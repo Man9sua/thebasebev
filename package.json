@@ -1,0 +1,43 @@
+{
+  "name": "the-base-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build:hero-css": "tailwindcss -c tailwind.hero.config.cjs -i src/styles/hero-tailwind.css -o public/css/tbs-tailwind.css --minify",
+    "build": "npm run build:hero-css && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "smoke:http": "node scripts/smoke-http.mjs",
+    "smoke:browser": "node scripts/smoke-browser.mjs",
+    "audit:commerce": "node scripts/audit-commerce.mjs",
+    "audit:crawlers": "node scripts/audit-crawlers.mjs",
+    "audit:seo-parity": "node scripts/audit-seo-parity.mjs",
+    "audit:routes": "node scripts/audit-route-indexability.mjs",
+    "audit:analytics": "node scripts/audit-analytics.mjs",
+    "audit:production-readiness": "node scripts/audit-production-readiness.mjs",
+    "check:assets": "node scripts/check-assets.mjs",
+    "cf:build": "opennextjs-cloudflare build",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env staging",
+    "deploy:production-preview": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env production"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.2",
+    "next": "^16.3.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.125.0"
+  }
+}

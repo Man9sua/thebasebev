@@ -1,0 +1,566 @@
+ErrorDocument 403 /page115314536.html
+ErrorDocument 404 /page115314536.html
+
+DirectoryIndex page62361237.html
+
+RewriteEngine On
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =https
+RewriteCond %{HTTP_HOST} ^www\.thebasebev.com [NC]
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} /robots.txt
+RewriteCond "%{DOCUMENT_ROOT}/robots_%{HTTP_HOST}.txt" -f
+RewriteRule ^(.*)$ robots_%{HTTP_HOST}.txt [NC,L]
+RewriteRule ^thank-you-order$ page77299576.html [NC]
+RewriteRule ^thank-you-order/$ page77299576.html [NC]
+
+RewriteRule ^main$ page62361237.html [NC]
+RewriteRule ^main/$ page62361237.html [NC]
+
+RewriteRule ^wholesale-strategy$ page147468696.html [NC]
+RewriteRule ^wholesale-strategy/$ page147468696.html [NC]
+
+RewriteRule ^terms$ page68443067.html [NC]
+RewriteRule ^terms/$ page68443067.html [NC]
+
+RewriteRule ^contacts$ page62585333.html [NC]
+RewriteRule ^contacts/$ page62585333.html [NC]
+
+RewriteRule ^about-us$ page62588185.html [NC]
+RewriteRule ^about-us/$ page62588185.html [NC]
+
+RewriteRule ^resources$ page151583806.html [NC]
+RewriteRule ^resources/$ page151583806.html [NC]
+
+RewriteRule ^privacy$ page68443503.html [NC]
+RewriteRule ^privacy/$ page68443503.html [NC]
+
+RewriteRule ^thank-you-form$ page77849746.html [NC]
+RewriteRule ^thank-you-form/$ page77849746.html [NC]
+
+RewriteRule ^distributors$ page65033993.html [NC]
+RewriteRule ^distributors/$ page65033993.html [NC]
+
+RewriteRule ^resources/blog$ page151592086.html [NC]
+RewriteRule ^resources/blog/$ page151592086.html [NC]
+
+RewriteRule ^cabinet$ page154764216.html [NC]
+RewriteRule ^cabinet/$ page154764216.html [NC]
+
+RewriteRule ^private-labeling$ page120311356.html [NC]
+RewriteRule ^private-labeling/$ page120311356.html [NC]
+
+RewriteRule ^sitemap$ page155556086.html [NC]
+RewriteRule ^sitemap/$ page155556086.html [NC]
+
+RewriteRule ^resources/glossary$ page151592696.html [NC]
+RewriteRule ^resources/glossary/$ page151592696.html [NC]
+
+RewriteRule ^resources/tools$ page151679366.html [NC]
+RewriteRule ^resources/tools/$ page151679366.html [NC]
+
+RewriteRule ^retail$ page114837666.html [NC]
+RewriteRule ^retail/$ page114837666.html [NC]
+
+RewriteRule ^knowledge-recipes$ page154758576.html [NC]
+RewriteRule ^knowledge-recipes/$ page154758576.html [NC]
+
+RewriteRule ^rnd$ page155598016.html [NC]
+RewriteRule ^rnd/$ page155598016.html [NC]
+
+RewriteRule ^not-found$ page115314536.html [NC]
+RewriteRule ^not-found/$ page115314536.html [NC]
+
+RewriteRule ^raf-coffee$ page62448803.html [NC]
+RewriteRule ^raf-coffee/$ page62448803.html [NC]
+
+RewriteRule ^cream-latte$ page62494049.html [NC]
+RewriteRule ^cream-latte/$ page62494049.html [NC]
+
+RewriteRule ^chai-latte$ page62497031.html [NC]
+RewriteRule ^chai-latte/$ page62497031.html [NC]
+
+RewriteRule ^milkshake$ page62508381.html [NC]
+RewriteRule ^milkshake/$ page62508381.html [NC]
+
+RewriteRule ^frappe$ page62510271.html [NC]
+RewriteRule ^frappe/$ page62510271.html [NC]
+
+RewriteRule ^iced-tea$ page62515411.html [NC]
+RewriteRule ^iced-tea/$ page62515411.html [NC]
+
+RewriteRule ^cordial$ page62539863.html [NC]
+RewriteRule ^cordial/$ page62539863.html [NC]
+
+RewriteRule ^topping$ page62541199.html [NC]
+RewriteRule ^topping/$ page62541199.html [NC]
+
+RewriteRule ^matcha$ page62544887.html [NC]
+RewriteRule ^matcha/$ page62544887.html [NC]
+
+RewriteRule ^chocolate$ page62565397.html [NC]
+RewriteRule ^chocolate/$ page62565397.html [NC]
+
+RewriteRule ^sugar-syrup$ page62566191.html [NC]
+RewriteRule ^sugar-syrup/$ page62566191.html [NC]
+
+RewriteRule ^vending$ page62573319.html [NC]
+RewriteRule ^vending/$ page62573319.html [NC]
+
+RewriteRule ^jam$ page62574449.html [NC]
+RewriteRule ^jam/$ page62574449.html [NC]
+
+RewriteRule ^garnish$ page62576005.html [NC]
+RewriteRule ^garnish/$ page62576005.html [NC]
+
+RewriteRule ^sugar-free$ page62578053.html [NC]
+RewriteRule ^sugar-free/$ page62578053.html [NC]
+
+RewriteRule ^tea$ page62581091.html [NC]
+RewriteRule ^tea/$ page62581091.html [NC]
+
+RewriteRule ^link$ page65943847.html [NC]
+RewriteRule ^link/$ page65943847.html [NC]
+
+RewriteRule ^catalog$ page114743626.html [NC]
+RewriteRule ^catalog/$ page114743626.html [NC]
+
+RewriteRule ^page65953477.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^page65953593.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^raf-cofeee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^raf-cofee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^functional-wellness$ https://thebasebev\.com/catalog [R=301,NC,L]
+
+RewriteRule ^members/ ma_start.html [NC,L]
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =https
+RewriteCond %{HTTP_HOST} ^www\.thebasebev.com [NC]
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} /robots.txt
+RewriteCond "%{DOCUMENT_ROOT}/robots_%{HTTP_HOST}.txt" -f
+RewriteRule ^(.*)$ robots_%{HTTP_HOST}.txt [NC,L]
+RewriteRule ^thank-you-order$ page77299576.html [NC]
+RewriteRule ^thank-you-order/$ page77299576.html [NC]
+
+RewriteRule ^main$ page62361237.html [NC]
+RewriteRule ^main/$ page62361237.html [NC]
+
+RewriteRule ^wholesale-strategy$ page147468696.html [NC]
+RewriteRule ^wholesale-strategy/$ page147468696.html [NC]
+
+RewriteRule ^terms$ page68443067.html [NC]
+RewriteRule ^terms/$ page68443067.html [NC]
+
+RewriteRule ^contacts$ page62585333.html [NC]
+RewriteRule ^contacts/$ page62585333.html [NC]
+
+RewriteRule ^about-us$ page62588185.html [NC]
+RewriteRule ^about-us/$ page62588185.html [NC]
+
+RewriteRule ^resources$ page151583806.html [NC]
+RewriteRule ^resources/$ page151583806.html [NC]
+
+RewriteRule ^privacy$ page68443503.html [NC]
+RewriteRule ^privacy/$ page68443503.html [NC]
+
+RewriteRule ^thank-you-form$ page77849746.html [NC]
+RewriteRule ^thank-you-form/$ page77849746.html [NC]
+
+RewriteRule ^distributors$ page65033993.html [NC]
+RewriteRule ^distributors/$ page65033993.html [NC]
+
+RewriteRule ^resources/blog$ page151592086.html [NC]
+RewriteRule ^resources/blog/$ page151592086.html [NC]
+
+RewriteRule ^cabinet$ page154764216.html [NC]
+RewriteRule ^cabinet/$ page154764216.html [NC]
+
+RewriteRule ^private-labeling$ page120311356.html [NC]
+RewriteRule ^private-labeling/$ page120311356.html [NC]
+
+RewriteRule ^sitemap$ page155556086.html [NC]
+RewriteRule ^sitemap/$ page155556086.html [NC]
+
+RewriteRule ^resources/glossary$ page151592696.html [NC]
+RewriteRule ^resources/glossary/$ page151592696.html [NC]
+
+RewriteRule ^resources/tools$ page151679366.html [NC]
+RewriteRule ^resources/tools/$ page151679366.html [NC]
+
+RewriteRule ^retail$ page114837666.html [NC]
+RewriteRule ^retail/$ page114837666.html [NC]
+
+RewriteRule ^knowledge-recipes$ page154758576.html [NC]
+RewriteRule ^knowledge-recipes/$ page154758576.html [NC]
+
+RewriteRule ^rnd$ page155598016.html [NC]
+RewriteRule ^rnd/$ page155598016.html [NC]
+
+RewriteRule ^not-found$ page115314536.html [NC]
+RewriteRule ^not-found/$ page115314536.html [NC]
+
+RewriteRule ^raf-coffee$ page62448803.html [NC]
+RewriteRule ^raf-coffee/$ page62448803.html [NC]
+
+RewriteRule ^cream-latte$ page62494049.html [NC]
+RewriteRule ^cream-latte/$ page62494049.html [NC]
+
+RewriteRule ^chai-latte$ page62497031.html [NC]
+RewriteRule ^chai-latte/$ page62497031.html [NC]
+
+RewriteRule ^milkshake$ page62508381.html [NC]
+RewriteRule ^milkshake/$ page62508381.html [NC]
+
+RewriteRule ^frappe$ page62510271.html [NC]
+RewriteRule ^frappe/$ page62510271.html [NC]
+
+RewriteRule ^iced-tea$ page62515411.html [NC]
+RewriteRule ^iced-tea/$ page62515411.html [NC]
+
+RewriteRule ^cordial$ page62539863.html [NC]
+RewriteRule ^cordial/$ page62539863.html [NC]
+
+RewriteRule ^topping$ page62541199.html [NC]
+RewriteRule ^topping/$ page62541199.html [NC]
+
+RewriteRule ^matcha$ page62544887.html [NC]
+RewriteRule ^matcha/$ page62544887.html [NC]
+
+RewriteRule ^chocolate$ page62565397.html [NC]
+RewriteRule ^chocolate/$ page62565397.html [NC]
+
+RewriteRule ^sugar-syrup$ page62566191.html [NC]
+RewriteRule ^sugar-syrup/$ page62566191.html [NC]
+
+RewriteRule ^vending$ page62573319.html [NC]
+RewriteRule ^vending/$ page62573319.html [NC]
+
+RewriteRule ^jam$ page62574449.html [NC]
+RewriteRule ^jam/$ page62574449.html [NC]
+
+RewriteRule ^garnish$ page62576005.html [NC]
+RewriteRule ^garnish/$ page62576005.html [NC]
+
+RewriteRule ^sugar-free$ page62578053.html [NC]
+RewriteRule ^sugar-free/$ page62578053.html [NC]
+
+RewriteRule ^tea$ page62581091.html [NC]
+RewriteRule ^tea/$ page62581091.html [NC]
+
+RewriteRule ^link$ page65943847.html [NC]
+RewriteRule ^link/$ page65943847.html [NC]
+
+RewriteRule ^catalog$ page114743626.html [NC]
+RewriteRule ^catalog/$ page114743626.html [NC]
+
+RewriteRule ^page65953477.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^page65953593.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^raf-cofeee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^raf-cofee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^functional-wellness$ https://thebasebev\.com/catalog [R=301,NC,L]
+
+RewriteRule ^members/ ma_start.html [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^resources\/recipes(?:/([a-z0-9_-]+(?:/[a-z0-9_-]+)*))?/?$ http://127.0.0.1:39215%{REQUEST_URI}?feeduid=111700959881 [P,L,QSA]
+RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =https
+RewriteCond %{HTTP_HOST} ^www\.thebasebev.com [NC]
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} /robots.txt
+RewriteCond "%{DOCUMENT_ROOT}/robots_%{HTTP_HOST}.txt" -f
+RewriteRule ^(.*)$ robots_%{HTTP_HOST}.txt [NC,L]
+RewriteRule ^thank-you-order$ page77299576.html [NC]
+RewriteRule ^thank-you-order/$ page77299576.html [NC]
+
+RewriteRule ^main$ page62361237.html [NC]
+RewriteRule ^main/$ page62361237.html [NC]
+
+RewriteRule ^wholesale-strategy$ page147468696.html [NC]
+RewriteRule ^wholesale-strategy/$ page147468696.html [NC]
+
+RewriteRule ^terms$ page68443067.html [NC]
+RewriteRule ^terms/$ page68443067.html [NC]
+
+RewriteRule ^contacts$ page62585333.html [NC]
+RewriteRule ^contacts/$ page62585333.html [NC]
+
+RewriteRule ^about-us$ page62588185.html [NC]
+RewriteRule ^about-us/$ page62588185.html [NC]
+
+RewriteRule ^resources$ page151583806.html [NC]
+RewriteRule ^resources/$ page151583806.html [NC]
+
+RewriteRule ^privacy$ page68443503.html [NC]
+RewriteRule ^privacy/$ page68443503.html [NC]
+
+RewriteRule ^thank-you-form$ page77849746.html [NC]
+RewriteRule ^thank-you-form/$ page77849746.html [NC]
+
+RewriteRule ^distributors$ page65033993.html [NC]
+RewriteRule ^distributors/$ page65033993.html [NC]
+
+RewriteRule ^resources/blog$ page151592086.html [NC]
+RewriteRule ^resources/blog/$ page151592086.html [NC]
+
+RewriteRule ^cabinet$ page154764216.html [NC]
+RewriteRule ^cabinet/$ page154764216.html [NC]
+
+RewriteRule ^private-labeling$ page120311356.html [NC]
+RewriteRule ^private-labeling/$ page120311356.html [NC]
+
+RewriteRule ^sitemap$ page155556086.html [NC]
+RewriteRule ^sitemap/$ page155556086.html [NC]
+
+RewriteRule ^resources/glossary$ page151592696.html [NC]
+RewriteRule ^resources/glossary/$ page151592696.html [NC]
+
+RewriteRule ^resources/tools$ page151679366.html [NC]
+RewriteRule ^resources/tools/$ page151679366.html [NC]
+
+RewriteRule ^retail$ page114837666.html [NC]
+RewriteRule ^retail/$ page114837666.html [NC]
+
+RewriteRule ^knowledge-recipes$ page154758576.html [NC]
+RewriteRule ^knowledge-recipes/$ page154758576.html [NC]
+
+RewriteRule ^rnd$ page155598016.html [NC]
+RewriteRule ^rnd/$ page155598016.html [NC]
+
+RewriteRule ^not-found$ page115314536.html [NC]
+RewriteRule ^not-found/$ page115314536.html [NC]
+
+RewriteRule ^raf-coffee$ page62448803.html [NC]
+RewriteRule ^raf-coffee/$ page62448803.html [NC]
+
+RewriteRule ^cream-latte$ page62494049.html [NC]
+RewriteRule ^cream-latte/$ page62494049.html [NC]
+
+RewriteRule ^chai-latte$ page62497031.html [NC]
+RewriteRule ^chai-latte/$ page62497031.html [NC]
+
+RewriteRule ^milkshake$ page62508381.html [NC]
+RewriteRule ^milkshake/$ page62508381.html [NC]
+
+RewriteRule ^frappe$ page62510271.html [NC]
+RewriteRule ^frappe/$ page62510271.html [NC]
+
+RewriteRule ^iced-tea$ page62515411.html [NC]
+RewriteRule ^iced-tea/$ page62515411.html [NC]
+
+RewriteRule ^cordial$ page62539863.html [NC]
+RewriteRule ^cordial/$ page62539863.html [NC]
+
+RewriteRule ^topping$ page62541199.html [NC]
+RewriteRule ^topping/$ page62541199.html [NC]
+
+RewriteRule ^matcha$ page62544887.html [NC]
+RewriteRule ^matcha/$ page62544887.html [NC]
+
+RewriteRule ^chocolate$ page62565397.html [NC]
+RewriteRule ^chocolate/$ page62565397.html [NC]
+
+RewriteRule ^sugar-syrup$ page62566191.html [NC]
+RewriteRule ^sugar-syrup/$ page62566191.html [NC]
+
+RewriteRule ^vending$ page62573319.html [NC]
+RewriteRule ^vending/$ page62573319.html [NC]
+
+RewriteRule ^jam$ page62574449.html [NC]
+RewriteRule ^jam/$ page62574449.html [NC]
+
+RewriteRule ^garnish$ page62576005.html [NC]
+RewriteRule ^garnish/$ page62576005.html [NC]
+
+RewriteRule ^sugar-free$ page62578053.html [NC]
+RewriteRule ^sugar-free/$ page62578053.html [NC]
+
+RewriteRule ^tea$ page62581091.html [NC]
+RewriteRule ^tea/$ page62581091.html [NC]
+
+RewriteRule ^link$ page65943847.html [NC]
+RewriteRule ^link/$ page65943847.html [NC]
+
+RewriteRule ^catalog$ page114743626.html [NC]
+RewriteRule ^catalog/$ page114743626.html [NC]
+
+RewriteRule ^page65953477.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^page65953593.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^raf-cofeee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^raf-cofee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^functional-wellness$ https://thebasebev\.com/catalog [R=301,NC,L]
+
+RewriteRule ^members/ ma_start.html [NC,L]
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =https
+RewriteCond %{HTTP_HOST} ^www\.thebasebev.com [NC]
+RewriteRule ^(.*)$ https://thebasebev\.com/$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} /robots.txt
+RewriteCond "%{DOCUMENT_ROOT}/robots_%{HTTP_HOST}.txt" -f
+RewriteRule ^(.*)$ robots_%{HTTP_HOST}.txt [NC,L]
+RewriteRule ^thank-you-order$ page77299576.html [NC]
+RewriteRule ^thank-you-order/$ page77299576.html [NC]
+
+RewriteRule ^main$ page62361237.html [NC]
+RewriteRule ^main/$ page62361237.html [NC]
+
+RewriteRule ^wholesale-strategy$ page147468696.html [NC]
+RewriteRule ^wholesale-strategy/$ page147468696.html [NC]
+
+RewriteRule ^terms$ page68443067.html [NC]
+RewriteRule ^terms/$ page68443067.html [NC]
+
+RewriteRule ^contacts$ page62585333.html [NC]
+RewriteRule ^contacts/$ page62585333.html [NC]
+
+RewriteRule ^about-us$ page62588185.html [NC]
+RewriteRule ^about-us/$ page62588185.html [NC]
+
+RewriteRule ^resources$ page151583806.html [NC]
+RewriteRule ^resources/$ page151583806.html [NC]
+
+RewriteRule ^privacy$ page68443503.html [NC]
+RewriteRule ^privacy/$ page68443503.html [NC]
+
+RewriteRule ^thank-you-form$ page77849746.html [NC]
+RewriteRule ^thank-you-form/$ page77849746.html [NC]
+
+RewriteRule ^distributors$ page65033993.html [NC]
+RewriteRule ^distributors/$ page65033993.html [NC]
+
+RewriteRule ^resources/blog$ page151592086.html [NC]
+RewriteRule ^resources/blog/$ page151592086.html [NC]
+
+RewriteRule ^cabinet$ page154764216.html [NC]
+RewriteRule ^cabinet/$ page154764216.html [NC]
+
+RewriteRule ^private-labeling$ page120311356.html [NC]
+RewriteRule ^private-labeling/$ page120311356.html [NC]
+
+RewriteRule ^sitemap$ page155556086.html [NC]
+RewriteRule ^sitemap/$ page155556086.html [NC]
+
+RewriteRule ^resources/glossary$ page151592696.html [NC]
+RewriteRule ^resources/glossary/$ page151592696.html [NC]
+
+RewriteRule ^resources/tools$ page151679366.html [NC]
+RewriteRule ^resources/tools/$ page151679366.html [NC]
+
+RewriteRule ^retail$ page114837666.html [NC]
+RewriteRule ^retail/$ page114837666.html [NC]
+
+RewriteRule ^knowledge-recipes$ page154758576.html [NC]
+RewriteRule ^knowledge-recipes/$ page154758576.html [NC]
+
+RewriteRule ^rnd$ page155598016.html [NC]
+RewriteRule ^rnd/$ page155598016.html [NC]
+
+RewriteRule ^not-found$ page115314536.html [NC]
+RewriteRule ^not-found/$ page115314536.html [NC]
+
+RewriteRule ^raf-coffee$ page62448803.html [NC]
+RewriteRule ^raf-coffee/$ page62448803.html [NC]
+
+RewriteRule ^cream-latte$ page62494049.html [NC]
+RewriteRule ^cream-latte/$ page62494049.html [NC]
+
+RewriteRule ^chai-latte$ page62497031.html [NC]
+RewriteRule ^chai-latte/$ page62497031.html [NC]
+
+RewriteRule ^milkshake$ page62508381.html [NC]
+RewriteRule ^milkshake/$ page62508381.html [NC]
+
+RewriteRule ^frappe$ page62510271.html [NC]
+RewriteRule ^frappe/$ page62510271.html [NC]
+
+RewriteRule ^iced-tea$ page62515411.html [NC]
+RewriteRule ^iced-tea/$ page62515411.html [NC]
+
+RewriteRule ^cordial$ page62539863.html [NC]
+RewriteRule ^cordial/$ page62539863.html [NC]
+
+RewriteRule ^topping$ page62541199.html [NC]
+RewriteRule ^topping/$ page62541199.html [NC]
+
+RewriteRule ^matcha$ page62544887.html [NC]
+RewriteRule ^matcha/$ page62544887.html [NC]
+
+RewriteRule ^chocolate$ page62565397.html [NC]
+RewriteRule ^chocolate/$ page62565397.html [NC]
+
+RewriteRule ^sugar-syrup$ page62566191.html [NC]
+RewriteRule ^sugar-syrup/$ page62566191.html [NC]
+
+RewriteRule ^vending$ page62573319.html [NC]
+RewriteRule ^vending/$ page62573319.html [NC]
+
+RewriteRule ^jam$ page62574449.html [NC]
+RewriteRule ^jam/$ page62574449.html [NC]
+
+RewriteRule ^garnish$ page62576005.html [NC]
+RewriteRule ^garnish/$ page62576005.html [NC]
+
+RewriteRule ^sugar-free$ page62578053.html [NC]
+RewriteRule ^sugar-free/$ page62578053.html [NC]
+
+RewriteRule ^tea$ page62581091.html [NC]
+RewriteRule ^tea/$ page62581091.html [NC]
+
+RewriteRule ^link$ page65943847.html [NC]
+RewriteRule ^link/$ page65943847.html [NC]
+
+RewriteRule ^catalog$ page114743626.html [NC]
+RewriteRule ^catalog/$ page114743626.html [NC]
+
+RewriteRule ^page65953477.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^page65953593.html$ https://thebasebev\.com/ [R=301,NC,L]
+
+RewriteRule ^raf-cofeee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^raf-cofee$ https://thebasebev\.com/raf-coffee [R=301,NC,L]
+
+RewriteRule ^functional-wellness$ https://thebasebev\.com/catalog [R=301,NC,L]
+
+RewriteRule ^members/ ma_start.html [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^resources\/recipes(?:/([a-z0-9_-]+(?:/[a-z0-9_-]+)*))?/?$ http://127.0.0.1:39215%{REQUEST_URI}?feeduid=111700959881 [P,L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^catalog(?:/([a-z0-9_-]+(?:/[a-z0-9_-]+)*))?/?$ http://127.0.0.1:39216/tcatalog%{REQUEST_URI} [P,L,QSA]
+
+<IfModule mod_headers.c>
+	Header set X-Content-Type-Options nosniff
+	Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+

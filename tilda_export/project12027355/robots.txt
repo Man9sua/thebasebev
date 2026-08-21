@@ -1,0 +1,42 @@
+User-Agent: *
+Disallow: /page77299576.html
+Disallow: /thank-you-order
+Disallow: /page68443067.html
+Disallow: /terms
+Disallow: /page68443503.html
+Disallow: /privacy
+Disallow: /page77849746.html
+Disallow: /thank-you-form
+Disallow: /page154764216.html
+Disallow: /cabinet
+Disallow: /page114837666.html
+Disallow: /retail
+Disallow: /page154758576.html
+Disallow: /knowledge-recipes
+Disallow: /page62362389.html
+Disallow: /page62447481.html
+Disallow: /page115314536.html
+Disallow: /not-found
+Disallow: /page65943847.html
+Disallow: /link
+Disallow: /page114053586.html
+Disallow: /page114237746.html
+Disallow: /page114551046.html
+Disallow: /page114609916.html
+Disallow: /page154766476.html
+Disallow: /tilda/form*
+Disallow: /tilda/rec*
+Disallow: /tilda/click*
+Disallow: /tilda/scroll*
+Disallow: /tilda/popup*
+Disallow: /tilda/cart*
+Disallow: /tilda/product*
+Disallow: /tilda/event*
+Disallow: /members/login*
+Disallow: /members/signup*
+Disallow:
+
+
+Sitemap: https://thebasebev.com/sitemap.xml
+Sitemap: https://thebasebev.com/sitemap-store.xml
+Sitemap: https://thebasebev.com/sitemap-feeds.xml

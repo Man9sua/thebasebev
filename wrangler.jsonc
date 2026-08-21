@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "the-base-staging",
+  "main": "worker.ts",
+  "compatibility_date": "2026-08-21",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "env": {
+    "staging": {
+      "name": "the-base-staging",
+      "workers_dev": true,
+      "vars": {
+        "APP_ENV": "staging"
+      }
+    },
+    "production": {
+      "name": "the-base-production",
+      "workers_dev": true,
+      "vars": {
+        "APP_ENV": "production"
+      }
+    }
+  }
+}

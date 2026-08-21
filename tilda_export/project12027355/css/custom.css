@@ -1,0 +1,3038 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=optional');
+.t450__menu_show {
+max-width: 100% !important;
+}
+
+.tilda-cookie-banner,
+[class*="cookie"],
+[class*="consent"],
+.modal-backdrop,
+.tn-cookie-banner {
+background: #ffffff !important;
+border: 1px solid #e5e5e5 !important;
+border-radius: 0px !important;
+padding: 24px 32px !important;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif !important;
+position: fixed !important;
+bottom: 32px !important;
+right: 32px !important;
+max-width: 360px !important;
+z-index: 9998 !important;
+}
+
+.tilda-cookie-banner p,
+[class*="cookie"] p,
+[class*="consent"] p,
+[class*="cookie"] span,
+[class*="consent"] span {
+font-size: 13px !important;
+line-height: 1.6 !important;
+color: #666 !important;
+margin: 0 0 16px 0 !important;
+font-weight: 400 !important;
+}
+
+button[class*="cookie"],
+button[class*="accept"],
+button[class*="consent"],
+.tilda-cookie-banner button,
+[class*="cookie"] button,
+[class*="consent"] button,
+.modal-footer button,
+[data-cookie-accept],
+[data-cookies-accept] {
+background: #C0392B !important;
+color: #ffffff !important;
+border: none !important;
+border-radius: 0px !important;
+padding: 12px 28px !important;
+font-size: 13px !important;
+font-weight: 600 !important;
+cursor: pointer !important;
+transition: all 0.2s ease !important;
+text-transform: uppercase !important;
+letter-spacing: 0.5px !important;
+box-shadow: none !important;
+outline: none !important;
+}
+
+button[class*="cookie"]:hover,
+button[class*="accept"]:hover,
+button[class*="consent"]:hover,
+.tilda-cookie-banner button:hover,
+[class*="cookie"] button:hover,
+[class*="consent"] button:hover,
+[data-cookie-accept]:hover,
+[data-cookies-accept]:hover {
+background: #a03225 !important;
+transform: translateY(-1px) !important;
+box-shadow: 0 4px 12px rgba(192, 57, 43, 0.25) !important;
+}
+
+button[class*="cookie"]:active,
+button[class*="accept"]:active,
+button[class*="consent"]:active,
+.tilda-cookie-banner button:active,
+[class*="cookie"] button:active,
+[class*="consent"] button:active {
+transform: translateY(0) !important;
+box-shadow: 0 2px 6px rgba(192, 57, 43, 0.15) !important;
+}
+
+button[class*="reject"],
+button[class*="decline"],
+[class*="cookie"] button:last-child,
+[class*="consent"] button:last-child {
+background: #f5f5f5 !important;
+color: #333 !important;
+border: 1px solid #ddd !important;
+margin-left: 12px !important;
+}
+
+button[class*="reject"]:hover,
+button[class*="decline"]:hover {
+background: #e8e8e8 !important;
+border-color: #bbb !important;
+}
+
+.tilda-cookie-banner [class*="close"],
+[class*="cookie"] [class*="close"],
+[class*="consent"] [class*="close"],
+button.close {
+background: transparent !important;
+border: none !important;
+color: #999 !important;
+font-size: 20px !important;
+cursor: pointer !important;
+padding: 4px !important;
+transition: color 0.2s ease !important;
+}
+
+.tilda-cookie-banner [class*="close"]:hover,
+[class*="cookie"] [class*="close"]:hover {
+color: #333 !important;
+}
+
+.modal-backdrop,
+.tilda-cookie-overlay,
+[class*="cookie-overlay"] {
+background: transparent !important;
+display: none !important;
+}
+
+[data-debug],
+[class*="debug"],
+[class*="test"],
+[class*="testing"],
+.console-output,
+.debug-info,
+.test-info,
+#debug,
+#testing {
+display: none !important;
+visibility: hidden !important;
+height: 0 !important;
+overflow: hidden !important;
+margin: 0 !important;
+padding: 0 !important;
+}
+
+.tb-debug-container,
+.debug-container,
+.test-results,
+.qa-info,
+[class*="qa-"],
+[class*="dev-"],
+[class*="staging-"] {
+display: none !important;
+}
+
+@media print {
+.tilda-cookie-banner,
+[class*="cookie"],
+[class*="consent"],
+.modal-backdrop,
+.tn-cookie-banner {
+display: none !important;
+}
+
+[data-calc-generate],
+[data-calc-reset],
+[data-calc-print],
+.tb-menu-controls button,
+button[class*="control"],
+button[class*="action"],
+button:not(.tb-menu-item button) {
+display: none !important;
+}
+
+[class*="widget"],
+[class*="floating"],
+[class*="chat"],
+[id*="widget"],
+[class*="whatsapp"],
+[class*="telegram"],
+.widget-float,
+.floating-widget,
+.chat-widget,
+.help-widget {
+display: none !important;
+}
+
+[class*="social"],
+[class*="share"],
+.social-buttons,
+.share-buttons,
+[id*="social"],
+[id*="share"] {
+display: none !important;
+}
+
+nav,
+header,
+footer,
+[role="navigation"],
+[class*="navbar"],
+[class*="header"],
+[class*="footer"],
+.tn-nav,
+.tn-header {
+display: none !important;
+}
+
+body {
+background: white !important;
+}
+
+* {
+background-image: none !important;
+box-shadow: none !important;
+}
+
+[data-menu-template],
+[data-menu-template].tb-menu-visible,
+.tb-menu-document,
+.tb-calculator-container,
+#rec2429369331 {
+display: block !important;
+background: white !important;
+padding: 0 !important;
+margin: 0 !important;
+}
+
+.tb-menu-item {
+page-break-inside: avoid !important;
+}
+
+.tb-menu-grid {
+page-break-inside: avoid !important;
+}
+
+.tb-menu-logo-section {
+page-break-after: avoid !important;
+}
+
+.tb-menu-document {
+max-width: 100% !important;
+margin: 0 !important;
+padding: 0 !important;
+}
+
+p {
+orphans: 3 !important;
+widows: 3 !important;
+}
+}
+
+#rec2429369331,
+.tb-calculator-container,
+.tb-menubuilder-container {
+background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+border-radius: 0px;
+}
+
+button,
+input,
+select,
+textarea,
+a {
+transition: all 0.2s ease;
+}
+
+button:focus,
+input:focus,
+select:focus {
+outline: none;
+box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
+}
+
+a {
+color: #C0392B;
+text-decoration: none;
+}
+
+a:hover {
+text-decoration: underline;
+}
+
+#rec2430603261 {
+transform: none !important;
+margin-top: 0 !important;
+position: relative !important;
+top: 0 !important;
+z-index: 5 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+#rec2429369331,
+.tb-calculator-container {
+background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+color: #e0e0e0;
+}
+
+.tilda-cookie-banner {
+background: #252525 !important;
+color: #e0e0e0 !important;
+border-color: #333 !important;
+}
+
+.tilda-cookie-banner p,
+[class*="cookie"] p {
+color: #999 !important;
+}
+}
+
+html body{ background-color:#000000; }
+html:not(.tb-dark-mode) body{ background-color:#ffffff; }
+
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+outline-color: #000 !important;
+}
+
+#rec1842546651 .t396__artboard{
+background:rgba(0,0,0,.9) !important;
+-webkit-backdrop-filter:blur(20px) saturate(140%);
+backdrop-filter:blur(20px) saturate(140%);
+border-bottom:1px solid rgba(255,255,255,.07);
+z-index:995 !important;
+}
+
+#rec1842546651 .t396__filter{background:transparent !important;}
+
+.tbne-link{
+color:#FFFFFF !important;
+min-height:44px;
+display:inline-flex;
+align-items:center;
+transition:color .2s ease, opacity .2s ease;
+}
+.tbne-link:hover{color:#C9C9C9 !important;}
+.tbne-chev{
+stroke:#FFFFFF !important;
+color:#FFFFFF !important;
+opacity:.75;
+transition:transform .25s ease, opacity .2s ease;
+}
+.tbne-item:hover .tbne-chev{opacity:1;}
+
+#rec1842546651 a[href^="tel:"],
+#rec1842546651 a[href^="tel:"] .tn-atom{color:#FFFFFF !important;}
+
+#rec1842546651 a[href*="wa.me"] img{
+filter:brightness(0) invert(1);
+opacity:.85;
+transition:opacity .2s ease;
+}
+#rec1842546651 a[href*="wa.me"]:hover img{opacity:1;}
+
+.tbne-panel{
+background:rgba(5,5,5,.97) !important;
+-webkit-backdrop-filter:blur(18px) saturate(130%);
+backdrop-filter:blur(18px) saturate(130%);
+border:1px solid rgba(255,255,255,.07) !important;
+border-radius:16px !important;
+box-shadow:0 24px 60px -18px rgba(0,0,0,.85) !important;
+color:#FFFFFF !important;
+transform-origin:top center;
+transform:scaleY(.96) translateY(-6px);
+opacity:0;
+transition:transform .22s cubic-bezier(.2,.7,.3,1), opacity .18s ease;
+}
+.tbne-item:hover .tbne-panel,
+.tbne-item:focus-within .tbne-panel{
+transform:scaleY(1) translateY(0);
+opacity:1;
+}
+
+.tbne-wrap{
+transform:none !important;
+transition:opacity .18s ease !important;
+}
+
+.tbne-col-title{
+color:#8E8E8E !important;
+font-size:10px !important;
+font-weight:600 !important;
+letter-spacing:.15em !important;
+text-transform:uppercase !important;
+}
+
+.tbne-links a{
+color:#FFFFFF !important;
+font-weight:400 !important;
+min-height:44px;
+display:flex;
+align-items:center;
+border-radius:8px !important;
+transition:color .18s ease, background .18s ease;
+}
+.tbne-links a:hover{
+color:#FF0000 !important;
+background:rgba(255,255,255,.04) !important;
+}
+
+.tbne-badge,
+.tbne-badge-green,
+.tbne-badge-blue,
+.tbne-badge-purple,
+.tbne-badge-amber{
+background:transparent !important;
+color:#FF5A5A !important;
+border:1px solid rgba(255,0,0,.32) !important;
+border-radius:3px !important;
+font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace !important;
+font-size:9px !important;
+font-weight:500 !important;
+letter-spacing:.1em !important;
+text-transform:uppercase !important;
+padding:2px 5px !important;
+line-height:1.2 !important;
+}
+
+.tbne-panel-footer{
+border-top:1px solid rgba(255,255,255,.08) !important;
+color:#8E8E8E !important;
+}
+.tbne-panel-footer a:not(.tbne-cta-primary){
+color:#8E8E8E !important;
+transition:color .2s ease;
+}
+.tbne-panel-footer a:not(.tbne-cta-primary):hover{color:#FFFFFF !important;}
+.tbne-footer-icon{
+stroke:#8E8E8E !important;
+color:#8E8E8E !important;
+}
+
+.tbne-cta-primary{
+background:rgba(255,255,255,.05) !important;
+color:#FFFFFF !important;
+border:1px solid rgba(255,255,255,.2) !important;
+border-radius:8px !important;
+min-height:44px;
+transition:border-color .25s ease, background .25s ease, box-shadow .25s ease !important;
+}
+.tbne-cta-primary:hover{
+background:rgba(255,0,0,.08) !important;
+border-color:#FF0000 !important;
+box-shadow:0 0 22px rgba(255,0,0,.18) !important;
+color:#FFFFFF !important;
+}
+.tbne-cta-primary svg{stroke:currentColor !important;}
+
+#tb-res-dd{
+background:rgba(8,8,8,.9) !important;
+-webkit-backdrop-filter:blur(18px);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.07) !important;
+border-radius:12px !important;
+box-shadow:0 20px 48px -16px rgba(0,0,0,.85) !important;
+}
+#tb-res-dd a{
+color:#FFFFFF !important;
+min-height:44px;
+display:flex !important;
+align-items:center;
+transition:color .18s ease, background .18s ease;
+}
+#tb-res-dd a:hover{
+color:#FF0000 !important;
+background:rgba(255,255,255,.04) !important;
+}
+
+#tb-dark-btn{
+min-width:44px;
+min-height:44px;
+}
+#tb-dark-panel{
+background:rgba(8,8,8,.92) !important;
+-webkit-backdrop-filter:blur(18px);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.07) !important;
+border-radius:14px !important;
+color:#FFFFFF !important;
+}
+#tb-dark-info,#tb-dark-panel-label{color:#8E8E8E !important;}
+
+#rec1842546651 a:focus-visible,
+#rec1842546651 button:focus-visible,
+.tbne-links a:focus-visible,
+.tbne-cta-primary:focus-visible,
+#tb-res-dd a:focus-visible{
+outline:2px solid #FFFFFF;
+outline-offset:2px;
+border-radius:6px;
+}
+
+@media(max-width:1200px){
+.tbne-panel{max-width:calc(100vw - 32px);}
+}
+@media(prefers-reduced-motion:reduce){
+.tbne-wrap{transition:opacity .01s !important;transform:none !important;}
+.tbne-item:hover .tbne-wrap,
+.tbne-item:focus-within .tbne-wrap{transform:none !important;}
+.tbne-link,.tbne-links a,.tbne-cta-primary{transition:none !important;}
+}
+
+html body #rec1842546651 .t396__artboard{
+background:rgba(0,0,0,.97) !important;
+-webkit-backdrop-filter:blur(14px) saturate(1) !important;
+backdrop-filter:blur(14px) saturate(1) !important;
+border-bottom:1px solid rgba(255,255,255,.1) !important;
+}
+
+html body #rec1842546651 .tbne-panel{
+background:#050505 !important;
+}
+
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom{
+display:inline-flex !important;
+align-items:center !important;
+
+margin-top:-9px !important;
+padding:10px 20px 10px 16px !important;
+border:1px solid rgba(255,255,255,.18) !important;
+border-radius:999px !important;
+background:rgba(255,255,255,.04) !important;
+transition:border-color .25s ease, background .25s ease !important;
+}
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom:hover{
+border-color:rgba(255,255,255,.42) !important;
+background:rgba(255,255,255,.08) !important;
+}
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom__button-content{
+display:inline-flex !important;
+align-items:center !important;
+gap:10px !important;
+width:auto !important;
+}
+
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom__button-text{
+color:#FFFFFF !important;
+font-weight:600 !important;
+letter-spacing:.01em !important;
+}
+
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom__button-icon{
+width:18px !important;
+height:18px !important;
+}
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom__button-icon::before,
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom__button-icon::after{
+width:18px !important;
+height:18px !important;
+background-size:18px 18px !important;
+filter:brightness(0) invert(1) !important;
+opacity:.92 !important;
+}
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom__button-border{
+display:none !important;
+}
+
+html body #rec1842546651 .tn-elem__18425466511784540108106000001{
+width:40px !important;
+height:40px !important;
+display:flex !important;
+align-items:center !important;
+justify-content:center !important;
+border:1px solid rgba(255,255,255,.18) !important;
+border-radius:50% !important;
+background:rgba(255,255,255,.04) !important;
+
+transform:translate(-13px,-7px) !important;
+transition:border-color .25s ease, background .25s ease !important;
+}
+html body #rec1842546651 .tn-elem__18425466511784540108106000001:hover{
+border-color:rgba(255,255,255,.42) !important;
+background:rgba(255,255,255,.08) !important;
+}
+html body #rec1842546651 .tn-elem__18425466511784540108106000001 .tn-atom,
+html body #rec1842546651 .tn-elem__18425466511784540108106000001 a{
+display:flex !important;
+align-items:center !important;
+justify-content:center !important;
+width:100% !important;
+height:100% !important;
+}
+
+html body #rec1842546651 .tn-elem__18425466511784540108106000001 img{
+width:20px !important;
+height:20px !important;
+opacity:1 !important;
+}
+
+html body #rec1842546651 .tbne-link{
+position:relative !important;
+}
+html body #rec1842546651 .tbne-link::after{
+position:absolute !important;
+left:16px;
+right:16px;
+bottom:14px;
+height:1px;
+background:#FFFFFF;
+box-shadow:0 0 8px rgba(255,255,255,.65);
+transform:scaleX(0);
+transform-origin:center;
+transition:transform .3s ease;
+pointer-events:none;
+}
+html body #rec1842546651 .tbne-item:hover .tbne-link::after{
+transform:scaleX(1);
+}
+
+html body #rec1842546651 .tn-elem__18425466511738315468689{
+display:flex !important;
+align-items:center !important;
+height:81px !important;
+}
+html body #rec1842546651 .tn-elem__18425466511738315468689 img{
+height:68px !important;
+width:auto !important;
+}
+
+@media(prefers-reduced-motion:reduce){
+html body #rec1842546651 .tbne-link::after,
+html body #rec1842546651 .tbne-link svg,
+html body #rec1842546651 .tn-elem__18425466511769582976552 .tn-atom,
+html body #rec1842546651 .tn-elem__18425466511784540108106000001{
+transition:none !important;
+}
+}
+
+html body #rec859779175 .t396__artboard,
+html body #rec859779175 .t396__filter,
+html body #rec859191909 .t396__artboard,
+html body #rec1851388021 .t396__artboard,
+html body #rec1851190051 .t396__artboard,
+html body #rec859275495 .t396__artboard{
+background-color:#000000 !important;
+}
+html:not(.tb-dark-mode) body #rec859779175 .t396__artboard,
+html:not(.tb-dark-mode) body #rec859779175 .t396__filter,
+html:not(.tb-dark-mode) body #rec859191909 .t396__artboard,
+html:not(.tb-dark-mode) body #rec1851388021 .t396__artboard,
+html:not(.tb-dark-mode) body #rec1851190051 .t396__artboard,
+html:not(.tb-dark-mode) body #rec859275495 .t396__artboard{
+background-color:#ffffff !important;
+}
+
+html body #rec859779175 .t396__artboard{
+height:auto !important;
+min-height:0 !important;
+}
+html body #rec859779175 .tn-elem__8597791751785185996288000001{
+position:relative !important;
+top:auto !important;
+left:auto !important;
+width:100% !important;
+max-width:100% !important;
+height:auto !important;
+}
+
+html body [id^="rec"]{
+scroll-margin-top:110px;
+}
+html{
+scroll-behavior:smooth;
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto;}
+}
+html body a:focus-visible,
+html body button:focus-visible,
+html body [tabindex]:focus-visible{
+outline:2px solid #FFFFFF !important;
+outline-offset:3px !important;
+}
+html body #rec860980632 .t-btnflex.t-btnflex_type_button,
+html body #rec860980632 .t-btn.t-btnflex{
+background-color:#FFFFFF !important;
+color:#000000 !important;
+border:1px solid #FFFFFF !important;
+}
+html body #rec860980632 .t-btnflex.t-btnflex_type_button:hover,
+html body #rec860980632 .t-btn.t-btnflex:hover{
+background-color:rgba(255,255,255,.88) !important;
+color:#000000 !important;
+}
+html body #rec861442702 .t-submit,
+html body #rec1855213141 .t-submit,
+html body #rec1855223381 .t-submit,
+html body #rec1855232921 .t-submit{
+background-color:#FFFFFF !important;
+color:#000000 !important;
+border:1px solid #FFFFFF !important;
+}
+html body #rec861442702 .t-submit:hover,
+html body #rec1855213141 .t-submit:hover,
+html body #rec1855223381 .t-submit:hover,
+html body #rec1855232921 .t-submit:hover{
+background-color:rgba(255,255,255,.88) !important;
+color:#000000 !important;
+}
+@media print{
+html body{background:#FFFFFF !important;color:#000000 !important;}
+html body #rec1842546651{display:none !important;}
+}
+html body #rec1842546651 .tbne-panel{
+max-width:calc(100vw - 32px) !important;
+box-sizing:border-box !important;
+}
+html body #rec1842546651 .tbne-panel-catalog{
+margin-left:-24px !important;
+}
+@media(max-width:1180px){
+html body #rec1842546651 .tbne-panel-catalog{
+margin-left:0 !important;
+}
+}
+html body #rec1842546651 .tbne-links a:hover,
+html body #tb-res-dd a:hover{
+color:#FFFFFF !important;
+background:rgba(255,255,255,.06) !important;
+}
+html body #rec1842546651 .tbne-cta-primary:hover{
+background:rgba(255,255,255,.08) !important;
+border-color:rgba(255,255,255,.45) !important;
+box-shadow:0 0 18px rgba(255,255,255,.14) !important;
+color:#FFFFFF !important;
+}
+html body #rec1842546651 .tbne-badge,
+html body #rec1842546651 .tbne-badge-green,
+html body #rec1842546651 .tbne-badge-blue,
+html body #rec1842546651 .tbne-badge-purple,
+html body #rec1842546651 .tbne-badge-amber{
+display:none !important;
+}
+html body #rec1842546651 .tbne-link::after{
+display:none !important;
+content:none !important;
+}
+html body #rec1842546651 .tbne-link{
+color:rgba(255,255,255,.82) !important;
+transition:color .22s ease !important;
+}
+html body #rec1842546651 .tbne-item:hover .tbne-link,
+html body #rec1842546651 .tbne-link:hover,
+html body #rec1842546651 .tbne-link:focus-visible{
+color:#FFFFFF !important;
+}
+html body #rec1842546651 .tbne-link svg{
+opacity:1 !important;
+color:#8E8E8E !important;
+stroke:#8E8E8E !important;
+transition:color .22s ease, stroke .22s ease !important;
+}
+html body #rec1842546651 .tbne-item:hover .tbne-link svg{
+color:#FFFFFF !important;
+stroke:#FFFFFF !important;
+}
+@media(prefers-reduced-motion:reduce){
+html body #rec1842546651 .tbne-link,
+html body #rec1842546651 .tbne-link svg,
+html body #rec1842546651 .tbne-cta-primary{
+transition:none !important;
+}
+}
+
+html body #rec859191909 .bchm-glow-dot{
+display:none !important;
+}
+html body #rec859191909 .bchm-card::before{
+display:none !important;
+content:none !important;
+}
+html body #rec859191909 .bchm-index{
+display:none !important;
+}
+html body #rec859191909 .bchm-card:hover{
+border-color:rgba(255,255,255,.22) !important;
+background:rgba(255,255,255,.04) !important;
+}
+html body #rec1851190051 .bben-dot{
+display:none !important;
+}
+html body #rec1851190051 .bben-card::before{
+display:none !important;
+content:none !important;
+}
+html body #rec1851190051 .bben-badge{
+display:none !important;
+}
+html body #rec1851190051 .bben-title{
+margin-top:4px !important;
+}
+html body #rec1851190051 .bben-card:hover{
+border-color:rgba(255,255,255,.22) !important;
+}
+html body #rec859275495 .bpro-badge{
+display:none !important;
+}
+html body #rec859275495 .bpro-btn:hover{
+border-color:#FFFFFF !important;
+box-shadow:0 0 0 1px rgba(255,255,255,.9), 0 0 26px rgba(255,255,255,.22) !important;
+color:#000000 !important;
+}
+html body #rec859779175 .bwho-badge{
+display:none !important;
+}
+html body #rec859779175 .bwho-card::before{
+display:none !important;
+content:none !important;
+}
+html body #rec859779175 .bwho-title{
+margin-top:2px !important;
+}
+html body #rec859779175 .bwho-card:hover{
+border-color:rgba(255,255,255,.22) !important;
+}
+html body #rec2503542591 .bcta-badge{
+display:none !important;
+}
+html body .bchm-glow-dot,
+html body .bben-dot{
+display:none !important;
+}
+html body .bchm-card::before,
+html body .bben-card::before,
+html body .bwho-card::before{
+display:none !important;
+content:none !important;
+}
+html body .bchm-index,
+html body .bben-badge,
+html body .bpro-badge,
+html body .bwho-badge,
+html body .bcta-badge{
+display:none !important;
+}
+
+html body #rec859779175 .bwho-stats{
+margin-bottom:56px !important;
+}
+@media(max-width:640px){
+html body #rec859779175 .bwho-stats{margin-bottom:40px !important;}
+}
+
+html body #rec909008440 .t396__artboard,
+html body #rec909008440 .t396__filter{
+background-color:#000000 !important;
+background-image:radial-gradient(rgba(142,142,142,.15) 1px, transparent 1px) !important;
+background-size:30px 30px !important;
+}
+
+html body #rec909008440 .tn-elem__9090084401742751381006 .tn-atom{
+background-color:rgba(255,255,255,.02) !important;
+background-image:none !important;
+border:1px solid rgba(255,255,255,.1) !important;
+border-radius:24px !important;
+backdrop-filter:blur(20px) !important;
+-webkit-backdrop-filter:blur(20px) !important;
+}
+html body #rec909008440 .tn-elem__9090084401742751381006 .tn-atom__img{
+display:none !important;
+}
+
+html body #rec909008440 .tn-elem__9090084401742751541075 .tn-atom{
+color:#FFFFFF !important;
+font-size:clamp(38px, 5vw, 68px) !important;
+font-weight:800 !important;
+letter-spacing:-.03em !important;
+line-height:1.02 !important;
+}
+html body #rec909008440 .tn-elem__9090084401742751501082 .tn-atom{
+color:#8E8E8E !important;
+font-size:16px !important;
+line-height:1.6 !important;
+}
+
+html body #rec909008440 #form909008440 .t-input,
+html body #rec909008440 #form909008440 .t-input-phonemask__wrap{
+background-color:transparent !important;
+color:#FFFFFF !important;
+border:0 !important;
+border-bottom:1px solid rgba(255,255,255,.2) !important;
+border-radius:0 !important;
+box-shadow:none !important;
+box-sizing:border-box !important;
+height:56px !important;
+padding-left:0 !important;
+transition:border-color .25s ease, box-shadow .25s ease !important;
+}
+html body #rec909008440 #form909008440 textarea.t-input{
+background-color:transparent !important;
+color:#FFFFFF !important;
+border:0 !important;
+border-bottom:1px solid rgba(255,255,255,.2) !important;
+border-radius:0 !important;
+box-shadow:none !important;
+padding-left:0 !important;
+height:auto !important;
+min-height:84px !important;
+}
+html body #rec909008440 #form909008440 .t-input:focus,
+html body #rec909008440 #form909008440 textarea.t-input:focus{
+border-bottom-color:#FFFFFF !important;
+box-shadow:0 4px 12px rgba(255,255,255,.1) !important;
+outline:none !important;
+}
+
+html body #rec909008440 #form909008440 .t-input__vis-ph{
+color:#8E8E8E !important;
+opacity:1 !important;
+}
+
+html body #rec909008440 #form909008440 .t-input::placeholder,
+html body #rec909008440 #form909008440 textarea.t-input::placeholder{
+color:#8E8E8E !important;
+opacity:1 !important;
+}
+html body #rec909008440 #form909008440 .t-input::-webkit-input-placeholder{
+color:#8E8E8E !important;
+}
+
+html body #rec909008440 #form909008440 .t-input:-webkit-autofill,
+html body #rec909008440 #form909008440 .t-input:-webkit-autofill:hover,
+html body #rec909008440 #form909008440 .t-input:-webkit-autofill:focus{
+-webkit-text-fill-color:#FFFFFF !important;
+-webkit-box-shadow:0 0 0 1000px #000000 inset !important;
+caret-color:#FFFFFF !important;
+}
+
+html body #rec909008440 #form909008440 .t-input-phonemask__select,
+html body #rec909008440 #form909008440 .t-input-phonemask__code,
+html body #rec909008440 #form909008440 .t-input-phonemask__input{
+background-color:transparent !important;
+color:#FFFFFF !important;
+border:0 !important;
+}
+html body #rec909008440 #form909008440 .t-input-phonemask__options,
+html body #rec909008440 #form909008440 .t-input-phonemask__dropdown{
+background-color:#1F1F1F !important;
+border:1px solid rgba(255,255,255,.12) !important;
+color:#FFFFFF !important;
+}
+
+html body #rec909008440 #form909008440 .t-input-phonemask__select-flag,
+html body #rec909008440 #form909008440 .t-input-phonemask__flag{
+filter:grayscale(1) contrast(.9) !important;
+}
+
+html body #rec909008440 #form909008440 .t-checkbox__control,
+html body #rec909008440 #form909008440 .t-checkbox__control_flex{
+color:#8E8E8E !important;
+font-size:12px !important;
+line-height:1.5 !important;
+}
+html body #rec909008440 #form909008440 .t-checkbox__indicator{
+background-color:rgba(255,255,255,.03) !important;
+border:1px solid rgba(255,255,255,.3) !important;
+border-radius:4px !important;
+}
+
+html body #rec909008440 #form909008440 .t-checkbox__indicator::after{
+border-color:#000000 !important;
+}
+html body #rec909008440 #form909008440 .t-checkbox:checked + .t-checkbox__indicator{
+background-color:#FFFFFF !important;
+border-color:#FFFFFF !important;
+}
+html body #rec909008440 #form909008440 .t-checkbox:focus-visible + .t-checkbox__indicator{
+outline:2px solid #FFFFFF !important;
+outline-offset:2px !important;
+}
+
+html body #rec909008440 #form909008440 a{
+color:#FFFFFF !important;
+text-decoration:underline !important;
+text-underline-offset:2px !important;
+}
+html body #rec909008440 #form909008440 a:hover{opacity:.75 !important;}
+
+html body #rec909008440 #form909008440 .t-submit,
+html body #rec909008440 #form909008440 input[type="submit"],
+html body #rec909008440 #form909008440 button[type="submit"]{
+background-color:#FFFFFF !important;
+background-image:none !important;
+color:#000000 !important;
+font-weight:700 !important;
+border:1px solid #FFFFFF !important;
+border-radius:100px !important;
+padding:18px 40px !important;
+height:auto !important;
+box-shadow:none !important;
+transition:transform .25s ease, box-shadow .25s ease !important;
+}
+html body #rec909008440 #form909008440 .t-submit:hover{
+transform:translateY(-2px) !important;
+box-shadow:0 0 25px rgba(255,255,255,.4) !important;
+color:#000000 !important;
+}
+html body #rec909008440 #form909008440 .t-submit:focus-visible{
+outline:2px solid #FFFFFF !important;
+outline-offset:4px !important;
+}
+
+html body #rec909008440 #form909008440 .t-input-error{
+color:#FFFFFF !important;
+background:transparent !important;
+}
+html body #rec909008440 #form909008440 .t-input_error{
+border-bottom-color:rgba(255,255,255,.65) !important;
+}
+html body #rec909008440 #form909008440 .t-form__errorbox-wrapper,
+html body #rec909008440 #form909008440 .t-form__errorbox-middle{
+background-color:rgba(255,255,255,.06) !important;
+border:1px solid rgba(255,255,255,.16) !important;
+border-radius:8px !important;
+}
+html body #rec909008440 #form909008440 .t-form__errorbox-text,
+html body #rec909008440 #form909008440 .t-form__successbox{
+color:#FFFFFF !important;
+}
+html body #rec909008440 #form909008440 .t-form__successbox{
+background-color:rgba(255,255,255,.06) !important;
+border:1px solid rgba(255,255,255,.16) !important;
+border-radius:8px !important;
+}
+
+@media(prefers-reduced-motion:reduce){
+html body #rec909008440 #form909008440 .t-submit,
+html body #rec909008440 #form909008440 .t-input,
+html body #rec909008440 #form909008440 textarea.t-input{transition:none !important;}
+html body #rec909008440 #form909008440 .t-submit:hover{transform:none !important;}
+}
+
+html body .t-feed__post-popup,
+html body .t-feed__post-popup__container,
+html body .t-feed__post-popup__content,
+html body .t-feed__post-popup__content-wrapper,
+html body .t-feed__post-popup__text-wrapper{
+background-color:#000000 !important;
+}
+
+html body .t-feed__post-popup__close-wrapper{
+background-color:#000000 !important;
+border-bottom:1px solid rgba(255,255,255,.1) !important;
+}
+html body .t-feed__post-popup__close-text,
+html body .t-feed__post-popup__close-text-wrapper{
+color:#8E8E8E !important;
+}
+
+html body .t-feed__post-popup__close-wrapper svg path,
+html body .t-feed__post-popup__close-wrapper svg line,
+html body .t-feed__post-popup__close-wrapper svg polyline{
+stroke:#FFFFFF !important;
+}
+html body .t-feed__post-popup__close-wrapper svg{
+transition:opacity .2s ease !important;
+}
+html body .t-feed__post-popup__close-wrapper:hover svg{
+opacity:.7 !important;
+}
+
+html body .t-feed__post-popup__title,
+html body .t-feed__post-popup__title *{
+color:#FFFFFF !important;
+}
+html body .t-feed__post-popup__text,
+html body .t-feed__post-popup__text p,
+html body .t-feed__post-popup__text span,
+html body .t-feed__post-popup__text div,
+html body .t-feed__post-popup__text li{
+color:#8E8E8E !important;
+}
+html body .t-feed__post-popup__text h1,
+html body .t-feed__post-popup__text h2,
+html body .t-feed__post-popup__text h3,
+html body .t-feed__post-popup__text h4,
+html body .t-feed__post-popup__text h5,
+html body .t-feed__post-popup__text h6{
+color:#FFFFFF !important;
+}
+html body .t-feed__post-popup__text strong,
+html body .t-feed__post-popup__text b{
+color:#FFFFFF !important;
+}
+html body .t-feed__post-popup__text blockquote{
+color:#FFFFFF !important;
+border-left:2px solid rgba(255,255,255,.25) !important;
+}
+html body .t-feed__post-popup__text hr{
+border:0 !important;
+border-top:1px solid rgba(255,255,255,.1) !important;
+}
+
+html body .t-feed__post-popup__text a{
+color:#FFFFFF !important;
+text-decoration:underline !important;
+text-underline-offset:2px !important;
+text-decoration-color:rgba(255,255,255,.4) !important;
+transition:text-decoration-color .2s ease !important;
+}
+html body .t-feed__post-popup__text a:hover{
+text-decoration-color:#FFFFFF !important;
+}
+
+html body .t-feed__post-popup__date,
+html body .t-feed__post-popup__date-wrapper,
+html body .t-feed__post-popup__date-parts-wrapper{
+color:#8E8E8E !important;
+}
+html body .t-feed__post-popup__tag,
+html body .t-feed__post-popup__tag a{
+color:#8E8E8E !important;
+background-color:transparent !important;
+}
+html body .t-feed__post-popup__tag a:hover{
+color:#FFFFFF !important;
+}
+html body .t-feed__post-popup ::selection{
+background:rgba(255,255,255,.2);
+color:#FFFFFF;
+}
+html body .t-feed__post-popup__close-wrapper:focus-visible,
+html body .t-feed__post-popup__text a:focus-visible{
+outline:2px solid #FFFFFF !important;
+outline-offset:2px !important;
+}
+
+html body #rec1854214341 .t-slds__bullet_body{
+background-color:rgba(255,255,255,.25) !important;
+border-color:transparent !important;
+transition:background-color .25s ease !important;
+}
+html body #rec1854214341 .t-slds__bullet:hover .t-slds__bullet_body,
+html body #rec1854214341 .t-slds__bullet_active .t-slds__bullet_body{
+background-color:#FFFFFF !important;
+border-color:transparent !important;
+}
+
+html body :is([data-elem-id="1742192552779"],[data-elem-id="1769678678675000003"],[data-elem-id="1769678690271000013"],[data-elem-id="1769678692676000022"],[data-elem-id="1769679209730000003"],[data-elem-id="1769679212246000012"],[data-elem-id="1769679221097000021"],[data-elem-id="1769775424083000003"],[data-elem-id="1769776627111000013"],[data-elem-id="1769777129928000023"],[data-elem-id="1769777715935000003"],[data-elem-id="1769778851752000013"],[data-elem-id="1769779381503000023"],[data-elem-id="1769780364022000033"],[data-elem-id="1769781129678000043"],[data-elem-id="1769679223430000030"],[data-elem-id="1738523845631"]) .tn-atom{
+background-color:#FFFFFF !important;
+background-image:none !important;
+color:#000000 !important;
+border:1px solid #FFFFFF !important;
+border-radius:100px !important;
+box-shadow:none !important;
+transition:transform .25s ease, box-shadow .25s ease !important;
+}
+html body :is([data-elem-id="1742192552779"],[data-elem-id="1769678678675000003"],[data-elem-id="1769678690271000013"],[data-elem-id="1769678692676000022"],[data-elem-id="1769679209730000003"],[data-elem-id="1769679212246000012"],[data-elem-id="1769679221097000021"],[data-elem-id="1769775424083000003"],[data-elem-id="1769776627111000013"],[data-elem-id="1769777129928000023"],[data-elem-id="1769777715935000003"],[data-elem-id="1769778851752000013"],[data-elem-id="1769779381503000023"],[data-elem-id="1769780364022000033"],[data-elem-id="1769781129678000043"],[data-elem-id="1769679223430000030"],[data-elem-id="1738523845631"]) .tn-atom:hover{
+transform:translateY(-2px) !important;
+box-shadow:0 0 25px rgba(255,255,255,.4) !important;
+color:#000000 !important;
+}
+
+html body #rec913700125 .t-btn{
+background-color:#FFFFFF !important;
+background-image:none !important;
+color:#000000 !important;
+border:1px solid #FFFFFF !important;
+border-radius:100px !important;
+font-weight:700 !important;
+transition:transform .25s ease, box-shadow .25s ease !important;
+}
+html body #rec913700125 .t-btn:hover{
+transform:translateY(-2px) !important;
+box-shadow:0 0 25px rgba(255,255,255,.4) !important;
+color:#000000 !important;
+}
+
+html body .t-form__errorbox-wrapper,
+html body .t-form__errorbox-middle,
+html body .js-errorbox-all{
+background-color:rgba(255,255,255,.06) !important;
+border:1px solid rgba(255,255,255,.16) !important;
+border-radius:8px !important;
+}
+html body .t-form__errorbox-text,
+html body .t-form__errorbox-item,
+html body .js-rule-error{
+color:#FFFFFF !important;
+}
+html body .t-input-error{
+color:#FFFFFF !important;
+background:transparent !important;
+}
+
+.tb-btn-primary{
+display:inline-block;
+padding:16px 34px;
+border:1px solid #FFFFFF;
+border-radius:100px;
+background-color:#FFFFFF;
+color:#000000;
+font-weight:700;
+text-decoration:none;
+cursor:pointer;
+transition:transform .25s ease, box-shadow .25s ease;
+}
+.tb-btn-primary:hover{
+transform:translateY(-2px);
+box-shadow:0 0 25px rgba(255,255,255,.4);
+color:#000000;
+}
+
+.tb-btn-primary:focus-visible,
+.tb-btn-glass:focus-visible,
+.tb-glass-card:focus-visible{
+outline:2px solid #FFFFFF;
+outline-offset:4px;
+}
+@media(prefers-reduced-motion:reduce){
+.tb-glass-card,
+.tb-badge,
+.tb-btn-primary,
+.tb-btn-glass,
+html body .t-feed__post-popup__close-wrapper svg,
+html body .t-feed__post-popup__text a{transition:none !important;}
+.tb-btn-primary:hover,
+.tb-btn-glass:hover{transform:none;}
+}
+
+:root{
+--tb-paper:#FAF8F5;
+--tb-latte:#EFE7DE;
+--tb-ink:#1A1311;
+--tb-ink-soft:#241A16;
+--tb-muted:#6B625B;
+--tb-muted-warm:#5A4A3C;
+--tb-muted-dark:#B8ACA2;
+--tb-hair:#E8E2DA;
+--tb-hair-warm:#E1D7CB;
+--tb-grey:#9A8F86;
+}
+
+html body *:not(i):not([class*="icon"]){
+font-family:'Exo 2', -apple-system, sans-serif !important;
+}
+
+html body h1, html body h2, html body h3,
+html body [class*="title"], html body [class*="heading"],
+html body [class*="number"], html body [class*="percent"],
+html body .bwho-stat-num{
+font-weight:300 !important;
+letter-spacing:-0.02em !important;
+}
+html body p, html body [class*="descr"]{
+font-weight:400 !important;
+line-height:1.7 !important;
+}
+html body .t-btn, html body [class*="btn"]{
+font-weight:500 !important;
+letter-spacing:.06em !important;
+border-radius:4px !important;
+}
+html body [class*="card"], html body [class*="tile"]{
+box-shadow:none !important;
+border-radius:16px !important;
+}
+html body [class*="card"] > span,
+html body [class*="card"] > p,
+html body [class*="card"] h3,
+html body [class*="card"] h4{
+border-radius:0 !important;
+border:none !important;
+}
+
+html body .tbs__slide p.tracking-\[0\.28em\]{ display:none !important; }
+html body .tbs__slide h1,
+html body .tbs__slide p.font-extrabold{
+text-transform: uppercase !important;
+font-weight: 800 !important;
+font-size: 68px !important;
+line-height: .92 !important;
+letter-spacing: -0.015em !important;
+color: #1A1311 !important;
+margin: 0 0 .35em !important;
+}
+@media (max-width: 900px){
+html body .tbs__slide h1,
+html body .tbs__slide p.font-extrabold{ font-size: 38px !important; }
+}
+
+html body #rec859191909 .t396__artboard,
+html body #rec859191909 .bchm-wrap{ background:var(--tb-paper) !important; }
+html body #rec859191909 .bchm-wrap *{ color:var(--tb-ink) !important; }
+html body #rec859191909 [class*="descr"],
+html body #rec859191909 .bchm-wrap p{ color:var(--tb-muted) !important; }
+html body #rec859191909 [class*="card"]{
+background:#FFFFFF !important;
+border:.5px solid var(--tb-hair) !important;
+}
+html body #rec859191909 [class*="percent"],
+html body #rec859191909 [class*="pct"]{
+color:var(--tb-grey) !important;
+font-weight:200 !important;
+font-size:.55em !important;
+vertical-align:super !important;
+letter-spacing:0 !important;
+}
+
+html body #rec1851190051 .t396__artboard,
+html body #rec1851190051 [class*="wrap"]{ background:var(--tb-paper) !important; }
+html body #rec1851190051 [class*="wrap"] *{ color:var(--tb-ink) !important; }
+html body #rec1851190051 [class*="descr"]{ color:var(--tb-muted) !important; }
+html body #rec1851190051 .bben-card{
+background:#FFFFFF !important;
+border:.5px solid var(--tb-hair) !important;
+}
+html body #rec1851190051 .bben-card-title,
+html body #rec1851190051 .bben-card-text{ border:none !important; border-radius:0 !important; }
+html body #rec859275495 .bpro-card::after{ display:none !important; }
+
+html body #rec859275495 .t396__artboard,
+html body #rec859275495 .bpro-wrap{ background:var(--tb-latte) !important; }
+html body #rec859275495 .bpro-wrap *{ color:var(--tb-ink) !important; }
+html body #rec859275495 .bpro-wrap p{ color:var(--tb-muted-warm) !important; }
+html body #rec859275495 [class*="card"]{
+background:var(--tb-paper) !important;
+border:.5px solid var(--tb-hair-warm) !important;
+}
+
+html body #rec859779175 .t396__artboard,
+html body #rec859779175 .t396__filter,
+html body #rec859779175 .bwho-wrap{ background:var(--tb-ink) !important; }
+html body #rec859779175 .bwho-media{ background-color:var(--tb-ink-soft) !important; }
+html body #rec859779175 .bwho-media{ position: relative !important; }
+html body #rec859779175 .bwho-media picture{
+position: absolute !important;
+inset: 0 !important;
+display: block !important;
+}
+html body #rec859779175 .bwho-media img{
+position: absolute !important;
+inset: 0 !important;
+width: 100% !important;
+height: 100% !important;
+object-fit: cover !important;
+object-position: center center !important;
+}
+html body #rec859779175 .bwho-media{
+background-size: cover !important;
+background-position: center center !important;
+background-repeat: no-repeat !important;
+}
+html body #rec859779175 .bwho-wrap p{ color:var(--tb-muted-dark) !important; }
+
+html body #rec2503542591 .t396__artboard,
+html body #rec2503542591 .bcta-wrap{ background:var(--tb-paper) !important; }
+html body #rec2503542591 .bcta-wrap *{ color:var(--tb-ink) !important; }
+html body #rec2503542591 .bcta-wrap p{ color:var(--tb-muted) !important; }
+html body #rec2503542591 .bcta-media{ background:var(--tb-latte) !important; }
+html body #rec2503542591 [class*="card"]{
+background:#FFFFFF !important;
+border:.5px solid var(--tb-hair) !important;
+}
+
+html body .bben-wrap::before,
+html body .bpro-wrap::before,
+html body .bwho-wrap::before,
+html body .bchm-wrap::before,
+html body .bcta-wrap::before{
+background-image: none !important;
+content: none !important;
+}
+
+html body #rec1861863531,
+html body #rec1861863521,
+html body #rec1861863531 .t396__artboard{
+display: none !important;
+visibility: hidden !important;
+opacity: 0 !important;
+pointer-events: none !important;
+}
+
+@media (max-width: 900px){
+html body .tbs__mark{
+display: block !important;
+-webkit-mask-image: none !important;
+mask-image: none !important;
+}
+
+}
+
+html body .tbh-mob{
+display: block !important;
+overflow: hidden;
+max-height: 0;
+opacity: 0;
+transform: translateY(-6px);
+pointer-events: none;
+transition: max-height .42s cubic-bezier(.22,.61,.36,1),
+opacity .45s ease,
+transform .68s cubic-bezier(.22,.61,.36,1);
+}
+html body .tbh-mob.is-open{
+max-height: 90vh;
+opacity: 1;
+transform: translateY(0);
+pointer-events: auto;
+overflow-y: auto;
+}
+html body .tbh-mob nav > *{
+opacity: 0;
+transform: translateY(-8px);
+transition: opacity .45s ease, transform .45s cubic-bezier(.22,.61,.36,1);
+}
+html body .tbh-mob.is-open nav > *{ opacity: 1; transform: none; }
+html body .tbh-mob.is-open nav > *:nth-child(1){ transition-delay: .16s; }
+html body .tbh-mob.is-open nav > *:nth-child(2){ transition-delay: .24s; }
+html body .tbh-mob.is-open nav > *:nth-child(3){ transition-delay: .32s; }
+html body .tbh-mob.is-open nav > *:nth-child(4){ transition-delay: .40s; }
+html body .tbh-mob.is-open nav > *:nth-child(5){ transition-delay: .48s; }
+html body .tbh-mob.is-open nav > *:nth-child(6){ transition-delay: .56s; }
+html body .tbh-burger i,
+html body .tbh-burger i::before,
+html body .tbh-burger i::after{
+transition: transform .32s cubic-bezier(.22,.61,.36,1), opacity .2s ease, background .2s ease;
+}
+html body .tbh-burger[aria-expanded="true"] i{ background: transparent !important; }
+html body .tbh-burger[aria-expanded="true"] i::before{ transform: translateY(6px) rotate(45deg); }
+html body .tbh-burger[aria-expanded="true"] i::after{ transform: translateY(-6px) rotate(-45deg); }
+@media (prefers-reduced-motion: reduce){
+html body .tbh-mob,
+html body .tbh-mob nav > *,
+html body .tbh-burger i,
+html body .tbh-burger i::before,
+html body .tbh-burger i::after{ transition: none !important; }
+
+}
+@media (max-width: 900px){
+html body .bchf-wrap{ display: flex !important; flex-direction: column !important; }
+html body .bchf-inner{ display: contents !important; }
+html body .bchf-inner > *{ order: 1; margin-bottom: 26px; }
+html body .bchf-bottom{ order: 2; }
+html body .bchf-logopanel{
+order: 3;
+}
+}
+
+html body a.catg-card[href="/tea"] .catg-img-wrap img,
+html body a.catg-card[href="/sugar-free"] .catg-img-wrap img{
+width: 100% !important;
+height: 100% !important;
+object-fit: cover !important;
+object-position: center !important;
+padding: 0 !important;
+max-width: none !important;
+max-height: none !important;
+}
+
+html body .tbh-bar{
+transition: height .32s cubic-bezier(.22,.61,.36,1), background .32s ease, box-shadow .32s ease;
+}
+
+html body .tbh-nav a,
+html body .tbh-nav__btn{
+position: relative;
+}
+html body .tbh-nav a::after,
+html body .tbh-nav__btn::after{
+content: "";
+position: absolute;
+left: 0; right: 100%; bottom: -6px;
+height: 1px;
+background: currentColor;
+opacity: .5;
+transition: right .28s cubic-bezier(.22,.61,.36,1);
+}
+html body .tbh-nav a:hover::after,
+html body .tbh-nav__btn:hover::after{ right: 0; }
+html body .tbh-cta{ transition: transform .2s ease, opacity .2s ease; }
+html body .tbh-cta:hover{ transform: translateY(-1px); opacity: .92; }
+
+@media (max-width: 768px){
+html, body{ overflow-x: hidden !important; }
+html body .tbh-ico, html body .tbh-burger{ min-width: 44px; min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+html body .tbh-bar,
+html body .tbh-nav a::after,
+html body .tbh-cta{ transition: none !important; }
+}
+
+html body .tbh-in{
+display: grid !important;
+grid-template-columns: 1fr auto 1fr !important;
+align-items: center !important;
+}
+html body .tbh-logo{ justify-self: start !important; }
+html body .tbh-nav{ justify-self: center !important; gap: 30px !important; }
+html body .tbh-util{ justify-self: end !important; flex-wrap: nowrap !important; }
+
+html body .tbh-nav a,
+html body .tbh-nav__btn{
+font-size: 11.5px !important;
+letter-spacing: .09em !important;
+font-weight: 500 !important;
+text-transform: uppercase !important;
+line-height: 1 !important;
+}
+
+html body .tbh-ticker{ height: 28px !important; background: #1A1311 !important; }
+html body .tbh-ticker__seq{ font-size: 10px !important; letter-spacing: .16em !important; opacity: .62; }
+
+html body .tbh-ico{
+width: 38px; height: 38px; border-radius: 50%;
+display: inline-flex; align-items: center; justify-content: center;
+transition: background .22s ease, transform .22s ease;
+}
+html body .tbh-ico:hover{ background: rgba(26,19,17,.06); transform: translateY(-1px); }
+
+html body .tbh-cta{ border-radius: 4px !important; letter-spacing: .1em !important; }
+
+html body .tbh-reg__btn,
+html body .tbh-reg__label,
+html body .tbh-reg__short{ white-space: nowrap !important; }
+
+html body .tbh-bar{
+background: #FFFFFF !important;
+-webkit-backdrop-filter: none !important;
+backdrop-filter: none !important;
+}
+
+.tbsr-pop{
+position: fixed;
+z-index: 100060;
+width: 320px;
+background: #fff;
+border: 1px solid #E8E2DA;
+border-radius: 8px;
+box-shadow: 0 18px 44px rgba(26,19,17,.16);
+overflow: hidden;
+opacity: 0;
+visibility: hidden;
+transform: translateY(-8px);
+transition: opacity .22s ease, transform .22s cubic-bezier(.22,.61,.36,1), visibility .22s;
+}
+.tbsr-pop.is-open{ opacity: 1; visibility: visible; transform: none; }
+.tbsr-in{
+width: 100%;
+border: 0;
+outline: 0;
+padding: 14px 16px;
+font-size: 14px;
+font-family: inherit;
+color: #1A1311;
+background: transparent;
+}
+.tbsr-list:not(:empty){ border-top: 1px solid #F2EEE9; max-height: 300px; overflow: auto; }
+.tbsr-item{
+display: block;
+padding: 10px 16px;
+text-decoration: none;
+color: #1A1311;
+font-size: 13px;
+border-bottom: 1px solid #F7F4F0;
+}
+.tbsr-item:hover, .tbsr-item.is-cur{ background: #FAF8F5; }
+.tbsr-cat{
+display: block;
+font-size: 9px;
+letter-spacing: .14em;
+text-transform: uppercase;
+color: #9A8F86;
+margin-bottom: 2px;
+}
+.tbsr-empty{ padding: 14px 16px; color: #6B625B; font-size: 13px; }
+@media (max-width: 640px){ .tbsr-pop{ width: calc(100vw - 32px); right: 16px !important; } }
+
+.tbc-add{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;padding:9px 14px;border:1px solid #1A1311;border-radius:4px;background:#fff;color:#1A1311;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;cursor:pointer;transition:background .2s,color .2s,transform .15s}
+.tbc-add:hover{background:#1A1311;color:#fff;transform:translateY(-1px)}
+.tbc-add.is-in{background:#1A1311;color:#fff}
+.tbc-badge{position:absolute;top:-2px;right:-2px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#C8322A;color:#fff;font-size:10px;font-weight:700;line-height:17px;text-align:center;box-shadow:0 0 0 2px #fff;opacity:0;transform:scale(.5);transition:opacity .2s,transform .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.tbc-badge.is-on{opacity:1;transform:scale(1)}
+.tbc-ovl{position:fixed;inset:0;z-index:100070;background:rgba(26,19,17,.4);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.tbc-ovl.is-open{opacity:1;visibility:visible}
+.tbc-drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:92vw;z-index:100071;background:#fff;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .38s cubic-bezier(.22,.61,.36,1);box-shadow:-20px 0 60px rgba(26,19,17,.18)}
+.tbc-drawer.is-open{transform:none}
+.tbc-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid #E8E2DA}
+.tbc-title{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:#1A1311}
+.tbc-close{border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#6B625B}
+.tbc-body{flex:1;overflow:auto;padding:8px 0}
+.tbc-row{display:flex;align-items:flex-start;gap:12px;padding:14px 24px;border-bottom:1px solid #F4F0EB}
+.tbc-nm{font-size:13px;color:#1A1311;font-weight:600;letter-spacing:.03em}
+.tbc-sb{font-size:11px;color:#9A8F86;margin-top:3px}
+.tbc-del{margin-left:auto;border:0;background:none;color:#9A8F86;cursor:pointer;font-size:16px;line-height:1}
+.tbc-del:hover{color:#C8322A}
+.tbc-empty{padding:56px 28px;text-align:center;color:#6B625B;font-size:13px;line-height:1.6}
+.tbc-foot{padding:18px 24px;border-top:1px solid #E8E2DA}
+.tbc-send{display:block;width:100%;padding:14px;background:#1A1311;color:#fff;text-align:center;text-decoration:none;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;border-radius:4px}
+.tbc-send:hover{opacity:.9}
+
+html body .catg-img-wrap{background:#F4F1EC !important;border-radius:14px;overflow:hidden;transition:box-shadow .35s ease}
+html body a.catg-card{position:relative !important;padding-bottom:56px !important;transition:transform .35s cubic-bezier(.22,.61,.36,1) !important}
+html body a.catg-card:hover{transform:translateY(-6px)}
+html body a.catg-card:hover .catg-img-wrap{box-shadow:0 18px 40px rgba(26,19,17,.13)}
+html body a.catg-card .catg-img-wrap img{transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+html body a.catg-card:hover .catg-img-wrap img{transform:scale(1.05)}
+html body .catg-name{font-weight:500 !important;font-size:16px !important;letter-spacing:.04em !important;text-transform:none !important}
+html body .catg-eyebrow{font-size:9px !important;letter-spacing:.2em !important;color:#9A8F86 !important;font-weight:600 !important}
+html body .catg-sub{font-size:11px !important;color:#9A8F86 !important;letter-spacing:.06em !important}
+html body .catg-text{padding-bottom:0 !important}
+html body .tbc-add{position:absolute !important;left:50% !important;bottom:12px !important;margin-top:0 !important;
+transform:translateX(-50%) translateY(6px);opacity:0;
+border:1px solid #1A1311 !important;border-bottom:1px solid #1A1311 !important;
+box-shadow:none !important;background-image:none !important;
+transition:opacity .3s ease,transform .3s ease,background .2s,color .2s}
+html body a.catg-card:hover .tbc-add,
+html body .tbc-add.is-in{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:900px){ html body .tbc-add{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+@media (max-width: 900px){
+
+html body .tbh-burger{ margin-right: 0 !important; }
+}
+
+@media (max-width: 900px){
+html body .tbh-in{
+display: flex !important;
+align-items: center !important;
+justify-content: space-between !important;
+}
+html body .tbh-util{ margin-left: auto !important; gap: 2px !important; }
+html body .bchf-logopanel{ margin: -46px 0 0 !important; }
+}
+
+@media (max-width: 900px){
+html body .tbc-add{
+white-space: nowrap !important;
+font-size: 9px !important;
+padding: 9px 12px !important;
+letter-spacing: .1em !important;
+}
+}
+
+@media (max-width: 900px){
+
+html body .bchm-card{ margin-bottom: 0 !important; }
+html body .bchm-wrap{ padding-bottom: 72px !important; }
+}
+
+#rec859191909 .t396__artboard{
+height: auto !important;
+min-height: 0 !important;
+overflow: visible !important;
+}
+#rec859191909 .t396__elem{
+position: static !important;
+height: auto !important;
+width: 100% !important;
+top: auto !important;
+left: auto !important;
+}
+#rec859191909 .tn-atom{ height: auto !important; width: 100% !important; }
+html body .bchm-wrap{
+box-sizing: border-box !important;
+width: 100% !important;
+max-width: 100% !important;
+margin-left: 0 !important;
+left: 0 !important;
+}
+@media (max-width: 900px){
+html body .bchm-grid{ gap: 18px !important; }
+html body .bchm-wrap{ padding: 64px 16px !important; }
+}
+
+html body .tbs__svgmark{
+position: absolute;
+display: block;
+pointer-events: none;
+user-select: none;
+height: auto;
+}
+@media (min-width: 901px){
+html body .tbs__svgmark{
+width: 44vw;
+left: 1vw;
+top: 16%;
+}
+}
+
+@media (max-width: 900px){
+html body .tbs__slide{
+border-bottom-left-radius: 0 !important;
+border-bottom-right-radius: 0 !important;
+overflow: visible !important;
+}
+
+}
+
+@media (max-width: 900px){
+html body .tbs__svgmark{
+width: 100vw !important;
+left: 0 !important;
+top: 9% !important;
+}
+
+}
+
+@media (max-width: 900px){
+
+html body .tbs__shot{ transform: translate(20%, -3%) scale(1.04) !important; transform-origin: 50% 56% !important; }
+}
+
+@media (max-width: 900px){
+html body .tbs__glass{ left: 54% !important; top: 26% !important; height: 78% !important; margin-left: 0 !important; margin-top: 0 !important; position: absolute !important; z-index: 20 !important; }
+html body .tbs__pouch{ z-index: 1 !important; position: absolute !important; }
+}
+
+@media (max-width: 900px){
+
+html body .tbs__slide .tbs__pouch{ z-index: 1 !important; position: absolute !important; }
+html body .tbs__shot{ isolation: auto !important; }
+}
+
+@media (max-width: 900px){
+html body .tbs__slide .tbs__glass{ left: 61% !important; top: 33% !important; height: 76% !important; margin: 0 !important; position: absolute !important; z-index: 30 !important; }
+}
+
+@media (min-width:1024px){
+#rec2772565803 .tbs__shot{
+transform:translate(-33.3%,-7.15%) scale(.85) !important;
+transform-origin:0 0 !important;
+}
+#rec2772565803 .tbs__svgmark{ top:3% !important; }
+}
+
+@media (min-width:1400px){
+#rec2772565803 .tbs__shot{
+transform:translateX(calc(576px - 27vw)) translate(-33.3%,-7.15%) scale(.85) !important;
+}
+}
+
+@media (min-width:1024px){
+
+#rec2772565803 .tbs__glass{ margin-bottom:-12px !important; }
+
+#rec2772565803 .tbs__slide:nth-of-type(1) .tbs__glass{
+height:75.5% !important;
+margin-left:-96px !important;
+margin-bottom:-7px !important;
+}
+}
+@media (max-width:1023px){
+
+#rec2772565803 .tbs__glass{
+height:92% !important;
+margin-left:-14px !important;
+margin-top:-60px !important;
+margin-bottom:0 !important;
+}
+#rec2772565803 .tbs__slide:nth-of-type(1) .tbs__glass{
+height:73% !important;
+margin-left:-49px !important;
+margin-top:-12px !important;
+}
+}
+
+#rec2772565803 .tbs__glass,
+#rec2772565803 .tbs__pouch{
+mix-blend-mode:normal !important;
+}
+
+#allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec2503542591 .t396__artboard{background:#fff!important}
+#allrecords:not(.avx1):not(.avx2) .bwho-wrap{background:#151516!important}
+#allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .bchm-wrap *,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap *,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap *,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap *,#allrecords:not(.avx1):not(.avx2) .bwho-wrap,#allrecords:not(.avx1):not(.avx2) .bwho-wrap *,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap *{
+font-family:'Jost','Exo 2',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap{color:#5A5B5F!important}
+#allrecords:not(.avx1):not(.avx2) .bben-card-text,#allrecords:not(.avx1):not(.avx2) .bpro-text,#allrecords:not(.avx1):not(.avx2) .bcta-text,#allrecords:not(.avx1):not(.avx2) .catg-sub,#allrecords:not(.avx1):not(.avx2) .bchm-card-text{
+font-weight:300!important;color:#5A5B5F!important;line-height:1.65!important}
+#allrecords:not(.avx1):not(.avx2) .catg-main-heading,#allrecords:not(.avx1):not(.avx2) .bben-title{
+font-family:'Source Serif 4',Georgia,serif!important;font-weight:400!important;font-size:38px!important;
+text-translate:0 0!important;letter-spacing:0!important;color:#323338!important;
+text-align:center!important;margin:0 auto 46px!important;display:block!important;width:100%!important}
+#allrecords:not(.avx1):not(.avx2) .bpro-title,#allrecords:not(.avx1):not(.avx2) .bwho-title,#allrecords:not(.avx1):not(.avx2) .bcta-title,#allrecords:not(.avx1):not(.avx2) .bben-card-title,#allrecords:not(.avx1):not(.avx2) .bwho-card-title,#allrecords:not(.avx1):not(.avx2) .bchm-card-title{
+font-family:'Source Serif 4',Georgia,serif!important;text-translate:0 0!important;letter-spacing:0!important}
+#allrecords:not(.avx1):not(.avx2) .bpro-title,#allrecords:not(.avx1):not(.avx2) .bcta-title{font-size:30px!important;font-weight:400!important;color:#323338!important;line-height:1.2!important}
+#allrecords:not(.avx1):not(.avx2) .bwho-title{font-size:38px!important;font-weight:400!important;color:#F2F2F2!important;line-height:1.2!important}
+#allrecords:not(.avx1):not(.avx2) .bben-card-title,#allrecords:not(.avx1):not(.avx2) .bchm-card-title{font-weight:500!important;color:#323338!important}
+#allrecords:not(.avx1):not(.avx2) .bwho-card-title{font-weight:500!important;color:#F2F2F2!important}
+#allrecords:not(.avx1):not(.avx2) .bben-badge,#allrecords:not(.avx1):not(.avx2) .bpro-badge,#allrecords:not(.avx1):not(.avx2) .bwho-badge,#allrecords:not(.avx1):not(.avx2) .bcta-badge,#allrecords:not(.avx1):not(.avx2) .bchm-eyebrow,#allrecords:not(.avx1):not(.avx2) .catg-eyebrow{
+font-size:10px!important;font-weight:400!important;letter-spacing:.22em!important;
+text-transform:uppercase!important;color:#9A9B9F!important;background:none!important;
+border:0!important;padding:0!important;border-radius:0!important}
+#allrecords:not(.avx1):not(.avx2) .bchm-card,#allrecords:not(.avx1):not(.avx2) .bben-card,#allrecords:not(.avx1):not(.avx2) .bpro-card,#allrecords:not(.avx1):not(.avx2) .bcta-card,#allrecords:not(.avx1):not(.avx2) .bwho-card,#allrecords:not(.avx1):not(.avx2) .catg-card,#allrecords:not(.avx1):not(.avx2) .catg-img-wrap,#allrecords:not(.avx1):not(.avx2) .bchm-grid,#allrecords:not(.avx1):not(.avx2) .bwho-media{
+border-radius:0!important;box-shadow:none!important;outline:0!important}
+#allrecords:not(.avx1):not(.avx2) .bchm-card,#allrecords:not(.avx1):not(.avx2) .bben-card{background:transparent!important;border:0!important;
+border-top:1px solid #E6E6E6!important;padding:26px 6px 0 0!important}
+#allrecords:not(.avx1):not(.avx2) .bchm-card::before,#allrecords:not(.avx1):not(.avx2) .bben-card::before{display:none!important}
+#allrecords:not(.avx1):not(.avx2) .bchm-grid{border:0!important;gap:34px!important;background:transparent!important}
+
+#allrecords:not(.avx1):not(.avx2) .catg-img-wrap{
+border:0!important;
+}
+#allrecords:not(.avx1):not(.avx2) .bwho-card{background:rgba(255,255,255,.04)!important;border:0!important;
+border-top:1px solid rgba(255,255,255,.18)!important}
+#allrecords:not(.avx1):not(.avx2) .catg-name{
+text-transform:uppercase!important;
+letter-spacing:.04em!important;
+}
+
+#allrecords:not(.avx1):not(.avx2) .catg-more{background:transparent!important;border:0!important}
+#allrecords:not(.avx1):not(.avx2) .bpro-btn,#allrecords:not(.avx1):not(.avx2) .bwho-btn,#allrecords:not(.avx1):not(.avx2) .bcta-btn,#allrecords:not(.avx1):not(.avx2) .catg-more a,#allrecords:not(.avx1):not(.avx2) .tbc-add{
+background:#151516!important;color:#E9E9E9!important;border:1px solid #151516!important;
+border-radius:0!important;font-size:12px!important;font-weight:400!important;
+letter-spacing:.1em!important;text-transform:uppercase!important;padding:12px 24px!important;
+box-shadow:none!important;display:inline-block!important}
+#allrecords:not(.avx1):not(.avx2) .bpro-btn:hover,#allrecords:not(.avx1):not(.avx2) .bcta-btn:hover,#allrecords:not(.avx1):not(.avx2) .catg-more a:hover,#allrecords:not(.avx1):not(.avx2) .tbc-add:hover{background:#fff!important;color:#151516!important}
+#allrecords:not(.avx1):not(.avx2) .bwho-btn{background:#fff!important;color:#151516!important;border-color:#fff!important}
+#allrecords:not(.avx1):not(.avx2) .bwho-btn:hover{background:transparent!important;color:#fff!important}
+#allrecords:not(.avx1):not(.avx2) .bpro-btn-arrow,#allrecords:not(.avx1):not(.avx2) .bwho-btn-arrow,#allrecords:not(.avx1):not(.avx2) .bcta-btn-arrow{display:none!important}
+
+/* ================= /AVANTCHA LAYER ================= */
+
+#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-name,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .t-uptitle,#allrecords:not(.avx1):not(.avx2) .t-btntext,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-input,#allrecords:not(.avx1):not(.avx2) .t-redactor__text,#allrecords:not(.avx1):not(.avx2) .t-store__card__title,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name,#allrecords:not(.avx1):not(.avx2) .tn-atom,#allrecords:not(.avx1):not(.avx2) .bchf-wrap,#allrecords:not(.avx1):not(.avx2) .bchf-wrap *,#allrecords:not(.avx1):not(.avx2) .tbh-nav a,#allrecords:not(.avx1):not(.avx2) .tbh-nav__btn,#allrecords:not(.avx1):not(.avx2) .tbh-mega__t,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) h4,#allrecords:not(.avx1):not(.avx2) h5,#allrecords:not(.avx1):not(.avx2) p,#allrecords:not(.avx1):not(.avx2) li{font-family:'Jost','Exo 2',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .bchf-heading,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name{
+font-family:'Source Serif 4',Georgia,serif!important;font-weight:400!important;
+text-translate:0 0!important;letter-spacing:0!important}
+#allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr{font-weight:300!important}
+#allrecords:not(.avx1):not(.avx2) a.tn-atom,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-store__card__btn,#allrecords:not(.avx1):not(.avx2) .t-store__btn,#allrecords:not(.avx1):not(.avx2) .bchf-pill,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) .t-inputbutton,#allrecords:not(.avx1):not(.avx2) .t1281__wrapper,#allrecords:not(.avx1):not(.avx2) .t1281__item,#allrecords:not(.avx1):not(.avx2) .t1281__slider{border-radius:0!important}
+#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-store__btn,#allrecords:not(.avx1):not(.avx2) .t-inputbutton{
+background-color:#151516!important;color:#E9E9E9!important;border:1px solid #151516!important;
+font-size:12px!important;font-weight:400!important;letter-spacing:.1em!important;
+text-transform:uppercase!important;box-shadow:none!important}
+#allrecords:not(.avx1):not(.avx2) .t1281__title,#allrecords:not(.avx1):not(.avx2) .t1281__title-text{font-size:12px!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+
+#allrecords:not(.avx1):not(.avx2) .bchf-wrap{background:#151516!important}
+#allrecords:not(.avx1):not(.avx2) .bchf-heading{font-size:19px!important;color:#F2F2F2!important}
+#allrecords:not(.avx1):not(.avx2) .bchf-links a,#allrecords:not(.avx1):not(.avx2) .bchf-pill,#allrecords:not(.avx1):not(.avx2) .bchf-contact-row{font-weight:300!important;letter-spacing:.01em!important}
+
+#allrecords #rec2772565803,#allrecords #rec2772565803 *{font-family:'Exo 2',sans-serif!important}
+/* ============ /AVANTCHA LAYER 2 ============ */
+
+/* ============ AVANTCHA LAYER 3 — фон страницы, футер, тикер ============ */
+
+html body,html body #allrecords,html body .t-records,html body .t-body{background-color:#fff!important}
+
+#allrecords:not(.avx1) .bchf-links a,#allrecords:not(.avx1) .bchf-links a:link,
+#allrecords:not(.avx1) .bchf-links a:visited,#allrecords:not(.avx1) .bchf-links a *,
+#allrecords:not(.avx1) .bchf-contact-row,#allrecords:not(.avx1) .bchf-contact-row *,
+#allrecords:not(.avx1) .bchf-contact-row a,#allrecords:not(.avx1) .bchf-contact-row a:visited{
+color:#B5B5B5!important;-webkit-text-fill-color:#B5B5B5!important}
+#allrecords:not(.avx1) .bchf-links a:hover,#allrecords:not(.avx1) .bchf-contact-row a:hover{
+color:#fff!important;-webkit-text-fill-color:#fff!important}
+#allrecords:not(.avx1) .bchf-pill,#allrecords:not(.avx1) .bchf-pill:link,#allrecords:not(.avx1) .bchf-pill:visited{
+color:#F2F2F2!important;-webkit-text-fill-color:#F2F2F2!important}
+#allrecords:not(.avx1) .bchf-bottom,#allrecords:not(.avx1) .bchf-bottom *{
+color:#7E7E7E!important;-webkit-text-fill-color:#7E7E7E!important}
+/* ============ /AVANTCHA LAYER 3 ============ */
+
+/* ============ AVANTCHA LAYER 4 — лишние рамки и подрезанная шапка ============ */
+
+#allrecords:not(.avx1) .bcta-card,#allrecords:not(.avx1) .bpro-card{border:0!important}
+
+html body .tbh-bar{border-bottom:0!important;box-shadow:none!important}
+
+/* ============ /AVANTCHA LAYER 4 ============ */
+
+/* ============ AVANTCHA LAYER 5 — посещённые ссылки в шапке и каталоге ============ */
+
+html body .tbh-nav a,html body .tbh-nav a:link,html body .tbh-nav a:visited,
+html body .tbh-nav__btn,html body .tbh-mob a,html body .tbh-mob a:visited,
+html body .tbh-mega__all,html body .tbh-mega__all:visited{
+color:#121212!important;-webkit-text-fill-color:#121212!important}
+html body .tbh-nav a:hover,html body .tbh-mob a:hover,html body .tbh-mega__all:hover{
+color:#5A5B5F!important;-webkit-text-fill-color:#5A5B5F!important}
+html body .tbh-mega a,html body .tbh-mega a:link,html body .tbh-mega a:visited{
+color:#6A6A6A!important;-webkit-text-fill-color:#6A6A6A!important}
+html body .tbh-mega a:hover{color:#121212!important;-webkit-text-fill-color:#121212!important}
+html body .tbh-mega__t{color:#8E8E8E!important;-webkit-text-fill-color:#8E8E8E!important}
+html body .tbh-cta,html body .tbh-cta:visited{color:#fff!important;-webkit-text-fill-color:#fff!important}
+#allrecords:not(.avx1) .catg-name{-webkit-text-fill-color:#323338!important}
+#allrecords:not(.avx1) .catg-eyebrow,#allrecords:not(.avx1) .catg-sub{-webkit-text-fill-color:#9A9B9F!important}
+#allrecords:not(.avx1) .catg-more a,#allrecords:not(.avx1) .catg-more a:visited{-webkit-text-fill-color:#E9E9E9!important}
+#allrecords:not(.avx1) .catg-more a:hover{-webkit-text-fill-color:#151516!important}
+#allrecords:not(.avx1) .bpro-btn,#allrecords:not(.avx1) .bcta-btn,
+#allrecords:not(.avx1) .bpro-btn:visited,#allrecords:not(.avx1) .bcta-btn:visited{-webkit-text-fill-color:#E9E9E9!important}
+#allrecords:not(.avx1) .bpro-btn:hover,#allrecords:not(.avx1) .bcta-btn:hover{-webkit-text-fill-color:#151516!important}
+#allrecords:not(.avx1) .bwho-btn,#allrecords:not(.avx1) .bwho-btn:visited{-webkit-text-fill-color:#151516!important}
+#allrecords a:visited{color:inherit}
+/* ============ /AVANTCHA LAYER 5 ============ */
+
+/* ============ AVANTCHA LAYER 6 — кнопка CATALOG при скролле ============ */
+
+/* ============ /AVANTCHA LAYER 6 ============ */
+
+/* ============ AVANTCHA LAYER 7 — шапка вообще не двигается при скролле ============ */
+
+html body .tbh-wrap.is-scrolled .tbh-bar{box-shadow:none!important;background:#fff!important;}
+html body .tbh-wrap.is-scrolled .tbh-in,
+html body .tbh-wrap.is-scrolled .tbh-nav,
+html body .tbh-wrap.is-scrolled .tbh-nav > *,
+html body .tbh-wrap.is-scrolled .tbh-drop,
+html body .tbh-wrap.is-scrolled .tbh-drop > *,
+html body .tbh-wrap.is-scrolled .tbh-nav__btn{height:72px!important}
+
+html body .tbh-bar,html body .tbh-in,html body .tbh-logo img{transition:none!important}
+/* ============ /AVANTCHA LAYER 7 ============ */
+
+/* ============ AVANTCHA LAYER 8 — футер: 4 колонки + значки оплаты ============ */
+
+@media(max-width:1100px){html body .bchf-inner{grid-template-columns:1fr 1fr!important}}
+@media(max-width:600px){html body .bchf-inner{grid-template-columns:1fr!important}}
+html body .avx-pay{
+flex-wrap:wrap;
+border-top:1px solid rgba(255,255,255,.12);
+}
+
+html body .bchf-inner .bchf-pill{margin-top:18px!important;display:inline-flex!important}
+/* ============ /AVANTCHA LAYER 8 ============ */
+
+html body .bchf-logopanel-img{
+max-width:none!important;
+object-fit:contain!important;
+}
+
+html body .avx-pay{
+margin-left:auto;
+margin-right:26px;
+}
+html body .avx-pay__img{height:26px;width:auto;display:block;opacity:.95}
+
+@media(max-width:900px){
+html body .bchf-logopanel-img{width:200px!important;height:200px!important}
+html body .avx-pay{margin:14px 0 0 0}
+}
+/* ============ /AVANTCHA LAYER 9 ============ */
+
+html body .bchf-inner,html body .bchf-bottom{max-width:none!important;width:calc(100% - 140px)!important;margin-left:auto!important;margin-right:auto!important}
+html body .bchf-inner{grid-template-columns:260px 1fr 1fr 1fr 1.2fr!important;gap:30px!important;align-items:start!important}
+html body .bchf-logopanel{display:flex!important;align-items:flex-start!important;justify-content:flex-start!important}
+
+html body .bchf-logopanel-img{width:300px!important;height:300px!important;transform:translateY(-42px)!important;margin-left:-30px!important}
+html body .bchf-inner .bchf-social{margin-top:26px!important;justify-content:flex-start!important}
+html body .bchf-bottom{justify-content:space-between!important}
+html body .avx-pay{display:flex;align-items:center;gap:14px;margin:0!important;border:0!important;padding:0!important}
+html body .avx-pay__img,html body .avx-pay__svg{height:26px;width:auto;display:block;opacity:.95}
+@media(max-width:1100px){
+html body .bchf-inner,html body .bchf-bottom{width:calc(100% - 60px)!important}
+html body .bchf-logopanel-img{width:200px!important;height:200px!important;transform:none!important;margin-left:0!important}
+}
+/* ============ /AVANTCHA LAYER 10 ============ */
+
+#allrecords:not(.avx1):not(.avx2) .bchf-pill{border:0!important;padding:0!important;background:transparent!important;min-width:0!important}
+@media(max-width:1100px){
+
+#allrecords:not(.avx1):not(.avx2) .bchf-logopanel{display:flex!important;justify-content:center!important;align-items:center!important;width:100%!important;overflow:hidden!important;padding:0!important}
+#allrecords:not(.avx1):not(.avx2) .bchf-logopanel-img{width:150px!important;height:150px!important;transform:none!important;margin:0 auto!important;position:static!important;left:auto!important;right:auto!important}
+}
+/* ============ /AVANTCHA LAYER 11 ============ */
+
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .bchf-wrap{padding-top:34px!important}
+#allrecords:not(.avx1):not(.avx2) .bchf-inner{gap:0!important}
+#allrecords:not(.avx1):not(.avx2) .avx-acc{border-bottom:1px solid rgba(255,255,255,.12)!important;padding:0!important}
+#allrecords:not(.avx1):not(.avx2) .avx-acc .bchf-heading{position:relative!important;margin:0!important;padding:16px 30px 16px 0!important;cursor:pointer!important;font-size:17px!important}
+#allrecords:not(.avx1):not(.avx2) .avx-acc .bchf-heading::after{content:"";position:absolute;right:6px;top:50%;width:8px;height:8px;
+border-right:1.5px solid #B5B5B5;border-bottom:1.5px solid #B5B5B5;transform:translateY(-70%) rotate(45deg);transition:transform .25s}
+#allrecords:not(.avx1):not(.avx2) .avx-acc.is-open .bchf-heading::after{transform:translateY(-30%) rotate(225deg)}
+#allrecords:not(.avx1):not(.avx2) .avx-acc .bchf-links{max-height:0!important;overflow:hidden!important;transition:max-height .3s ease!important;margin:0!important}
+#allrecords:not(.avx1):not(.avx2) .avx-acc.is-open .bchf-links{max-height:460px!important;padding-bottom:10px!important}
+#allrecords:not(.avx1):not(.avx2) .avx-acc .bchf-links li{margin:0 0 12px 0!important}
+#allrecords:not(.avx1):not(.avx2) .bchf-inner > div:last-child{padding-top:18px!important}
+
+#allrecords:not(.avx1):not(.avx2) .bchf-logopanel{
+margin:6px 0 0 0!important;
+padding:0!important;
+overflow:visible!important;
+}
+#allrecords:not(.avx1):not(.avx2) .bchf-logopanel-img{
+flex:0 0 auto!important;
+}
+#allrecords:not(.avx1):not(.avx2) .bchf-bottom{padding:18px 0 10px!important}
+}
+/* ============ /AVANTCHA LAYER 12 ============ */
+
+/* ============ AVANTCHA LAYER 13 — мобильный низ футера по левому краю ============ */
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .bchf-inner{width:calc(100% - 48px)!important;margin-left:auto!important;margin-right:auto!important}
+
+#allrecords:not(.avx1):not(.avx2) .bchf-bottom{width:100%!important;margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important;
+flex-direction:column!important;align-items:flex-start!important;gap:16px!important}
+#allrecords:not(.avx1):not(.avx2) .avx-pay{margin:0!important}
+
+#allrecords:not(.avx1):not(.avx2) .bchf-logopanel{
+justify-content:flex-start!important;
+}
+
+}
+/* ============ /AVANTCHA LAYER 13 ============ */
+
+/* ============ AVANTCHA LAYER 14 — логотип налезал на значки оплаты ============ */
+
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .bchf-logopanel{height:270px!important;min-height:270px!important;margin-top:20px!important;align-items:flex-end!important}
+#allrecords:not(.avx1):not(.avx2) .bchf-logopanel-img{width:250px!important;height:250px!important;margin-left:-10px!important}
+}
+/* ============ /AVANTCHA LAYER 14 ============ */
+
+/* ============ AVANTCHA LAYER 15 — стрелка ↗ на карточках-ссылках ============ */
+#allrecords:not(.avx1):not(.avx2) .catg-card{position:relative!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card::after{
+content:"";
+position:absolute;
+top:14px;
+right:14px;
+width:13px;
+height:13px;
+border-top:1.5px solid #9A9B9F;
+border-right:1.5px solid #9A9B9F;
+transform:rotate(45deg) translate(0,0);
+transition:transform .28s cubic-bezier(.22,.61,.36,1),opacity .28s,border-color .28s;
+pointer-events:none;
+z-index:3;
+}
+#allrecords:not(.avx1):not(.avx2) .catg-card:hover::after{opacity:1;border-color:#151516;transform:rotate(45deg) translate(3px,-3px)}
+/* ============ /AVANTCHA LAYER 15 ============ */
+
+/* ============ AVANTCHA LAYER 16 — секции съезжали влево на мобильном ============ */
+
+#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bwho-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .bchm-wrap{
+width:100%!important;left:auto!important;right:auto!important;margin-left:0!important;margin-right:0!important}
+/* ============ /AVANTCHA LAYER 16 ============ */
+
+/* ============ AVANTCHA LAYER 17 — мега-меню и кнопка Shop Now ============ */
+
+html body .tbh-drop .tbh-mega,
+html body .tbh-wrap.is-scrolled .tbh-drop .tbh-mega,
+html body .tbh-wrap.is-scrolled .tbh-drop > .tbh-mega{height:auto!important;min-height:0!important}
+
+html body .tbs__slide a.bg-ink,
+html body .tbs__slide a.bg-ink:link,
+html body .tbs__slide a.bg-ink:visited{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body .tbs__slide a:not(.bg-ink),
+html body .tbs__slide a:not(.bg-ink):link,
+html body .tbs__slide a:not(.bg-ink):visited{color:#1A1311!important;-webkit-text-fill-color:#1A1311!important}
+/* ============ /AVANTCHA LAYER 17 ============ */
+
+/* ============ AVANTCHA LAYER 18 — бежевые полосы по бокам секций ============ */
+
+#allrecords:not(.avx1):not(.avx2) #rec1851190051,#allrecords:not(.avx1):not(.avx2) #rec859275495,#allrecords:not(.avx1):not(.avx2) #rec859191909,#allrecords:not(.avx1):not(.avx2) #rec2503542591,
+#allrecords:not(.avx1):not(.avx2) #rec1851190051 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__artboard,
+#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec2503542591 .t396__artboard{background-color:#fff!important}
+/* ============ /AVANTCHA LAYER 18 ============ */
+
+@media(max-width:900px){
+
+#allrecords:not(.avx1):not(.avx2) #rec1851190051 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard{height:auto!important;min-height:0!important}
+#allrecords:not(.avx1):not(.avx2) #rec1851190051 .t396__elem,#allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__elem,#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__elem{position:static!important;height:auto!important;top:auto!important;left:auto!important}
+}
+/* ============ /AVANTCHA LAYER 19 ============ */
+
+/* ============ AVANTCHA LAYER 20 — продукты героя по центру надписи BASE ============ */
+
+@media(min-width:1024px){
+#allrecords #rec2772565803 .tbs__shot{transform:translate(-8.5%,-7.15%) scale(.85)!important;transform-origin:0 0!important}
+}
+/* ============ /AVANTCHA LAYER 20 ============ */
+
+/* ============ AVANTCHA LAYER 21 — насыщенные градиенты слайдов героя ============ */
+
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(1){background:linear-gradient(150deg,#E9C89F 0%,#DDB07C 46%,#C99459 100%)!important}
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(2){background:linear-gradient(150deg,#F2B2AE 0%,#E88D87 46%,#D4736C 100%)!important}
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(3){background:linear-gradient(150deg,#8CCB8A 0%,#5FBE72 46%,#3FA95C 100%)!important}
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(4){background:linear-gradient(150deg,#F5D69B 0%,#E9C071 46%,#D3A54F 100%)!important}
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(5){background:linear-gradient(150deg,#EBB0BB 0%,#DA8D9C 46%,#C47183 100%)!important}
+/* ============ /AVANTCHA LAYER 21 ============ */
+
+/* ============ AVANTCHA LAYER 22 — мягкая тень под продуктами героя ============ */
+
+#allrecords #rec2772565803 .tbs__glass{filter:drop-shadow(14px 22px 22px rgba(60,40,25,.28))!important}
+#allrecords #rec2772565803 .tbs__pouch{filter:drop-shadow(10px 18px 20px rgba(60,40,25,.18))!important}
+/* ============ /AVANTCHA LAYER 22 ============ */
+
+/* ============ AVANTCHA LAYER 23 — заголовок слайда RAF ============ */
+
+html body #rec2772565803 .tbs__slide h1,
+html body #rec2772565803 .tbs__slide h1.font-extrabold{
+font-weight:800!important;text-transform:uppercase!important;
+font-size:68px!important;line-height:.92!important;letter-spacing:-0.015em!important;color:#1A1311!important}
+@media(max-width:900px){
+html body #rec2772565803 .tbs__slide h1,
+html body #rec2772565803 .tbs__slide h1.font-extrabold{font-size:38px!important}
+}
+/* ============ /AVANTCHA LAYER 23 ============ */
+
+@media(min-width:1024px){
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(1) .tbs__pouch{height:141%!important;margin-top:-124px!important}
+
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(1) .tbs__glass{margin-top:-80px!important}
+}
+@media(max-width:1023px){
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(1) .tbs__pouch{margin-top:-39px!important}
+#allrecords #rec2772565803 .tbs__slide:nth-of-type(1) .tbs__glass{margin-top:-34px!important}
+}
+/* ============ /AVANTCHA LAYER 24 ============ */
+
+#allrecords #rec2772565803 .tbs__mark{font-size:0!important;color:transparent!important;line-height:0!important}
+#allrecords #rec2772565803 .tbs__mark > *:not(.tbs__svgmark){display:none!important}
+#allrecords #rec2772565803 .tbs__svgmark{font-size:initial!important;line-height:normal!important}
+/* ============ /AVANTCHA LAYER 25 ============ */
+
+/* ============ AVANTCHA LAYER 26 — убрать красную подсветку при фокусе ============ */
+
+html body button:focus,
+html body input:focus,
+html body select:focus,
+html body textarea:focus,
+html body a:focus,
+html body [tabindex]:focus,
+html body .t-input:focus,
+html body .t-inputtext:focus,
+html body .t-submit:focus,
+html body .tbsr-pop input:focus,
+html body .tbc-drawer input:focus,
+html body .bfaq-btn:focus{box-shadow:none!important;outline-color:transparent!important}
+/* ============ /AVANTCHA LAYER 26 ============ */
+
+/* ============ AVANTCHA LAYER 27 — цены в плитках каталога ============ */
+
+#allrecords:not(.avx1):not(.avx2) .catg-price{margin-top:6px;font-size:14px;font-weight:500;color:#151516;letter-spacing:.01em}
+#allrecords:not(.avx1):not(.avx2) .catg-price--req{color:#9A8F86;font-size:12px;font-weight:400}
+@media(max-width:900px){#allrecords:not(.avx1):not(.avx2) .catg-price{font-size:13px}}
+/* ============ /AVANTCHA LAYER 27 ============ */
+
+/* ============ AVANTCHA LAYER 28 — оформление корзины Tilda (.t706) ============ */
+
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{border-radius:0!important;padding:36px 34px 34px!important;font-family:'Jost',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-heading{font-family:'Source Serif 4',Georgia,serif!important;font-size:26px!important;font-weight:500!important;color:#151516!important;letter-spacing:0!important;margin-bottom:22px!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-title{font-family:'Jost',sans-serif!important;font-size:15px!important;font-weight:500!important;color:#151516!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-title__option{font-family:'Jost',sans-serif!important;font-size:12px!important;color:#8A8A8A!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product{border-bottom:1px solid #ECECEC!important;padding:16px 0!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-prodamount,
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-prodamount-price,
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-prodamount-currency{font-size:14px!important;color:#151516!important;font-weight:500!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-quantity{font-size:14px!important;color:#5A5B5F!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount-wrap{border-top:1px solid #151516!important;margin-top:10px!important;padding-top:16px!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount,
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount-info{font-size:18px!important;font-weight:600!important;color:#151516!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-input,
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-inputtext{border:1px solid #DCDCDC!important;border-radius:0!important;height:46px!important;font-size:14px!important;font-family:'Jost',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-input-title{font-size:12px!important;color:#5A5B5F!important;letter-spacing:.04em!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-submit{background:#151516!important;color:#fff!important;border:0!important;border-radius:0!important;
+height:52px!important;font-size:13px!important;letter-spacing:.12em!important;text-transform:uppercase!important;font-weight:500!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-close{opacity:.5!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-del{color:#9A9A9A!important}
+/* ============ /AVANTCHA LAYER 28 ============ */
+
+/* ============ AVANTCHA LAYER 29 — единый шрифт Roboto ============ */
+
+html body *:not([class*="t-icon"]):not([class*="icon"]):not(i):not(.t-store__card__mark),
+html body,
+html body h1, html body h2, html body h3, html body h4, html body p, html body a,
+html body .t-title, html body .t-heading, html body .t-name, html body .t-text, html body .t-descr,
+html body .t-btn, html body .t-submit, html body .t-input, html body .tn-atom,
+html body #rec2772565803, html body #rec2772565803 *,
+html body .t706__cartwin, html body .t706__cartwin *,
+html body .tbh-nav a, html body .bchf-wrap, html body .bchf-wrap *,
+html body .catg-name, html body .catg-price, html body .bfaq-wrap *{
+font-family:'Roboto',-apple-system,Arial,sans-serif!important}
+
+html body .t706__cartwin-heading,
+html body h1, html body h2{letter-spacing:0!important}
+/* ============ /AVANTCHA LAYER 29 ============ */
+
+#allrecords:not(.avx1):not(.avx2) *:not([class*="t-icon"]):not([class*="icon"]):not(i),
+#allrecords:not(.avx1):not(.avx2){font-family:'Roboto',-apple-system,Arial,sans-serif!important}
+
+#allrecords #rec2544308101,
+#allrecords #rec2544308101 .t396__artboard{background-color:#000!important;height:auto!important;min-height:0!important;overflow:visible!important}
+#allrecords #rec2544308101 .t396__elem{position:static!important;height:auto!important;top:auto!important;left:auto!important}
+#allrecords:not(.avx1):not(.avx2) .bfaq-wrap{width:100%!important;max-width:none!important;margin:0!important;padding:64px 70px!important;box-sizing:border-box!important}
+#allrecords:not(.avx1):not(.avx2) .bfaq-inner{max-width:1240px!important;margin:0 auto!important}
+@media(max-width:900px){#allrecords:not(.avx1):not(.avx2) .bfaq-wrap{padding:48px 20px!important}}
+/* ============ /AVANTCHA LAYER 30 ============ */
+
+#allrecords #rec860957415,
+#allrecords #rec860957415 .t396__artboard{background-color:#121212!important}
+
+#allrecords #rec859870796,
+#allrecords #rec859870796 .t396__artboard{background-color:#151516!important}
+/* ============ /AVANTCHA LAYER 31 ============ */
+
+/* ============ AVANTCHA LAYER 32 — единый вертикальный ритм секций ============ */
+
+#allrecords:not(.avx1):not(.avx2) .bchm-wrap,
+#allrecords:not(.avx1):not(.avx2) .catg-wrap,
+#allrecords:not(.avx1):not(.avx2) .bben-wrap,
+#allrecords:not(.avx1):not(.avx2) .bpro-wrap,
+#allrecords:not(.avx1):not(.avx2) .bcta-wrap,
+#allrecords:not(.avx1):not(.avx2) .bwho-wrap{padding-top:100px!important;padding-bottom:100px!important}
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .bchm-wrap,
+#allrecords:not(.avx1):not(.avx2) .catg-wrap,
+#allrecords:not(.avx1):not(.avx2) .bben-wrap,
+#allrecords:not(.avx1):not(.avx2) .bpro-wrap,
+#allrecords:not(.avx1):not(.avx2) .bcta-wrap,
+#allrecords:not(.avx1):not(.avx2) .bwho-wrap{padding-top:64px!important;padding-bottom:64px!important}
+}
+/* ============ /AVANTCHA LAYER 32 ============ */
+
+/* ============ AVANTCHA LAYER 33 — FAQ на телефоне ============ */
+
+#allrecords #rec2544308101 .t396__elem,
+#allrecords #rec2544308101 .tn-atom{width:100%!important;max-width:100%!important}
+#allrecords:not(.avx1):not(.avx2) .bfaq-inner{width:100%!important;box-sizing:border-box!important}
+/* ============ /AVANTCHA LAYER 33 ============ */
+
+/* ============ AVANTCHA LAYER 34 — одна корзина вместо двух ============ */
+
+html body .t706__carticon,
+html body .t706__carticon_showed{display:none!important}
+/* ============ /AVANTCHA LAYER 34 ============ */
+
+/* ============ AVANTCHA LAYER 35 — флаг страны в шапке ============ */
+
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__flag,
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__panel li span:first-child,
+#allrecords:not(.avx1):not(.avx2) .tbh-reg .tbh-reg__opt-flag{
+font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important;
+line-height:1!important;display:inline-flex!important;align-items:center!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{align-items:center!important}
+/* ============ /AVANTCHA LAYER 35 ============ */
+
+/* ============ AVANTCHA LAYER 36 — правки по замечаниям ============ */
+
+#allrecords:not(.avx1):not(.avx2) .bchm-card,
+#allrecords:not(.avx1):not(.avx2) .bben-card{border-top:0!important}
+
+#allrecords:not(.avx1):not(.avx2) .bben-icon{width:64px!important;height:64px!important}
+#allrecords:not(.avx1):not(.avx2) .bben-icon svg{width:32px!important;height:32px!important}
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .bben-icon{width:56px!important;height:56px!important}
+#allrecords:not(.avx1):not(.avx2) .bben-icon svg{width:28px!important;height:28px!important}
+}
+
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-inner{display:flex!important;flex-wrap:wrap!important;align-items:center!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-main-heading{text-align:left!important;margin:0!important;order:1!important;flex:1 1 auto!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-group{display:contents!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-grid{order:3!important;flex:1 0 100%!important;margin-top:28px!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-more{order:2!important;flex:0 0 auto!important;width:auto!important;margin:0 0 0 auto!important;text-align:right!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-more a{display:inline-block!important;padding:11px 22px!important;
+border:1px solid #151516!important;background:transparent!important;color:#151516!important;
+-webkit-text-fill-color:#151516!important;
+font-size:12px!important;font-weight:500!important;letter-spacing:.1em!important;text-transform:uppercase!important;
+text-decoration:none!important;white-space:nowrap!important;transition:background .2s,color .2s!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-more a:hover{background:#151516!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+@media(max-width:600px){
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-main-heading{flex:1 1 100%!important;margin-bottom:14px!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-more{flex:1 1 100%!important;text-align:left!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403 .catg-more a{padding:10px 16px!important;font-size:11px!important}
+}
+
+@media(min-width:1024px){
+#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__shot{transform:translate(-8.5%,5.4%) scale(.85)!important;transform-origin:0 0!important}
+}
+/* ============ /AVANTCHA LAYER 36 ============ */
+
+/* ============ AVANTCHA LAYER 37 - RAF pouch up, level with other slides ============ */
+@media (min-width:1024px){
+#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__slide:first-child .tbs__pouch{bottom:31.8px!important}
+#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__slide:first-child .tbs__glass{bottom:31.8px!important}
+}
+/* ============ /AVANTCHA LAYER 37 ============ */
+
+/* ============ AVANTCHA LAYER 38 ============ */
+
+#allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-badge,#allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-btn,#allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-btn-arrow{text-transform:none!important}
+
+#allrecords:not(.avx1):not(.avx2) #rec859779175,#allrecords:not(.avx1):not(.avx2) #rec859779175 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859779175 .bwho-wrap{background-color:#000!important}
+#allrecords:not(.avx1):not(.avx2) #rec859779175 .bwho-card{background:transparent!important;border-top:1px solid rgba(255,255,255,.18)!important}
+#allrecords:not(.avx1):not(.avx2) #rec859779175 .bwho-icon{width:64px!important;height:64px!important}
+#allrecords:not(.avx1):not(.avx2) #rec859779175 .bwho-card-title{color:#fff!important;-webkit-text-fill-color:#fff!important}
+#allrecords:not(.avx1):not(.avx2) #rec859779175 .bwho-card-text{color:#C9C9C9!important;-webkit-text-fill-color:#C9C9C9!important}
+
+#allrecords:not(.avx1):not(.avx2) .bchf-wrap{background-color:#000!important}
+#allrecords:not(.avx1):not(.avx2) #rec859870796,#allrecords:not(.avx1):not(.avx2) #rec859870796 .t396__artboard{background-color:#000!important}
+
+#allrecords:not(.avx1):not(.avx2) .bfaq-wrap::before,#allrecords:not(.avx1):not(.avx2) .bsto-wrap::before,#allrecords:not(.avx1):not(.avx2) .bmap-wrap::before,#allrecords:not(.avx1):not(.avx2) .bpla-wrap::before{background-image:none!important;content:none!important}
+
+#allrecords:not(.avx1):not(.avx2) #rec860957415 .t396__artboard{height:auto!important;min-height:0!important;overflow:visible!important}
+#allrecords:not(.avx1):not(.avx2) #rec860957415 .t396__elem{position:static!important;height:auto!important;width:100%!important;top:auto!important;left:auto!important}
+/* ============ /AVANTCHA LAYER 38 ============ */
+
+/* ============ AVANTCHA LAYER 39 - promo titles: sentence case ============ */
+#allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-title{text-transform:lowercase!important}
+#allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-title::first-letter{text-transform:uppercase!important}
+/* ============ /AVANTCHA LAYER 39 ============ */
+
+/* ============ AVANTCHA LAYER 40 - hero: slide indicator dots ============ */
+#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dots{gap:12px;align-items:center;height:auto;margin-bottom:18px}
+#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dot{flex:0 0 auto!important;width:11px!important;min-width:11px!important;max-width:11px!important;height:11px!important;border-radius:50%!important;border:0!important;background-color:rgba(26,19,17,.32)!important;transition:background-color .3s,transform .3s!important}
+#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dot.bg-ink{background-color:#1A1311!important;transform:scale(1.2)}
+
+@media(max-width:900px){#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dots{bottom:16px!important;margin-bottom:0!important;gap:10px!important}}
+/* ============ /AVANTCHA LAYER 40 ============ */
+
+/* ============ AVANTCHA LAYER 41 - Learn More hover ============ */
+html body .tbs__slide a:not(.bg-ink):hover{color:#fff!important;-webkit-text-fill-color:#fff!important}
+/* ============ /AVANTCHA LAYER 41 ============ */
+
+/* ============ AVANTCHA LAYER 42 - header polish ============ */
+#allrecords:not(.avx1):not(.avx2) .tbh-in{max-width:1600px!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__flag{display:none!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{gap:6px!important}
+
+#allrecords:not(.avx1):not(.avx2) .tbh-wa{color:#25D366!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-wa svg{width:21px!important;height:21px!important;fill:#25D366!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-wa svg path{fill:#25D366!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-wa:hover svg,#allrecords:not(.avx1):not(.avx2) .tbh-wa:hover svg path{fill:#1DA851!important}
+/* ============ /AVANTCHA LAYER 42 ============ */
+
+/* ============ AVANTCHA LAYER 43 - header layout (avantcha-style) ============ */
+@media (min-width:1440px){
+#allrecords:not(.avx1):not(.avx2) .tbh-in{grid-template-columns:1fr auto 1fr!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-logo{order:2!important;justify-self:center!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-nav{order:1!important;justify-self:start!important;justify-content:flex-start!important;gap:26px!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-util{order:3!important;justify-self:end!important}
+
+}
+
+#allrecords:not(.avx1):not(.avx2) .tbh-ticker{height:20px!important}
+/* ============ /AVANTCHA LAYER 43 ============ */
+
+/* ============ AVANTCHA LAYER 44 - header type (znakfood-style) ============ */
+#allrecords:not(.avx1):not(.avx2) .tbh-nav a,#allrecords:not(.avx1):not(.avx2) .tbh-nav__btn{text-transform:none!important;font-size:14px!important;font-weight:400!important;letter-spacing:0!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-cta{border-radius:999px!important;padding:0 24px!important;height:46px!important;font-size:13px!important;text-transform:none!important;letter-spacing:.01em!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-cta::after{content:"\2197";margin-left:8px;font-size:14px}
+
+/* ============ /AVANTCHA LAYER 44 ============ */
+
+/* ============ AVANTCHA LAYER 45 - mega menu fix after nav moved left ============ */
+@media (min-width:1440px){
+#allrecords:not(.avx1):not(.avx2) .tbh-drop .tbh-mega{left:0!important;transform:none!important}
+}
+/* ============ /AVANTCHA LAYER 45 ============ */
+
+/* ============ AVANTCHA LAYER 46 - header like znakfood (opaque) ============ */
+@media(min-width:1440px){
+#allrecords:not(.avx1):not(.avx2) .tbh-in{grid-template-columns:auto 1fr auto!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-logo{order:1!important;justify-self:start!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-nav{order:2!important;justify-self:center!important;justify-content:center!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-util{order:3!important;justify-self:end!important}
+}
+#allrecords:not(.avx1):not(.avx2) .tbh-ico{border:1px solid rgba(26,19,17,.18)!important;border-radius:999px!important;width:40px!important;height:40px!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{border:1px solid rgba(26,19,17,.18)!important;border-radius:999px!important;padding:0 14px!important;height:40px!important}
+/* ============ /AVANTCHA LAYER 46 ============ */
+
+/* ============ AVANTCHA LAYER 48 - ticker off + spacer ============ */
+#allrecords:not(.avx1):not(.avx2) .tbh-ticker{display:none!important}
+#allrecords #rec2676415503{height:84px!important;min-height:0!important}
+/* ============ /AVANTCHA LAYER 48 ============ */
+
+/* ============ AVANTCHA LAYER 49 - mobile header fits ============ */
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .tbh-cta{display:none!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-ico{width:38px!important;height:38px!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{height:38px!important;padding:0 10px!important;font-size:12px!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-util{gap:6px!important}
+}
+/* ============ /AVANTCHA LAYER 49 ============ */
+
+/* ============ AVANTCHA LAYER 50 - header height locked + no white gap ============ */
+@media(max-width:900px){
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar,html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{height:61px!important}
+
+#allrecords #rec2676415503{height:61px!important}
+}
+@media(min-width:901px){
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar,html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{height:73px!important}
+#allrecords #rec2676415503{height:73px!important}
+}
+/* ============ /AVANTCHA LAYER 50 ============ */
+
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .tbh-reg{position:static!important}
+#allrecords:not(.avx1):not(.avx2) .tbh-reg__panel{position:fixed!important;left:16px!important;right:16px!important;top:66px!important;width:auto!important;max-width:none!important}
+#allrecords #rec897027334 .t-bgimg{background-size:cover!important;background-position:78% 50%!important}
+#allrecords #rec1937227721 .t396__artboard,#allrecords #rec1937227721 .t396__filter,#allrecords #rec1937227721 .t396__carrier{height:auto!important;min-height:0!important}
+#allrecords #rec1937227721{padding:34px 20px 6px!important}
+#allrecords #rec1937227721 .t396__elem{position:static!important;top:auto!important;left:auto!important;width:100%!important;height:auto!important}
+#allrecords #rec1937217991 .t396__artboard,#allrecords #rec1937217991 .t396__filter,#allrecords #rec1937217991 .t396__carrier{height:24px!important;min-height:0!important}
+}
+/* ============ /AVANTCHA LAYER 51 ============ */
+
+/* ============ AVANTCHA LAYER 52 - about-us fixes + mobile catalog cards ============ */
+@media(max-width:900px){
+#allrecords #rec909008440 .t396__artboard,#allrecords #rec909008440 .t396__filter,#allrecords #rec909008440 .t396__carrier{height:920px!important}
+#allrecords #rec1862296951 .t396__artboard,#allrecords #rec1862296951 .t396__filter,#allrecords #rec1862296951 .t396__carrier{height:24px!important;min-height:0!important}
+#allrecords:not(.avx1):not(.avx2) .catg-img-wrap{border-radius:12px!important;background:#F4F1EC!important;aspect-ratio:1/1.05!important;height:auto!important;overflow:hidden}
+#allrecords:not(.avx1):not(.avx2) .catg-card img{padding:8px 6px!important;object-fit:contain!important;width:100%!important;height:100%!important}
+#allrecords:not(.avx1):not(.avx2) .catg-text{
+text-align:left!important;
+}
+#allrecords:not(.avx1):not(.avx2) .catg-eyebrow{
+color:#A79E95!important;
+}
+#allrecords:not(.avx1):not(.avx2) .catg-name{
+font-weight:600!important;
+color:#1A1311!important;
+margin-top:5px!important;
+}
+#allrecords:not(.avx1):not(.avx2) .catg-sub{
+color:#8A8078!important;
+margin-top:3px!important;
+}
+#allrecords:not(.avx1):not(.avx2) .catg-card{padding-bottom:54px!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{
+opacity:1!important;
+left:0!important;
+right:0!important;
+bottom:0!important;
+transform:none!important;
+border-radius:8px!important;
+background:#1A1311!important;
+color:#fff!important;
+-webkit-text-fill-color:#fff!important;
+letter-spacing:.1em!important;
+border:0!important;
+}
+#allrecords:not(.avx1):not(.avx2) .catg-card::after{opacity:0!important}
+}
+/* ============ /AVANTCHA LAYER 52 ============ */
+
+/* ============ AVANTCHA LAYER 53 - empty cart: EN text + no black bars ============ */
+html body .t706__cartpage-products_empty{font-size:0!important;line-height:0!important}
+html body .t706__cartpage-products_empty::after{content:"Your cart is empty. Add at least one product";font-size:15px;line-height:1.5;color:#1A1311;display:block}
+@media(max-width:900px){
+html body .t706__cartwin-close{background:#fff!important;height:56px!important;border-bottom:1px solid #E9E6E1!important}
+html body .t706__cartwin-close-text,html body .t706__cartwin-close *{color:#1A1311!important;-webkit-text-fill-color:#1A1311!important}
+html body .t706__cartwin-content{min-height:calc(100vh - 56px)!important;margin-top:56px!important}
+}
+/* ============ /AVANTCHA LAYER 53 ============ */
+
+/* ============ AVANTCHA LAYER 54 - empty spacer blocks off (all widths) ============ */
+#allrecords #rec1862296951,#allrecords #rec1937217991{display:none!important}
+#allrecords #rec2519851201{padding-bottom:0!important}
+/* ============ /AVANTCHA LAYER 54 ============ */
+
+html body,#allrecords{background:#FDFAF5!important}
+#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859191909{background:#FDFAF5!important;background-color:#FDFAF5!important}
+#allrecords:not(.avx1):not(.avx2) #rec2739830403{background:#F7F1E8!important}
+#allrecords:not(.avx1):not(.avx2) #rec1851190051 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec1851190051{background:#FDFAF5!important;background-color:#FDFAF5!important}
+#allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859275495{background:#F7F1E8!important;background-color:#F7F1E8!important}
+#allrecords:not(.avx1):not(.avx2) #rec2503542591{background:#FDFAF5!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card{background:#FFFDFA!important;border:1px solid #EFE7DA!important;border-radius:20px!important;box-shadow:none!important;padding:10px 10px 16px!important;overflow:hidden!important;transition:border-color .25s,box-shadow .25s,transform .25s!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card:hover{border-color:#E0D3BE!important;box-shadow:0 10px 30px rgba(120,95,60,.08)!important;transform:translateY(-4px)!important}
+#allrecords:not(.avx1):not(.avx2) .catg-img-wrap{background:#F7F1E8!important;border-radius:14px!important;aspect-ratio:1/1!important;height:auto!important;overflow:hidden!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card img{padding:10px!important;object-fit:contain!important;width:100%!important;height:100%!important}
+#allrecords:not(.avx1):not(.avx2) .catg-text{padding:14px 8px 0!important;text-align:left!important}
+#allrecords:not(.avx1):not(.avx2) .catg-eyebrow{display:inline-block!important;background:#F2EADD!important;color:#8A7B67!important;-webkit-text-fill-color:#8A7B67!important;border-radius:8px!important;padding:4px 9px!important;font-size:9.5px!important;letter-spacing:.08em!important}
+#allrecords:not(.avx1):not(.avx2) .catg-name{font-size:15px!important;font-weight:600!important;color:#2B2320!important;margin-top:9px!important}
+#allrecords:not(.avx1):not(.avx2) .catg-sub{font-size:11.5px!important;color:#9C9188!important;margin-top:3px!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{margin:14px 8px 0!important;width:calc(100% - 16px)!important;height:42px!important;border-radius:12px!important;background:#2B2320!important;color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important;position:static!important;transform:none!important;border:0!important;font-size:10.5px!important;letter-spacing:.08em!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card::after{opacity:0!important}
+@media(max-width:900px){
+#allrecords:not(.avx1):not(.avx2) .catg-card{border-radius:16px!important;padding:8px 8px 14px!important}
+#allrecords:not(.avx1):not(.avx2) .catg-eyebrow{font-size:8px!important;padding:3px 7px!important;letter-spacing:.04em!important;white-space:nowrap!important}
+#allrecords:not(.avx1):not(.avx2) .catg-sub{font-size:10.5px!important;white-space:nowrap!important}
+#allrecords:not(.avx1):not(.avx2) .catg-name{font-size:13.5px!important}
+#allrecords:not(.avx1):not(.avx2) .catg-text{padding:12px 6px 0!important}
+#allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{height:38px!important;font-size:9.5px!important;margin:12px 6px 0!important;width:calc(100% - 12px)!important}
+}
+
+html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-wrap,html body #allrecords:not(.avx1):not(.avx2) .bcta-wrap,html body #allrecords:not(.avx1):not(.avx2) #rec1851190051 .bben-wrap,html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-wrap{background:transparent!important;background-color:transparent!important;width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .bpro-card,html body #allrecords:not(.avx1):not(.avx2) .bcta-card{border-radius:20px!important;overflow:hidden!important;background:#FFFDFA!important;border:1px solid #EFE7DA!important}
+html body #allrecords:not(.avx1):not(.avx2) .bcta-media{border-radius:20px!important}
+/* ============ /AVANTCHA LAYER 58 ============ */
+
+/* ============ AVANTCHA LAYER 59 - product tabs like znakfood ============ */
+html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper{display:inline-flex!important;width:auto!important;background:#F2EADD!important;border-radius:18px!important;padding:6px!important;gap:2px!important;margin:0 auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .t1281__slider{text-align:center!important}
+html body #allrecords:not(.avx1):not(.avx2) .t1281__item{width:auto!important;background:transparent!important;border:0!important;border-radius:14px!important;transition:background .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .t1281__title{padding:9px 18px!important;font-size:13px!important;letter-spacing:.02em!important;text-transform:none!important;color:#8A7B67!important;-webkit-text-fill-color:#8A7B67!important}
+html body #allrecords:not(.avx1):not(.avx2) .t1281__item.t1281__tab_active{background:#FFFFFF!important;box-shadow:0 2px 8px rgba(120,95,60,.10)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t1281__item.t1281__tab_active .t1281__title{color:#2B2320!important;-webkit-text-fill-color:#2B2320!important;font-weight:600!important}
+html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281),html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281) .t396__artboard,html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281)+.r,html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281)+.r .t396__artboard{background:#FDFAF5!important;background-color:#FDFAF5!important}
+@media(max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .t1281__title{padding:8px 12px!important;font-size:11.5px!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper{padding:4px!important;border-radius:16px!important}}
+/* ============ /AVANTCHA LAYER 59 ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card{background:transparent!important;border:0!important;box-shadow:none!important;padding:0 0 8px!important;border-radius:0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{
+box-shadow:none!important;
+}
+html body #allrecords:not(.avx1):not(.avx2) .catg-img-wrap{
+background:#EFEAE1!important;
+height:auto!important;
+overflow:hidden!important;
+}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{background:#E7E1D5!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card img{
+transition:transform .3s!important;
+}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-text{
+text-align:left!important;
+}
+html body #allrecords:not(.avx1):not(.avx2) .catg-eyebrow{
+background:transparent!important;
+padding:0!important;
+border-radius:0!important;
+}
+html body #allrecords:not(.avx1):not(.avx2) .catg-name{
+color:#2B2320!important;
+}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{
+margin:12px 0 0!important;
+width:100%!important;
+opacity:1!important;
+position:static!important;
+transform:none!important;
+}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add:hover{
+border-color:#2B2320!important;
+}
+@media(max-width:900px){
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{
+font-size:9.5px!important;
+}
+}
+/* ============ /AVANTCHA LAYER 60 ============ */
+
+/* ============ AVANTCHA LAYER 61 - colour background per product ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/milkshake"] .catg-img-wrap{background:#C9BFD8!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"] .catg-img-wrap{background:#C8A98A!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"] .catg-img-wrap{background:#E0B36A!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cordial"] .catg-img-wrap{background:#D98F72!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/raf-coffee"] .catg-img-wrap{background:#DCC0B4!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chai-latte"] .catg-img-wrap{background:#C79A6B!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/matcha"] .catg-img-wrap{background:#A8BE8C!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chocolate"] .catg-img-wrap{background:#8E6B54!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cream-latte"] .catg-img-wrap{background:#D9C7A9!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"] .catg-img-wrap{background:#C97B86!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] .catg-img-wrap{background:#E3C9A0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"] .catg-img-wrap{background:#B3C4A0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"] .catg-img-wrap{background:#D8C48F!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .catg-img-wrap{background:#9FB596!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] .catg-img-wrap{background:#AEC3CC!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .catg-img-wrap{background:#B0AEC4!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{filter:brightness(.95)!important;background-color:inherit}
+/* ============ /AVANTCHA LAYER 61 ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card img{
+position:absolute!important;
+inset:0!important;
+margin:0!important;
+width:100%!important;
+height:100%!important;
+object-fit:contain!important;
+}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card{display:flex!important;flex-direction:column!important;height:100%!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-text{flex:1 1 auto!important}
+
+@media(max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-card img{padding:10px!important}}
+/* ============ /AVANTCHA LAYER 62 ============ */
+
+/* ============ AVANTCHA LAYER 63 - equal product image size ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card img{
+transform:scale(1.16)!important;
+}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cream-latte"] img{transform:scale(0.88)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] img{transform:scale(0.88)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] img{transform:scale(0.88)!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cream-latte"]:hover img{transform:scale(0.92)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"]:hover img{transform:scale(0.92)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"]:hover img{transform:scale(0.92)!important}
+
+/* ============ /AVANTCHA LAYER 63 ============ */
+
+/* ============ AVANTCHA LAYER 64 - align packs + polish ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card img{object-position:50% 50%!important;padding:14px 16px!important;transform-origin:center center!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"] img{transform:scale(0.88) translateY(-3%)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chocolate"] img{transform:scale(0.90) translateY(-1%)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"] img{transform:scale(1.13)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-img-wrap{
+aspect-ratio:1/1.14!important;
+}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover img{transform:scale(1.21)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"]:hover img{transform:scale(0.92) translateY(-3%)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chocolate"]:hover img{transform:scale(0.94) translateY(-1%)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"]:hover img{transform:scale(1.18)!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-eyebrow{font-size:10.5px!important;letter-spacing:.12em!important;color:#A79C90!important;-webkit-text-fill-color:#A79C90!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{letter-spacing:.1em!important;font-weight:600!important}
+/* ============ /AVANTCHA LAYER 64 ============ */
+
+/* ============ AVANTCHA LAYER 65 - catalog polish ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-img-wrap{border-radius:18px!important;box-shadow:0 1px 2px rgba(90,70,45,.05)!important;transition:box-shadow .3s ease,background .3s ease!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{box-shadow:0 14px 34px rgba(90,70,45,.14)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card{transition:transform .3s cubic-bezier(.22,.61,.36,1)!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-text{padding:16px 4px 0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-name{
+font-size:16px!important;
+font-weight:650!important;
+letter-spacing:.01em!important;
+}
+html body #allrecords:not(.avx1):not(.avx2) .catg-sub{font-size:12px!important;color:#8F857A!important;margin-top:4px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{background:#F2EADD!important;border:0!important;color:#2B2320!important;-webkit-text-fill-color:#2B2320!important;height:40px!important;border-radius:12px!important;margin-top:14px!important;font-size:10.5px!important;transition:background .25s,color .25s!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add:hover{background:#2B2320!important;color:#FFF!important;-webkit-text-fill-color:#FFF!important}
+@media(max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-img-wrap{border-radius:14px!important}html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{height:38px!important}}
+/* ============ /AVANTCHA LAYER 65 ============ */
+
+/* ============ AVANTCHA LAYER 66 - hover fix + mobile type ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card.in-view:hover .catg-img-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{transform:none!important;border-radius:18px!important;border-color:transparent!important;box-shadow:0 14px 34px rgba(90,70,45,.14)!important}
+@media(max-width:900px){
+html body #allrecords:not(.avx1):not(.avx2) .catg-name{font-size:13.5px!important;margin-top:6px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-sub{font-size:11px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-text{padding:12px 2px 0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card.in-view:hover .catg-img-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{border-radius:14px!important;box-shadow:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{transform:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover img{transform:scale(1.16)!important}
+}
+/* ============ /AVANTCHA LAYER 66 ============ */
+
+/* ============ AVANTCHA LAYER 67 - hide eyebrow + sub in cards ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-eyebrow,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{display:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-text{padding-top:14px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-name{margin-top:0!important}
+/* ============ /AVANTCHA LAYER 67 ============ */
+
+/* ============ AVANTCHA LAYER 68 - sachet shots not cropped ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"] img{transform:scale(0.98)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"] img{transform:scale(0.98)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"] img{transform:scale(0.98)!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"]:hover img{transform:scale(1.02)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"]:hover img{transform:scale(1.02)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"]:hover img{transform:scale(1.02)!important}
+@media(max-width:900px){
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"]:hover img{transform:scale(0.98)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"]:hover img{transform:scale(0.98)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"]:hover img{transform:scale(0.98)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"]:hover img{transform:scale(0.98)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"]:hover img{transform:scale(0.98)!important}
+}
+/* ============ /AVANTCHA LAYER 68 ============ */
+
+/* ============ AVANTCHA LAYER 69 - hide group titles + crop sachet shots ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-group-title{display:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-group{margin-top:0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] img{object-fit:cover!important;object-position:50% 78%!important;padding:0!important;transform:scale(1)!important;border-radius:18px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] img{object-fit:cover!important;object-position:50% 78%!important;padding:0!important;transform:scale(1)!important;border-radius:18px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"]:hover img{transform:scale(1.04)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"]:hover img{transform:scale(1.04)!important}
+/* ============ /AVANTCHA LAYER 69 ============ */
+
+/* ============ AVANTCHA LAYER 70 - catalog intro ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-wrap{background:#FDFAF5!important;padding-top:56px!important;padding-bottom:72px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-inner{max-width:1240px!important;margin:0 auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-h1{text-align:left!important;font-size:clamp(32px,3.2vw,46px)!important;line-height:1.08!important;font-weight:600!important;color:#2B2320!important;letter-spacing:-.02em!important;max-width:none!important;width:auto!important;margin:0!important;text-wrap:balance}
+html body #allrecords:not(.avx1):not(.avx2) .catg-lede{text-align:left!important;font-size:15px!important;line-height:1.6!important;color:#8F857A!important;max-width:52ch!important;margin:16px 0 0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-grid{margin-top:44px!important}
+@media(max-width:900px){
+html body #allrecords:not(.avx1):not(.avx2) .catg-wrap{padding-top:34px!important;padding-bottom:48px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-h1{font-size:28px!important;max-width:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-lede{font-size:13.5px!important;margin-top:12px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-grid{margin-top:28px!important}
+}
+/* ============ /AVANTCHA LAYER 70 ============ */
+
+@keyframes catgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card{opacity:1!important;visibility:visible!important;animation:catgIn .38s cubic-bezier(.22,.61,.36,1) both!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{animation:none!important;transform:translateY(-4px)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card.is-hidden{display:none!important}
+@media(prefers-reduced-motion:reduce){html body #allrecords:not(.avx1):not(.avx2) .catg-card{animation:none!important}}
+/* ============ /AVANTCHA LAYER 71 ============ */
+
+/* ============ AVANTCHA LAYER 72: catalog card ============ */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-name{font-size:17px!important;letter-spacing:.5px!important;margin:0 0 6px!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal!important;text-transform:none!important;letter-spacing:0!important;font-size:13.5px!important;line-height:1.55!important;font-weight:400!important;color:#8a8177!important;margin:0 0 14px!important;min-height:3.1em}
+@media (max-width:1199px){html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{-webkit-line-clamp:3;min-height:4.65em}}
+@media (max-width:767px){html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{-webkit-line-clamp:4;min-height:6.2em;font-size:12.5px!important}}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{background:transparent!important;border:1px solid #d8cfc2!important;color:#2b2320!important;border-radius:999px!important;padding:13px 24px!important;font-size:11px!important;letter-spacing:1.3px!important;font-weight:600!important;transition:background .25s,color .25s,border-color .25s!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add:hover{background:#2b2320!important;border-color:#2b2320!important;color:#fff!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap{border-radius:22px!important;box-shadow:0 1px 2px rgba(43,35,32,.04),0 8px 24px rgba(43,35,32,.07)!important;transition:box-shadow .35s ease!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{box-shadow:0 2px 6px rgba(43,35,32,.06),0 18px 42px rgba(43,35,32,.13)!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/milkshake"] .catg-img-wrap{background:rgb(223,168,181)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"] .catg-img-wrap{background:rgb(153,100,56)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"] .catg-img-wrap{background:rgb(214,186,96)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cordial"] .catg-img-wrap{background:rgb(130,152,177)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/raf-coffee"] .catg-img-wrap{background:rgb(221,209,185)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chai-latte"] .catg-img-wrap{background:rgb(194,168,153)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/matcha"] .catg-img-wrap{background:rgb(82,168,102)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chocolate"] .catg-img-wrap{background:rgb(73,49,44)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cream-latte"] .catg-img-wrap{background:rgb(206,170,166)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"] .catg-img-wrap{background:rgb(61,5,9)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] .catg-img-wrap{background:rgb(233,230,217)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"] .catg-img-wrap{background:rgb(237,229,215)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"] .catg-img-wrap{background:rgb(230,179,168)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .catg-img-wrap{background:rgb(0,0,0)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] .catg-img-wrap{background:rgb(232,242,233)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .catg-img-wrap{background:rgb(77,51,45)!important}
+/* ============ /AVANTCHA LAYER 72 ============ */
+
+/* ============ AVANTCHA LAYER 73: плавное появление карточек ============ */
+html.catg-rv body #allrecords:not(.avx1):not(.avx2) .catg-card{opacity:0!important;transform:translateY(22px)!important;animation:none!important;transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1)!important;will-change:opacity,transform}
+html.catg-rv body #allrecords:not(.avx1):not(.avx2) .catg-card.in-view{opacity:1!important;transform:none!important}
+@media (prefers-reduced-motion:reduce){html.catg-rv body #allrecords:not(.avx1):not(.avx2) .catg-card{opacity:1!important;transform:none!important;transition:none!important}}
+/* ============ /AVANTCHA LAYER 73 ============ */
+
+/* ============ AVANTCHA LAYER 74: шапка ============ */
+html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{border-bottom:1px solid rgba(26,19,17,.07)!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a{font-weight:500!important;letter-spacing:.2px!important;position:relative!important;color:#2b2320!important;transition:color .25s!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a::after{content:""!important;position:absolute!important;left:0;right:0;bottom:22px;height:1px;background:#2b2320;transform:scaleX(0);transform-origin:left;transition:transform .32s cubic-bezier(.22,.61,.36,1)}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a:hover::after{transform:scaleX(1)}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-ico{border:1px solid rgba(26,19,17,.13)!important;transition:background-color .25s,border-color .25s!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-ico:hover{background-color:rgba(26,19,17,.05)!important;border-color:rgba(26,19,17,.28)!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-cta{font-size:12.5px!important;font-weight:600!important;letter-spacing:.4px!important;box-shadow:0 1px 2px rgba(26,19,17,.10),0 6px 18px rgba(26,19,17,.13)!important;transition:transform .25s,box-shadow .25s,background-color .25s!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover{transform:translateY(-1px)!important;box-shadow:0 2px 6px rgba(26,19,17,.12),0 12px 28px rgba(26,19,17,.20)!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar{background:rgba(255,255,255,.82)!important;-webkit-backdrop-filter:saturate(180%) blur(14px)!important;backdrop-filter:saturate(180%) blur(14px)!important;box-shadow:0 1px 0 rgba(26,19,17,.06),0 10px 30px rgba(26,19,17,.06)!important}
+/* ============ /AVANTCHA LAYER 74 ============ */
+
+/* ============ AVANTCHA LAYER 75: меню, сжатие шапки, активный раздел ============ */
+html body #allrecords:not(.avx1):not(.avx2) .tbh-drop .tbh-mega{border-radius:0 0 20px 20px!important;box-shadow:0 20px 50px rgba(26,19,17,.10),0 2px 8px rgba(26,19,17,.05)!important;top:64px!important;transition:opacity .28s cubic-bezier(.22,.61,.36,1),visibility .28s,top .28s cubic-bezier(.22,.61,.36,1)!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-drop:hover .tbh-mega{top:72px!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{transition:height .3s cubic-bezier(.22,.61,.36,1),background-color .3s,box-shadow .3s!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-in,html body #allrecords:not(.avx1):not(.avx2) .tbh-nav,html body #allrecords:not(.avx1):not(.avx2) .tbh-nav>*,html body #allrecords:not(.avx1):not(.avx2) .tbh-nav__btn,html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a{transition:height .3s cubic-bezier(.22,.61,.36,1)!important}
+
+html body #allrecords[data-tilda-page-alias="catalog"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="milkshake"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="frappe"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="iced-tea"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="cordial"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="raf-coffee"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="chai-latte"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="matcha"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="chocolate"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="cream-latte"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="jam"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="topping"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="garnish"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="sugar-syrup"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="tea"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="sugar-free"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="vending"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"],html body #allrecords[data-tilda-page-alias="distributors"]:not(.avx1):not(.avx2) .tbh-nav a[href="/distributors"],html body #allrecords[data-tilda-page-alias="private-labeling"]:not(.avx1):not(.avx2) .tbh-nav a[href="/private-labeling"],html body #allrecords[data-tilda-page-alias="about-us"]:not(.avx1):not(.avx2) .tbh-nav a[href="/about-us"]{font-weight:600!important;color:#1a1311!important}
+html body #allrecords[data-tilda-page-alias="catalog"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="milkshake"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="frappe"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="iced-tea"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="cordial"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="raf-coffee"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="chai-latte"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="matcha"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="chocolate"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="cream-latte"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="jam"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="topping"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="garnish"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="sugar-syrup"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="tea"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="sugar-free"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="vending"]:not(.avx1):not(.avx2) .tbh-nav a[href="/catalog"]::after,html body #allrecords[data-tilda-page-alias="distributors"]:not(.avx1):not(.avx2) .tbh-nav a[href="/distributors"]::after,html body #allrecords[data-tilda-page-alias="private-labeling"]:not(.avx1):not(.avx2) .tbh-nav a[href="/private-labeling"]::after,html body #allrecords[data-tilda-page-alias="about-us"]:not(.avx1):not(.avx2) .tbh-nav a[href="/about-us"]::after{transform:scaleX(1)!important;background:#1a1311!important}
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-flt{border-radius:18px!important;padding:8px!important;gap:6px!important;justify-content:flex-start!important}}
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-in,html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-nav,html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-nav>*,html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-drop,html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-drop>*,html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-nav__btn{height:60px!important}}
+
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wa{background-color:transparent!important;border:1px solid rgba(37,211,102,.45)!important;transition:background-color .25s,border-color .25s,transform .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wa svg{width:21px!important;height:21px!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wa svg,html body #allrecords:not(.avx1):not(.avx2) .tbh-wa svg path{fill:#1faa4f!important;color:#1faa4f!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wa:hover{background-color:#25d366!important;border-color:#25d366!important;transform:translateY(-1px)!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-wa:hover svg,html body #allrecords:not(.avx1):not(.avx2) .tbh-wa:hover svg path{fill:#fff!important;color:#fff!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover,html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover *{color:#121212!important;-webkit-text-fill-color:#121212!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover svg,html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover svg path{fill:#121212!important;stroke:#121212!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover{border-color:#121212!important}
+/* ============ /AVANTCHA LAYER 75 ============ */
+
+/* ============ AVANTCHA LAYER 76: окно корзины ============ */
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin{background:rgba(26,19,17,.5)!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{border-radius:24px!important;box-shadow:0 30px 80px rgba(26,19,17,.28)!important;padding:34px 32px 32px!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-top{padding:0 0 22px!important;border-bottom:1px solid rgba(26,19,17,.09)!important;font-size:22px!important;font-weight:600!important;letter-spacing:-.2px!important;color:#1a1311!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__product{padding:18px 0!important;border-bottom:1px solid rgba(26,19,17,.07)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__product-imgdiv{border-radius:12px!important;background-color:#f6f1e9!important;background-size:contain!important;overflow:hidden!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__product-title{font-size:15px!important;font-weight:600!important;color:#1a1311!important;letter-spacing:.1px!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__product-plus,html body #allrecords:not(.avx1):not(.avx2) .t706__product-minus{border:1px solid rgba(26,19,17,.16)!important;border-radius:999px!important;transition:background-color .2s,border-color .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__product-plus:hover,html body #allrecords:not(.avx1):not(.avx2) .t706__product-minus:hover{background-color:rgba(26,19,17,.06)!important;border-color:rgba(26,19,17,.3)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__product-del{opacity:.35!important;transition:opacity .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__product-del:hover{opacity:.9!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount-wrap{padding:20px 0 4px!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount{font-size:22px!important;font-weight:700!important;color:#1a1311!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=text],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=email],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=tel],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea{border-radius:12px!important;border:1px solid rgba(26,19,17,.14)!important;padding:14px 16px!important;font-size:15px!important;transition:border-color .2s,box-shadow .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input:focus,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea:focus{border-color:#2b2320!important;box-shadow:0 0 0 3px rgba(43,35,32,.08)!important;outline:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit{border-radius:999px!important;height:54px!important;font-size:12.5px!important;font-weight:600!important;letter-spacing:1.2px!important;transition:transform .2s,box-shadow .2s!important;box-shadow:0 2px 6px rgba(26,19,17,.12),0 10px 26px rgba(26,19,17,.16)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit:hover{transform:translateY(-1px)!important;box-shadow:0 4px 10px rgba(26,19,17,.14),0 16px 34px rgba(26,19,17,.22)!important}
+
+@media (min-width:901px){
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close{border-radius:999px!important;background-color:#fff!important;box-shadow:0 2px 10px rgba(26,19,17,.18)!important;transition:transform .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close:hover{transform:scale(1.06)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg g,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg rect,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg path{fill:#1a1311!important}
+}
+/* ============ /AVANTCHA LAYER 76 ============ */
+/* ============ AVANTCHA LAYER 77: качество текста в плитках ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card{will-change:auto!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text *{font-family:Roboto,-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important;-moz-osx-font-smoothing:auto!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{color:#6f6862!important}
+/* ============ /AVANTCHA LAYER 77 ============ */
+
+/* ============ AVANTCHA LAYER 78: блок преимуществ (40/50/60/100%) ============ */
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card *{font-family:Roboto,-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-number.bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-percent.bchm-percent{font-family:Roboto,-apple-system,Arial,sans-serif!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-number{font-weight:300!important;letter-spacing:-1.5px!important;line-height:1!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-percent{font-weight:300!important;color:#b4a99e!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-eyebrow{font-size:10px!important;letter-spacing:1.6px!important;color:#a79c90!important;margin-bottom:4px!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-title{font-size:18px!important;font-weight:600!important;letter-spacing:.1px!important;margin:14px 0 8px!important;color:#1a1311!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-desc{font-size:14px!important;line-height:1.55!important;color:#6f6862!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card{padding:26px 26px 26px 24px!important;border-left:1px solid rgba(26,19,17,.10)!important;border-radius:14px!important;transition:background-color .3s,border-color .3s!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-grid{gap:0 12px!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card:hover{background-color:rgba(26,19,17,.025)!important;border-left-color:rgba(26,19,17,.28)!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card:first-child{border-left:0!important}
+
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card:not(:has(.bchm-eyebrow)){padding-top:17px!important}
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .bchm-card{border-left:0!important;border-top:0!important;border-radius:0!important;padding:18px 2px 14px!important}html body #allrecords:not(.avx1):not(.avx2) .bchm-card:first-child{padding-top:6px!important}html body #allrecords:not(.avx1):not(.avx2) .bchm-card:not(:has(.bchm-eyebrow)){padding-top:18px!important}html body #allrecords:not(.avx1):not(.avx2) .bchm-grid{gap:0!important}}
+/* ============ /AVANTCHA LAYER 78 ============ */
+
+/* ============ AVANTCHA LAYER 79: товары без цены ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .tbc-add{pointer-events:none!important;font-size:0!important;line-height:0!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] .tbc-add::after,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .tbc-add::after,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .tbc-add::after{content:"Request price"!important;font-size:11px!important;line-height:1!important;letter-spacing:1.3px!important;font-weight:600!important;display:inline-block!important}
+/* ============ /AVANTCHA LAYER 79 ============ */
+
+/* ============ AVANTCHA LAYER 80: юридические ссылки в подвале ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .bchf-legal{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px 18px!important;font-size:13px!important;color:#7e7e7e!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a{color:#9a9a9a!important;text-decoration:none!important;position:relative!important;transition:color .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a:hover{color:#fff!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a+a::before{content:"·"!important;position:absolute!important;left:-11px!important;color:#5a5a5a!important}
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .bchf-legal{gap:4px 14px!important;font-size:12px!important}html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a+a::before{display:none!important}}
+/* ============ /AVANTCHA LAYER 80 ============ */
+
+/* ============ AVANTCHA LAYER 81: без прыжка шапки при загрузке ============ */
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{content:""!important;flex:0 0 44px!important;height:44px!important;order:9!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util:has(.tbh-wa)::after{display:none!important}}
+@media (min-width:901px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{content:""!important;flex:0 0 40px!important;height:40px!important;order:9!important;border:1px solid rgba(37,211,102,.45)!important;border-radius:999px!important;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231faa4f' d='M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29z'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:19px 19px!important;align-self:center!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util:has(.tbh-wa)::after{display:none!important}}
+/* ============ /AVANTCHA LAYER 81 ============ */
+
+
+
+/* ============ AVANTCHA LAYER 84: каталог на телефоне ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-name{color:#201A17!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-price{color:#201A17!important;font-weight:600!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{color:#6F6862!important}
+
+@media (hover:none){html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .tbc-add:hover{background:transparent!important;background-color:transparent!important;color:#2B2320!important;border-color:#D8CFC2!important}html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover,html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{transform:none!important}html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover .catg-img-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{transform:none!important;box-shadow:0 1px 2px rgba(43,35,32,.04),0 8px 24px rgba(43,35,32,.07)!important;filter:none!important}html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover .catg-img-wrap img{transform:scale(1.16)!important}}
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap img{transform:none!important;object-fit:contain!important;padding:6px!important}}
+/* ============ /AVANTCHA LAYER 84 ============ */
+
+/* ============ AVANTCHA LAYER 85: промо-карточки на телефоне ============ */
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__elem{width:100%!important;left:0!important}html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-wrap{width:100%!important;padding:56px 16px 60px!important}html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-card,html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bcta-card{background-color:#F5EFE6!important;border-color:#E7DCCB!important;padding:26px 20px 24px!important}html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-card .bpro-img{width:auto!important;height:136px!important;left:auto!important;right:-6px!important;top:auto!important;bottom:8px!important;object-fit:contain!important}}
+/* ============ /AVANTCHA LAYER 85 ============ */
+
+/* ============ AVANTCHA LAYER 86: подвал на телефоне ============ */
+
+@media (max-width:900px){html{background-color:#000!important}html body #allrecords:not(.avx1):not(.avx2) .bchf-logopanel{overflow:hidden!important;height:auto!important;min-height:200px!important}html body #allrecords:not(.avx1):not(.avx2) .bchf-logopanel-img{margin:0!important;bottom:0!important;height:auto!important;width:200px!important;max-width:60%!important;object-fit:contain!important}}
+/* ============ /AVANTCHA LAYER 86 ============ */
+
+/* ============ AVANTCHA LAYER 87: вкладки на товарной, телефон ============ */
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .t1281{padding-top:24px!important;padding-bottom:18px!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper_mobile{display:none!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__slider{justify-content:center!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper.t1281__wrapper{display:flex!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:4px!important;gap:0!important;justify-content:space-between!important;overflow:hidden!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__item.t1281__item{flex:0 1 auto!important;min-width:0!important;padding:9px 0!important;text-align:center!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__item .t1281__title.t1281__title{font-size:9.5px!important;white-space:nowrap!important;padding:6px!important;justify-content:center!important;letter-spacing:0!important}}
+/* ============ /AVANTCHA LAYER 87 ============ */
+
+/* ============ AVANTCHA LAYER 88: FAQ на товарных по образцу с /about-us ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(.t668__accordion){background-image:none!important;padding:56px 0 64px!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__accordion{margin-bottom:14px!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__wrapper.t668__wrapper{background-color:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:16px!important;overflow:hidden!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__title.t668__title{color:#fff!important;font-size:16px!important;line-height:1.4!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__icon svg *{stroke:rgba(255,255,255,.75)!important;fill:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__textwrapper,html body #allrecords:not(.avx1):not(.avx2) .t668__text{color:#B9B9B9!important;font-size:14px!important}
+/* ============ /AVANTCHA LAYER 88 ============ */
+
+/* ============ AVANTCHA LAYER 89: поле телефона в корзине ============ */
+
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-input-phonemask__wrap{border:1px solid rgba(26,19,17,.14)!important;border-radius:12px!important;background:#fff!important;padding:0 12px!important;overflow:hidden!important;transition:border-color .2s,box-shadow .2s!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-input-phonemask__wrap:focus-within{border-color:#2b2320!important;box-shadow:0 0 0 3px rgba(43,35,32,.08)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=tel].t-input-phonemask.t-input-phonemask{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:13px 8px!important;height:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-input-phonemask__wrap .t-input-phonemask__select{border:0!important;background:transparent!important}
+/* ============ /AVANTCHA LAYER 89 ============ */
+
+/* ============ AVANTCHA LAYER 90: формы не «гуляют» на iPhone ============ */
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) input[type=text],html body #allrecords:not(.avx1):not(.avx2) input[type=email],html body #allrecords:not(.avx1):not(.avx2) input[type=tel],html body #allrecords:not(.avx1):not(.avx2) input[type=number],html body #allrecords:not(.avx1):not(.avx2) input[type=search],html body #allrecords:not(.avx1):not(.avx2) textarea,html body #allrecords:not(.avx1):not(.avx2) select{font-size:16px!important}html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin{height:100dvh!important;max-height:100dvh!important;overscroll-behavior:contain!important}html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{max-height:calc(100dvh - 24px)!important;overflow-y:auto!important;overscroll-behavior:contain!important}}
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=text],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=email],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=tel],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea{font-size:16px!important}}
+/* ============ /AVANTCHA LAYER 90 ============ */
+
+/* ============ AVANTCHA LAYER 91: калькуляторы на телефоне ============ */
+
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-elem__24293693311470209944682,html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-elem__24293693311470210128180,html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-elem__24293693311470233923389{display:none!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .t396__artboard{height:auto!important;min-height:0!important;padding:24px 0 8px!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .t396__elem{position:relative!important;left:0!important;top:0!important;width:100%!important;max-width:100%!important;margin:0!important;transform:none!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-atom{width:100%!important;max-width:100%!important;height:auto!important;white-space:normal!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tb-calculator-container{width:100%!important;max-width:100%!important;padding:0 16px!important;box-sizing:border-box!important}}
+/* ============ /AVANTCHA LAYER 91 ============ */
+
+
+/* ============ AVANTCHA LAYER 92: заголовок FAQ на товарных ============ */
+/* Заголовок был 48px КАПСОМ, у образца (/about-us) — 34px обычным начертанием.
+   Блок заголовка опознаём структурно: запись, ЗА КОТОРОЙ идёт запись со списком t668. */
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom{font-size:30px!important;font-weight:400!important;line-height:1.15!important;text-transform:lowercase!important;letter-spacing:0!important}
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom::first-letter{text-transform:uppercase!important}
+
+/* ============ /AVANTCHA LAYER 92 ============ */
+
+
+/* ============ AVANTCHA LAYER 93: шапка без прыжка, жёсткая сетка ============ */
+/* Заглушка из слоя 81 держала общую ширину, но на телефоне пользователя иконки всё равно ехали:
+   при загрузке группа начиналась с 174, после появления кнопки — со 131. Теперь пять фиксированных мест,
+   бургер всегда в пятом, WhatsApp в четвёртом — ничто не двигается, когда кнопка появляется. */
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util{display:grid!important;grid-template-columns:44px 54px 44px 44px 44px!important;gap:6px!important;align-items:center!important;justify-content:end!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{display:none!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-burger{grid-column:5!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-wa{grid-column:4!important}}
+/* ============ /AVANTCHA LAYER 93 ============ */
+
+
+/* ============ AVANTCHA LAYER 94: значок WhatsApp сразу, плавная надпись, мягкий герой ============ */
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::before{content:""!important;grid-column:4!important;grid-row:1!important;width:44px!important;height:44px!important;border:1px solid rgba(37,211,102,.45)!important;border-radius:999px!important;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231faa4f' d='M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29z'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:21px 21px!important;align-self:center!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util:has(.tbh-wa)::before{display:none!important}}
+
+/* ============ /AVANTCHA LAYER 94 ============ */
+
+
+
+
+
+
+
+
+/* ============ AVANTCHA LAYER 96: FAQ — точки в шапке блока ============ */
+/* Точки убирались только со списка вопросов, а фон в точку лежит и на записи ЗАГОЛОВКА над ним */
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion){background-image:none!important}
+/* ============ /AVANTCHA LAYER 96 ============ */
+
+
+/* ============ AVANTCHA LAYER 97: FAQ товарных один в один с образцом ============ */
+html body #allrecords:not(.avx1):not(.avx2) .t668__circle{display:none!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__icon{width:24px!important;height:24px!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__accordion{margin-bottom:14px!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__header{padding:0!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__trigger-button{padding:18px 20px!important;min-height:0!important}
+html body #allrecords:not(.avx1):not(.avx2) .t668__title.t668__title{font-size:16px!important;line-height:1.35!important;padding:0 16px 0 0!important}
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom{font-size:34px!important}
+
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom::after{content:"Supply terms, samples, certification and distribution. If your question is not here, write to us and we will answer directly."!important;display:block!important;margin-top:18px!important;font-size:16px!important;line-height:1.5!important;color:#8e8e8e!important;text-transform:none!important;font-weight:400!important;letter-spacing:0!important}
+/* ============ /AVANTCHA LAYER 97 ============ */
+
+
+/* ============ AVANTCHA LAYER 98: FAQ — ровный заголовок, без скруглений, без пустоты ============ */
+/* Скругление верха убрано по просьбе. Заголовок переведён в поток: раньше при height:auto блок
+   схлопывался (дети абсолютные) и текст вылезал. Отступы списка ужаты — было 56 сверху и 64 снизу. */
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion){border-radius:0!important;overflow:visible!important}
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .t396__artboard{height:auto!important;min-height:250px!important;padding:0!important}
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .t396__elem{position:relative!important;top:0!important;left:0!important;margin:34px 20px 24px!important;width:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(.t668__accordion){padding:0 0 36px!important}
+/* каталог: у описания была минимальная высота под 4 строки — на телефоне это давало пустоту до кнопки */
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{min-height:0!important;margin-bottom:10px!important}html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{margin-top:12px!important}}
+/* ============ /AVANTCHA LAYER 98 ============ */
+
+
+/* ============ AVANTCHA LAYER 99: единая система движения ============ */
+/* На сайте было 74 разных описания перехода — отсюда ощущение разнобоя. У avantcha по сути одно.
+   Всё, что реагирует на касание, теперь движется одинаково: 0.3с и одна кривая ускорения.
+   Только для устройств с мышью, чтобы на телефоне не залипали наведения. */
+@media (hover:hover){html body #allrecords:not(.avx1):not(.avx2) a,html body #allrecords:not(.avx1):not(.avx2) button,html body #allrecords:not(.avx1):not(.avx2) input,html body #allrecords:not(.avx1):not(.avx2) textarea,html body #allrecords:not(.avx1):not(.avx2) select,html body #allrecords:not(.avx1):not(.avx2) .t-btn,html body #allrecords:not(.avx1):not(.avx2) .t-submit,html body #allrecords:not(.avx1):not(.avx2) [class*="btn"],html body #allrecords:not(.avx1):not(.avx2) [class*="button"],html body #allrecords:not(.avx1):not(.avx2) .tbh-ico,html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a,html body #allrecords:not(.avx1):not(.avx2) .tbh-cta,html body #allrecords:not(.avx1):not(.avx2) .tbh-wa,html body #allrecords:not(.avx1):not(.avx2) .tbh-burger,html body #allrecords:not(.avx1):not(.avx2) .tbh-reg__btn,html body #allrecords:not(.avx1):not(.avx2) .tbc-badge,html body #allrecords:not(.avx1):not(.avx2) .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .catg-card,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-card img,html body #allrecords:not(.avx1):not(.avx2) .bpro-card,html body #allrecords:not(.avx1):not(.avx2) .bcta-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-title,html body #allrecords:not(.avx1):not(.avx2) .bchm-desc,html body #allrecords:not(.avx1):not(.avx2) .bben-card,html body #allrecords:not(.avx1):not(.avx2) .bben-card-title,html body #allrecords:not(.avx1):not(.avx2) .bfaq-item,html body #allrecords:not(.avx1):not(.avx2) .tn-atom,html body #allrecords:not(.avx1):not(.avx2) .tn-molecule,html body #allrecords:not(.avx1):not(.avx2) .tbs__lift,html body #allrecords:not(.avx1):not(.avx2) .t-input,html body #allrecords:not(.avx1):not(.avx2) .t668__wrapper,html body #allrecords:not(.avx1):not(.avx2) .t668__icon,html body #allrecords:not(.avx1):not(.avx2) .t706__product,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close{transition-duration:.3s!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important}}
+/* ⛔ ПЕРВЫЙ ЭКРАН ИСКЛЮЧЁН: его картинки двигает скрипт слайдера, любой переход = «полёты» */
+html body #allrecords:not(.avx1):not(.avx2) .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__mark{transition-duration:0s!important}
+/* ============ /AVANTCHA LAYER 99 ============ */
+
+
+/* ============ AVANTCHA LAYER 100: появление первого экрана ============ */
+/* Упаковка, стакан и фоновая надпись выезжают слева при заходе на сайт, по очереди.
+   Только первый слайд: у остальных своя анимация при переключении.
+   ⛔ Это АНИМАЦИЯ (одноразовая), а не переход — переходы на геометрии дают «полёты» при смене слайда. */
+@keyframes tbsHeroIn{from{opacity:0;translate:-80px 0}to{opacity:1;translate:0 0}}
+html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch{animation:tbsHeroIn .9s cubic-bezier(.16,.84,.44,1) .05s both!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass{animation:tbsHeroIn .9s cubic-bezier(.16,.84,.44,1) .2s both!important}
+html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation:tbsHeroIn 1.1s cubic-bezier(.16,.84,.44,1) .35s both!important}
+@media (prefers-reduced-motion:reduce){html body #allrecords:not(.avx1):not(.avx2) .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__svgmark{animation:none!important;opacity:1!important;translate:0 0!important}}
+/* ============ /AVANTCHA LAYER 100 ============ */
+
+
+/* ============ AVANTCHA LAYER 101: снятие нагрузки при прокрутке ============ */
+/* 1) У СКРЫТОЙ панели тёмной темы стоит backdrop-filter blur(14px) во весь артборд —
+   элемент невидим, а браузер продолжает считать размытие на каждый кадр прокрутки. */
+html body #allrecords:not(.avx1):not(.avx2) #rec1842546651 .t396__artboard{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+/* 2) drop-shadow висел на ВСЕХ 10 упаковках и стаканах, а видны только два — оставляем тень активному слайду */
+
+/* ============ /AVANTCHA LAYER 101 ============ */
+
+
+/* ============ AVANTCHA LAYER 102: шапка — шрифт каталога, линия в мегаменю, место под WhatsApp ============ */
+/* 1) «Catalog» — ЭТО BUTTON, а оформление пунктов было написано только для ссылок: вес 400 вместо 500, без разрядки */
+html body #allrecords:not(.avx1):not(.avx2) .tbh-nav .tbh-nav__btn{font-weight:500!important;letter-spacing:.2px!important;font-size:14px!important}
+/* 2) Подчёркивание рассчитано на пункты высотой 72 (отступ снизу 22px).
+   В мегаменю пункты высотой 17 — тот же отступ выносил линию ВЫШЕ текста. Ставим её под текст. */
+html body #allrecords:not(.avx1):not(.avx2) .tbh-mega a::after{bottom:-3px!important}
+/* ============ /AVANTCHA LAYER 102 ============ */
+
+
+
+
+
+/* ============ AVANTCHA LAYER 104: телефон — скачок масштаба спрятан за появлением ============ */
+/* Скрипты героя расставляют картинки в проходы 0 / 60 / 400 мс, и на телефоне видно, как упаковка
+   после появления меняет размер. Сдвигаем начало анимации за последний ранний проход:
+   до 0.45с картинка не показана, а когда выезжает — размер уже окончательный. */
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation-delay:2.6s!important}html.hro body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch{animation-delay:0s!important}html.hro body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass{animation-delay:.15s!important}html.hro body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation-delay:.3s!important}}
+/* ============ /AVANTCHA LAYER 104 ============ */
+
+
+/* ============ AVANTCHA LAYER 105: заглушка WhatsApp стоит ПЕРЕД Contact Us ============ */
+/* Заглушка `::after` имеет order:9 и без этого правила вставала ПОСЛЕ кнопки Contact Us,
+   и та уезжала влево на 44px, пока скрипт не создаст настоящую кнопку. */
+@media (min-width:901px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{order:4!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-burger{order:5!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-cta{order:10!important}}
+/* ============ /AVANTCHA LAYER 105 ============ */
+
+
+/* ============ AVANTCHA LAYER 106: одинаковый размер дойпаков в каталоге ============ */
+/* Были пер-товарные масштабы 1.16 / 0.88 / 0.98 из старых слоёв — на телефоне я их уже снял,
+   на десктопе оставались: одни упаковки крупнее, другие мельче, сетка выглядела неровной */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap img{transform:none!important;object-fit:contain!important;padding:8px!important}
+/* ============ /AVANTCHA LAYER 106 ============ */
+
+
+/* ============ AVANTCHA LAYER 107: на телефоне — только мягкое проявление ============ */
+/* На узком экране выезд слева совпадал с движением слайдера — читалось как рывок справа.
+   Оставляем только проявление на месте, без сдвига. */
+@keyframes tbsFadeIn{from{opacity:0}to{opacity:1}}
+@media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation-name:tbsFadeIn!important;animation-duration:.6s!important;animation-timing-function:ease-out!important}}
+/* ============ /AVANTCHA LAYER 107 ============ */
+
+
+/* ============ AVANTCHA LAYER 108: значок не мелькает в Contact Us ============ */
+/* НАШЁЛ ПОЛЬЗОВАТЕЛЬ: значок WhatsApp изначально лежит ВНУТРИ кнопки Contact Us,
+   а скрипт потом вынимает его в отдельную круглую кнопку. Замерено: со значком кнопка 165px, без него 142px —
+   вот откуда сдвиг шапки на 23px при каждой загрузке. Прячем значок, пока он внутри кнопки. */
+html body #allrecords:not(.avx1):not(.avx2) .tbh-cta>svg{display:none!important}
+/* ============ /AVANTCHA LAYER 108 ============ */
+
+
+/* ============ AVANTCHA LAYER 109: упаковки одного видимого размера ============ */
+/* Коробки плиток одинаковы, НО в САМИХ ФАЙЛАХ разные поля: у Frappe упаковка занимает 91% кадра,
+   у Garnish — 54%, у большинства 67%. Оттого одни казались крупнее других.
+   Доля измерена по пикселям каждого файла, масштаб = 0.72 / доля — видимая высота стала равной */
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/milkshake"] .catg-img-wrap img{transform:scale(1.065)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"] .catg-img-wrap img{transform:scale(0.788)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"] .catg-img-wrap img{transform:scale(1.079)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cordial"] .catg-img-wrap img{transform:scale(1.079)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/raf-coffee"] .catg-img-wrap img{transform:scale(1.079)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chai-latte"] .catg-img-wrap img{transform:scale(1.079)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/matcha"] .catg-img-wrap img{transform:scale(1.065)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chocolate"] .catg-img-wrap img{transform:scale(0.788)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cream-latte"] .catg-img-wrap img{transform:scale(0.788)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"] .catg-img-wrap img{transform:scale(1.079)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] .catg-img-wrap img{transform:scale(0.788)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"] .catg-img-wrap img{transform:scale(1.321)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"] .catg-img-wrap img{transform:scale(1.079)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .catg-img-wrap img{transform:scale(0.822)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] .catg-img-wrap img{transform:scale(0.853)!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .catg-img-wrap img{transform:scale(0.788)!important}
+/* ============ /AVANTCHA LAYER 109 ============ */
+
+/* ============ AVANTCHA LAYER 110 — ПОДВАЛ: убран большой логотип над аккордеоном ============ */
+/* На телефоне в подвале было ДВА логотипа: .bchf-mobile-logo (375x430) над колонками
+   и .bchf-logopanel в самом низу. Оставлен только нижний. */
+#allrecords:not(.avx1):not(.avx2) .bchf-mobile-logo{display:none!important}
+/* ============ /AVANTCHA LAYER 110 ============ */
