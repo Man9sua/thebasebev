@@ -1,8 +1,8 @@
 # Route indexability audit
 
-Generated: 2026-08-21T02:28:08.329Z
+Generated: 2026-08-21T20:33:07.470Z
 
-Target: `https://the-base-production.mnsdemo.workers.dev`
+Target: `https://the-base-production.mansua.workers.dev`
 
 ## Accounting
 

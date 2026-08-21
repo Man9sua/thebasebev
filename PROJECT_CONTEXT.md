@@ -37,8 +37,10 @@ Cloudflare Workers
 ```
 
 - Production: `https://thebasebev.com` — still Tilda.
-- Staging: `https://the-base-staging.mnsdemo.workers.dev`.
-- Production preview: separate `the-base-production` Worker on `workers.dev`, with no custom domain.
+- Cloudflare account: `mansua`, dedicated to THE BASE.
+- Staging: `https://the-base-staging.mansua.workers.dev`.
+- Production preview: `https://the-base-production.mansua.workers.dev`, with no custom domain.
+- Personal Cloudflare account `indukok667` is not THE BASE infrastructure and must never receive future THE BASE deployments. Its legacy previews are retained temporarily only as rollback/reference.
 - Local Tilda export: technical content/design/asset source of truth.
 - Live Tilda site: read-only reference for current production parity.
 
@@ -54,7 +56,7 @@ Next.js application
 CMS / Lead API / future Odoo integrations
 ```
 
-The registrar, nameservers, custom domain, and live traffic must not be changed without a separately approved cutover.
+The registrar, nameservers, custom domain, and live traffic must not be changed without a separately approved cutover. Teammates must be invited manually only to Cloudflare account `mansua`, never to personal account `indukok667`.
 
 ## International architecture — future only
 

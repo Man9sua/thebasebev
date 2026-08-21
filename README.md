@@ -16,6 +16,7 @@ This is not yet a Tilda-free implementation. The compatibility document executes
 - Global/exported CSS during the compatibility phase
 - OpenNext for Cloudflare
 - Cloudflare Workers staging and isolated production-preview environments
+- Dedicated Cloudflare account `mansua`; personal account `indukok667` is excluded
 
 ## Requirements
 
@@ -77,8 +78,9 @@ npm.cmd run preview
 Deploy only the configured staging Worker:
 
 ```powershell
-npx.cmd wrangler whoami
-npx.cmd wrangler login
+npx.cmd wrangler auth create mansua
+npx.cmd wrangler auth activate mansua .
+npx.cmd wrangler whoami --json
 npm.cmd run deploy:staging
 ```
 
@@ -95,21 +97,22 @@ The configured staging Worker name is `the-base-staging`. The repository does no
 Current verified staging deployment:
 
 ```text
-https://the-base-staging.mnsdemo.workers.dev
+https://the-base-staging.mansua.workers.dev
 ```
 
 Current verified production preview:
 
 ```text
-https://the-base-production.mnsdemo.workers.dev
+https://the-base-production.mansua.workers.dev
 ```
 
-The OpenNext configuration uses its read-only Workers Static Assets incremental cache for the SSG pages. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
+The OpenNext configuration uses its read-only Workers Static Assets incremental cache for the SSG pages. The Cloudflare build also prepares a generated static-document fast path so the public site stays below the target account's Workers Free CPU limit; dynamic APIs remain in OpenNext. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
 
 Run the complete sequential verification against a deployed target with:
 
 ```powershell
-npm.cmd run audit:production-readiness -- https://the-base-production.mnsdemo.workers.dev
+npm.cmd run audit:production-readiness -- https://the-base-production.mansua.workers.dev
+npm.cmd run audit:cloudflare-parity
 ```
 
 Individual remote audits are available as `audit:crawlers`, `audit:seo-parity`, `audit:routes`, and `audit:analytics`. They are diagnostic only and do not bypass Cloudflare controls or submit real leads/orders.
@@ -199,7 +202,7 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 | Checkout/order delivery | NEEDS CREDENTIALS | Cart state/UI are verified without submitting a real order; owned receiver/payment contracts are required. |
 | Dynamic recipes/catalog feed | BLOCKED | Upstream feed data is not contained in the export. |
 | OpenNext Worker bundle | DONE | `npm run cf:build` completes locally; Windows emits the upstream WSL recommendation. |
-| Cloudflare staging deployment | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed; remote HTTP and browser smoke pass. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker exists with preview noindex and no custom domain. |
-| GitHub CI | DONE | Pull requests and shared-branch pushes run install/typecheck/lint/build/assets/audit checks; CI has no deployment job. Branch protection remains a GitHub-admin setting to confirm. |
+| Cloudflare staging deployment | DONE | `the-base-staging.mansua.workers.dev` is deployed in isolated account `mansua`; remote HTTP and crawler smoke pass. |
+| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker exists in `mansua` with preview noindex and no custom domain. |
+| GitHub CI/CD | DONE | Pull requests and shared-branch pushes run verification only. A separate manual workflow can deploy `workers.dev` previews only after enforcing the `mansua` account ID; GitHub environment credentials still need owner configuration. |
 | Production cutover | HUMAN APPROVAL REQUIRED | Runbooks are prepared; domain, DNS, Tilda, and Search Console remain untouched. |

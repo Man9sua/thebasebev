@@ -10,7 +10,9 @@ The implementation intentionally preserves Tilda class names and head assets dur
 
 Current-tree `npm run build`, `npm run cf:build`, typecheck, lint, asset validation, HTTP smoke, and browser smoke complete successfully. The OpenNext build reports its upstream Windows/WSL recommendation; the generated Worker bundle itself completes.
 
-The staging Worker is deployed at `https://the-base-staging.mnsdemo.workers.dev`. Remote HTTP and browser smoke both pass. No custom-domain route, production DNS, GoDaddy setting, Tilda project, or Search Console property was changed.
+The isolated staging Worker is deployed at `https://the-base-staging.mansua.workers.dev` in Cloudflare account `mansua`. The previous `mnsdemo.workers.dev` Workers remain unchanged in personal account `indukok667` only as rollback/reference. No custom-domain route, production DNS, GoDaddy setting, Tilda project, or Search Console property was changed.
+
+The empty target account started on Workers Free. Initial OpenNext document responses intermittently exceeded its 10 ms CPU limit and returned 503; Worker tail provided exact `exceededCpu` evidence. The final build serves the same prerendered HTML through a generated Static Assets fast path and retains OpenNext for dynamic APIs. Repeated stability, source-target parity, HTTP/browser/commerce/crawler, and production-readiness checks pass on the final target versions.
 
 Cloudflare runtime required two explicit boundaries that local Node does not expose: legacy page aliases are a checked-in audited list rather than a runtime directory scan, and OpenNext uses `staticAssetsIncrementalCache` with cache interception so all build-time SSG responses are deployed as Workers Static Assets. The native branded unknown-path 404 avoids reading the source export from the Worker filesystem; the separate `/not-found` compatibility URL still preserves its exported page.
 
@@ -172,7 +174,7 @@ These findings belong in later cleanup/design decisions. They must not be silent
 | Analytics continuity | PARTIAL | Existing IDs are inventoried; ownership, duplication, consent, and runtime events need verification. |
 | Recipe/catalog dynamic feeds | BLOCKED | Required upstream datasets are absent from the export. |
 | Checkout/order delivery | NEEDS CREDENTIALS | UI/state are verified without submission; owned receiver/payment contracts and credentialed end-to-end proof are unavailable. |
-| Cloudflare staging | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed; 39-route HTTP smoke and focused browser smoke pass remotely. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker is deployed without a route/custom domain and remains preview-noindex. |
+| Cloudflare staging | DONE | `the-base-staging.mansua.workers.dev` is deployed in isolated account `mansua`; 39-route HTTP smoke passes remotely. |
+| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker is deployed without a route/custom domain and remains preview-noindex. |
 | Analytics preview isolation | DONE | Exported overlapping tracker runtimes are stripped; controlled GTM-or-GA bootstrap is restricted to exact production hostnames. |
 | Production cutover | HUMAN APPROVAL REQUIRED | DNS/domain/Tilda remain untouched; DNS, crawler, cache, cutover, and rollback runbooks are prepared. |

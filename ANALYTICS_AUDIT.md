@@ -1,6 +1,6 @@
 # Analytics audit
 
-Generated: 2026-08-21T02:28:15.683Z
+Generated: 2026-08-21T20:34:04.203Z
 
 ## Export inventory
 
@@ -28,7 +28,7 @@ No new analytics property or ID was created.
 
 ## Target verification
 
-- Target: `https://the-base-production.mnsdemo.workers.dev`
+- Target: `https://the-base-production.mansua.workers.dev`
 - HTTP status: 200
 - Legacy tracker markers in server HTML: none
 

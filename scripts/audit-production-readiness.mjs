@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 
-const target = process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev";
+const target = process.argv[2] ?? "https://the-base-staging.mansua.workers.dev";
 const parsedTarget = new URL(target);
 if (!/^https?:$/.test(parsedTarget.protocol) || parsedTarget.username || parsedTarget.password) {
   throw new Error("Target must be an HTTP(S) URL without embedded credentials.");

@@ -8,6 +8,7 @@ This runbook is for a future approved cutover. Nothing here authorizes a current
 - Export and verify complete GoDaddy DNS, including email and verification records.
 - Record the current Tilda website origin/records immediately before cutover; do not rely on an old IP snapshot.
 - Save the last known-good Worker version ID and production-preview test report.
+- Keep the legacy THE BASE preview Workers in source account `indukok667` unchanged as temporary engineering reference; never modify unrelated personal resources there.
 - Establish named decision owner, Cloudflare operator, DNS operator, lead-flow owner, and communications contact.
 
 ## Rollback triggers
@@ -28,6 +29,8 @@ This runbook is for a future approved cutover. Nothing here authorizes a current
 2. Restore the last known-good Worker version using Cloudflare version/rollback controls.
 3. Purge only affected cached HTML/assets if necessary.
 4. Re-run `/api/health`, HTTP, crawler, form, analytics, and key-route checks.
+
+Application rollback must operate in isolated account `mansua`. The retained source preview is evidence/reference, not authorization to deploy future THE BASE releases into the personal account.
 
 ## Traffic rollback to Tilda
 

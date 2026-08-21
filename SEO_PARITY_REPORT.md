@@ -1,9 +1,9 @@
 # SEO parity report
 
-Generated: 2026-08-21T02:28:12.340Z
+Generated: 2026-08-21T20:34:03.108Z
 
 - Production: `https://thebasebev.com`
-- Target: `https://the-base-production.mnsdemo.workers.dev`
+- Target: `https://the-base-production.mansua.workers.dev`
 - Canonical public routes: 29
 - Critical failures: 0
 - Non-blocking link/alt observations: 1

@@ -2,6 +2,14 @@
 
 No real secret belongs in this repository. The following items are genuinely unavailable or unconfirmed.
 
+## GitHub Cloudflare deployment — NEEDS CREDENTIALS
+
+- target-account-scoped `CLOUDFLARE_API_TOKEN` for GitHub environments `staging` and `production`
+- `CLOUDFLARE_ACCOUNT_ID` GitHub environment variable confirming the isolated `mansua` account
+- optional human approval/reviewer rules for the `production` GitHub environment
+
+The manual workflow refuses any account ID other than the pinned THE BASE target. Do not reuse a personal `indukok667` credential. Local Wrangler OAuth credentials are user-level only and were not copied into GitHub or Git.
+
 ## Lead delivery — NEEDS CREDENTIALS
 
 - `LEAD_API_URL`

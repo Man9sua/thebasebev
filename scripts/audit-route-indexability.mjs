@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
+const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
 const reportPath = process.argv[3] ?? "ROUTE_INDEXABILITY_AUDIT.md";
 const siteSource = fs.readFileSync("src/lib/site-pages.ts", "utf8");
 const nextConfig = fs.readFileSync("next.config.ts", "utf8");
@@ -139,11 +139,29 @@ function getCanonical(html) {
   );
 }
 
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function fetchWithPropagationRetry(url, options, expectedStatus) {
+  const maximumAttempts = expectedStatus === 200 ? 5 : 2;
+  for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
+    const response = await fetch(url, options);
+    const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
+    if (!retryable || attempt === maximumAttempts) return response;
+    await response.arrayBuffer();
+    await delay(attempt * 1_000);
+  }
+  throw new Error(`Unreachable retry state for ${url}`);
+}
+
 async function inspect(entry) {
-  const response = await fetch(`${targetOrigin}${entry.route}`, {
-    redirect: "manual",
-    headers: { "User-Agent": "THE-BASE-Route-Indexability-Audit/1.0" },
-  });
+  const response = await fetchWithPropagationRetry(
+    `${targetOrigin}${entry.route}`,
+    {
+      redirect: "manual",
+      headers: { "User-Agent": "THE-BASE-Route-Indexability-Audit/1.0" },
+    },
+    entry.expectedStatus,
+  );
   const body = await response.text();
   const robots = meta(body, "robots");
   const canonicalValue = getCanonical(body);
@@ -166,9 +184,10 @@ async function worker() {
   while (cursor < controlledRoutes.length) {
     const index = cursor++;
     audited[index] = await inspect(controlledRoutes[index]);
+    await delay(250);
   }
 }
-await Promise.all(Array.from({ length: 8 }, () => worker()));
+await Promise.all(Array.from({ length: 1 }, () => worker()));
 
 const redirectAudits = [];
 for (const redirect of redirectRows) {

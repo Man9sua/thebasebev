@@ -104,6 +104,6 @@ The 29 canonical indexable friendly routes are the sitemap candidates. Compatibi
 | OpenNext Worker bundle | DONE | OpenNext build completes and generates the Worker output. |
 | Forms/lead delivery | NEEDS CREDENTIALS | Owned endpoint, authentication, recipients, and response contract are unavailable. |
 | Checkout/order delivery | NEEDS CREDENTIALS | Cart state and checkout UI pass browser smoke; a real order was intentionally not submitted, and the owned delivery/payment contract is unavailable. |
-| Cloudflare staging | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed and passes remote HTTP/browser smoke. No production route is configured. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker is deployed, has preview noindex, and has no custom domain. |
+| Cloudflare staging | DONE | `the-base-staging.mansua.workers.dev` is deployed in isolated account `mansua` and passes remote checks. No production route is configured. |
+| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker is deployed, has preview noindex, and has no custom domain. |
 | Production domain/DNS | HUMAN APPROVAL REQUIRED | Explicitly outside preparation scope and intentionally untouched. |
