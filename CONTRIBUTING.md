@@ -26,6 +26,20 @@ Create a focused branch from current `develop`. Keep commits reviewable and avoi
 
 Suggested commit prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `test:`.
 
+## GitHub repository settings
+
+The workflow file is version-controlled, but branch protection is a GitHub repository setting and must be confirmed by an administrator. `HUMAN APPROVAL REQUIRED`:
+
+- protect `main` against deletion and force-push;
+- require a pull request before merging to `main`;
+- require the `verify` CI job to pass;
+- require at least one approval when a second reviewer is available;
+- dismiss stale approvals after material changes;
+- allow emergency bypass only for named repository owners and record its use;
+- keep automatic production deployment disabled during migration.
+
+Apply a lighter equivalent to `develop` if direct integration pushes should also be prevented. Do not claim branch protection is active until GitHub's Rules/Branches page confirms it.
+
 ## Required local checks
 
 ```bash

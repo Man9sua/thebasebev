@@ -201,5 +201,5 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 | OpenNext Worker bundle | DONE | `npm run cf:build` completes locally; Windows emits the upstream WSL recommendation. |
 | Cloudflare staging deployment | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed; remote HTTP and browser smoke pass. |
 | Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker exists with preview noindex and no custom domain. |
-| GitHub CI | DONE | Pull requests and shared-branch pushes run install/typecheck/lint/build/assets/audit checks; CI has no deployment job. |
+| GitHub CI | DONE | Pull requests and shared-branch pushes run install/typecheck/lint/build/assets/audit checks; CI has no deployment job. Branch protection remains a GitHub-admin setting to confirm. |
 | Production cutover | HUMAN APPROVAL REQUIRED | Runbooks are prepared; domain, DNS, Tilda, and Search Console remain untouched. |
