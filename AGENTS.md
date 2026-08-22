@@ -25,6 +25,18 @@ The migration must preserve SEO, organic Google traffic, AI/Search referrals, ex
 - Do not intentionally block Googlebot, Bingbot, Applebot, OAI-SearchBot, ChatGPT-User, PerplexityBot/Perplexity-User, or Claude search/user crawlers.
 - Do not activate all exported analytics IDs. `GTM` is authoritative when configured; direct GA is only a fallback.
 
+## Lead pipeline rules
+
+- All public forms MUST submit to `/api/leads`. No other client-facing lead endpoint.
+- DO NOT call Odoo directly from client-side code.
+- DO NOT expose Odoo webhook URLs, or `LEAD_API_URL`, to the browser. Never use a `NEXT_PUBLIC_` prefix for either.
+- DO NOT modify, redeploy, or delete the production `tilda-odoo.thebasebev.workers.dev` Worker. It serves live Tilda traffic.
+- Preserve attribution on every lead, including first-touch `utm_source=chatgpt.com`, `landing_page`, `current_page`, and `referrer`.
+- Never report a successful submission when the upstream delivery failed.
+- Field names sent upstream are Tilda's, not ours. Map them in `src/lib/lead-forms.ts` only — do not rename fields at a call site.
+
+See `LEAD_PIPELINE.md` for the full contract and `TELEGRAM_MIGRATION.md` for the open Telegram question.
+
 The custom Worker wrapper in `worker.ts` only removes preview `X-Robots-Tag` when `APP_ENV=production` and the exact request hostname is `thebasebev.com` or `www.thebasebev.com`. Canonicals always remain on `https://thebasebev.com`.
 
 ## Required checks
