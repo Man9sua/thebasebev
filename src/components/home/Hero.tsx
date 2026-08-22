@@ -8,6 +8,9 @@ import styles from "./Hero.module.css";
 /**
  * Fullscreen hero video.
  *
+ * Intentionally has no heading: the page h1 lives in Bestsellers, where it
+ * carries the active product the way production does today.
+ *
  * The source is chosen once, before the element mounts, from a media query —
  * setting `src` after mount would make the browser fetch both files. Autoplay
  * can still be refused (low-power mode, some mobile settings), so the poster
@@ -99,11 +102,6 @@ export function Hero() {
 
   return (
     <section className={styles.hero} aria-label="THE BASE">
-      {/* The page needs one H1; the design needs the frame clean. */}
-      <h1 className="tbb-visually-hidden">
-        Dry beverage premix manufacturer for global HoReCa supply
-      </h1>
-
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={styles.poster}

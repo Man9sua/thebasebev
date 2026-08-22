@@ -1,3 +1,4 @@
+import { Bestsellers } from "@/components/home/Bestsellers";
 import { Hero } from "@/components/home/Hero";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -29,6 +30,7 @@ export function HomePage() {
       <SiteHeader overHero />
       <main>
         <Hero />
+        <Bestsellers />
       </main>
     </div>
   );

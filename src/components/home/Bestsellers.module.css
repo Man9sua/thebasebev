@@ -1,0 +1,367 @@
+.section {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: clip;
+  background: var(--tbb-paper);
+  padding: var(--tbb-section) 0;
+}
+
+/* The colour field. It is the product's own colour, so it changes with the
+   slide — a long transition on background-color is the section's main beat. */
+.field {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  background: var(--field, var(--tbb-sand));
+  transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
+}
+
+/* A hairline of the next colour bleeding past the field keeps the edge from
+   looking like a flat cut. */
+.field::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -1px;
+  width: 1px;
+  background: inherit;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+  display: grid;
+  /* Equal outer columns is what actually centres the product. Weighting them
+     differently (copy wider than controls) pushes the middle column off-centre,
+     which is the one thing this composition must not do. */
+  grid-template-columns: 1fr minmax(0, clamp(20rem, 34vw, 34rem)) 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+/* ---- left column ---- */
+
+.copy {
+  max-width: 32ch;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.heading {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.25rem, 4.4vw, 4.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.headingProduct {
+  display: block;
+}
+
+.description {
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+  color: var(--tbb-ink-soft);
+  max-width: 34ch;
+}
+
+.specs {
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+  display: flex;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  border-top: 1px solid var(--tbb-line);
+  padding-top: clamp(0.85rem, 1.6vw, 1.25rem);
+}
+
+.spec {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.specValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Text swaps are their own small motion so the copy does not just pop. */
+.swap {
+  transition:
+    opacity var(--tbb-dur) var(--tbb-ease),
+    transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.swapOut {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+
+.cta {
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1.6rem;
+  background: var(--tbb-ink);
+  color: var(--tbb-paper);
+  text-decoration: none;
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  border-radius: 999px;
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cta:hover {
+  transform: translate3d(0, -2px, 0);
+  background: var(--tbb-ink-soft);
+}
+
+.cta svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cta:hover svg {
+  transform: translate3d(4px, 0, 0);
+}
+
+/* ---- centre stage ---- */
+
+.stage {
+  position: relative;
+  grid-column: 2;
+  aspect-ratio: 1 / 0.92;
+  display: grid;
+  place-items: center;
+}
+
+/* Slides are stacked and cross-faded rather than remounted, so images stay
+   decoded and the transition is pure opacity/transform. */
+.slide {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.94) translate3d(0, 12px, 0);
+  transition:
+    opacity var(--tbb-dur-slow) var(--tbb-ease),
+    transform var(--tbb-dur-slow) var(--tbb-ease);
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.slideActive {
+  opacity: 1;
+  transform: scale(1) translate3d(0, 0, 0);
+  pointer-events: auto;
+}
+
+.shot {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 40px 60px rgba(26, 19, 17, 0.22));
+}
+
+/* Fallback when a product has no pack shot: the colour field carries it. */
+.shotFallback {
+  width: 78%;
+  aspect-ratio: 1 / 1.1;
+  border-radius: 3px;
+  background: var(--field, var(--tbb-sand));
+  display: grid;
+  place-items: center;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.5rem, 3vw, 2.75rem);
+  text-transform: uppercase;
+  color: rgba(26, 19, 17, 0.35);
+  box-shadow: 0 40px 60px rgba(26, 19, 17, 0.18);
+}
+
+/* ---- controls ---- */
+
+/* Everything below sits on the colour field, so it inherits ink derived from
+   that colour rather than assuming the field is light. */
+.controls {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  color: var(--on-field, var(--tbb-ink));
+  transition: color var(--tbb-dur-slow) var(--tbb-ease-inout);
+}
+
+.arrows {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.arrow {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  opacity: 0.75;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.arrow:hover {
+  background: currentColor;
+  opacity: 1;
+  transform: translate3d(0, -2px, 0);
+}
+
+/* The glyph has to invert against the filled pill, and the fill is
+   currentColor, so the icon takes the field colour itself. */
+.arrow:hover svg {
+  color: var(--field);
+}
+
+.arrow:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.dots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.dot {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: inherit;
+  opacity: 0.5;
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.dotLine {
+  display: block;
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  transform-origin: right center;
+  transition: transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.dot:hover,
+.dotActive {
+  opacity: 1;
+}
+
+.dotActive .dotLine {
+  transform: scaleX(1.9);
+}
+
+@media (max-width: 1023px) {
+  /* Below the desktop grid the composition is rebuilt, not squeezed: the field
+     becomes a band behind the product, copy sits under it, controls go inline. */
+  .section {
+    min-height: 0;
+    padding: var(--tbb-section) 0 clamp(3rem, 8vw, 5rem);
+  }
+
+  /* Hidden on mobile: the band is drawn by the stage, so it always ends where
+     the product ends instead of running under the copy on tall slides. */
+  .field {
+    display: none;
+  }
+
+  .inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.5rem, 5vw, 2.5rem);
+  }
+
+  .stage {
+    grid-column: 1;
+    grid-row: 1;
+    aspect-ratio: 1 / 0.8;
+    width: auto;
+    /* Full-bleed past the page gutter. */
+    margin: 0 calc(var(--tbb-gutter) * -1);
+    padding: clamp(1.5rem, 6vw, 2.5rem) var(--tbb-gutter);
+    background: var(--field, var(--tbb-sand));
+    transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
+  }
+
+  .controls {
+    /* Back on paper once the band ends. */
+    color: var(--tbb-ink);
+  }
+
+  .copy {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: 46ch;
+  }
+
+  .controls {
+    grid-column: 1;
+    grid-row: 3;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .dots {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .dotLabel {
+    display: none;
+  }
+
+  .dotLine {
+    width: 1.5rem;
+    transform-origin: center;
+  }
+}

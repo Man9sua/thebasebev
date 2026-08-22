@@ -137,8 +137,8 @@ export const PRODUCTS: Product[] = [
     headline: "Cream Latte Base — Rich, Smooth, and Easy to Prepare",
     description:
       "Cream latte base with a rounded dairy body that holds through steaming and over ice.",
-    image: null,
-    backgroundColor: "#e6d3bd" /* hand-set — verify */,
+    image: "/images/tild6532-6131-4765-a162-316663316136__mask_group_96.png",
+    backgroundColor: "#ceaaa7",
   },
   {
     slug: "tea",
