@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
-import { onColor } from "@/lib/contrast";
+import { BESTSELLER_SLUGS, getProducts, resolveProductColors } from "@/data/products";
+
 import styles from "./Bestsellers.module.css";
 
 /**
@@ -113,10 +113,10 @@ export function Bestsellers() {
       id="bestsellers"
       className={styles.section}
       style={{
-        ["--field" as string]: active.backgroundColor,
+        ["--field" as string]: resolveProductColors(active).background,
         // Controls sit on the colour field, and the field can be #f1d1b4 or
         // #42080d depending on the slide, so their ink is derived per product.
-        ["--on-field" as string]: onColor(active.backgroundColor),
+        ["--on-field" as string]: resolveProductColors(active).text,
       }}
       aria-roledescription="carousel"
       aria-label="Bestsellers"
@@ -131,7 +131,7 @@ export function Bestsellers() {
           {/* Production renders this as `Premium<br>{product}<br>Bases`. The
               explicit spaces keep the extracted text identical — the parts are
               block-level, so they are never visible. */}
-          <h1 className={styles.heading}>
+          <h2 className={styles.heading}>
             Premium{" "}
             <span
               className={`${styles.headingProduct} ${styles.swap} ${
@@ -141,7 +141,7 @@ export function Bestsellers() {
               {active.name}
             </span>{" "}
             Bases
-          </h1>
+          </h2>
 
           <p
             className={`${styles.description} ${styles.swap} ${

@@ -1,159 +1,265 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useMediaQuery } from "@/components/motion/useMediaQuery";
-import { HERO_VIDEO } from "@/lib/site-config";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { HERO_SLUGS, getProducts, resolveProductColors } from "@/data/products";
 import styles from "./Hero.module.css";
 
 /**
- * Fullscreen hero video.
+ * Product-first hero.
  *
- * Intentionally has no heading: the page h1 lives in Bestsellers, where it
- * carries the active product the way production does today.
+ * The first viewport is the product: copy left, pack shot dead centre and
+ * dominant, metadata right. The background is paper with one soft wash of the
+ * product's own colour behind it, so the field works for the product instead of
+ * competing with it.
  *
- * The source is chosen once, before the element mounts, from a media query —
- * setting `src` after mount would make the browser fetch both files. Autoplay
- * can still be refused (low-power mode, some mobile settings), so the poster
- * stays underneath and a play control appears rather than a dead black screen.
+ * Colours come from `resolveProductColors`, never from this component, so the
+ * real palette can land in the data without touching any UI.
+ *
+ * This section carries the page `h1`. Production's homepage h1 is
+ * "Premium / Cream Latte / Bases", so the first hero product is cream-latte and
+ * that shape survives the redesign.
  */
-export function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [needsGesture, setNeedsGesture] = useState(false);
-  const [seam, setSeam] = useState(false);
 
-  // Resolved before the element renders, so only one file is ever fetched.
-  const isMobile = useMediaQuery(
-    `(max-width: ${HERO_VIDEO.mobileBreakpoint - 1}px)`,
+const PRODUCTS = getProducts(HERO_SLUGS);
+/** Slow enough to read a product. This is a hero, not a slideshow. */
+const ADVANCE_MS = 9000;
+
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
-  const source = isMobile ? HERO_VIDEO.mobile : HERO_VIDEO.desktop;
+}
 
-  // Read inside listeners without making them a dependency of the effect.
-  const blockedRef = useRef(false);
+export function Hero() {
+  const [index, setIndex] = useState(0);
+  const [ready, setReady] = useState(false);
+  const [swapping, setSwapping] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const indexRef = useRef(0);
+  const swapTimer = useRef<number | undefined>(undefined);
+
+  const active = PRODUCTS[index];
+  const colors = resolveProductColors(active);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    indexRef.current = index;
+  }, [index]);
 
-    const play = () => {
-      video.play().then(
-        () => {
-          blockedRef.current = false;
-          setNeedsGesture(false);
-        },
-        () => {
-          blockedRef.current = true;
-          setNeedsGesture(true);
-        },
-      );
+  // Arm the entrance on the frame after mount, so the transition actually runs
+  // instead of being collapsed into the first paint.
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setReady(true));
+    // rAF is not serviced in a background tab; this makes sure the hero is
+    // never left invisible on a page the user has not looked at yet.
+    const fallback = window.setTimeout(() => setReady(true), 400);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(fallback);
+    };
+  }, []);
+
+  const goTo = useCallback((next: number) => {
+    setIndex((current) => {
+      const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
+      if (resolved === current) return current;
+      // Drop the copy out first so the text never visibly rewrites itself.
+      setSwapping(true);
+      window.clearTimeout(swapTimer.current);
+      swapTimer.current = window.setTimeout(() => setSwapping(false), 280);
+      return resolved;
+    });
+  }, []);
+
+  useEffect(() => () => window.clearTimeout(swapTimer.current), []);
+
+  useEffect(() => {
+    if (PRODUCTS.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timer = window.setInterval(() => goTo(indexRef.current + 1), ADVANCE_MS);
+    return () => window.clearInterval(timer);
+  }, [goTo]);
+
+  /**
+   * Scroll hand-off into Bestsellers: the product eases back and the copy lifts
+   * away as the hero leaves, so the two read as one movement rather than one
+   * block ending and another starting.
+   *
+   * Written straight to `style` in a rAF loop that only runs while the hero is
+   * on screen — no state, no render per frame.
+   */
+  useEffect(() => {
+    const hero = heroRef.current;
+    const stage = stageRef.current;
+    const copy = copyRef.current;
+    if (!hero || !stage || !copy) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let visible = false;
+
+    const tick = () => {
+      const rect = hero.getBoundingClientRect();
+      // 0 while the hero fills the viewport, 1 once it has fully left.
+      const progress = Math.min(1, Math.max(0, -rect.top / window.innerHeight));
+      const eased = progress * progress;
+
+      stage.style.transform = `scale(${(1 - eased * 0.12).toFixed(4)}) translate3d(0, ${(
+        eased * -40
+      ).toFixed(1)}px, 0)`;
+      copy.style.transform = `translate3d(0, ${(eased * -60).toFixed(1)}px, 0)`;
+      copy.style.opacity = (Math.max(0, 1 - progress * 1.6)).toFixed(3);
+
+      frame = visible ? requestAnimationFrame(tick) : 0;
     };
 
-    play();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible && !frame) frame = requestAnimationFrame(tick);
+      },
+      { threshold: [0, 0.01, 0.5, 1] },
+    );
 
-    const { loopStart, loopEnd, seamFadeMs } = HERO_VIDEO;
-    const fadeSeconds = seamFadeMs / 1000;
-
-    /**
-     * Two jobs: honour an optional trim range, and dip to black across the loop
-     * boundary. `timeupdate` fires ~4x a second, which is enough to arm a CSS
-     * transition ahead of the seam without polling every frame.
-     */
-    const onTimeUpdate = () => {
-      const end = loopEnd ?? video.duration;
-      if (!Number.isFinite(end)) return;
-
-      setSeam(video.currentTime >= end - fadeSeconds);
-
-      if (video.currentTime >= end) {
-        video.currentTime = loopStart ?? 0;
-      }
-    };
-
-    const onSeeked = () => setSeam(false);
-    // A stalled hero reads as broken; recovering silently is better than a
-    // frozen frame the user has to fix by reloading.
-    const onStalled = () => play();
-
-    video.addEventListener("timeupdate", onTimeUpdate);
-    video.addEventListener("seeked", onSeeked);
-    video.addEventListener("stalled", onStalled);
-    video.addEventListener("suspend", onStalled);
-
-    // A background tab refuses autoplay the same way a real block does, so
-    // always retry on return: if it was only the tab being hidden, this starts
-    // playback and clears the Play control the user never needed to press.
-    const onVisibility = () => {
-      if (!document.hidden && video.paused) play();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
+    observer.observe(hero);
 
     return () => {
-      video.removeEventListener("timeupdate", onTimeUpdate);
-      video.removeEventListener("seeked", onSeeked);
-      video.removeEventListener("stalled", onStalled);
-      video.removeEventListener("suspend", onStalled);
-      document.removeEventListener("visibilitychange", onVisibility);
+      observer.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+      stage.style.transform = "";
+      copy.style.transform = "";
+      copy.style.opacity = "";
     };
-  }, [source]);
-
-  const scrollOn = () => {
-    const next = document.getElementById("bestsellers");
-    (next ?? document.body).scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  }, []);
 
   return (
-    <section className={styles.hero} aria-label="THE BASE" data-hero>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={styles.poster}
-        src={HERO_VIDEO.poster}
-        alt=""
-        aria-hidden="true"
-        fetchPriority="high"
-      />
+    <section
+      ref={heroRef}
+      className={`${styles.hero} ${ready ? styles.ready : ""}`}
+      data-hero
+      aria-label="THE BASE products"
+      style={{
+        ["--product-bg" as string]: colors.background,
+        ["--product-accent" as string]: colors.accent,
+      }}
+    >
+      <span className={styles.wash} aria-hidden="true" />
 
-      <video
-        ref={videoRef}
-        className={styles.video}
-        src={source}
-        poster={HERO_VIDEO.poster}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        // Decorative: the film's message is repeated in the sections below.
-        aria-hidden="true"
-        tabIndex={-1}
-      />
+      <div className={styles.inner}>
+        <div ref={copyRef} className={styles.copy}>
+          <span
+            className={`tbb-label ${styles.category} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "420ms" }}
+          >
+            Dry beverage base
+          </span>
 
-      <span
-        className={`${styles.seam} ${seam ? styles.seamActive : ""}`}
-        style={{ ["--seam-fade" as string]: `${HERO_VIDEO.seamFadeMs}ms` }}
-        aria-hidden="true"
-      />
-      <span className={styles.veil} aria-hidden="true" />
+          <h1
+            className={`${styles.title} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "500ms" }}
+          >
+            Premium{" "}
+            <span
+              className={styles.titleProduct}
+              style={{ opacity: swapping ? 0 : 1 }}
+            >
+              {active.name}
+            </span>{" "}
+            Bases
+          </h1>
 
-      {needsGesture && (
-        <button
-          type="button"
-          className={styles.playButton}
-          onClick={() => videoRef.current?.play().then(() => setNeedsGesture(false))}
+          <p
+            className={`${styles.description} ${styles.enter} ${styles.swap} ${
+              swapping ? styles.swapOut : ""
+            }`}
+            style={{ ["--enter-delay" as string]: "600ms" }}
+          >
+            {active.description}
+          </p>
+
+          <Link
+            href={active.route}
+            className={`${styles.cta} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "760ms" }}
+          >
+            Shop {active.name}
+            <ArrowIcon />
+          </Link>
+        </div>
+
+        <div
+          ref={stageRef}
+          className={`${styles.stage} ${styles.enterProduct}`}
+          aria-live="polite"
         >
-          Play
-        </button>
-      )}
+          {PRODUCTS.map((product, slide) => (
+            <div
+              key={product.slug}
+              className={`${styles.slide} ${slide === index ? styles.slideActive : ""}`}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${slide + 1} of ${PRODUCTS.length}: ${product.name}`}
+              aria-hidden={slide !== index}
+            >
+              {product.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className={styles.shot}
+                  src={product.image}
+                  alt={`${product.name} base by THE BASE`}
+                  // The first product is the largest thing above the fold.
+                  loading={slide === 0 ? "eager" : "lazy"}
+                  fetchPriority={slide === 0 ? "high" : undefined}
+                  decoding="async"
+                  draggable={false}
+                />
+              )}
+            </div>
+          ))}
+        </div>
 
-      <div className={styles.foot}>
-        <p className={styles.tagline}>
-          <span className={`tbb-label ${styles.taglineLabel}`}>Dubai, UAE</span>
-          600+ dry beverage bases and instant premixes, made for HoReCa, retail
-          and private label.
-        </p>
+        <div className={styles.meta}>
+          <div
+            className={`${styles.metaBlock} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "660ms" }}
+          >
+            <span className="tbb-label">From</span>
+            <span className={styles.price}>{active.price ?? "On request"}</span>
+          </div>
 
-        <button type="button" className={styles.cue} onClick={scrollOn}>
-          <span className={`tbb-label ${styles.cueLabel}`}>Scroll</span>
-          <span className={styles.cueLine} aria-hidden="true" />
-        </button>
+          <div
+            className={`${styles.badges} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "700ms" }}
+          >
+            <span className="tbb-label">Halal certified</span>
+            <span className="tbb-label">HACCP audited</span>
+            <span className="tbb-label">Made in Dubai</span>
+          </div>
+
+          <div
+            className={`${styles.switcher} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "820ms" }}
+          >
+            {PRODUCTS.map((product, slide) => (
+              <button
+                key={product.slug}
+                type="button"
+                className={`${styles.step} ${slide === index ? styles.stepActive : ""}`}
+                onClick={() => goTo(slide)}
+                aria-label={`Show ${product.name}`}
+                aria-current={slide === index}
+              >
+                {String(slide + 1).padStart(2, "0")}
+                <span className={styles.stepLine} aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

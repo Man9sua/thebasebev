@@ -18,6 +18,8 @@
  * disagreeing.
  */
 
+import { onColor } from "@/lib/contrast";
+
 export type Product = {
   slug: string;
   /** Live URL. Never rename. */
@@ -37,9 +39,48 @@ export type Product = {
    * catalog, so any drift fails a test rather than going unnoticed.
    */
   price: string | null;
-  /** Swap freely — nothing hard-codes a product colour anywhere else. */
+  /**
+   * The product's colour field. Swap freely — no component hard-codes a
+   * product colour anywhere.
+   */
   backgroundColor: string;
+  /**
+   * Accent for small emphasis: the product name in the hero, the active
+   * indicator, rules. Optional — falls back to the brand red until the real
+   * palette arrives.
+   */
+  accentColor?: string;
+  /**
+   * Ink for anything sitting on `backgroundColor`. Optional — when absent it is
+   * measured from the background so it always clears WCAG AA. Set it only to
+   * override that.
+   */
+  textColor?: string;
 };
+
+/** Used when a product has no accent of its own. */
+export const DEFAULT_ACCENT = "#e11b22";
+
+export type ResolvedProductColors = {
+  background: string;
+  accent: string;
+  text: string;
+};
+
+/**
+ * The one place product colours become what components render.
+ *
+ * Components call this and never read the raw fields, so filling in
+ * `accentColor` / `textColor` later changes the whole site without touching a
+ * single component.
+ */
+export function resolveProductColors(product: Product): ResolvedProductColors {
+  return {
+    background: product.backgroundColor,
+    accent: product.accentColor ?? DEFAULT_ACCENT,
+    text: product.textColor ?? onColor(product.backgroundColor),
+  };
+}
 
 export const PRODUCTS: Product[] = [
   {
@@ -219,6 +260,15 @@ export const PRODUCTS: Product[] = [
     backgroundColor: "#583d35",
   },
 ];
+
+/**
+ * Shown in the hero, in order.
+ *
+ * cream-latte is first on purpose: production's homepage h1 is
+ * "Premium / Cream Latte / Bases", and the hero carries that h1, so the
+ * server-rendered wording has to match.
+ */
+export const HERO_SLUGS = ["cream-latte", "matcha", "chocolate"] as const;
 
 /**
  * Featured in the Bestsellers carousel, in order.
