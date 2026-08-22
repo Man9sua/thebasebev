@@ -1,4 +1,5 @@
 import { About } from "@/components/home/About";
+import { BlogCarousel } from "@/components/home/BlogCarousel";
 import { Bestsellers } from "@/components/home/Bestsellers";
 import { Collage } from "@/components/home/Collage";
 import { MiniCatalog } from "@/components/home/MiniCatalog";
@@ -37,6 +38,7 @@ export function HomePage() {
         <Bestsellers />
         <Collage />
         <MiniCatalog />
+        <BlogCarousel />
         <About />
       </main>
       <SiteFooter />

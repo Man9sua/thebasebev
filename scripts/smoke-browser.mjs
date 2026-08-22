@@ -87,6 +87,51 @@ try {
     "home: next arrow did not activate slide two",
   );
 
+  // Horizontal reading rail: a native overflow scroller, so the arrows move it
+  // and vertical wheel over it must still scroll the page.
+  const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
+  await rail.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
+  check(
+    (await rail.locator("[data-card]").count()) === 7,
+    "reading: expected seven cards in the rail",
+  );
+  check(
+    await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
+    "reading: rail is not horizontally scrollable",
+  );
+
+  const railNext = page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll right']");
+  check(
+    await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled(),
+    "reading: left arrow should start disabled",
+  );
+  await railNext.click();
+  await page.waitForTimeout(1_200);
+  check(
+    (await rail.evaluate((el) => el.scrollLeft)) > 100,
+    "reading: right arrow did not advance the rail",
+  );
+  check(
+    !(await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled()),
+    "reading: left arrow should enable once scrolled",
+  );
+
+  // The progress thumb tracks the rail rather than sitting still.
+  const thumbShift = await page.locator("section[aria-labelledby='reading-title'] [class*='thumb']")
+    .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
+  check(thumbShift > 5, "reading: progress indicator did not follow the rail");
+
+  // A vertical wheel over the rail must scroll the page, not be swallowed.
+  const beforeY = await page.evaluate(() => window.scrollY);
+  await rail.hover();
+  await page.mouse.wheel(0, 400);
+  await page.waitForTimeout(700);
+  check(
+    (await page.evaluate(() => window.scrollY)) > beforeY + 50,
+    "reading: rail swallowed vertical scrolling",
+  );
+
   // Clicking a carousel control scrolls the page, and the bar hides on
   // scroll-down by design, so come back to the top before touching the header.
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -288,6 +333,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-    console.log("Browser smoke passed: hero, header, mobile menu, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
+    console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
   console.log(`Captured nine homepage viewports in ${artifactRoot}.`);
 }
