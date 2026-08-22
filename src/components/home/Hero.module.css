@@ -1,0 +1,178 @@
+.hero {
+  position: relative;
+  width: 100%;
+  /* svh tracks the mobile URL bar, so the video fills the screen without the
+     jump `vh` causes when the bar collapses. vh is the fallback. */
+  height: 100vh;
+  height: 100svh;
+  overflow: clip;
+  background: var(--tbb-ink-black);
+  color: var(--tbb-on-dark);
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* cover + fixed box = no letterboxing and no distortion at any ratio. */
+  object-fit: cover;
+  object-position: var(--hero-position, center center);
+}
+
+/* Poster underneath so the first paint is the frame, not black, and there is
+   no flash if autoplay is refused. */
+.poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-position, center center);
+}
+
+/* The supplied film ends on a card and restarts on a different one. Fading the
+   seam turns a hard cut into a deliberate beat. */
+.seam {
+  position: absolute;
+  inset: 0;
+  background: var(--tbb-ink-black);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--seam-fade, 900ms) linear;
+}
+
+.seamActive {
+  opacity: 1;
+}
+
+.veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(18, 18, 18, 0.55) 0%,
+    rgba(18, 18, 18, 0) 38%
+  );
+}
+
+.foot {
+  position: absolute;
+  left: var(--tbb-gutter);
+  right: var(--tbb-gutter);
+  bottom: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.tagline {
+  max-width: 26ch;
+  font-size: clamp(0.95rem, 1.3vw, 1.125rem);
+  line-height: 1.45;
+  color: rgba(253, 250, 245, 0.9);
+}
+
+.taglineLabel {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: rgba(253, 250, 245, 0.6);
+}
+
+.cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: none;
+  border: 0;
+  padding: 0.5rem 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.cueLabel {
+  color: rgba(253, 250, 245, 0.7);
+}
+
+.cueLine {
+  display: block;
+  width: 1px;
+  height: 2.75rem;
+  background: rgba(253, 250, 245, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+/* A travelling highlight rather than a bouncing arrow — quieter, and it never
+   moves layout. */
+.cueLine::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 45%;
+  background: var(--tbb-paper);
+  animation: cueTravel 2.6s var(--tbb-ease-inout) infinite;
+}
+
+@keyframes cueTravel {
+  0% {
+    transform: translate3d(0, -110%, 0);
+  }
+  60%,
+  100% {
+    transform: translate3d(0, 240%, 0);
+  }
+}
+
+/* Shown only when the browser refuses to autoplay. */
+.playButton {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(253, 250, 245, 0.45);
+  background: rgba(18, 18, 18, 0.35);
+  color: var(--tbb-paper);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.playButton:hover {
+  transform: scale(1.06);
+}
+
+@media (max-width: 767px) {
+  .foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .cue {
+    align-self: flex-start;
+  }
+
+  .cueLine {
+    height: 2rem;
+  }
+
+  .tagline {
+    max-width: 22ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cueLine::after {
+    animation: none;
+    transform: translate3d(0, 60%, 0);
+  }
+}

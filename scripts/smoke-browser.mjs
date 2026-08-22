@@ -42,33 +42,142 @@ try {
   const page = await desktop.newPage();
   observe(page, "desktop");
 
+  // The homepage is the redesigned surface: a video hero, then the Bestsellers
+  // carousel. Navigation, product grid and the region picker moved out of the
+  // old hover mega-menu into the full-screen menu panel, so they are asserted
+  // there rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await page.locator("[data-tbs]").waitFor();
+  await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
 
-  check((await page.locator(".tbs__slide").count()) === 5, "home: expected five hero slides");
-  check((await page.locator("[data-tbs-dots] button").count()) === 5, "home: expected five hero dots");
-  await page.locator("[data-tbs-next]").click();
+  const heroVideo = page.locator("section video").first();
+  check(await heroVideo.count() === 1, "home: expected one hero video");
   check(
-    (await page.locator(".tbs__slide.is-active").getAttribute("aria-label"))?.startsWith("2 of 5"),
+    await heroVideo.evaluate((v) => v.muted && v.loop && v.playsInline),
+    "home: hero video must be muted, looping and inline",
+  );
+  check(
+    await heroVideo.evaluate((v) => getComputedStyle(v).objectFit === "cover"),
+    "home: hero video must cover without letterboxing",
+  );
+
+  check(
+    (await page.locator("#bestsellers [aria-roledescription='slide']").count()) === 5,
+    "home: expected five bestseller slides",
+  );
+  check(
+    (await page.locator("#bestsellers [aria-current]").count()) === 5,
+    "home: expected five bestseller dots",
+  );
+  check(
+    (await page.locator("h1").count()) === 1,
+    "home: expected exactly one h1",
+  );
+  check(
+    /^Premium\s+.+\s+Bases$/.test(((await page.locator("h1").textContent()) ?? "").trim()),
+    "home: h1 must keep the production wording (Premium … Bases)",
+  );
+
+  await page.locator("#bestsellers [aria-label='Next product']").click();
+  await page.waitForTimeout(900);
+  check(
+    (await page.locator("#bestsellers .is-active, #bestsellers [aria-hidden='false'][aria-roledescription='slide']")
+      .first()
+      .getAttribute("aria-label"))?.startsWith("2 of 5"),
     "home: next arrow did not activate slide two",
   );
 
-  await page.locator(".tbh-drop").hover();
-  await page.waitForTimeout(250);
+  // Horizontal reading rail: a native overflow scroller, so the arrows move it
+  // and vertical wheel over it must still scroll the page.
+  const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
+  await rail.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
   check(
-    await page.locator(".tbh-mega").evaluate((element) => getComputedStyle(element).visibility === "visible"),
-    "header: desktop mega-menu did not open on hover",
+    (await rail.locator("[data-card]").count()) === 7,
+    "reading: expected seven cards in the rail",
+  );
+  check(
+    await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
+    "reading: rail is not horizontally scrollable",
   );
 
-  await page.locator("[data-tbh-reg-toggle]").click();
-  check(await page.locator("[data-tbh-reg]").evaluate((element) => element.classList.contains("is-open")), "header: region panel did not open");
-  await page.locator('.tbh-reg__opt[data-short="KZ"]').click();
-  check((await page.locator("[data-tbh-short]").textContent()) === "KZ", "header: region selection did not update");
+  const railNext = page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll right']");
+  check(
+    await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled(),
+    "reading: left arrow should start disabled",
+  );
+  await railNext.click();
+  await page.waitForTimeout(1_200);
+  check(
+    (await rail.evaluate((el) => el.scrollLeft)) > 100,
+    "reading: right arrow did not advance the rail",
+  );
+  check(
+    !(await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled()),
+    "reading: left arrow should enable once scrolled",
+  );
 
-  await page.evaluate(() => window.scrollTo(0, 120));
-  await page.waitForTimeout(100);
-  check(await page.locator(".tbh-wrap").evaluate((element) => element.classList.contains("is-scrolled")), "header: scrolled state was not applied");
+  // The progress thumb tracks the rail rather than sitting still.
+  const thumbShift = await page.locator("section[aria-labelledby='reading-title'] [class*='thumb']")
+    .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
+  check(thumbShift > 5, "reading: progress indicator did not follow the rail");
+
+  // A vertical wheel over the rail must scroll the page, not be swallowed.
+  const beforeY = await page.evaluate(() => window.scrollY);
+  await rail.hover();
+  await page.mouse.wheel(0, 400);
+  await page.waitForTimeout(700);
+  check(
+    (await page.evaluate(() => window.scrollY)) > beforeY + 50,
+    "reading: rail swallowed vertical scrolling",
+  );
+
+  // Clicking a carousel control scrolls the page, and the bar hides on
+  // scroll-down by design, so come back to the top before touching the header.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(700);
+
+  // Region picker — ported from production, still display-only.
+  const region = page.locator("header button[aria-label^='Region:']");
+  await region.click();
+  await page.waitForTimeout(200);
+  check(
+    (await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").count()) === 5,
+    "header: region panel did not list five regions",
+  );
+  await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").nth(2).click();
+  await page.waitForTimeout(200);
+  check(
+    ((await region.textContent()) ?? "").includes("KZ"),
+    "header: region selection did not update",
+  );
+
+  // Everything the old mega-menu linked to now lives in the menu panel.
+  await page.locator("header button[aria-label='Open menu']").click();
+  await page.waitForTimeout(900);
+  const menu = page.locator("#site-menu");
+  check(
+    await menu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
+    "header: menu panel did not open",
+  );
+  check(
+    (await menu.locator("a[href^='/']").evaluateAll((links) => new Set(links.map((a) => a.getAttribute("href"))).size)) >= 24,
+    "header: menu lost links the mega-menu used to expose",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(600);
+
+  await page.evaluate(() => window.scrollTo(0, 1200));
+  // The bar cross-fades over --tbb-dur (720ms); sample after it settles.
+  await page.waitForTimeout(1_100);
+  const headerState = await page.locator("header").evaluate((el) => ({
+    color: getComputedStyle(el).color,
+    panel: getComputedStyle(el, "::after").transform,
+  }));
+  check(
+    headerState.color === "rgb(26, 19, 17)",
+    `header: scrolled state was not applied (${JSON.stringify(headerState)})`,
+  );
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
   await page.locator(".catg-card").first().waitFor();
@@ -178,11 +287,23 @@ try {
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await mobilePage.locator("[data-tbh-burger]").waitFor();
-  await mobilePage.locator("[data-tbh-burger]").click();
+  const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
+  await mobileBurger.waitFor();
+  await mobileBurger.click();
+  await mobilePage.waitForTimeout(900);
   check(
-    await mobilePage.locator("[data-tbh-mob]").evaluate((element) => element.classList.contains("is-open")),
+    await mobilePage.locator("#site-menu").evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
     "mobile: burger menu did not open",
+  );
+  // Account and the region picker leave the bar on small screens, so the menu
+  // is the only place they exist — if they are missing there, they are gone.
+  check(
+    (await mobilePage.locator("#site-menu a[href='/cabinet']").count()) === 1,
+    "mobile: account link missing from the menu",
+  );
+  check(
+    (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 1,
+    "mobile: region picker missing from the menu",
   );
   await mobile.close();
 
@@ -193,7 +314,7 @@ try {
     const height = width <= 430 ? 844 : 1000;
     await visualPage.setViewportSize({ width, height });
     await visualPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-    await visualPage.locator("[data-tbs]").waitFor();
+    await visualPage.locator("#bestsellers").waitFor();
     await visualPage.waitForTimeout(3_500);
     await visualPage.screenshot({
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
@@ -212,6 +333,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-    console.log("Browser smoke passed: hero, header, mobile menu, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
+    console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
   console.log(`Captured nine homepage viewports in ${artifactRoot}.`);
 }
