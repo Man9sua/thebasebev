@@ -2,7 +2,12 @@
 
 import { useEffect } from "react";
 import {
+  LEGACY_FORM_NAMES,
+  resolveLeadFormType,
+} from "@/lib/lead-forms";
+import {
   createFirstTouchAttribution,
+  LEAD_HONEYPOT_FIELD,
   parseFirstTouchAttribution,
   validateLeadPayload,
   type FirstTouchAttribution,
@@ -33,18 +38,6 @@ const OWNED_TILDA_FORM_NAMES = new Set([
   "join our team",
   "contact us",
 ]);
-
-const LEGACY_FORM_NAMES: Record<string, string> = {
-  form861442702: "Partner with Us",
-  form1855213141: "Custom flavour",
-  form1855223381: "Free Sample",
-  form1855232921: "Custom flavor for your brand",
-  form909008440: "Join Our Team",
-  form860957415: "Contact Us",
-  form861445930: "Custom flavour",
-  form861448872: "Free Sample",
-  form861451973: "Custom flavor for your brand",
-};
 
 const COUNTRY_DIAL_CODES: Record<string, string> = {
   ae: "+971",
@@ -142,11 +135,13 @@ function buildLeadPayload(
       ? `${normalizedCountry ? COUNTRY_DIAL_CODES[normalizedCountry] ?? "" : ""}${phonePart}`
       : undefined);
 
+  const formName = getFormName(form, formData);
   const candidate = {
     name: getFormValue(formData, ["name", "Name", "Full Name"]),
     email: getFormValue(formData, ["email", "Email"]),
     phone,
     country: phoneCountry?.toUpperCase(),
+    company: getFormValue(formData, ["company", "Company"]),
     message: getFormValue(formData, [
       "text",
       "message",
@@ -154,8 +149,13 @@ function buildLeadPayload(
       "comments",
       "Comments",
     ]),
-    formName: getFormName(form, formData),
+    formId: form.id || undefined,
+    formName,
+    // The server re-derives and re-checks this against its allowlist; sending it
+    // only saves a lookup, it is never trusted as-is.
+    formType: resolveLeadFormType(form.id, formName) ?? undefined,
     consent: getConsent(form),
+    [LEAD_HONEYPOT_FIELD]: getFormValue(formData, [LEAD_HONEYPOT_FIELD]) ?? "",
     ...attribution,
     submissionPage: window.location.href,
     clientTimestamp: new Date().toISOString(),
@@ -232,9 +232,12 @@ function showLegacyError(form: HTMLFormElement, message: string) {
   if (!errorBox) {
     errorBox = document.createElement("div");
     errorBox.className = "js-errorbox-all t-form__errorbox-wrapper";
-    errorBox.setAttribute("role", "alert");
     form.append(errorBox);
   }
+
+  // Tilda ships its own error box without a live-region role, so announce it
+  // whether we created the element or inherited it.
+  errorBox.setAttribute("role", "alert");
 
   let messageNode = errorBox.querySelector<HTMLElement>(".js-rule-error-all");
   if (!messageNode) {
@@ -301,16 +304,34 @@ function getApiErrorMessage(body: unknown): string {
   if (
     typeof body === "object" &&
     body !== null &&
-    "error" in body &&
-    typeof body.error === "object" &&
-    body.error !== null &&
-    "message" in body.error &&
-    typeof body.error.message === "string"
+    "message" in body &&
+    typeof body.message === "string" &&
+    body.message.trim() !== ""
   ) {
-    return body.error.message;
+    return body.message;
   }
 
-  return "We could not send your request. Please try again.";
+  return "Something went wrong. Please try again.";
+}
+
+/**
+ * Add the decoy field to an owned form. It is visually hidden and removed from
+ * the tab order and the accessibility tree, so only automated fillers reach it.
+ */
+function attachHoneypot(form: HTMLFormElement) {
+  if (form.querySelector(`input[name="${LEAD_HONEYPOT_FIELD}"]`)) {
+    return;
+  }
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.name = LEAD_HONEYPOT_FIELD;
+  input.tabIndex = -1;
+  input.autocomplete = "off";
+  input.setAttribute("aria-hidden", "true");
+  input.style.cssText =
+    "position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;";
+  form.append(input);
 }
 
 export function LeadAttributionBridge() {
@@ -318,21 +339,24 @@ export function LeadAttributionBridge() {
     const attribution = getFirstTouchAttribution();
     const pendingForms = new WeakSet<HTMLFormElement>();
 
-    const handleSubmit = (event: SubmitEvent) => {
-      if (!(event.target instanceof HTMLFormElement)) {
-        return;
-      }
+    const armOwnedForms = () => {
+      document
+        .querySelectorAll<HTMLFormElement>("form")
+        .forEach((form) => {
+          if (isOwnedTildaLeadForm(form)) {
+            attachHoneypot(form);
+          }
+        });
+    };
 
-      const form = event.target;
-      if (!isOwnedTildaLeadForm(form)) {
-        return;
-      }
+    armOwnedForms();
 
-      // Once this allowlisted form is owned, prevent the legacy Tilda handler
-      // from submitting a second copy to opaque receiver hashes.
-      event.preventDefault();
-      event.stopImmediatePropagation();
+    // Tilda injects Zero Block popup forms after hydration, so watch for them
+    // instead of assuming the first pass saw every form.
+    const observer = new MutationObserver(armOwnedForms);
+    observer.observe(document.body, { childList: true, subtree: true });
 
+    const submitOwnedForm = (form: HTMLFormElement) => {
       if (pendingForms.has(form) || !passesLegacyValidation(form)) {
         return;
       }
@@ -374,10 +398,59 @@ export function LeadAttributionBridge() {
         });
     };
 
-    // Capture at `window` before Tilda's document/form handlers can submit an
-    // opaque duplicate to the legacy receiver.
+    const handleSubmit = (event: SubmitEvent) => {
+      if (!(event.target instanceof HTMLFormElement)) {
+        return;
+      }
+
+      const form = event.target;
+      if (!isOwnedTildaLeadForm(form)) {
+        return;
+      }
+
+      // Once this allowlisted form is owned, prevent the legacy Tilda handler
+      // from submitting a second copy to opaque receiver hashes.
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      submitOwnedForm(form);
+    };
+
+    // Tilda's form script calls preventDefault() on the submit button's click,
+    // so on most pages no `submit` event is ever dispatched and a submit-only
+    // listener never runs. Claim the click first — window capture is the
+    // earliest phase, ahead of Tilda's element and document handlers.
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const control = target.closest<HTMLButtonElement | HTMLInputElement>(
+        'button[type="submit"], input[type="submit"], button:not([type])',
+      );
+      if (!control || control.disabled) {
+        return;
+      }
+
+      const form = control.form ?? control.closest("form");
+      if (!form || !isOwnedTildaLeadForm(form)) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      submitOwnedForm(form);
+    };
+
+    // Keyboard submits (Enter inside a field) still arrive as `submit`, and
+    // some forms are not driven by the Tilda script at all.
+    window.addEventListener("click", handleClick, true);
     window.addEventListener("submit", handleSubmit, true);
-    return () => window.removeEventListener("submit", handleSubmit, true);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("click", handleClick, true);
+      window.removeEventListener("submit", handleSubmit, true);
+    };
   }, []);
 
   return null;

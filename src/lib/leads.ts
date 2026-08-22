@@ -1,3 +1,16 @@
+import {
+  defaultFormName,
+  isLeadFormType,
+  resolveLeadFormType,
+  type LeadFormType,
+} from "@/lib/lead-forms";
+
+/**
+ * Name of the decoy field rendered off-screen in every lead form. Real users
+ * never fill it in; bots that auto-complete every input do.
+ */
+export const LEAD_HONEYPOT_FIELD = "company_website";
+
 export const LEAD_UTM_KEYS = [
   "utm_source",
   "utm_medium",
@@ -37,12 +50,16 @@ export type LeadPayload = FirstTouchAttribution & {
   email: string;
   phone?: string;
   country?: string;
+  company?: string;
   message?: string;
+  formType: LeadFormType;
   formName: string;
   consent: boolean | null;
   submissionPage: string;
   order?: LeadOrderContext;
   clientTimestamp: string;
+  /** True when the decoy field was filled — the caller drops the submission. */
+  honeypotTripped: boolean;
 };
 
 export type LeadValidationIssue = {
@@ -309,12 +326,30 @@ export function validateLeadPayload(input: unknown): LeadValidationResult {
     MAX_SHORT_TEXT_LENGTH,
     issues,
   ).toLowerCase();
-  const formName = readRequiredString(
+  // The browser may send a form type, but it only ever selects from the
+  // allowlist — it can never introduce an internal form name of its own.
+  const requestedType = input.formType;
+  const formId = readOptionalString(input, "formId", MAX_SHORT_TEXT_LENGTH, issues);
+  const requestedName = readOptionalString(
     input,
     "formName",
     MAX_SHORT_TEXT_LENGTH,
     issues,
   );
+
+  let formType: LeadFormType | null = null;
+  if (requestedType === undefined || requestedType === null || requestedType === "") {
+    formType = resolveLeadFormType(formId, requestedName);
+    if (!formType) {
+      issues.push({ field: "formType", message: "formType is required" });
+    }
+  } else if (isLeadFormType(requestedType)) {
+    formType = requestedType;
+  } else {
+    issues.push({ field: "formType", message: "formType is not allowed" });
+  }
+
+  const formName = requestedName ?? (formType ? defaultFormName(formType) : "");
   const landingPage = readRequiredString(
     input,
     "landingPage",
@@ -363,6 +398,14 @@ export function validateLeadPayload(input: unknown): LeadValidationResult {
     issues.push({ field: "consent", message: "consent must be boolean or null" });
   }
 
+  const honeypotValue = input[LEAD_HONEYPOT_FIELD];
+  const honeypotTripped =
+    typeof honeypotValue === "string" && honeypotValue.trim() !== "";
+
+  if (!formType) {
+    return { ok: false, issues };
+  }
+
   const data: LeadPayload = {
     name,
     email,
@@ -373,9 +416,12 @@ export function validateLeadPayload(input: unknown): LeadValidationResult {
       issues,
     ),
     country: readOptionalString(input, "country", 128, issues),
+    company: readOptionalString(input, "company", MAX_SHORT_TEXT_LENGTH, issues),
     message: readOptionalString(input, "message", MAX_TEXT_LENGTH, issues),
+    formType,
     formName,
     consent,
+    honeypotTripped,
     landingPage,
     submissionPage,
     referrer:
