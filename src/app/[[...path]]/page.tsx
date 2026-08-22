@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import {
   getSitePage,
@@ -74,5 +75,13 @@ export default async function SiteRoute({ params }: RouteProps) {
   const route = normalizeSitePath((await params).path);
   const page = getSitePage(route);
   if (!page) notFound();
+
+  // Only the homepage is redesigned so far. Every other route keeps rendering
+  // the Tilda parity document, so titles, canonicals, structured data and the
+  // legacy form pipeline are untouched while the new design is built out.
+  // `generateMetadata` above is shared, so `/` keeps its existing title and
+  // description either way.
+  if (route === "/") return <HomePage />;
+
   return <LegacyDocument page={page} />;
 }
