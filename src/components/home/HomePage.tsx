@@ -1,4 +1,6 @@
 import { Bestsellers } from "@/components/home/Bestsellers";
+import { Collage } from "@/components/home/Collage";
+import { MiniCatalog } from "@/components/home/MiniCatalog";
 import { Hero } from "@/components/home/Hero";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -31,6 +33,8 @@ export function HomePage() {
       <main>
         <Hero />
         <Bestsellers />
+        <Collage />
+        <MiniCatalog />
       </main>
     </div>
   );
