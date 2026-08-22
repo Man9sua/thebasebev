@@ -38,17 +38,26 @@ export function SmoothScroll() {
     const maxScroll = () =>
       Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
 
+    // The last position we wrote ourselves. Anything that does not match it is
+    // someone else moving the page.
+    let selfScrollY = window.scrollY;
+
+    const scrollTo = (y: number) => {
+      selfScrollY = y;
+      window.scrollTo(0, y);
+    };
+
     const tick = () => {
       const current = window.scrollY;
       const delta = target - current;
 
       if (Math.abs(delta) < SETTLE_EPSILON) {
-        window.scrollTo(0, target);
+        scrollTo(target);
         animating = false;
         return;
       }
 
-      window.scrollTo(0, current + delta * LERP);
+      scrollTo(current + delta * LERP);
       frame = requestAnimationFrame(tick);
     };
 
@@ -76,10 +85,31 @@ export function SmoothScroll() {
       start();
     };
 
-    // Anything that is not our own easing — scrollbar drag, keyboard, anchor
-    // jumps, browser restore — resets the target so the two never fight.
+    /**
+     * Adopt any scroll we did not cause.
+     *
+     * Guarding this on `!animating` was a real bug: the blog rail is marked
+     * `data-native-scroll`, so a wheel over it is left to the browser. If our
+     * easing loop happened to still be running, the native scroll was ignored
+     * here and `tick` kept dragging the page back toward a stale target — the
+     * page fought the user and looked stuck. It was intermittent because it
+     * depended on whether the loop was still settling when the pointer crossed
+     * onto the rail.
+     *
+     * Comparing against the position we last wrote catches every other source
+     * too: scrollbar drag, keyboard, anchor jumps, browser restore.
+     */
     const onScroll = () => {
-      if (!animating) target = window.scrollY;
+      const y = window.scrollY;
+      if (Math.abs(y - selfScrollY) <= 1) return;
+
+      target = y;
+      selfScrollY = y;
+      if (animating) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        animating = false;
+      }
     };
 
     const onResize = () => {

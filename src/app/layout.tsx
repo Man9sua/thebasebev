@@ -1,26 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Jost } from "next/font/google";
+import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
 import "./globals.css";
 
 /**
- * The redesigned surfaces need a webfont of their own: the legacy pages get
- * Jost from Tilda's stylesheets, but the new homepage does not load those, so
- * it was falling back to a system grotesque.
+ * Exo 2 — the brand face, per Guidebook p.16: "EXO 2.0 font looks technical
+ * and friendly, free font with open license".
+ *
+ * It replaces Jost, which was a stand-in picked before the Guidebook was
+ * available. Weights map to the Guidebook's roles: 700 Header Bold, 400
+ * Subheader Regular, 300 body Light.
  *
  * next/font self-hosts the files at build time — no runtime request to Google —
- * and reserves metrics up front, so swapping in the real face causes no shift.
+ * and reserves metrics up front, so the swap causes no shift.
  *
  * The variable class goes on <html>, not <body>: the design tokens compose it
  * inside `:root`, and a var() that is undefined at :root makes the whole
  * declaration invalid at computed-value time — which silently dropped the font
  * stack to Times New Roman.
  */
-const jost = Jost({
+const exo2 = Exo_2({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
-  variable: "--tbb-font-jost",
+  variable: "--tbb-font-exo",
 });
 
 export const metadata: Metadata = {
@@ -47,7 +50,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={jost.variable} suppressHydrationWarning>
+    <html lang="en" className={exo2.variable} suppressHydrationWarning>
       <head>
         <base href="/" />
         <link rel="alternate" type="application/rss+xml" title="THE BASE" href="/rss.xml" />

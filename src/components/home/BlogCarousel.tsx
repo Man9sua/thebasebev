@@ -103,8 +103,10 @@ export function BlogCarousel() {
       startLeft: rail.scrollLeft,
       moved: 0,
     };
-    setDragging(true);
-    rail.setPointerCapture(event.pointerId);
+    // Deliberately no setPointerCapture here. Capturing on pointerdown
+    // retargets the following `click` to the rail instead of the card, so
+    // every blog link silently stopped navigating. Capture is taken below,
+    // only once the pointer has actually moved far enough to be a drag.
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -114,6 +116,16 @@ export function BlogCarousel() {
 
     const delta = event.clientX - drag.current.startX;
     drag.current.moved = Math.max(drag.current.moved, Math.abs(delta));
+    if (drag.current.moved <= DRAG_THRESHOLD_PX) return;
+
+    if (!rail.hasPointerCapture(event.pointerId)) {
+      rail.setPointerCapture(event.pointerId);
+      setDragging(true);
+      // Snapping has to be off *this frame*. Waiting for the state-driven
+      // class meant mandatory snap pulled every scrollLeft write straight back
+      // to the nearest card, so the rail never moved.
+      rail.style.scrollSnapType = "none";
+    }
     rail.scrollLeft = drag.current.startLeft - delta;
   };
 
@@ -121,7 +133,13 @@ export function BlogCarousel() {
     if (!drag.current.active) return;
     drag.current.active = false;
     setDragging(false);
-    railRef.current?.releasePointerCapture(event.pointerId);
+
+    const rail = railRef.current;
+    if (rail?.hasPointerCapture(event.pointerId)) {
+      rail.releasePointerCapture(event.pointerId);
+    }
+    // Hand snapping back so the rail settles on a card.
+    if (rail) rail.style.scrollSnapType = "";
   };
 
   // A drag that ends over a card must not also open it.
@@ -169,6 +187,10 @@ export function BlogCarousel() {
         ref={railRef}
         className={`${styles.rail} ${dragging ? styles.dragging : ""}`}
         data-native-scroll
+        // Cards are links, and pressing then moving on a link starts a native
+        // link drag, which kills the pointer stream mid-gesture. Suppressing
+        // dragstart keeps drag-to-scroll alive without touching click.
+        onDragStart={(event) => event.preventDefault()}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
