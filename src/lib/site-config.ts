@@ -94,11 +94,23 @@ export const FOOTER_LINKS = {
   ],
 } as const;
 
-/** Taken from the existing site metadata — not invented. */
+/** Taken from the existing site — every value appears in the Tilda export. */
 export const COMPANY = {
   legalName: "The Base Beverage LLC",
   city: "Dubai",
   country: "United Arab Emirates",
-  phone: "+971509890429",
+  phone: "+971 50 989 0429",
   phoneHref: "tel:+971509890429",
+  phoneAlt: "+971 58 932 7887",
+  phoneAltHref: "tel:+971589327887",
+  email: "info@thebasebev.com",
+  emailHref: "mailto:info@thebasebev.com",
 } as const;
+
+/** Live accounts, lifted from the export — none of these are placeholders. */
+export const SOCIAL_LINKS = [
+  { label: "Instagram", href: "https://instagram.com/thebasebev/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/the-base-beverage-llc/" },
+  { label: "YouTube", href: "https://youtube.com/@thebasebev" },
+  { label: "Facebook", href: "https://www.facebook.com/p/The-Base-Beverage-61572299409113/" },
+] as const;

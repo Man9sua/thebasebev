@@ -63,15 +63,11 @@
   transform: scale(1.1);
 }
 
-/* The parallax wrapper has to fill the tile for object-fit to have a box. */
+/* Sized by `inset` alone — it overhangs the tile so the parallax shift never
+   exposes an edge. Do not add height:100%: it would override the bottom edge. */
 .layer {
   position: absolute;
   inset: -8% 0;
-}
-
-.layer > div {
-  width: 100%;
-  height: 100%;
 }
 
 .caption {

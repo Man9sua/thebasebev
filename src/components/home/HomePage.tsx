@@ -1,8 +1,10 @@
+import { About } from "@/components/home/About";
 import { Bestsellers } from "@/components/home/Bestsellers";
 import { Collage } from "@/components/home/Collage";
 import { MiniCatalog } from "@/components/home/MiniCatalog";
 import { Hero } from "@/components/home/Hero";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 
@@ -35,7 +37,9 @@ export function HomePage() {
         <Bestsellers />
         <Collage />
         <MiniCatalog />
+        <About />
       </main>
+      <SiteFooter />
     </div>
   );
 }
