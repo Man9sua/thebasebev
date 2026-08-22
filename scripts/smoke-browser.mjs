@@ -143,6 +143,36 @@ try {
     "reading: rail swallowed vertical scrolling",
   );
 
+  // The footer wordmark must fit. It was sized in `vw`, which includes the
+  // scrollbar, so the final E ran off the right edge on desktop only.
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForTimeout(900);
+  const wordmark = await page.evaluate(() => {
+    const el = [...document.querySelectorAll("footer *")]
+      .find((e) => e.textContent.trim() === "BASE" && e.children.length === 0);
+    if (!el) return null;
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const box = range.getBoundingClientRect();
+    const cw = document.documentElement.clientWidth;
+    return { left: box.left, right: box.right, cw, share: box.width / cw };
+  });
+  check(!!wordmark, "footer: BASE wordmark not found");
+  check(
+    !!wordmark && wordmark.left >= -2 && wordmark.right <= wordmark.cw + 2,
+    `footer: BASE wordmark overflows (${Math.round(wordmark?.left ?? 0)}..${Math.round(wordmark?.right ?? 0)} of ${wordmark?.cw})`,
+  );
+  check(
+    !!wordmark && wordmark.share > 0.7,
+    "footer: BASE wordmark should span most of the width",
+  );
+  check(
+    await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
+    "home: horizontal overflow on the page",
+  );
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(700);
+
   // Clicking a carousel control scrolls the page, and the bar hides on
   // scroll-down by design, so come back to the top before touching the header.
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -186,7 +216,8 @@ try {
     panel: getComputedStyle(el, "::after").transform,
   }));
   check(
-    headerState.color === "rgb(26, 19, 17)",
+    // Guidebook p.15: ink is 000000.
+    headerState.color === "rgb(0, 0, 0)",
     `header: scrolled state was not applied (${JSON.stringify(headerState)})`,
   );
 
