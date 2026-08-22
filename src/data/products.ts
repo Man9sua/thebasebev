@@ -10,9 +10,12 @@
  * product's largest artwork is a dark banner rather than a coloured pack shot;
  * they are marked and are the ones worth reviewing first.
  *
- * Prices are deliberately absent: the Tilda store fetches them at runtime from
- * its own CDN, so there is no price in this repository to copy. The catalog
- * renders an enquiry CTA instead of inventing a number.
+ * `price` is a snapshot of what /catalog shows. That page still fetches live
+ * prices at runtime — these are here so the homepage can show a real number
+ * instead of a placeholder, and they are safe to duplicate only because
+ * `scripts/smoke-browser.mjs` asserts the same strings against the running
+ * catalog. If a price changes, that test fails rather than the two quietly
+ * disagreeing.
  */
 
 export type Product = {
@@ -25,6 +28,15 @@ export type Product = {
   headline: string;
   description: string;
   image: string | null;
+  /**
+   * Retail price as shown on /catalog, or null for "Price on request".
+   *
+   * A snapshot, not a source of truth — the catalog page still fetches live
+   * prices at runtime. It is safe to keep here because
+   * `scripts/smoke-browser.mjs` asserts these exact strings against the running
+   * catalog, so any drift fails a test rather than going unnoticed.
+   */
+  price: string | null;
   /** Swap freely — nothing hard-codes a product colour anywhere else. */
   backgroundColor: string;
 };
@@ -38,6 +50,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Milkshake base powder for cafés and HoReCa: thick, creamy texture from a single scoop, no dairy prep and no waste.",
     image: "/images/tild6133-3232-4764-b264-653138376630__group_903_1.png",
+    price: "45.38 AED",
     backgroundColor: "#dfa9b5",
   },
   {
@@ -48,6 +61,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Matcha beverage base with a clean, balanced profile that holds its colour hot or iced, built for repeatable service.",
     image: "/images/tild3865-3461-4539-a437-323236316538__group_907_2.png",
+    price: "70.42 AED",
     backgroundColor: "#53a967",
   },
   {
@@ -58,6 +72,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Rich chocolate base that dissolves cleanly in hot or cold milk, for cafés, bars and private-label production.",
     image: "/images/tild6263-6261-4637-a161-336164333433__group_909_1.png",
+    price: "67.88 AED",
     backgroundColor: "#43201c",
   },
   {
@@ -68,6 +83,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Crisp iced tea base that mixes instantly and stays bright over ice — consistent from the first cup to the last.",
     image: "/images/tild3363-6566-4933-b332-643866313131__group_905_1.png",
+    price: "42.81 AED",
     backgroundColor: "#d7bd64",
   },
   {
@@ -78,6 +94,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Frappe base engineered for blended service: smooth body, stable foam and the same result on every shift.",
     image: "/images/tild3462-3862-4961-a462-633462333961__group_904_1.png",
+    price: "49.40 AED",
     backgroundColor: "#9b693d",
   },
   {
@@ -88,6 +105,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Authentic spiced chai latte base — full aromatic profile without brewing, steeping or waste.",
     image: "/images/tild3862-3533-4437-b961-623838626563__group_902_1.png",
+    price: "52.05 AED",
     backgroundColor: "#c2a899",
   },
   {
@@ -98,6 +116,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Cordial powders for bold fruit and spice builds across mocktails, sodas and signature menu drinks.",
     image: "/images/tild3266-3831-4662-b132-393566336463__group_906_1.png",
+    price: "50.15 AED",
     backgroundColor: "#8499b3",
   },
   {
@@ -108,6 +127,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Consistent sugar syrup for cafés and bars — stable sweetness with no crystallisation behind the counter.",
     image: "/images/tild3762-6437-4936-b831-353461653538__group_911_1.png",
+    price: "48.82 AED",
     backgroundColor: "#f1d1b4",
   },
   {
@@ -118,6 +138,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Jams and fruit fillings with real fruit character, bake-stable and ready for beverage, pastry and dessert work.",
     image: "/images/tild6132-6537-4635-a437-613138386635__group_916_1.png",
+    price: "64.94 AED",
     backgroundColor: "#42080d",
   },
   {
@@ -128,6 +149,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Raf coffee base — the signature creamy, lightly sweet profile, ready in one step.",
     image: "/images/tild3465-3139-4036-b037-343164383039__group_798.png",
+    price: "38.74 AED",
     backgroundColor: "#c8a887" /* hand-set — verify */,
   },
   {
@@ -138,6 +160,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Cream latte base with a rounded dairy body that holds through steaming and over ice.",
     image: "/images/tild6532-6131-4765-a162-316663316136__mask_group_96.png",
+    price: "38.76 AED",
     backgroundColor: "#ceaaa7",
   },
   {
@@ -148,6 +171,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Tea-based drink powders for cafés, bars and OEM projects, from classic black to green and herbal profiles.",
     image: "/images/tild3836-3861-4566-b132-313163316566__group_946.png",
+    price: null,
     backgroundColor: "#b7c9a6" /* hand-set — verify */,
   },
   {
@@ -158,6 +182,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Professional toppings that finish drinks and desserts with consistent texture and clean release.",
     image: "/images/tild3764-3966-4862-a438-323039663536__group_929_1.png",
+    price: null,
     backgroundColor: "#eeebe1",
   },
   {
@@ -168,6 +193,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Garnishes built for service speed — consistent size, colour and shelf life across every cover.",
     image: "/images/tild6564-3935-4536-b739-306432633831__group_890_1.png",
+    price: "4.91 AED",
     backgroundColor: "#ebe2d2",
   },
   {
@@ -178,6 +204,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Sugar-free beverage bases that keep full flavour, for menus that need a no-sugar option without compromise.",
     image: "/images/tild6437-6630-4363-b464-343536313462__group_947.png",
+    price: "14.22 AED",
     backgroundColor: "#e8f1e9",
   },
   {
@@ -188,6 +215,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Free-flowing powders formulated for automatic dispensing — no bridging, no clogging, consistent dose.",
     image: "/images/tild6439-3835-4139-b932-323831386638__group_912_1.png",
+    price: null,
     backgroundColor: "#583d35",
   },
 ];

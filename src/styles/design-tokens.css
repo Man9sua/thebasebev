@@ -30,8 +30,8 @@
    * Alexandra is not licensed or installed in this project; until it is, the
    * stack falls back to Jost, which the current site already loads.
    */
-  --tbb-font-display: "Alexandra", "Jost", "Helvetica Neue", Arial, sans-serif;
-  --tbb-font-sans: "Jost", "Helvetica Neue", Arial, sans-serif;
+  --tbb-font-display: "Alexandra", var(--tbb-font-jost, "Jost"), "Helvetica Neue", Arial, sans-serif;
+  --tbb-font-sans: var(--tbb-font-jost, "Jost"), "Helvetica Neue", Arial, sans-serif;
   --tbb-font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 
   /* Fluid scale — clamp() keeps every step responsive without breakpoints,

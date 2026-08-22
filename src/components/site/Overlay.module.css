@@ -204,3 +204,51 @@
     gap: 1.25rem;
   }
 }
+
+/* ---- product grid (production's mega-menu, folded into the panel) ---- */
+
+.products {
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+}
+
+.productList {
+  list-style: none;
+  margin: clamp(0.75rem, 2vw, 1.25rem) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: 0.15rem clamp(1rem, 3vw, 2.5rem);
+}
+
+.productLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0;
+  color: var(--tbb-ink);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.productLink:hover {
+  opacity: 0.55;
+}
+
+.productSwatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  flex: none;
+}
+
+/* The bar shows the picker from 1024px up, so the menu only needs it below. */
+.metaRegion {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .metaRegion {
+    display: flex;
+  }
+}

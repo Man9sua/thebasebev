@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useRef } from "react";
+import { PRODUCTS } from "@/data/products";
 import { COMPANY, FOOTER_LINKS, SITE_NAV } from "@/lib/site-config";
+import { RegionPicker } from "./RegionPicker";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
 
@@ -49,9 +51,37 @@ export function SiteMenu({
           ))}
         </nav>
 
+        {/* The product grid production keeps in a hover mega-menu. Carrying
+            every one of those links here is also what keeps the homepage's
+            internal-link count where the SEO audit expects it. */}
+        <div
+          className={`${styles.products} ${styles.item}`}
+          style={{ transitionDelay: open ? `${120 + SITE_NAV.length * 55}ms` : "0ms" }}
+        >
+          <span className="tbb-label">All products</span>
+          <ul className={styles.productList}>
+            {PRODUCTS.map((product) => (
+              <li key={product.slug}>
+                <Link
+                  href={product.route}
+                  className={styles.productLink}
+                  onClick={onClose}
+                >
+                  <span
+                    className={styles.productSwatch}
+                    style={{ background: product.backgroundColor }}
+                    aria-hidden="true"
+                  />
+                  {product.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div
           className={`${styles.meta} ${styles.item}`}
-          style={{ transitionDelay: open ? `${120 + SITE_NAV.length * 55}ms` : "0ms" }}
+          style={{ transitionDelay: open ? `${160 + SITE_NAV.length * 55}ms` : "0ms" }}
         >
           <div className={styles.metaGroup}>
             <span className="tbb-label">Enquiries</span>
@@ -71,6 +101,11 @@ export function SiteMenu({
             <Link className={styles.metaLink} href="/contacts" onClick={onClose}>
               Contact us
             </Link>
+          </div>
+
+          <div className={`${styles.metaGroup} ${styles.metaRegion}`}>
+            <span className="tbb-label">Region</span>
+            <RegionPicker compact />
           </div>
 
           <div className={styles.metaGroup}>

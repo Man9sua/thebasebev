@@ -101,7 +101,7 @@ export function Hero() {
   };
 
   return (
-    <section className={styles.hero} aria-label="THE BASE">
+    <section className={styles.hero} aria-label="THE BASE" data-hero>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={styles.poster}

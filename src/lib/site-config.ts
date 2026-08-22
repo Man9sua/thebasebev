@@ -36,6 +36,29 @@ export const HERO_VIDEO = {
   objectPosition: { desktop: "center center", mobile: "center center" },
 } as const;
 
+/**
+ * Regions offered by the header picker, copied from the control on production.
+ *
+ * Display-only for now — see RegionPicker. The shape matches the future
+ * locale/currency model in PROJECT_CONTEXT.md so wiring it up later is a data
+ * change rather than a rewrite.
+ */
+export type Region = {
+  short: string;
+  label: string;
+  name: string;
+  flag: string;
+  currency: string;
+};
+
+export const REGIONS: Region[] = [
+  { short: "AE", label: "UAE (EN)", name: "United Arab Emirates", flag: "🇦🇪", currency: "AED" },
+  { short: "SA", label: "KSA (EN)", name: "Saudi Arabia", flag: "🇸🇦", currency: "SAR" },
+  { short: "KZ", label: "KZ (RU)", name: "Kazakhstan", flag: "🇰🇿", currency: "KZT" },
+  { short: "RU", label: "RU (RU)", name: "Russia", flag: "🇷🇺", currency: "RUB" },
+  { short: "UK", label: "UK (EN)", name: "United Kingdom", flag: "🇬🇧", currency: "GBP" },
+];
+
 export const SITE_NAV = [
   { label: "Catalog", href: "/catalog" },
   { label: "Private Label", href: "/private-labeling" },

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { RegionPicker } from "@/components/site/RegionPicker";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
 import styles from "./SiteHeader.module.css";
@@ -47,43 +48,48 @@ function AccountIcon() {
 }
 
 export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
-  const [solid, setSolid] = useState(!overHero);
+  const [pastHero, setPastHero] = useState(false);
   const [hidden, setHidden] = useState(false);
+  // Derived, not stored: away from the hero the bar is always solid.
+  const solid = !overHero || pastHero;
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const lastY = useRef(0);
 
+  /**
+   * Solid state is driven by an IntersectionObserver on the hero rather than by
+   * measuring scrollY on every frame. It is cheaper, and it does not depend on
+   * `requestAnimationFrame`, which browsers stop servicing in a background tab —
+   * that left the bar stuck transparent whenever the page was not in front.
+   */
+  useEffect(() => {
+    // Only a page that actually renders a hero can be over one.
+    const hero = overHero ? document.querySelector("[data-hero]") : null;
+    if (!hero) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setPastHero(entry.intersectionRatio < 0.14),
+      { threshold: [0, 0.14, 0.5, 1] },
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [overHero]);
+
+  // Direction only — plain arithmetic in the scroll handler, no frame loop.
   useEffect(() => {
     lastY.current = window.scrollY;
-    let frame = 0;
-
-    const read = () => {
-      const y = window.scrollY;
-      // Over the hero the bar only turns solid once the video is behind it.
-      const threshold = overHero ? window.innerHeight * 0.86 : 8;
-      setSolid(y > threshold);
-      // Never hide while an overlay is open, or near the very top.
-      setHidden(y > threshold && y > lastY.current + 4);
-      lastY.current = y;
-      frame = 0;
-    };
 
     const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(read);
+      const y = window.scrollY;
+      setHidden(y > window.innerHeight * 0.86 && y > lastY.current + 4);
+      lastY.current = y;
     };
 
-    read();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [overHero]);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   /**
    * The legacy Tilda cart is the real cart. Where its runtime is on the page
@@ -128,6 +134,12 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         </Link>
 
         <div className={styles.actions}>
+          {/* Ported from production. Display-only there and here — see
+              RegionPicker. Moves into the menu on small screens. */}
+          <span className={styles.desktopOnly}>
+            <RegionPicker />
+          </span>
+
           <Link
             href="/catalog"
             className={styles.action}
