@@ -128,9 +128,18 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           .filter(Boolean)
           .join(" ")}
       >
+        {/* The original lockup, lifted verbatim out of the Tilda header and
+            saved as public/images/base-logo.svg — the same paths the old site
+            shipped, not redrawn and not re-typeset. */}
         <Link href="/" className={styles.logo} aria-label="THE BASE — home">
-          <span className={styles.logoMark}>the</span>
-          BASE
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/base-logo.svg"
+            alt="THE BASE — Beverage Production"
+            width={175}
+            height={80}
+            draggable={false}
+          />
         </Link>
 
         <div className={styles.actions}>

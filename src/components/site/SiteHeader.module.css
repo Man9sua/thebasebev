@@ -7,22 +7,25 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--tbb-gutter);
-  color: var(--tbb-on-dark);
+  /* The hero is paper now, not a dark video, so the bar starts in ink and
+     simply stays there. The old scrim existed to keep white icons legible over
+     footage that ran from near-black to bright white. */
+  color: var(--tbb-on-light);
   transition:
     color var(--tbb-dur) var(--tbb-ease),
     transform var(--tbb-dur) var(--tbb-ease);
 }
 
-/* A scrim rather than a solid bar: the hero video runs from near-black to a
-   bright white counter, so the icons need contrast without a hard edge. */
+/* Transparent over the hero: the bar reads as part of the composition rather
+   than as a separate navbar sitting on top of it. */
 .header::before {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(18, 18, 18, 0.55),
-    rgba(18, 18, 18, 0)
+    rgba(253, 250, 245, 0.9),
+    rgba(253, 250, 245, 0)
   );
   opacity: 1;
   transition: opacity var(--tbb-dur) var(--tbb-ease);
@@ -68,22 +71,21 @@
   position: relative;
   z-index: 1;
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.4em;
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: currentColor;
+  align-items: center;
   text-decoration: none;
 }
 
-.logoMark {
-  font-size: 0.55em;
-  letter-spacing: 0.1em;
-  opacity: 0.7;
-  font-weight: 400;
+/* Height-driven, width auto: the lockup's aspect ratio is never touched, and
+   it is the same asset at every breakpoint — only the scale changes. */
+.logo img {
+  display: block;
+  height: clamp(1.5rem, 2.1vw, 2rem);
+  width: auto;
+}
+
+.logo:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
 }
 
 .actions {

@@ -4,36 +4,17 @@
  * Everything here is meant to be edited without touching a component.
  */
 
-export const HERO_VIDEO = {
-  /**
-   * Encoded from the supplied `BASE-VIDEO final2.mp4` (86 MB, 1920x1080, 55s):
-   * audio stripped because the hero is always muted, H.264 CRF 30, faststart.
-   * Result is 3.9 MB desktop / 1.8 MB mobile.
-   */
+/**
+ * The brand film is no longer the hero — the hero is the product.
+ *
+ * The encoded files stay in `public/video/` (3.9 MB desktop / 1.8 MB mobile
+ * plus a poster) so the asset is available if it is wanted elsewhere. Nothing
+ * renders them today.
+ */
+export const BRAND_VIDEO = {
   desktop: "/video/base-hero.mp4",
   mobile: "/video/base-hero-mobile.mp4",
   poster: "/video/base-hero-poster.jpg",
-
-  /** Below this width the lighter file is used. Matches the CSS breakpoint. */
-  mobileBreakpoint: 768,
-
-  /**
-   * The source is a finished promo film: it opens on a logo card and ends on a
-   * "Simplify your bar operations today" card, so looping it end-to-end shows a
-   * hard cut. `seamFadeMs` fades the seam so the restart reads as intentional.
-   *
-   * To loop only the ambient product footage instead, set `loopStart` /
-   * `loopEnd` (seconds). `null` plays the whole film.
-   */
-  loopStart: null as number | null,
-  loopEnd: null as number | null,
-  seamFadeMs: 900,
-
-  /**
-   * How the frame is anchored when the viewport crops it. The film is centre
-   * composed, so mobile keeps the middle rather than drifting to one edge.
-   */
-  objectPosition: { desktop: "center center", mobile: "center center" },
 } as const;
 
 /**

@@ -1,178 +1,370 @@
 .hero {
   position: relative;
   width: 100%;
-  /* svh tracks the mobile URL bar, so the video fills the screen without the
-     jump `vh` causes when the bar collapses. vh is the fallback. */
-  height: 100vh;
-  height: 100svh;
-  overflow: clip;
-  background: var(--tbb-ink-black);
-  color: var(--tbb-on-dark);
-}
-
-.video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  /* cover + fixed box = no letterboxing and no distortion at any ratio. */
-  object-fit: cover;
-  object-position: var(--hero-position, center center);
-}
-
-/* Poster underneath so the first paint is the frame, not black, and there is
-   no flash if autoplay is refused. */
-.poster {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: var(--hero-position, center center);
-}
-
-/* The supplied film ends on a card and restarts on a different one. Fading the
-   seam turns a hard cut into a deliberate beat. */
-.seam {
-  position: absolute;
-  inset: 0;
-  background: var(--tbb-ink-black);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--seam-fade, 900ms) linear;
-}
-
-.seamActive {
-  opacity: 1;
-}
-
-.veil {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    rgba(18, 18, 18, 0.55) 0%,
-    rgba(18, 18, 18, 0) 38%
-  );
-}
-
-.foot {
-  position: absolute;
-  left: var(--tbb-gutter);
-  right: var(--tbb-gutter);
-  bottom: clamp(1.5rem, 4vw, 3rem);
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem;
+  align-items: center;
+  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 4vw, 3rem)) 0
+    clamp(2rem, 5vw, 4rem);
+  overflow: clip;
+  /* Paper, not the product colour: the field below is a soft wash so the pack
+     shot stays the brightest, most saturated thing in the frame. */
+  background: var(--tbb-paper);
+  isolation: isolate;
 }
 
-.tagline {
+/* A soft paper vignette, not a colour halo: the pack shots are pre-composed
+   cards that carry their own background, so tinting the space around them only
+   muddies the edge. This just lifts the centre of the frame. */
+.wash {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: min(96vw, 78rem);
+  aspect-ratio: 1 / 0.7;
+  transform: translate3d(-50%, -50%, 0);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--tbb-paper-warm) 0%,
+    rgba(247, 241, 232, 0) 100%
+  );
+  opacity: 0.9;
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+  display: grid;
+  /* Equal outer columns so the product sits on the true centre of the frame. */
+  grid-template-columns: 1fr minmax(0, clamp(19rem, 44vw, 46rem)) 1fr;
+  align-items: center;
+  gap: clamp(1rem, 2.5vw, 3rem);
+}
+
+/* ---- left: editorial copy ---- */
+
+.copy {
   max-width: 26ch;
-  font-size: clamp(0.95rem, 1.3vw, 1.125rem);
-  line-height: 1.45;
-  color: rgba(253, 250, 245, 0.9);
 }
 
-.taglineLabel {
+.category {
   display: block;
-  margin-bottom: 0.6rem;
-  color: rgba(253, 250, 245, 0.6);
+  margin-bottom: clamp(0.9rem, 2vw, 1.4rem);
 }
 
-.cue {
+.title {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.titleProduct {
+  display: block;
+  color: var(--product-accent, var(--tbb-accent));
+  transition: color var(--tbb-dur-slow) var(--tbb-ease-inout);
+}
+
+.description {
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+  color: var(--tbb-ink-soft);
+  max-width: 30ch;
+}
+
+.cta {
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  background: none;
-  border: 0;
-  padding: 0.5rem 0;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-}
-
-.cueLabel {
-  color: rgba(253, 250, 245, 0.7);
-}
-
-.cueLine {
-  display: block;
-  width: 1px;
-  height: 2.75rem;
-  background: rgba(253, 250, 245, 0.35);
-  position: relative;
-  overflow: hidden;
-}
-
-/* A travelling highlight rather than a bouncing arrow — quieter, and it never
-   moves layout. */
-.cueLine::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 45%;
-  background: var(--tbb-paper);
-  animation: cueTravel 2.6s var(--tbb-ease-inout) infinite;
-}
-
-@keyframes cueTravel {
-  0% {
-    transform: translate3d(0, -110%, 0);
-  }
-  60%,
-  100% {
-    transform: translate3d(0, 240%, 0);
-  }
-}
-
-/* Shown only when the browser refuses to autoplay. */
-.playButton {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 5.5rem;
-  height: 5.5rem;
-  border-radius: 999px;
-  border: 1px solid rgba(253, 250, 245, 0.45);
-  background: rgba(18, 18, 18, 0.35);
+  gap: 0.75rem;
+  padding: 1rem 1.75rem;
+  background: var(--tbb-ink);
   color: var(--tbb-paper);
-  cursor: pointer;
-  backdrop-filter: blur(6px);
+  text-decoration: none;
   font-size: var(--tbb-text-label);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
+  border-radius: 999px;
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cta:hover {
+  transform: translate3d(0, -2px, 0);
+  background: var(--tbb-ink-soft);
+}
+
+.cta svg {
+  width: 14px;
+  height: 14px;
   transition: transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.playButton:hover {
-  transform: scale(1.06);
+.cta:hover svg {
+  transform: translate3d(4px, 0, 0);
 }
 
-@media (max-width: 767px) {
-  .foot {
-    flex-direction: column;
+/* ---- centre: the product ---- */
+
+.stage {
+  grid-column: 2;
+  position: relative;
+  aspect-ratio: 1 / 0.95;
+  display: grid;
+  place-items: center;
+}
+
+.slide {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity var(--tbb-dur-slow) var(--tbb-ease),
+    transform var(--tbb-dur-slow) var(--tbb-ease);
+  pointer-events: none;
+}
+
+.slideActive {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.shot {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  /* Two shadows: a long cast one for weight, a tight one so the card's edge
+     reads as deliberate against paper rather than as a crop. */
+  filter:
+    drop-shadow(0 52px 72px rgba(26, 19, 17, 0.24))
+    drop-shadow(0 4px 14px rgba(26, 19, 17, 0.13));
+}
+
+/* ---- right: metadata ---- */
+
+.meta {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  text-align: right;
+}
+
+.price {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.25rem, 1.9vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.metaBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* Product switcher — numbered, quiet, no dots-and-arrows carousel furniture. */
+.switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  align-items: flex-end;
+}
+
+.step {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0.2rem 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--tbb-muted);
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.stepLine {
+  display: block;
+  width: 1.5rem;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left center;
+  transition: transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.step:hover {
+  color: var(--tbb-ink);
+}
+
+.stepActive {
+  color: var(--tbb-ink);
+}
+
+.stepActive .stepLine {
+  transform: scaleX(2);
+  background: var(--product-accent, var(--tbb-accent));
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 3px;
+}
+
+/* ---- entrance ----
+   Staged: wash, then product, then copy, then CTA. Every step is
+   opacity+transform only, and each element is laid out in its final position,
+   so nothing reflows and there is no CLS. */
+
+.enter {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+}
+
+.ready .enter {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 1100ms var(--tbb-ease) var(--enter-delay, 0ms),
+    transform 1100ms var(--tbb-ease) var(--enter-delay, 0ms);
+}
+
+.enterProduct {
+  opacity: 0;
+  transform: scale(0.94) translate3d(0, 30px, 0);
+}
+
+.ready .enterProduct {
+  opacity: 1;
+  transform: scale(1) translate3d(0, 0, 0);
+  transition:
+    opacity 1400ms var(--tbb-ease) 120ms,
+    transform 1400ms var(--tbb-ease) 120ms;
+}
+
+.wash {
+  opacity: 0;
+}
+
+.ready .wash {
+  opacity: 0.9;
+  transition: opacity 1200ms var(--tbb-ease);
+}
+
+@media (max-width: 1023px) {
+  /* Rebuilt, not squeezed: product first and still dominant, copy under it,
+     metadata folded into a single row. */
+  .hero {
     align-items: flex-start;
-    gap: 1.25rem;
   }
 
-  .cue {
-    align-self: flex-start;
+  .inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.25rem, 4vw, 2rem);
+    justify-items: center;
+    text-align: center;
   }
 
-  .cueLine {
-    height: 2rem;
+  .stage {
+    grid-column: 1;
+    grid-row: 1;
+    width: min(100%, 26rem);
+    /* Keeps the pack shot the largest thing on a small screen. */
+    aspect-ratio: 1 / 0.9;
   }
 
-  .tagline {
-    max-width: 22ch;
+  .copy {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: 34ch;
+  }
+
+  .description {
+    max-width: none;
+  }
+
+  .meta {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(1rem, 4vw, 2rem);
+  }
+
+  .switcher {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .badges {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .wash {
+    width: 118vw;
+    top: 34%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cueLine::after {
-    animation: none;
-    transform: translate3d(0, 60%, 0);
+  .enter,
+  .enterProduct,
+  .wash {
+    opacity: 1;
+    transform: none;
   }
+
+  .ready .wash {
+    opacity: 0.9;
+  }
+}
+
+/* Copy swap when the hero product changes — the same small drop the
+   Bestsellers copy uses, so both sections speak one motion language. */
+.swap {
+  transition:
+    opacity var(--tbb-dur) var(--tbb-ease),
+    transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.swapOut {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+
+.titleProduct {
+  transition:
+    opacity 260ms var(--tbb-ease),
+    color var(--tbb-dur-slow) var(--tbb-ease-inout);
 }

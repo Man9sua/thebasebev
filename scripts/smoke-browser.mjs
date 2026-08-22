@@ -50,15 +50,26 @@ try {
   await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
 
-  const heroVideo = page.locator("section video").first();
-  check(await heroVideo.count() === 1, "home: expected one hero video");
+  // The hero is product-first: no video, and the pack shot is the dominant
+  // object in the first viewport.
+  const hero = page.locator("section[data-hero]");
+  check((await hero.locator("video").count()) === 0, "home: hero must not use video");
+  const heroShot = hero.locator("[aria-roledescription='slide']:not([aria-hidden='true']) img").first();
+  check(await heroShot.count() === 1, "home: expected one visible hero product");
+  const heroBox = await heroShot.boundingBox();
+  const view = page.viewportSize();
   check(
-    await heroVideo.evaluate((v) => v.muted && v.loop && v.playsInline),
-    "home: hero video must be muted, looping and inline",
+    !!heroBox && heroBox.height > view.height * 0.4,
+    `home: hero product is not dominant (${Math.round(heroBox?.height ?? 0)}px of ${view.height})`,
   );
   check(
-    await heroVideo.evaluate((v) => getComputedStyle(v).objectFit === "cover"),
-    "home: hero video must cover without letterboxing",
+    !!heroBox && Math.abs(heroBox.x + heroBox.width / 2 - view.width / 2) < 60,
+    "home: hero product is not centred",
+  );
+  // The header must carry the original Tilda lockup, not a text substitute.
+  check(
+    (await page.locator("header a[href='/'] img[src$='base-logo.svg']").count()) === 1,
+    "header: original BASE logo asset missing",
   );
 
   check(
