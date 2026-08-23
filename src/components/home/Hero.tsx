@@ -91,7 +91,21 @@ function HeroTile({ tile, clone }: { tile: Tile; clone: boolean }) {
   }
 
   return (
-    <Link href={tile.route} className={styles.tile} data-hero-tile style={tile.style}>
+    <Link
+      href={tile.route}
+      className={styles.tile}
+      data-hero-tile
+      style={tile.style}
+      // Eleven links sit above the fold, each pointing at a legacy parity page
+      // that is expensive to render. Left on, Next prefetches all eleven the
+      // moment the rail scrolls into view. The Worker already returns
+      // intermittent Cloudflare 1102 (CPU limit) under concurrent renders of
+      // those pages — measured on staging both with and without this rail — so
+      // adding eleven speculative renders to the homepage is bandwidth and CPU
+      // spent on a showcase most visitors will not click through. Fetch on
+      // click instead.
+      prefetch={false}
+    >
       {art}
     </Link>
   );
