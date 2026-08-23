@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { whenLoadingGateOpens } from "@/components/site/loading-gate";
 import {
   HERO_MARQUEE_SLUGS,
   HERO_SLUGS,
@@ -124,18 +125,17 @@ export function Hero() {
   const copyRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
 
-  // Arm the entrance on the frame after mount, so the transition actually runs
-  // instead of being collapsed into the first paint.
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setReady(true));
-    // rAF is not serviced in a background tab; this makes sure the hero is
-    // never left invisible on a page the user has not looked at yet.
-    const fallback = window.setTimeout(() => setReady(true), 400);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.clearTimeout(fallback);
-    };
-  }, []);
+  /**
+   * Arm the entrance when the loading screen starts pulling away, so the
+   * headline rises into a frame the visitor is actually watching instead of
+   * having already played behind a curtain.
+   *
+   * With no loading screen — no JS gate, a repeat view, reduced motion — the
+   * gate is already open and this runs on the frame after mount, exactly as it
+   * did before. `whenLoadingGateOpens` carries its own timeout, so the hero is
+   * never left invisible waiting on a screen that failed to finish.
+   */
+  useEffect(() => whenLoadingGateOpens(() => setReady(true)), []);
 
   /**
    * Scroll hand-off into Bestsellers: the copy lifts away and the rail settles
@@ -197,6 +197,19 @@ export function Hero() {
       data-hero
       aria-label="THE BASE products"
     >
+      {/*
+        The entrance is armed from JavaScript, so without it every staged
+        element would sit at its `opacity: 0` start state forever. This is the
+        one case where the hero has to be legible with no script at all.
+      */}
+      <noscript>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `.${styles.enter},.${styles.lineInner},.${styles.enterMarquee},.${styles.wash}{opacity:1!important;transform:none!important}`,
+          }}
+        />
+      </noscript>
+
       <span className={styles.wash} aria-hidden="true" />
 
       <div ref={copyRef} className={styles.inner}>

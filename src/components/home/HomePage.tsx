@@ -4,6 +4,7 @@ import { Bestsellers } from "@/components/home/Bestsellers";
 import { Collage } from "@/components/home/Collage";
 import { MiniCatalog } from "@/components/home/MiniCatalog";
 import { Hero } from "@/components/home/Hero";
+import { LoadingScreen } from "@/components/site/LoadingScreen";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -23,6 +24,10 @@ export function HomePage() {
 
   return (
     <div className="tbb">
+      {/* First in the tree: its inline script has to run before the header and
+          the hero are parsed, or there is a frame of page before the curtain. */}
+      <LoadingScreen />
+
       {structuredData.map((block, index) => (
         <script
           key={index}

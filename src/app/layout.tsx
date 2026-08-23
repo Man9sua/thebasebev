@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
+import { LOADING_GATE_SCRIPT } from "@/components/site/loading-gate";
 import "./globals.css";
 
 /**
@@ -53,6 +54,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={exo2.variable} suppressHydrationWarning>
       <head>
         <base href="/" />
+        {/*
+          Blocking and first, because it has to decide whether the homepage's
+          loading screen is showing before a single pixel is painted. It is a
+          no-op on every other route — see LOADING_GATE_SCRIPT.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: LOADING_GATE_SCRIPT }} />
         <link rel="alternate" type="application/rss+xml" title="THE BASE" href="/rss.xml" />
       </head>
       <body className="t-body" suppressHydrationWarning>
