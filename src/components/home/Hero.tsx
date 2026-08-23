@@ -29,7 +29,6 @@ import styles from "./Hero.module.css";
  */
 
 const FEATURED = getProducts(HERO_SLUGS)[0];
-const FEATURED_COLORS = resolveProductColors(FEATURED);
 
 /**
  * The rail, resolved once at module scope.
@@ -197,9 +196,6 @@ export function Hero() {
       className={`${styles.hero} ${ready ? styles.ready : ""}`}
       data-hero
       aria-label="THE BASE products"
-      // The featured product's accent, not its background: the field around the
-      // rail stays paper, so only the h1 line and the CTA take a product colour.
-      style={{ ["--product-accent" as string]: FEATURED_COLORS.accent }}
     >
       <span className={styles.wash} aria-hidden="true" />
 
@@ -207,35 +203,47 @@ export function Hero() {
         <div className={styles.copy}>
           <span
             className={`tbb-label ${styles.tagline} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "380ms" }}
+            style={{ ["--enter-delay" as string]: "180ms" }}
           >
             Dry beverage base
           </span>
 
+          {/*
+            Three lines, each rising out of its own mask. The hierarchy is size
+            and weight, not colour: "Premium" and "Bases" are small and tracked,
+            the product name carries the line. Text content stays the one string
+            production serves — "Premium Cream Latte Bases".
+          */}
           <h1 className={styles.title}>
-            <span
-              className={`${styles.titleWord} ${styles.enter}`}
-              style={{ ["--enter-delay" as string]: "460ms" }}
-            >
-              Premium
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleAffix}`}
+                style={{ ["--enter-delay" as string]: "300ms" }}
+              >
+                Premium
+              </span>
             </span>{" "}
-            <span
-              className={`${styles.titleProduct} ${styles.enter}`}
-              style={{ ["--enter-delay" as string]: "560ms" }}
-            >
-              {FEATURED.name}
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleProduct}`}
+                style={{ ["--enter-delay" as string]: "400ms" }}
+              >
+                {FEATURED.name}
+              </span>
             </span>{" "}
-            <span
-              className={`${styles.titleWord} ${styles.enter}`}
-              style={{ ["--enter-delay" as string]: "660ms" }}
-            >
-              Bases
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleAffix}`}
+                style={{ ["--enter-delay" as string]: "520ms" }}
+              >
+                Bases
+              </span>
             </span>
           </h1>
 
           <p
             className={`${styles.description} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "740ms" }}
+            style={{ ["--enter-delay" as string]: "640ms" }}
           >
             {FEATURED.description}
           </p>
@@ -243,7 +251,7 @@ export function Hero() {
           <Link
             href={FEATURED.route}
             className={`${styles.cta} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "820ms" }}
+            style={{ ["--enter-delay" as string]: "730ms" }}
           >
             Shop {FEATURED.name}
             <ArrowIcon />
@@ -251,7 +259,7 @@ export function Hero() {
 
           <p
             className={`${styles.badges} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "900ms" }}
+            style={{ ["--enter-delay" as string]: "820ms" }}
           >
             <span className="tbb-label">From {FEATURED.price ?? "On request"}</span>
             <span className="tbb-label">Halal certified</span>

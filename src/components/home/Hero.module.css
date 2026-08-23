@@ -51,7 +51,10 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 46rem;
+  /* Wide enough that the product name stays on one line — a two-line headline
+     costs a third of the frame and unbalances the lockup. The prose underneath
+     sets its own, much narrower measure. */
+  max-width: min(94vw, 64rem);
 }
 
 .tagline {
@@ -67,25 +70,50 @@
 
 .title {
   font-family: var(--tbb-font-display);
-  /* Height-aware as well as width-aware: three uppercase lines plus the rail
-     have to clear a 720px laptop viewport without pushing the fold below it. */
-  font-size: clamp(2.6rem, min(7vw, 10vh), 6.25rem);
-  line-height: 0.92;
-  letter-spacing: -0.025em;
-  font-weight: 700;
   text-transform: uppercase;
-  margin: clamp(0.75rem, min(2.4vw, 3vh), 1.6rem) 0 0;
+  margin: clamp(0.6rem, min(2vw, 2.4vh), 1.4rem) 0 0;
 }
 
-/* Each line is its own block so the h1 keeps production's three-line shape —
-   "Premium / Cream Latte / Bases" — while its text content stays one string. */
-.titleWord,
-.titleProduct {
+/* The mask each line rises out of. Every line is its own block, so the h1 keeps
+   production's three-line shape — "Premium / Cream Latte / Bases" — while its
+   text content stays the one string production serves.
+
+   The padding/margin pair gives descenders room inside the mask; without it the
+   overflow clip shaves the bottom of the type at rest, not only mid-reveal. */
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.lineInner {
   display: block;
 }
 
+/* "Premium" and "Bases": small, tracked, quiet. They frame the product name
+   instead of competing with it, and that framing is what carries the hierarchy
+   now that no line is coloured — the brand red goes back to being a mark
+   colour, which is all the Guidebook ever asked it to be. */
+.titleAffix {
+  font-size: clamp(0.8rem, min(1.5vw, 2vh), 1.35rem);
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  /* Tracking hangs empty space off the last letter; pull it back so the line
+     stays optically centred over the one below. */
+  text-indent: 0.34em;
+  line-height: 1.6;
+  color: var(--tbb-muted);
+}
+
+/* The product name is the headline: one big ink line, height-aware as well as
+   width-aware so it and the rail both clear a 720px laptop viewport. */
 .titleProduct {
-  color: var(--product-accent, var(--tbb-accent));
+  font-size: clamp(2.6rem, min(8.4vw, 12.5vh), 7.5rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+  color: var(--tbb-ink);
 }
 
 .description {
@@ -101,23 +129,26 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 2rem;
-  /* The brand red is a mark colour: fine on a pill this size, never as a field. */
-  background: var(--product-accent, var(--tbb-accent));
-  color: var(--tbb-white);
+  /* Ink, not the brand red: the red belongs to the logo, and a red pill under a
+     black headline puts two focal points in a frame that only needs one. */
+  background: var(--tbb-ink);
+  color: var(--tbb-paper);
   text-decoration: none;
   font-size: var(--tbb-text-label);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   border-radius: 999px;
-  box-shadow: 0 14px 34px color-mix(in srgb, var(--product-accent, var(--tbb-accent)) 28%, transparent);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
   transition:
     transform var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
     box-shadow var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .cta:hover {
-  transform: translate3d(0, -2px, 0) scale(1.03);
-  box-shadow: 0 18px 42px color-mix(in srgb, var(--product-accent, var(--tbb-accent)) 34%, transparent);
+  transform: translate3d(0, -2px, 0);
+  background: var(--tbb-ink-soft);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
 }
 
 .cta:active {
@@ -146,6 +177,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem clamp(0.9rem, 2vw, 1.6rem);
+  max-width: 46rem;
   color: var(--tbb-muted);
 }
 
@@ -217,7 +249,7 @@
   position: relative;
   flex: 0 0 auto;
   display: block;
-  width: clamp(13rem, min(23vw, 32vh), 25rem);
+  width: clamp(15rem, min(31vw, 44vh), 34rem);
   /* The card artwork's own ratio, so nothing is cropped through its lockup. */
   aspect-ratio: 1081 / 951;
   margin-right: clamp(0.75rem, 1.6vw, 1.5rem);
@@ -256,34 +288,52 @@
 }
 
 /* ---- entrance ----
-   Staged: wash, then rail, then copy line by line. Every step is
-   opacity+transform only, and each element is laid out in its final position,
-   so nothing reflows and there is no CLS. */
+   Staged: wash, then the rail rising into place, then the headline lines coming
+   out of their masks, then the copy beneath. Every step is opacity+transform
+   only, and each element is laid out in its final position, so nothing reflows
+   and there is no CLS.
+
+   Durations are long and the ease is soft — that slowness is the character of
+   the design, not an accident. */
 
 .enter {
   opacity: 0;
-  transform: translate3d(0, 26px, 0);
+  transform: translate3d(0, 22px, 0);
 }
 
 .ready .enter {
   opacity: 1;
   transform: none;
   transition:
-    opacity 1000ms var(--tbb-ease) var(--enter-delay, 0ms),
-    transform 1000ms var(--tbb-ease) var(--enter-delay, 0ms);
+    opacity 900ms var(--tbb-ease) var(--enter-delay, 0ms),
+    transform 900ms var(--tbb-ease) var(--enter-delay, 0ms);
+}
+
+/* The headline reveal: each line starts below its own mask and slides up into
+   it. No fade — a masked line that also fades reads as blurry rather than as
+   type arriving, and the mask alone is the sharper effect. */
+.lineInner {
+  transform: translate3d(0, 106%, 0);
+}
+
+.ready .lineInner {
+  transform: none;
+  transition: transform 1150ms var(--tbb-ease) var(--enter-delay, 0ms);
 }
 
 .enterMarquee {
   opacity: 0;
-  transform: translate3d(0, 48px, 0);
+  /* Rises and settles from slightly small, so the rail arrives as one object
+     rather than sliding in like a strip of film. */
+  transform: scale(0.94) translate3d(0, 56px, 0);
 }
 
 .ready .enterMarquee {
   opacity: 1;
   transform: none;
   transition:
-    opacity 1400ms var(--tbb-ease) 120ms,
-    transform 1400ms var(--tbb-ease) 120ms;
+    opacity 1500ms var(--tbb-ease) 100ms,
+    transform 1500ms var(--tbb-ease) 100ms;
 }
 
 .wash {
@@ -296,12 +346,19 @@
 }
 
 @media (max-width: 1023px) {
-  .title {
-    font-size: clamp(2.4rem, min(12vw, 8vh), 4.5rem);
+  .titleProduct {
+    font-size: clamp(2.6rem, min(13vw, 9vh), 5rem);
+  }
+
+  .titleAffix {
+    letter-spacing: 0.28em;
+    text-indent: 0.28em;
   }
 
   .tile {
-    width: clamp(11rem, 46vw, 17rem);
+    /* Roughly three quarters of the screen: big enough to read a pack shot,
+       narrow enough that the next card is always visibly on its way in. */
+    width: clamp(14rem, 76vw, 26rem);
   }
 
   .track {
@@ -321,6 +378,7 @@
 @media (prefers-reduced-motion: reduce) {
   .enter,
   .enterMarquee,
+  .lineInner,
   .wash {
     opacity: 1;
     transform: none;
