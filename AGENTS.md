@@ -60,7 +60,19 @@ npm audit
 
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order.
 
-Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Deploy staging or production-preview only when explicitly authorized; never add a custom domain during migration preparation.
+Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Never add a custom domain during migration preparation.
+
+Production-preview and the production domain still need a fresh human OK for every deploy. Staging does not — the "Definition of done" below is that authorization, standing.
+
+## Definition of done
+
+Every generation task ends with these three steps, in this order. None of them is optional and none of them is a separate request: code that compiles is not finished work.
+
+1. **Refactor what was just generated.** Re-read it before shipping. Hoist work that does not belong in a render, delete whatever the change made dead, collapse duplicated branches, and match the naming and comment density of the file it lives in. Then re-run the required checks above — a refactor that was not re-verified did not happen.
+2. **Push to GitHub.** Commit onto a `feature/*`, `fix/*` or `migration/*` branch — never straight onto `main` or `develop` — push to `origin`, and open a PR toward `develop`. One commit message that says what changed and why, per the Git workflow below.
+3. **Deploy to Cloudflare staging.** `npm run deploy:staging`, then verify against `https://the-base-staging.mnsdemo.workers.dev` with `npm run smoke:http`, `npm run smoke:browser` and `npm run audit:crawlers`. Staging must come back `noindex, nofollow` at the transport layer, and canonicals must still point at `https://thebasebev.com`.
+
+Report each step's real outcome. A failed deploy or a failing check is reported as failed, never smoothed over.
 
 ## Git workflow
 

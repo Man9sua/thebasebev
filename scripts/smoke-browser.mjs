@@ -50,21 +50,25 @@ try {
   await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
 
-  // The hero is product-first: no video, and the pack shot is the dominant
-  // object in the first viewport.
+  // The hero is a marquee of pre-composed product cards: no video, a rail that
+  // is rendered twice so the loop is seamless, and tiles big enough to read.
   const hero = page.locator("section[data-hero]");
   check((await hero.locator("video").count()) === 0, "home: hero must not use video");
-  const heroShot = hero.locator("[aria-roledescription='slide']:not([aria-hidden='true']) img").first();
-  check(await heroShot.count() === 1, "home: expected one visible hero product");
-  const heroBox = await heroShot.boundingBox();
+  const heroTiles = hero.locator("[data-hero-tile]");
+  const heroTileCount = await heroTiles.count();
+  check(
+    heroTileCount >= 20 && heroTileCount % 2 === 0,
+    `home: hero marquee needs both passes of a duplicated rail (got ${heroTileCount})`,
+  );
+  const heroTileBox = await heroTiles.first().boundingBox();
   const view = page.viewportSize();
   check(
-    !!heroBox && heroBox.height > view.height * 0.4,
-    `home: hero product is not dominant (${Math.round(heroBox?.height ?? 0)}px of ${view.height})`,
+    !!heroTileBox && heroTileBox.height > view.height * 0.18,
+    `home: hero marquee tile is too small (${Math.round(heroTileBox?.height ?? 0)}px of ${view.height})`,
   );
   check(
-    !!heroBox && Math.abs(heroBox.x + heroBox.width / 2 - view.width / 2) < 60,
-    "home: hero product is not centred",
+    (await hero.locator("a[href='/cream-latte']").count()) > 0,
+    "home: hero CTA must still point at the featured product",
   );
   // The header must carry the original Tilda lockup, not a text substitute.
   check(
