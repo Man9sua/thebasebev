@@ -70,7 +70,12 @@ Every generation task ends with these three steps, in this order. None of them i
 
 1. **Refactor what was just generated.** Re-read it before shipping. Hoist work that does not belong in a render, delete whatever the change made dead, collapse duplicated branches, and match the naming and comment density of the file it lives in. Then re-run the required checks above — a refactor that was not re-verified did not happen.
 2. **Push to GitHub.** Commit onto a `feature/*`, `fix/*` or `migration/*` branch — never straight onto `main` or `develop` — push to `origin`, and open a PR toward `develop`. One commit message that says what changed and why, per the Git workflow below.
-3. **Deploy to Cloudflare staging.** `npm run deploy:staging`, then verify against `https://the-base-staging.mnsdemo.workers.dev` with `npm run smoke:http`, `npm run smoke:browser` and `npm run audit:crawlers`. Staging must come back `noindex, nofollow` at the transport layer, and canonicals must still point at `https://thebasebev.com`.
+3. **Deploy to Cloudflare staging.** `npm run deploy:staging`, then verify with `npm run smoke:http`, `npm run smoke:browser` and `npm run audit:crawlers` against the URL wrangler prints. Staging must come back `noindex, nofollow` at the transport layer, and canonicals must still point at `https://thebasebev.com`.
+
+   Two open issues to know about before reading a staging failure as your own:
+
+   - **There are two `the-base-staging` Workers**, one per Cloudflare account: `the-base-staging.mansua.workers.dev` (account `mansua`, `678720af…`, the one that receives deploys) and `the-base-staging.mnsdemo.workers.dev` (still up, serving a much older build). `wrangler whoami` lists both accounts, so `deploy:staging` needs `CLOUDFLARE_ACCOUNT_ID` to be unambiguous. Which one is authoritative is unresolved — see `migration/cloudflare-account-isolation`.
+   - **Staging returns intermittent Cloudflare `1102` (Worker CPU limit)** on legacy parity routes whenever several are rendered at once. Reproduced against a build of `main`, so it is a property of the environment, not of whatever you just changed. It is enough to fail `smoke:browser` and `audit:seo-parity` on its own: those two audits pass against `next dev` on the same commit. Verify parity locally, and read staging for what only staging can prove — transport headers, real routing, the deployed bundle.
 
 Report each step's real outcome. A failed deploy or a failing check is reported as failed, never smoothed over.
 
