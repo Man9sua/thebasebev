@@ -238,6 +238,118 @@ function preserveCatalogPrices(source: string, file: string) {
     .replace(/if\(!scards\.length\) return;\s*scards\.forEach/, "scards.forEach");
 }
 
+/**
+ * Tilda shell records dropped from every parity page.
+ *
+ * The exported body of 37 of the 39 pages carries the whole Tilda site chrome:
+ * `<!--header--> <header id="t-header">…` and the matching footer. The shared
+ * React header and footer now render around that document, so the old chrome
+ * has to go — but it cannot simply be cut out wholesale, because those two
+ * elements also carry things the site still depends on:
+ *
+ * - all of the page's JSON-LD (`rec2483211811`);
+ * - the Tilda cart and its form (`rec2989879303`) — `SiteHeader` calls
+ *   `tcart__openCart()`, so the cart *is* this markup;
+ * - four of the nine owned lead forms (`rec861442702`, `rec1855213141`,
+ *   `rec1855223381`, `rec1855232921`) and their popup triggers;
+ * - the cookie-consent banner (`rec913700125`).
+ *
+ * So the removal is per record, and only of the parts the new shell replaces.
+ * Note that four of these were already `display:none` in the export — the
+ * client had replaced them with the `.tbh-wrap` header long ago — so they were
+ * dead weight that still shipped a duplicate navigation to crawlers.
+ */
+const REMOVED_SHELL_RECORDS = new Set([
+  "rec2676415503", // .tbh-wrap header, ticker and spacer — SiteHeader replaces it
+  "rec1842546651", // old Tilda menu, already display:none, duplicate nav links
+  "rec913703869", //  hidden strapline, already display:none
+  "rec860980632", //  old nav column, already display:none, duplicate nav links
+  "rec859870796", //  visible footer nav — SiteFooter replaces it
+]);
+
+const SHELL_CONTAINERS = [
+  { marker: "<!--header-->", tag: "header" },
+  { marker: "<!--footer-->", tag: "footer" },
+] as const;
+
+/** How far the marker comment may sit from its element before we distrust it. */
+const MARKER_PROXIMITY = 40;
+
+type ShellRecord = { id: string; html: string };
+
+/**
+ * Splits a shell container into its top-level Tilda records.
+ *
+ * Records are siblings, so each one runs from its own opening `<div id="recN">`
+ * to the next one — no balanced-tag parsing, which would be unreliable against
+ * minified markup where `<div` also appears inside inline scripts.
+ */
+function splitShellRecords(inner: string): ShellRecord[] {
+  const expression = /<div id="(rec\d+)"[^>]*class="[^"]*\bt-rec\b/g;
+  const starts: Array<{ id: string; at: number }> = [];
+  let match: RegExpExecArray | null;
+
+  while ((match = expression.exec(inner))) {
+    starts.push({ id: match[1], at: match.index });
+  }
+
+  if (!starts.length) return [{ id: "", html: inner }];
+
+  return [
+    { id: "", html: inner.slice(0, starts[0].at) },
+    ...starts.map((start, index) => ({
+      id: start.id,
+      html: inner.slice(start.at, index + 1 < starts.length ? starts[index + 1].at : inner.length),
+    })),
+  ];
+}
+
+/** True when this page carries the shared Tilda chrome we know how to replace. */
+export function hasLegacyShell(bodyHtml: string) {
+  return SHELL_CONTAINERS.every(({ marker, tag }) => {
+    const commentAt = bodyHtml.indexOf(marker);
+    if (commentAt < 0) return false;
+    const openAt = bodyHtml.indexOf(`<${tag} id="t-${tag}"`, commentAt);
+    return openAt >= 0 && openAt - commentAt <= MARKER_PROXIMITY;
+  });
+}
+
+function stripShellRecords(bodyHtml: string) {
+  let result = bodyHtml;
+
+  for (const { marker, tag } of SHELL_CONTAINERS) {
+    const commentAt = result.indexOf(marker);
+    if (commentAt < 0) continue;
+
+    const openAt = result.indexOf(`<${tag} id="t-${tag}"`, commentAt);
+    if (openAt < 0 || openAt - commentAt > MARKER_PROXIMITY) continue;
+
+    const openEnd = result.indexOf(">", openAt);
+    const closeAt = result.indexOf(`</${tag}>`, openEnd);
+    if (openEnd < 0 || closeAt < 0) continue;
+
+    const kept = splitShellRecords(result.slice(openEnd + 1, closeAt))
+      .filter((record) => !REMOVED_SHELL_RECORDS.has(record.id))
+      .map((record) => record.html)
+      .join("");
+
+    // Retagged to a plain div. The page already has one <header> and one
+    // <footer> landmark from the shared shell, and a second of each would be
+    // announced twice; the id and classes stay untouched so the legacy cart
+    // script, which looks its container up by id, still finds it.
+    const openTag = result.slice(openAt, openEnd + 1).replace(`<${tag}`, "<div");
+
+    result =
+      result.slice(0, commentAt) +
+      openTag +
+      kept +
+      "</div>" +
+      result.slice(closeAt + `</${tag}>`.length);
+  }
+
+  return result;
+}
+
 export type SitePage = RouteDefinition & {
   title: string;
   description: string;
@@ -252,6 +364,12 @@ export type SitePage = RouteDefinition & {
   };
   bodyHtml: string;
   headAssetsHtml: string;
+  /**
+   * Whether the shared React header/footer should render around this document.
+   * False for the two standalone header/footer aliases, which are the exported
+   * chrome itself and would otherwise be framed by a copy of themselves.
+   */
+  usesSharedShell: boolean;
 };
 
 const pageCache = new Map<string, SitePage>();
@@ -269,6 +387,9 @@ export function getSitePage(route: string): SitePage | undefined {
 
   const source = fs.readFileSync(path.join(exportRoot, definition.file), "utf8");
   const assetsMatch = source.match(/<!-- Assets -->([\s\S]*?)<\/head>/i);
+  const rawBody = extractBody(source, definition.file);
+  const usesSharedShell = hasLegacyShell(rawBody);
+
   const result: SitePage = {
     ...definition,
     title: matchFirst(source, /<title[^>]*>([\s\S]*?)<\/title>/i),
@@ -284,11 +405,12 @@ export function getSitePage(route: string): SitePage | undefined {
       type: meta(source, "og:type") || "website",
       image: toAbsoluteUrl(meta(source, "og:image")),
     },
+    usesSharedShell,
     bodyHtml: removeLegacyAnalyticsRuntime(
       localizeHeroTailwind(
         removeInlineScriptContaining(
           removeInlineScriptContaining(
-            extractBody(source, definition.file),
+            usesSharedShell ? stripShellRecords(rawBody) : rawBody,
             '"twitter:card"',
           ),
           "/api/tildafeed",

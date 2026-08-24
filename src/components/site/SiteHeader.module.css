@@ -211,3 +211,35 @@
     display: none;
   }
 }
+
+/* Surface adaptation — see the observer in SiteHeader.tsx. Over a section that
+   declares itself dark the bar inverts rather than keeping a paper slab on top
+   of it, which is what makes the header read as part of the page rather than a
+   panel floating above it. */
+.inverted {
+  color: var(--tbb-on-dark);
+}
+
+/* The paper wash exists to lift dark icons off the hero; on a dark surface it
+   would do the opposite. */
+.inverted::before {
+  opacity: 0;
+}
+
+.inverted::after {
+  background: var(--tbb-ink);
+  border-bottom-color: rgba(255, 255, 255, 0.14);
+}
+
+/* The mark is a fixed two-colour SVG, so it cannot inherit `color`. Knocking it
+   back to a single white silhouette keeps the shape exactly and stays legible;
+   tinting it would misprint the brand red. */
+.inverted .logo img {
+  filter: brightness(0) invert(1);
+}
+
+/* Declared after `.logo img` so it applies to both palettes: the knock-out
+   should ease in with the rest of the bar, not snap. */
+.logo img {
+  transition: filter var(--tbb-dur) var(--tbb-ease);
+}

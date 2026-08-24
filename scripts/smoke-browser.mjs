@@ -272,7 +272,9 @@ try {
   check(cartProducts[0]?.name === "Milkshake", "catalog: unexpected cart product");
   check(Number(cartProducts[0]?.price) === 45.38, "catalog: cart product price changed");
   await page.waitForTimeout(900);
-  await page.locator('.tbh-ico[aria-label="Cart"]').first().click();
+  // The shared header owns the cart control now; its label gains the item
+  // count once the Tilda cart reports one, so match on the prefix.
+  await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
   await page.waitForTimeout(500);
   const openCartText = await page.evaluate(() => {
     const cart = [...document.querySelectorAll('[class*="t706__cartwin"]')].find((element) => {

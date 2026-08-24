@@ -100,7 +100,7 @@ export function SiteSearch({
       aria-label="Search"
       aria-hidden={!open}
       tabIndex={-1}
-      {...(open ? {} : { inert: "" as unknown as boolean })}
+      inert={!open}
     >
       <div className={styles.body}>
         <div

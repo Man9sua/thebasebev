@@ -1,0 +1,11 @@
+/* The shared header is fixed, so the document needs its own height back. */
+.shell {
+  padding-top: var(--tbb-header-h);
+}
+
+/* The export's own chrome is gone, but its records still carry Tilda's page
+   padding. Nothing is re-laid-out here — that belongs to the per-page work —
+   this only stops the first record butting into the bar. */
+.shell > :global(#allrecords) > :global(.t-rec:first-of-type) {
+  scroll-margin-top: var(--tbb-header-h);
+}
