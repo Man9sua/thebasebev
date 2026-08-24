@@ -9,6 +9,7 @@ export default defineConfig([
     ".next/**",
     ".open-next/**",
     ".wrangler/**",
+    ".audit-artifacts/**",
     "node_modules/**",
     "public/**",
     "tilda_export/**",

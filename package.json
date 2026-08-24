@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test:stripe": "tsx --test tests/stripe-checkout.test.ts",
     "smoke:http": "node scripts/smoke-http.mjs",
     "smoke:browser": "node scripts/smoke-browser.mjs",
     "audit:commerce": "node scripts/audit-commerce.mjs",
@@ -29,7 +30,8 @@
     "@opennextjs/cloudflare": "^1.20.2",
     "next": "^16.3.1",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "stripe": "^22.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
@@ -39,6 +41,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.1",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.12",
     "typescript": "^6.0.3",
     "wrangler": "^4.125.0"
   }
