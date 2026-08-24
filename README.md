@@ -95,13 +95,13 @@ The configured staging Worker name is `the-base-staging`. The repository does no
 Current verified staging deployment:
 
 ```text
-https://the-base-staging.mnsdemo.workers.dev
+https://the-base-staging.mansua.workers.dev
 ```
 
 Current verified production preview:
 
 ```text
-https://the-base-production.mnsdemo.workers.dev
+https://the-base-production.mansua.workers.dev
 ```
 
 The OpenNext configuration uses its read-only Workers Static Assets incremental cache for the SSG pages. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
@@ -109,7 +109,7 @@ The OpenNext configuration uses its read-only Workers Static Assets incremental 
 Run the complete sequential verification against a deployed target with:
 
 ```powershell
-npm.cmd run audit:production-readiness -- https://the-base-production.mnsdemo.workers.dev
+npm.cmd run audit:production-readiness -- https://the-base-production.mansua.workers.dev
 ```
 
 Individual remote audits are available as `audit:crawlers`, `audit:seo-parity`, `audit:routes`, and `audit:analytics`. They are diagnostic only and do not bypass Cloudflare controls or submit real leads/orders.
