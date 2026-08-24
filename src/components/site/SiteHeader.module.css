@@ -1,0 +1,213 @@
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 90;
+  height: var(--tbb-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--tbb-gutter);
+  /* The hero is paper now, not a dark video, so the bar starts in ink and
+     simply stays there. The old scrim existed to keep white icons legible over
+     footage that ran from near-black to bright white. */
+  color: var(--tbb-on-light);
+  transition:
+    color var(--tbb-dur) var(--tbb-ease),
+    transform var(--tbb-dur) var(--tbb-ease);
+}
+
+/* Transparent over the hero: the bar reads as part of the composition rather
+   than as a separate navbar sitting on top of it. */
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(253, 250, 245, 0.9),
+    rgba(253, 250, 245, 0)
+  );
+  opacity: 1;
+  transition: opacity var(--tbb-dur) var(--tbb-ease);
+  pointer-events: none;
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--tbb-paper);
+  transform: translate3d(0, -101%, 0);
+  transition: transform var(--tbb-dur) var(--tbb-ease);
+  pointer-events: none;
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+/* Past the hero the bar becomes paper and the type flips to ink. */
+.solid {
+  color: var(--tbb-on-light);
+}
+
+.solid::before {
+  opacity: 0;
+}
+
+.solid::after {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Scrolling down hides the bar; scrolling up brings it back. */
+.hidden {
+  transform: translate3d(0, -100%, 0);
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  display: contents;
+}
+
+.logo {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* Height-driven, width auto: the lockup's aspect ratio is never touched, and
+   it is the same asset at every breakpoint — only the scale changes. */
+.logo img {
+  display: block;
+  height: clamp(1.5rem, 2.1vw, 2rem);
+  width: auto;
+}
+
+.logo:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.35rem, 1.1vw, 0.9rem);
+}
+
+.action {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: currentColor;
+  padding: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 999px;
+  position: relative;
+  text-decoration: none;
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    opacity var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.action svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.action:hover {
+  transform: translate3d(0, -2px, 0);
+}
+
+.action:active {
+  transform: translate3d(0, 0, 0);
+}
+
+.action:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Cart count sits on the icon so the bar stays free of text. */
+.count {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.15rem;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--tbb-accent);
+  color: #fff;
+  font-size: 0.625rem;
+  line-height: 1.05rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ---- burger ---- */
+
+.burgerBox {
+  width: 20px;
+  height: 14px;
+  position: relative;
+}
+
+.burgerBox span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    opacity 160ms var(--tbb-ease);
+}
+
+.burgerBox span:nth-child(1) {
+  top: 0;
+}
+.burgerBox span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.burgerBox span:nth-child(3) {
+  bottom: 0;
+}
+
+.open .burgerBox span:nth-child(1) {
+  transform: translate3d(0, 6.25px, 0) rotate(45deg);
+}
+.open .burgerBox span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+.open .burgerBox span:nth-child(3) {
+  transform: translate3d(0, -6.25px, 0) rotate(-45deg);
+}
+
+@media (max-width: 767px) {
+  .header {
+    height: 3.75rem;
+  }
+
+  .action {
+    padding: 0.5rem 0.4rem;
+  }
+
+  .action svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  /* Account moves into the menu on mobile — the bar keeps cart, search, burger
+     so the tap targets stay comfortable instead of shrinking. */
+  .desktopOnly {
+    display: none;
+  }
+}

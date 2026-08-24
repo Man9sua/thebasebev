@@ -1,0 +1,157 @@
+.section {
+  position: relative;
+  background: var(--tbb-paper-warm);
+  padding: var(--tbb-section) 0;
+  overflow: clip;
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+}
+
+.head {
+  max-width: 44ch;
+  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.title {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h2);
+  line-height: 1.04;
+  letter-spacing: var(--tbb-tracking-display);
+  font-weight: 600;
+  margin-top: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.lede {
+  margin-top: clamp(0.75rem, 2vw, 1.25rem);
+  color: var(--tbb-ink-soft);
+  max-width: 46ch;
+}
+
+/* Asymmetric across, regular down: each band of tiles sums to twelve columns
+   with an uneven split, and each band gets its own height. Mixing row spans
+   *within* a band instead left holes the grid could not pack around, even with
+   dense flow. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: clamp(3.5rem, 6vw, 6.5rem);
+  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--tbb-sand);
+}
+
+.media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Oversized so the parallax shift never exposes an edge. */
+  transform: scale(1.06);
+  transition: transform var(--tbb-dur-slow) var(--tbb-ease);
+}
+
+.tile:hover .media {
+  transform: scale(1.1);
+}
+
+/* Sized by `inset` alone — it overhangs the tile so the parallax shift never
+   exposes an edge. Do not add height:100%: it would override the bottom edge. */
+.layer {
+  position: absolute;
+  inset: -8% 0;
+}
+
+.caption {
+  position: absolute;
+  left: clamp(0.75rem, 1.4vw, 1.25rem);
+  bottom: clamp(0.6rem, 1.2vw, 1rem);
+  color: var(--tbb-paper);
+  text-shadow: 0 1px 12px rgba(18, 18, 18, 0.5);
+  z-index: 1;
+}
+
+/* --- placements --- */
+
+.a {
+  grid-column: span 5;
+  grid-row: span 5;
+}
+.b {
+  grid-column: span 4;
+  grid-row: span 5;
+}
+.c {
+  grid-column: span 3;
+  grid-row: span 5;
+}
+.d {
+  grid-column: span 4;
+  grid-row: span 3;
+}
+.e {
+  grid-column: span 3;
+  grid-row: span 3;
+}
+.f {
+  grid-column: span 5;
+  grid-row: span 3;
+}
+.g {
+  grid-column: span 4;
+  grid-row: span 4;
+}
+.h {
+  grid-column: span 8;
+  grid-row: span 4;
+}
+
+@media (max-width: 767px) {
+  /* Mobile keeps the asymmetry but on a 6-column grid, so tiles stay large
+     enough to read instead of shrinking to thumbnails. */
+  .grid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: clamp(3rem, 11vw, 5rem);
+  }
+
+  .a {
+    grid-column: span 6;
+    grid-row: span 4;
+  }
+  .b {
+    grid-column: span 3;
+    grid-row: span 3;
+  }
+  .c {
+    grid-column: span 3;
+    grid-row: span 3;
+  }
+  .d {
+    grid-column: span 6;
+    grid-row: span 4;
+  }
+  .e {
+    grid-column: span 3;
+    grid-row: span 3;
+  }
+  .f {
+    grid-column: span 3;
+    grid-row: span 3;
+  }
+  .g {
+    grid-column: span 6;
+    grid-row: span 4;
+  }
+  .h {
+    grid-column: span 6;
+    grid-row: span 3;
+  }
+}
