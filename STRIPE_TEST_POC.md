@@ -35,6 +35,11 @@ validated before Stripe is called. Each session receives a random, non-PII
 `tb_request_id` in Checkout Session and PaymentIntent metadata and as the
 Stripe idempotency key.
 
+Checkout bodies are limited to 16 KiB and guarded by a best-effort 10/minute
+per-isolate IP limiter. Webhook bodies are limited to 1 MiB before signature
+verification. Cloudflare WAF/rate-limit policy remains a human-controlled
+production decision; this POC is not production payment architecture.
+
 ## Webhook status
 
 `STRIPE_WEBHOOK_SECRET` must be created by a human for the staging endpoint in
@@ -61,3 +66,8 @@ STRIPE_WEBHOOK_SECRET=
 
 Never commit actual values. Only Stripe Test Mode credentials are accepted by
 this proof of concept.
+
+`npm run verify:stripe-auth` performs a read-only SDK/API check and prints only
+mode/status booleans. `npm run test:stripe` runs checkout, tampering,
+quantity/currency, size, missing-env, host/Live-key, signature and duplicate
+event tests without contacting Stripe.

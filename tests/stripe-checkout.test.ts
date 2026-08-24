@@ -136,6 +136,17 @@ test("unsupported currency is rejected", async () => {
   assert.equal(body.error.code, "UNSUPPORTED_CURRENCY");
 });
 
+test("oversized checkout payload is rejected before Stripe is called", async () => {
+  const response = await handleStripeTestCheckout(
+    checkoutRequest({ ...validPayload(), note: "x".repeat(20_000) }),
+    checkoutDependencies(),
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 413);
+  assert.equal(body.error.code, "PAYLOAD_TOO_LARGE");
+});
+
 test("missing Stripe secret is build-safe and returns 503", async () => {
   let clientCreated = false;
   const response = await handleStripeTestCheckout(
@@ -208,6 +219,24 @@ test("webhook rejects an invalid Stripe signature", async () => {
 
   assert.equal(response.status, 400);
   assert.equal(body.error.code, "STRIPE_SIGNATURE_INVALID");
+});
+
+test("production hostname cannot receive Stripe Test webhook events", async () => {
+  const response = await handleStripeTestWebhook(
+    new Request("https://thebasebev.com/api/stripe/webhook", {
+      method: "POST",
+      headers: { "stripe-signature": "t=1,v1=unused" },
+      body: "{}",
+    }),
+    {
+      webhookSecret: "whsec_unit_test_only",
+      eventRegistry: new InMemoryStripeEventRegistry(),
+    },
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 403);
+  assert.equal(body.error.code, "STRIPE_TEST_HOST_REQUIRED");
 });
 
 test("verified duplicate webhook event is acknowledged without reprocessing", async () => {
@@ -306,5 +335,32 @@ test("missing webhook secret does not attempt verification", async () => {
 
   assert.equal(response.status, 503);
   assert.equal(body.error.code, "STRIPE_WEBHOOK_NOT_CONFIGURED");
+  assert.equal(verificationAttempted, false);
+});
+
+test("oversized webhook payload is rejected before signature verification", async () => {
+  let verificationAttempted = false;
+  const response = await handleStripeTestWebhook(
+    new Request(
+      "https://the-base-staging.mansua.workers.dev/api/stripe/webhook",
+      {
+        method: "POST",
+        headers: { "stripe-signature": "t=1,v1=unused" },
+        body: "x".repeat(1024 * 1024 + 1),
+      },
+    ),
+    {
+      webhookSecret: "whsec_unit_test_only",
+      eventRegistry: new InMemoryStripeEventRegistry(),
+      verifyEvent: async () => {
+        verificationAttempted = true;
+        throw new Error("must not verify");
+      },
+    },
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 413);
+  assert.equal(body.error.code, "STRIPE_WEBHOOK_TOO_LARGE");
   assert.equal(verificationAttempted, false);
 });

@@ -1,20 +1,20 @@
 # Route indexability audit
 
-Generated: 2026-08-21T20:33:07.470Z
+Generated: 2026-08-24T12:45:26.795Z
 
-Target: `https://the-base-production.mansua.workers.dev`
+Target: `http://127.0.0.1:3000`
 
 ## Accounting
 
 - Friendly routes: 39 (29 canonical/indexable + 10 excluded).
 - Direct `pageNNNN.html` compatibility aliases: 41.
 - Tilda product compatibility aliases: 26.
-- Technical/metadata/API routes: 5.
-- **Controlled route total: 111.**
+- Technical/metadata/API routes: 7.
+- **Controlled route total: 113.**
 - Permanent redirects (not generated pages): 5.
 - Sitemap members: 29.
 
-The 111 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The 113 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
 
 ## Generated and technical routes
 
@@ -130,6 +130,8 @@ The 111 controlled routes explain why the application can generate far more outp
 | `/robots.txt` | technical SEO endpoint | 200 | NO | NO | NO | Crawler policy endpoint, not a search result page |
 | `/sitemap.xml` | technical SEO endpoint | 200 | NO | NO | NO | Sitemap document, not a sitemap member |
 | `/api/leads` | dynamic API | 405 | NO | NO | NO | POST-only lead delivery boundary; GET is intentionally rejected |
+| `/api/checkout/stripe` | dynamic API | 405 | NO | NO | NO | POST-only Stripe Test checkout boundary; GET is intentionally rejected |
+| `/api/stripe/webhook` | dynamic API | 405 | NO | NO | NO | POST-only Stripe Test webhook boundary; GET is intentionally rejected |
 | `/api/health` | dynamic API | 200 | NO | NO | NO | No-store deployment health probe |
 
 ## Redirects

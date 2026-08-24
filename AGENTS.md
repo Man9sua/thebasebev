@@ -52,6 +52,8 @@ After substantial changes run, at minimum:
 ```bash
 npm run typecheck
 npm run lint
+npm run audit:leads
+npm run test:stripe
 npm run build
 npm run cf:build
 npm run check:assets
@@ -65,7 +67,7 @@ npm run audit:cloudflare-parity
 npm audit
 ```
 
-`npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order.
+`npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 
 Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Before every deployment, verify that Wrangler selects account `mansua` and exact account ID `678720af4dded7d23aad4a859b6e5f3a`. Deploy staging only when the current task explicitly authorizes it; the prelaunch integration workflow is such authorization. Production-preview and the production domain require separate human approval. Never add a custom domain during migration preparation.
 

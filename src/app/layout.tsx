@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
+import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
 import { LOADING_GATE_SCRIPT } from "@/components/site/loading-gate";
 import "./globals.css";
 
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className="t-body" suppressHydrationWarning>
         {children}
+        <LeadAttributionBridge />
         <Analytics />
       </body>
     </html>

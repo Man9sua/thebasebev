@@ -37,7 +37,7 @@ Tilda must remain recoverable through the cutover observation period.
 
 | Environment | Worker | Verified version (2026-08-21) | Access before cutover | APP_ENV | Indexability |
 | --- | --- | --- | --- | --- | --- |
-| staging | `the-base-staging` | `c8a18cee-bdab-4236-9104-3a1bdfb78071` | `*.workers.dev` | `staging` | transport `noindex, nofollow` |
+| staging | `the-base-staging` | `daa6c072-728d-4c24-9e96-7856b048b41f` (2026-08-24) | `*.workers.dev` | `staging` | transport `noindex, nofollow` |
 | production preview | `the-base-production` | `b043e4d6-56c4-45d9-9538-79c9f0e8bc16` | `*.workers.dev` | `production` | transport `noindex, nofollow` while hostname is `workers.dev` |
 | approved production | same reviewed production build | record at cutover | `thebasebev.com` / `www.thebasebev.com` | `production` | indexable |
 
@@ -79,6 +79,12 @@ Wrangler configuration pins the target `mansua` account ID. The manual GitHub de
 - [ ] Capture complete registrar DNS export, including hidden/selector-specific records.
 - [ ] Review future Cloudflare zone security, bot, and caching rules.
 - [ ] Run a final production-preview readiness audit immediately before cutover.
+
+The 2026-08-24 staging build deployed successfully, but post-deploy QA is
+temporarily blocked by Cloudflare Error 1027: account `mansua` exhausted the
+Workers Free 100,000 request/day allowance. The limit applies account-wide and
+resets at 00:00 UTC. Do not route around it through `indukok667`; re-run the
+remote readiness suite after reset or an explicitly approved plan upgrade.
 
 ## Custom-domain boundary
 

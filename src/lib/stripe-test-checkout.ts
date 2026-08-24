@@ -5,6 +5,7 @@ export const STRIPE_TEST_STAGING_ORIGIN =
 
 const MAX_LINE_ITEMS = 20;
 const MAX_QUANTITY_PER_ITEM = 100;
+const MAX_CHECKOUT_BODY_BYTES = 16 * 1024;
 
 type StripeTestProduct = Readonly<{
   name: string;
@@ -196,9 +197,28 @@ export async function handleStripeTestCheckout(
     );
   }
 
+  const declaredLength = Number(request.headers.get("content-length") ?? "0");
+  if (
+    Number.isFinite(declaredLength) &&
+    declaredLength > MAX_CHECKOUT_BODY_BYTES
+  ) {
+    return apiError(413, "PAYLOAD_TOO_LARGE", "The request body is too large.");
+  }
+
+  let rawBody: string;
+  try {
+    rawBody = await request.text();
+  } catch {
+    return apiError(400, "INVALID_JSON", "The request body must be valid JSON.");
+  }
+
+  if (new TextEncoder().encode(rawBody).byteLength > MAX_CHECKOUT_BODY_BYTES) {
+    return apiError(413, "PAYLOAD_TOO_LARGE", "The request body is too large.");
+  }
+
   let input: unknown;
   try {
-    input = await request.json();
+    input = JSON.parse(rawBody);
   } catch {
     return apiError(400, "INVALID_JSON", "The request body must be valid JSON.");
   }

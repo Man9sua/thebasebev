@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 
 const DEFAULT_EVENT_REGISTRY_LIMIT = 1_000;
+const MAX_WEBHOOK_BODY_BYTES = 1024 * 1024;
 
 export type VerifiedStripeEvent = Readonly<{
   id: string;
@@ -65,6 +66,26 @@ export async function handleStripeTestWebhook(
   request: Request,
   dependencies: StripeWebhookDependencies,
 ) {
+  let requestUrl: URL;
+  try {
+    requestUrl = new URL(request.url);
+  } catch {
+    return apiError(400, "INVALID_REQUEST_URL", "The request URL is invalid.");
+  }
+
+  if (
+    requestUrl.hostname !== "the-base-staging.mansua.workers.dev" &&
+    requestUrl.hostname !== "localhost" &&
+    requestUrl.hostname !== "127.0.0.1" &&
+    requestUrl.hostname !== "[::1]"
+  ) {
+    return apiError(
+      403,
+      "STRIPE_TEST_HOST_REQUIRED",
+      "Stripe Test webhooks are available only on local development and the staging hostname.",
+    );
+  }
+
   const webhookSecret = dependencies.webhookSecret?.trim();
   if (!webhookSecret) {
     return apiError(
@@ -83,8 +104,19 @@ export async function handleStripeTestWebhook(
     );
   }
 
+  const declaredLength = Number(request.headers.get("content-length") ?? "0");
+  if (
+    Number.isFinite(declaredLength) &&
+    declaredLength > MAX_WEBHOOK_BODY_BYTES
+  ) {
+    return apiError(413, "STRIPE_WEBHOOK_TOO_LARGE", "The webhook body is too large.");
+  }
+
   // Signature verification requires the exact raw request body.
   const payload = await request.text();
+  if (new TextEncoder().encode(payload).byteLength > MAX_WEBHOOK_BODY_BYTES) {
+    return apiError(413, "STRIPE_WEBHOOK_TOO_LARGE", "The webhook body is too large.");
+  }
   let event: VerifiedStripeEvent;
   try {
     event = await (dependencies.verifyEvent ?? verifyStripeWebhookEvent)(

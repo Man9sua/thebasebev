@@ -1,19 +1,19 @@
 # SEO parity report
 
-Generated: 2026-08-21T20:34:03.108Z
+Generated: 2026-08-24T12:46:19.416Z
 
 - Production: `https://thebasebev.com`
-- Target: `https://the-base-production.mansua.workers.dev`
+- Target: `http://127.0.0.1:3000`
 - Canonical public routes: 29
 - Critical failures: 0
-- Non-blocking link/alt observations: 1
-- Preview transport noindex expected: yes
+- Non-blocking link/alt observations: 3
+- Preview transport noindex expected: no
 
 The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.dev` preview. Page-level metadata and canonical URLs must still match production and remain oriented to `https://thebasebev.com`.
 
 | Route | Production | Target | Critical parity | Internal links P/T | Target images/missing/empty alt | Notes |
 | --- | ---: | ---: | --- | ---: | ---: | --- |
-| `/` | 200 | 200 | PASS | 28/28 | 39/0/10 | Critical fields match |
+| `/` | 200 | 200 | PASS | 28/32 | 49/0/18 | Critical fields match |
 | `/wholesale-strategy` | 200 | 200 | PASS | 28/28 | 26/0/17 | Critical fields match |
 | `/contacts` | 200 | 200 | PASS | 28/28 | 18/0/10 | Critical fields match |
 | `/about-us` | 200 | 200 | PASS | 28/28 | 27/0/10 | Critical fields match |
@@ -49,4 +49,6 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 
 ## Non-blocking observations
 
+- /: internal links differ (-0/+4)
+- /: image alt stats differ ({"total":39,"missing":0,"empty":10} vs {"total":49,"missing":0,"empty":18})
 - /catalog: internal links differ (-1/+0)

@@ -93,6 +93,24 @@ const controlledRoutes = [
     reason: "POST-only lead delivery boundary; GET is intentionally rejected",
   },
   {
+    route: "/api/checkout/stripe",
+    type: "dynamic API",
+    expectedStatus: 405,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "POST-only Stripe Test checkout boundary; GET is intentionally rejected",
+  },
+  {
+    route: "/api/stripe/webhook",
+    type: "dynamic API",
+    expectedStatus: 405,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "POST-only Stripe Test webhook boundary; GET is intentionally rejected",
+  },
+  {
     route: "/api/health",
     type: "dynamic API",
     expectedStatus: 200,
@@ -108,18 +126,38 @@ if (friendlyRoutes.length !== 39 || pageFiles.length !== 41 || productSlugs.leng
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
   );
 }
-if (controlledRoutes.length !== 111) {
-  throw new Error(`Expected 111 controlled routes, received ${controlledRoutes.length}.`);
+if (controlledRoutes.length !== 113) {
+  throw new Error(`Expected 113 controlled routes, received ${controlledRoutes.length}.`);
 }
 if (redirectRows.length !== 5) throw new Error(`Expected five redirects, received ${redirectRows.length}.`);
 
-const sitemapResponse = await fetch(`${targetOrigin}/sitemap.xml`);
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function fetchWithPropagationRetry(url, options, expectedStatus) {
+  const maximumAttempts = expectedStatus === 200 ? 8 : 3;
+  for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
+    const response = await fetch(url, options);
+    const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
+    if (!retryable || attempt === maximumAttempts) return response;
+    await response.arrayBuffer();
+    await delay(Math.min(attempt * 2_000, 10_000));
+  }
+  throw new Error(`Unreachable retry state for ${url}`);
+}
+
+const sitemapResponse = await fetchWithPropagationRetry(
+  `${targetOrigin}/sitemap.xml`,
+  { headers: { "User-Agent": "THE-BASE-Route-Indexability-Audit/1.0" } },
+  200,
+);
 const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== 29) {
-  throw new Error(`Expected 29 target sitemap URLs, received ${sitemapPaths.size}.`);
+  throw new Error(
+    `Expected HTTP 200 with 29 target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,
+  );
 }
 
 function meta(html, name) {
@@ -137,20 +175,6 @@ function getCanonical(html) {
     html.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i)?.[1] ??
     ""
   );
-}
-
-const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
-
-async function fetchWithPropagationRetry(url, options, expectedStatus) {
-  const maximumAttempts = expectedStatus === 200 ? 5 : 2;
-  for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
-    const response = await fetch(url, options);
-    const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
-    if (!retryable || attempt === maximumAttempts) return response;
-    await response.arrayBuffer();
-    await delay(attempt * 1_000);
-  }
-  throw new Error(`Unreachable retry state for ${url}`);
 }
 
 async function inspect(entry) {
@@ -223,12 +247,12 @@ Target: \`${targetOrigin}\`
 - Friendly routes: ${friendlyRoutes.length} (${friendlyRoutes.filter((route) => route.indexable).length} canonical/indexable + ${friendlyRoutes.filter((route) => !route.indexable).length} excluded).
 - Direct \`pageNNNN.html\` compatibility aliases: ${pageFiles.length}.
 - Tilda product compatibility aliases: ${productSlugs.length * 2}.
-- Technical/metadata/API routes: 5.
+- Technical/metadata/API routes: 7.
 - **Controlled route total: ${controlledRoutes.length}.**
 - Permanent redirects (not generated pages): ${redirectRows.length}.
 - Sitemap members: ${sitemapPaths.size}.
 
-The 111 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The ${controlledRoutes.length} controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
 
 ## Generated and technical routes
 

@@ -296,8 +296,29 @@ try {
     "matcha: Place order did not open the shared Free Sample form",
   );
 
+  // Browser smoke must be safe against a credentialed staging environment.
+  // Mock only the same-origin lead boundary so the UX and attribution path are
+  // exercised without creating a real CRM lead or contacting any recipient.
+  await page.route("**/api/leads", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      headers: { "Cache-Control": "no-store" },
+      body: JSON.stringify({
+        ok: false,
+        error: "lead_backend_unavailable",
+        message: "Lead delivery is temporarily unavailable. Please contact us directly.",
+        requestId: "browser-smoke-mocked",
+      }),
+    });
+  });
+
   await page.evaluate(() => sessionStorage.removeItem("thebase:first-touch-attribution:v1"));
-  await page.goto(`${baseUrl}/contacts?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+  await page.goto(`${baseUrl}/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.locator("#bestsellers").waitFor();
+  await page.goto(`${baseUrl}/contacts`, {
     waitUntil: "domcontentloaded",
   });
   const contactForm = page.locator("#form860957415");

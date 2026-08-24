@@ -10,6 +10,8 @@ const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const checks = [
   ["typecheck", ["run", "typecheck"]],
   ["lint", ["run", "lint"]],
+  ["lead pipeline", ["run", "audit:leads"]],
+  ["Stripe Test checkout", ["run", "test:stripe"]],
   ["OpenNext build (includes Next production build)", ["run", "cf:build"]],
   ["assets", ["run", "check:assets"]],
   ["route/indexability", ["run", "audit:routes", "--", target]],
