@@ -60,7 +60,7 @@ npm audit
 
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order.
 
-Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Deploy staging or production-preview only when explicitly authorized; never add a custom domain during migration preparation.
+Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Deploy production-preview only when explicitly authorized; staging is standing-authorized by the delivery pipeline below. Never add a custom domain during migration preparation.
 
 ## Git workflow
 
@@ -68,6 +68,33 @@ Before changing Next.js APIs, read the relevant guide under `node_modules/next/d
 - `develop`: integration branch.
 - Work on `feature/*`, `fix/*`, or `migration/*`; open a PR toward `develop`, then promote reviewed releases to `main`.
 - Never force-push shared branches. Never commit build output, browser artifacts, credentials, tokens, or Cloudflare secrets.
+
+## Delivery pipeline
+
+A generated change is not finished when the code merely looks right. Every
+generation ends with these three steps, in this order:
+
+1. **Refactor what was just written.** Re-read it against the surrounding code
+   before anything else touches it: remove duplication, drop dead branches and
+   unused imports, name things the way neighbouring files do, and delete the
+   scaffolding used to get there. Match the existing idiom instead of importing
+   a new one — this repository styles with CSS Modules and `--tbb-*` tokens, and
+   its runtime dependency list is deliberately short.
+2. **Push to GitHub.** Commit with a descriptive message on a `feature/*`,
+   `fix/*` or `migration/*` branch, push it, then open a PR toward `develop`.
+   Never push straight to `main`, and never force-push a shared branch.
+3. **Deploy to staging.** `npm run deploy:staging`, which targets the
+   `the-base-staging` Worker on `workers.dev` and nothing else. Re-run the remote
+   audits against the deployed URL afterwards.
+
+Steps 2 and 3 are gated on the Required checks above. Never push or deploy a
+change that has not been typechecked, linted and built. When a step genuinely
+cannot run — no toolchain installed, no network, a rate-limited Worker — say so
+plainly and stop at the last step that did complete. Reporting a pipeline as
+finished when it was not is the one failure this section exists to prevent.
+
+This pipeline never reaches production: `deploy:production-preview`,
+`thebasebev.com`, its DNS, and the live Tilda project all stay outside it.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

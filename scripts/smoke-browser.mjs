@@ -98,49 +98,62 @@ try {
     "home: next arrow did not activate slide two",
   );
 
-  // Horizontal reading rail: a native overflow scroller, so the arrows move it
-  // and vertical wheel over it must still scroll the page.
-  const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
-  await rail.scrollIntoViewIfNeeded();
+  // Reading deck: a staggered stack, not a scroller. The arrows deal it, and
+  // every entry stays a real link so the homepage keeps its internal links.
+  const deck = page.locator("section[aria-labelledby='reading-title']");
+  await deck.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
+
   check(
-    (await rail.locator("[data-card]").count()) === 7,
-    "reading: expected seven cards in the rail",
+    (await deck.locator("a[href]").count()) === 7,
+    "reading: expected seven entry links in the deck",
   );
   check(
-    await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
-    "reading: rail is not horizontally scrollable",
+    (await deck.locator("a[aria-current='true']").count()) === 1,
+    "reading: expected exactly one centred card",
   );
 
-  const railNext = page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll right']");
-  check(
-    await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled(),
-    "reading: left arrow should start disabled",
-  );
-  await railNext.click();
+  const centredTitle = () => deck.locator("a[aria-current='true'] h3").textContent();
+  const firstCentred = await centredTitle();
+
+  await deck.locator("button[aria-label='Next entry']").click();
   await page.waitForTimeout(1_200);
   check(
-    (await rail.evaluate((el) => el.scrollLeft)) > 100,
-    "reading: right arrow did not advance the rail",
+    (await centredTitle()) !== firstCentred,
+    "reading: next arrow did not deal a new card to the centre",
+  );
+
+  await deck.locator("button[aria-label='Previous entry']").click();
+  await page.waitForTimeout(1_200);
+  check(
+    (await centredTitle()) === firstCentred,
+    "reading: previous arrow did not return the original card",
+  );
+
+  // A card that is not centred must deal itself forward instead of navigating:
+  // the reader cannot yet see what they would be opening.
+  const urlBeforeCardClick = page.url();
+  const offCentre = deck.locator("a[href]:not([aria-current='true'])").first();
+  const offCentreTitle = await offCentre.locator("h3").textContent();
+  await offCentre.click();
+  await page.waitForTimeout(1_200);
+  check(
+    page.url() === urlBeforeCardClick,
+    "reading: clicking an off-centre card navigated away",
   );
   check(
-    !(await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled()),
-    "reading: left arrow should enable once scrolled",
+    (await centredTitle()) === offCentreTitle,
+    "reading: clicking an off-centre card did not bring it to the centre",
   );
 
-  // The progress thumb tracks the rail rather than sitting still.
-  const thumbShift = await page.locator("section[aria-labelledby='reading-title'] [class*='thumb']")
-    .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
-  check(thumbShift > 5, "reading: progress indicator did not follow the rail");
-
-  // A vertical wheel over the rail must scroll the page, not be swallowed.
+  // The deck is not a scroller, so a wheel over it must still move the page.
   const beforeY = await page.evaluate(() => window.scrollY);
-  await rail.hover();
+  await deck.hover();
   await page.mouse.wheel(0, 400);
   await page.waitForTimeout(700);
   check(
     (await page.evaluate(() => window.scrollY)) > beforeY + 50,
-    "reading: rail swallowed vertical scrolling",
+    "reading: deck swallowed vertical scrolling",
   );
 
   // The footer wordmark must fit. It was sized in `vw`, which includes the
@@ -375,6 +388,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-    console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
+    console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading deck, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
   console.log(`Captured nine homepage viewports in ${artifactRoot}.`);
 }

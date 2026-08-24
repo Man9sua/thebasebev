@@ -9,10 +9,6 @@
   max-width: var(--tbb-max);
   margin: 0 auto clamp(2rem, 5vw, 3.5rem);
   padding: 0 var(--tbb-gutter);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
 }
 
 .title {
@@ -24,18 +20,177 @@
   margin-top: clamp(0.5rem, 1.5vw, 1rem);
 }
 
-.controls {
+/* The stage. Cards are absolutely placed against its centre and moved only by
+   `transform`, so the deck's own box never changes size. */
+.deck {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+  background: var(--tbb-paper-warm);
+}
+
+.card {
+  /* Both are read back by the children below, so the cut corner and the inset
+     can never drift out of step with the padding and the hairline. */
+  --card-pad: clamp(1.5rem, 2.4vw, 2rem);
+  --notch: 50px;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--card-pad);
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+  border: 1px solid var(--tbb-line);
+  text-decoration: none;
+  cursor: pointer;
+  /* The cut corner is the shape the whole section is built around: it is what
+     stops a stack of squares reading as a stack of boxes. */
+  clip-path: polygon(0 0, calc(100% - var(--notch)) 0, 100% var(--notch), 100% 100%, 0 100%);
+  transition:
+    transform var(--tbb-dur) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    box-shadow var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.card:hover:not(.centre) {
+  border-color: var(--tbb-muted);
+}
+
+.centre {
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+  border-color: var(--tbb-ink);
+  box-shadow: 0 8px 0 4px var(--tbb-line);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--tbb-accent);
+  outline-offset: 4px;
+}
+
+/* Hairline along the cut corner: the hypotenuse of the square the clip-path
+   removes, laid over that edge. */
+.notch {
+  position: absolute;
+  top: calc(var(--notch) - 2px);
+  right: -2px;
+  width: calc(var(--notch) * 1.4142);
+  height: 1px;
+  background: var(--tbb-line);
+  transform-origin: top right;
+  transform: rotate(45deg);
+}
+
+.centre .notch {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.thumb {
+  width: 64px;
+  height: 76px;
   flex: none;
+  object-fit: cover;
+  object-position: top;
+  background: var(--tbb-sand);
+  /* Offset block instead of a blur: the brand mark colour, used small. */
+  box-shadow: 3px 3px 0 var(--tbb-accent);
+}
+
+.category {
+  display: block;
+  margin-top: clamp(1rem, 1.8vw, 1.4rem);
+}
+
+.centre .category {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.cardTitle {
+  margin-top: 0.5rem;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+  line-height: 1.16;
+  letter-spacing: var(--tbb-tracking-display);
+  font-weight: 500;
+}
+
+.summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  color: var(--tbb-ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.centre .summary {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* Pinned rather than pushed: the cards are a fixed square, so the foot sits on
+   the bottom padding line whatever the title and summary do above it. */
+.foot {
+  position: absolute;
+  left: var(--card-pad);
+  right: var(--card-pad);
+  bottom: var(--card-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--tbb-muted);
+}
+
+.centre .foot {
+  color: var(--tbb-on-dark);
+}
+
+.foot svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  opacity: 0;
+  transform: translate3d(-4px, 0, 0);
+  transition:
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+/* Only the centre card navigates, so only the centre card gets the affordance. */
+.centre .foot svg {
+  opacity: 1;
+  transform: none;
+}
+
+.controls {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1rem, 2.5vw, 2rem);
+  z-index: 20;
   display: flex;
   gap: 0.5rem;
+  transform: translateX(-50%);
 }
 
 .arrow {
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(26, 19, 17, 0.28);
-  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  background: var(--tbb-paper);
   color: var(--tbb-ink);
   display: inline-grid;
   place-items: center;
@@ -43,7 +198,6 @@
   transition:
     background var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease),
-    opacity var(--tbb-dur-fast) var(--tbb-ease),
     transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
@@ -52,15 +206,10 @@
   height: 16px;
 }
 
-.arrow:hover:not(:disabled) {
+.arrow:hover {
   background: var(--tbb-ink);
   color: var(--tbb-paper);
   transform: translate3d(0, -2px, 0);
-}
-
-.arrow:disabled {
-  opacity: 0.28;
-  cursor: default;
 }
 
 .arrow:focus-visible {
@@ -68,166 +217,13 @@
   outline-offset: 3px;
 }
 
-/* A real horizontal scroller, not a hijacked page scroll: native overflow with
-   snap points, so trackpads, touch, keyboard and the scrollbar all work and
-   vertical scrolling over it still moves the page. */
-.rail {
-  display: flex;
-  gap: clamp(1rem, 2vw, 1.75rem);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: var(--tbb-gutter);
-  padding: 0 var(--tbb-gutter) 1rem;
-  scrollbar-width: none;
-  cursor: grab;
-}
-
-.rail::-webkit-scrollbar {
-  display: none;
-}
-
-.dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
-  user-select: none;
-}
-
-.card {
-  flex: 0 0 auto;
-  width: clamp(15rem, 24vw, 22rem);
-  scroll-snap-align: start;
-  text-decoration: none;
-  color: var(--tbb-ink);
-  display: flex;
-  flex-direction: column;
-}
-
-.frame {
-  display: block;
-  position: relative;
-  aspect-ratio: 1 / 1.34;
-  overflow: hidden;
-  /* The arch is the one shape borrowed from the reference — it is what makes a
-     rail of photographs read as editorial rather than as a filmstrip. */
-  border-radius: 999px 999px 3px 3px;
-  background: var(--tbb-sand);
-}
-
-.media {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.03);
-  transition: transform var(--tbb-dur-slow) var(--tbb-ease);
-}
-
-.card:hover .media,
-.card:focus-visible .media {
-  transform: scale(1.09);
-}
-
-.scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(18, 18, 18, 0.62) 0%,
-    rgba(18, 18, 18, 0.12) 46%,
-    rgba(18, 18, 18, 0) 70%
-  );
-}
-
-.overlay {
-  display: block;
-  position: absolute;
-  left: clamp(1rem, 1.8vw, 1.5rem);
-  right: clamp(1rem, 1.8vw, 1.5rem);
-  bottom: clamp(1.1rem, 2vw, 1.6rem);
-  color: var(--tbb-paper);
-}
-
-/* Both of these are spans (they sit inside an anchor), so they need to be told
-   to stack — otherwise the label and the title run together on one line. */
-.category {
-  display: block;
-  color: rgba(253, 250, 245, 0.75);
-}
-
-.cardTitle {
-  display: block;
-  margin-top: 0.5rem;
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
-  line-height: 1.18;
-  font-weight: 500;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.card:hover .cardTitle,
-.card:focus-visible .cardTitle {
-  transform: translate3d(0, -3px, 0);
-}
-
-.summary {
-  display: block;
-  margin-top: clamp(0.75rem, 1.4vw, 1.1rem);
-  color: var(--tbb-ink-soft);
-  font-size: 0.9375rem;
-  line-height: 1.5;
-}
-
-.date {
-  display: block;
-  margin-top: 0.5rem;
-}
-
-.card:focus-visible {
-  outline: 2px solid var(--tbb-ink);
-  outline-offset: 5px;
-  border-radius: 3px;
-}
-
-/* Progress rail mirrors how far the list has been scrolled. */
-.progress {
-  width: 100%;
-  max-width: var(--tbb-max);
-  margin: clamp(1.25rem, 3vw, 2rem) auto 0;
-  padding: 0 var(--tbb-gutter);
-}
-
-.track {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 1px;
-  background: var(--tbb-line);
-}
-
-.thumb {
-  display: block;
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 100%;
-  height: 1px;
-  background: var(--tbb-ink);
-  transform-origin: left center;
-  will-change: transform;
-}
-
-@media (max-width: 767px) {
-  .head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.25rem;
+@media (max-width: 639px) {
+  .deck {
+    height: 480px;
   }
 
-  /* Arrows are redundant next to a native swipe. */
-  .controls {
-    display: none;
-  }
-
-  .card {
-    width: min(78vw, 20rem);
+  .summary {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
   }
 }
