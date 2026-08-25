@@ -1,4 +1,5 @@
-# Legacy Tilda shell — record-level audit
+| Tilda form script | C | kept, but owned forms are intercepted first by `LeadAttributionBridge` |
+| `fixPhone` / `startPhoneFix` | C | kept 2014 see below |# Legacy Tilda shell — record-level audit
 
 Evidence for what the shared public-page shell actually contains, and what the
 unified header/footer work is allowed to delete. Measured against
@@ -97,3 +98,24 @@ server-rendered HTML.
   grid and controls rather than the design tokens.
 - No shared `ProductPage` template yet; product routes are still parity
   documents inside the new shell.
+
+## `fixPhone` and the retired number
+
+The export ships an inline `fixPhone` script that runs on load and rewrites
+`+971 58 932 7887` to `+971 50 989 0429` everywhere on the page — anchor hrefs,
+raw text nodes, and `wa.me` numbers. The old number appears in 37 of the 39
+exported files, so this is how the business retired it without re-editing the
+export.
+
+It is kept (class C): the legacy content still needs it.
+
+What it exposed is that `COMPANY.phoneAlt` in `src/lib/site-config.ts` was that
+retired number, so the shared React footer was the one surface still publishing
+it — and `fixPhone` duly corrected the footer after hydration, which is what
+broke hydration on every parity page heavier than roughly 600 KB. The number is
+now removed from the config and the footer, so there is nothing in the shell for
+`fixPhone` to touch.
+
+That mismatch was also the cause of the Free Sample popup failing on product
+pages: React recovered from the failed hydration by regenerating the tree, which
+discarded the Tilda listeners bound to the popup triggers.

@@ -184,11 +184,11 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             saved as public/images/base-logo.svg — the same paths the old site
             shipped, not redrawn and not re-typeset. */}
         <Link href="/" className={styles.logo} aria-label="THE BASE — home">
+          {/* The Tilda runtime on parity routes re-sets src and adds
+              decoding/fetchpriority on every img it finds, this one included.
+              The rewrite is cosmetic, but React would still read it as a
+              mismatch on a node it owns. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {/* The Tilda runtime on parity routes rewrites every img on the page —
-              it re-sets src and adds decoding/fetchpriority — including this one,
-              which is React-owned. Without this, hydration fails on every legacy
-              route and React throws the whole shell away and re-renders it. */}
           <img
             suppressHydrationWarning
             src="/images/base-logo.svg"

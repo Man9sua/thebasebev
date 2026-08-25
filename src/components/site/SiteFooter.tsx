@@ -33,9 +33,6 @@ export function SiteFooter() {
               <a className={styles.link} href={COMPANY.phoneHref}>
                 {COMPANY.phone}
               </a>
-              <a className={styles.link} href={COMPANY.phoneAltHref}>
-                {COMPANY.phoneAlt}
-              </a>
               <span className={styles.link} style={{ pointerEvents: "none" }}>
                 {COMPANY.city}, {COMPANY.country}
               </span>

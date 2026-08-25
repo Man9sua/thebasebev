@@ -94,7 +94,9 @@ try {
           : [],
       }));
 
-      const cartButton = page.locator('.tbh-ico[aria-label="Cart"]').first();
+      // The shared header owns the cart control; its label gains the item count
+      // once the Tilda cart reports one, so match on the prefix.
+      const cartButton = page.locator('header a[aria-label^="Cart"]').first();
       if (await cartButton.count()) {
         await page.waitForTimeout(900);
         await cartButton.click();

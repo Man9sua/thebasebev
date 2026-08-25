@@ -76,14 +76,21 @@ export const FOOTER_LINKS = {
 } as const;
 
 /** Taken from the existing site — every value appears in the Tilda export. */
+/**
+ * `phoneAlt` used to carry +971 58 932 7887. It is retired: the export still
+ * contains it in 37 files, and the site ships a `fixPhone` script that rewrites
+ * every occurrence — links, text nodes and WhatsApp numbers — to the number
+ * below on page load. Publishing it from the shared footer meant the React shell
+ * was the one place still advertising a number the business rewrites away, and
+ * `fixPhone` duly corrected it after hydration, which is what broke hydration on
+ * every parity page. One number, and it is this one.
+ */
 export const COMPANY = {
   legalName: "The Base Beverage LLC",
   city: "Dubai",
   country: "United Arab Emirates",
   phone: "+971 50 989 0429",
   phoneHref: "tel:+971509890429",
-  phoneAlt: "+971 58 932 7887",
-  phoneAltHref: "tel:+971589327887",
   email: "info@thebasebev.com",
   emailHref: "mailto:info@thebasebev.com",
 } as const;
