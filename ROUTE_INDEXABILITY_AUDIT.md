@@ -1,8 +1,8 @@
 # Route indexability audit
 
-Generated: 2026-08-24T12:45:26.795Z
+Generated: 2026-08-25T21:54:30.678Z
 
-Target: `http://127.0.0.1:3000`
+Target: `https://the-base-staging.mansua.workers.dev`
 
 ## Accounting
 

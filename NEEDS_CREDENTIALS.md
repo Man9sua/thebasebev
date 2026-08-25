@@ -35,14 +35,13 @@ human-approved environment.
 No Telegram credential was present, so no message was sent and no unverified
 notification path was implemented.
 
-## Stripe Test webhook — NEEDS HUMAN SETUP
+## Stripe Test webhook — VERIFIED
 
-- Create the Test Mode endpoint at
-  `https://the-base-staging.mansua.workers.dev/api/stripe/webhook`.
-- Configure the resulting `STRIPE_WEBHOOK_SECRET` as a staging Worker secret.
-
-Stripe Test SDK/API authentication and checkout unit coverage pass. Stripe Live
-was not accessed. The webhook builds safely and returns 503 until configured.
+The Test Mode endpoint and signing secret are configured for staging. One paid
+AED Checkout, a real `checkout.session.completed` delivery, and a duplicate
+resend returned HTTP 200. Stripe Live was not accessed or modified. No Stripe
+credential is needed for the completed staging POC; any production payment
+contract remains explicitly out of scope.
 
 ## Analytics — NEEDS CONFIRMATION
 

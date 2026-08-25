@@ -89,3 +89,11 @@ partners.thebasebev.com
 ```
 
 See `AGENTS.md`, `CLOUDFLARE_MIGRATION.md`, `PRODUCTION_CUTOVER.md`, and `ROLLBACK_PLAN.md` before infrastructure work.
+
+## Stripe Test staging status
+
+The isolated Stripe proof of concept has a verified Test Mode Checkout and
+signed staging webhook path. One AED test payment completed successfully, and
+both the real `checkout.session.completed` delivery and one duplicate resend
+returned HTTP 200. It creates no Odoo order, invoice, payment transaction, or
+Telegram message and must not be treated as production payment architecture.

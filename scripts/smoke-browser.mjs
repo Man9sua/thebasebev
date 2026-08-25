@@ -7,6 +7,7 @@ const chromePath =
   process.env.CHROME_PATH ??
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const artifactRoot = path.resolve(".visual-artifacts");
+const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
 const failures = [];
 const pageErrors = [];
 const localResponseErrors = [];
@@ -315,7 +316,7 @@ try {
     });
   });
 
-  await page.evaluate(() => sessionStorage.removeItem("thebase:first-touch-attribution:v1"));
+  await page.evaluate((storageKey) => sessionStorage.removeItem(storageKey), firstTouchStorageKey);
   await page.goto(`${baseUrl}/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
     waitUntil: "domcontentloaded",
   });
@@ -340,8 +341,9 @@ try {
     /temporarily unavailable/i.test((await contactForm.locator(".js-rule-error-all").textContent()) ?? ""),
     "contacts: unconfigured lead backend did not show an honest error",
   );
-  const attribution = await page.evaluate(() =>
-    JSON.parse(sessionStorage.getItem("thebase:first-touch-attribution:v1") ?? "null"),
+  const attribution = await page.evaluate(
+    (storageKey) => JSON.parse(sessionStorage.getItem(storageKey) ?? "null"),
+    firstTouchStorageKey,
   );
   check(attribution?.utm_source === "chatgpt.com", "contacts: chatgpt.com attribution was not retained");
   check(
@@ -356,14 +358,33 @@ try {
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  // On a remote Worker the static HTML can arrive before its client chunks.
+  // The attribution bridge writes this key from a React effect, giving the
+  // smoke test a deterministic hydration signal before it clicks the menu.
+  await mobilePage.waitForFunction(
+    (storageKey) => sessionStorage.getItem(storageKey) !== null,
+    firstTouchStorageKey,
+  );
+  // A first visit also runs the homepage loading screen after hydration. Wait
+  // for its explicit gate instead of clicking through an entrance transition.
+  await mobilePage.waitForFunction(
+    () => document.documentElement.getAttribute("data-tbb-loading") !== "1",
+    undefined,
+    { timeout: 7_000 },
+  );
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
   await mobileBurger.click();
-  await mobilePage.waitForTimeout(900);
-  check(
-    await mobilePage.locator("#site-menu").evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
-    "mobile: burger menu did not open",
-  );
+  const mobileMenuOpened = await mobilePage
+    .waitForFunction(() => {
+      const menu = document.querySelector("#site-menu");
+      if (!menu || menu.getAttribute("aria-hidden") !== "false") return false;
+      const style = getComputedStyle(menu);
+      return style.visibility === "visible" && style.clipPath === "inset(0px)";
+    }, undefined, { timeout: 5_000 })
+    .then(() => true)
+    .catch(() => false);
+  check(mobileMenuOpened, "mobile: burger menu did not open");
   // Account and the region picker leave the bar on small screens, so the menu
   // is the only place they exist — if they are missing there, they are gone.
   check(
