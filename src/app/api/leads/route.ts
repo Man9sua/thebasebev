@@ -98,6 +98,7 @@ export const DELETE = GET;
 export async function POST(request: Request) {
   const requestId = newRequestId();
   const startedAt = Date.now();
+  const receivedAt = new Date().toISOString();
   const done = (
     outcome: string,
     upstreamStatus: number | null,
@@ -189,7 +190,7 @@ export async function POST(request: Request) {
   }
 
   // Translate to the legacy Tilda field names the Odoo webhook already parses.
-  const upstreamPayload = toTildaLeadPayload(lead);
+  const upstreamPayload = toTildaLeadPayload(lead, { requestId, receivedAt });
 
   const headers: Record<string, string> = {
     Accept: "application/json",

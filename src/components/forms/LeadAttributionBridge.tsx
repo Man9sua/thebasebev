@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { FIRST_TOUCH_STORAGE_KEY } from "@/components/forms/first-touch";
 import {
   LEGACY_FORM_NAMES,
   resolveLeadFormType,
@@ -13,8 +14,6 @@ import {
   type FirstTouchAttribution,
   type LeadPayload,
 } from "@/lib/leads";
-
-const FIRST_TOUCH_STORAGE_KEY = "thebase:first-touch-attribution:v1";
 
 const OWNED_TILDA_FORM_IDS = new Set([
   "form861442702",

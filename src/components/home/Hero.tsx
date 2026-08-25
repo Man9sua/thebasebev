@@ -1,29 +1,115 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { HERO_SLUGS, getProducts, resolveProductColors } from "@/data/products";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { whenLoadingGateOpens } from "@/components/site/loading-gate";
+import {
+  HERO_MARQUEE_SLUGS,
+  HERO_SLUGS,
+  getProducts,
+  resolveProductColors,
+} from "@/data/products";
 import styles from "./Hero.module.css";
 
 /**
- * Product-first hero.
+ * Marquee hero.
  *
- * The first viewport is the product: copy left, pack shot dead centre and
- * dominant, metadata right. The background is paper with one soft wash of the
- * product's own colour behind it, so the field works for the product instead of
- * competing with it.
+ * Centred copy over an endlessly scrolling rail of the pre-composed product
+ * cards. The rail is the range argument — a buyer sees eleven finished products
+ * in the first viewport instead of one — while the copy stays a single, static,
+ * server-rendered block.
  *
- * Colours come from `resolveProductColors`, never from this component, so the
- * real palette can land in the data without touching any UI.
+ * The h1 is deliberately fixed on Cream Latte. Production's homepage h1 is
+ * "Premium / Cream Latte / Bases", so the wording is SEO surface, not a design
+ * choice: it must be identical in the server HTML and must not rewrite itself
+ * afterwards. `HERO_SLUGS[0]` is the single source for which product that is.
  *
- * This section carries the page `h1`. Production's homepage h1 is
- * "Premium / Cream Latte / Bases", so the first hero product is cream-latte and
- * that shape survives the redesign.
+ * Motion is CSS only — one keyframed transform on the rail plus the staged
+ * entrance below. No animation library: nothing here needs per-frame JS, and
+ * the Worker bundle stays as small as the rest of the site.
  */
 
-const PRODUCTS = getProducts(HERO_SLUGS);
-/** Slow enough to read a product. This is a hero, not a slideshow. */
-const ADVANCE_MS = 9000;
+const FEATURED = getProducts(HERO_SLUGS)[0];
+
+/**
+ * The rail, resolved once at module scope.
+ *
+ * Nothing in it depends on render state, so the colours, the alternating tilt
+ * and the loading hints are computed here instead of per tile per render.
+ */
+const TILES = getProducts(HERO_MARQUEE_SLUGS).map((product, position) => ({
+  slug: product.slug,
+  route: product.route,
+  name: product.name,
+  image: product.image,
+  // Alternating tilt, straightened on hover — the same trick the pack shots use
+  // elsewhere: the rail reads as objects laid on a surface, not a filmstrip.
+  style: {
+    ["--tilt" as string]: position % 2 === 0 ? "-2.5deg" : "3.5deg",
+    // Matches the card's own field, so a rounded corner never shows paper.
+    ["--tile-bg" as string]: resolveProductColors(product).background,
+  } as CSSProperties,
+  // Only the first few cards are above the fold on the first paint; the rest
+  // scroll in.
+  eager: position < 3,
+  priority: position === 0,
+}));
+
+type Tile = (typeof TILES)[number];
+
+/**
+ * The rail is rendered twice back to back and translated by exactly half its
+ * width, which is what makes the loop seamless. The second pass is presentation
+ * only, so `HeroTile` renders it without an anchor, without alt text and
+ * without a tab stop — the same products are not announced or linked twice.
+ */
+const PASSES = [
+  { key: "lead", clone: false },
+  { key: "loop", clone: true },
+] as const;
+
+function HeroTile({ tile, clone }: { tile: Tile; clone: boolean }) {
+  const art = tile.image && (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      className={styles.tileImage}
+      src={tile.image}
+      alt={clone ? "" : `${tile.name} base by THE BASE`}
+      loading={!clone && tile.eager ? "eager" : "lazy"}
+      fetchPriority={!clone && tile.priority ? "high" : undefined}
+      decoding="async"
+      draggable={false}
+    />
+  );
+
+  if (clone) {
+    return (
+      <div className={styles.tile} data-hero-tile style={tile.style} aria-hidden="true">
+        {art}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={tile.route}
+      className={styles.tile}
+      data-hero-tile
+      style={tile.style}
+      // Eleven links sit above the fold, each pointing at a legacy parity page
+      // that is expensive to render. Left on, Next prefetches all eleven the
+      // moment the rail scrolls into view. The Worker already returns
+      // intermittent Cloudflare 1102 (CPU limit) under concurrent renders of
+      // those pages — measured on staging both with and without this rail — so
+      // adding eleven speculative renders to the homepage is bandwidth and CPU
+      // spent on a showcase most visitors will not click through. Fetch on
+      // click instead.
+      prefetch={false}
+    >
+      {art}
+    </Link>
+  );
+}
 
 function ArrowIcon() {
   return (
@@ -34,70 +120,37 @@ function ArrowIcon() {
 }
 
 export function Hero() {
-  const [index, setIndex] = useState(0);
   const [ready, setReady] = useState(false);
-  const [swapping, setSwapping] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
-  const indexRef = useRef(0);
-  const swapTimer = useRef<number | undefined>(undefined);
-
-  const active = PRODUCTS[index];
-  const colors = resolveProductColors(active);
-
-  useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
-
-  // Arm the entrance on the frame after mount, so the transition actually runs
-  // instead of being collapsed into the first paint.
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setReady(true));
-    // rAF is not serviced in a background tab; this makes sure the hero is
-    // never left invisible on a page the user has not looked at yet.
-    const fallback = window.setTimeout(() => setReady(true), 400);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.clearTimeout(fallback);
-    };
-  }, []);
-
-  const goTo = useCallback((next: number) => {
-    setIndex((current) => {
-      const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
-      if (resolved === current) return current;
-      // Drop the copy out first so the text never visibly rewrites itself.
-      setSwapping(true);
-      window.clearTimeout(swapTimer.current);
-      swapTimer.current = window.setTimeout(() => setSwapping(false), 280);
-      return resolved;
-    });
-  }, []);
-
-  useEffect(() => () => window.clearTimeout(swapTimer.current), []);
-
-  useEffect(() => {
-    if (PRODUCTS.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const timer = window.setInterval(() => goTo(indexRef.current + 1), ADVANCE_MS);
-    return () => window.clearInterval(timer);
-  }, [goTo]);
+  const railRef = useRef<HTMLDivElement>(null);
 
   /**
-   * Scroll hand-off into Bestsellers: the product eases back and the copy lifts
-   * away as the hero leaves, so the two read as one movement rather than one
+   * Arm the entrance when the loading screen starts pulling away, so the
+   * headline rises into a frame the visitor is actually watching instead of
+   * having already played behind a curtain.
+   *
+   * With no loading screen — no JS gate, a repeat view, reduced motion — the
+   * gate is already open and this runs on the frame after mount, exactly as it
+   * did before. `whenLoadingGateOpens` carries its own timeout, so the hero is
+   * never left invisible waiting on a screen that failed to finish.
+   */
+  useEffect(() => whenLoadingGateOpens(() => setReady(true)), []);
+
+  /**
+   * Scroll hand-off into Bestsellers: the copy lifts away and the rail settles
+   * back as the hero leaves, so the two read as one movement rather than one
    * block ending and another starting.
    *
    * Written straight to `style` in a rAF loop that only runs while the hero is
-   * on screen — no state, no render per frame.
+   * on screen — no state, no render per frame. The rail's own marquee transform
+   * lives on the inner track, so nothing here fights it.
    */
   useEffect(() => {
     const hero = heroRef.current;
-    const stage = stageRef.current;
     const copy = copyRef.current;
-    if (!hero || !stage || !copy) return;
+    const rail = railRef.current;
+    if (!hero || !copy || !rail) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let frame = 0;
@@ -109,11 +162,11 @@ export function Hero() {
       const progress = Math.min(1, Math.max(0, -rect.top / window.innerHeight));
       const eased = progress * progress;
 
-      stage.style.transform = `scale(${(1 - eased * 0.12).toFixed(4)}) translate3d(0, ${(
-        eased * -40
+      copy.style.transform = `translate3d(0, ${(eased * -70).toFixed(1)}px, 0)`;
+      copy.style.opacity = Math.max(0, 1 - progress * 1.6).toFixed(3);
+      rail.style.transform = `scale(${(1 - eased * 0.06).toFixed(4)}) translate3d(0, ${(
+        eased * 26
       ).toFixed(1)}px, 0)`;
-      copy.style.transform = `translate3d(0, ${(eased * -60).toFixed(1)}px, 0)`;
-      copy.style.opacity = (Math.max(0, 1 - progress * 1.6)).toFixed(3);
 
       frame = visible ? requestAnimationFrame(tick) : 0;
     };
@@ -131,9 +184,9 @@ export function Hero() {
     return () => {
       observer.disconnect();
       if (frame) cancelAnimationFrame(frame);
-      stage.style.transform = "";
       copy.style.transform = "";
       copy.style.opacity = "";
+      rail.style.transform = "";
     };
   }, []);
 
@@ -143,122 +196,103 @@ export function Hero() {
       className={`${styles.hero} ${ready ? styles.ready : ""}`}
       data-hero
       aria-label="THE BASE products"
-      style={{
-        ["--product-bg" as string]: colors.background,
-        ["--product-accent" as string]: colors.accent,
-      }}
     >
+      {/*
+        The entrance is armed from JavaScript, so without it every staged
+        element would sit at its `opacity: 0` start state forever. This is the
+        one case where the hero has to be legible with no script at all.
+      */}
+      <noscript>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `.${styles.enter},.${styles.lineInner},.${styles.enterMarquee},.${styles.wash}{opacity:1!important;transform:none!important}`,
+          }}
+        />
+      </noscript>
+
       <span className={styles.wash} aria-hidden="true" />
 
-      <div className={styles.inner}>
-        <div ref={copyRef} className={styles.copy}>
+      <div ref={copyRef} className={styles.inner}>
+        <div className={styles.copy}>
           <span
-            className={`tbb-label ${styles.category} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "420ms" }}
+            className={`tbb-label ${styles.tagline} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "180ms" }}
           >
             Dry beverage base
           </span>
 
-          <h1
-            className={`${styles.title} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "500ms" }}
-          >
-            Premium{" "}
-            <span
-              className={styles.titleProduct}
-              style={{ opacity: swapping ? 0 : 1 }}
-            >
-              {active.name}
+          {/*
+            Three lines, each rising out of its own mask. The hierarchy is size
+            and weight, not colour: "Premium" and "Bases" are small and tracked,
+            the product name carries the line. Text content stays the one string
+            production serves — "Premium Cream Latte Bases".
+          */}
+          <h1 className={styles.title}>
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleAffix}`}
+                style={{ ["--enter-delay" as string]: "300ms" }}
+              >
+                Premium
+              </span>
             </span>{" "}
-            Bases
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleProduct}`}
+                style={{ ["--enter-delay" as string]: "400ms" }}
+              >
+                {FEATURED.name}
+              </span>
+            </span>{" "}
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleAffix}`}
+                style={{ ["--enter-delay" as string]: "520ms" }}
+              >
+                Bases
+              </span>
+            </span>
           </h1>
 
           <p
-            className={`${styles.description} ${styles.enter} ${styles.swap} ${
-              swapping ? styles.swapOut : ""
-            }`}
-            style={{ ["--enter-delay" as string]: "600ms" }}
+            className={`${styles.description} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "640ms" }}
           >
-            {active.description}
+            {FEATURED.description}
           </p>
 
           <Link
-            href={active.route}
+            href={FEATURED.route}
             className={`${styles.cta} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "760ms" }}
+            style={{ ["--enter-delay" as string]: "730ms" }}
           >
-            Shop {active.name}
+            Shop {FEATURED.name}
             <ArrowIcon />
           </Link>
-        </div>
 
-        <div
-          ref={stageRef}
-          className={`${styles.stage} ${styles.enterProduct}`}
-          aria-live="polite"
-        >
-          {PRODUCTS.map((product, slide) => (
-            <div
-              key={product.slug}
-              className={`${styles.slide} ${slide === index ? styles.slideActive : ""}`}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${slide + 1} of ${PRODUCTS.length}: ${product.name}`}
-              aria-hidden={slide !== index}
-            >
-              {product.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  className={styles.shot}
-                  src={product.image}
-                  alt={`${product.name} base by THE BASE`}
-                  // The first product is the largest thing above the fold.
-                  loading={slide === 0 ? "eager" : "lazy"}
-                  fetchPriority={slide === 0 ? "high" : undefined}
-                  decoding="async"
-                  draggable={false}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.meta}>
-          <div
-            className={`${styles.metaBlock} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "660ms" }}
-          >
-            <span className="tbb-label">From</span>
-            <span className={styles.price}>{active.price ?? "On request"}</span>
-          </div>
-
-          <div
+          <p
             className={`${styles.badges} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "700ms" }}
+            style={{ ["--enter-delay" as string]: "820ms" }}
           >
+            <span className="tbb-label">From {FEATURED.price ?? "On request"}</span>
             <span className="tbb-label">Halal certified</span>
             <span className="tbb-label">HACCP audited</span>
             <span className="tbb-label">Made in Dubai</span>
-          </div>
+          </p>
+        </div>
+      </div>
 
-          <div
-            className={`${styles.switcher} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "820ms" }}
-          >
-            {PRODUCTS.map((product, slide) => (
-              <button
-                key={product.slug}
-                type="button"
-                className={`${styles.step} ${slide === index ? styles.stepActive : ""}`}
-                onClick={() => goTo(slide)}
-                aria-label={`Show ${product.name}`}
-                aria-current={slide === index}
-              >
-                {String(slide + 1).padStart(2, "0")}
-                <span className={styles.stepLine} aria-hidden="true" />
-              </button>
-            ))}
-          </div>
+      <div
+        ref={railRef}
+        className={`${styles.marquee} ${styles.enterMarquee}`}
+        aria-label="THE BASE product range"
+      >
+        <div className={styles.track}>
+          {PASSES.map((pass) =>
+            TILES.map((tile) => (
+              <HeroTile key={`${pass.key}-${tile.slug}`} tile={tile} clone={pass.clone} />
+            )),
+          )}
         </div>
       </div>
     </section>

@@ -159,8 +159,8 @@ These blockers require the original Tilda feed data or replacement backend integ
 
 ## Preview and production indexability boundary
 
-- `the-base-staging.mnsdemo.workers.dev`: transport `X-Robots-Tag: noindex, nofollow`.
-- `the-base-production.mnsdemo.workers.dev`: transport `X-Robots-Tag: noindex, nofollow` despite `APP_ENV=production`, because it is still a preview hostname.
+- `the-base-staging.mansua.workers.dev`: transport `X-Robots-Tag: noindex, nofollow`.
+- `the-base-production.mansua.workers.dev`: transport `X-Robots-Tag: noindex, nofollow` despite `APP_ENV=production`, because it is still a preview hostname.
 - `thebasebev.com` and `www.thebasebev.com`: eligible for indexable delivery only when `APP_ENV=production` after explicit cutover approval.
 - Canonical and OG URLs remain rooted at `https://thebasebev.com` in every environment.
 

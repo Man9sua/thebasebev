@@ -7,6 +7,7 @@ const chromePath =
   process.env.CHROME_PATH ??
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const artifactRoot = path.resolve(".visual-artifacts");
+const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
 const failures = [];
 const pageErrors = [];
 const localResponseErrors = [];
@@ -50,21 +51,25 @@ try {
   await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
 
-  // The hero is product-first: no video, and the pack shot is the dominant
-  // object in the first viewport.
+  // The hero is a marquee of pre-composed product cards: no video, a rail that
+  // is rendered twice so the loop is seamless, and tiles big enough to read.
   const hero = page.locator("section[data-hero]");
   check((await hero.locator("video").count()) === 0, "home: hero must not use video");
-  const heroShot = hero.locator("[aria-roledescription='slide']:not([aria-hidden='true']) img").first();
-  check(await heroShot.count() === 1, "home: expected one visible hero product");
-  const heroBox = await heroShot.boundingBox();
+  const heroTiles = hero.locator("[data-hero-tile]");
+  const heroTileCount = await heroTiles.count();
+  check(
+    heroTileCount >= 20 && heroTileCount % 2 === 0,
+    `home: hero marquee needs both passes of a duplicated rail (got ${heroTileCount})`,
+  );
+  const heroTileBox = await heroTiles.first().boundingBox();
   const view = page.viewportSize();
   check(
-    !!heroBox && heroBox.height > view.height * 0.4,
-    `home: hero product is not dominant (${Math.round(heroBox?.height ?? 0)}px of ${view.height})`,
+    !!heroTileBox && heroTileBox.height > view.height * 0.18,
+    `home: hero marquee tile is too small (${Math.round(heroTileBox?.height ?? 0)}px of ${view.height})`,
   );
   check(
-    !!heroBox && Math.abs(heroBox.x + heroBox.width / 2 - view.width / 2) < 60,
-    "home: hero product is not centred",
+    (await hero.locator("a[href='/cream-latte']").count()) > 0,
+    "home: hero CTA must still point at the featured product",
   );
   // The header must carry the original Tilda lockup, not a text substitute.
   check(
@@ -268,7 +273,9 @@ try {
   check(cartProducts[0]?.name === "Milkshake", "catalog: unexpected cart product");
   check(Number(cartProducts[0]?.price) === 45.38, "catalog: cart product price changed");
   await page.waitForTimeout(900);
-  await page.locator('.tbh-ico[aria-label="Cart"]').first().click();
+  // The shared header owns the cart control now; its label gains the item
+  // count once the Tilda cart reports one, so match on the prefix.
+  await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
   await page.waitForTimeout(500);
   const openCartText = await page.evaluate(() => {
     const cart = [...document.querySelectorAll('[class*="t706__cartwin"]')].find((element) => {
@@ -292,8 +299,29 @@ try {
     "matcha: Place order did not open the shared Free Sample form",
   );
 
-  await page.evaluate(() => sessionStorage.removeItem("thebase:first-touch-attribution:v1"));
-  await page.goto(`${baseUrl}/contacts?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+  // Browser smoke must be safe against a credentialed staging environment.
+  // Mock only the same-origin lead boundary so the UX and attribution path are
+  // exercised without creating a real CRM lead or contacting any recipient.
+  await page.route("**/api/leads", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      headers: { "Cache-Control": "no-store" },
+      body: JSON.stringify({
+        ok: false,
+        error: "lead_backend_unavailable",
+        message: "Lead delivery is temporarily unavailable. Please contact us directly.",
+        requestId: "browser-smoke-mocked",
+      }),
+    });
+  });
+
+  await page.evaluate((storageKey) => sessionStorage.removeItem(storageKey), firstTouchStorageKey);
+  await page.goto(`${baseUrl}/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.locator("#bestsellers").waitFor();
+  await page.goto(`${baseUrl}/contacts`, {
     waitUntil: "domcontentloaded",
   });
   const contactForm = page.locator("#form860957415");
@@ -313,8 +341,9 @@ try {
     /temporarily unavailable/i.test((await contactForm.locator(".js-rule-error-all").textContent()) ?? ""),
     "contacts: unconfigured lead backend did not show an honest error",
   );
-  const attribution = await page.evaluate(() =>
-    JSON.parse(sessionStorage.getItem("thebase:first-touch-attribution:v1") ?? "null"),
+  const attribution = await page.evaluate(
+    (storageKey) => JSON.parse(sessionStorage.getItem(storageKey) ?? "null"),
+    firstTouchStorageKey,
   );
   check(attribution?.utm_source === "chatgpt.com", "contacts: chatgpt.com attribution was not retained");
   check(
@@ -329,14 +358,33 @@ try {
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  // On a remote Worker the static HTML can arrive before its client chunks.
+  // The attribution bridge writes this key from a React effect, giving the
+  // smoke test a deterministic hydration signal before it clicks the menu.
+  await mobilePage.waitForFunction(
+    (storageKey) => sessionStorage.getItem(storageKey) !== null,
+    firstTouchStorageKey,
+  );
+  // A first visit also runs the homepage loading screen after hydration. Wait
+  // for its explicit gate instead of clicking through an entrance transition.
+  await mobilePage.waitForFunction(
+    () => document.documentElement.getAttribute("data-tbb-loading") !== "1",
+    undefined,
+    { timeout: 7_000 },
+  );
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
   await mobileBurger.click();
-  await mobilePage.waitForTimeout(900);
-  check(
-    await mobilePage.locator("#site-menu").evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
-    "mobile: burger menu did not open",
-  );
+  const mobileMenuOpened = await mobilePage
+    .waitForFunction(() => {
+      const menu = document.querySelector("#site-menu");
+      if (!menu || menu.getAttribute("aria-hidden") !== "false") return false;
+      const style = getComputedStyle(menu);
+      return style.visibility === "visible" && style.clipPath === "inset(0px)";
+    }, undefined, { timeout: 5_000 })
+    .then(() => true)
+    .catch(() => false);
+  check(mobileMenuOpened, "mobile: burger menu did not open");
   // Account and the region picker leave the bar on small screens, so the menu
   // is the only place they exist — if they are missing there, they are gone.
   check(

@@ -4,6 +4,9 @@ import openNextWorker from "./.open-next/worker.js";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
+  ASSETS?: {
+    fetch(request: Request): Promise<Response>;
+  };
   [key: string]: unknown;
 };
 
@@ -13,6 +16,35 @@ type WorkerExecutionContext = {
 };
 
 const PRODUCTION_HOSTS = new Set(["thebasebev.com", "www.thebasebev.com"]);
+const PERMANENT_REDIRECTS = new Map([
+  ["/page65953477.html", "/"],
+  ["/page65953593.html", "/"],
+  ["/raf-cofeee", "/raf-coffee"],
+  ["/raf-cofee", "/raf-coffee"],
+  ["/functional-wellness", "/catalog"],
+]);
+
+function normalizePathname(pathname: string) {
+  if (pathname === "/") return pathname;
+  return pathname.replace(/\/+$/, "") || "/";
+}
+
+function staticPageAssetPath(pathname: string) {
+  if (pathname === "/") return "/__static_pages/index.html";
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
+    return `/__static_pages${pathname}`;
+  }
+  return `/__static_pages${pathname}.html`;
+}
+
+function requestForAsset(request: Request, pathname: string) {
+  const url = new URL(request.url);
+  url.pathname = pathname;
+  return new Request(url, {
+    method: request.method,
+    headers: request.headers,
+  });
+}
 
 function withDeploymentHeaders(
   request: Request,
@@ -49,13 +81,65 @@ function withDeploymentHeaders(
   });
 }
 
+async function staticFastPath(
+  request: Request,
+  environment: WorkerEnvironment,
+): Promise<Response | null> {
+  if (!environment.ASSETS || !["GET", "HEAD"].includes(request.method)) return null;
+
+  const url = new URL(request.url);
+  const pathname = normalizePathname(url.pathname);
+
+  if (pathname === "/api/health" && request.method === "GET") {
+    return Response.json(
+      { status: "ok" },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  const redirect = PERMANENT_REDIRECTS.get(pathname);
+  if (redirect) {
+    return new Response(null, {
+      status: 301,
+      headers: { Location: new URL(redirect, request.url).toString() },
+    });
+  }
+
+  // Let Workers Static Assets serve hashed chunks and exported media directly.
+  const directAsset = await environment.ASSETS.fetch(request);
+  if (directAsset.status !== 404) return directAsset;
+
+  if (pathname.startsWith("/api/") || request.headers.has("RSC")) return null;
+
+  const pageAsset = await environment.ASSETS.fetch(
+    requestForAsset(request, staticPageAssetPath(pathname)),
+  );
+  if (pageAsset.status !== 404) {
+    const status = pathname === "/_not-found" ? 404 : pageAsset.status;
+    return new Response(pageAsset.body, {
+      status,
+      headers: pageAsset.headers,
+    });
+  }
+
+  const notFoundAsset = await environment.ASSETS.fetch(
+    requestForAsset(request, "/__static_pages/not-found.html"),
+  );
+  return new Response(notFoundAsset.body, {
+    status: 404,
+    headers: notFoundAsset.headers,
+  });
+}
+
 const worker = {
   async fetch(
     request: Request,
     environment: WorkerEnvironment,
     context: WorkerExecutionContext,
   ) {
-    const response = await openNextWorker.fetch(request, environment, context);
+    const response =
+      (await staticFastPath(request, environment)) ??
+      (await openNextWorker.fetch(request, environment, context));
     return withDeploymentHeaders(request, response, environment);
   },
 };

@@ -10,7 +10,9 @@ The implementation intentionally preserves Tilda class names and head assets dur
 
 Current-tree `npm run build`, `npm run cf:build`, typecheck, lint, asset validation, HTTP smoke, and browser smoke complete successfully. The OpenNext build reports its upstream Windows/WSL recommendation; the generated Worker bundle itself completes.
 
-The staging Worker is deployed at `https://the-base-staging.mnsdemo.workers.dev`. Remote HTTP and browser smoke both pass. No custom-domain route, production DNS, GoDaddy setting, Tilda project, or Search Console property was changed.
+The isolated staging Worker version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed at `https://the-base-staging.mansua.workers.dev` in Cloudflare account `mansua`. The previous `mnsdemo.workers.dev` Workers remain unchanged in personal account `indukok667` only as rollback/reference. No custom-domain route, production DNS, GoDaddy setting, Tilda project, or Search Console property was changed. Post-deploy remote QA is temporarily blocked by account-wide Cloudflare Error 1027 until the Free daily request allowance resets.
+
+The empty target account started on Workers Free. Initial OpenNext document responses intermittently exceeded its 10 ms CPU limit and returned 503; Worker tail provided exact `exceededCpu` evidence. The final build serves the same prerendered HTML through a generated Static Assets fast path and retains OpenNext for dynamic APIs. Repeated stability, source-target parity, HTTP/browser/commerce/crawler, and production-readiness checks pass on the final target versions.
 
 Cloudflare runtime required two explicit boundaries that local Node does not expose: legacy page aliases are a checked-in audited list rather than a runtime directory scan, and OpenNext uses `staticAssetsIncrementalCache` with cache interception so all build-time SSG responses are deployed as Workers Static Assets. The native branded unknown-path 404 avoids reading the source export from the Worker filesystem; the separate `/not-found` compatibility URL still preserves its exported page.
 
@@ -117,7 +119,7 @@ The production-readiness layer additionally provides:
 - environment-aware `X-Robots-Tag` so staging and both `workers.dev` previews remain `noindex, nofollow` while page canonicals stay production-oriented;
 - a nine-User-Agent crawler audit covering Google, Bing, Apple, OpenAI, Perplexity, and Claude search/user agents;
 - an automated 29-route live Tilda vs Worker parity report for status, title, description, H1, canonical, indexability, JSON-LD types, Open Graph, internal links, and image-alt statistics;
-- a complete generated route/indexability report explaining 111 controlled routes and five redirects;
+- a complete generated route/indexability report explaining 113 controlled routes and five redirects;
 - isolated analytics bootstrap that cannot load on preview hosts and never initializes GTM plus direct GA together;
 - a minimal uncached `/api/health` endpoint and non-cacheable API responses.
 
@@ -161,18 +163,18 @@ These findings belong in later cleanup/design decisions. They must not be silent
 | Server-rendered export content | DONE | The catch-all compatibility page emits meaningful markup on the server. |
 | Known legacy redirects | DONE | Five intended 301 responses and destinations pass built HTTP smoke. |
 | Metadata, robots, sitemap, JSON-LD | PARTIAL | Metadata/robots/sitemap/status checks pass; full semantic schema and page-by-page heading/alt review remain. |
-| Current-tree Next production build | DONE | Next 16 production build passes and generates 111 static pages plus the lead API route. |
+| Current-tree Next production build | DONE | Next 16 production build passes and generates 111 static pages plus health, lead and two Stripe Test APIs. |
 | OpenNext Cloudflare build | DONE | `.open-next/worker.js` and assets are generated successfully. |
 | Next.js visual parity | PARTIAL | Nine target widths are captured and representative export/Next geometry is verified; exhaustive route/state diffs remain. |
 | Navigation, sliders, popups, calculators | PARTIAL | Hero/header/mobile menu/catalog filter and product-order popup paths pass browser smoke; untested legacy surfaces and React extraction remain. |
 | Product details, cart, checkout | PARTIAL | Visible prices, add-to-cart, cart contents, checkout dialog, and Free Sample order popup pass browser smoke; dynamic detail data and real order delivery remain unverified. |
 | Form rendering | DONE | Contact form fields render and the allowlisted bridge is exercised in browser smoke. |
 | Typed lead payload, first-touch attribution, and API boundary | DONE | Shared validation, allowlisted browser interception, and server forwarding boundary exist in code. |
-| Lead delivery and attribution | NEEDS CREDENTIALS | `utm_source=chatgpt.com` first-touch retention and honest unconfigured error UX pass browser smoke; owned delivery credentials remain absent. |
+| Lead delivery and attribution | STAGING VERIFIED | One controlled Odoo lead confirmed request ID, contact mapping, landing/submission pages, referrer, timestamps and `utm_source=chatgpt.com`; production enablement remains human-controlled. |
 | Analytics continuity | PARTIAL | Existing IDs are inventoried; ownership, duplication, consent, and runtime events need verification. |
 | Recipe/catalog dynamic feeds | BLOCKED | Required upstream datasets are absent from the export. |
 | Checkout/order delivery | NEEDS CREDENTIALS | UI/state are verified without submission; owned receiver/payment contracts and credentialed end-to-end proof are unavailable. |
-| Cloudflare staging | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed; 39-route HTTP smoke and focused browser smoke pass remotely. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker is deployed without a route/custom domain and remains preview-noindex. |
+| Cloudflare staging | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in isolated account `mansua`; post-deploy remote audits are blocked by Error 1027 until quota reset. |
+| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker is deployed without a route/custom domain and remains preview-noindex. |
 | Analytics preview isolation | DONE | Exported overlapping tracker runtimes are stripped; controlled GTM-or-GA bootstrap is restricted to exact production hostnames. |
 | Production cutover | HUMAN APPROVAL REQUIRED | DNS/domain/Tilda remain untouched; DNS, crawler, cache, cutover, and rollback runbooks are prepared. |

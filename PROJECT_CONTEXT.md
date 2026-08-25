@@ -37,8 +37,10 @@ Cloudflare Workers
 ```
 
 - Production: `https://thebasebev.com` — still Tilda.
-- Staging: `https://the-base-staging.mnsdemo.workers.dev`.
-- Production preview: separate `the-base-production` Worker on `workers.dev`, with no custom domain.
+- Cloudflare account: `mansua`, dedicated to THE BASE.
+- Staging: `https://the-base-staging.mansua.workers.dev`.
+- Production preview: `https://the-base-production.mansua.workers.dev`, with no custom domain.
+- Personal Cloudflare account `indukok667` is not THE BASE infrastructure and must never receive future THE BASE deployments. Its legacy previews are retained temporarily only as rollback/reference.
 - Local Tilda export: technical content/design/asset source of truth.
 - Live Tilda site: read-only reference for current production parity.
 
@@ -54,7 +56,7 @@ Next.js application
 CMS / Lead API / future Odoo integrations
 ```
 
-The registrar, nameservers, custom domain, and live traffic must not be changed without a separately approved cutover.
+The registrar, nameservers, custom domain, and live traffic must not be changed without a separately approved cutover. Teammates must be invited manually only to Cloudflare account `mansua`, never to personal account `indukok667`.
 
 ## International architecture — future only
 
@@ -87,3 +89,11 @@ partners.thebasebev.com
 ```
 
 See `AGENTS.md`, `CLOUDFLARE_MIGRATION.md`, `PRODUCTION_CUTOVER.md`, and `ROLLBACK_PLAN.md` before infrastructure work.
+
+## Stripe Test staging status
+
+The isolated Stripe proof of concept has a verified Test Mode Checkout and
+signed staging webhook path. One AED test payment completed successfully, and
+both the real `checkout.session.completed` delivery and one duplicate resend
+returned HTTP 200. It creates no Odoo order, invoice, payment transaction, or
+Telegram message and must not be treated as production payment architecture.

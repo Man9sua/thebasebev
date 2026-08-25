@@ -55,6 +55,9 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  // Set while a section that declares itself dark sits under the bar.
+  const [onDark, setOnDark] = useState(false);
+  const barRef = useRef<HTMLElement>(null);
   const lastY = useRef(0);
 
   /**
@@ -92,6 +95,51 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   }, []);
 
   /**
+   * Surface adaptation, as on mercury.com: a thin observation band the height
+   * of the bar is pinned to the top of the viewport, and any element that
+   * declares `data-surface="dark"` flips the bar to its inverted palette while
+   * it is inside that band. The footer is the dark surface today; marking a
+   * section is all it takes to add another.
+   *
+   * The band is expressed as a bottom `rootMargin` that collapses the root to
+   * the header strip, so this costs one observer and no scroll maths.
+   */
+  useEffect(() => {
+    const surfaces = Array.from(document.querySelectorAll("[data-surface='dark']"));
+    if (!surfaces.length) return;
+
+    const lit = new Set<Element>();
+    let observer: IntersectionObserver | null = null;
+
+    const build = () => {
+      observer?.disconnect();
+      lit.clear();
+      const height = barRef.current?.offsetHeight ?? 0;
+      const below = Math.max(window.innerHeight - height, 0);
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) lit.add(entry.target);
+            else lit.delete(entry.target);
+          }
+          setOnDark(lit.size > 0);
+        },
+        { rootMargin: `0px 0px -${below}px 0px`, threshold: 0 },
+      );
+
+      surfaces.forEach((surface) => observer?.observe(surface));
+    };
+
+    build();
+    window.addEventListener("resize", build);
+    return () => {
+      window.removeEventListener("resize", build);
+      observer?.disconnect();
+    };
+  }, []);
+
+  /**
    * The legacy Tilda cart is the real cart. Where its runtime is on the page
    * (every parity route) the icon opens it and mirrors its count; on the
    * redesigned homepage, which does not load that runtime, it takes the user to
@@ -119,9 +167,13 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   return (
     <>
       <header
+        ref={barRef}
         className={[
           styles.header,
           solid || menuOpen || searchOpen ? styles.solid : "",
+          // An open overlay owns the whole screen, so the bar follows it
+          // rather than whatever section happens to be underneath.
+          onDark && !menuOpen && !searchOpen ? styles.inverted : "",
           hidden && !menuOpen && !searchOpen ? styles.hidden : "",
           menuOpen ? styles.open : "",
         ]
@@ -132,8 +184,13 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             saved as public/images/base-logo.svg — the same paths the old site
             shipped, not redrawn and not re-typeset. */}
         <Link href="/" className={styles.logo} aria-label="THE BASE — home">
+          {/* The Tilda runtime on parity routes re-sets src and adds
+              decoding/fetchpriority on every img it finds, this one included.
+              The rewrite is cosmetic, but React would still read it as a
+              mismatch on a node it owns. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            suppressHydrationWarning
             src="/images/base-logo.svg"
             alt="THE BASE — Beverage Production"
             width={175}

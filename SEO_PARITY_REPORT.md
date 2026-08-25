@@ -1,47 +1,47 @@
 # SEO parity report
 
-Generated: 2026-08-21T02:28:12.340Z
+Generated: 2026-08-25T21:55:06.490Z
 
 - Production: `https://thebasebev.com`
-- Target: `https://the-base-production.mnsdemo.workers.dev`
+- Target: `https://the-base-staging.mansua.workers.dev`
 - Canonical public routes: 29
 - Critical failures: 0
-- Non-blocking link/alt observations: 1
+- Non-blocking link/alt observations: 58
 - Preview transport noindex expected: yes
 
 The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.dev` preview. Page-level metadata and canonical URLs must still match production and remain oriented to `https://thebasebev.com`.
 
 | Route | Production | Target | Critical parity | Internal links P/T | Target images/missing/empty alt | Notes |
 | --- | ---: | ---: | --- | ---: | ---: | --- |
-| `/` | 200 | 200 | PASS | 28/28 | 39/0/10 | Critical fields match |
-| `/wholesale-strategy` | 200 | 200 | PASS | 28/28 | 26/0/17 | Critical fields match |
-| `/contacts` | 200 | 200 | PASS | 28/28 | 18/0/10 | Critical fields match |
-| `/about-us` | 200 | 200 | PASS | 28/28 | 27/0/10 | Critical fields match |
-| `/resources` | 200 | 200 | PASS | 28/28 | 18/0/10 | Critical fields match |
-| `/distributors` | 200 | 200 | PASS | 28/28 | 27/0/10 | Critical fields match |
-| `/resources/blog` | 200 | 200 | PASS | 28/28 | 18/0/10 | Critical fields match |
-| `/private-labeling` | 200 | 200 | PASS | 28/28 | 18/0/10 | Critical fields match |
-| `/sitemap` | 200 | 200 | PASS | 30/30 | 18/0/10 | Critical fields match |
-| `/resources/glossary` | 200 | 200 | PASS | 28/28 | 18/0/10 | Critical fields match |
-| `/resources/tools` | 200 | 200 | PASS | 28/28 | 18/0/10 | Critical fields match |
-| `/rnd` | 200 | 200 | PASS | 28/28 | 22/0/14 | Critical fields match |
-| `/raf-coffee` | 200 | 200 | PASS | 28/28 | 49/0/40 | Critical fields match |
-| `/cream-latte` | 200 | 200 | PASS | 28/28 | 48/0/38 | Critical fields match |
-| `/chai-latte` | 200 | 200 | PASS | 28/28 | 47/0/37 | Critical fields match |
-| `/milkshake` | 200 | 200 | PASS | 28/28 | 47/0/37 | Critical fields match |
-| `/frappe` | 200 | 200 | PASS | 28/28 | 49/0/39 | Critical fields match |
-| `/iced-tea` | 200 | 200 | PASS | 28/28 | 46/0/36 | Critical fields match |
-| `/cordial` | 200 | 200 | PASS | 28/28 | 46/0/36 | Critical fields match |
-| `/topping` | 200 | 200 | PASS | 28/28 | 46/0/36 | Critical fields match |
-| `/matcha` | 200 | 200 | PASS | 28/28 | 44/0/34 | Critical fields match |
-| `/chocolate` | 200 | 200 | PASS | 28/28 | 45/0/35 | Critical fields match |
-| `/sugar-syrup` | 200 | 200 | PASS | 28/28 | 42/0/32 | Critical fields match |
-| `/vending` | 200 | 200 | PASS | 28/28 | 44/0/34 | Critical fields match |
-| `/jam` | 200 | 200 | PASS | 28/28 | 44/0/34 | Critical fields match |
-| `/garnish` | 200 | 200 | PASS | 28/28 | 36/0/28 | Critical fields match |
-| `/sugar-free` | 200 | 200 | PASS | 28/28 | 38/0/30 | Critical fields match |
-| `/tea` | 200 | 200 | PASS | 28/28 | 32/0/23 | Critical fields match |
-| `/catalog` | 200 | 200 | PASS | 29/28 | 34/0/10 | Critical fields match |
+| `/` | 200 | 200 | PASS | 28/32 | 45/0/18 | Critical fields match |
+| `/wholesale-strategy` | 200 | 200 | PASS | 28/32 | 21/0/12 | Critical fields match |
+| `/contacts` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
+| `/about-us` | 200 | 200 | PASS | 28/32 | 22/0/5 | Critical fields match |
+| `/resources` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
+| `/distributors` | 200 | 200 | PASS | 28/32 | 22/0/5 | Critical fields match |
+| `/resources/blog` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
+| `/private-labeling` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
+| `/sitemap` | 200 | 200 | PASS | 30/33 | 13/0/5 | Critical fields match |
+| `/resources/glossary` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
+| `/resources/tools` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
+| `/rnd` | 200 | 200 | PASS | 28/32 | 17/0/9 | Critical fields match |
+| `/raf-coffee` | 200 | 200 | PASS | 28/32 | 44/0/35 | Critical fields match |
+| `/cream-latte` | 200 | 200 | PASS | 28/32 | 43/0/33 | Critical fields match |
+| `/chai-latte` | 200 | 200 | PASS | 28/32 | 42/0/32 | Critical fields match |
+| `/milkshake` | 200 | 200 | PASS | 28/32 | 42/0/32 | Critical fields match |
+| `/frappe` | 200 | 200 | PASS | 28/32 | 44/0/34 | Critical fields match |
+| `/iced-tea` | 200 | 200 | PASS | 28/32 | 41/0/31 | Critical fields match |
+| `/cordial` | 200 | 200 | PASS | 28/32 | 41/0/31 | Critical fields match |
+| `/topping` | 200 | 200 | PASS | 28/32 | 41/0/31 | Critical fields match |
+| `/matcha` | 200 | 200 | PASS | 28/32 | 39/0/29 | Critical fields match |
+| `/chocolate` | 200 | 200 | PASS | 28/32 | 40/0/30 | Critical fields match |
+| `/sugar-syrup` | 200 | 200 | PASS | 28/32 | 37/0/27 | Critical fields match |
+| `/vending` | 200 | 200 | PASS | 28/32 | 39/0/29 | Critical fields match |
+| `/jam` | 200 | 200 | PASS | 28/32 | 39/0/29 | Critical fields match |
+| `/garnish` | 200 | 200 | PASS | 28/32 | 31/0/23 | Critical fields match |
+| `/sugar-free` | 200 | 200 | PASS | 28/32 | 33/0/25 | Critical fields match |
+| `/tea` | 200 | 200 | PASS | 28/32 | 27/0/18 | Critical fields match |
+| `/catalog` | 200 | 200 | PASS | 29/32 | 29/0/5 | Critical fields match |
 
 ## Critical failures
 
@@ -49,4 +49,61 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 
 ## Non-blocking observations
 
-- /catalog: internal links differ (-1/+0)
+- /: internal links differ (-0/+4)
+- /: image alt stats differ ({"total":39,"missing":0,"empty":10} vs {"total":45,"missing":0,"empty":18})
+- /wholesale-strategy: internal links differ (-0/+4)
+- /wholesale-strategy: image alt stats differ ({"total":26,"missing":0,"empty":17} vs {"total":21,"missing":0,"empty":12})
+- /contacts: internal links differ (-0/+4)
+- /contacts: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /about-us: internal links differ (-0/+4)
+- /about-us: image alt stats differ ({"total":27,"missing":0,"empty":10} vs {"total":22,"missing":0,"empty":5})
+- /resources: internal links differ (-0/+4)
+- /resources: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /distributors: internal links differ (-0/+4)
+- /distributors: image alt stats differ ({"total":27,"missing":0,"empty":10} vs {"total":22,"missing":0,"empty":5})
+- /resources/blog: internal links differ (-0/+4)
+- /resources/blog: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /private-labeling: internal links differ (-0/+4)
+- /private-labeling: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /sitemap: internal links differ (-0/+3)
+- /sitemap: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /resources/glossary: internal links differ (-0/+4)
+- /resources/glossary: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /resources/tools: internal links differ (-0/+4)
+- /resources/tools: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /rnd: internal links differ (-0/+4)
+- /rnd: image alt stats differ ({"total":22,"missing":0,"empty":14} vs {"total":17,"missing":0,"empty":9})
+- /raf-coffee: internal links differ (-0/+4)
+- /raf-coffee: image alt stats differ ({"total":49,"missing":0,"empty":40} vs {"total":44,"missing":0,"empty":35})
+- /cream-latte: internal links differ (-0/+4)
+- /cream-latte: image alt stats differ ({"total":48,"missing":0,"empty":38} vs {"total":43,"missing":0,"empty":33})
+- /chai-latte: internal links differ (-0/+4)
+- /chai-latte: image alt stats differ ({"total":47,"missing":0,"empty":37} vs {"total":42,"missing":0,"empty":32})
+- /milkshake: internal links differ (-0/+4)
+- /milkshake: image alt stats differ ({"total":47,"missing":0,"empty":37} vs {"total":42,"missing":0,"empty":32})
+- /frappe: internal links differ (-0/+4)
+- /frappe: image alt stats differ ({"total":49,"missing":0,"empty":39} vs {"total":44,"missing":0,"empty":34})
+- /iced-tea: internal links differ (-0/+4)
+- /iced-tea: image alt stats differ ({"total":46,"missing":0,"empty":36} vs {"total":41,"missing":0,"empty":31})
+- /cordial: internal links differ (-0/+4)
+- /cordial: image alt stats differ ({"total":46,"missing":0,"empty":36} vs {"total":41,"missing":0,"empty":31})
+- /topping: internal links differ (-0/+4)
+- /topping: image alt stats differ ({"total":46,"missing":0,"empty":36} vs {"total":41,"missing":0,"empty":31})
+- /matcha: internal links differ (-0/+4)
+- /matcha: image alt stats differ ({"total":44,"missing":0,"empty":34} vs {"total":39,"missing":0,"empty":29})
+- /chocolate: internal links differ (-0/+4)
+- /chocolate: image alt stats differ ({"total":45,"missing":0,"empty":35} vs {"total":40,"missing":0,"empty":30})
+- /sugar-syrup: internal links differ (-0/+4)
+- /sugar-syrup: image alt stats differ ({"total":42,"missing":0,"empty":32} vs {"total":37,"missing":0,"empty":27})
+- /vending: internal links differ (-0/+4)
+- /vending: image alt stats differ ({"total":44,"missing":0,"empty":34} vs {"total":39,"missing":0,"empty":29})
+- /jam: internal links differ (-0/+4)
+- /jam: image alt stats differ ({"total":44,"missing":0,"empty":34} vs {"total":39,"missing":0,"empty":29})
+- /garnish: internal links differ (-0/+4)
+- /garnish: image alt stats differ ({"total":36,"missing":0,"empty":28} vs {"total":31,"missing":0,"empty":23})
+- /sugar-free: internal links differ (-0/+4)
+- /sugar-free: image alt stats differ ({"total":38,"missing":0,"empty":30} vs {"total":33,"missing":0,"empty":25})
+- /tea: internal links differ (-0/+4)
+- /tea: image alt stats differ ({"total":32,"missing":0,"empty":23} vs {"total":27,"missing":0,"empty":18})
+- /catalog: internal links differ (-1/+4)
+- /catalog: image alt stats differ ({"total":34,"missing":0,"empty":10} vs {"total":29,"missing":0,"empty":5})

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
+import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import {
   getSitePage,
   getStaticSiteParams,
@@ -76,12 +79,22 @@ export default async function SiteRoute({ params }: RouteProps) {
   const page = getSitePage(route);
   if (!page) notFound();
 
-  // Only the homepage is redesigned so far. Every other route keeps rendering
-  // the Tilda parity document, so titles, canonicals, structured data and the
-  // legacy form pipeline are untouched while the new design is built out.
-  // `generateMetadata` above is shared, so `/` keeps its existing title and
-  // description either way.
+  // `generateMetadata` above is shared, so every route keeps its existing
+  // title, description and canonical whichever branch renders it.
   if (route === "/") return <HomePage />;
 
-  return <LegacyDocument page={page} />;
+  // The two standalone aliases are the exported header and footer records
+  // themselves. Framing them in the shared shell would wrap a copy of the site
+  // chrome around the site chrome, so they keep rendering exactly as exported.
+  if (!page.usesSharedShell) return <LegacyDocument page={page} />;
+
+  // Everything else: one shared header and footer, with the old Tilda chrome
+  // already removed from the markup server-side.
+  return (
+    <div className="tbb">
+      <SiteHeader />
+      <LegacyPageShell page={page} />
+      <SiteFooter />
+    </div>
+  );
 }

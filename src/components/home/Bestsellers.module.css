@@ -50,6 +50,10 @@
 /* ---- left column ---- */
 
 .copy {
+  /* Above the stage: a turned card may drift this far, and copy that the
+     artwork can cover is copy nobody reads. */
+  position: relative;
+  z-index: 2;
   max-width: 32ch;
 }
 
@@ -150,31 +154,68 @@
   position: relative;
   grid-column: 2;
   aspect-ratio: 1 / 0.92;
-  display: grid;
-  place-items: center;
+  /* The depth the turn is read through. Shallower than the usual 1400px
+     because these cards sit close together — a deeper camera flattens the
+     rotation until the side shots look merely scaled rather than turned. */
+  perspective: 1200px;
 }
 
-/* Slides are stacked and cross-faded rather than remounted, so images stay
-   decoded and the transition is pure opacity/transform. */
+/* Cards are stacked on one another and moved only by transform, so images stay
+   decoded and every switch stays on the compositor. Slot, depth and opacity
+   come from the component, which is where the wrap-around maths lives. */
 .slide {
-  grid-area: 1 / 1;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
-  opacity: 0;
-  transform: scale(0.94) translate3d(0, 12px, 0);
+  transform-origin: center center;
   transition:
     opacity var(--tbb-dur-slow) var(--tbb-ease),
     transform var(--tbb-dur-slow) var(--tbb-ease);
-  pointer-events: none;
   will-change: opacity, transform;
 }
 
 .slideActive {
-  opacity: 1;
-  transform: scale(1) translate3d(0, 0, 0);
   pointer-events: auto;
+}
+
+/* Covers the whole card, so anywhere on a turned shot pulls it to the centre. */
+.pull {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Only the centre card is priced: the turned ones are too small to read, and a
+   column of competing numbers would fight the headline for attention. */
+.price {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  transform: translate3d(-50%, 0, 0);
+  opacity: 0;
+  transition: opacity var(--tbb-dur) var(--tbb-ease);
+  pointer-events: none;
+}
+
+.slideActive .price {
+  opacity: 1;
+}
+
+.priceValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-display);
+  color: var(--tbb-ink);
 }
 
 .shot {
@@ -209,6 +250,8 @@
 /* Everything below sits on the colour field, so it inherits ink derived from
    that colour rather than assuming the field is light. */
 .controls {
+  position: relative;
+  z-index: 2;
   grid-column: 3;
   display: flex;
   flex-direction: column;

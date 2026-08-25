@@ -9,27 +9,33 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test:stripe": "tsx --test tests/stripe-checkout.test.ts",
+    "verify:stripe-auth": "node scripts/verify-stripe-test-auth.mjs",
     "smoke:http": "node scripts/smoke-http.mjs",
     "smoke:browser": "node scripts/smoke-browser.mjs",
     "audit:commerce": "node scripts/audit-commerce.mjs",
     "audit:leads": "node scripts/audit-leads.mjs",
     "test:lead-live": "node scripts/test-lead-live.mjs",
+    "verify:lead-odoo": "node scripts/verify-odoo-test-lead.mjs",
     "audit:crawlers": "node scripts/audit-crawlers.mjs",
     "audit:seo-parity": "node scripts/audit-seo-parity.mjs",
     "audit:routes": "node scripts/audit-route-indexability.mjs",
     "audit:analytics": "node scripts/audit-analytics.mjs",
+    "audit:cloudflare-parity": "node scripts/audit-cloudflare-parity.mjs",
     "audit:production-readiness": "node scripts/audit-production-readiness.mjs",
     "check:assets": "node scripts/check-assets.mjs",
-    "cf:build": "opennextjs-cloudflare build",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env staging",
-    "deploy:production-preview": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env production"
+    "prepare:static-fast-path": "node scripts/prepare-static-fast-path.mjs",
+    "cf:build": "opennextjs-cloudflare build && npm run prepare:static-fast-path",
+    "preview": "npm run cf:build && opennextjs-cloudflare preview",
+    "deploy:staging": "npm run cf:build && opennextjs-cloudflare deploy --env staging",
+    "deploy:production-preview": "npm run cf:build && opennextjs-cloudflare deploy --env production"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.2",
     "next": "^16.3.1",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "stripe": "^22.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
@@ -39,6 +45,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.1",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.12",
     "typescript": "^6.0.3",
     "wrangler": "^4.125.0"
   }

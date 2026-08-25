@@ -90,10 +90,12 @@ The 29 canonical indexable friendly routes are the sitemap candidates. Compatibi
 | `/sitemap.xml` | 200 | NO | NO | DONE — contains exactly 29 canonical public pages |
 | `/api/health` | 200 JSON, `no-store` | NO | NO | DONE — safe deployment probe returning only `status: ok` |
 | `/api/leads` GET | 405 | NO | NO | DONE — POST-only typed delivery boundary |
-| `/api/leads` POST without credentials | 503 | NO | NO | DONE — explicit blocked integration, never fake success |
+| `/api/leads` POST invalid payload | 400 | NO | NO | DONE — safe validation boundary used by automated smoke |
+| `/api/checkout/stripe` GET | 405 | NO | NO | DONE — POST-only Test Mode checkout POC |
+| `/api/stripe/webhook` GET | 405 | NO | NO | DONE — POST-only signed Test Mode webhook boundary |
 | unknown path | branded 404 | NO | NO | DONE — native not-found boundary |
 
-`ROUTE_INDEXABILITY_AUDIT.md` accounts for all 111 generated/technical routes plus the five redirects and records why each item is or is not indexable.
+`ROUTE_INDEXABILITY_AUDIT.md` accounts for all 113 generated/technical routes plus the five redirects and records why each item is or is not indexable.
 
 ## Deployment and integration gates
 
@@ -102,8 +104,8 @@ The 29 canonical indexable friendly routes are the sitemap candidates. Compatibi
 | Local Next route foundation | DONE | App Router registry and server-rendered compatibility document exist. |
 | Clean current-tree Next build | DONE | Production build and HTTP/browser smoke pass. |
 | OpenNext Worker bundle | DONE | OpenNext build completes and generates the Worker output. |
-| Forms/lead delivery | NEEDS CREDENTIALS | Owned endpoint, authentication, recipients, and response contract are unavailable. |
+| Forms/lead delivery | STAGING VERIFIED | One controlled Odoo lead confirmed field mapping, request ID and `utm_source=chatgpt.com`; production enablement remains human-controlled. |
 | Checkout/order delivery | NEEDS CREDENTIALS | Cart state and checkout UI pass browser smoke; a real order was intentionally not submitted, and the owned delivery/payment contract is unavailable. |
-| Cloudflare staging | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed and passes remote HTTP/browser smoke. No production route is configured. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker is deployed, has preview noindex, and has no custom domain. |
+| Cloudflare staging | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in `mansua`; Error 1027 blocks post-deploy remote checks until the account quota resets. No production route is configured. |
+| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker is deployed, has preview noindex, and has no custom domain. |
 | Production domain/DNS | HUMAN APPROVAL REQUIRED | Explicitly outside preparation scope and intentionally untouched. |

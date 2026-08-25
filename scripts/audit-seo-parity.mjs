@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
 const productionOrigin = "https://thebasebev.com";
-const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
+const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
 const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
 
@@ -100,8 +100,21 @@ function normalizeRobots(value) {
   return [...normalized].sort().join(",");
 }
 
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function fetchWithRetry(url, options = {}) {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    const response = await fetch(url, options);
+    const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
+    if (!retryable || attempt === 5) return response;
+    await response.arrayBuffer();
+    await delay(attempt * 1_000);
+  }
+  throw new Error(`Unreachable retry state for ${url}`);
+}
+
 async function fetchSnapshot(origin, route) {
-  const response = await fetch(`${origin}${route === "/" ? "/" : route}`, {
+  const response = await fetchWithRetry(`${origin}${route === "/" ? "/" : route}`, {
     redirect: "manual",
     headers: {
       "User-Agent": "THE-BASE-SEO-Parity-Audit/1.0",
@@ -130,7 +143,7 @@ async function fetchSnapshot(origin, route) {
   };
 }
 
-const sitemapResponse = await fetch(`${targetOrigin}/sitemap.xml`, {
+const sitemapResponse = await fetchWithRetry(`${targetOrigin}/sitemap.xml`, {
   headers: { "User-Agent": "THE-BASE-SEO-Parity-Audit/1.0" },
 });
 const sitemapXml = await sitemapResponse.text();
@@ -149,14 +162,14 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const [production, target] = await Promise.all([
-      fetchSnapshot(productionOrigin, route),
-      fetchSnapshot(targetOrigin, route),
-    ]);
+    const production = await fetchSnapshot(productionOrigin, route);
+    await delay(500);
+    const target = await fetchSnapshot(targetOrigin, route);
     results[index] = { route, production, target };
+    await delay(500);
   }
 }
-await Promise.all(Array.from({ length: 4 }, () => worker()));
+await Promise.all(Array.from({ length: 1 }, () => worker()));
 
 const criticalFailures = [];
 const warnings = [];
