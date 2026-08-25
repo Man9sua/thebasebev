@@ -26,6 +26,8 @@ import styles from "./Bestsellers.module.css";
 const PRODUCTS = getProducts(BESTSELLER_SLUGS);
 /** Long enough to read a slide, not so long the section feels static. */
 const AUTOPLAY_MS = 7000;
+/** Slots either side of the centre card, so the rail wraps symmetrically. */
+const HALF = Math.floor(PRODUCTS.length / 2);
 
 function Arrow({ back = false }: { back?: boolean }) {
   return (
@@ -173,33 +175,73 @@ export function Bestsellers() {
         </div>
 
         <div className={styles.stage} aria-live="polite">
-          {PRODUCTS.map((product, slide) => (
-            <div
-              key={product.slug}
-              className={`${styles.slide} ${slide === index ? styles.slideActive : ""}`}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${slide + 1} of ${PRODUCTS.length}: ${product.name} bases`}
-              aria-hidden={slide !== index}
-              style={{ ["--field" as string]: product.backgroundColor }}
-            >
-              {product.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  className={styles.shot}
-                  src={product.image}
-                  alt={`${product.name} base by THE BASE`}
-                  // Only the first slide is above the fold on load.
-                  loading={slide === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                />
-              ) : (
-                <span className={styles.shotFallback} aria-hidden="true">
-                  {product.name}
-                </span>
-              )}
-            </div>
-          ))}
+          {PRODUCTS.map((product, slide) => {
+            // Signed distance from the centre, wrapped so the rail is a loop.
+            const forward = (slide - index + PRODUCTS.length) % PRODUCTS.length;
+            const slot = forward > HALF ? forward - PRODUCTS.length : forward;
+            const depth = Math.abs(slot);
+            const isActive = slot === 0;
+
+            return (
+              <div
+                key={product.slug}
+                className={`${styles.slide} ${isActive ? styles.slideActive : ""}`}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${slide + 1} of ${PRODUCTS.length}: ${product.name} bases`}
+                aria-hidden={!isActive}
+                style={{
+                  ["--field" as string]: product.backgroundColor,
+                  // Nearer the centre sits nearer the front, and every shot
+                  // stays on screen — the whole range is the point of a
+                  // coverflow, so nothing is faded out entirely.
+                  zIndex: PRODUCTS.length - depth,
+                  opacity: 1 - depth * 0.3,
+                  transform: `translate3d(${slot * 30}%, 0, 0) scale(${
+                    1 - depth * 0.2
+                  }) rotateY(${slot * -20}deg)`,
+                }}
+              >
+                {!isActive && (
+                  /* Mouse affordance only: it duplicates a control the product
+                     list already exposes, so it stays out of the tab order and
+                     out of the accessibility tree rather than announcing a
+                     second way to do the same thing. */
+                  <button
+                    type="button"
+                    className={styles.pull}
+                    onClick={() => goTo(slide)}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  />
+                )}
+
+                {product.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    className={styles.shot}
+                    src={product.image}
+                    alt={`${product.name} base by THE BASE`}
+                    // Only the first slide is above the fold on load.
+                    loading={slide === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    draggable={false}
+                  />
+                ) : (
+                  <span className={styles.shotFallback} aria-hidden="true">
+                    {product.name}
+                  </span>
+                )}
+
+                {product.price && (
+                  <span className={styles.price}>
+                    <span className="tbb-label">From</span>
+                    <span className={styles.priceValue}>{product.price}</span>
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <div className={styles.controls}>
