@@ -1,5 +1,4 @@
-| Tilda form script | C | kept, but owned forms are intercepted first by `LeadAttributionBridge` |
-| `fixPhone` / `startPhoneFix` | C | kept 2014 see below |# Legacy Tilda shell — record-level audit
+# Legacy Tilda shell — record-level audit
 
 Evidence for what the shared public-page shell actually contains, and what the
 unified header/footer work is allowed to delete. Measured against
@@ -80,6 +79,7 @@ internal links.
 | `cdn.tailwindcss.com` | D | already replaced with the local `/css/tbs-tailwind.css` build |
 | Tilda cart runtime (`tcart`) | C | kept — no owned replacement exists yet |
 | Tilda form script | C | kept, but owned forms are intercepted first by `LeadAttributionBridge` |
+| `fixPhone` / `startPhoneFix` | C | kept — rewrites the retired phone number across the page; see below |
 
 ## What this change does
 
