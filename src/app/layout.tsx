@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
 import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
+import { FIRST_TOUCH_SCRIPT } from "@/components/forms/first-touch";
 import { LOADING_GATE_SCRIPT } from "@/components/site/loading-gate";
 import "./globals.css";
 
@@ -61,6 +62,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           no-op on every other route — see LOADING_GATE_SCRIPT.
         */}
         <script dangerouslySetInnerHTML={{ __html: LOADING_GATE_SCRIPT }} />
+        {/* Also blocking, and for the same reason: the first touch must be
+            recorded before a click can navigate away from the landing page. */}
+        <script dangerouslySetInnerHTML={{ __html: FIRST_TOUCH_SCRIPT }} />
         <link rel="alternate" type="application/rss+xml" title="THE BASE" href="/rss.xml" />
       </head>
       <body className="t-body" suppressHydrationWarning>

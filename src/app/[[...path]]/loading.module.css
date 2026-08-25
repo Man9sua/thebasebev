@@ -1,0 +1,80 @@
+.page {
+  padding: calc(var(--tbb-header-h) + clamp(2rem, 6vw, 5rem)) var(--tbb-gutter) var(--tbb-section);
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+}
+
+.block {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--tbb-grey-lightest);
+}
+
+/* One sweep across the whole page rather than a per-block animation with its
+   own phase: separate shimmers read as noise, a single pass reads as loading. */
+.block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translate3d(-100%, 0, 0);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.65),
+    transparent
+  );
+  animation: sweep 1.4s var(--tbb-ease-inout) infinite;
+}
+
+@keyframes sweep {
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+.label {
+  width: 6rem;
+  height: 0.6875rem;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  width: min(100%, 34ch);
+  height: clamp(2.4rem, 5vw, 4rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.lines {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 62ch;
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.line {
+  height: 0.9rem;
+}
+
+.line:last-child {
+  width: 62%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: clamp(1rem, 2vw, 1.75rem);
+}
+
+.card {
+  aspect-ratio: 1 / 1.24;
+}
+
+/* The sweep is decoration; the layout already communicates that content is on
+   its way. */
+@media (prefers-reduced-motion: reduce) {
+  .block::after {
+    animation: none;
+    opacity: 0;
+  }
+}

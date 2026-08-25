@@ -34,7 +34,7 @@ export function SiteMenu({
       tabIndex={-1}
       // Keeps the panel and everything in it out of the tab order and the
       // accessibility tree while it is clipped away.
-      {...(open ? {} : { inert: "" as unknown as boolean })}
+      inert={!open}
     >
       <div className={styles.body}>
         <nav className={styles.nav}>

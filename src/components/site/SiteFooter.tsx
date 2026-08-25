@@ -16,7 +16,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={styles.footer}>
+    <footer data-surface="dark" className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.top}>
           <div className={styles.brand}>
@@ -32,9 +32,6 @@ export function SiteFooter() {
               </a>
               <a className={styles.link} href={COMPANY.phoneHref}>
                 {COMPANY.phone}
-              </a>
-              <a className={styles.link} href={COMPANY.phoneAltHref}>
-                {COMPANY.phoneAlt}
               </a>
               <span className={styles.link} style={{ pointerEvents: "none" }}>
                 {COMPANY.city}, {COMPANY.country}
