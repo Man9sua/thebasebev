@@ -46,7 +46,7 @@ export const SITE_NAV = [
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
   { label: "Resources", href: "/resources" },
-  { label: "About", href: "/about-us" },
+  { label: "About", href: "/#about" },
   { label: "Contacts", href: "/contacts" },
 ] as const;
 

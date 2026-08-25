@@ -73,3 +73,48 @@
   color: var(--tbb-on-dark);
   box-shadow: none;
 }
+
+/* ---- cursor tilt ----
+ *
+ * The transform itself is written inline by `LegacyCatalogTilt` — see the note
+ * there for why it cannot come from a stylesheet. Everything around it lives
+ * here, so a page without JS is simply the catalogue as exported.
+ *
+ * `perspective` belongs on the card, the tile's parent: set on the tile itself
+ * it would have no effect, and set on the grid every tile would share one
+ * vanishing point and the row would swing as a single plane.
+ */
+
+.legacy-document .catg-grid .catg-card {
+  perspective: 900px;
+}
+
+.legacy-document .catg-grid .catg-card .catg-img-wrap {
+  transform-style: preserve-3d;
+  transition:
+    transform var(--tbb-dur) var(--tbb-ease),
+    box-shadow var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+/* Immediate on the way in: a tile that eases towards the cursor lags behind it
+   and reads as broken. The ease above is what plays on the way back out. */
+.legacy-document .catg-grid .catg-card[data-tilting] .catg-img-wrap {
+  transition:
+    transform 80ms linear,
+    box-shadow var(--tbb-dur-fast) var(--tbb-ease);
+  box-shadow: 0 1.25rem 2.75rem rgba(0, 0, 0, 0.16);
+}
+
+/* The pack shot rides forward so it leads the turn rather than sliding about
+   inside a flat rectangle. */
+.legacy-document .catg-grid .catg-card[data-tilting] .catg-img-wrap img {
+  transform: translateZ(26px) scale(1.04) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legacy-document .catg-grid .catg-card .catg-img-wrap,
+  .legacy-document .catg-grid .catg-card[data-tilting] .catg-img-wrap img {
+    transform: none;
+    transition: none;
+  }
+}

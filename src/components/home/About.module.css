@@ -4,132 +4,135 @@
   overflow: clip;
 }
 
+/* A single column with a wide measure rather than the old copy/photo split —
+   with the plates gone there is nothing to sit opposite, and stretching the
+   text across the full width would leave an unreadable line length. */
 .inner {
   width: 100%;
   max-width: var(--tbb-max);
   margin: 0 auto;
   padding: 0 var(--tbb-gutter);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: clamp(2rem, 6vw, 6rem);
-  align-items: center;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  column-gap: clamp(2rem, 6vw, 7rem);
+  row-gap: clamp(2.5rem, 6vw, 4.5rem);
+  align-items: start;
 }
 
-.copy {
-  max-width: 40ch;
+.head {
+  grid-column: 1;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+/* The one flash of the mark colour in this section. */
+.mark {
+  color: var(--tbb-accent);
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 .title {
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  line-height: 1.04;
+  font-size: var(--tbb-text-display);
+  line-height: 0.98;
   letter-spacing: var(--tbb-tracking-display);
   font-weight: 600;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
 }
 
+/* Opposite the headline, so the section opens as a statement answered by an
+   explanation rather than as a wall of type. */
 .body {
-  margin-top: clamp(1rem, 2.4vw, 1.75rem);
+  grid-column: 2;
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-self: end;
+  max-width: 46ch;
+}
+
+.para {
   color: var(--tbb-ink-soft);
+  line-height: 1.55;
 }
 
-.body + .body {
-  margin-top: 0.9rem;
-}
-
-.stats {
-  margin-top: clamp(1.75rem, 4vw, 2.75rem);
+.facts {
+  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(1.5rem, 4vw, 3rem);
+  gap: clamp(2rem, 7vw, 6rem);
+  padding-top: clamp(2rem, 5vw, 3.5rem);
   border-top: 1px solid var(--tbb-line);
-  padding-top: clamp(1rem, 2vw, 1.5rem);
 }
 
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+.fact {
+  display: grid;
+  gap: 0.35rem;
 }
 
-.statValue {
+/* Sized off the display scale, not the body: these are the section's evidence
+   and they replace the photographs that used to carry it. */
+.factValue {
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.5rem, 2.6vw, 2.5rem);
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  line-height: 0.9;
+  letter-spacing: var(--tbb-tracking-display);
   font-weight: 600;
-  line-height: 1;
+}
+
+.action {
+  grid-column: 1 / -1;
 }
 
 .cta {
-  margin-top: clamp(1.75rem, 4vw, 2.5rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--tbb-ink);
+  padding: 1rem 1.75rem;
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
   text-decoration: none;
   font-size: var(--tbb-text-label);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid currentColor;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+  font-weight: 500;
+  transition:
+    gap var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cta svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
 }
 
 .cta:hover {
-  opacity: 0.55;
+  gap: 1.25rem;
+  transform: translate3d(0, -2px, 0);
 }
 
-/* Two plates, offset and overlapping — the composition is the point, so they
-   are placed rather than laid out in a row. */
-.plates {
-  position: relative;
-  aspect-ratio: 1 / 0.98;
+.cta:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 3px;
 }
 
-.plate {
-  position: absolute;
-  overflow: hidden;
-  border-radius: 2px;
-  background: var(--tbb-sand);
-}
-
-.plateA {
-  left: 0;
-  top: 0;
-  width: 62%;
-  height: 72%;
-}
-
-.plateB {
-  right: 0;
-  bottom: 0;
-  width: 52%;
-  height: 62%;
-  box-shadow: -18px -18px 48px rgba(26, 19, 17, 0.14);
-}
-
-.media {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.05);
-}
-
-/* The parallax wrapper is sized by `inset` alone. Adding height:100% here
-   overrode the bottom edge, leaving a 6% strip of bare plate below the image. */
-.layer {
-  position: absolute;
-  inset: -6% 0;
-}
-
-@media (max-width: 1023px) {
+@media (max-width: 899px) {
   .inner {
     grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2rem, 8vw, 3rem);
   }
 
-  .plates {
-    order: -1;
-    aspect-ratio: 1 / 0.72;
-    max-width: 34rem;
+  .head,
+  .body {
+    grid-column: 1;
+  }
+
+  .body {
+    align-self: start;
   }
 }

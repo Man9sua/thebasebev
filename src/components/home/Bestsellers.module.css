@@ -62,18 +62,34 @@
   margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
 }
 
+/* "Premium" and "Bases" are connective tissue; the product is the headline.
+   Setting them apart in size is what the hero already does, and matching it
+   here lets the two big statements on the page speak with one voice.
+
+   Grid rather than line breaks: the three parts are two text nodes either side
+   of a span, so each becomes its own anonymous row without adding markup — and
+   the heading stays one unbroken string for anything that reads it. */
 .heading {
   font-family: var(--tbb-font-display);
-  font-size: clamp(2.25rem, 4.4vw, 4.25rem);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  font-weight: 700;
+  display: grid;
+  justify-items: start;
+  gap: clamp(0.3rem, 0.8vw, 0.6rem);
+  font-size: clamp(0.75rem, 1.05vw, 1rem);
+  line-height: 1;
+  letter-spacing: 0.4em;
+  font-weight: 400;
   text-transform: uppercase;
+  color: var(--tbb-muted);
   margin: 0;
 }
 
 .headingProduct {
   display: block;
+  font-size: clamp(2.6rem, 5.6vw, 5.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--tbb-ink);
 }
 
 .description {

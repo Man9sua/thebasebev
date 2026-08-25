@@ -1,3 +1,4 @@
+import { LegacyCatalogTilt } from "@/components/legacy/LegacyCatalogTilt";
 import type { SitePage } from "@/lib/site-pages";
 import styles from "./LegacyPageShell.module.css";
 
@@ -29,6 +30,11 @@ export function LegacyPageShell({ page }: { page: SitePage }) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
       />
+
+      {/* Progressive enhancement over the exported grid, and a no-op on every
+          route without one. The catalogue owns the cart, so its markup is left
+          exactly as exported and only decorated from the outside. */}
+      <LegacyCatalogTilt />
     </>
   );
 }
