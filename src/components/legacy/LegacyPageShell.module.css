@@ -1,11 +1,16 @@
-/* The shared header is fixed, so the document needs its own height back. */
+/* The shared header is fixed, so the document needs its own height back.
+
+   `display: block` is not decoration. Globals set `.legacy-document` to
+   `display: contents`, which generates no box at all, so the padding below was
+   computed and then silently discarded — every parity page opened with its
+   first record sitting underneath the bar. The legacy markup is ordinary block
+   flow, so a real block wrapper is exactly what its own <body> used to be. */
 .shell {
+  display: block;
   padding-top: var(--tbb-header-h);
 }
 
-/* The export's own chrome is gone, but its records still carry Tilda's page
-   padding. Nothing is re-laid-out here — that belongs to the per-page work —
-   this only stops the first record butting into the bar. */
-.shell > :global(#allrecords) > :global(.t-rec:first-of-type) {
+/* Anchor links land below the bar rather than behind it. */
+.shell :global(.t-rec) {
   scroll-margin-top: var(--tbb-header-h);
 }

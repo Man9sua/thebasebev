@@ -1,0 +1,75 @@
+/**
+ * Brand skin for the exported catalogue block.
+ *
+ * `/catalog` is still the Tilda export: sixteen `.catg-card`s, four filters and
+ * the add-to-cart wiring that drives the real cart. None of that is touched
+ * here — no markup, no script, no class names — because the cart is a live
+ * business function and `audit:commerce` asserts its identity and prices.
+ *
+ * What is touched is only how it looks. The block was built with its own
+ * Roboto/grey system, which is what makes leaving the redesigned homepage for
+ * the catalogue feel like leaving the site. Conveniently it declares every one
+ * of its colours as a custom property on `.catg-wrap`, so remapping those to
+ * the design tokens re-skins the whole thing from the outside.
+ *
+ * The filter pill hard-codes its colours instead, so those few rules are
+ * restated below. Everything stays scoped to `.legacy-document` so the
+ * redesigned surfaces are unaffected.
+ */
+
+.legacy-document .catg-wrap {
+  font-family: var(--tbb-font-sans);
+
+  --catg-bg: var(--tbb-paper);
+  --catg-eyebrow: var(--tbb-muted);
+  /* Flat, not gradients: the brand's fields are solid. */
+  --catg-card-bg: var(--tbb-grey-lightest);
+  --catg-card-hover-bg: var(--tbb-grey-light);
+  --catg-card-border: var(--tbb-line);
+  --catg-card-hover-border: var(--tbb-muted);
+  --catg-name: var(--tbb-ink);
+  --catg-sub: var(--tbb-muted);
+  /* "Price on request" is the one place the mark colour earns its keep here. */
+  --catg-pending: var(--tbb-accent);
+}
+
+/* The block sets `font` shorthand on several elements, which resets the family
+   it would otherwise inherit. */
+.legacy-document .catg-wrap h1,
+.legacy-document .catg-wrap h2,
+.legacy-document .catg-wrap h3,
+.legacy-document .catg-wrap button,
+.legacy-document .catg-wrap a {
+  font-family: var(--tbb-font-sans);
+}
+
+.legacy-document .catg-wrap .catg-h1 {
+  font-family: var(--tbb-font-display);
+  letter-spacing: var(--tbb-tracking-display);
+}
+
+/* ---- filters ---- */
+
+.legacy-document .catg-flt {
+  background: var(--tbb-paper-warm);
+  border-color: var(--tbb-line);
+}
+
+.legacy-document .catg-flt button {
+  color: var(--tbb-muted);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+}
+
+.legacy-document .catg-flt button:hover {
+  color: var(--tbb-ink);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* The selected filter is the one solid ink surface in the block, which is how
+   the rest of the site marks a current state. */
+.legacy-document .catg-flt button.on {
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+  box-shadow: none;
+}
