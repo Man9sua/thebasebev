@@ -40,7 +40,6 @@ const publicRoutes = [
   "/terms",
   "/privacy",
   "/thank-you-form",
-  "/cabinet",
   "/retail",
   "/knowledge-recipes",
   "/not-found",
@@ -53,6 +52,7 @@ const redirects = new Map([
   ["/raf-cofeee", "/raf-coffee"],
   ["/raf-cofee", "/raf-coffee"],
   ["/functional-wellness", "/catalog"],
+  ["/cabinet", "/"],
 ]);
 
 const failures = [];
@@ -63,7 +63,7 @@ for (const route of publicRoutes) {
   if (response.status !== 200) failures.push(`${route}: expected 200, received ${response.status}`);
   if (!/<html[^>]+lang=["']en["']/i.test(html)) failures.push(`${route}: missing static lang=en`);
   if (!/<title[^>]*>[^<]+<\/title>/i.test(html)) failures.push(`${route}: missing title`);
-  if (!["/cabinet", "/knowledge-recipes", "/link"].includes(route) && !/<h1\b/i.test(html)) {
+  if (!["/knowledge-recipes", "/link"].includes(route) && !/<h1\b/i.test(html)) {
     failures.push(`${route}: missing crawler-visible H1`);
   }
   if (route === "/" && (workerTarget || productionTarget)) {

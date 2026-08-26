@@ -48,6 +48,37 @@
   letter-spacing: var(--tbb-tracking-display);
 }
 
+/* The adjusted sources are full transparent canvases, so the old uniform 65%
+   box made the opaque product occupy barely half of the card. Alpha-bound
+   measurements put the ordinary canvases in one 88% system. */
+.legacy-document .catg-card .catg-img--adj {
+  --adj: 88%;
+  --vy: 48%;
+}
+
+/* Tea and Sugar Free already use nearly the full source canvas and only need a
+   modest increase to match the pouch cards. */
+.legacy-document .catg-card[href="/tea"] .catg-img--adj,
+.legacy-document .catg-card[href="/sugar-free"] .catg-img--adj {
+  --adj: 92%;
+  --vy: 50%;
+}
+
+/* Garnish is the measured exception: its meaningful pixels occupy only the
+   lower 55% of a tall transparent source. Enlarge/reposition the canvas while
+   keeping the product's opaque bounds inside the frame. */
+.legacy-document .catg-card[href="/garnish"] .catg-img--adj {
+  --adj: 112%;
+  --vy: 38%;
+}
+
+/* The Tilda record stays in the DOM as cart/product data, but its six loading
+   placeholders are not part of the visible catalogue. The export hid the
+   loaded grid and forgot the separate preloader container. */
+.legacy-document #rec2839951603 .js-store-grid-cont-preloader {
+  display: none !important;
+}
+
 /* ---- filters ---- */
 
 .legacy-document .catg-flt {

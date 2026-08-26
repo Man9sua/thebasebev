@@ -121,15 +121,15 @@ const controlledRoutes = [
   },
 ];
 
-if (friendlyRoutes.length !== 39 || pageFiles.length !== 41 || productSlugs.length !== 13) {
+if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.length !== 13) {
   throw new Error(
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
   );
 }
-if (controlledRoutes.length !== 113) {
-  throw new Error(`Expected 113 controlled routes, received ${controlledRoutes.length}.`);
+if (controlledRoutes.length !== 112) {
+  throw new Error(`Expected 112 controlled routes, received ${controlledRoutes.length}.`);
 }
-if (redirectRows.length !== 5) throw new Error(`Expected five redirects, received ${redirectRows.length}.`);
+if (redirectRows.length !== 6) throw new Error(`Expected six redirects, received ${redirectRows.length}.`);
 
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 

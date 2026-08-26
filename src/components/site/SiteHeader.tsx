@@ -38,15 +38,6 @@ function SearchIcon() {
   );
 }
 
-function AccountIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-      <circle cx="12" cy="9" r="3.2" />
-      <path d="M5.5 19a6.5 6.5 0 0 1 13 0" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   const [pastHero, setPastHero] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -228,14 +219,6 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           >
             <SearchIcon />
           </button>
-
-          <Link
-            href="/cabinet"
-            className={`${styles.action} ${styles.desktopOnly}`}
-            aria-label="Account"
-          >
-            <AccountIcon />
-          </Link>
 
           <button
             type="button"

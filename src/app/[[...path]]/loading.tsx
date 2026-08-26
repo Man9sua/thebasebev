@@ -15,7 +15,7 @@ import styles from "./loading.module.css";
  */
 export default function Loading() {
   return (
-    <div className="tbb">
+    <div className="tbb" data-route-loading-fallback>
       <div className={styles.page} role="status" aria-label="Loading page">
         <div className={`${styles.block} ${styles.label}`} />
         <div className={`${styles.block} ${styles.title}`} />

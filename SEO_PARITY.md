@@ -95,7 +95,7 @@ The runtime emits `noindex` for these routes and omits them from the sitemap. A 
 | `/terms` | Terms & Conditions | — | `https://thebasebev.com/terms` | Terms and Conditions | No | Common graph | DONE; original noindex preserved |
 | `/privacy` | Privacy Policy | — | `https://thebasebev.com/privacy` | Privacy Policy | No | Common graph | DONE; original noindex preserved |
 | `/thank-you-form` | Thank you form page | — | `https://thebasebev.com/thank-you-form` | Thank you for reaching out. | No | Common graph | DONE |
-| `/cabinet` | — | — | `https://thebasebev.com/cabinet` | — | No | None | PARTIAL; empty Tilda Members shell only |
+| `/cabinet` | — | — | `/` destination | — | No | None | 301; empty Tilda Members shell removed from public application |
 | `/retail` | Retail | — | `https://thebasebev.com/retail` | BRING THE BASE TO YOUR SHELVES | No, nofollow | Common graph | DONE; original noindex/nofollow preserved |
 | `/knowledge-recipes` | — | — | `https://thebasebev.com/knowledge-recipes` | — | No | None | PARTIAL; empty Tilda Members shell only |
 | `/not-found` | Page not found | — | `https://thebasebev.com/not-found` | Error 404 | No | Common graph | DONE; branded route preserved |

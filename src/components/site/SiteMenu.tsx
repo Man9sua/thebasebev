@@ -94,10 +94,7 @@ export function SiteMenu({
           </div>
 
           <div className={styles.metaGroup}>
-            <span className="tbb-label">Account</span>
-            <Link className={styles.metaLink} href="/cabinet" onClick={onClose}>
-              Cabinet
-            </Link>
+            <span className="tbb-label">Contact</span>
             <Link className={styles.metaLink} href="/contacts" onClick={onClose}>
               Contact us
             </Link>

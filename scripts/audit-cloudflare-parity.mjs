@@ -17,7 +17,7 @@ const routes = [
   "/chai-latte", "/milkshake", "/frappe", "/iced-tea", "/cordial", "/topping",
   "/matcha", "/chocolate", "/sugar-syrup", "/vending", "/jam", "/garnish",
   "/sugar-free", "/tea", "/catalog", "/thank-you-order", "/terms", "/privacy",
-  "/thank-you-form", "/cabinet", "/retail", "/knowledge-recipes", "/not-found", "/link",
+  "/thank-you-form", "/retail", "/knowledge-recipes", "/not-found", "/link",
 ];
 
 const redirects = new Map([
@@ -27,6 +27,8 @@ const redirects = new Map([
   ["/raf-cofee", "/raf-coffee"],
   ["/functional-wellness", "/catalog"],
 ]);
+
+const targetOnlyRedirects = new Map([["/cabinet", "/"]]);
 
 function attribute(html, tag, attributeName, attributeValue, resultAttribute) {
   const tags = html.match(new RegExp(`<${tag}\\b[^>]*>`, "gi")) ?? [];
@@ -64,6 +66,7 @@ function inspectHtml(html) {
     internalLinks,
     images: images.length,
     missingAlt,
+    cabinetLinks: (html.match(/href=["']\/cabinet(?:["'#?])/gi) ?? []).length,
     visibleTextHash: createHash("sha256").update(visible).digest("hex"),
   };
 }
@@ -88,13 +91,30 @@ async function worker() {
     const index = cursor++;
     const route = routes[index];
     const [source, target] = await Promise.all([inspect(sourceOrigin, route), inspect(targetOrigin, route)]);
-    const differences = Object.keys(source).filter((key) => source[key] !== target[key]);
+    const cabinetWasRemoved = source.cabinetLinks > 0 && target.cabinetLinks === 0;
+    const intentionalShellFields = new Set(
+      cabinetWasRemoved ? ["cabinetLinks", "internalLinks", "visibleTextHash"] : [],
+    );
+    const differences = Object.keys(source).filter(
+      (key) => source[key] !== target[key] && !intentionalShellFields.has(key),
+    );
     if (differences.length) {
       failures.push(`${route}: ${differences.map((key) => `${key} (${JSON.stringify(source[key])} -> ${JSON.stringify(target[key])})`).join(", ")}`);
     }
   }
 }
 await Promise.all(Array.from({ length: 6 }, () => worker()));
+
+for (const [route, expected] of targetOnlyRedirects) {
+  const response = await fetch(`${targetOrigin}${route}`, { redirect: "manual" });
+  const location = response.headers.get("location");
+  const destination = location ? new URL(location, targetOrigin).pathname : "";
+  if (response.status !== 301 || destination !== expected) {
+    failures.push(
+      `${route}: target-only redirect expected 301 ${expected}, received ${response.status} ${destination || "<none>"}`,
+    );
+  }
+}
 
 for (const [route, expected] of redirects) {
   const signatures = await Promise.all(

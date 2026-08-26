@@ -296,7 +296,7 @@
    Durations are long and the ease is soft — that slowness is the character of
    the design, not an accident. */
 
-.enter {
+.motionArmed .enter {
   opacity: 0;
   transform: translate3d(0, 22px, 0);
 }
@@ -312,7 +312,7 @@
 /* The headline reveal: each line starts below its own mask and slides up into
    it. No fade — a masked line that also fades reads as blurry rather than as
    type arriving, and the mask alone is the sharper effect. */
-.lineInner {
+.motionArmed .lineInner {
   transform: translate3d(0, 106%, 0);
 }
 
@@ -321,7 +321,7 @@
   transition: transform 1150ms var(--tbb-ease) var(--enter-delay, 0ms);
 }
 
-.enterMarquee {
+.motionArmed .enterMarquee {
   opacity: 0;
   /* Rises and settles from slightly small, so the rail arrives as one object
      rather than sliding in like a strip of film. */
@@ -336,7 +336,7 @@
     transform 1500ms var(--tbb-ease) 100ms;
 }
 
-.wash {
+.motionArmed .wash {
   opacity: 0;
 }
 
@@ -376,10 +376,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .enter,
-  .enterMarquee,
-  .lineInner,
-  .wash {
+  .motionArmed .enter,
+  .motionArmed .enterMarquee,
+  .motionArmed .lineInner,
+  .motionArmed .wash {
     opacity: 1;
     transform: none;
   }

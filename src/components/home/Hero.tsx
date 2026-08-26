@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { whenLoadingGateOpens } from "@/components/site/loading-gate";
+import { isLoadingGateOpen, whenLoadingGateOpens } from "@/components/site/loading-gate";
 import {
   HERO_MARQUEE_SLUGS,
   HERO_SLUGS,
@@ -120,6 +120,7 @@ function ArrowIcon() {
 }
 
 export function Hero() {
+  const [motionArmed, setMotionArmed] = useState(false);
   const [ready, setReady] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
@@ -131,11 +132,24 @@ export function Hero() {
    * having already played behind a curtain.
    *
    * With no loading screen — no JS gate, a repeat view, reduced motion — the
-   * gate is already open and this runs on the frame after mount, exactly as it
-   * did before. `whenLoadingGateOpens` carries its own timeout, so the hero is
-   * never left invisible waiting on a screen that failed to finish.
+   * stable server render remains visible and no entrance is armed.
+   * `whenLoadingGateOpens` carries its own timeout, so an armed hero is never
+   * left invisible waiting on a screen that failed to finish.
    */
-  useEffect(() => whenLoadingGateOpens(() => setReady(true)), []);
+  useEffect(() => {
+    // The server/default render is visible. We only arm hidden start styles
+    // when the inline script has already confirmed that a loading curtain is
+    // covering the page; if that gate never existed, there is nothing to wait
+    // for and no content can get stranded off-screen.
+    if (isLoadingGateOpen()) return;
+
+    const frame = requestAnimationFrame(() => setMotionArmed(true));
+    const stopWaiting = whenLoadingGateOpens(() => setReady(true));
+    return () => {
+      cancelAnimationFrame(frame);
+      stopWaiting();
+    };
+  }, []);
 
   /**
    * Scroll hand-off into Bestsellers: the copy lifts away and the rail settles
@@ -193,23 +207,10 @@ export function Hero() {
   return (
     <section
       ref={heroRef}
-      className={`${styles.hero} ${ready ? styles.ready : ""}`}
+      className={`${styles.hero} ${motionArmed ? styles.motionArmed : ""} ${ready ? styles.ready : ""}`}
       data-hero
       aria-label="THE BASE products"
     >
-      {/*
-        The entrance is armed from JavaScript, so without it every staged
-        element would sit at its `opacity: 0` start state forever. This is the
-        one case where the hero has to be legible with no script at all.
-      */}
-      <noscript>
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `.${styles.enter},.${styles.lineInner},.${styles.enterMarquee},.${styles.wash}{opacity:1!important;transform:none!important}`,
-          }}
-        />
-      </noscript>
-
       <span className={styles.wash} aria-hidden="true" />
 
       <div ref={copyRef} className={styles.inner}>

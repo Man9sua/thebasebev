@@ -45,7 +45,7 @@ Status meanings:
 | `page68443067.html` | `/terms` | PARTIAL | Noindex legal page is registered; built metadata/status smoke remains. |
 | `page68443503.html` | `/privacy` | PARTIAL | Noindex legal page is registered; built metadata/status smoke remains. |
 | `page77849746.html` | `/thank-you-form` | PARTIAL | Noindex success page is registered; real lead submission is not connected. |
-| `page154764216.html` | `/cabinet` | PARTIAL | Noindex Tilda Members placeholder only; future Partner Hub remains separate. |
+| `page154764216.html` | `/cabinet` → `/` | 301 | Empty noindex Tilda Members placeholder removed from public UI; future Partner Hub remains separate. |
 | `page114837666.html` | `/retail` | PARTIAL | Original noindex,nofollow page is registered. |
 | `page154758576.html` | `/knowledge-recipes` | PARTIAL | Noindex Tilda Members placeholder only; future Partner Hub remains separate. |
 | `page115314536.html` | `/not-found` | DONE | Source route is registered and unknown paths return the branded body with HTTP 404. |

@@ -35,18 +35,27 @@ function observe(page, label) {
 const browser = await chromium.launch({
   executablePath: chromePath,
   headless: true,
-  args: ["--disable-background-networking", "--disable-component-update", "--disable-sync"],
 });
 
 try {
+  const history = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const historyPage = await history.newPage();
+  observe(historyPage, "history");
+  await historyPage.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
+  await historyPage.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
+  await historyPage.goBack({ waitUntil: "domcontentloaded" });
+  check(historyPage.url().endsWith("/catalog"), "navigation: browser Back did not restore catalog");
+  await historyPage.goForward({ waitUntil: "domcontentloaded" });
+  check(historyPage.url().endsWith("/matcha"), "navigation: browser Forward did not restore product route");
+  await history.close();
+
   const desktop = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage is the redesigned surface: a video hero, then the Bestsellers
-  // carousel. Navigation, product grid and the region picker moved out of the
-  // old hover mega-menu into the full-screen menu panel, so they are asserted
-  // there rather than on hover.
+  // The homepage is the redesigned surface: a product rail, then Bestsellers.
+  // Navigation, product grid and the region picker live in the full-screen menu
+  // panel, so they are asserted there rather than in a legacy hover menu.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
@@ -210,6 +219,10 @@ try {
     (await menu.locator("a[href^='/']").evaluateAll((links) => new Set(links.map((a) => a.getAttribute("href"))).size)) >= 24,
     "header: menu lost links the mega-menu used to expose",
   );
+  check(
+    (await menu.locator("a[href='/cabinet']").count()) === 0,
+    "header: cabinet link leaked into desktop navigation",
+  );
   await page.keyboard.press("Escape");
   await page.waitForTimeout(600);
 
@@ -261,6 +274,10 @@ try {
     check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
   }
   check((await page.locator(".catg-flt button").count()) === 5, "catalog: expected All plus four filters");
+  check(
+    !(await page.locator("#rec2839951603 .js-store-grid-cont-preloader").isVisible()),
+    "catalog: hidden Tilda store preloader leaked into the public grid",
+  );
   await page.locator('.catg-flt button[data-f="Cold & Refreshing"]').click();
   check((await page.locator(".catg-card:not(.is-hidden)").count()) === 4, "catalog: cold filter did not leave four cards");
 
@@ -290,8 +307,27 @@ try {
 
   await page.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
   await page.locator("h1").first().waitFor();
+  await page.waitForTimeout(1_200);
   check(/Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""), "matcha: unexpected H1");
   check((await page.locator("img").count()) > 10, "matcha: expected product imagery");
+  const hiddenProductContent = await page.locator("main .t-animate").evaluateAll((elements) =>
+    elements.filter((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return rect.width > 24 && rect.height > 24 &&
+        (style.opacity === "0" || style.visibility === "hidden");
+    }).length,
+  );
+  check(
+    hiddenProductContent === 0,
+    `matcha: ${hiddenProductContent} meaningful product elements stayed hidden`,
+  );
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator("h1").first().waitFor();
+  check(
+    /Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""),
+    "matcha: product content failed after a hard refresh",
+  );
   await page.locator('a[href="#sample"]').first().click();
   await page.waitForTimeout(500);
   check(
@@ -358,6 +394,18 @@ try {
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  const loadingGateWasArmed = await mobilePage.evaluate(
+    () => document.documentElement.getAttribute("data-tbb-loading") === "1",
+  );
+  check(loadingGateWasArmed, "mobile: first-visit loading gate was not armed");
+  if (loadingGateWasArmed) {
+    const progress = mobilePage.locator("[data-loading-screen][role='progressbar']");
+    check(await progress.isVisible(), "mobile: semantic loading progress was not visible");
+    check(
+      (await progress.getAttribute("aria-valuemax")) === "100",
+      "mobile: loading progress is missing its 0-100 semantic range",
+    );
+  }
   // On a remote Worker the static HTML can arrive before its client chunks.
   // The attribution bridge writes this key from a React effect, giving the
   // smoke test a deterministic hydration signal before it clicks the menu.
@@ -372,6 +420,12 @@ try {
     undefined,
     { timeout: 7_000 },
   );
+  const loadingCurtainCleared = await mobilePage
+    .locator("[data-loading-screen]")
+    .waitFor({ state: "hidden", timeout: 3_000 })
+    .then(() => true)
+    .catch(() => false);
+  check(loadingCurtainCleared, "mobile: loading curtain remained over the completed page");
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
   await mobileBurger.click();
@@ -385,11 +439,15 @@ try {
     .then(() => true)
     .catch(() => false);
   check(mobileMenuOpened, "mobile: burger menu did not open");
-  // Account and the region picker leave the bar on small screens, so the menu
-  // is the only place they exist — if they are missing there, they are gone.
+  // Cabinet is no longer public. The region picker still moves from the bar
+  // into the menu on small screens.
   check(
-    (await mobilePage.locator("#site-menu a[href='/cabinet']").count()) === 1,
-    "mobile: account link missing from the menu",
+    (await mobilePage.locator("a[href='/cabinet']").count()) === 0,
+    "mobile: cabinet link leaked into public navigation",
+  );
+  check(
+    (await mobilePage.locator("#site-menu a[href='/contacts']").count()) >= 1,
+    "mobile: contact link missing from the menu",
   );
   check(
     (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 1,
@@ -397,21 +455,75 @@ try {
   );
   await mobile.close();
 
-  const viewportWidths = [1440, 1280, 1024, 768, 430, 390, 375, 360, 320];
+  const viewports = [
+    { width: 1920, height: 1080 },
+    { width: 1536, height: 864 },
+    { width: 1440, height: 900 },
+    { width: 1366, height: 768 },
+    { width: 1280, height: 900 },
+    { width: 1024, height: 768 },
+    { width: 768, height: 1024 },
+    { width: 430, height: 932 },
+    { width: 414, height: 896 },
+    { width: 390, height: 844 },
+    { width: 375, height: 812 },
+    { width: 360, height: 800 },
+    { width: 320, height: 720 },
+  ];
   const visual = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const visualPage = await visual.newPage();
-  for (const width of viewportWidths) {
-    const height = width <= 430 ? 844 : 1000;
+  for (const { width, height } of viewports) {
     await visualPage.setViewportSize({ width, height });
     await visualPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
     await visualPage.locator("#bestsellers").waitFor();
     await visualPage.waitForTimeout(3_500);
+    check(
+      await visualPage.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      ),
+      `home: horizontal overflow at ${width}x${height}`,
+    );
     await visualPage.screenshot({
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
       fullPage: false,
     });
   }
   await visual.close();
+
+  const reduced = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce",
+  });
+  const reducedPage = await reduced.newPage();
+  observe(reducedPage, "reduced-motion");
+  await reducedPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  check(
+    (await reducedPage.locator("html[data-tbb-loading='1']").count()) === 0,
+    "reduced-motion: initial loading gate must be skipped",
+  );
+  check(
+    await reducedPage.locator("section[data-hero] h1").isVisible(),
+    "reduced-motion: homepage hero content is not immediately visible",
+  );
+  await reduced.close();
+
+  const noScript = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    javaScriptEnabled: false,
+  });
+  const noScriptPage = await noScript.newPage();
+  observe(noScriptPage, "no-script");
+  await noScriptPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  check(
+    await noScriptPage.locator("section[data-hero] h1").isVisible(),
+    "no-script: homepage hero content is not visible",
+  );
+  check(
+    !(await noScriptPage.locator("[data-loading-screen]").isVisible()),
+    "no-script: non-dismissible loading screen is visible",
+  );
+  await noScript.close();
+
 } finally {
   await browser.close();
 }
@@ -423,6 +535,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-    console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
-  console.log(`Captured nine homepage viewports in ${artifactRoot}.`);
+  console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters/framing, cart, visible product content, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

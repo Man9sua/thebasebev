@@ -1,20 +1,20 @@
 # Route indexability audit
 
-Generated: 2026-08-25T21:54:30.678Z
+Generated: 2026-08-26T00:03:14.156Z
 
-Target: `https://the-base-staging.mansua.workers.dev`
+Target: `http://127.0.0.1:3108`
 
 ## Accounting
 
-- Friendly routes: 39 (29 canonical/indexable + 10 excluded).
+- Friendly routes: 38 (29 canonical/indexable + 9 excluded).
 - Direct `pageNNNN.html` compatibility aliases: 41.
 - Tilda product compatibility aliases: 26.
 - Technical/metadata/API routes: 7.
-- **Controlled route total: 113.**
-- Permanent redirects (not generated pages): 5.
+- **Controlled route total: 112.**
+- Permanent redirects (not generated pages): 6.
 - Sitemap members: 29.
 
-The 113 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The 112 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
 
 ## Generated and technical routes
 
@@ -54,7 +54,6 @@ The 113 controlled routes explain why the application can generate far more outp
 | `/terms` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page68443067.html |
 | `/privacy` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page68443503.html |
 | `/thank-you-form` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page77849746.html |
-| `/cabinet` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page154764216.html |
 | `/retail` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page114837666.html |
 | `/knowledge-recipes` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page154758576.html |
 | `/not-found` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page115314536.html |
@@ -143,6 +142,7 @@ The 113 controlled routes explain why the application can generate far more outp
 | `/raf-cofeee` | 301 | `/raf-coffee` | `/raf-coffee` | PASS |
 | `/raf-cofee` | 301 | `/raf-coffee` | `/raf-coffee` | PASS |
 | `/functional-wellness` | 301 | `/catalog` | `/catalog` | PASS |
+| `/cabinet` | 301 | `/` | `/` | PASS |
 
 ## Result
 

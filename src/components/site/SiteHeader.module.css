@@ -205,8 +205,8 @@
     height: 19px;
   }
 
-  /* Account moves into the menu on mobile — the bar keeps cart, search, burger
-     so the tap targets stay comfortable instead of shrinking. */
+  /* Region moves into the menu on mobile; the bar keeps cart, search and the
+     burger so the tap targets stay comfortable instead of shrinking. */
   .desktopOnly {
     display: none;
   }

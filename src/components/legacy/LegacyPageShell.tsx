@@ -1,5 +1,8 @@
 import type { SitePage } from "@/lib/site-pages";
+import { PRODUCTS } from "@/data/products";
 import styles from "./LegacyPageShell.module.css";
+
+const PRODUCT_ROUTES = new Set(PRODUCTS.map((product) => product.route));
 
 /**
  * Frame for a parity page whose Tilda chrome has been removed.
@@ -16,6 +19,12 @@ import styles from "./LegacyPageShell.module.css";
  * retagged `#t-header` / `#t-footer` containers.
  */
 export function LegacyPageShell({ page }: { page: SitePage }) {
+  const pageKind = PRODUCT_ROUTES.has(page.route)
+    ? "product"
+    : page.route === "/catalog"
+      ? "catalog"
+      : "content";
+
   return (
     <>
       <div
@@ -24,8 +33,9 @@ export function LegacyPageShell({ page }: { page: SitePage }) {
         dangerouslySetInnerHTML={{ __html: page.headAssetsHtml }}
       />
       <main
-        className={`legacy-document ${styles.shell}`}
+        className={`legacy-document ${styles.shell} ${pageKind === "product" ? styles.product : ""}`}
         data-source-file={page.file}
+        data-page-kind={pageKind}
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
       />
