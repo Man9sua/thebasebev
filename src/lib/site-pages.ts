@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getProduct } from "@/data/products";
 import legacyImageVariants from "@/data/legacy-image-variants.json";
+import catalogTilesJson from "@/data/catalog-tiles.json";
 import productDetailsJson from "@/data/product-details.json";
 
 export const SITE_ORIGIN = "https://thebasebev.com";
@@ -107,6 +108,9 @@ export type ProductDetail = {
 };
 
 export const productDetails = productDetailsJson as Record<string, ProductDetail>;
+
+/** Catalogue tile per product — see `scripts/build-catalog-tiles.mjs`. */
+const catalogTiles = catalogTilesJson as Record<string, { image: string }>;
 
 /** Product slug -> the exported page it is served from. Derived, not repeated. */
 const PRODUCT_PAGE_FILES: Record<string, string> = Object.fromEntries(
@@ -291,19 +295,19 @@ function preserveCatalogPrices(source: string, file: string) {
  * Two things happen to every card, and both need the HTML rather than a
  * stylesheet:
  *
- * The pack shot is repointed. The export names sixteen unrelated renders, at
+ * The picture is repointed. The export names sixteen unrelated renders, at
  * three different scales on three different baselines, and three of them are a
- * background image rather than the product — which is why the row looked
- * ragged whatever the cards were styled like. `scripts/build-pack-shots.mjs`
- * re-plates all sixteen onto one canvas as `pack-<slug>.webp`, and the card's
- * own `href` is that slug, so the swap needs no second table to fall out of
- * date. `catg-img--adj` goes with it: it scaled three cards up by 3% to paper
- * over exactly the mismatch the new artwork removes.
+ * background image rather than the product — which is why the row looked ragged
+ * whatever the cards were styled like. `scripts/build-catalog-tiles.mjs` cuts
+ * one square tile per product out of the client's own key visuals, and the
+ * card's own `href` is the slug those are named after, so the swap needs no
+ * second table to fall out of date. `catg-img--adj` goes with it: it scaled
+ * three cards up by 3% to paper over exactly the mismatch the tiles remove.
  *
- * And the card is told its product colour, as `--tile`. The stylesheet mixes
- * that down to a wash so the white pouches read on every card; it cannot look
- * the colour up itself, and `products.ts` stays the one place a product colour
- * is written down.
+ * And the card is told its product colour, as `--tile`, which is what the
+ * stylesheet marks the current filter and the rules with. It cannot look the
+ * colour up itself, and `products.ts` stays the one place a product colour is
+ * written down.
  *
  * Done here rather than by editing the export, because the export is the
  * parity reference and stays as exported.
@@ -315,9 +319,10 @@ function replateCatalogCards(source: string, file: string) {
     /<a class="catg-card" href="\/([a-z-]+)">(\s*<div class="catg-img-wrap">\s*<img\b)([^>]*?)(\/?>)/g,
     (whole, slug: string, open: string, attributes: string, close: string) => {
       const alt = attributes.match(/\salt="[^"]*"/)?.[0] ?? "";
+      const image = catalogTiles[slug]?.image ?? `/images/pack-${slug}.webp`;
       const tile = getProduct(slug)?.backgroundColor;
       const style = tile ? ` style="--tile:${tile}"` : "";
-      return `<a class="catg-card" href="/${slug}"${style}>${open}${alt} src="/images/pack-${slug}.webp"${close}`;
+      return `<a class="catg-card" href="/${slug}"${style}>${open}${alt} src="${image}"${close}`;
     },
   );
 }
