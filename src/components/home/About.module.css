@@ -4,27 +4,15 @@
   overflow: clip;
 }
 
-/* A single column with a wide measure rather than the old copy/photo split —
-   with the plates gone there is nothing to sit opposite, and stretching the
-   text across the full width would leave an unreadable line length. */
 .inner {
   width: 100%;
   max-width: var(--tbb-max);
   margin: 0 auto;
   padding: 0 var(--tbb-gutter);
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  column-gap: clamp(2rem, 6vw, 7rem);
-  row-gap: clamp(2.5rem, 6vw, 4.5rem);
-  align-items: start;
-}
-
-.head {
-  grid-column: 1;
 }
 
 .eyebrow {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.6rem;
   margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
@@ -37,22 +25,107 @@
   line-height: 1;
 }
 
+/* ---- film ---- */
+
+/* `--notch-*` are read by both the clip path and the panel that sits in the
+   hole, so the two can never drift apart. */
+.frame {
+  --notch-w: clamp(11rem, 26vw, 22rem);
+  --notch-h: clamp(5rem, 9vw, 7.5rem);
+
+  position: relative;
+  display: block;
+}
+
+.film {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  background: var(--tbb-ink);
+  border-radius: clamp(0.75rem, 1.6vw, 1.5rem);
+  /* A bite taken out of the bottom-right corner. The figure below fills it, so
+     the number reads as part of the frame rather than a card dropped on it. */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--notch-h)),
+    calc(100% - var(--notch-w)) calc(100% - var(--notch-h)),
+    calc(100% - var(--notch-w)) 100%,
+    0 100%
+  );
+}
+
+.headlineFigure {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--notch-w);
+  height: var(--notch-h);
+  margin: 0;
+  padding-left: clamp(1rem, 2.5vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.figureValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+  line-height: 0.9;
+  letter-spacing: var(--tbb-tracking-display);
+  font-weight: 600;
+  color: var(--tbb-accent);
+}
+
+/* ---- facts ---- */
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(2rem, 5vw, 3.5rem);
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+.fact {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.factValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-weight: 600;
+  color: var(--tbb-ink);
+}
+
+/* ---- body ---- */
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+}
+
 .title {
   font-family: var(--tbb-font-display);
   font-size: var(--tbb-text-display);
   line-height: 0.98;
   letter-spacing: var(--tbb-tracking-display);
   font-weight: 600;
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.75rem);
 }
 
-/* Opposite the headline, so the section opens as a statement answered by an
-   explanation rather than as a wall of type. */
-.body {
-  grid-column: 2;
+.columns {
   display: grid;
-  gap: clamp(1rem, 2vw, 1.5rem);
-  align-self: end;
-  max-width: 46ch;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
 }
 
 .para {
@@ -60,35 +133,37 @@
   line-height: 1.55;
 }
 
-.facts {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(2rem, 7vw, 6rem);
-  padding-top: clamp(2rem, 5vw, 3.5rem);
-  border-top: 1px solid var(--tbb-line);
-}
+/* ---- aside ---- */
 
-.fact {
+.aside {
+  text-align: right;
   display: grid;
+  justify-items: end;
+  align-content: start;
   gap: 0.35rem;
 }
 
-/* Sized off the display scale, not the body: these are the section's evidence
-   and they replace the photographs that used to carry it. */
-.factValue {
+.asideName {
   font-family: var(--tbb-font-display);
-  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
-  line-height: 0.9;
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-weight: 700;
   letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
+  color: var(--tbb-accent);
 }
 
-.action {
-  grid-column: 1 / -1;
+.asideRole {
+  font-size: 0.875rem;
+  color: var(--tbb-muted);
+}
+
+.asidePrompt {
+  margin-top: clamp(1.25rem, 3vw, 2.25rem);
+  max-width: 24ch;
+  font-weight: 500;
 }
 
 .cta {
+  margin-top: clamp(0.75rem, 2vw, 1.25rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
@@ -123,16 +198,26 @@
 }
 
 @media (max-width: 899px) {
-  .inner {
+  /* The notch costs more than it gives once the frame is this narrow: the
+     figure would eat a third of the film. Square the corner and stack. */
+  .film {
+    aspect-ratio: 16 / 10;
+    clip-path: none;
+  }
+
+  .headlineFigure {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: clamp(1rem, 3vw, 1.5rem) 0 0;
+  }
+
+  .body {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .head,
-  .body {
-    grid-column: 1;
-  }
-
-  .body {
-    align-self: start;
+  .aside {
+    text-align: left;
+    justify-items: start;
   }
 }
