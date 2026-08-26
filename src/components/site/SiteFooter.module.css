@@ -166,3 +166,19 @@
     gap: 1.25rem;
   }
 }
+
+/* Preserve the mobile information order at desktop widths; the wider canvas
+   changes measure and spacing, not the footer hierarchy. */
+@media (min-width: 560px) {
+  .top {
+    width: min(100%, 52rem);
+    margin-inline: auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .brand {
+    grid-column: span 1;
+    max-width: 42ch;
+  }
+}

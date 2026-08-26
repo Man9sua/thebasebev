@@ -1,0 +1,16 @@
+.experience {
+  position: relative;
+}
+
+.scene,
+.experience :global([data-home-scene]) {
+  scroll-margin-top: 0;
+  scroll-snap-align: start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene,
+  .experience :global([data-home-scene]) {
+    scroll-snap-align: none;
+  }
+}

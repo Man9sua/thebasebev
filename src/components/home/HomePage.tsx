@@ -1,13 +1,4 @@
-import { About } from "@/components/home/About";
-import { BlogCarousel } from "@/components/home/BlogCarousel";
-import { Bestsellers } from "@/components/home/Bestsellers";
-import { Collage } from "@/components/home/Collage";
-import { Hero } from "@/components/home/Hero";
-import { LoadingScreen } from "@/components/site/LoadingScreen";
-import { SmoothScroll } from "@/components/motion/SmoothScroll";
-import { StackReveal } from "@/components/motion/StackReveal";
-import { SiteFooter } from "@/components/site/SiteFooter";
-import { SiteHeader } from "@/components/site/SiteHeader";
+import { HomeExperience } from "@/components/home/HomeExperience";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 
 /**
@@ -28,10 +19,6 @@ export function HomePage() {
 
   return (
     <div className="tbb">
-      {/* First in the tree: its inline script has to run before the header and
-          the hero are parsed, or there is a frame of page before the curtain. */}
-      <LoadingScreen />
-
       {structuredData.map((block, index) => (
         <script
           key={index}
@@ -40,26 +27,7 @@ export function HomePage() {
         />
       ))}
 
-      <SmoothScroll />
-      <SiteHeader overHero />
-      <main>
-        <Hero />
-        <StackReveal>
-          <Bestsellers />
-        </StackReveal>
-        <StackReveal>
-          <Collage />
-        </StackReveal>
-        <StackReveal>
-          <BlogCarousel />
-        </StackReveal>
-        <StackReveal>
-          <About />
-        </StackReveal>
-      </main>
-      <StackReveal pinned={false}>
-        <SiteFooter />
-      </StackReveal>
+      <HomeExperience />
     </div>
   );
 }

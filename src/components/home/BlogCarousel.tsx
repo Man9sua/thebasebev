@@ -11,8 +11,8 @@ import styles from "./BlogCarousel.module.css";
  * Built on a native `overflow-x` scroller with snap points rather than a
  * transform-driven track. Trackpad, touch, keyboard, scrollbar and browser
  * find-on-page all keep working, and — importantly — a vertical wheel over the
- * rail still scrolls the page instead of being captured. `data-native-scroll`
- * additionally tells SmoothScroll to leave this element alone.
+ * rail still advances the shared scene flow instead of being converted into a
+ * horizontal gesture.
  *
  * Drag-to-scroll is layered on top for mouse users, and is careful to let a
  * click through when the pointer barely moved.

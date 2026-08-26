@@ -41,63 +41,49 @@ function Arrow({ back = false }: { back?: boolean }) {
   );
 }
 
-export function Bestsellers() {
-  const [index, setIndex] = useState(0);
+export function Bestsellers({
+  index,
+  isActive,
+  onIndexChange,
+}: {
+  index: number;
+  isActive: boolean;
+  onIndexChange: (next: number) => void;
+}) {
   const [swapping, setSwapping] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
   const swapTimer = useRef<number | undefined>(undefined);
   // Autoplay reads the current slide from here, so the interval does not have
   // to be torn down and rebuilt on every change.
   const indexRef = useRef(index);
 
   useEffect(() => {
+    if (indexRef.current !== index) {
+      setSwapping(true);
+      window.clearTimeout(swapTimer.current);
+      swapTimer.current = window.setTimeout(() => setSwapping(false), 260);
+    }
     indexRef.current = index;
   }, [index]);
 
   const active = PRODUCTS[index];
 
   const goTo = useCallback((next: number) => {
-    setIndex((current) => {
-      const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
-      if (resolved === current) return current;
-
-      // Drop the copy out first, then swap it under cover of the fade, so the
-      // text never visibly rewrites itself mid-transition.
-      setSwapping(true);
-      window.clearTimeout(swapTimer.current);
-      swapTimer.current = window.setTimeout(() => setSwapping(false), 260);
-      return resolved;
-    });
-  }, []);
+    const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
+    if (resolved !== indexRef.current) onIndexChange(resolved);
+  }, [onIndexChange]);
 
   useEffect(() => () => window.clearTimeout(swapTimer.current), []);
 
   // Advance on its own, but only while the section is actually on screen —
-  // a carousel cycling out of view is wasted work and wasted battery.
+  // Sticky scenes remain geometrically visible under later surfaces, so the
+  // shared scene state, not IntersectionObserver, controls autoplay.
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+    if (!isActive) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let timer: number | undefined;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        window.clearInterval(timer);
-        if (entry.isIntersecting) {
-          timer = window.setInterval(() => goTo(indexRef.current + 1), AUTOPLAY_MS);
-        }
-      },
-      { threshold: 0.4 },
-    );
-
-    observer.observe(section);
-    return () => {
-      window.clearInterval(timer);
-      observer.disconnect();
-    };
-  }, [goTo]);
-
+    const timer = window.setInterval(() => goTo(indexRef.current + 1), AUTOPLAY_MS);
+    return () => window.clearInterval(timer);
+  }, [goTo, isActive]);
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
@@ -109,9 +95,60 @@ export function Bestsellers() {
     }
   };
 
+  const completeSwipe = (startX: number, startY: number, endX: number, endY: number) => {
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    if (Math.abs(deltaX) < 44 || Math.abs(deltaX) <= Math.abs(deltaY)) return false;
+    goTo(indexRef.current + (deltaX < 0 ? 1 : -1));
+    return true;
+  };
+
+  const swipe = useRef({ active: false, pointerId: 0, startX: 0, startY: 0 });
+  const touch = useRef({ active: false, startX: 0, startY: 0 });
+  const suppressClick = useRef(false);
+  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || event.pointerType === "touch") return;
+    swipe.current = {
+      active: true,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+    };
+  };
+  const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    const gesture = swipe.current;
+    swipe.current = { ...gesture, active: false };
+    if (!gesture.active || gesture.pointerId !== event.pointerId) return;
+
+    suppressClick.current = completeSwipe(
+      gesture.startX,
+      gesture.startY,
+      event.clientX,
+      event.clientY,
+    );
+  };
+
+  const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (event.touches.length !== 1) return;
+    const point = event.touches[0];
+    touch.current = { active: true, startX: point.clientX, startY: point.clientY };
+  };
+
+  const onTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const gesture = touch.current;
+    touch.current = { ...gesture, active: false };
+    const point = event.changedTouches[0];
+    if (!gesture.active || !point) return;
+    suppressClick.current = completeSwipe(
+      gesture.startX,
+      gesture.startY,
+      point.clientX,
+      point.clientY,
+    );
+  };
+
   return (
     <section
-      ref={sectionRef}
       id="bestsellers"
       className={styles.section}
       style={{
@@ -123,6 +160,10 @@ export function Bestsellers() {
       aria-roledescription="carousel"
       aria-label="Bestsellers"
       onKeyDown={onKeyDown}
+      data-active-product={active.slug}
+      data-active-product-index={index}
+      data-product-count={PRODUCTS.length}
+      data-scene-active={isActive || undefined}
     >
       <span className={styles.field} aria-hidden="true" />
 
@@ -174,7 +215,27 @@ export function Bestsellers() {
           </Link>
         </div>
 
-        <div className={styles.stage} aria-live="polite">
+        <div
+          className={styles.stage}
+          aria-live="polite"
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          onDragStart={(event) => event.preventDefault()}
+          onClickCapture={(event) => {
+            if (!suppressClick.current) return;
+            suppressClick.current = false;
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onPointerCancel={() => {
+            swipe.current = { ...swipe.current, active: false };
+          }}
+          onTouchCancel={() => {
+            touch.current = { ...touch.current, active: false };
+          }}
+        >
           {PRODUCTS.map((product, slide) => {
             // Signed distance from the centre, wrapped so the rail is a loop.
             const forward = (slide - index + PRODUCTS.length) % PRODUCTS.length;

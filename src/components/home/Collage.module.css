@@ -155,3 +155,43 @@
     grid-row: span 3;
   }
 }
+
+/* The mobile six-column mosaic is canonical. Desktop scales that sequence
+   instead of replacing it with a different twelve-column gallery. */
+@media (min-width: 768px) {
+  .inner {
+    max-width: 70rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: clamp(2.75rem, min(4vw, 5.5vh), 3.5rem);
+  }
+
+  .a {
+    grid-column: span 6;
+    grid-row: span 4;
+  }
+  .b,
+  .c {
+    grid-column: span 3;
+    grid-row: span 3;
+  }
+  .d {
+    grid-column: span 6;
+    grid-row: span 4;
+  }
+  .e,
+  .f {
+    grid-column: span 3;
+    grid-row: span 3;
+  }
+  .g {
+    grid-column: span 6;
+    grid-row: span 4;
+  }
+  .h {
+    grid-column: span 6;
+    grid-row: span 3;
+  }
+}

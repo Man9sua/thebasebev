@@ -26,15 +26,18 @@ maps friendly and audited legacy paths to the corresponding static Tilda export.
 
 1. Real-signal 0-100 initial loading gate.
 2. Shared dynamic header.
-3. Cream Latte product hero and infinite product rail.
-4. Bestsellers.
-5. Product/brand collage.
-6. Resources carousel.
-7. Company/manufacturing section.
-8. Shared footer.
+3. Scene 0: Cream Latte product hero and infinite product rail.
+4. Scene 1: Bestsellers active-product carousel.
+5. Scene 2: Product/manufacturing collage.
+6. Scene 3: Resources carousel.
+7. Scene 4: Company/manufacturing section.
+8. Scene 5: shared dark footer.
 
-The hero is responsive composition, not a scaled mobile canvas. Stacked section
-motion follows the hero and must fall back to ordinary visible document flow.
+The mobile hierarchy is canonical at every width. A shared state machine tracks
+the scene and active bestseller; desktop wheel/trackpad and keyboard are input
+adapters for the same sequence that native mobile scroll and product swipe use.
+Stacked motion must still fall back to ordinary visible document flow when
+motion or JavaScript is unavailable.
 
 ## Catalog
 

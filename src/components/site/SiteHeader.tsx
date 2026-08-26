@@ -38,16 +38,29 @@ function SearchIcon() {
   );
 }
 
-export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
+export function SiteHeader({
+  overHero = false,
+  activeScene,
+  footerSceneIndex,
+}: {
+  overHero?: boolean;
+  activeScene?: number;
+  footerSceneIndex?: number;
+}) {
   const [pastHero, setPastHero] = useState(false);
   const [hidden, setHidden] = useState(false);
-  // Derived, not stored: away from the hero the bar is always solid.
-  const solid = !overHero || pastHero;
+  const sceneControlled = activeScene !== undefined;
+  // Homepage scene state is authoritative when supplied. Legacy pages retain
+  // the intersection-based behavior because they do not have scene markers.
+  const solid = !overHero || (sceneControlled ? activeScene > 0 : pastHero);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   // Set while a section that declares itself dark sits under the bar.
-  const [onDark, setOnDark] = useState(false);
+  const [observedDark, setObservedDark] = useState(false);
+  const onDark = sceneControlled
+    ? activeScene === footerSceneIndex
+    : observedDark;
   const barRef = useRef<HTMLElement>(null);
   const lastY = useRef(0);
 
@@ -58,6 +71,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
    * that left the bar stuck transparent whenever the page was not in front.
    */
   useEffect(() => {
+    if (sceneControlled) return;
     // Only a page that actually renders a hero can be over one.
     const hero = overHero ? document.querySelector("[data-hero]") : null;
     if (!hero) return;
@@ -69,7 +83,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, [overHero]);
+  }, [overHero, sceneControlled]);
 
   // Direction only — plain arithmetic in the scroll handler, no frame loop.
   useEffect(() => {
@@ -96,6 +110,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
    * the header strip, so this costs one observer and no scroll maths.
    */
   useEffect(() => {
+    if (sceneControlled) return;
     const surfaces = Array.from(document.querySelectorAll("[data-surface='dark']"));
     if (!surfaces.length) return;
 
@@ -114,7 +129,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             if (entry.isIntersecting) lit.add(entry.target);
             else lit.delete(entry.target);
           }
-          setOnDark(lit.size > 0);
+          setObservedDark(lit.size > 0);
         },
         { rootMargin: `0px 0px -${below}px 0px`, threshold: 0 },
       );
@@ -128,7 +143,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
       window.removeEventListener("resize", build);
       observer?.disconnect();
     };
-  }, []);
+  }, [sceneControlled]);
 
   /**
    * The legacy Tilda cart is the real cart. Where its runtime is on the page
@@ -170,6 +185,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         ]
           .filter(Boolean)
           .join(" ")}
+        data-header-theme={onDark ? "dark" : solid ? "light" : "hero"}
       >
         {/* The original lockup, lifted verbatim out of the Tilda header and
             saved as public/images/base-logo.svg — the same paths the old site

@@ -22,9 +22,21 @@ import styles from "./StackReveal.module.css";
 export function StackReveal({
   children,
   pinned = true,
+  scene,
+  sceneIndex,
 }: {
   children: ReactNode;
   pinned?: boolean;
+  scene?: string;
+  sceneIndex?: number;
 }) {
-  return <div className={pinned ? styles.layer : styles.edge}>{children}</div>;
+  return (
+    <div
+      className={pinned ? styles.layer : styles.edge}
+      data-home-scene={scene}
+      data-scene-index={sceneIndex}
+    >
+      {children}
+    </div>
+  );
 }
