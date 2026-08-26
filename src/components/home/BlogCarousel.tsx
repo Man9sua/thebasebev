@@ -11,8 +11,7 @@ import styles from "./BlogCarousel.module.css";
  * Built on a native `overflow-x` scroller with snap points rather than a
  * transform-driven track. Trackpad, touch, keyboard, scrollbar and browser
  * find-on-page all keep working, and — importantly — a vertical wheel over the
- * rail still advances the shared scene flow instead of being converted into a
- * horizontal gesture.
+ * rail still scrolls the page instead of being captured.
  *
  * Drag-to-scroll is layered on top for mouse users, and is careful to let a
  * click through when the pointer barely moved.
@@ -186,6 +185,8 @@ export function BlogCarousel() {
       <div
         ref={railRef}
         className={`${styles.rail} ${dragging ? styles.dragging : ""}`}
+        // Marks the rail as its own scroller — it scrolls natively and nothing
+        // else may drive it. `smoke:browser` uses it as the rail's handle.
         data-native-scroll
         // Cards are links, and pressing then moving on a link starts a native
         // link drag, which kills the pointer stream mid-gesture. Suppressing

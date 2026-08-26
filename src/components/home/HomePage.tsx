@@ -1,4 +1,11 @@
-import { HomeExperience } from "@/components/home/HomeExperience";
+import { About } from "@/components/home/About";
+import { BlogCarousel } from "@/components/home/BlogCarousel";
+import { Bestsellers } from "@/components/home/Bestsellers";
+import { Collage } from "@/components/home/Collage";
+import { Hero } from "@/components/home/Hero";
+import { LoadingScreen } from "@/components/site/LoadingScreen";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 
 /**
@@ -15,6 +22,10 @@ export function HomePage() {
 
   return (
     <div className="tbb">
+      {/* The server-rendered curtain is first so the head gate can cover the
+          initial frame before the shared header and hero are painted. */}
+      <LoadingScreen />
+
       {structuredData.map((block, index) => (
         <script
           key={index}
@@ -23,7 +34,15 @@ export function HomePage() {
         />
       ))}
 
-      <HomeExperience />
+      <SiteHeader overHero />
+      <main>
+        <Hero />
+        <Bestsellers />
+        <Collage />
+        <BlogCarousel />
+        <About />
+      </main>
+      <SiteFooter />
     </div>
   );
 }

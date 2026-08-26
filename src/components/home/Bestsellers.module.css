@@ -213,7 +213,10 @@
 .stage {
   position: relative;
   grid-column: 2;
-  aspect-ratio: 1 / 0.92;
+  /* Taller than the artwork by about the two rows of type above and below it,
+     so moving the name and the price out of the picture cost the picture
+     nothing. */
+  aspect-ratio: 1 / 1.06;
   /* The depth the turn is read through. Shallower than the usual 1400px
      because these cards sit close together — a deeper camera flattens the
      rotation until the side shots look merely scaled rather than turned. */
@@ -224,11 +227,18 @@
 /* Cards are stacked on one another and moved only by transform, so images stay
    decoded and every switch stays on the compositor. Slot, depth and opacity
    come from the component, which is where the wrap-around maths lives. */
+/* Three rows — name, pack shot, price — so the two pieces of type sit above and
+   below the artwork instead of on it. The middle row is `minmax(0, 1fr)`: it
+   takes whatever the other two leave and no more, which is what stops the shot
+   growing back over them. */
 .slide {
   position: absolute;
   inset: 0;
   display: grid;
-  place-items: center;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  justify-items: center;
+  align-items: center;
+  row-gap: clamp(0.45rem, 1vw, 0.9rem);
   transform-origin: center center;
   transition:
     opacity var(--tbb-dur-slow) var(--tbb-ease),
@@ -251,17 +261,42 @@
   cursor: pointer;
 }
 
+/* The pack's own name, over the shot rather than on it. Every card carries one:
+   the artwork prints the name too, but on a turned card that lettering is
+   foreshortened and half of it is behind the next card, which is the whole
+   reason for a label. */
+.name {
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(0.625rem, 0.85vw, 0.75rem);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--tbb-ink-soft);
+}
+
+/* The middle row. `place-self: stretch` is doing the work: the row centres its
+   items, so without it this box would be shrink-to-fit, the shot's `height:
+   100%` would resolve against nothing, and the artwork would grow to its own
+   size and paint straight over the price underneath — which is exactly the
+   thing being moved out of the picture. `min-height: 0` for the same reason in
+   the other direction: a grid item's automatic minimum is its content. */
+.media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  place-self: stretch;
+  min-width: 0;
+  min-height: 0;
+}
+
 /* Only the centre card is priced: the turned ones are too small to read, and a
-   column of competing numbers would fight the headline for attention. */
+   column of competing numbers would fight the headline for attention. The
+   element is still in the row on every card, so the shots stay on one line. */
 .price {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  z-index: 3;
   display: grid;
   justify-items: center;
   gap: 0.15rem;
-  transform: translate3d(-50%, 0, 0);
   opacity: 0;
   transition: opacity var(--tbb-dur) var(--tbb-ease);
   pointer-events: none;
@@ -279,9 +314,14 @@
   color: var(--tbb-ink);
 }
 
+/* Capped rather than sized. `width/height: 100%` with `object-fit: contain`
+   looks equivalent and is not: a percentage height only resolves against a
+   parent whose own height is definite, and inside a centred box it is not — the
+   plate came out at its intrinsic size and ran over the price below it. Two
+   maximums need no such basis. */
 .shot {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   /* Two shadows, not one: the cast shadow gives the card weight, the tight
      ambient one keeps its edges off the wash so the square reads as a card
@@ -428,7 +468,9 @@
   .stage {
     grid-column: 1;
     grid-row: 1;
-    aspect-ratio: 1 / 0.8;
+    /* Same allowance as on desktop for the name and the price standing outside
+       the artwork — the stage is wider here, so it is a smaller fraction. */
+    aspect-ratio: 1 / 0.92;
     width: auto;
   }
 
@@ -467,9 +509,10 @@
    Only the stage measure and available whitespace grow. */
 @media (min-width: 1024px) {
   .section {
-    height: 100vh;
-    height: 100svh;
-    min-height: 42rem;
+    /* Natural document scrolling means this surface may grow when the pack
+       name and price make the composition taller than a short laptop viewport.
+       A fixed 100svh clipped the controls under the following Collage. */
+    min-height: max(100svh, 42rem);
     padding: clamp(1.75rem, 3.5vh, 2.75rem) 0 clamp(1.25rem, 2.5vh, 2rem);
   }
 

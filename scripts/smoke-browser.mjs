@@ -127,14 +127,13 @@ try {
     "home: h1 must keep the production wording (Premium … Bases)",
   );
 
-  // Bestsellers is a scene, not an off-screen static block. Enter it through
-  // the same wheel input a desktop visitor uses before testing its controls;
-  // auto-scrolling a sticky button can carry it underneath a later scene.
-  await page.mouse.wheel(0, 120);
-  await page.waitForFunction(
-    () => document.querySelector("[data-home-experience]")?.getAttribute("data-active-scene") === "1",
-  );
-  await page.waitForTimeout(1_000);
+  // The homepage uses the browser's natural document scroll. Verify that a
+  // desktop wheel actually moves it before bringing the carousel into view.
+  const initialScrollY = await page.evaluate(() => window.scrollY);
+  await page.mouse.wheel(0, 600);
+  await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
+  await page.locator("#bestsellers").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
   await page.locator("#bestsellers [aria-label='Next product']").click();
   await page.waitForTimeout(900);
   check(

@@ -27,17 +27,22 @@ function observe(page, label) {
   });
 }
 
+async function capture(page, viewport, label) {
+  await page.screenshot({
+    path: path.join(artifactRoot, `${viewport}-${label}.png`),
+    fullPage: false,
+  });
+}
+
 async function waitForHome(page, viewport) {
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await page.locator("[data-home-experience]").waitFor();
+  await page.locator("[data-hero]").waitFor();
+
   const loader = page.locator("[data-loading-screen]");
   const introVisible = await loader.isVisible();
   check(introVisible, `${viewport}: intro loader was not visible on document load`);
   if (introVisible) {
     const values = [];
-    // Run independently of the screenshot/sample loop. The completed value is
-    // deliberately held for only one visual beat, and a remote browser can be
-    // descheduled between two Node-side polls even though a visitor sees it.
     const reachedComplete = page
       .waitForFunction(
         () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") === "100",
@@ -45,15 +50,10 @@ async function waitForHome(page, viewport) {
         { timeout: 7_500 },
       )
       .then(() => true, () => false);
-    await page.screenshot({
-      path: path.join(artifactRoot, `${viewport}-intro.png`),
-      fullPage: false,
-    });
+
+    await capture(page, viewport, "intro");
     const deadline = Date.now() + 8_000;
     while ((await loader.count()) && Date.now() < deadline) {
-      // The curtain can unmount between two protocol calls on a remote Worker.
-      // Read through the document in one operation so disappearance is a null
-      // sample, not a 30-second locator wait for an element that has completed.
       const rawValue = await page.evaluate(
         () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") ?? null,
       );
@@ -61,6 +61,7 @@ async function waitForHome(page, viewport) {
       if (Number.isFinite(value) && values.at(-1) !== value) values.push(value);
       await page.waitForTimeout(80);
     }
+
     check(!(await loader.count()), `${viewport}: intro loader did not leave the page`);
     check(values.length > 1 && values[0] < 100, `${viewport}: intro did not expose real progress`);
     check(await reachedComplete, `${viewport}: intro never exposed its completed 100% state`);
@@ -69,10 +70,11 @@ async function waitForHome(page, viewport) {
       `${viewport}: intro progress moved backwards`,
     );
   }
+
   await page.waitForTimeout(250);
 }
 
-async function assertHeroPhotography(page, viewport) {
+async function assertHero(page, viewport) {
   const hero = page.locator("[data-hero]");
   const title = hero.locator("h1");
   const image = hero.locator("img[fetchpriority='high']").first();
@@ -80,18 +82,9 @@ async function assertHeroPhotography(page, viewport) {
     (await title.textContent())?.replace(/\s+/g, " ").trim() === "Premium Cream Latte Bases",
     `${viewport}: production hero H1 changed`,
   );
-  const entranceSettled = await page
-    .waitForFunction(
-      () => {
-        const words = [...document.querySelectorAll("[data-hero] h1 > span > span")];
-        return words.length === 3 && words.every((word) => getComputedStyle(word).transform === "none");
-      },
-      undefined,
-      { timeout: 3_000 },
-    )
-    .then(() => true, () => false);
-  check(entranceSettled, `${viewport}: hero headline remained hidden after the intro`);
+  check(await title.isVisible(), `${viewport}: hero title is not visible after intro`);
   check((await image.count()) === 1, `${viewport}: critical hero photograph is missing`);
+
   const imageBox = await image.boundingBox();
   const view = page.viewportSize();
   check(
@@ -108,142 +101,76 @@ async function assertHeroPhotography(page, viewport) {
   );
 }
 
-async function assertReloadIntro(page, viewport) {
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await page.locator("[data-home-experience]").waitFor();
-  const loader = page.locator("[data-loading-screen]");
-  const visible = await loader.isVisible();
-  check(visible, `${viewport}: intro loader did not replay on full reload`);
-  if (!visible) return;
+async function assertNaturalScroll(page, viewport, scroll) {
+  const before = await page.evaluate(() => window.scrollY);
+  await scroll();
+  const moved = await page
+    .waitForFunction((start) => window.scrollY > start + 4, before, { timeout: 2_000 })
+    .then(() => true, () => false);
+  check(moved, `${viewport}: homepage wheel/touch did not move the document naturally`);
+}
 
-  const reachedComplete = await page
+async function assertCarousel(page, viewport, swipe) {
+  const carousel = page.locator("#bestsellers");
+  await carousel.evaluate((element) => element.scrollIntoView({ block: "start" }));
+  await page.waitForTimeout(300);
+
+  const productCount = Number(await carousel.getAttribute("data-product-count"));
+  check(productCount === 5, `${viewport}: expected five bestseller products`);
+  const initial = await carousel.getAttribute("data-active-product-index");
+
+  if (swipe) {
+    await swipe(carousel);
+  } else {
+    await carousel.getByRole("button", { name: "Next product" }).click();
+  }
+
+  const changed = await page
     .waitForFunction(
-      () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") === "100",
-      undefined,
-      { timeout: 7_500 },
+      (previous) =>
+        document.querySelector("#bestsellers")?.getAttribute("data-active-product-index") !== previous,
+      initial,
+      { timeout: 2_000 },
     )
     .then(() => true, () => false);
-  check(reachedComplete, `${viewport}: reload intro never reached 100%`);
-  if (reachedComplete) await capture(page, viewport, "intro-complete");
-  await loader.waitFor({ state: "hidden", timeout: 4_000 });
-  await page.waitForTimeout(250);
-}
-
-async function readState(page) {
-  return page.locator("[data-home-experience]").evaluate((root) => ({
-    scene: Number(root.getAttribute("data-active-scene")),
-    sceneName: root.getAttribute("data-active-scene-name"),
-    product: root.getAttribute("data-active-product"),
-    headerTheme: document.querySelector("header")?.getAttribute("data-header-theme"),
-    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  }));
-}
-
-async function waitForScene(page, scene) {
-  await page.waitForFunction(
-    (expected) =>
-      document.querySelector("[data-home-experience]")?.getAttribute("data-active-scene") ===
-      String(expected),
-    scene,
-    { timeout: 3_000 },
+  check(changed, `${viewport}: bestseller interaction did not change the active product`);
+  check(
+    (await carousel.locator("[aria-hidden='false'][aria-roledescription='slide']").count()) === 1,
+    `${viewport}: carousel must expose exactly one active slide`,
   );
-}
-
-async function waitForProduct(page, previous) {
-  await page.waitForFunction(
-    (value) =>
-      document.querySelector("[data-home-experience]")?.getAttribute("data-active-product") !==
-      value,
-    previous,
-    { timeout: 2_000 },
-  );
-}
-
-async function capture(page, viewport, label) {
-  await page.screenshot({
-    path: path.join(artifactRoot, `${viewport}-${label}.png`),
-    fullPage: false,
+  await page.waitForFunction(() => {
+    const image = document.querySelector(
+      "#bestsellers [aria-hidden='false'][aria-roledescription='slide'] img",
+    );
+    return image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0;
   });
+  await carousel.evaluate((element) => element.scrollIntoView({ block: "start" }));
+  await page.waitForTimeout(320);
+  await capture(page, viewport, "bestsellers");
 }
 
-async function wheelUntilScene(page, from, to, viewport) {
-  for (let attempt = 0; attempt < 16; attempt += 1) {
-    const state = await readState(page);
-    if (state.scene === to) return;
-    check(state.scene === from, `${viewport}: wheel skipped scene ${from} and reached ${state.scene}`);
-    if (state.scene !== from) return;
-    await page.mouse.wheel(0, Math.round(page.viewportSize().height * 0.36));
-    await page.waitForTimeout(320);
+async function assertSections(page, viewport) {
+  const sections = [
+    ["section[aria-labelledby='collage-title']", "manufacturing"],
+    ["section[aria-labelledby='reading-title']", "reading"],
+    ["section[aria-labelledby='about-title']", "about"],
+    ["footer", "footer"],
+  ];
+
+  for (const [selector, label] of sections) {
+    const section = page.locator(selector).first();
+    check((await section.count()) === 1, `${viewport}: ${label} section is missing`);
+    if ((await section.count()) !== 1) continue;
+    await section.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(220);
+    check(await section.isVisible(), `${viewport}: ${label} section is not visible`);
+    await capture(page, viewport, label);
   }
-  failures.push(`${viewport}: wheel did not advance scene ${from} -> ${to}`);
-}
 
-async function auditDesktop(browser, width, height) {
-  const viewport = `${width}x${height}`;
-  const context = await browser.newContext({ viewport: { width, height } });
-  const page = await context.newPage();
-  observe(page, viewport);
-  await waitForHome(page, viewport);
-
-  if (width === 1440) await assertReloadIntro(page, viewport);
-  await assertHeroPhotography(page, viewport);
-
-  let state = await readState(page);
-  check(state.scene === 0 && state.sceneName === "hero", `${viewport}: hero is not initial scene`);
-  check(state.headerTheme === "hero", `${viewport}: hero header theme is not transparent`);
-  check(state.overflow <= 1, `${viewport}: horizontal document overflow ${state.overflow}px`);
-  await capture(page, viewport, "scene-0-hero");
-
-  // Small deltas exercise the accumulator used by a precision trackpad.
-  for (let pulse = 0; pulse < 4; pulse += 1) await page.mouse.wheel(0, 12);
-  await waitForScene(page, 1);
-  await page.waitForTimeout(1_000);
-  state = await readState(page);
-  check(state.headerTheme === "light", `${viewport}: Bestsellers header theme is not light`);
-  await capture(page, viewport, "scene-1-product-0");
-
-  const productCount = Number(await page.locator("#bestsellers").getAttribute("data-product-count"));
-  check(productCount >= 2, `${viewport}: Bestsellers does not expose multiple products`);
-  const products = [state.product];
-  for (let index = 1; index < productCount; index += 1) {
-    const previous = products.at(-1);
-    await page.mouse.wheel(0, 120);
-    await waitForProduct(page, previous);
-    await page.waitForTimeout(620);
-    const next = await readState(page);
-    products.push(next.product);
-    check(next.scene === 1, `${viewport}: product wheel left Bestsellers too early`);
-    await capture(page, viewport, `scene-1-product-${index}`);
-  }
-  check(new Set(products).size === productCount, `${viewport}: wheel did not activate each product`);
-
-  await page.mouse.wheel(0, 120);
-  await waitForScene(page, 2);
-  await page.waitForTimeout(1_000);
-  await capture(page, viewport, "scene-2-manufacturing");
-
-  await wheelUntilScene(page, 2, 3, viewport);
-  await page.waitForTimeout(900);
-  await capture(page, viewport, "scene-3-reading");
-
-  await wheelUntilScene(page, 3, 4, viewport);
-  await page.waitForTimeout(900);
-  await capture(page, viewport, "scene-4-about");
-
-  await wheelUntilScene(page, 4, 5, viewport);
-  await page.waitForTimeout(900);
-  state = await readState(page);
-  check(state.scene === 5 && state.sceneName === "footer", `${viewport}: footer scene not reached`);
-  check(state.headerTheme === "dark", `${viewport}: footer did not switch header to dark`);
-  await capture(page, viewport, "scene-5-footer");
-
-  await page.mouse.wheel(0, -120);
-  await waitForScene(page, 4);
-  await page.waitForTimeout(900);
-  state = await readState(page);
-  check(state.sceneName === "about", `${viewport}: reverse wheel did not restore About`);
-  check(state.overflow <= 1, `${viewport}: horizontal overflow after scene interactions`);
-  await context.close();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  check(overflow <= 1, `${viewport}: horizontal document overflow ${overflow}px`);
 }
 
 async function touchDrag(page, from, to) {
@@ -273,16 +200,18 @@ async function touchDrag(page, from, to) {
   }
 }
 
-async function touchUntilScene(page, from, to, viewport) {
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const state = await readState(page);
-    if (state.scene === to) return;
-    check(state.scene === from, `${viewport}: touch scroll skipped scene ${from} and reached ${state.scene}`);
-    if (state.scene !== from) return;
-    await touchDrag(page, { x: 195, y: 700 }, { x: 195, y: 120 });
-    await page.waitForTimeout(400);
-  }
-  failures.push(`${viewport}: touch scroll did not advance scene ${from} -> ${to}`);
+async function auditDesktop(browser, width, height) {
+  const viewport = `${width}x${height}`;
+  const context = await browser.newContext({ viewport: { width, height } });
+  const page = await context.newPage();
+  observe(page, viewport);
+  await waitForHome(page, viewport);
+  await assertHero(page, viewport);
+  await capture(page, viewport, "hero");
+  await assertNaturalScroll(page, viewport, () => page.mouse.wheel(0, Math.round(height * 0.55)));
+  await assertCarousel(page, viewport);
+  await assertSections(page, viewport);
+  await context.close();
 }
 
 async function auditMobile(browser) {
@@ -295,43 +224,22 @@ async function auditMobile(browser) {
   const page = await context.newPage();
   observe(page, viewport);
   await waitForHome(page, viewport);
-
-  let state = await readState(page);
-  check(state.scene === 0, `${viewport}: hero is not initial scene`);
-  check(state.overflow <= 1, `${viewport}: horizontal document overflow ${state.overflow}px`);
-  await capture(page, viewport, "scene-0-hero");
-
-  await touchUntilScene(page, 0, 1, viewport);
-  await page.waitForTimeout(500);
-  await capture(page, viewport, "scene-1-product-0");
-
-  const stage = await page.locator("#bestsellers [aria-live='polite']").boundingBox();
-  check(!!stage, `${viewport}: Bestsellers swipe stage missing`);
-  if (stage) {
-    const previous = (await readState(page)).product;
+  await assertHero(page, viewport);
+  await capture(page, viewport, "hero");
+  await assertNaturalScroll(page, viewport, () =>
+    touchDrag(page, { x: 195, y: 700 }, { x: 195, y: 160 }),
+  );
+  await assertCarousel(page, viewport, async (carousel) => {
+    const stage = await carousel.locator("[aria-live='polite']").boundingBox();
+    check(!!stage, `${viewport}: Bestsellers swipe stage missing`);
+    if (!stage) return;
     await touchDrag(
       page,
       { x: stage.x + stage.width * 0.78, y: stage.y + stage.height * 0.5 },
       { x: stage.x + stage.width * 0.22, y: stage.y + stage.height * 0.5 },
     );
-    await waitForProduct(page, previous);
-    await page.waitForTimeout(620);
-    state = await readState(page);
-    check(state.scene === 1, `${viewport}: product swipe changed the scene`);
-    await capture(page, viewport, "scene-1-product-1");
-  }
-
-  const sceneNames = ["manufacturing", "reading", "about", "footer"];
-  for (let index = 0; index < sceneNames.length; index += 1) {
-    const scene = index + 2;
-    await touchUntilScene(page, scene - 1, scene, viewport);
-    await page.waitForTimeout(450);
-    await capture(page, viewport, `scene-${scene}-${sceneNames[index]}`);
-  }
-
-  state = await readState(page);
-  check(state.headerTheme === "dark", `${viewport}: footer did not switch header to dark`);
-  check(state.overflow <= 1, `${viewport}: horizontal overflow after swipe/scroll sequence`);
+  });
+  await assertSections(page, viewport);
   await context.close();
 }
 
@@ -346,10 +254,10 @@ try {
 
 failures.push(...pageErrors, ...responseErrors);
 if (failures.length) {
-  console.error("Homepage scene smoke failed:");
+  console.error("Homepage experience smoke failed:");
   failures.forEach((failure) => console.error(`- ${failure}`));
   process.exit(1);
 }
 
-console.log(`Homepage scene smoke passed for ${baseUrl}.`);
+console.log(`Homepage experience smoke passed for ${baseUrl}.`);
 console.log(`Screenshots: ${artifactRoot}`);

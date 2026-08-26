@@ -37,49 +37,56 @@ function Arrow({ back = false }: { back?: boolean }) {
   );
 }
 
-export function Bestsellers({
-  index,
-  isActive,
-  onIndexChange,
-}: {
-  index: number;
-  isActive: boolean;
-  onIndexChange: (next: number) => void;
-}) {
+export function Bestsellers() {
+  const [index, setIndex] = useState(0);
   const [swapping, setSwapping] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const swapTimer = useRef<number | undefined>(undefined);
   // Autoplay reads the current slide from here, so the interval does not have
   // to be torn down and rebuilt on every change.
   const indexRef = useRef(index);
 
-  useEffect(() => {
-    if (indexRef.current !== index) {
-      setSwapping(true);
-      window.clearTimeout(swapTimer.current);
-      swapTimer.current = window.setTimeout(() => setSwapping(false), 260);
-    }
-    indexRef.current = index;
-  }, [index]);
-
   const active = PRODUCTS[index];
 
   const goTo = useCallback((next: number) => {
-    const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
-    if (resolved !== indexRef.current) onIndexChange(resolved);
-  }, [onIndexChange]);
+    setIndex((current) => {
+      const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
+      if (resolved === current) return current;
+
+      setSwapping(true);
+      window.clearTimeout(swapTimer.current);
+      swapTimer.current = window.setTimeout(() => setSwapping(false), 260);
+      indexRef.current = resolved;
+      return resolved;
+    });
+  }, []);
 
   useEffect(() => () => window.clearTimeout(swapTimer.current), []);
 
-  // Advance on its own, but only while the section is actually on screen —
-  // Sticky scenes remain geometrically visible under later surfaces, so the
-  // shared scene state, not IntersectionObserver, controls autoplay.
+  // Natural document scrolling owns section visibility, so autoplay follows
+  // the section itself instead of an external scene controller.
   useEffect(() => {
-    if (!isActive) return;
+    const section = sectionRef.current;
+    if (!section) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const timer = window.setInterval(() => goTo(indexRef.current + 1), AUTOPLAY_MS);
-    return () => window.clearInterval(timer);
-  }, [goTo, isActive]);
+    let timer: number | undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        window.clearInterval(timer);
+        if (entry.isIntersecting) {
+          timer = window.setInterval(() => goTo(indexRef.current + 1), AUTOPLAY_MS);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    observer.observe(section);
+    return () => {
+      window.clearInterval(timer);
+      observer.disconnect();
+    };
+  }, [goTo]);
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
@@ -145,6 +152,7 @@ export function Bestsellers({
 
   return (
     <section
+      ref={sectionRef}
       id="bestsellers"
       className={styles.section}
       style={{ ["--field" as string]: active.backgroundColor }}
@@ -154,7 +162,6 @@ export function Bestsellers({
       data-active-product={active.slug}
       data-active-product-index={index}
       data-product-count={PRODUCTS.length}
-      data-scene-active={isActive || undefined}
     >
       <div className={styles.inner}>
         <div className={styles.copy}>
@@ -272,31 +279,49 @@ export function Bestsellers({
                   />
                 )}
 
-                {product.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    className={styles.shot}
-                    // The plate is 1170x1703 and this draws it about 450 wide;
-                    // five of them made the homepage an 8.8 MB page.
-                    src={resizedImage(product.image) ?? product.image}
-                    alt={`${product.name} base by THE BASE`}
-                    // Only the first slide is above the fold on load.
-                    loading={slide === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    draggable={false}
-                  />
-                ) : (
-                  <span className={styles.shotFallback} aria-hidden="true">
-                    {product.name}
-                  </span>
-                )}
+                {/* The slide's `aria-label` already names the product, so this
+                    is the same name a second time and stays out of the
+                    accessibility tree. */}
+                <span className={styles.name} aria-hidden="true">
+                  {product.name}
+                </span>
 
-                {product.price && (
-                  <span className={styles.price}>
-                    <span className="tbb-label">From</span>
-                    <span className={styles.priceValue}>{product.price}</span>
-                  </span>
-                )}
+                <span className={styles.media}>
+                  {product.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      className={styles.shot}
+                      // The plate is 1170x1703 and this draws it about 450 wide;
+                      // five of them made the homepage an 8.8 MB page.
+                      src={resizedImage(product.image) ?? product.image}
+                      alt={`${product.name} base by THE BASE`}
+                      // The coverflow exposes the active card and both
+                      // neighbours. Keep those three decoded so a click/swipe
+                      // never reveals an empty stage; distant cards stay lazy.
+                      loading={depth <= 1 ? "eager" : "lazy"}
+                      decoding="async"
+                      draggable={false}
+                    />
+                  ) : (
+                    <span className={styles.shotFallback} aria-hidden="true">
+                      {product.name}
+                    </span>
+                  )}
+                </span>
+
+                {/* Rendered on every slide, shown only on the centre one — the
+                    row has to be there either way or the pack shots would sit
+                    at different heights across the rail. */}
+                <span className={styles.price}>
+                  {product.price ? (
+                    <>
+                      <span className="tbb-label">From</span>
+                      <span className={styles.priceValue}>{product.price}</span>
+                    </>
+                  ) : (
+                    <span className={styles.priceValue}>Price on request</span>
+                  )}
+                </span>
               </div>
             );
           })}

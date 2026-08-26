@@ -113,9 +113,8 @@ async function auditViewport(browser, viewport) {
   if (viewport.width === 390 || viewport.width === 1440) {
     const homePage = await browser.newPage({ viewport });
     await open(homePage, "/");
-    const homeExperience = homePage.locator("[data-home-experience]");
-    const homePresent = (await homeExperience.count()) === 1;
-    check(homePresent, `${label}: homepage experience missing during BlogCarousel audit`);
+    const homePresent = (await homePage.locator("[data-hero]").count()) === 1;
+    check(homePresent, `${label}: homepage missing during BlogCarousel audit`);
     check(
       (await homePage.locator('section[aria-labelledby="reading-title"] a[href="/resources/blog"]').count()) === 0,
       `${label}: Blog card remains in BlogCarousel`,
