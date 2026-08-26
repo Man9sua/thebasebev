@@ -134,13 +134,19 @@
   padding-top: clamp(2.5rem, 5vw, 4rem);
 }
 
+/* The gap lives on `.headline` below, not here: `.tbb h2 { margin: 0 }` in the
+   tokens outranks this class and quietly dropped the bottom margin. */
 .title {
   font-family: var(--tbb-font-display);
   font-size: var(--tbb-text-display);
   line-height: 0.98;
   letter-spacing: var(--tbb-tracking-display);
   font-weight: 600;
-  margin-bottom: clamp(1.5rem, 3.5vw, 2.75rem);
+}
+
+.headline {
+  display: grid;
+  row-gap: clamp(1.5rem, 3.5vw, 2.75rem);
 }
 
 .columns {
@@ -175,8 +181,9 @@
   color: var(--tbb-muted);
 }
 
+/* Padding, not margin — the tokens reset every `p` margin to zero. */
 .asidePrompt {
-  margin-top: clamp(1.25rem, 3vw, 2.25rem);
+  padding-top: clamp(1.25rem, 3vw, 2.25rem);
   max-width: 24ch;
   font-weight: 500;
 }

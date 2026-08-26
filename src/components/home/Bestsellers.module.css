@@ -49,17 +49,25 @@
 
 /* ---- left column ---- */
 
+/* Above the stage: a turned card may drift this far, and copy that the artwork
+   can cover is copy nobody reads.
+
+   Spacing is a row gap rather than margins on the children, because
+   `design-tokens.css` carries `.tbb h2, .tbb p { margin: 0 }` — at (0,1,1) that
+   outranks a single class here, so a `margin-top` on the description was being
+   dropped and the copy closed up against the headline. A gap belongs to the
+   container and nothing can reset it. */
 .copy {
-  /* Above the stage: a turned card may drift this far, and copy that the
-     artwork can cover is copy nobody reads. */
   position: relative;
   z-index: 2;
   max-width: 32ch;
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(1.25rem, 2.6vw, 2rem);
 }
 
 .eyebrow {
   display: block;
-  margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
 }
 
 /* The same two-row composition as the hero, so the page's two big statements
@@ -117,13 +125,11 @@
 }
 
 .description {
-  margin-top: clamp(1.4rem, 2.8vw, 2.25rem);
   color: var(--tbb-ink-soft);
   max-width: 34ch;
 }
 
 .specs {
-  margin-top: clamp(1.25rem, 2.5vw, 2rem);
   display: flex;
   gap: clamp(1.25rem, 3vw, 2.5rem);
   border-top: 1px solid var(--tbb-line);
@@ -156,7 +162,6 @@
 }
 
 .cta {
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;

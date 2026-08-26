@@ -64,8 +64,17 @@
   will-change: transform, opacity;
 }
 
+/* Grid with a row gap, not margins on the children.
+
+   `design-tokens.css` carries `.tbb h1, .tbb p { margin: 0 }`, and at (0,1,1)
+   that outranks any single class here — every `margin-top` set on the headline,
+   the description or the badges was being dropped on the floor, which is what
+   closed the gaps up. A gap belongs to the container, so nothing can reset it. */
 .copy {
   max-width: min(46ch, 52%);
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(1.4rem, 3.4vh, 2.25rem);
 }
 
 .tagline {
@@ -85,7 +94,6 @@
 .title {
   font-family: var(--tbb-font-display);
   text-transform: uppercase;
-  margin: clamp(0.8rem, 2.5vh, 1.6rem) 0 0;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -153,14 +161,12 @@
 }
 
 .description {
-  margin: clamp(1rem, 2.5vh, 1.75rem) 0 0;
   color: var(--tbb-ink-soft);
   font-size: clamp(1rem, 1.25vw, 1.1875rem);
   max-width: 42ch;
 }
 
 .cta {
-  margin-top: clamp(1.25rem, 3vh, 2.25rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
@@ -195,10 +201,11 @@
 }
 
 .badges {
-  margin: clamp(1.25rem, 3vh, 2rem) 0 0;
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(0.75rem, 2vw, 1.75rem);
+  /* Split, so a wrapped row does not sit tight against the one above it. */
+  column-gap: clamp(0.9rem, 2vw, 1.75rem);
+  row-gap: 0.6rem;
   color: var(--tbb-muted);
 }
 
