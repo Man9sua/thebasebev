@@ -22,6 +22,7 @@ const PERMANENT_REDIRECTS = new Map([
   ["/raf-cofeee", "/raf-coffee"],
   ["/raf-cofee", "/raf-coffee"],
   ["/functional-wellness", "/catalog"],
+  ["/cabinet", "/"],
 ]);
 
 function normalizePathname(pathname: string) {
