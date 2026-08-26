@@ -1,6 +1,6 @@
 # SEO parity report
 
-Generated: 2026-08-26T21:56:33.718Z
+Generated: 2026-08-26T20:37:48.531Z
 
 - Production: `https://thebasebev.com`
 - Target: `http://127.0.0.1:3100`

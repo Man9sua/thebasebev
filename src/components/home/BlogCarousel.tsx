@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Reveal } from "@/components/motion/Reveal";
 import { HOMEPAGE_ENTRIES } from "@/data/posts";
 import styles from "./BlogCarousel.module.css";
 
@@ -153,7 +152,7 @@ export function BlogCarousel() {
 
   return (
     <section className={styles.section} aria-labelledby="reading-title">
-      <Reveal className={styles.head}>
+      <div className={styles.head}>
         <div>
           <span className="tbb-label">Reading</span>
           <h2 id="reading-title" className={styles.title}>
@@ -181,7 +180,7 @@ export function BlogCarousel() {
             <Arrow />
           </button>
         </div>
-      </Reveal>
+      </div>
 
       <div
         ref={railRef}

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Reveal } from "@/components/motion/Reveal";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
 import { resizedImage } from "@/lib/images";
 
@@ -117,7 +116,7 @@ export function Bestsellers() {
       onKeyDown={onKeyDown}
     >
       <div className={styles.inner}>
-        <Reveal className={styles.copy}>
+        <div className={styles.copy}>
           <span className={`tbb-label ${styles.eyebrow}`}>Bestsellers</span>
 
           {/* The affixes are wrapped so the stylesheet can place them: bare text
@@ -168,7 +167,7 @@ export function Bestsellers() {
             Explore {active.name}
             <Arrow />
           </Link>
-        </Reveal>
+        </div>
 
         <div className={styles.stage} aria-live="polite">
           {PRODUCTS.map((product, slide) => {
@@ -258,7 +257,7 @@ export function Bestsellers() {
           })}
         </div>
 
-        <Reveal className={styles.controls} delay={120}>
+        <div className={styles.controls}>
           <div className={styles.arrows}>
             <button
               type="button"
@@ -293,7 +292,7 @@ export function Bestsellers() {
               </button>
             ))}
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
