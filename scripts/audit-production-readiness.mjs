@@ -21,6 +21,7 @@ const checks = [
   ["browser smoke", ["run", "smoke:browser", "--", target]],
   ["commerce audit", ["run", "audit:commerce", "--", target]],
   ["crawler audit", ["run", "audit:crawlers", "--", target]],
+  ["Cloudflare source/target parity", ["run", "audit:cloudflare-parity"]],
   ["npm audit", ["audit", "--audit-level=high"]],
 ];
 

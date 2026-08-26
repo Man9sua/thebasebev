@@ -43,11 +43,18 @@ try {
   observe(historyPage, "history");
   await historyPage.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
   await historyPage.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
-  await historyPage.goBack({ waitUntil: "domcontentloaded" });
+  await Promise.all([
+    historyPage.waitForURL(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" }),
+    historyPage.evaluate(() => window.history.back()),
+  ]);
   check(historyPage.url().endsWith("/catalog"), "navigation: browser Back did not restore catalog");
-  await historyPage.goForward({ waitUntil: "domcontentloaded" });
+  await Promise.all([
+    historyPage.waitForURL(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" }),
+    historyPage.evaluate(() => window.history.forward()),
+  ]);
   check(historyPage.url().endsWith("/matcha"), "navigation: browser Forward did not restore product route");
   await history.close();
+  console.log("Browser smoke phase passed: history");
 
   const desktop = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await desktop.newPage();
@@ -389,6 +396,7 @@ try {
   );
 
   await desktop.close();
+  console.log("Browser smoke phase passed: desktop interactions");
 
   const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const mobilePage = await mobile.newPage();
@@ -454,6 +462,7 @@ try {
     "mobile: region picker missing from the menu",
   );
   await mobile.close();
+  console.log("Browser smoke phase passed: mobile interactions");
 
   const viewports = [
     { width: 1920, height: 1080 },
@@ -489,6 +498,7 @@ try {
     });
   }
   await visual.close();
+  console.log("Browser smoke phase passed: responsive captures");
 
   const reduced = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -506,6 +516,7 @@ try {
     "reduced-motion: homepage hero content is not immediately visible",
   );
   await reduced.close();
+  console.log("Browser smoke phase passed: reduced motion");
 
   const noScript = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -523,6 +534,7 @@ try {
     "no-script: non-dismissible loading screen is visible",
   );
   await noScript.close();
+  console.log("Browser smoke phase passed: no JavaScript");
 
 } finally {
   await browser.close();

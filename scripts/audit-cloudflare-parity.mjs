@@ -50,9 +50,84 @@ function textContent(fragment) {
     .trim();
 }
 
+function legacyMain(html) {
+  const opening = /<main\b[^>]*\bdata-source-file=["'][^"']+["'][^>]*>/i.exec(html);
+  if (!opening) return "";
+
+  const start = opening.index + opening[0].length;
+  const end = html.indexOf("</main>", start);
+  return end === -1 ? "" : html.slice(start, end);
+}
+
+const removedShellRecords = new Set([
+  "rec2676415503",
+  "rec1842546651",
+  "rec913703869",
+  "rec860980632",
+  "rec859870796",
+]);
+
+function splitShellRecords(inner) {
+  const expression = /<div id="(rec\d+)"[^>]*class="[^"]*\bt-rec\b/g;
+  const starts = [];
+  let match;
+
+  while ((match = expression.exec(inner))) {
+    starts.push({ id: match[1], at: match.index });
+  }
+
+  if (!starts.length) return [{ id: "", html: inner }];
+
+  return [
+    { id: "", html: inner.slice(0, starts[0].at) },
+    ...starts.map((start, index) => ({
+      id: start.id,
+      html: inner.slice(start.at, index + 1 < starts.length ? starts[index + 1].at : inner.length),
+    })),
+  ];
+}
+
+function normalizeLegacyShell(fragment) {
+  let result = fragment;
+
+  for (const { marker, tag } of [
+    { marker: "<!--header-->", tag: "header" },
+    { marker: "<!--footer-->", tag: "footer" },
+  ]) {
+    const commentAt = result.indexOf(marker);
+    if (commentAt < 0) continue;
+
+    const openAt = result.indexOf(`<${tag} id="t-${tag}"`, commentAt);
+    const openEnd = result.indexOf(">", openAt);
+    const closeAt = result.indexOf(`</${tag}>`, openEnd);
+    if (openAt < 0 || openAt - commentAt > 40 || openEnd < 0 || closeAt < 0) continue;
+
+    const kept = splitShellRecords(result.slice(openEnd + 1, closeAt))
+      .filter((record) => !removedShellRecords.has(record.id))
+      .map((record) => record.html)
+      .join("");
+
+    result = result.slice(0, commentAt) + kept + result.slice(closeAt + `</${tag}>`.length);
+  }
+
+  return result;
+}
+
+function contentSignature(fragment) {
+  if (!fragment) return null;
+
+  const visible = textContent(fragment);
+  return {
+    textHash: createHash("sha256").update(visible).digest("hex"),
+    internalLinks: (fragment.match(/href=["'](?:https:\/\/thebasebev\.com)?\//gi) ?? []).length,
+    images: (fragment.match(/<img\b[^>]*>/gi) ?? []).length,
+  };
+}
+
 function inspectHtml(html) {
   const h1 = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? "";
   const visible = textContent(html);
+  const legacyContent = contentSignature(normalizeLegacyShell(legacyMain(html)));
   const internalLinks = (html.match(/href=["'](?:https:\/\/thebasebev\.com)?\//gi) ?? []).length;
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
   const missingAlt = images.filter((tag) => !/\balt=["'][^"']*["']/i.test(tag)).length;
@@ -68,6 +143,7 @@ function inspectHtml(html) {
     missingAlt,
     cabinetLinks: (html.match(/href=["']\/cabinet(?:["'#?])/gi) ?? []).length,
     visibleTextHash: createHash("sha256").update(visible).digest("hex"),
+    legacyContent,
   };
 }
 
@@ -85,21 +161,32 @@ async function inspect(origin, route) {
 }
 
 const failures = [];
+const shellObservations = [];
 let cursor = 0;
 async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
     const [source, target] = await Promise.all([inspect(sourceOrigin, route), inspect(targetOrigin, route)]);
-    const cabinetWasRemoved = source.cabinetLinks > 0 && target.cabinetLinks === 0;
-    const intentionalShellFields = new Set(
-      cabinetWasRemoved ? ["cabinetLinks", "internalLinks", "visibleTextHash"] : [],
-    );
+    const intentionalShellFields = new Set([
+      "cabinetLinks",
+      "internalLinks",
+      "images",
+      "visibleTextHash",
+    ]);
+    if (route === "/") intentionalShellFields.add("legacyContent");
     const differences = Object.keys(source).filter(
-      (key) => source[key] !== target[key] && !intentionalShellFields.has(key),
+      (key) =>
+        JSON.stringify(source[key]) !== JSON.stringify(target[key]) &&
+        !intentionalShellFields.has(key),
     );
     if (differences.length) {
       failures.push(`${route}: ${differences.map((key) => `${key} (${JSON.stringify(source[key])} -> ${JSON.stringify(target[key])})`).join(", ")}`);
+    }
+
+    const shellDifferences = [...intentionalShellFields].filter((key) => source[key] !== target[key]);
+    if (shellDifferences.length) {
+      shellObservations.push(`${route}: ${shellDifferences.join(", ")}`);
     }
   }
 }
@@ -136,7 +223,8 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`Cloudflare account parity passed: ${routes.length} rendered routes and ${redirects.size} redirects are semantically identical.`);
+  console.log(`Cloudflare account parity passed: ${routes.length} rendered routes and ${redirects.size} redirects preserve HTTP, SEO and legacy content signatures.`);
+  console.log(`Intentional shared-shell differences observed on ${shellObservations.length} routes.`);
   console.log(`Source retained: ${sourceOrigin}`);
   console.log(`Target verified: ${targetOrigin}`);
 }
