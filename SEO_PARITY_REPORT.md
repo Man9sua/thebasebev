@@ -1,6 +1,6 @@
 # SEO parity report
 
-Generated: 2026-08-26T18:41:03.397Z
+Generated: 2026-08-26T19:29:48.885Z
 
 - Production: `https://thebasebev.com`
 - Target: `http://127.0.0.1:3100`
@@ -20,7 +20,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/resources` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
 | `/distributors` | 200 | 200 | PASS | 28/32 | 22/0/5 | Critical fields match |
 | `/resources/blog` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
-| `/private-labeling` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
+| `/private-labeling` | 200 | 200 | PASS | 28/32 | 17/0/9 | Critical fields match |
 | `/sitemap` | 200 | 200 | PASS | 30/33 | 13/0/5 | Critical fields match |
 | `/resources/glossary` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
 | `/resources/tools` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
@@ -65,7 +65,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 - /resources/blog: internal links differ (-0/+4)
 - /resources/blog: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
 - /private-labeling: internal links differ (-0/+4)
-- /private-labeling: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
+- /private-labeling: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":17,"missing":0,"empty":9})
 - /sitemap: internal links differ (-0/+3)
 - /sitemap: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":13,"missing":0,"empty":5})
 - /resources/glossary: internal links differ (-0/+4)

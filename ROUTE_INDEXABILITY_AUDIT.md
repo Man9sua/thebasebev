@@ -1,6 +1,6 @@
 # Route indexability audit
 
-Generated: 2026-08-26T18:40:26.493Z
+Generated: 2026-08-26T19:29:13.531Z
 
 Target: `http://127.0.0.1:3100`
 

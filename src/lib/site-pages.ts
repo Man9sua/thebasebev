@@ -398,6 +398,7 @@ const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
   // /private-labeling
   "page120311356.html": [
     "rec2507342601", // serif opening block — PageIntro replaces it
+    "rec1937225061", // the four services — PageOffers replaces it
     "rec1937227721", // the h1, orphaned at the foot of the page
     "rec1937217991", // empty in the export
     "rec2360860451", // empty in the export

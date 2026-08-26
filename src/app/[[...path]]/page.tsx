@@ -7,8 +7,9 @@ import { ProductDetails } from "@/components/product/ProductDetails";
 import { ProductHero } from "@/components/product/ProductHero";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { PageIntro } from "@/components/site/PageIntro";
+import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { getPageIntro } from "@/data/page-intros";
+import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
 import {
   getSitePage,
@@ -102,11 +103,13 @@ export default async function SiteRoute({ params }: RouteProps) {
   // the four popup lead forms the buttons above open.
   const product = getProduct(route.slice(1));
 
-  // Two pages open with a React head instead. Both were built on stock Tilda
-  // themes and were still opening with the theme rather than with themselves —
-  // `site-pages.ts` says exactly what was dropped, and `data/page-intros.ts`
-  // holds the heading each page now carries in its place.
+  // Two pages open with a React head instead, and one of them carries its four
+  // services in React as well. Both were built on stock Tilda themes and were
+  // still opening with the theme rather than with themselves — `site-pages.ts`
+  // says exactly what was dropped, and `data/page-intros.ts` holds the copy
+  // each page carries in its place.
   const intro = getPageIntro(route);
+  const offers = getPageOffers(route);
 
   // Everything else: one shared header and footer, with the old Tilda chrome
   // already removed from the markup server-side.
@@ -114,6 +117,7 @@ export default async function SiteRoute({ params }: RouteProps) {
     <div className="tbb">
       <SiteHeader />
       {intro && <PageIntro intro={intro} />}
+      {offers && <PageOffers offers={offers} />}
       {product && <ProductHero product={product} />}
       {product && <ProductDetails product={product} />}
       <LegacyPageShell page={page} opensPage={!intro && !product} />
