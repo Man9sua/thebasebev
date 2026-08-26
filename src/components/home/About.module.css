@@ -67,7 +67,10 @@
 }
 
 .mark {
-  color: var(--tbb-accent);
+  /* Inherits the eyebrow rather than printing the mark colour: on a page
+     that carries the red only in the logo, one red glyph over the footage
+     read as a rendering fault rather than as an accent. */
+  color: inherit;
   font-size: 0.9rem;
   line-height: 1;
 }
@@ -94,7 +97,7 @@
   line-height: 0.9;
   letter-spacing: var(--tbb-tracking-display);
   font-weight: 600;
-  color: var(--tbb-accent);
+  color: var(--tbb-ink);
 }
 
 /* ---- everything on paper ---- */
@@ -173,7 +176,7 @@
   font-size: clamp(1.15rem, 1.7vw, 1.5rem);
   font-weight: 700;
   letter-spacing: var(--tbb-tracking-display);
-  color: var(--tbb-accent);
+  color: var(--tbb-ink);
 }
 
 .asideRole {

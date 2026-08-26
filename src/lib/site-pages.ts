@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { getProduct } from "@/data/products";
 
 export const SITE_ORIGIN = "https://thebasebev.com";
 export const EXPORT_LAST_MODIFIED = new Date("2026-08-20T20:38:39.000Z");
@@ -239,6 +240,43 @@ function preserveCatalogPrices(source: string, file: string) {
 }
 
 /**
+ * Re-plate the catalogue grid.
+ *
+ * Two things happen to every card, and both need the HTML rather than a
+ * stylesheet:
+ *
+ * The pack shot is repointed. The export names sixteen unrelated renders, at
+ * three different scales on three different baselines, and three of them are a
+ * background image rather than the product — which is why the row looked
+ * ragged whatever the cards were styled like. `scripts/build-pack-shots.mjs`
+ * re-plates all sixteen onto one canvas as `pack-<slug>.webp`, and the card's
+ * own `href` is that slug, so the swap needs no second table to fall out of
+ * date. `catg-img--adj` goes with it: it scaled three cards up by 3% to paper
+ * over exactly the mismatch the new artwork removes.
+ *
+ * And the card is told its product colour, as `--tile`. The stylesheet mixes
+ * that down to a wash so the white pouches read on every card; it cannot look
+ * the colour up itself, and `products.ts` stays the one place a product colour
+ * is written down.
+ *
+ * Done here rather than by editing the export, because the export is the
+ * parity reference and stays as exported.
+ */
+function replateCatalogCards(source: string, file: string) {
+  if (file !== "page114743626.html") return source;
+
+  return source.replace(
+    /<a class="catg-card" href="\/([a-z-]+)">(\s*<div class="catg-img-wrap">\s*<img\b)([^>]*?)(\/?>)/g,
+    (whole, slug: string, open: string, attributes: string, close: string) => {
+      const alt = attributes.match(/\salt="[^"]*"/)?.[0] ?? "";
+      const tile = getProduct(slug)?.backgroundColor;
+      const style = tile ? ` style="--tile:${tile}"` : "";
+      return `<a class="catg-card" href="/${slug}"${style}>${open}${alt} src="/images/pack-${slug}.webp"${close}`;
+    },
+  );
+}
+
+/**
  * Tilda shell records dropped from every parity page.
  *
  * The exported body of 37 of the 39 pages carries the whole Tilda site chrome:
@@ -406,16 +444,19 @@ export function getSitePage(route: string): SitePage | undefined {
       image: toAbsoluteUrl(meta(source, "og:image")),
     },
     usesSharedShell,
-    bodyHtml: removeLegacyAnalyticsRuntime(
-      localizeHeroTailwind(
-        removeInlineScriptContaining(
+    bodyHtml: replateCatalogCards(
+      removeLegacyAnalyticsRuntime(
+        localizeHeroTailwind(
           removeInlineScriptContaining(
-            usesSharedShell ? stripShellRecords(rawBody) : rawBody,
-            '"twitter:card"',
+            removeInlineScriptContaining(
+              usesSharedShell ? stripShellRecords(rawBody) : rawBody,
+              '"twitter:card"',
+            ),
+            "/api/tildafeed",
           ),
-          "/api/tildafeed",
         ),
       ),
+      definition.file,
     ),
     headAssetsHtml: preserveCatalogPrices(
       removeLegacyAnalyticsRuntime(

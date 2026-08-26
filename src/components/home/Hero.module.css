@@ -12,12 +12,15 @@
 /* The photograph is a tall frame, not a wide one — it is a crop of a key visual
    rather than a landscape plate — so a full-bleed box would have to overscan it
    by half again to fill the viewport, and all that survived was one glass at
-   1.4x. Anchored to the right instead, it plays back at close to its own scale
-   and the whole shot reads. The veil then carries it into the paper the copy
-   sits on, so there is no vertical edge where the box begins. */
+   1.4x.
+ *
+   Anchored to the right instead, in a box cut to roughly the crop's own 0.88,
+   so on a laptop the shot plays back whole: both glasses, the lockup, no
+   overscan. The veil then carries it into the paper the copy sits on, so there
+   is no vertical edge where the box begins. */
 .media {
   position: absolute;
-  inset: 0 0 0 30%;
+  inset: 0 0 0 47%;
   /* The box has a left edge and the veil is angled, so at the foot of the frame
      the gradient runs out before the edge does and leaves a vertical line. The
      mask dissolves the edge itself, at every height. */
@@ -40,6 +43,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* On a frame wider than the crop there is height to give up, and the lockup
+     sits in the top eighth of it — so what goes is the foot of the picture. */
+  object-position: 50% 22%;
 }
 
 /* Fades the photograph out from the left so the copy sits on paper rather than
@@ -79,7 +85,9 @@
    the description or the badges was being dropped on the floor, which is what
    closed the gaps up. A gap belongs to the container, so nothing can reset it. */
 .copy {
-  max-width: min(46ch, 52%);
+  /* Ends before the photograph's box begins, so the copy sits on paper the
+     whole way across rather than running under the masked edge. */
+  max-width: min(46ch, 45%);
   display: grid;
   justify-items: start;
   row-gap: clamp(1.4rem, 3.4vh, 2.25rem);
