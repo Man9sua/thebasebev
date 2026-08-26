@@ -340,6 +340,38 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   .legacy-document .catg-inner {
     --catg-columns: 2;
   }
+
+  /* Two cards to a 390px phone leaves about 160px of card, and the name and the
+     price were sharing that row: "MILKSHAKE" is one word and cannot wrap, so it
+     ran straight under "45.38 AED", and "ICED TEA" lost its second word
+     entirely. Below this width they take a row each — the price under the name,
+     left-aligned with it, because there is no longer an opposite edge for it to
+     sit against. */
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card {
+    grid-template-columns: minmax(0, 1fr);
+    /* Pack, category, name, price, copy, button. */
+    grid-template-rows: auto auto auto auto 1fr auto;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-name {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-price {
+    grid-column: 1;
+    grid-row: 4;
+    justify-self: start;
+    padding: 0.15rem 0 0;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-sub {
+    grid-row: 5;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add {
+    grid-row: 6;
+  }
 }
 
 /* ---- cursor tilt ----
