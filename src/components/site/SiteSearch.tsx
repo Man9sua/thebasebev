@@ -136,7 +136,12 @@ export function SiteSearch({
                 className={styles.item}
                 style={{ transitionDelay: open ? `${200 + index * 35}ms` : "0ms" }}
               >
-                <Link href={hit.href} className={styles.result} onClick={close}>
+                <Link
+                  href={hit.href}
+                  className={styles.result}
+                  onClick={close}
+                  prefetch={false}
+                >
                   <span
                     className={styles.swatch}
                     style={{
@@ -155,7 +160,7 @@ export function SiteSearch({
         ) : (
           <p className={styles.empty}>
             Nothing matches “{query.trim()}”. Try a product name, or{" "}
-            <Link href="/contacts" onClick={close}>
+            <Link href="/contacts" onClick={close} prefetch={false}>
               contact us
             </Link>
             .

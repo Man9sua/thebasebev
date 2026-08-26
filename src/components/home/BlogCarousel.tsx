@@ -198,7 +198,13 @@ export function BlogCarousel() {
         onClickCapture={onClickCapture}
       >
         {HOMEPAGE_ENTRIES.map((entry) => (
-          <Link key={entry.href} href={entry.href} className={styles.card} data-card>
+          <Link
+            key={entry.href}
+            href={entry.href}
+            className={styles.card}
+            data-card
+            prefetch={false}
+          >
             <span className={styles.frame}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

@@ -190,7 +190,7 @@ export function SiteHeader({
         {/* The original lockup, lifted verbatim out of the Tilda header and
             saved as public/images/base-logo.svg — the same paths the old site
             shipped, not redrawn and not re-typeset. */}
-        <Link href="/" className={styles.logo} aria-label="THE BASE — home">
+        <Link href="/" className={styles.logo} aria-label="THE BASE — home" prefetch={false}>
           {/* The Tilda runtime on parity routes re-sets src and adds
               decoding/fetchpriority on every img it finds, this one included.
               The rewrite is cosmetic, but React would still read it as a
@@ -218,6 +218,7 @@ export function SiteHeader({
             className={styles.action}
             onClick={openCart}
             aria-label={cartCount ? `Cart, ${cartCount} items` : "Cart"}
+            prefetch={false}
           >
             <CartIcon />
             {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}

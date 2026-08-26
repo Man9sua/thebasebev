@@ -22,7 +22,7 @@ function observe(page, label) {
   page.on("response", (response) => {
     const url = new URL(response.url());
     if (url.origin === baseUrl && response.status() >= 400) {
-      responseErrors.push(`${label}: ${response.status()} ${url.pathname}`);
+      responseErrors.push(`${label}: ${response.status()} ${url.pathname}${url.search}`);
     }
   });
 }
@@ -51,7 +51,13 @@ async function waitForHome(page, viewport) {
     });
     const deadline = Date.now() + 8_000;
     while ((await loader.count()) && Date.now() < deadline) {
-      const value = Number(await loader.getAttribute("aria-valuenow"));
+      // The curtain can unmount between two protocol calls on a remote Worker.
+      // Read through the document in one operation so disappearance is a null
+      // sample, not a 30-second locator wait for an element that has completed.
+      const rawValue = await page.evaluate(
+        () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") ?? null,
+      );
+      const value = rawValue === null ? Number.NaN : Number(rawValue);
       if (Number.isFinite(value) && values.at(-1) !== value) values.push(value);
       await page.waitForTimeout(80);
     }

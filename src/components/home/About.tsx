@@ -58,7 +58,7 @@ export function About() {
             </span>
           </div>
 
-          <Link href="/about-us" className={styles.cta}>
+          <Link href="/about-us" className={styles.cta} prefetch={false}>
             More about the company
           </Link>
         </Reveal>

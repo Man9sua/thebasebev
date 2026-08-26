@@ -209,7 +209,7 @@ export function Bestsellers({
             </span>
           </div>
 
-          <Link href={active.route} className={styles.cta}>
+          <Link href={active.route} className={styles.cta} prefetch={false}>
             Explore {active.name}
             <Arrow />
           </Link>

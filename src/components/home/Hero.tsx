@@ -266,6 +266,7 @@ export function Hero() {
             href={FEATURED.route}
             className={`${styles.cta} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "730ms" }}
+            prefetch={false}
           >
             Shop {FEATURED.name}
             <ArrowIcon />

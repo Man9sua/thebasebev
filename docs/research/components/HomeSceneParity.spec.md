@@ -75,6 +75,15 @@ Scene order and content are invariant across viewport widths.
   homepage document load. Client-side route changes must not invent a second
   curtain.
 
+### F. Homepage link prefetch overloads the preview Worker
+
+- As the scene smoke exposes later sections, Next automatically requests many
+  internal routes as speculative RSC payloads. The Workers Free CPU budget can
+  reject that burst even though direct HTML requests use the static fast path.
+- Safe fix: disable speculative prefetch for links rendered by the homepage and
+  shared shell. Navigation remains functional and fetches the requested static
+  document only after explicit user intent.
+
 ## State contract
 
 ```text

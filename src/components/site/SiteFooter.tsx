@@ -42,7 +42,7 @@ export function SiteFooter() {
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Products</span>
             {FOOTER_LINKS.products.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
               </Link>
             ))}
@@ -51,7 +51,7 @@ export function SiteFooter() {
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Company</span>
             {FOOTER_LINKS.company.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
               </Link>
             ))}
@@ -60,7 +60,7 @@ export function SiteFooter() {
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Resources</span>
             {FOOTER_LINKS.resources.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
               </Link>
             ))}
@@ -93,7 +93,7 @@ export function SiteFooter() {
           </span>
           <span className={styles.legalLinks}>
             {FOOTER_LINKS.legal.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
               </Link>
             ))}
