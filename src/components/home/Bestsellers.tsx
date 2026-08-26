@@ -130,11 +130,12 @@ export function Bestsellers() {
         <div className={styles.copy}>
           <span className={`tbb-label ${styles.eyebrow}`}>Bestsellers</span>
 
-          {/* Production renders this as `Premium<br>{product}<br>Bases`. The
-              explicit spaces keep the extracted text identical — the parts are
-              block-level, so they are never visible. */}
+          {/* The affixes are wrapped so the stylesheet can place them: bare text
+              nodes cannot be given an order. The spaces between the three parts
+              stay, so the heading still reads as one string — "Premium <product>
+              Bases" — which is the wording production ranks on. */}
           <h2 className={styles.heading}>
-            Premium{" "}
+            <span className={styles.headingAffix}>Premium</span>{" "}
             <span
               className={`${styles.headingProduct} ${styles.swap} ${
                 swapping ? styles.swapOut : ""
@@ -142,7 +143,7 @@ export function Bestsellers() {
             >
               {active.name}
             </span>{" "}
-            Bases
+            <span className={styles.headingAffix}>Bases</span>
           </h2>
 
           <p

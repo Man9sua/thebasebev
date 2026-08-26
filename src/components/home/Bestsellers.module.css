@@ -62,38 +62,62 @@
   margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
 }
 
-/* "Premium" and "Bases" are connective tissue; the product is the headline.
-   Setting them apart in size is what the hero already does, and matching it
-   here lets the two big statements on the page speak with one voice.
+/* The same two-row composition as the hero, so the page's two big statements
+   speak with one voice: "Premium" and "Bases" sit together as one quiet line of
+   framing, and the product name takes the row below on its own.
 
-   Grid rather than line breaks: the three parts are two text nodes either side
-   of a span, so each becomes its own anonymous row without adding markup — and
-   the heading stays one unbroken string for anything that reads it. */
+   The three parts are two text nodes either side of a span. Wrapping the text
+   nodes is what `.headingAffix` does in the markup; the reorder is visual only,
+   so the h1 still serves "Premium <product> Bases" as one string — the wording
+   production ranks on and the string the smoke test reads. */
 .heading {
   font-family: var(--tbb-font-display);
-  display: grid;
-  justify-items: start;
-  gap: clamp(0.3rem, 0.8vw, 0.6rem);
-  font-size: clamp(0.75rem, 1.05vw, 1rem);
-  line-height: 1;
-  letter-spacing: 0.4em;
-  font-weight: 400;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: clamp(0.8rem, 1.6vw, 1.4rem);
+  row-gap: clamp(0.2rem, 0.7vw, 0.5rem);
   text-transform: uppercase;
-  color: var(--tbb-muted);
   margin: 0;
 }
 
+.headingAffix {
+  order: 1;
+  font-size: clamp(0.7rem, 0.95vw, 0.9rem);
+  line-height: 1;
+  letter-spacing: 0.38em;
+  font-weight: 400;
+  color: var(--tbb-muted);
+}
+
+/* The two affixes are not adjacent — the product sits between them — so this
+   is the closing one by position, not by sibling combinator. */
+.headingAffix:last-child {
+  order: 2;
+}
+
+/* Binds the two framing words into one phrase. Generated content, so it never
+   reaches `textContent`. */
+.headingAffix:last-child::before {
+  content: "·";
+  margin-right: clamp(0.8rem, 1.6vw, 1.4rem);
+  color: var(--tbb-muted);
+}
+
+/* Full basis forces the break, so the product always lands on its own row
+   however long its name is. */
 .headingProduct {
-  display: block;
-  font-size: clamp(2.6rem, 5.6vw, 5.5rem);
+  order: 3;
+  flex-basis: 100%;
+  font-size: clamp(2.8rem, 6.2vw, 6.5rem);
   line-height: 0.88;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-weight: 700;
   color: var(--tbb-ink);
 }
 
 .description {
-  margin-top: clamp(1rem, 2vw, 1.5rem);
+  margin-top: clamp(1.4rem, 2.8vw, 2.25rem);
   color: var(--tbb-ink-soft);
   max-width: 34ch;
 }

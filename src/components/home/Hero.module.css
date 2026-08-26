@@ -68,14 +68,49 @@
   color: var(--tbb-muted);
 }
 
+/* Two rows, not three: "Premium" and "Bases" sit together as one quiet line of
+   framing, and the product name gets the whole second row to itself.
+
+   The reorder is visual only — `order` moves the boxes, the DOM keeps serving
+   "Premium Cream Latte Bases" in that order, which is the string production
+   ranks on and the one the smoke test reads. */
 .title {
   font-family: var(--tbb-font-display);
   text-transform: uppercase;
   margin: clamp(0.6rem, min(2vw, 2.4vh), 1.4rem) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  column-gap: clamp(0.9rem, 2vw, 1.6rem);
+  row-gap: clamp(0.2rem, 0.8vw, 0.6rem);
 }
 
-/* The mask each line rises out of. Every line is its own block, so the h1 keeps
-   production's three-line shape — "Premium / Cream Latte / Bases" — while its
+.line:nth-child(1) {
+  order: 1;
+}
+
+.line:nth-child(3) {
+  order: 2;
+}
+
+/* Full basis forces the break, so the product always lands on its own row
+   however long its name is. */
+.line:nth-child(2) {
+  order: 3;
+  flex-basis: 100%;
+}
+
+/* Binds the two framing words into one phrase instead of two stray labels.
+   Generated content, so it never reaches `textContent`. */
+.line:nth-child(3) .lineInner::before {
+  content: "·";
+  margin-right: clamp(0.9rem, 2vw, 1.6rem);
+  color: var(--tbb-muted);
+}
+
+/* The mask each part rises out of. Each is its own box, which is what makes the
+   staggered reveal work, and what the row layout above arranges. The h1's
    text content stays the one string production serves.
 
    The padding/margin pair gives descenders room inside the mask; without it the
@@ -109,7 +144,7 @@
 /* The product name is the headline: one big ink line, height-aware as well as
    width-aware so it and the rail both clear a 720px laptop viewport. */
 .titleProduct {
-  font-size: clamp(2.6rem, min(8.4vw, 12.5vh), 7.5rem);
+  font-size: clamp(3rem, min(10vw, 14vh), 9rem);
   font-weight: 700;
   line-height: 0.94;
   letter-spacing: -0.03em;
