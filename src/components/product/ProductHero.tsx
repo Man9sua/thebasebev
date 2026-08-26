@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
+import productHeroes from "@/data/product-heroes.json";
+import { isDark } from "@/lib/contrast";
 import { productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
 
@@ -13,15 +16,21 @@ import styles from "./ProductHero.module.css";
  * never saw the name, the price or a way to order. `site-pages.ts` drops that
  * block; this renders the same copy as ordinary markup.
  *
+ * The picture is the client's own key visual for the product, cut down to the
+ * part of it that carries no type — see `scripts/build-product-heroes.mjs`. The
+ * band behind the copy is the colour sampled from the banner at the cut, so the
+ * two are one surface rather than a photograph pasted onto a page. Eleven
+ * products have a banner; the rest fall back to the pack shot on a wash of
+ * their own colour.
+ *
  * The copy is the page's own, lifted out of the export by
  * `scripts/build-product-details.mjs` rather than rewritten — these pages carry
  * two years of ranking and the wording is what they rank on. The `h1` in
  * particular is reproduced verbatim, because `audit:seo-parity` compares it
  * against the live site character for character.
- *
- * Both buttons point into the shared lead forms that the export still provides
- * from the retained shell records, so ordering works exactly as it did.
  */
+
+const heroes = productHeroes as Record<string, { image: string; band: string }>;
 
 function Arrow() {
   return (
@@ -33,91 +42,102 @@ function Arrow() {
 
 export function ProductHero({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
+  const banner = heroes[product.slug];
   // The registry's description is the fallback for the three pages whose own
   // copy does not open by naming the product, which is how the extractor
   // recognises it.
   const paragraphs = detail?.description.length ? detail.description : [product.description];
-  // The normalised cut-out rather than the composed marketing tile: the tile
-  // is a square of solid colour and would sit on this wash as a rectangle,
-  // where the cut-out stands on it. Same artwork either way — see
-  // `scripts/build-pack-shots.mjs`.
-  const pack = `/images/pack-${product.slug}.webp`;
+
+  // A banner sets the band; without one the page mixes the product colour down
+  // to a wash, which is always light. Ink is measured either way rather than
+  // assumed — Tea's band is near-black and Jam's is burgundy.
+  const band = banner?.band;
+  const onDark = band ? isDark(band) : false;
 
   return (
     <section
-      className={styles.hero}
-      style={{ ["--tile" as string]: product.backgroundColor }}
+      className={`${styles.hero} ${onDark ? styles.onDark : ""}`}
+      style={{
+        ["--tile" as string]: product.backgroundColor,
+        ...(band ? { ["--band" as string]: band } : {}),
+      }}
       aria-labelledby="product-title"
     >
       <div className={styles.inner}>
         <div className={styles.copy}>
-          <p className={styles.breadcrumb}>
+          <Reveal as="p" className={styles.breadcrumb} distance={12}>
             <Link href="/catalog">Catalog</Link>
             <span aria-hidden="true">/</span>
             <span>{product.name}</span>
-          </p>
+          </Reveal>
 
-          <h1 id="product-title" className={styles.title}>
-            {detail?.h1 ?? product.headline}
-          </h1>
+          <Reveal delay={60} distance={20}>
+            <h1 id="product-title" className={styles.title}>
+              {detail?.h1 ?? product.headline}
+            </h1>
+          </Reveal>
 
           {detail?.tagline && (
-            <p className={styles.tagline}>
+            <Reveal as="p" className={styles.tagline} delay={120} distance={16}>
               {detail.tagline}
               {detail.weight && <span className={styles.weight}>{detail.weight}</span>}
-            </p>
+            </Reveal>
           )}
 
-          <div className={styles.body}>
+          <Reveal className={styles.body} delay={170} distance={16}>
             {paragraphs.map((paragraph) => (
               <p key={paragraph} className={styles.paragraph}>
                 {paragraph}
               </p>
             ))}
-          </div>
+          </Reveal>
 
-          <p className={styles.price}>
-            {product.price ? (
-              <>
-                <span className="tbb-label">From</span>
-                <span className={styles.priceValue}>{product.price}</span>
-              </>
-            ) : (
-              <span className={styles.priceValue}>Price on request</span>
-            )}
-          </p>
+          <Reveal className={styles.buy} delay={230} distance={16}>
+            <p className={styles.price}>
+              {product.price ? (
+                <>
+                  <span className="tbb-label">From</span>
+                  <span className={styles.priceValue}>{product.price}</span>
+                </>
+              ) : (
+                <span className={styles.priceValue}>Price on request</span>
+              )}
+            </p>
 
-          <div className={styles.actions}>
-            <a href="#order" className={styles.primary}>
-              Place order
-              <Arrow />
-            </a>
-            <a href="#sample" className={styles.secondary}>
-              Request a sample
-            </a>
-          </div>
+            <div className={styles.actions}>
+              <a href="#order" className={styles.primary}>
+                Place order
+                <Arrow />
+              </a>
+              <a href="#sample" className={styles.secondary}>
+                Request a sample
+              </a>
+            </div>
+          </Reveal>
 
           {detail?.features.length ? (
-            <dl className={styles.features}>
+            <Reveal as="dl" className={styles.features} delay={290} distance={16}>
               {detail.features.map((feature) => (
                 <div key={feature.label} className={styles.feature}>
                   <dt className={styles.featureLabel}>{feature.label}</dt>
                   <dd className={styles.featureValue}>{feature.value}</dd>
                 </div>
               ))}
-            </dl>
+            </Reveal>
           ) : null}
         </div>
+      </div>
 
-        <div className={styles.stage}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className={styles.pack}
-            src={pack}
-            alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
-            fetchPriority="high"
-          />
-        </div>
+      <div className={styles.media} aria-hidden={banner ? "true" : undefined}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={banner ? styles.banner : styles.pack}
+          src={banner?.image ?? `/images/pack-${product.slug}.webp`}
+          // The banner is decoration beside copy that already says all of this;
+          // the pack shot on its own is the product, so it is described.
+          alt={banner ? "" : `${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
+          fetchPriority="high"
+        />
       </div>
     </section>
   );
