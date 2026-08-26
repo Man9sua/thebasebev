@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
+import { resizedImage } from "@/lib/images";
 
 import styles from "./Bestsellers.module.css";
 
@@ -214,7 +215,9 @@ export function Bestsellers() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     className={styles.shot}
-                    src={product.image}
+                    // The plate is 1170x1703 and this draws it about 450 wide;
+                    // five of them made the homepage an 8.8 MB page.
+                    src={resizedImage(product.image) ?? product.image}
                     alt={`${product.name} base by THE BASE`}
                     // Only the first slide is above the fold on load.
                     loading={slide === 0 ? "eager" : "lazy"}

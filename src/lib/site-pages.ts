@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { getProduct } from "@/data/products";
+import legacyImageVariants from "@/data/legacy-image-variants.json";
 
 export const SITE_ORIGIN = "https://thebasebev.com";
 export const EXPORT_LAST_MODIFIED = new Date("2026-08-20T20:38:39.000Z");
@@ -277,6 +278,58 @@ function replateCatalogCards(source: string, file: string) {
 }
 
 /**
+ * Point the parity pages at the delivery-sized copies of their images.
+ *
+ * `scripts/build-legacy-image-variants.mjs` writes a WebP beside every heavy
+ * original — 87 MB of plates become 7.7 MB — and leaves the originals in place,
+ * because nothing in `public/images` may be renamed. The swap happens here, as
+ * the page is served, so the export on disk stays the parity reference.
+ *
+ * Both the markup and the head assets go through it: more than half the weight
+ * of a product page was `background-image: url(...)` in the export's own inline
+ * CSS, not `<img>` at all.
+ */
+function useResizedLegacyImages(source: string) {
+  return source.replace(
+    /images\/([A-Za-z0-9._-]+\.(?:png|jpe?g|webp))/gi,
+    (whole, file: string) => {
+      const variant = (legacyImageVariants as Record<string, string>)[file];
+      return variant ? `images/${variant}` : whole;
+    },
+  );
+}
+
+/**
+ * Defer the parity pages' images.
+ *
+ * A product page ships 14.7 MB over 97 requests and takes about four seconds to
+ * reach `load` — measured on the deployed Worker — because the export asks for
+ * every image at full size and asks for all of them at once. Nearly all of it
+ * is below the fold: `/milkshake` alone pulls a 1680x1951 plate to show it 596px
+ * wide, and another at 1170x1703 to show it at 390.
+ *
+ * Marking them `lazy` does not make the bytes smaller, but it stops them
+ * competing with the ones the visitor is actually looking at, which is the part
+ * that reads as "the page will not load". The real fix is to serve these at the
+ * size they are displayed; this is the safe half of it, and it changes no URL.
+ *
+ * The first two images are left eager on purpose — one of them is the page's
+ * LCP, and lazy-loading that would trade a slow page for a blank one. Anything
+ * that already declares its own `loading` or `fetchpriority` is left alone,
+ * because the export meant something by it.
+ */
+function deferLegacyImages(source: string) {
+  let seen = 0;
+
+  return source.replace(/<img\b[^>]*>/gi, (tag) => {
+    seen += 1;
+    if (seen <= 2) return tag;
+    if (/\s(?:loading|fetchpriority)\s*=/i.test(tag)) return tag;
+    return tag.replace(/<img\b/i, '<img loading="lazy" decoding="async"');
+  });
+}
+
+/**
  * Tilda shell records dropped from every parity page.
  *
  * The exported body of 37 of the 39 pages carries the whole Tilda site chrome:
@@ -428,6 +481,32 @@ export function getSitePage(route: string): SitePage | undefined {
   const rawBody = extractBody(source, definition.file);
   const usesSharedShell = hasLegacyShell(rawBody);
 
+  /**
+   * What the export is put through on its way out, in order. Written as a list
+   * rather than as nested calls: there are seven passes over the body now, and
+   * read inside-out they stopped being followable.
+   */
+  const applyAll = (input: string, passes: ((value: string) => string)[]) =>
+    passes.reduce((value, pass) => pass(value), input);
+
+  const bodyHtml = applyAll(usesSharedShell ? stripShellRecords(rawBody) : rawBody, [
+    (value) => removeInlineScriptContaining(value, '"twitter:card"'),
+    (value) => removeInlineScriptContaining(value, "/api/tildafeed"),
+    localizeHeroTailwind,
+    removeLegacyAnalyticsRuntime,
+    deferLegacyImages,
+    useResizedLegacyImages,
+    (value) => replateCatalogCards(value, definition.file),
+  ]);
+
+  const headAssetsHtml = applyAll(assetsMatch?.[1] ?? "", [
+    (value) => removeInlineScriptContaining(value, "__tbCanonInit"),
+    (value) => removeInlineScriptContaining(value, "/api/tildafeed"),
+    removeLegacyAnalyticsRuntime,
+    useResizedLegacyImages,
+    (value) => preserveCatalogPrices(value, definition.file),
+  ]);
+
   const result: SitePage = {
     ...definition,
     title: matchFirst(source, /<title[^>]*>([\s\S]*?)<\/title>/i),
@@ -444,32 +523,8 @@ export function getSitePage(route: string): SitePage | undefined {
       image: toAbsoluteUrl(meta(source, "og:image")),
     },
     usesSharedShell,
-    bodyHtml: replateCatalogCards(
-      removeLegacyAnalyticsRuntime(
-        localizeHeroTailwind(
-          removeInlineScriptContaining(
-            removeInlineScriptContaining(
-              usesSharedShell ? stripShellRecords(rawBody) : rawBody,
-              '"twitter:card"',
-            ),
-            "/api/tildafeed",
-          ),
-        ),
-      ),
-      definition.file,
-    ),
-    headAssetsHtml: preserveCatalogPrices(
-      removeLegacyAnalyticsRuntime(
-        removeInlineScriptContaining(
-          removeInlineScriptContaining(
-            assetsMatch?.[1] ?? "",
-            "__tbCanonInit",
-          ),
-          "/api/tildafeed",
-        ),
-      ),
-      definition.file,
-    ),
+    bodyHtml,
+    headAssetsHtml,
   };
 
   pageCache.set(route, result);
