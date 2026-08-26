@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LOADING_SEEN_KEY, isLoadingGateOpen, openLoadingGate } from "./loading-gate";
+import { isLoadingGateOpen, openLoadingGate } from "./loading-gate";
 import styles from "./LoadingScreen.module.css";
 
 /**
@@ -19,9 +19,10 @@ import styles from "./LoadingScreen.module.css";
  * slow image can never strand a visitor behind a blank screen.
  *
  * It renders on the server too, but the CSS keeps it invisible unless the
- * inline gate script has armed it. So no-JS visitors, repeat views in the same
- * tab and reduced-motion all get the page directly, with no flash and nothing
- * to dismiss.
+ * inline gate script has armed it. So no-JS visitors and reduced-motion users
+ * get the page directly, with no flash and nothing to dismiss. Every full
+ * homepage document load is armed; client-side navigation does not execute the
+ * head script again and therefore does not create an extra curtain.
  */
 
 /** Hard ceiling. Nothing may hold the page longer than this. */
@@ -31,8 +32,8 @@ const WATCHED_IMAGES = 3;
 
 const LIFT_MS = 520;
 const OPEN_MS = 1000;
-/** One rendered frame for the completed 100% state before the number lifts. */
-const COMPLETE_FRAME_MS = 48;
+/** A brief readable hold for the completed 100% state before the number lifts. */
+const COMPLETE_FRAME_MS = 320;
 
 type Phase = "counting" | "lifting" | "opening";
 
@@ -95,12 +96,6 @@ export function LoadingScreen() {
               // two read as one gesture rather than a screen leaving and a
               // page starting.
               openLoadingGate();
-              try {
-                sessionStorage.setItem(LOADING_SEEN_KEY, "1");
-              } catch {
-                // Private-mode storage refusals are not worth failing over;
-                // the screen simply shows again on the next navigation.
-              }
             },
             LIFT_MS),
           );

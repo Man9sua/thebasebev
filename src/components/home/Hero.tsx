@@ -286,9 +286,10 @@ export function Hero() {
       <div
         ref={railRef}
         className={`${styles.marquee} ${styles.enterMarquee}`}
+        data-hero-marquee
         aria-label="THE BASE product range"
       >
-        <div className={styles.track}>
+        <div className={styles.track} data-hero-track>
           {PASSES.map((pass) =>
             TILES.map((tile) => (
               <HeroTile key={`${pass.key}-${tile.slug}`} tile={tile} clone={pass.clone} />

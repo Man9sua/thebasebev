@@ -62,6 +62,19 @@ Scene order and content are invariant across viewport widths.
 - Safe fix: keep one controlled active-product index and route arrows, dots,
   autoplay, pointer swipe and desktop scene-wheel steps through the same setter.
 
+### E. Desktop hero motion is accidentally suppressed
+
+- The CSS rail pauses whenever the large marquee viewport is hovered. On a
+  desktop pointer this is the resting cursor area for much of the first screen,
+  so the `Hero.module.css` track appears permanently static.
+- The loading gate is also recorded in `sessionStorage`, suppressing the 0–100
+  intro after the first load in the same tab. A normal desktop refresh therefore
+  does not replay the homepage welcome sequence.
+- Safe fix: keep the marquee moving during ordinary pointer hover, retain a
+  keyboard-focus pause for accessibility, and arm the intro on every full
+  homepage document load. Client-side route changes must not invent a second
+  curtain.
+
 ## State contract
 
 ```text
@@ -91,6 +104,9 @@ headerTheme: hero | light | dark
 ## Acceptance tests
 
 - Initial scene is 0 after the loading gate.
+- A full homepage reload replays the visible 0–100 intro and holds 100 long
+  enough to be perceived before the curtain opens.
+- The hero product rail advances before and during pointer hover on desktop.
 - Desktop wheel moves 0 to 1 and does not skip scenes during its lock.
 - While Scene 1 is active, wheel changes the product before advancing to 2.
 - Reverse wheel restores the previous product and scene.

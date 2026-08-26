@@ -230,8 +230,10 @@
   will-change: transform;
 }
 
-/* Pausing on hover or keyboard focus is what makes the cards clickable. */
-.marquee:hover .track,
+/* A pointer can rest over most of the rail on desktop, so pausing on ordinary
+   hover makes the showcase look permanently broken. Keyboard focus keeps an
+   explicit pause for accessibility while pointer users retain continuous
+   motion and can still click the moving cards. */
 .track:focus-within {
   animation-play-state: paused;
 }

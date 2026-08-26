@@ -31,7 +31,9 @@ async function waitForHome(page, viewport) {
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("[data-home-experience]").waitFor();
   const loader = page.locator("[data-loading-screen]");
-  if (await loader.count()) {
+  const introVisible = await loader.isVisible();
+  check(introVisible, `${viewport}: intro loader was not visible on document load`);
+  if (introVisible) {
     const values = [];
     // Run independently of the screenshot/sample loop. The completed value is
     // deliberately held for only one visual beat, and a remote browser can be
@@ -61,6 +63,61 @@ async function waitForHome(page, viewport) {
       `${viewport}: intro progress moved backwards`,
     );
   }
+  await page.waitForTimeout(250);
+}
+
+async function assertHeroRailMotion(page, viewport) {
+  // The class fallback lets this regression check diagnose an older deployed
+  // build before the stable data hooks themselves reach staging.
+  const track = page.locator("[data-hero-track], [data-hero] [class*='track']").first();
+  const marquee = page.locator("[data-hero-marquee], [data-hero] [class*='marquee']").first();
+  const readMotion = () =>
+    track.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        animationName: style.animationName,
+        playState: style.animationPlayState,
+        transform: style.transform,
+      };
+    });
+
+  const before = await readMotion();
+  await page.waitForTimeout(420);
+  const after = await readMotion();
+  check(before.animationName !== "none", `${viewport}: hero rail animation is missing`);
+  check(after.playState === "running", `${viewport}: hero rail is not running before hover`);
+  check(before.transform !== after.transform, `${viewport}: hero rail did not move before hover`);
+
+  await marquee.hover();
+  const hoverBefore = await readMotion();
+  await page.waitForTimeout(420);
+  const hoverAfter = await readMotion();
+  check(hoverAfter.playState === "running", `${viewport}: hero rail paused on pointer hover`);
+  check(
+    hoverBefore.transform !== hoverAfter.transform,
+    `${viewport}: hero rail stopped moving on pointer hover`,
+  );
+  await page.mouse.move(1, 1);
+}
+
+async function assertReloadIntro(page, viewport) {
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator("[data-home-experience]").waitFor();
+  const loader = page.locator("[data-loading-screen]");
+  const visible = await loader.isVisible();
+  check(visible, `${viewport}: intro loader did not replay on full reload`);
+  if (!visible) return;
+
+  const reachedComplete = await page
+    .waitForFunction(
+      () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") === "100",
+      undefined,
+      { timeout: 7_500 },
+    )
+    .then(() => true, () => false);
+  check(reachedComplete, `${viewport}: reload intro never reached 100%`);
+  if (reachedComplete) await capture(page, viewport, "intro-complete");
+  await loader.waitFor({ state: "hidden", timeout: 4_000 });
   await page.waitForTimeout(250);
 }
 
@@ -119,6 +176,9 @@ async function auditDesktop(browser, width, height) {
   const page = await context.newPage();
   observe(page, viewport);
   await waitForHome(page, viewport);
+
+  if (width === 1440) await assertReloadIntro(page, viewport);
+  await assertHeroRailMotion(page, viewport);
 
   let state = await readState(page);
   check(state.scene === 0 && state.sceneName === "hero", `${viewport}: hero is not initial scene`);
