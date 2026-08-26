@@ -367,12 +367,26 @@ try {
   await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
-  await mobileBurger.click();
-  await mobilePage.waitForTimeout(900);
-  check(
-    await mobilePage.locator("#site-menu").evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
-    "mobile: burger menu did not open",
-  );
+  // The button ships in the server HTML, so it is clickable well before React
+  // has hydrated and an early click is simply dropped. On localhost hydration
+  // wins that race every time; against a deployed Worker it loses it every
+  // time, which read as a broken menu rather than as a test clicking too soon.
+  // So click until the menu answers, giving each click room to finish its
+  // transition before deciding it went nowhere.
+  const mobileMenu = mobilePage.locator("#site-menu");
+  const menuIsOpen = () =>
+    mobileMenu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)");
+  let mobileMenuOpen = false;
+  for (let attempt = 0; attempt < 6 && !mobileMenuOpen; attempt += 1) {
+    // Once it opens the button relabels itself to "Close menu" and this locator
+    // stops matching — which only happens after the loop has already won.
+    await mobileBurger.click({ timeout: 5_000 }).catch(() => {});
+    for (let tick = 0; tick < 8 && !mobileMenuOpen; tick += 1) {
+      await mobilePage.waitForTimeout(250);
+      mobileMenuOpen = await menuIsOpen();
+    }
+  }
+  check(mobileMenuOpen, "mobile: burger menu did not open");
   // Account and the region picker leave the bar on small screens, so the menu
   // is the only place they exist — if they are missing there, they are gone.
   check(
