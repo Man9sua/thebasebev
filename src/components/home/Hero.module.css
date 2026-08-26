@@ -9,9 +9,20 @@
 
 /* ---- photograph ---- */
 
+/* The photograph is a tall frame, not a wide one — it is a crop of a key visual
+   rather than a landscape plate — so a full-bleed box would have to overscan it
+   by half again to fill the viewport, and all that survived was one glass at
+   1.4x. Anchored to the right instead, it plays back at close to its own scale
+   and the whole shot reads. The veil then carries it into the paper the copy
+   sits on, so there is no vertical edge where the box begins. */
 .media {
   position: absolute;
-  inset: 0;
+  inset: 0 0 0 30%;
+  /* The box has a left edge and the veil is angled, so at the foot of the frame
+     the gradient runs out before the edge does and leaves a vertical line. The
+     mask dissolves the edge itself, at every height. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 24%);
   opacity: 0;
   transform: scale(1.06);
   transition:
@@ -29,13 +40,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* The right edge is where the image is allowed to be loudest, so it is
-     anchored there and any crop is taken off the quiet left side. */
-  object-position: right center;
 }
 
 /* Fades the photograph out from the left so the copy sits on paper rather than
-   on syrup. Angled rather than straight so the boundary is never a vertical
+   on glassware. Angled rather than straight so the boundary is never a vertical
    line the eye can find. */
 .veil {
   position: absolute;
@@ -43,10 +51,10 @@
   background: linear-gradient(
     100deg,
     rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 1) 24%,
-    rgba(255, 255, 255, 0.88) 42%,
-    rgba(255, 255, 255, 0.3) 62%,
-    rgba(255, 255, 255, 0) 80%
+    rgba(255, 255, 255, 1) 40%,
+    rgba(255, 255, 255, 0.84) 50%,
+    rgba(255, 255, 255, 0.26) 65%,
+    rgba(255, 255, 255, 0) 78%
   );
   pointer-events: none;
 }
@@ -87,40 +95,17 @@
 
 /* ---- headline ----
  *
- * Two rows: "Premium" and "Bases" sit together as one quiet line of framing,
- * and the product name takes the row below on its own. `order` moves the boxes
- * only — the DOM keeps serving "Premium Cream Latte Bases" in that order, which
- * is the string production ranks on and the one the smoke test reads. */
+ * One word to a row, each in its own mask so it can rise on its own beat. A
+ * grid rather than the reordered flex row this used to be: with the product
+ * name gone from the middle, the three parts already read top to bottom in DOM
+ * order — "Premium Beverage Bases", the string production ranks on and the one
+ * the smoke test reads — so nothing needs moving. */
 .title {
   font-family: var(--tbb-font-display);
   text-transform: uppercase;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: clamp(0.9rem, 2vw, 1.6rem);
+  display: grid;
+  justify-items: start;
   row-gap: clamp(0.2rem, 0.8vw, 0.6rem);
-}
-
-.line:nth-child(1) {
-  order: 1;
-}
-
-.line:nth-child(3) {
-  order: 2;
-}
-
-/* Full basis forces the break, so the product always lands on its own row. */
-.line:nth-child(2) {
-  order: 3;
-  flex-basis: 100%;
-}
-
-/* Binds the two framing words into one phrase. Generated content, so it never
-   reaches `textContent`. */
-.line:nth-child(3) .lineInner::before {
-  content: "·";
-  margin-right: clamp(0.9rem, 2vw, 1.6rem);
-  color: var(--tbb-muted);
 }
 
 /* The mask each part rises out of. The padding/margin pair gives descenders
@@ -152,8 +137,11 @@
   color: var(--tbb-muted);
 }
 
-.titleProduct {
-  font-size: clamp(3rem, min(9vw, 15vh), 8.5rem);
+/* Two big rows now instead of one, so the type is a step smaller than the
+   single-word headline it replaces — otherwise "Beverage / Bases" runs past the
+   fold on a laptop. */
+.titleLead {
+  font-size: clamp(2.9rem, min(8vw, 12vh), 7.5rem);
   font-weight: 700;
   line-height: 0.88;
   letter-spacing: -0.03em;
@@ -226,14 +214,20 @@
 }
 
 @media (max-width: 899px) {
-  /* No room for a side-by-side split: the veil covers the whole frame instead,
-     lightly, and the copy runs the full width over it. */
+  /* No room for a side-by-side split: the photograph takes the whole frame, the
+     veil covers all of it lightly, and the copy runs the full width over it. */
+  .media {
+    inset: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
   .veil {
     background: linear-gradient(
       to bottom,
       rgba(255, 255, 255, 0.94) 0%,
-      rgba(255, 255, 255, 0.82) 45%,
-      rgba(255, 255, 255, 0.55) 100%
+      rgba(255, 255, 255, 0.86) 45%,
+      rgba(255, 255, 255, 0.74) 100%
     );
   }
 

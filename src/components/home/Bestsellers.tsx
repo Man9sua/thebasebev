@@ -2,25 +2,20 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BESTSELLER_SLUGS, getProducts, resolveProductColors } from "@/data/products";
+import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
 
 import styles from "./Bestsellers.module.css";
 
 /**
  * Bestsellers carousel.
  *
- * Composition: copy on the left, the product dead centre, a colour field on the
- * right. The field takes its colour from `product.backgroundColor`, and so does
- * the pack shot's own background — they are sampled from the same artwork — so
- * the shot melts into the field instead of sitting on it as a rectangle.
+ * Composition: copy on the left, the product dead centre, controls on the
+ * right, all of it on a wash of the slide's own `backgroundColor`. The wash is
+ * uniform across the section on purpose — see the note in the stylesheet.
  *
  * Slides are stacked and cross-faded rather than remounted: images stay decoded,
  * and switching is pure opacity/transform plus one background-color transition,
  * which is why it reads as a single movement rather than four separate ones.
- *
- * This section carries the page's `h1`. Production's homepage h1 is the active
- * hero slide's product ("Premium / Cream Latte / Bases"), and keeping that shape
- * here is what preserves it through the redesign.
  */
 
 const PRODUCTS = getProducts(BESTSELLER_SLUGS);
@@ -114,18 +109,11 @@ export function Bestsellers() {
       ref={sectionRef}
       id="bestsellers"
       className={styles.section}
-      style={{
-        ["--field" as string]: resolveProductColors(active).background,
-        // Controls sit on the colour field, and the field can be #f1d1b4 or
-        // #42080d depending on the slide, so their ink is derived per product.
-        ["--on-field" as string]: resolveProductColors(active).text,
-      }}
+      style={{ ["--field" as string]: active.backgroundColor }}
       aria-roledescription="carousel"
       aria-label="Bestsellers"
       onKeyDown={onKeyDown}
     >
-      <span className={styles.field} aria-hidden="true" />
-
       <div className={styles.inner}>
         <div className={styles.copy}>
           <span className={`tbb-label ${styles.eyebrow}`}>Bestsellers</span>
@@ -133,7 +121,7 @@ export function Bestsellers() {
           {/* The affixes are wrapped so the stylesheet can place them: bare text
               nodes cannot be given an order. The spaces between the three parts
               stay, so the heading still reads as one string — "Premium <product>
-              Bases" — which is the wording production ranks on. */}
+              Bases" — rather than three fragments glued together. */}
           <h2 className={styles.heading}>
             <span className={styles.headingAffix}>Premium</span>{" "}
             <span
@@ -141,7 +129,12 @@ export function Bestsellers() {
                 swapping ? styles.swapOut : ""
               }`}
             >
-              {active.name}
+              {/* Soft-hyphenated where the name is one long word, so it breaks
+                  inside the column instead of running out over the artwork. The
+                  hyphen is invisible unless the break is taken, and every other
+                  use of the name — the dots, the CTA, the slide labels — keeps
+                  the plain string. */}
+              {active.hyphenatedName ?? active.name}
             </span>{" "}
             <span className={styles.headingAffix}>Bases</span>
           </h2>

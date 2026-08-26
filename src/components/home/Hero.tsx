@@ -3,33 +3,34 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { whenLoadingGateOpens } from "@/components/site/loading-gate";
-import { HERO_SLUGS, getProducts } from "@/data/products";
 import styles from "./Hero.module.css";
 
 /**
  * Photographic hero.
  *
- * One full-bleed photograph with the copy held on the left against a veil that
- * fades the image out under the type. It replaces the marquee of product cards
- * that stood here before: the rail argued the range, this argues the product.
+ * One photograph running the height of the frame from its right edge, with the
+ * copy held on the left against a veil that fades the image out under the type.
  *
- * The photograph is syrup rather than a factory or a person — it is what THE
- * BASE actually makes, it carries the brand red without printing it, and being
- * abstract it never competes with the headline for the eye.
+ * The copy is about the company, not about one product. A hero built on a
+ * single base put the homepage's biggest words behind a product the visitor had
+ * no reason to have picked yet, and spent the only above-the-fold link on that
+ * one page. It now says what THE BASE makes and sends the visitor to the range.
  *
- * The h1 is deliberately fixed on Cream Latte. Production's homepage h1 is
- * "Premium / Cream Latte / Bases", so the wording is SEO surface, not a design
- * choice: it must be identical in the server HTML and must not rewrite itself
- * afterwards. `HERO_SLUGS[0]` is the single source for which product that is.
+ * The h1 still reads "Premium … Bases" — that is the wording production ranks
+ * on, so it is SEO surface rather than a design choice, and it must be
+ * identical in the server HTML and must not rewrite itself afterwards. Only the
+ * middle of the phrase changed, from a product name to what the company sells.
  */
-
-const FEATURED = getProducts(HERO_SLUGS)[0];
 
 /**
  * Decorative, so it carries an empty alt and its wrapper is hidden from the
  * accessibility tree. Everything the section means is in the copy beside it.
+ *
+ * Cropped from the brand key visual: the original has the slogan and the
+ * lockup printed into it, and the page already carries both — the header logo
+ * and the h1 — so the crop keeps the photograph and drops the artwork.
  */
-const BACKDROP = "/images/tild3239-6265-4237-b866-373233306262__photo-1772986564376-.jpg";
+const BACKDROP = "/images/hero-taste-begins.jpg";
 
 function ArrowIcon() {
   return (
@@ -114,7 +115,7 @@ export function Hero() {
       ref={heroRef}
       className={`${styles.hero} ${ready ? styles.ready : ""}`}
       data-hero
-      aria-label="THE BASE products"
+      aria-label="THE BASE"
     >
       {/*
         The entrance is armed from JavaScript, so without it every staged
@@ -135,7 +136,7 @@ export function Hero() {
       </div>
 
       {/* Fades the photograph out from the left so the copy sits on paper
-          rather than on syrup. Without it the headline fights the image at
+          rather than on glassware. Without it the headline fights the image at
           every scroll position and loses somewhere. */}
       <span className={styles.veil} aria-hidden="true" />
 
@@ -145,12 +146,12 @@ export function Hero() {
             className={`tbb-label ${styles.tagline} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "180ms" }}
           >
-            Dry beverage base
+            Where taste begins
           </span>
 
-          {/* Two rows: "Premium" and "Bases" frame the product name, which
-              takes the row below on its own. The reorder is visual — the DOM
-              keeps serving "Premium Cream Latte Bases" as one string. */}
+          {/* One word to a row, each rising out of its own mask. The DOM still
+              serves "Premium Beverage Bases" as one string, which is the
+              wording production ranks on and the string the smoke test reads. */}
           <h1 className={styles.title}>
             <span className={styles.line}>
               <span
@@ -162,15 +163,15 @@ export function Hero() {
             </span>{" "}
             <span className={styles.line}>
               <span
-                className={`${styles.lineInner} ${styles.titleProduct}`}
+                className={`${styles.lineInner} ${styles.titleLead}`}
                 style={{ ["--enter-delay" as string]: "400ms" }}
               >
-                {FEATURED.name}
+                Beverage
               </span>
             </span>{" "}
             <span className={styles.line}>
               <span
-                className={`${styles.lineInner} ${styles.titleAffix}`}
+                className={`${styles.lineInner} ${styles.titleLead}`}
                 style={{ ["--enter-delay" as string]: "520ms" }}
               >
                 Bases
@@ -182,15 +183,17 @@ export function Hero() {
             className={`${styles.description} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "640ms" }}
           >
-            {FEATURED.description}
+            THE BASE makes dry beverage bases in Dubai — over 600 flavours for
+            cafés, franchises and private label, built from a single scoop so the
+            drink tastes the same in every outlet.
           </p>
 
           <Link
-            href={FEATURED.route}
+            href="/catalog"
             className={`${styles.cta} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "730ms" }}
           >
-            Shop {FEATURED.name}
+            Explore the catalog
             <ArrowIcon />
           </Link>
 
@@ -198,7 +201,7 @@ export function Hero() {
             className={`${styles.badges} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "820ms" }}
           >
-            <span className="tbb-label">From {FEATURED.price ?? "On request"}</span>
+            <span className="tbb-label">600+ flavours</span>
             <span className="tbb-label">Halal certified</span>
             <span className="tbb-label">HACCP audited</span>
             <span className="tbb-label">Made in Dubai</span>

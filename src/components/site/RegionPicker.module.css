@@ -35,14 +35,17 @@
   outline-offset: 2px;
 }
 
-.flag {
-  font-size: 1em;
+/* The country code, and the only mark of identity the control carries — see
+   the note on `Region` for why there is no flag beside it. In the list it is
+   given a fixed width so the names line up under one another. */
+.code {
+  font-weight: 600;
   line-height: 1;
 }
 
-.short {
-  display: none;
-  font-weight: 600;
+.optionName .code {
+  min-width: 1.6rem;
+  color: var(--tbb-muted);
 }
 
 .panel {
@@ -142,12 +145,8 @@
 }
 
 @media (max-width: 1023px) {
-  /* In the bar, the long label gives way to the two-letter code. */
+  /* In the bar, the long label gives way and the code carries the control. */
   .root:not(.compact) .label {
     display: none;
-  }
-
-  .root:not(.compact) .short {
-    display: inline;
   }
 }

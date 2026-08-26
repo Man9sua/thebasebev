@@ -50,11 +50,11 @@ try {
   await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
 
-  // The hero is one full-bleed photograph with the copy held on the left. It
-  // replaced a marquee of product tiles, so the rail assertions are gone; what
-  // still matters is that it is a picture and not video, that the picture
-  // actually covers the frame, and that the CTA still points at the product the
-  // h1 names.
+  // The hero is one photograph anchored to the right edge with the copy held on
+  // the left. It replaced a marquee of product tiles, so the rail assertions are
+  // gone; what still matters is that it is a picture and not video, that the
+  // picture runs the height of the frame and takes the half the copy does not,
+  // and that the one above-the-fold CTA still opens the range.
   const hero = page.locator("section[data-hero]");
   check((await hero.locator("video").count()) === 0, "home: hero must not use video");
   const heroImage = hero.locator("img").first();
@@ -62,16 +62,22 @@ try {
   const heroImageBox = await heroImage.boundingBox();
   const view = page.viewportSize();
   check(
-    !!heroImageBox && heroImageBox.width >= view.width - 1,
-    `home: hero photograph must run full bleed (got ${Math.round(heroImageBox?.width ?? 0)} of ${view.width})`,
+    !!heroImageBox && heroImageBox.x + heroImageBox.width >= view.width - 1,
+    `home: hero photograph must reach the right edge (ends at ${Math.round(
+      (heroImageBox?.x ?? 0) + (heroImageBox?.width ?? 0),
+    )} of ${view.width})`,
+  );
+  check(
+    !!heroImageBox && heroImageBox.width > view.width * 0.5,
+    `home: hero photograph must take at least half the frame (got ${Math.round(heroImageBox?.width ?? 0)} of ${view.width})`,
   );
   check(
     !!heroImageBox && heroImageBox.height > view.height * 0.6,
     `home: hero photograph is too short (${Math.round(heroImageBox?.height ?? 0)}px of ${view.height})`,
   );
   check(
-    (await hero.locator("a[href='/cream-latte']").count()) > 0,
-    "home: hero CTA must still point at the featured product",
+    (await hero.locator("a[href='/catalog']").count()) > 0,
+    "home: hero CTA must point at the catalog",
   );
   // The header must carry the original Tilda lockup, not a text substitute.
   check(
