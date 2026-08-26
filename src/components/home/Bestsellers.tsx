@@ -211,31 +211,47 @@ export function Bestsellers() {
                   />
                 )}
 
-                {product.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    className={styles.shot}
-                    // The plate is 1170x1703 and this draws it about 450 wide;
-                    // five of them made the homepage an 8.8 MB page.
-                    src={resizedImage(product.image) ?? product.image}
-                    alt={`${product.name} base by THE BASE`}
-                    // Only the first slide is above the fold on load.
-                    loading={slide === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    draggable={false}
-                  />
-                ) : (
-                  <span className={styles.shotFallback} aria-hidden="true">
-                    {product.name}
-                  </span>
-                )}
+                {/* The slide's `aria-label` already names the product, so this
+                    is the same name a second time and stays out of the
+                    accessibility tree. */}
+                <span className={styles.name} aria-hidden="true">
+                  {product.name}
+                </span>
 
-                {product.price && (
-                  <span className={styles.price}>
-                    <span className="tbb-label">From</span>
-                    <span className={styles.priceValue}>{product.price}</span>
-                  </span>
-                )}
+                <span className={styles.media}>
+                  {product.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      className={styles.shot}
+                      // The plate is 1170x1703 and this draws it about 450 wide;
+                      // five of them made the homepage an 8.8 MB page.
+                      src={resizedImage(product.image) ?? product.image}
+                      alt={`${product.name} base by THE BASE`}
+                      // Only the first slide is above the fold on load.
+                      loading={slide === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                      draggable={false}
+                    />
+                  ) : (
+                    <span className={styles.shotFallback} aria-hidden="true">
+                      {product.name}
+                    </span>
+                  )}
+                </span>
+
+                {/* Rendered on every slide, shown only on the centre one — the
+                    row has to be there either way or the pack shots would sit
+                    at different heights across the rail. */}
+                <span className={styles.price}>
+                  {product.price ? (
+                    <>
+                      <span className="tbb-label">From</span>
+                      <span className={styles.priceValue}>{product.price}</span>
+                    </>
+                  ) : (
+                    <span className={styles.priceValue}>Price on request</span>
+                  )}
+                </span>
               </div>
             );
           })}
