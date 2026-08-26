@@ -1,0 +1,95 @@
+/**
+ * FAQ accordion.
+ *
+ * The open/close animation is a grid row going from `0fr` to `1fr`. It is the
+ * one way to transition to a height nobody has measured — `height: auto` is not
+ * an animatable value — without reading the answer's height in script on every
+ * open, which would force a layout each time.
+ */
+
+.list {
+  display: grid;
+  border-top: 1px solid var(--tbb-line);
+}
+
+.item {
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+.heading {
+  font: inherit;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: clamp(1.1rem, 2.2vw, 1.6rem) 0;
+  border: 0;
+  background: none;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: left;
+  color: var(--tbb-ink);
+  cursor: pointer;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.trigger:hover {
+  color: color-mix(in srgb, var(--tile, var(--tbb-accent)) 70%, var(--tbb-ink));
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  color: var(--tbb-ink);
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.icon[data-open="true"] {
+  transform: rotate(180deg);
+  border-color: transparent;
+  background: color-mix(in srgb, var(--tile, var(--tbb-accent)) 22%, var(--tbb-paper));
+}
+
+.answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.answer[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+/* The clipping has to sit on the row itself: anything the answer holds — the
+   paragraph's own bottom spacing included — is measured into the row unless
+   this element hides it. */
+.answerInner {
+  overflow: hidden;
+}
+
+.answerBody {
+  max-width: 68ch;
+  padding-bottom: clamp(1.1rem, 2.2vw, 1.6rem);
+  font-size: var(--tbb-text-body);
+  line-height: 1.6;
+  color: var(--tbb-ink-soft);
+}

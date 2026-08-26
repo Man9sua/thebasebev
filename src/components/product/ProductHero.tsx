@@ -104,8 +104,15 @@ export function ProductHero({ product }: { product: Product }) {
               )}
             </p>
 
+            {/*
+              Both hrefs are popup hooks the export still owns — `#form` is the
+              partner enquiry, `#sample` the free-sample form — and they are the
+              two the original buttons pointed at. The first was `#order` here,
+              which no page has a hook for, so the page's primary call to action
+              did nothing at all.
+            */}
             <div className={styles.actions}>
-              <a href="#order" className={styles.primary}>
+              <a href="#form" className={styles.primary}>
                 Place order
                 <Arrow />
               </a>

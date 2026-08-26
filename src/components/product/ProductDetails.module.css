@@ -1,0 +1,330 @@
+/**
+ * Product detail sections.
+ *
+ * Four bands of the same rhythm, alternating between paper and a wash of the
+ * product's own colour, so the page reads as one surface continuing under the
+ * hero rather than as five blocks stacked. `--tile` is the product colour and
+ * is the only colour any of this names; everything else is a token.
+ */
+
+.root {
+  position: relative;
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+}
+
+.section {
+  padding: clamp(3rem, 7vw, 6rem) 0;
+  /* The tab bar is sticky, so an anchored section has to stop below it rather
+     than under it. */
+  scroll-margin-top: calc(var(--tbb-header-h) + 3.5rem);
+}
+
+/* Every other band, mixed down far enough that the ink on it is unchanged. */
+.tinted {
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 9%, var(--tbb-paper));
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+}
+
+.title {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h2);
+  font-weight: 700;
+  line-height: var(--tbb-leading-tight);
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.75rem);
+}
+
+/* ---- the four figures ---- */
+
+.specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin: 0;
+}
+
+.spec {
+  display: grid;
+  justify-items: start;
+  row-gap: 0.4rem;
+  padding-top: clamp(0.9rem, 1.8vw, 1.4rem);
+  border-top: 2px solid var(--tbb-ink);
+}
+
+.specIcon {
+  width: clamp(2.25rem, 3.4vw, 2.75rem);
+  height: auto;
+  margin-bottom: 0.4rem;
+}
+
+.specLabel {
+  color: var(--tbb-muted);
+}
+
+.specValue {
+  margin: 0;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.15rem, 1.9vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--tbb-ink);
+}
+
+/* ---- the comparative table ---- */
+
+.tableWrap {
+  overflow-x: auto;
+  /* A table narrower than its box should not be stretched to fill it, but a
+     wider one must be allowed to scroll — hence the wrapper, not `width`. */
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th,
+.table td {
+  padding: clamp(0.7rem, 1.4vw, 1rem) clamp(0.75rem, 1.6vw, 1.25rem);
+  border-bottom: 1px solid var(--tbb-line);
+  vertical-align: middle;
+}
+
+.table thead th {
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-muted);
+  border-bottom-color: var(--tbb-ink);
+  white-space: nowrap;
+}
+
+.table tbody th {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-body);
+  font-weight: 600;
+  color: var(--tbb-ink);
+}
+
+.table tbody td {
+  font-size: var(--tbb-text-body);
+  color: var(--tbb-ink-soft);
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* The column that is us. Tinted the product's colour end to end so the row you
+   are meant to compare against stands out without a second type treatment. */
+.table [data-ours="true"] {
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 16%, var(--tbb-paper));
+  color: var(--tbb-ink);
+}
+
+.table thead [data-ours="true"] {
+  color: var(--tbb-ink);
+}
+
+.mark {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.yes {
+  color: #52a866;
+}
+
+.no {
+  color: #e70000;
+}
+
+/* ---- flavours ---- */
+
+.flavorLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+/* Filled down the first column and then down the second, which is how the
+   block was laid out — `--rows` is how tall each column is. */
+.flavors {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(var(--columns, 1), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows, 1), auto);
+  gap: 0 clamp(1.5rem, 3vw, 3rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flavor {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--tbb-line);
+  /* Short enough that a column of twenty has finished before the reader has
+     scrolled past it; the slow site-wide settle would still be running. */
+  --reveal-dur: var(--tbb-dur);
+}
+
+.fromLeft {
+  flex-direction: row;
+  text-align: left;
+}
+
+/* The right-hand column mirrors: its rule sits on the outer edge and draws
+   inwards, so the two columns open away from the middle of the page. */
+.fromRight {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.flavorRule {
+  flex: none;
+  width: clamp(1.25rem, 3vw, 3rem);
+  height: 1px;
+  background: var(--tile, var(--tbb-accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--tbb-dur) var(--tbb-ease) var(--row-delay, 0ms);
+}
+
+.fromRight .flavorRule {
+  transform-origin: right;
+}
+
+.flavor[data-revealed="true"] .flavorRule {
+  transform: scaleX(1);
+}
+
+.flavorName {
+  font-size: var(--tbb-text-body);
+  color: var(--tbb-ink);
+}
+
+.custom {
+  position: sticky;
+  top: calc(var(--tbb-header-h) + 5rem);
+  display: grid;
+  justify-items: start;
+  row-gap: 1rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 18%, var(--tbb-paper));
+}
+
+.customTitle {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h3);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.customNote {
+  font-size: var(--tbb-text-body);
+  line-height: 1.55;
+  color: var(--tbb-ink-soft);
+}
+
+.customCta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-paper);
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.customCta:hover {
+  transform: translate3d(0, -2px, 0);
+}
+
+/* ---- usage ---- */
+
+.usageLines {
+  display: grid;
+  row-gap: 0.4rem;
+  max-width: 60ch;
+}
+
+.usageLine {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--tbb-ink-soft);
+}
+
+.usageImage {
+  width: 100%;
+  max-width: 62rem;
+  height: auto;
+  margin-top: clamp(1.75rem, 4vw, 3rem);
+}
+
+@media (max-width: 899px) {
+  .flavorLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .custom {
+    position: static;
+  }
+}
+
+@media (max-width: 599px) {
+  /* One column of flavours on a phone: the names are longer than half of a
+     360px screen. The rules all run from the left; the second half of the list
+     still arrives from the right, which is what closes the column. */
+  .flavors {
+    grid-auto-flow: row;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+
+  /* The diagram is drawn a thousand pixels wide and its labels do not reflow;
+     scaled to a phone it is unreadable, so it keeps a legible width and scrolls
+     inside its own box, the same as the table above it. */
+  .usageFigure {
+    overflow-x: auto;
+  }
+
+  .usageImage {
+    min-width: 30rem;
+  }
+
+  .fromRight {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .fromRight .flavorRule {
+    transform-origin: left;
+  }
+}

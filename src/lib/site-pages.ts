@@ -71,14 +71,39 @@ const tildaProductPaths = [
   "975474893862-matcha",
 ];
 
-type ProductDetail = {
+export type ProductSpec = { label: string; value: string; icon?: string };
+
+/**
+ * The comparative table, rebuilt from the coordinates the zero block drew it
+ * at. A cell is a figure, a tick or a cross, or nothing at all.
+ */
+export type ProductCalculation = {
+  title: string;
+  columns: string[];
+  rows: (string | boolean | null)[][];
+};
+
+export type ProductDetail = {
   h1: string | null;
-  heroRecord: string | null;
+  /**
+   * The exported records React now renders itself, by name. Every one of them
+   * is cut out of the served markup — see `dropReplacedRecords` — so the page
+   * never carries both versions of the same copy.
+   */
+  records: Record<string, string | null>;
   tagline: string | null;
   weight: string | null;
   description: string[];
   features: { label: string; value: string }[];
-  specs: { label: string; value: string }[];
+  specs: ProductSpec[];
+  calculation: ProductCalculation | null;
+  flavors: {
+    note: string | null;
+    cta: { label: string; href: string } | null;
+    items: string[];
+  } | null;
+  usage: { lines: string[]; image: string | null } | null;
+  faq: { question: string; answer: string }[];
 };
 
 export const productDetails = productDetailsJson as Record<string, ProductDetail>;
@@ -298,27 +323,14 @@ function replateCatalogCards(source: string, file: string) {
 }
 
 /**
- * Drop the product pages' hero block.
+ * Cut one record out of the served markup.
  *
- * It is a Tilda "zero block": name, tagline, weight, both paragraphs, the price
- * buttons and the four selling points are all absolutely positioned elements
- * whose coordinates are applied by script at runtime. That script does not
- * finish here, so the block occupies its full 949px and paints nothing — the
- * blank coloured rectangle at the top of every product page.
- *
- * `ProductHero` renders the same copy as ordinary markup instead, so the block
- * is removed rather than hidden: leaving it would put every line of the hero in
- * the document twice, including a second `h1`.
- *
- * `scripts/build-product-details.mjs` records which block that is per product.
- * Removal counts `<div>` depth from the opening tag, because the block is a
+ * Depth-counted from the opening tag rather than matched: a Tilda record is a
  * couple of hundred kilobytes of nested markup and a regex cannot see its end.
+ * Unbalanced markup leaves the page exactly as exported rather than cutting it
+ * off at the wrong place.
  */
-function dropProductHero(source: string, file: string) {
-  const slug = Object.entries(PRODUCT_PAGE_FILES).find(([, value]) => value === file)?.[0];
-  const recordId = slug ? productDetails[slug]?.heroRecord : null;
-  if (!recordId) return source;
-
+function dropRecord(source: string, recordId: string) {
   const start = source.search(new RegExp(`<div[^>]*id="${recordId}"`));
   if (start < 0) return source;
 
@@ -331,9 +343,33 @@ function dropProductHero(source: string, file: string) {
     if (depth === 0) return source.slice(0, start) + source.slice(tags.lastIndex);
   }
 
-  // Unbalanced markup: leave the page exactly as exported rather than cut it
-  // off at the wrong place.
   return source;
+}
+
+/**
+ * Drop every block on a product page that React now renders itself.
+ *
+ * All of them are Tilda "zero blocks": the hero, the four figures, the
+ * comparative table, the flavour list and the usage note are absolutely
+ * positioned atoms on a fixed-height artboard, held back behind Tilda's own
+ * scroll-animation script — which is why the top of every product page was a
+ * blank coloured rectangle. The tab strip above them scrolled sideways and
+ * switched nothing, and the FAQ was Tilda's own accordion.
+ *
+ * They are removed rather than hidden. Left in place they would put every line
+ * of the page in the document twice, including a second `h1` and a second copy
+ * of each question — and `audit:seo-parity` reads the first `h1` it finds.
+ *
+ * `scripts/build-product-details.mjs` records which block is which per product.
+ */
+function dropReplacedRecords(source: string, file: string) {
+  const slug = Object.entries(PRODUCT_PAGE_FILES).find(([, value]) => value === file)?.[0];
+  const records = slug ? productDetails[slug]?.records : null;
+  if (!records) return source;
+
+  return Object.values(records)
+    .filter((recordId): recordId is string => Boolean(recordId))
+    .reduce(dropRecord, source);
 }
 
 /**
@@ -553,7 +589,7 @@ export function getSitePage(route: string): SitePage | undefined {
     (value) => removeInlineScriptContaining(value, "/api/tildafeed"),
     localizeHeroTailwind,
     removeLegacyAnalyticsRuntime,
-    (value) => dropProductHero(value, definition.file),
+    (value) => dropReplacedRecords(value, definition.file),
     deferLegacyImages,
     useResizedLegacyImages,
     (value) => replateCatalogCards(value, definition.file),
