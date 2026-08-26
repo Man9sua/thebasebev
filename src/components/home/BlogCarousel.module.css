@@ -231,30 +231,3 @@
     width: min(78vw, 20rem);
   }
 }
-
-/* Wide screens keep the same heading-then-rail hierarchy as mobile. More room
-   reveals neighbouring card edges instead of turning the carousel into a row. */
-@media (min-width: 768px) {
-  .section {
-    min-height: 100vh;
-    min-height: 100svh;
-    padding: clamp(2.75rem, 6vh, 4.5rem) 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.25rem;
-  }
-
-  .controls {
-    align-self: flex-end;
-  }
-
-  .card {
-    width: clamp(20rem, 29vw, 25rem);
-  }
-}

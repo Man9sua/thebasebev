@@ -24,6 +24,10 @@ const PRODUCTS = getProducts(BESTSELLER_SLUGS);
 const AUTOPLAY_MS = 7000;
 /** Slots either side of the centre card, so the rail wraps symmetrically. */
 const HALF = Math.floor(PRODUCTS.length / 2);
+const SWIPE_THRESHOLD_PX = 44;
+const DRAG_INTENT_PX = 10;
+const TRACKPAD_IDLE_MS = 180;
+const TRACKPAD_LOCK_MS = 420;
 
 function Arrow({ back = false }: { back?: boolean }) {
   return (
@@ -101,53 +105,97 @@ export function Bestsellers() {
   const completeSwipe = (startX: number, startY: number, endX: number, endY: number) => {
     const deltaX = endX - startX;
     const deltaY = endY - startY;
-    if (Math.abs(deltaX) < 44 || Math.abs(deltaX) <= Math.abs(deltaY)) return false;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      return false;
+    }
     goTo(indexRef.current + (deltaX < 0 ? 1 : -1));
     return true;
   };
 
+  const stageRef = useRef<HTMLDivElement>(null);
   const swipe = useRef({ active: false, pointerId: 0, startX: 0, startY: 0 });
-  const touch = useRef({ active: false, startX: 0, startY: 0 });
+  const wheel = useRef({ deltaX: 0, lastAt: 0, lockedUntil: 0 });
   const suppressClick = useRef(false);
+
+  // A horizontal two-finger trackpad gesture has no pointer events. Listen
+  // natively so it can be cancelled without React's passive wheel delegation,
+  // while a vertical wheel remains ordinary page scroll.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const onWheel = (event: WheelEvent) => {
+      const scale = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? window.innerWidth
+          : 1;
+      const deltaX = event.deltaX * scale;
+      const deltaY = event.deltaY * scale;
+
+      if (Math.abs(deltaX) < 4 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      event.preventDefault();
+
+      const now = performance.now();
+      if (now - wheel.current.lastAt > TRACKPAD_IDLE_MS) wheel.current.deltaX = 0;
+      wheel.current.lastAt = now;
+      if (now < wheel.current.lockedUntil) return;
+
+      wheel.current.deltaX += deltaX;
+      if (Math.abs(wheel.current.deltaX) < SWIPE_THRESHOLD_PX) return;
+
+      goTo(indexRef.current + (wheel.current.deltaX > 0 ? 1 : -1));
+      wheel.current = { deltaX: 0, lastAt: now, lockedUntil: now + TRACKPAD_LOCK_MS };
+    };
+
+    stage.addEventListener("wheel", onWheel, { passive: false });
+    return () => stage.removeEventListener("wheel", onWheel);
+  }, [goTo]);
+
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!event.isPrimary || event.pointerType === "touch") return;
+    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
+    suppressClick.current = false;
     swipe.current = {
       active: true,
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
     };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const gesture = swipe.current;
+    if (!gesture.active || gesture.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+    if (Math.abs(deltaX) > DRAG_INTENT_PX && Math.abs(deltaX) > Math.abs(deltaY)) {
+      suppressClick.current = true;
+      event.preventDefault();
+    }
   };
   const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
     const gesture = swipe.current;
     swipe.current = { ...gesture, active: false };
     if (!gesture.active || gesture.pointerId !== event.pointerId) return;
 
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
     suppressClick.current = completeSwipe(
       gesture.startX,
       gesture.startY,
       event.clientX,
       event.clientY,
-    );
+    ) || suppressClick.current;
   };
 
-  const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (event.touches.length !== 1) return;
-    const point = event.touches[0];
-    touch.current = { active: true, startX: point.clientX, startY: point.clientY };
-  };
-
-  const onTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
-    const gesture = touch.current;
-    touch.current = { ...gesture, active: false };
-    const point = event.changedTouches[0];
-    if (!gesture.active || !point) return;
-    suppressClick.current = completeSwipe(
-      gesture.startX,
-      gesture.startY,
-      point.clientX,
-      point.clientY,
-    );
+  const onPointerCancel = (event: React.PointerEvent<HTMLDivElement>) => {
+    swipe.current = { ...swipe.current, active: false };
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
   };
 
   return (
@@ -218,12 +266,12 @@ export function Bestsellers() {
         </div>
 
         <div
+          ref={stageRef}
           className={styles.stage}
           aria-live="polite"
           onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
           onDragStart={(event) => event.preventDefault()}
           onClickCapture={(event) => {
             if (!suppressClick.current) return;
@@ -231,12 +279,7 @@ export function Bestsellers() {
             event.preventDefault();
             event.stopPropagation();
           }}
-          onPointerCancel={() => {
-            swipe.current = { ...swipe.current, active: false };
-          }}
-          onTouchCancel={() => {
-            touch.current = { ...touch.current, active: false };
-          }}
+          onPointerCancel={onPointerCancel}
         >
           {PRODUCTS.map((product, slide) => {
             // Signed distance from the centre, wrapped so the rail is a loop.

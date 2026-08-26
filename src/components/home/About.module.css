@@ -5,7 +5,6 @@
   padding: 0 0 var(--tbb-section);
   overflow: clip;
 }
-
 /* ---- film ---- */
 
 /* `--fade` is how much of the frame is given over to the dissolve. It is read
@@ -238,39 +237,5 @@
   .aside {
     text-align: left;
     justify-items: start;
-  }
-}
-
-/* Keep the mobile plate-first hierarchy on wide screens. */
-@media (min-width: 1024px) {
-  .section {
-    min-height: 100vh;
-    min-height: 100svh;
-    display: flex;
-    align-items: center;
-    padding: clamp(2.5rem, 5vh, 4rem) 0;
-  }
-
-  .inner {
-    max-width: 54rem;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.5rem, 3vh, 2.25rem);
-  }
-
-  .plates {
-    order: -1;
-    width: min(100%, 38rem);
-    aspect-ratio: 1 / 0.56;
-    margin: 0 auto;
-  }
-
-  .copy {
-    width: min(100%, 48rem);
-    max-width: 48rem;
-    margin: 0 auto;
-  }
-
-  .title {
-    max-width: 15ch;
   }
 }

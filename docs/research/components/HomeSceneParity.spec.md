@@ -1,126 +1,75 @@
-# Homepage scene parity specification
+# Homepage responsive and interaction specification
 
-## Overview
+## Stable content order
 
-- **Target files:** `src/components/home/HomeExperience.tsx` and existing home sections.
-- **Reference:** current homepage at `390x844`.
-- **Interaction model:** one ordered scroll-driven scene system, with native touch
-  scrolling and horizontal product swipe on touch, plus debounced scene/product
-  stepping for wheel, trackpad and keyboard input.
-- **QA artifacts:** ignored `.audit-artifacts/home-sequence/` and
-  `.visual-artifacts/home-scenes/` screenshots.
+The public homepage keeps one semantic section order at every viewport:
 
-## Audited mobile sequence
+1. Real-signal `0-100` loading curtain.
+2. Cream Latte product hero.
+3. Bestsellers product carousel.
+4. Manufacturing collage.
+5. Reading carousel.
+6. Company/About section.
+7. Shared footer.
 
-| State | Surface | Content and behavior |
-| --- | --- | --- |
-| Intro | Loading curtain | Real-signal `0%` to `100%`, then one clean hero reveal. |
-| Scene 0 | Hero | Cream Latte hierarchy, CTA, badges and moving product-card rail. |
-| Scene 1 | Bestsellers | Product stage first, copy second, controls third; one active product with adjacent cards. |
-| Scene 2 | Manufacturing collage | Eyebrow, heading and lede before the asymmetric six-column image sequence. |
-| Scene 3 | Reading | Heading before a native horizontal snap rail with one card and the next card edge visible. |
-| Scene 4 | About | Overlapping image plates before company copy, stats and CTA. |
-| Scene 5 | Footer | Dark shared footer; header changes to its dark-surface state. |
+The browser owns vertical document scrolling. Animations enhance the sections
+but must never be required for their content to exist or remain visible.
 
-Scene order and content are invariant across viewport widths.
+## Desktop composition
 
-## Root causes
+Desktop is not the mobile layout enlarged inside a narrow centred column.
+Starting at `1024px`, preserve the designed wide composition:
 
-### A. Bestsellers desktop composition diverges
+- Bestsellers is a three-column `copy / product stage / controls` grid.
+- The manufacturing collage uses its asymmetric twelve-column mosaic.
+- The Reading heading and arrow controls share one horizontal row.
+- The About body uses its two-column editorial layout.
+- The footer uses `brand / products / company / resources` columns.
 
-- Base CSS uses a three-column `copy / stage / controls` grid and a right-hand
-  colour field.
-- The correct vertical `stage / copy / controls` composition exists only below
-  `1024px`.
-- Safe fix: make the vertical composition the base at every width; desktop may
-  increase stage width, type size and visible adjacent-card area only.
+Do not add `min-width` media rules that replace these grids with `1fr` or cap
+the entire section at a mobile reading width. Required desktop references are
+`1366x768`, `1440x900` and `1920x1080`.
 
-### B. About and Reading desktop compositions diverge
+## Mobile composition
 
-- About is two columns on desktop, while mobile correctly puts the image plates
-  before the copy.
-- Reading exposes four narrow cards and a side-by-side header on desktop, while
-  mobile is a horizontal rail with one active visual and a partial neighbour.
-- Safe fix: preserve mobile DOM order and flex/grid direction at all widths;
-  change dimensions and spacing only.
+Below the existing component breakpoints, the same content is deliberately
+restacked for a narrow screen. Bestsellers becomes `stage / copy / controls`,
+the collage uses six columns, About becomes one column and the footer collapses
+progressively. Required mobile references are `320`, `375`, `390` and `430px`.
 
-### C. There is no shared scene state machine
+## Bestsellers input contract
 
-- `StackReveal` supplies the same sticky surface transition, but active scene,
-  active product and transition lock are not coordinated.
-- `SmoothScroll` handles desktop wheel as continuous document movement and is
-  disabled for coarse pointers; the header runs separate observers.
-- Safe fix: one `HomeExperience` client owns `activeScene`, `activeProduct` and
-  `isTransitioning`. Input adapters call the same transition functions. Mobile
-  keeps native vertical touch scrolling; desktop wheel/trackpad and keyboard
-  step the same DOM scenes.
+One `goTo` function owns the active product. It is used by:
 
-### D. Product interaction is not input-parity complete
+- previous/next buttons;
+- product dots;
+- autoplay while the section is visible;
+- keyboard left/right arrows;
+- pointer drag in both directions;
+- touch swipe in both directions;
+- dominant horizontal trackpad wheel gestures in both directions.
 
-- Product arrows, dots and autoplay share `goTo`, but horizontal swipe is not
-  implemented.
-- Safe fix: keep one controlled active-product index and route arrows, dots,
-  autoplay, pointer swipe and desktop scene-wheel steps through the same setter.
+Vertical touch and wheel input must continue to scroll the document. A drag
+must suppress the underlying product click, while a click without movement must
+still select the card.
 
-### E. Desktop hero motion is accidentally suppressed
+## Loading and accessibility
 
-- The CSS rail pauses whenever the large marquee viewport is hovered. On a
-  desktop pointer this is the resting cursor area for much of the first screen,
-  so the `Hero.module.css` track appears permanently static.
-- The loading gate is also recorded in `sessionStorage`, suppressing the 0–100
-  intro after the first load in the same tab. A normal desktop refresh therefore
-  does not replay the homepage welcome sequence.
-- Safe fix: keep the marquee moving during ordinary pointer hover, retain a
-  keyboard-focus pause for accessibility, and arm the intro on every full
-  homepage document load. Client-side route changes must not invent a second
-  curtain.
+- A full homepage document load exposes progress from `0` through `100` before
+  revealing the Hero without an extra blank delay.
+- Critical Hero media is eager; below-the-fold media remains lazy.
+- `prefers-reduced-motion` and no-JavaScript paths expose readable content.
+- Exactly one carousel slide is active to assistive technology.
+- Every verified viewport has no document-level horizontal overflow.
 
-### F. Homepage link prefetch overloads the preview Worker
+## Automated regression contract
 
-- As the scene smoke exposes later sections, Next automatically requests many
-  internal routes as speculative RSC payloads. The Workers Free CPU budget can
-  reject that burst even though direct HTML requests use the static fast path.
-- Safe fix: disable speculative prefetch for links rendered by the homepage and
-  shared shell. Navigation remains functional and fetches the requested static
-  document only after explicit user intent.
+`npm run smoke:home-scenes -- <url>` must verify:
 
-## State contract
-
-```text
-activeScene: 0..5
-activeProduct: 0..N-1
-isTransitioning: boolean
-headerTheme: hero | light | dark
-```
-
-- Scene 0 uses transparent hero header treatment.
-- Scenes 1-4 use the light solid treatment.
-- Scene 5 uses the dark footer treatment.
-- At Scene 1, forward/back wheel steps active products before leaving the scene.
-- At first/last scene, outward wheel input is released instead of trapped.
-- `prefers-reduced-motion` keeps content visible and uses native non-animated
-  navigation without forcing scene transitions.
-
-## Responsive contract
-
-- Breakpoints may change only sizes, width, gaps, padding and the amount of a
-  neighbouring card visible.
-- Breakpoints must not reorder scenes, replace a carousel with a grid, hide a
-  scene, or disable the shared scene observer/state.
-- Mobile `390x844` remains the regression reference.
-- Required desktop references: `1440x900` and `1920x1080`.
-
-## Acceptance tests
-
-- Initial scene is 0 after the loading gate.
-- A full homepage reload replays the visible 0–100 intro and holds 100 long
-  enough to be perceived before the curtain opens.
-- The hero product rail advances before and during pointer hover on desktop.
-- Desktop wheel moves 0 to 1 and does not skip scenes during its lock.
-- While Scene 1 is active, wheel changes the product before advancing to 2.
-- Reverse wheel restores the previous product and scene.
-- Keyboard arrows use the same transitions.
-- Horizontal pointer/touch swipe changes the active product.
-- Native mobile vertical scroll updates the same `activeScene` state.
-- Final scene activates the footer header theme.
-- Every state has zero document-level horizontal overflow.
+- desktop grid column counts listed above;
+- pointer and trackpad movement next and previous on desktop;
+- touch swipe next and previous on mobile;
+- active product image decoding;
+- intro completion, natural document scroll and section visibility;
+- zero horizontal document overflow;
+- screenshots at `390x844`, `1440x900` and `1920x1080`.

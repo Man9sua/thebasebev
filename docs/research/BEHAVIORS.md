@@ -22,16 +22,13 @@ is kept in the ignored `.audit-artifacts/` directory.
   Tilda carousel. The first viewport contains the Cream Latte copy and a
   continuously moving product-card rail; the remaining sections use stacked
   scroll transitions.
-- Mobile `390x844` is the behavior and composition reference. The canonical
-  order is Hero, Bestsellers, manufacturing collage, Reading, About and Footer.
-  Desktop uses the same vertical hierarchy and state machine; breakpoints may
-  scale spacing and expose more of adjacent carousel items, but may not replace
-  the mobile composition with columns or a static row.
-- One homepage controller owns `activeScene`, `activeProduct` and the transition
-  lock. Native mobile scrolling, horizontal product swipe, desktop wheel,
-  trackpad and keyboard input all update that shared state.
-- In Bestsellers, wheel input cycles products before leaving the scene. At the
-  first and last scenes outward input is released, so the page is not a trap.
+- The canonical content order is Hero, Bestsellers, manufacturing collage,
+  Reading, About and Footer. Mobile restacks that content; desktop retains the
+  wide three-column Bestsellers, twelve-column collage, two-column About and
+  four-column footer instead of squeezing them into the mobile measure.
+- The browser owns vertical document scrolling. Bestsellers has one active
+  product state shared by arrows, dots, autoplay, keyboard, bidirectional
+  pointer/touch swipes and dominant horizontal trackpad gestures.
 - The 0-100 intro is shown once per tab. Progress is derived from fonts,
   document readiness and the first three hero images. It has a safety timeout,
   but no artificial minimum delay.

@@ -120,7 +120,7 @@ async function assertCarousel(page, viewport, swipe) {
   const initial = await carousel.getAttribute("data-active-product-index");
 
   if (swipe) {
-    await swipe(carousel);
+    await swipe(carousel, "next");
   } else {
     await carousel.getByRole("button", { name: "Next product" }).click();
   }
@@ -134,6 +134,19 @@ async function assertCarousel(page, viewport, swipe) {
     )
     .then(() => true, () => false);
   check(changed, `${viewport}: bestseller interaction did not change the active product`);
+
+  if (swipe) {
+    await swipe(carousel, "previous");
+    const returned = await page
+      .waitForFunction(
+        (expected) =>
+          document.querySelector("#bestsellers")?.getAttribute("data-active-product-index") === expected,
+        initial,
+        { timeout: 2_000 },
+      )
+      .then(() => true, () => false);
+    check(returned, `${viewport}: reverse bestseller swipe did not restore the product`);
+  }
   check(
     (await carousel.locator("[aria-hidden='false'][aria-roledescription='slide']").count()) === 1,
     `${viewport}: carousel must expose exactly one active slide`,
@@ -173,6 +186,66 @@ async function assertSections(page, viewport) {
   check(overflow <= 1, `${viewport}: horizontal document overflow ${overflow}px`);
 }
 
+async function assertDesktopComposition(page, viewport) {
+  const metrics = await page.evaluate(() => {
+    const columnCount = (element) => {
+      if (!(element instanceof HTMLElement)) return 0;
+      return getComputedStyle(element)
+        .gridTemplateColumns.trim()
+        .split(/\s+/)
+        .filter(Boolean).length;
+    };
+    const width = (element) =>
+      element instanceof HTMLElement ? element.getBoundingClientRect().width : 0;
+
+    const bestsellers = document.querySelector("#bestsellers");
+    const bestsellersInner = bestsellers?.querySelector(":scope > div");
+    const collage = document.querySelector("section[aria-labelledby='collage-title']");
+    const collageGrid = collage?.querySelector(":scope > div > div:nth-child(2)");
+    const reading = document.querySelector("section[aria-labelledby='reading-title']");
+    const readingHead = reading?.querySelector(":scope > div");
+    const about = document.querySelector("section[aria-labelledby='about-title']");
+    const aboutBody = about?.querySelector(":scope > div:nth-child(2) > div:nth-child(2)");
+    const footerTop = document.querySelector("footer > div > div");
+
+    return {
+      viewportWidth: document.documentElement.clientWidth,
+      bestsellersColumns: columnCount(bestsellersInner),
+      bestsellersWidth: width(bestsellersInner),
+      collageColumns: columnCount(collageGrid),
+      readingDirection:
+        readingHead instanceof HTMLElement ? getComputedStyle(readingHead).flexDirection : "",
+      aboutColumns: columnCount(aboutBody),
+      footerColumns: columnCount(footerTop),
+    };
+  });
+
+  check(
+    metrics.bestsellersColumns === 3,
+    `${viewport}: Bestsellers collapsed to ${metrics.bestsellersColumns} desktop column(s)`,
+  );
+  check(
+    metrics.bestsellersWidth >= metrics.viewportWidth * 0.78,
+    `${viewport}: Bestsellers desktop body is squeezed to ${Math.round(metrics.bestsellersWidth)}px`,
+  );
+  check(
+    metrics.collageColumns === 12,
+    `${viewport}: manufacturing collage is not a 12-column desktop grid`,
+  );
+  check(
+    metrics.readingDirection === "row",
+    `${viewport}: Reading header retained the mobile column layout`,
+  );
+  check(
+    metrics.aboutColumns === 2,
+    `${viewport}: About body retained the mobile single-column layout`,
+  );
+  check(
+    metrics.footerColumns === 4,
+    `${viewport}: footer retained the mobile single-column layout`,
+  );
+}
+
 async function touchDrag(page, from, to) {
   const session = await page.context().newCDPSession(page);
   const point = (x, y) => ({ x, y, id: 1, radiusX: 5, radiusY: 5, force: 1 });
@@ -200,6 +273,52 @@ async function touchDrag(page, from, to) {
   }
 }
 
+async function pointerSwipe(page, carousel, direction) {
+  const stage = await carousel.locator("[aria-live='polite']").boundingBox();
+  check(!!stage, "desktop: Bestsellers pointer swipe stage missing");
+  if (!stage) return;
+
+  const fromX = stage.x + stage.width * (direction === "next" ? 0.78 : 0.22);
+  const toX = stage.x + stage.width * (direction === "next" ? 0.22 : 0.78);
+  const y = stage.y + stage.height * 0.5;
+  await page.mouse.move(fromX, y);
+  await page.mouse.down();
+  await page.mouse.move(toX, y, { steps: 8 });
+  await page.mouse.up();
+}
+
+async function assertTrackpadCarousel(page, viewport) {
+  const carousel = page.locator("#bestsellers");
+  const stage = await carousel.locator("[aria-live='polite']").boundingBox();
+  check(!!stage, `${viewport}: Bestsellers trackpad stage missing`);
+  if (!stage) return;
+
+  const initial = await carousel.getAttribute("data-active-product-index");
+  await page.mouse.move(stage.x + stage.width / 2, stage.y + stage.height / 2);
+  await page.mouse.wheel(90, 0);
+  const advanced = await page
+    .waitForFunction(
+      (previous) =>
+        document.querySelector("#bestsellers")?.getAttribute("data-active-product-index") !== previous,
+      initial,
+      { timeout: 2_000 },
+    )
+    .then(() => true, () => false);
+  check(advanced, `${viewport}: horizontal trackpad swipe did not advance Bestsellers`);
+
+  await page.waitForTimeout(460);
+  await page.mouse.wheel(-90, 0);
+  const returned = await page
+    .waitForFunction(
+      (expected) =>
+        document.querySelector("#bestsellers")?.getAttribute("data-active-product-index") === expected,
+      initial,
+      { timeout: 2_000 },
+    )
+    .then(() => true, () => false);
+  check(returned, `${viewport}: reverse trackpad swipe did not restore Bestsellers`);
+}
+
 async function auditDesktop(browser, width, height) {
   const viewport = `${width}x${height}`;
   const context = await browser.newContext({ viewport: { width, height } });
@@ -207,9 +326,13 @@ async function auditDesktop(browser, width, height) {
   observe(page, viewport);
   await waitForHome(page, viewport);
   await assertHero(page, viewport);
+  await assertDesktopComposition(page, viewport);
   await capture(page, viewport, "hero");
   await assertNaturalScroll(page, viewport, () => page.mouse.wheel(0, Math.round(height * 0.55)));
-  await assertCarousel(page, viewport);
+  await assertCarousel(page, viewport, (carousel, direction) =>
+    pointerSwipe(page, carousel, direction),
+  );
+  await assertTrackpadCarousel(page, viewport);
   await assertSections(page, viewport);
   await context.close();
 }
@@ -229,14 +352,20 @@ async function auditMobile(browser) {
   await assertNaturalScroll(page, viewport, () =>
     touchDrag(page, { x: 195, y: 700 }, { x: 195, y: 160 }),
   );
-  await assertCarousel(page, viewport, async (carousel) => {
+  await assertCarousel(page, viewport, async (carousel, direction) => {
     const stage = await carousel.locator("[aria-live='polite']").boundingBox();
     check(!!stage, `${viewport}: Bestsellers swipe stage missing`);
     if (!stage) return;
     await touchDrag(
       page,
-      { x: stage.x + stage.width * 0.78, y: stage.y + stage.height * 0.5 },
-      { x: stage.x + stage.width * 0.22, y: stage.y + stage.height * 0.5 },
+      {
+        x: stage.x + stage.width * (direction === "next" ? 0.78 : 0.22),
+        y: stage.y + stage.height * 0.5,
+      },
+      {
+        x: stage.x + stage.width * (direction === "next" ? 0.22 : 0.78),
+        y: stage.y + stage.height * 0.5,
+      },
     );
   });
   await assertSections(page, viewport);

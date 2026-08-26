@@ -23,7 +23,6 @@
   transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
   padding: var(--tbb-section) 0;
 }
-
 .inner {
   position: relative;
   z-index: 1;
@@ -501,97 +500,6 @@
 
   .dotLine {
     width: 1.5rem;
-    transform-origin: center;
-  }
-}
-
-/* Desktop is the same vertical composition as the mobile source of truth.
-   Only the stage measure and available whitespace grow. */
-@media (min-width: 1024px) {
-  .section {
-    /* Natural document scrolling means this surface may grow when the pack
-       name and price make the composition taller than a short laptop viewport.
-       A fixed 100svh clipped the controls under the following Collage. */
-    min-height: max(100svh, 42rem);
-    padding: clamp(1.75rem, 3.5vh, 2.75rem) 0 clamp(1.25rem, 2.5vh, 2rem);
-  }
-
-  .field {
-    display: none;
-  }
-
-  .inner {
-    max-width: 58rem;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(0.65rem, 1.4vh, 1rem);
-  }
-
-  .stage {
-    grid-column: 1;
-    grid-row: 1;
-    width: clamp(22rem, min(54vw, 56vh), 32rem);
-    aspect-ratio: 1 / 0.8;
-    margin: 0 auto;
-    padding: clamp(1rem, 2vh, 1.5rem);
-    border-radius: clamp(1rem, 1.8vw, 1.75rem);
-    background: var(--field, var(--tbb-sand));
-    transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
-  }
-
-  .copy {
-    grid-column: 1;
-    grid-row: 2;
-    width: min(100%, 48rem);
-    max-width: 48rem;
-    margin: 0 auto;
-  }
-
-  .heading {
-    max-width: 11ch;
-    font-size: clamp(2.25rem, min(4.4vw, 5.2vh), 3.5rem);
-  }
-
-  .eyebrow {
-    margin-bottom: clamp(0.45rem, 1vh, 0.75rem);
-  }
-
-  .description {
-    margin-top: clamp(0.45rem, 1vh, 0.75rem);
-  }
-
-  .specs {
-    margin-top: clamp(0.65rem, 1.25vh, 1rem);
-    padding-top: clamp(0.55rem, 1vh, 0.75rem);
-  }
-
-  .cta {
-    margin-top: clamp(0.75rem, 1.5vh, 1.1rem);
-  }
-
-  .controls {
-    grid-column: 1;
-    grid-row: 3;
-    width: min(100%, 48rem);
-    margin: 0 auto;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--tbb-ink);
-  }
-
-  .dots {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.75rem;
-    padding-right: 0;
-  }
-
-  .dotLabel {
-    display: none;
-  }
-
-  .dotLine {
-    width: 1.75rem;
     transform-origin: center;
   }
 }

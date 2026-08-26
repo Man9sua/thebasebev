@@ -33,11 +33,11 @@ maps friendly and audited legacy paths to the corresponding static Tilda export.
 7. Scene 4: Company/manufacturing section.
 8. Scene 5: shared dark footer.
 
-The mobile hierarchy is canonical at every width. A shared state machine tracks
-the scene and active bestseller; desktop wheel/trackpad and keyboard are input
-adapters for the same sequence that native mobile scroll and product swipe use.
-Stacked motion must still fall back to ordinary visible document flow when
-motion or JavaScript is unavailable.
+Section order is canonical at every width, but layout is responsive: desktop
+retains the wide editorial grids and mobile restacks those same sections. The
+browser owns vertical scrolling. Bestsellers keeps one active product across
+arrows, dots, autoplay, keyboard and bidirectional pointer/touch/trackpad input.
+Motion must still fall back to ordinary visible document flow when unavailable.
 
 ## Catalog
 
