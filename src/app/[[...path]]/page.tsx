@@ -5,8 +5,14 @@ import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
 import { GlossaryPage } from "@/components/resources/GlossaryPage";
 import { ToolsPage } from "@/components/resources/ToolsPage";
+import { ProductDetails } from "@/components/product/ProductDetails";
+import { ProductHero } from "@/components/product/ProductHero";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { PageIntro } from "@/components/site/PageIntro";
+import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { getPageIntro, getPageOffers } from "@/data/page-intros";
+import { getProduct } from "@/data/products";
 import {
   getSitePage,
   getStaticSiteParams,
@@ -119,12 +125,33 @@ export default async function SiteRoute({ params }: RouteProps) {
     );
   }
 
+  // A product page is React down to the FAQ and the export from there on. The
+  // eight blocks React replaces — the hero, the tab strip, the four figures,
+  // the comparative table, the flavours, the usage note, the FAQ and its
+  // heading — are all cut out of the markup below by `site-pages.ts`, so the
+  // two never both claim the copy or the `h1`. What the export still owns is
+  // what nothing has replaced yet: the partnership block, the cookie banner and
+  // the four popup lead forms the buttons above open.
+  const product = getProduct(route.slice(1));
+
+  // Two pages open with a React head instead, and one of them carries its four
+  // services in React as well. Both were built on stock Tilda themes and were
+  // still opening with the theme rather than with themselves — `site-pages.ts`
+  // says exactly what was dropped, and `data/page-intros.ts` holds the copy
+  // each page carries in its place.
+  const intro = getPageIntro(route);
+  const offers = getPageOffers(route);
+
   // Everything else: one shared header and footer, with the old Tilda chrome
   // already removed from the markup server-side.
   return (
     <div className="tbb">
       <SiteHeader />
-      <LegacyPageShell page={page} />
+      {intro && <PageIntro intro={intro} />}
+      {offers && <PageOffers offers={offers} />}
+      {product && <ProductHero product={product} />}
+      {product && <ProductDetails product={product} />}
+      <LegacyPageShell page={page} opensPage={!intro && !product} />
       <SiteFooter />
     </div>
   );

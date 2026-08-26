@@ -173,7 +173,7 @@ export function ToolsPage() {
           <div className={styles.heroCopy}>
             <span className={`tbb-label ${styles.eyebrow}`}>B2B menu planning</span>
             <h1 id="tools-title" className={styles.heroTitle}>
-              Tools for profitable beverage menus
+              Tools for Menu Planning
             </h1>
             <p className={styles.heroText}>
               Calculate cost and margin, then turn selected drinks into a clean seasonal menu.

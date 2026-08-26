@@ -26,6 +26,17 @@ export type Product = {
   route: string;
   /** Short display name for cards and the carousel. */
   name: string;
+  /**
+   * `name` with soft hyphens (U+00AD) marking where it may break when it is set
+   * at display size. Only needed for single words long enough to outrun their
+   * column — anything with a space in it already has somewhere to break.
+   *
+   * Set explicitly rather than left to `hyphens: auto`, which needs a
+   * hyphenation dictionary the browser may simply not have: Chromium ships them
+   * as a downloadable component, and without one the property does nothing at
+   * all. A soft hyphen needs no dictionary.
+   */
+  hyphenatedName?: string;
   /** The product page's H1, reused so wording stays consistent across the site. */
   headline: string;
   description: string;
@@ -87,6 +98,7 @@ export const PRODUCTS: Product[] = [
     slug: "milkshake",
     route: "/milkshake",
     name: "Milkshake",
+    hyphenatedName: "Milk\u00ADshake",
     headline: "Milkshake Base Powder — Thick, Creamy & Easy to Blend",
     description:
       "Milkshake base powder for cafés and HoReCa: thick, creamy texture from a single scoop, no dairy prep and no waste.",
@@ -260,39 +272,6 @@ export const PRODUCTS: Product[] = [
     backgroundColor: "#583d35",
   },
 ];
-
-/**
- * Shown in the hero, in order.
- *
- * cream-latte is first on purpose: production's homepage h1 is
- * "Premium / Cream Latte / Bases", and the hero carries that h1, so the
- * server-rendered wording has to match.
- */
-export const HERO_SLUGS = ["cream-latte", "matcha", "chocolate"] as const;
-
-/**
- * Shown in the hero marquee, in order.
- *
- * Every slug here has to point at one of the pre-composed product cards — the
- * 1081x951 artwork that already carries its own colour field, pack shot and
- * certification marks. The marquee crops every tile to that one ratio, so a
- * product whose artwork is a bare transparent pouch (raf-coffee, tea,
- * sugar-free, topping, garnish) is left out rather than cropped through its own
- * lockup. Add a slug here the moment its card artwork lands.
- */
-export const HERO_MARQUEE_SLUGS = [
-  "cream-latte",
-  "chocolate",
-  "iced-tea",
-  "jam",
-  "cordial",
-  "chai-latte",
-  "matcha",
-  "frappe",
-  "milkshake",
-  "sugar-syrup",
-  "vending",
-] as const;
 
 /**
  * Featured in the Bestsellers carousel, in order.

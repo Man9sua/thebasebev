@@ -12,9 +12,9 @@ import styles from "./LoadingScreen.module.css";
  * so the hero is uncovered from the top edge down and plays its own entrance
  * into the space as it appears.
  *
- * The count is driven by real signals — fonts, the window load event, the first
- * rail cards decoding — not a fake timer, because the point of holding the
- * first paint back is that the type and the pack shots have actually arrived by
+ * The count is driven by real signals — fonts, the window load event and the
+ * critical hero art decoding — not a fake timer, because the point of holding
+ * the first paint back is that the type and key visual have actually arrived by
  * the time anyone sees them. `MAX_MS` caps the whole thing regardless, so a
  * slow image can never strand a visitor behind a blank screen.
  *
@@ -27,7 +27,7 @@ import styles from "./LoadingScreen.module.css";
 
 /** Hard ceiling. Nothing may hold the page longer than this. */
 const MAX_MS = 2600;
-/** How many rail cards have to decode before we call the hero "arrived". */
+/** Maximum critical hero images to wait for. */
 const WATCHED_IMAGES = 3;
 
 const LIFT_MS = 520;
@@ -68,7 +68,11 @@ export function LoadingScreen() {
     if (document.readyState === "complete") signals.load = true;
     else window.addEventListener("load", markLoaded, { once: true });
 
-    const art = [...document.querySelectorAll<HTMLImageElement>("[data-hero-tile] img")]
+    const art = [
+      ...document.querySelectorAll<HTMLImageElement>(
+        "[data-hero] img[fetchpriority='high'], [data-hero-tile] img",
+      ),
+    ]
       .slice(0, WATCHED_IMAGES)
       .map((image) =>
         image.complete

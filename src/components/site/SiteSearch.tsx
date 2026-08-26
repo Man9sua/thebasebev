@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { PRODUCTS } from "@/data/products";
+import { resizedImage } from "@/lib/images";
 import { SITE_NAV } from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
@@ -31,11 +32,17 @@ const PAGE_HITS: Hit[] = SITE_NAV.map((item) => ({
   image: null,
 }));
 
+/**
+ * The swatch is 44px square and it was painting the product's full pack plate
+ * into it — six of them at around 1.1 MB each, fetched on every page of the
+ * site because this overlay is mounted everywhere. That was 6.8 MB of the
+ * 14.7 MB a product page weighed, and none of it was even on screen.
+ */
 const PRODUCT_HITS: Hit[] = PRODUCTS.map((product) => ({
   href: product.route,
   name: product.name,
   kind: "Product",
-  image: product.image,
+  image: resizedImage(product.image),
   color: product.backgroundColor,
 }));
 

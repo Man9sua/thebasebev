@@ -1,0 +1,2152 @@
+{
+  "milkshake": {
+    "h1": "Milkshake Base Powder – Thick, Creamy & Easy to Blend",
+    "records": {
+      "hero": "rec860335353",
+      "tabs": "rec1851848151",
+      "specs": "rec1851854681",
+      "calculation": "rec1851863371",
+      "flavors": "rec860335355",
+      "usage": "rec860335356",
+      "faqTitle": "rec2489108381",
+      "faq": "rec2488861531"
+    },
+    "tagline": "Creamy. Convenient. Thick.",
+    "weight": "500g",
+    "description": [
+      "Milkshake is a classic treat loved for its thick, creamy texture and rich flavor.",
+      "Our premix powder makes it easy to create without the need for ice cream and syrup, blending perfectly with dairy or plant-based milk."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "30 seconds"
+      },
+      {
+        "label": "No Ice Cream or Freezers",
+        "value": "Save on equipment, works with any blender"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 17 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "12 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Ice Cream",
+          "100 g",
+          true,
+          false
+        ],
+        [
+          "Ice Cubes",
+          "100mL",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "200mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Milkshake)",
+          "30g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Dates",
+        "Banana",
+        "Caramel",
+        "Chocolate",
+        "HoneyDew",
+        "Mango",
+        "Mango Lassi",
+        "Base No Added Sugar",
+        "Rainbow Unicorn",
+        "Raspberry",
+        "Strawberry",
+        "Vanilla",
+        "Yogurt",
+        "Yogurt Base No Added Sugar"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, add ice cubes, and blend until smooth."
+      ],
+      "image": "/images/tild3163-6239-4166-b631-316534646237__group_895.svg"
+    },
+    "faq": [
+      {
+        "question": "Can your milkshake base replace soft serve ice cream machines?",
+        "answer": "Absolutely. Heavy ice cream machines require constant cleaning cycles and expensive maintenance contracts. Our dry milkshake base delivers an identical rich, frozen dairy texture using only standard commercial blenders and ice, drastically cutting your initial CapEx."
+      },
+      {
+        "question": "How do you handle lactose or dairy variations across regions?",
+        "answer": "Our versatile milkshake formulations are designed to perform exceptionally well with both standard dairy and modern plant - based milk alternatives. This allows franchise menus to easily capture the growing vegan demographic using a single core inventory item."
+      },
+      {
+        "question": "Is the powder prone to clumping in humid kitchen environments?",
+        "answer": "We incorporate specialized anti - caking agents into the blend. Even in high humidity environments like busy fast food kitchens or coastal tourist resorts, the powder remains free flowing to ensure precise portion control."
+      }
+    ]
+  },
+  "frappe": {
+    "h1": "Frappe Base for Smooth, Creamy Blended Beverages",
+    "records": {
+      "hero": "rec860351176",
+      "tabs": "rec1851910881",
+      "specs": "rec1851910891",
+      "calculation": "rec1851920511",
+      "flavors": "rec860351178",
+      "usage": "rec860351179",
+      "faqTitle": "rec2489108911",
+      "faq": "rec2488892961"
+    },
+    "tagline": "Cold. Refreshing. Smooth.",
+    "weight": "500g",
+    "description": [
+      "Frappe is a smooth, creamy blended drink, perfect for hot weather or as a dessert-style beverage."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "30 seconds"
+      },
+      {
+        "label": "No Ice Cream or Freezers",
+        "value": "Save on equipment, works with any blender"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 14 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "16 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Frappe with Syrup",
+        "Frappe with The Base"
+      ],
+      "rows": [
+        [
+          "Coffee",
+          "20 g",
+          true,
+          true
+        ],
+        [
+          "Ice Cubes",
+          "150 g",
+          true,
+          true
+        ],
+        [
+          "Syrup",
+          "30 mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "200 mL",
+          true,
+          true
+        ],
+        [
+          "Topping",
+          "60 g",
+          true,
+          true
+        ],
+        [
+          "The Base (Frappe)",
+          "35 g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Coffee",
+        "Chocolate",
+        "Base No Added Sugar",
+        "Green Tea",
+        "Mocha",
+        "Pistachio",
+        "Purple Yum UBE",
+        "Salted Caramel",
+        "Strawberry Matcha",
+        "Vanilla"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply blend with milk, espresso, and ice cubes."
+      ],
+      "image": "/images/tild6464-6536-4562-a434-326137366361__group_929.svg"
+    },
+    "faq": [
+      {
+        "question": "Will the blended frappe separate in high temperature environments?",
+        "answer": "We utilize advanced hydrocolloid stabilizers in all our frappe bases. This ensures the ice and liquid remain perfectly bound together, guaranteeing a premium texture for outdoor catering events and busy food trucks operating in extreme summer heat."
+      },
+      {
+        "question": "How does the dry frappe base impact equipment lifespan?",
+        "answer": "Our powders are engineered to minimize friction and wear on commercial blender blades. The high dispersibility reduces blending times, cutting energy consumption and extending the operational life of your capital equipment."
+      },
+      {
+        "question": "Can we customize the sweetness level for regional franchise markets?",
+        "answer": "Yes. Our frappe foundation provides a balanced base matrix. Franchise operators can easily adjust the final sugar ratios to meet local consumer preferences without compromising the core structural integrity of the drink."
+      }
+    ]
+  },
+  "iced-tea": {
+    "h1": "Iced Tea Base for Refreshing, Crisp, Ready-to-Mix Beverages",
+    "records": {
+      "hero": "rec860392934",
+      "tabs": "rec1851910931",
+      "specs": "rec1851910941",
+      "calculation": "rec1851928801",
+      "flavors": "rec860392936",
+      "usage": "rec860392937",
+      "faqTitle": "rec2489110761",
+      "faq": "rec2488894411"
+    },
+    "tagline": "Crisp. Refreshing. Flavorful.",
+    "weight": "500g",
+    "description": [
+      "Iced tea is a refreshing, cool drink with a clean, crisp flavor that’s perfect for hot days."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need to brew tea and extra ingredients"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "12 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Iced Tea with Syrup",
+        "Iced Tea with The Base"
+      ],
+      "rows": [
+        [
+          "Loose Tea",
+          "20g",
+          true,
+          false
+        ],
+        [
+          "Fresh Lemon Juice",
+          "15mL",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Ice Cubes",
+          "100g",
+          true,
+          true
+        ],
+        [
+          "The Base (Iced Tea)",
+          "20g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Base No Added Sugar",
+        "Lemon",
+        "Green",
+        "Mango",
+        "Peach",
+        "Strawberry"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, add ice cubes, and blend until smooth."
+      ],
+      "image": "/images/tild3438-3962-4132-b762-623234333837__group_899.svg"
+    },
+    "faq": [
+      {
+        "question": "How does this solution solve the batch brewing spoilage problem?",
+        "answer": "Traditional loose leaf batch brewing forces managers to predict daily demand, often leading to massive end - of - day liquid waste. Our instant Iced Tea base allows your staff to prepare exact volumes on demand, driving your daily shrinkage down to near zero."
+      },
+      {
+        "question": "Does the tea base cloud or separate when stored over ice?",
+        "answer": "We use high - clarity tea extracts that maintain absolute visual transparency. Your iced tea will never look cloudy or develop muddy sediment at the bottom of the glass, preserving a premium presentation for high - end dining environments."
+      },
+      {
+        "question": "Are the fruit profiles synthetic or natural?",
+        "answer": "We prioritize natural fruit extracts and stable flavor encapsulation. This provides a crisp, authentic fruit profile that appeals to health - conscious consumers without the artificial aftertaste found in basic commercial syrups."
+      }
+    ]
+  },
+  "cordial": {
+    "h1": "Cordial Drink Powders – Add Bold Fruit & Spice Flavors",
+    "records": {
+      "hero": "rec860603406",
+      "tabs": "rec1851910951",
+      "specs": "rec1851910961",
+      "calculation": "rec1851933761",
+      "flavors": "rec860603408",
+      "usage": "rec860603409",
+      "faqTitle": "rec2489111151",
+      "faq": "rec2488894691"
+    },
+    "tagline": "Sweet. Fruity. Flavorful.",
+    "weight": "500g",
+    "description": [
+      "Cordial is a sweet, flavorful premix powder that adds a burst of fruit or spice to drinks."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Ready to Drink",
+        "value": "Ready-to-drink beverages in hot climate"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste, just great taste"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 33 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "12 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Iced Tea with Syrup",
+        "Iced Tea with The Base"
+      ],
+      "rows": [
+        [
+          "Soda Water",
+          "150mL",
+          true,
+          true
+        ],
+        [
+          "Fresh Lemon Juice",
+          "15mL",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Ice Cubes",
+          "100ml",
+          true,
+          true
+        ],
+        [
+          "The Base (Cordial)",
+          "15g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Classic Mojito",
+        "Red Rose Lemon",
+        "Ginger Citrus",
+        "Hibiscus Apple",
+        "Lemon Ginger",
+        "Lemonade",
+        "Lavender Peach",
+        "Mango",
+        "Frangelico",
+        "Mango Lemongrass",
+        "Mango Pink Grapefruit Mojito",
+        "Minty Pineapple",
+        "Passion Fruit Mojito",
+        "Peach Rosemary",
+        "Raspberry Mint",
+        "Spiced Mandarin",
+        "Strawberry Mojito",
+        "Sweet and Sour Mix",
+        "Watermelon Mojito"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with sparkling water, stir, and add ice cubes."
+      ],
+      "image": "/images/tild6132-3836-4762-b061-333533306439__group_896.svg"
+    },
+    "faq": [
+      {
+        "question": "Why should a high - volume bar switch to your commercial syrup solutions?",
+        "answer": "Making syrups in - house requires dedicated prep hours, stove space, and leads to inconsistent brix levels. Our commercial solutions deliver absolute flavor and sweetness uniformity, allowing your mixology team to focus exclusively on rapid drink assembly during peak night shifts."
+      },
+      {
+        "question": "Do your cordials require refrigeration after opening?",
+        "answer": "Our cordials are formulated with precise water activity and brix levels to ensure absolute microbial stability. They remain completely stable at room temperature on the back bar, optimizing your workspace and eliminating cold storage dependencies."
+      },
+      {
+        "question": "Can these bases be used in draft cocktail systems?",
+        "answer": "Yes. The high solubility and consistent viscosity of our syrups and cordials make them perfectly compatible with modern keg and draft cocktail systems, ensuring smooth line flow and identical drink profiles for massive event operations."
+      }
+    ]
+  },
+  "raf-coffee": {
+    "h1": "Raf Coffee",
+    "records": {
+      "hero": "rec859872922",
+      "tabs": "rec1851889971",
+      "specs": "rec1851890171",
+      "calculation": "rec1851891541",
+      "flavors": "rec859873027",
+      "usage": "rec860104767",
+      "faqTitle": "rec2489105501",
+      "faq": "rec2486979911"
+    },
+    "tagline": "Smooth. Velvety. Irresistible.",
+    "weight": "500g",
+    "description": [
+      "Raf Coffee is a globally loved signature drink, known for its delicate, ice-cream-like taste.",
+      "Our premix powder replaces cream while preserving the same flavor and texture, working perfectly with plant-based and lactose-free milk."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "Just add milk and espresso"
+      },
+      {
+        "label": "No Refrigeration",
+        "value": "Dry mix, no cold storage needed"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Coffee",
+          "20 g",
+          true,
+          true
+        ],
+        [
+          "Cream (10%)",
+          "200mL",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "30mL",
+          false,
+          true
+        ],
+        [
+          "The Base (Raf)",
+          "20g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Banana Ice Cream",
+        "Orange Sundae",
+        "Pineapple Caramel",
+        "Pistachio",
+        "Pomegranate",
+        "Ptichye Moloko",
+        "Cherry coconut",
+        "Tary",
+        "Raspberry Coconut",
+        "Salted Caramel",
+        "Spanish Latte",
+        "Spanish Peach",
+        "Vanilla",
+        "Tangerine Cookie",
+        "Raf Base No Added Sugar"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, add espresso, and steam at 65 °C until frothy."
+      ],
+      "image": "/images/tild6532-3566-4566-a261-343839613233____1_7.svg"
+    },
+    "faq": [
+      {
+        "question": "Does the Raf base require fresh dairy cream for preparation?",
+        "answer": "No. We pre - blend premium dairy components into the dry matrix. Your baristas simply add standard milk and steam the mixture to achieve the signature thick, velvety texture, completely removing the need to manage highly perishable fresh cream inventory."
+      },
+      {
+        "question": "How does this product impact service speed during morning rushes?",
+        "answer": "Preparing a traditional Raf involves measuring liquid cream, vanilla sugar, and espresso under tight time constraints. Our all - in - one base eliminates multiple preparation steps, cutting ticket times in half and maximizing your peak hour throughput."
+      },
+      {
+        "question": "Will the foam hold its structure for delivery orders?",
+        "answer": "Yes. The proprietary stabilizers in our Raf Coffee base maintain micro - foam density much longer than standard milk. This ensures the beverage looks and tastes perfect when it reaches the customer, making it ideal for the booming food delivery sector."
+      }
+    ]
+  },
+  "chai-latte": {
+    "h1": "Chai Latte Base – Authentic, Spiced, and Easy to Prepare",
+    "records": {
+      "hero": "rec860240544",
+      "tabs": "rec1851910821",
+      "specs": "rec1851910831",
+      "calculation": "rec1851911621",
+      "flavors": "rec860240546",
+      "usage": "rec860240547",
+      "faqTitle": "rec2489108101",
+      "faq": "rec2488890661"
+    },
+    "tagline": "Spiced. Aromatic. Comforting.",
+    "weight": "500g",
+    "description": [
+      "Chai latte is a warm, spiced drink loved for its bold, comforting flavor.",
+      "Our premix powder makes it easy to prepare, delivering the authentic taste of chai without the need for extra spices."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need to brew tea and extra spices"
+      },
+      {
+        "label": "No Refrigeration",
+        "value": "Dry mix, no cold storage needed"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 Sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 20 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Leaf Tea",
+          "20 g",
+          true,
+          false
+        ],
+        [
+          "Condensed Milk",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "150mL",
+          true,
+          false
+        ],
+        [
+          "The Base (Chai Latte)",
+          "25g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Karak",
+        "Masala"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply steam at 65 °C with milk and froth until creamy.",
+        "You may also mix with hot water, and stir."
+      ],
+      "image": "/images/tild3261-6264-4635-b137-376332646536__group_931.svg"
+    },
+    "faq": [
+      {
+        "question": "What equipment is required to serve this chai at scale?",
+        "answer": "Zero specialized equipment is needed. The base dissolves instantly using a standard commercial steam wand or hot water dispenser. This allows large catering halls and bakeries to serve hundreds of cups per hour with entry level staff."
+      },
+      {
+        "question": "How does your dry chai blend compare to liquid concentrates?",
+        "answer": "Liquid chai concentrates are heavy to transport and prone to spoilage once opened. Our dry Chai Latte base offers a massive reduction in shipping weight and features an 18 month ambient shelf life, drastically lowering your landed cost and daily waste logs."
+      },
+      {
+        "question": "Are the spice profiles authentic enough for premium boutique cafes?",
+        "answer": "We utilize micro - encapsulation technology to lock in genuine cardamom, clove, and cinnamon extracts. The result is a bold, complex sensory profile that perfectly mirrors traditional brewing methods, satisfying even the most demanding consumer demographics."
+      }
+    ]
+  },
+  "matcha": {
+    "h1": "Matcha Beverage Base – Perfect for Cafés, Franchises & OEM",
+    "records": {
+      "hero": "rec860641052",
+      "tabs": "rec1851911021",
+      "specs": "rec1851911031",
+      "calculation": "rec860641053",
+      "flavors": "rec860641054",
+      "usage": "rec860641055",
+      "faqTitle": "rec2486826251",
+      "faq": "rec2488897291"
+    },
+    "tagline": "Savory. Vibrant. Refreshing.",
+    "weight": "500g",
+    "description": [
+      "Matcha is a vibrant, earthy drink loved for its rich flavor and smooth texture.",
+      "Our premix powder makes it easy to prepare, delivering the authentic taste of matcha without the need for whisking."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need for bowl, sifter, and whisk"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Matcha Powder",
+          "3g",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "200mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Matcha)",
+          "20g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Anchan Blueberry",
+        "Classic",
+        "Mango Coconut",
+        "Purple Yum Ube",
+        "Pure",
+        "Base No Added Sugar",
+        "Pink",
+        "Raspberry",
+        "Strawberry",
+        "Hojicha",
+        "Pecan Kumquat"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, steam at 65 °C and froth."
+      ],
+      "image": "/images/tild3264-3363-4234-b037-633064343663____1_33.svg"
+    },
+    "faq": [
+      {
+        "question": "Does your commercial matcha require specialized cold storage?",
+        "answer": "Our premium matcha dry bases are engineered for total ambient stability. Hotel networks and boutique cafes can store bulk inventory on standard dry shelves for up to 18 months. This eliminates cold chain logistics and frees up refrigeration space in your kitchens."
+      },
+      {
+        "question": "How do we prevent the powder from clumping during peak hours?",
+        "answer": "Traditional raw matcha requires slow manual whisking, which destroys speed of service during a morning rush. The Base applies advanced instantization technology to all our matcha blends. Your frontline staff can dissolve the powder perfectly in seconds using a standard espresso steam wand, ensuring zero clumps and absolute consistency."
+      },
+      {
+        "question": "Do we need traditional preparation tools to serve your matcha menu?",
+        "answer": "Zero specialized tools are required. We specifically designed our commercial matcha solutions to integrate directly into your existing operational workflow. Your team can execute premium matcha lattes and frappes using the exact same pitchers and basic equipment already present on your coffee bar."
+      },
+      {
+        "question": "What is the exact yield and cost per serving for high volume locations?",
+        "answer": "Commercial profitability relies on predictable unit economics. Our concentrated matcha formulations deliver exact gram to cup ratios. Procurement directors can accurately forecast their net margin per cup without worrying about raw material waste, ingredient spoilage, or barista overpouring."
+      },
+      {
+        "question": "How do you guarantee color and flavor consistency across a multiunit franchise?",
+        "answer": "Basic culinary powders often yield a dull olive color and a harsh bitter taste that requires heavy sweetening. We strictly control our sensory baselines and blending processes to guarantee a vibrant green hue and a smooth profile across every single batch. A customer visiting your flagship location will experience the exact same premium quality as someone visiting a remote franchise branch."
+      },
+      {
+        "question": "Is this matcha suitable for automated dispensers and vending operations?",
+        "answer": "Yes. We maintain tight control over the bulk density and flowability of our powders. The proprietary anticaking formulation prevents moisture buildup, allowing the powder to flow seamlessly through automated hoppers and commercial dispensing equipment without causing blockages."
+      }
+    ]
+  },
+  "chocolate": {
+    "h1": "Chocolate Beverage Base for Cafés, Bars & OEM Use",
+    "records": {
+      "hero": "rec860798129",
+      "tabs": "rec1851911091",
+      "specs": "rec1851911101",
+      "calculation": "rec860798130",
+      "flavors": "rec860798131",
+      "usage": "rec860798132",
+      "faqTitle": "rec2489112331",
+      "faq": "rec2488898131"
+    },
+    "tagline": "Smooth. Soft. Sweet.",
+    "weight": "500g",
+    "description": [
+      "Chocolate is a rich, creamy premix powder that makes preparing indulgent hot chocolate and cold cocoa drinks easy."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Natural Taste",
+        "value": "Free from sweeteners and artificial colorings"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "40 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 14 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Premium Cocoa Powder",
+          "10g",
+          true,
+          false
+        ],
+        [
+          "Dark Chocolate Powder",
+          "15g",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "15mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "200mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Chocolate)",
+          "35g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Classic",
+        "Orange",
+        "Strawberry",
+        "Mocha",
+        "Pistachio",
+        "Premium"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, steam at 65 °C, and froth."
+      ],
+      "image": "/images/tild6135-3835-4834-b162-666166323064__group_930.svg"
+    },
+    "faq": [
+      {
+        "question": "Is the commercial chocolate powder compatible with automated vending machines?",
+        "answer": "Yes. The powder features specialized anti - caking technology and optimal flowability. It will not bridge or block inside automated hoppers, drastically reducing maintenance call - outs for self - serve gas station kiosks."
+      },
+      {
+        "question": "How do you prevent cocoa separation in the final beverage?",
+        "answer": "We utilize advanced emulsification processes during manufacturing. The cocoa particles remain perfectly suspended in hot water or milk, ensuring the customer never receives a watery cup with a thick sludge layer at the bottom."
+      },
+      {
+        "question": "Does the chocolate base require liquid milk to taste rich?",
+        "answer": "We integrate premium dairy and lipid components directly into the dry mix. Operators can execute a thick, luxurious hot chocolate using only hot water, instantly eliminating fresh milk expenses and safeguarding profit margins."
+      }
+    ]
+  },
+  "cream-latte": {
+    "h1": "Cream Latte Base – Rich, Smooth, and Easy to Prepare",
+    "records": {
+      "hero": "rec860215404",
+      "tabs": "rec1851902271",
+      "specs": "rec1851902931",
+      "calculation": "rec1851906461",
+      "flavors": "rec860215406",
+      "usage": "rec860215407",
+      "faqTitle": "rec2489106541",
+      "faq": "rec2488891731"
+    },
+    "tagline": "Creamy. Soft. Velvety.",
+    "weight": "500g",
+    "description": [
+      "Cream Latte is a popular drink loved for its rich, creamy texture and smooth coffee flavor.",
+      "Our premix powder makes it easy to prepare without the need for fresh cream, working perfectly with dairy or plant-based milk."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "Just add milk and espresso"
+      },
+      {
+        "label": "No Refrigeration",
+        "value": "Dry mix, no cold storage needed"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Coffee",
+          "20 g",
+          true,
+          true
+        ],
+        [
+          "Cream (10%)",
+          "120mL",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "200mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Cream Latte)",
+          "15g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Birds Dream",
+        "Blueberry",
+        "Cheesy Cream",
+        "Citrus Sundae",
+        "Tropical Berry",
+        "Salty Carmel Sunset",
+        "Golden Caramel Nana",
+        "Vanilla Sky",
+        "Nutty Pistachio"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, froth until creamy, and add espresso."
+      ],
+      "image": "/images/tild6431-3766-4835-a439-373730636638____1_51.svg"
+    },
+    "faq": [
+      {
+        "question": "Can the Cream Latte base replace high - fat fresh dairy?",
+        "answer": "Absolutely. This dry base delivers a heavy, velvety mouthfeel identical to liquid cream, but completely removes the massive spoilage risks, daily waste logs, and strict cold chain logistics associated with fresh dairy management."
+      },
+      {
+        "question": "How does this formulation perform in drive - thru operations?",
+        "answer": "Drive - thru profitability relies on extreme speed of service. The Cream Latte base instantizes immediately under standard steam pressure, cutting multiple assembly steps and maximizing hourly vehicle throughput during morning rushes."
+      },
+      {
+        "question": "Does the cream base mask the underlying coffee flavor?",
+        "answer": "No. The lipid structure is precisely balanced to enhance, rather than overpower, the espresso profile. It provides a rich dairy foundation while allowing specialty coffee notes to cut through perfectly."
+      }
+    ]
+  },
+  "jam": {
+    "h1": "Premium Jam and Fruit Fillings for Cafés, Bakeries & Beverages",
+    "records": {
+      "hero": "rec860870149",
+      "tabs": "rec1851911181",
+      "specs": "rec1851911191",
+      "calculation": "rec860870150",
+      "flavors": "rec860870151",
+      "usage": "rec860870152",
+      "faqTitle": "rec2489115201",
+      "faq": "rec2488898921"
+    },
+    "tagline": "Sweet. Fruity. Thick.",
+    "weight": "500g",
+    "description": [],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months, preservative-free"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "Dissolves effortlessly in hot water for fast preparation"
+      },
+      {
+        "label": "Space-Efficient",
+        "value": "Compact packaging lowers transport costs"
+      },
+      {
+        "label": "Convenient",
+        "value": "No need for processing or straining raw ingredients"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "15 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 33 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Fruit Jam",
+          "15g",
+          true,
+          false
+        ],
+        [
+          "Fresh Lemon Juice",
+          "15mL",
+          true,
+          false
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Water",
+          "200mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Jam)",
+          "15g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Strawberry",
+        "Watermelon"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with hot water, and stir."
+      ],
+      "image": "/images/tild3435-6133-4661-b639-336566636137__group_932.svg"
+    },
+    "faq": [
+      {
+        "question": "Is your commercial jam bake - stable for industrial pastry production?",
+        "answer": "Yes. Our formulations are engineered to withstand extreme commercial oven temperatures without boiling over, burning, or soaking into the dough. This drastically reduces visual defects and product waste in large scale bakery operations."
+      },
+      {
+        "question": "How does bulk packaging optimize hotel breakfast buffets?",
+        "answer": "We package our jams in high - yield formats that prevent cross - contamination and minimize packaging waste. This streamlines morning buffet setups and allows hospitality staff to manage inventory with absolute precision."
+      },
+      {
+        "question": "Do you use synthetic thickeners to maintain viscosity?",
+        "answer": "We rely on natural fruit pectins to achieve the perfect structural set. This ensures a clean label appeal for your corporate clients while delivering a smooth, easy - to - spread texture straight from the container."
+      }
+    ]
+  },
+  "topping": {
+    "h1": "Professional Toppings for Drinks and Desserts",
+    "records": {
+      "hero": "rec860613123",
+      "tabs": "rec1851910991",
+      "specs": "rec1851911001",
+      "calculation": "rec1851938921",
+      "flavors": "rec860613125",
+      "usage": "rec860613126",
+      "faqTitle": "rec2489111691",
+      "faq": "rec2488896371"
+    },
+    "tagline": "Creamy. Light. Decorative.",
+    "weight": "500g",
+    "description": [],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need to brew tea and extra ingredients"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 45 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "50g",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Topping with Syrup",
+        "Topping with The Base"
+      ],
+      "rows": [
+        [
+          "Fresh Cream",
+          "300mL",
+          true,
+          false
+        ],
+        [
+          "Sugar",
+          "24g",
+          true,
+          false
+        ],
+        [
+          "Vanilla Extract",
+          "5mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "200mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Toppings)",
+          "100g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Strawberry Mousse",
+        "Chocolate Velvet",
+        "Classic Cheese Cream",
+        "Matcha Bliss",
+        "Coffee Crème",
+        "Hazelnut",
+        "Sea Salt Cheese",
+        "Caramel Drizzle Citrus Burst",
+        "Sweet Vanilla Cloud",
+        "Tropical Coconut Cream"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, and whisk until smooth."
+      ],
+      "image": "/images/tild6364-3863-4237-a433-363462383837__group_897.svg"
+    },
+    "faq": [
+      {
+        "question": "Will the topping sauces clog standard commercial dispensing pumps?",
+        "answer": "Our toppings are formulated with highly controlled viscosity parameters. They flow smoothly through standard QSR pumping systems at room temperature, eliminating the need for heated dispensers or constant pump cleaning."
+      },
+      {
+        "question": "Do the toppings retain their structure on hot beverages?",
+        "answer": "Yes. The structural integrity of our toppings ensures they rest perfectly on hot milk foam or whipped cream without immediately sinking, maintaining the premium visual appeal critical for social media marketing."
+      },
+      {
+        "question": "Are these toppings freeze - thaw stable for cold desserts?",
+        "answer": "Absolutely. When applied to soft serve or frozen frappes, the toppings maintain their elasticity and flavor release, avoiding the brittle, waxy texture that inferior sauces develop under extreme cold."
+      }
+    ]
+  },
+  "garnish": {
+    "h1": "Professional Garnishes for Beverages and Desserts",
+    "records": {
+      "hero": "rec860881290",
+      "tabs": "rec1851970951",
+      "specs": "rec1851970961",
+      "calculation": "rec860881291",
+      "flavors": "rec860881292",
+      "usage": "rec918906727",
+      "faqTitle": "rec2489115521",
+      "faq": "rec2488899221"
+    },
+    "tagline": "Aesthetic. Decorative. Flavorful.",
+    "weight": "50g",
+    "description": [],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months, preservative-free"
+      },
+      {
+        "label": "Versatile use",
+        "value": "A variety of beverages, coffee, cocktails and milkshakes"
+      },
+      {
+        "label": "Customizable",
+        "value": "Offers a variety of unique flavors"
+      },
+      {
+        "label": "Enhances Presentation",
+        "value": "Improves appearance, aroma, and flavor"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "10 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "50 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 100 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "0.5 g",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Fresh Berries (strawberries, blueberries or raspberry)",
+          "5g",
+          true,
+          false
+        ],
+        [
+          "The Base (Garnish)",
+          "0.5g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Banana",
+        "Cherry",
+        "Blueberry",
+        "Mango",
+        "Papaya",
+        "Pomegranate",
+        "Raspberry",
+        "Salted Caramel",
+        "Strawberry",
+        "Kiwi",
+        "Dragon Fruit",
+        "Black Currant"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply sprinkle on top of the drink."
+      ],
+      "image": "/images/tild6130-3839-4139-a534-333738343737__group_923.svg"
+    },
+    "faq": [
+      {
+        "question": "How do garnishes impact operational speed during peak service?",
+        "answer": "Pre - portioned commercial garnishes eliminate manual prep work. Baristas and bartenders bypass slicing, drying, or zesting, allowing them to finalize premium drink presentations in seconds while maintaining strict visual uniformity across all franchise locations."
+      },
+      {
+        "question": "Are these garnishes stable in high humidity environments?",
+        "answer": "Yes. Our garnishes undergo precise dehydration and moisture control processing. They resist clumping and wilting, ensuring a perfect aesthetic finish even in humid coastal resorts or busy open - air catering events."
+      },
+      {
+        "question": "Can premium garnishes justify a higher menu price?",
+        "answer": "Absolutely. A standardized, high - quality visual finish dramatically elevates the perceived value of the beverage. This allows operators to comfortably increase their retail price, driving higher net margins on standard drink categories."
+      }
+    ]
+  },
+  "sugar-syrup": {
+    "h1": "Sugar Syrup for Cafés, Bars & Beverage Brands",
+    "records": {
+      "hero": "rec860803878",
+      "tabs": "rec1851911131",
+      "specs": "rec1851911141",
+      "calculation": "rec860803879",
+      "flavors": "rec860803880",
+      "usage": "rec860803881",
+      "faqTitle": "rec2489113641",
+      "faq": "rec2488898321"
+    },
+    "tagline": "Compact. Sweet. Effortless.",
+    "weight": "500g",
+    "description": [
+      "Sugar syrup is an analog of liquid syrup, perfect for enhancing drinks with smooth, balanced sweetness.",
+      "It blends effortlessly, simplifying preparation for busy operations."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Space-Efficient",
+        "value": "Compact packaging lowers transport costs"
+      },
+      {
+        "label": "Precise Portioning",
+        "value": "Accurate control over sweetness levels"
+      },
+      {
+        "label": "Safe & Convenient",
+        "value": "No glass bottles, no breakage risk"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 83 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "6 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "150mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Sugar Syrup)",
+          "6g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Blueberry",
+        "Hazelnut",
+        "Mango",
+        "Peppermint",
+        "Raspberry",
+        "Salted Caramel",
+        "Strawberry",
+        "Vanilla",
+        "Peach",
+        "Pineapple",
+        "Red Apple"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk, froth, and add to coffee or tea."
+      ],
+      "image": "/images/tild3663-3138-4266-b431-386234613065__group_900.svg"
+    },
+    "faq": [
+      {
+        "question": "Why should a high - volume bar switch to your commercial syrup solutions?",
+        "answer": "Making syrups in - house requires dedicated prep hours, stove space, and leads to inconsistent brix levels. Our commercial solutions deliver absolute flavor and sweetness uniformity, allowing your mixology team to focus exclusively on rapid drink assembly during peak night shifts."
+      },
+      {
+        "question": "Do your cordials require refrigeration after opening?",
+        "answer": "Our cordials are formulated with precise water activity and brix levels to ensure absolute microbial stability. They remain completely stable at room temperature on the back bar, optimizing your workspace and eliminating cold storage dependencies."
+      },
+      {
+        "question": "Can these bases be used in draft cocktail systems?",
+        "answer": "Yes. The high solubility and consistent viscosity of our syrups and cordials make them perfectly compatible with modern keg and draft cocktail systems, ensuring smooth line flow and identical drink profiles for massive event operations."
+      }
+    ]
+  },
+  "tea": {
+    "h1": "Tea-Based Drink Powders for Cafés, Bars & OEM Projects",
+    "records": {
+      "hero": "rec860922831",
+      "tabs": "rec1851971091",
+      "specs": "rec1851971101",
+      "calculation": "rec860922832",
+      "flavors": "rec860922833",
+      "usage": "rec860922834",
+      "faqTitle": "rec2489187971",
+      "faq": "rec2488900221"
+    },
+    "tagline": null,
+    "weight": null,
+    "description": [
+      "Tea is a delightful infusion that easily dissolves in hot water, providing a comforting and flavorful experience with every sip."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Natural Taste",
+        "value": "Free from sweeteners and artificial colorings."
+      },
+      {
+        "label": "Consistent-quality",
+        "value": "Guaranteed premium taste everytime"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "100 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 100 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "6 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "The Base (Tea)",
+          "1g",
+          false,
+          true
+        ],
+        [
+          "Tea bag",
+          "2g",
+          true,
+          false
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Black",
+        "Green",
+        "Jasmine"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk and froth until smooth. Add it to coffee or tea."
+      ],
+      "image": "/images/tild3132-3135-4738-b032-663334626330__group_927.svg"
+    },
+    "faq": [
+      {
+        "question": "What is the primary operational advantage of liquid tea extracts over loose leaf?",
+        "answer": "Tea extracts eliminate the entire brewing, steeping, and straining cycle. Kitchen staff can instantly scale up production from a single glass to a 50 - liter catering dispenser with zero flavor deviation or steep time delays."
+      },
+      {
+        "question": "Does the extract maintain stability in RTD bottling applications?",
+        "answer": "Yes. The extract is micro - filtered to prevent sediment dropping or clouding over time, ensuring flawless visual clarity for prolonged shelf life in retail refrigerators and grab - and - go stations."
+      },
+      {
+        "question": "Can we use this extract for hot beverage service?",
+        "answer": "Completely. The extract is thermally stable, meaning it delivers an identical authentic tannin structure and aroma profile whether diluted with iced water for summer menus or hot water for winter services."
+      }
+    ]
+  },
+  "sugar-free": {
+    "h1": "Sugar-Free Beverage Bases for Cafés, Restaurants & Distributors",
+    "records": {
+      "hero": "rec860897623",
+      "tabs": "rec1851971041",
+      "specs": "rec1851971051",
+      "calculation": "rec860897624",
+      "flavors": "rec860897625",
+      "usage": "rec918906499",
+      "faqTitle": "rec2489116661",
+      "faq": "rec2488899741"
+    },
+    "tagline": null,
+    "weight": null,
+    "description": [
+      "Sugar Free is a convenient premix powder to enhance any drink with a bold, recognizable flavor without the added sweetness."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "No Risk of Leakage",
+        "value": "Powder eliminates spills and mess common with liquids"
+      },
+      {
+        "label": "No added sweetness",
+        "value": "Delivers a pure flavour profile"
+      },
+      {
+        "label": "Precise Dosage",
+        "value": "Offers exact measurements, full control over taste"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "100 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 100 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "6 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Sugar Free Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "Milk",
+          "200mL",
+          true,
+          true
+        ],
+        [
+          "The Base (Sugar Free)",
+          "1g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Amaretto",
+        "Banana",
+        "Black Currant",
+        "Blueberry",
+        "Caramel",
+        "Cherry",
+        "Coconut",
+        "Grapefruit",
+        "Green Apple",
+        "Hazelnut",
+        "Heavenly",
+        "Melon",
+        "Mango",
+        "Mint",
+        "Peach",
+        "Pear",
+        "Pineapple",
+        "Pistachio",
+        "Peppermint",
+        "Raspberry",
+        "Strawberry"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with milk and froth until smooth. Add it to coffee or tea."
+      ],
+      "image": "/images/tild6535-3962-4335-a138-303230393361__group_924.svg"
+    },
+    "faq": [
+      {
+        "question": "Does the sugar - free base alter our standard recipe dose weights?",
+        "answer": "No. We engineer our sugar - free solutions to match the exact bulk density and sweetness profile of traditional bases. Your staff uses the exact same scoops and pumps, requiring zero menu recalculations or staff retraining."
+      },
+      {
+        "question": "How does this category drive revenue in institutional catering?",
+        "answer": "Corporate campuses and healthcare facilities demand strict dietary compliance. Offering a premium sugar - free alternative allows operators to capture high - margin, health - conscious demographics without complicating the existing supply chain."
+      },
+      {
+        "question": "Do your sugar - free products have a bitter chemical aftertaste?",
+        "answer": "We utilize advanced multi - sweetener blending technology to mimic the exact flavor curve of sucrose. This guarantees a clean, natural finish without the astringent aftertaste commonly associated with basic zero - calorie syrups."
+      }
+    ]
+  },
+  "vending": {
+    "h1": "Vending Machine Drink Powders for Automatic Dispensing",
+    "records": {
+      "hero": "rec860861276",
+      "tabs": "rec1851911161",
+      "specs": "rec1851911171",
+      "calculation": "rec860861277",
+      "flavors": "rec860861278",
+      "usage": "rec860861279",
+      "faqTitle": "rec2489114551",
+      "faq": "rec2488898571"
+    },
+    "tagline": "Convenient. Reliable. Instant.",
+    "weight": "500g",
+    "description": [
+      "Vending is a reliable premix powder designed for high-volume beverage service in self-serve machines.",
+      "It ensures quick preparation with consistent quality, making it ideal for busy settings."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months, preservative-free"
+      },
+      {
+        "label": "Space-Efficient",
+        "value": "Compact packaging lowers transport costs"
+      },
+      {
+        "label": "Consistent Quality",
+        "value": "Ensures the same great taste every time"
+      },
+      {
+        "label": "Versatile Options",
+        "value": "Easily create multiple flavors"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec",
+        "icon": "/images/tild6437-6164-4837-b438-356166356631__frame_758.svg"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g",
+        "icon": "/images/tild6533-3463-4433-b535-303337383234__frame_758.svg"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups",
+        "icon": "/images/tild3038-3135-4564-a436-336433333836__frame_758.svg"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz",
+        "icon": "/images/tild3438-3166-4632-a430-363734386361__frame_758.svg"
+      }
+    ],
+    "calculation": {
+      "title": "Comparative Calculation",
+      "columns": [
+        "Product Name",
+        "Usage Norm",
+        "Actual Recipe",
+        "THE BASE"
+      ],
+      "rows": [
+        [
+          "Cocoa Powder",
+          "15g",
+          true,
+          false
+        ],
+        [
+          "Water",
+          "15mL",
+          true,
+          true
+        ],
+        [
+          "Syrup",
+          "30mL",
+          true,
+          false
+        ],
+        [
+          "The Base (Vending)",
+          "20g",
+          false,
+          true
+        ]
+      ]
+    },
+    "flavors": {
+      "note": "We can quickly and efficiently develop any flavor you need.",
+      "cta": {
+        "label": "Get A Sample",
+        "href": "#flavor"
+      },
+      "items": [
+        "Karak",
+        "Chocolate",
+        "Matcha"
+      ]
+    },
+    "usage": {
+      "lines": [
+        "Simply mix with water, and serve."
+      ],
+      "image": "/images/tild3637-6466-4436-b538-316434383563____1_40.svg"
+    },
+    "faq": [
+      {
+        "question": "Is the vending base compatible with fully automated dispensing machines?",
+        "answer": "Yes. The powder is engineered with high flowability and anti-caking properties, allowing it to feed smoothly through automated hoppers without bridging or clogging, even during continuous high-volume vending operation."
+      },
+      {
+        "question": "How does the vending base reduce operating costs compared to fresh ingredients?",
+        "answer": "A single 500g doypack yields up to 25 cups, eliminating the need for fresh dairy, syrups, or multiple SKUs. Combined with an 18-month preservative-free shelf life, this drastically cuts waste, storage, and restocking frequency across unattended machines."
+      },
+      {
+        "question": "Can operators maintain consistent quality across multiple vending units without on-site staff?",
+        "answer": "Absolutely. Since the base only requires mixing with water in precise, pre-calculated proportions, every cup delivered is identical regardless of location or machine, removing human error from the equation and ensuring uniform taste across an entire vending fleet."
+      }
+    ]
+  }
+}

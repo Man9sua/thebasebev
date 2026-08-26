@@ -73,6 +73,21 @@ function withDeploymentHeaders(
 
   if (new URL(request.url).pathname.startsWith("/api/")) {
     headers.set("Cache-Control", "no-store");
+  } else if (!isApprovedProductionHost) {
+    /**
+     * A preview must never be a stale preview.
+     *
+     * `workers.dev` caches at the edge, in front of this Worker, and it kept
+     * serving one page for hours after three deploys had replaced it — the
+     * version's own preview URL had the new page the whole time, so nothing
+     * inside the Worker could see the difference, let alone fix it. Reviewing a
+     * change against a copy of the change before it is worse than not being
+     * able to review it at all.
+     *
+     * Only previews. The real hostname keeps its caching, which is most of what
+     * makes the static fast path worth having.
+     */
+    headers.set("Cache-Control", "no-store");
   }
 
   return new Response(response.body, {
@@ -110,7 +125,41 @@ async function staticFastPath(
   const directAsset = await environment.ASSETS.fetch(request);
   if (directAsset.status !== 404) return directAsset;
 
-  if (pathname.startsWith("/api/") || request.headers.has("RSC")) return null;
+  if (pathname.startsWith("/api/")) return null;
+
+  /**
+   * The router's own request for a page.
+   *
+   * Next asks for an RSC payload on every in-page navigation and prefetch — the
+   * same URL as the document, with an `RSC` header — and OpenNext cannot answer
+   * those here: it looks them up in an incremental cache the prerendered
+   * payloads are not in, so all of them came back 404 and the router fell back
+   * to a full page load every time. `prepare-static-fast-path.mjs` now copies
+   * the payloads beside the documents, so they are served the same way.
+   *
+   * A hovered link asks for a slice of the route tree instead, naming it in
+   * `Next-Router-Segment-Prefetch`; the build writes those beside the page as
+   * `<route>.segments/<slice>.segment.rsc`, so the header is the file name. It
+   * is used as a path, so it is checked like one.
+   */
+  if (request.headers.has("RSC")) {
+    const segment = request.headers.get("Next-Router-Segment-Prefetch");
+    if (segment && (!segment.startsWith("/") || segment.includes(".."))) return null;
+
+    const base = staticPageAssetPath(pathname).replace(/\.html$/, "");
+    const payload = await environment.ASSETS.fetch(
+      requestForAsset(request, segment ? `${base}.segments${segment}.segment.rsc` : `${base}.rsc`),
+    );
+    if (payload.status === 404) return null;
+
+    const headers = new Headers(payload.headers);
+    headers.set("Content-Type", "text/x-component; charset=utf-8");
+    headers.set(
+      "Vary",
+      "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+    );
+    return new Response(payload.body, { status: 200, headers });
+  }
 
   const pageAsset = await environment.ASSETS.fetch(
     requestForAsset(request, staticPageAssetPath(pathname)),

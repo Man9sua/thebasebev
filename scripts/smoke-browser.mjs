@@ -60,32 +60,42 @@ try {
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage is the redesigned surface: a product rail, then Bestsellers.
-  // Navigation, product grid and the region picker live in the full-screen menu
-  // panel, so they are asserted there rather than in a legacy hover menu.
+  // The homepage is the redesigned surface: a photographic hero, then the
+  // Bestsellers carousel. Navigation, product grid and the region picker moved
+  // out of the old hover mega-menu into the full-screen menu panel, so they are
+  // asserted there rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
 
-  // The hero is a marquee of pre-composed product cards: no video, a rail that
-  // is rendered twice so the loop is seamless, and tiles big enough to read.
+  // The hero is one photograph anchored to the right edge with the copy held on
+  // the left. It replaced a marquee of product tiles, so the rail assertions are
+  // gone; what still matters is that it is a picture and not video, that the
+  // picture runs the height of the frame and takes the half the copy does not,
+  // and that the one above-the-fold CTA still opens the range.
   const hero = page.locator("section[data-hero]");
   check((await hero.locator("video").count()) === 0, "home: hero must not use video");
-  const heroTiles = hero.locator("[data-hero-tile]");
-  const heroTileCount = await heroTiles.count();
-  check(
-    heroTileCount >= 20 && heroTileCount % 2 === 0,
-    `home: hero marquee needs both passes of a duplicated rail (got ${heroTileCount})`,
-  );
-  const heroTileBox = await heroTiles.first().boundingBox();
+  const heroImage = hero.locator("img").first();
+  check((await heroImage.count()) === 1, "home: hero is missing its photograph");
+  const heroImageBox = await heroImage.boundingBox();
   const view = page.viewportSize();
   check(
-    !!heroTileBox && heroTileBox.height > view.height * 0.18,
-    `home: hero marquee tile is too small (${Math.round(heroTileBox?.height ?? 0)}px of ${view.height})`,
+    !!heroImageBox && heroImageBox.x + heroImageBox.width >= view.width - 1,
+    `home: hero photograph must reach the right edge (ends at ${Math.round(
+      (heroImageBox?.x ?? 0) + (heroImageBox?.width ?? 0),
+    )} of ${view.width})`,
   );
   check(
-    (await hero.locator("a[href='/cream-latte']").count()) > 0,
-    "home: hero CTA must still point at the featured product",
+    !!heroImageBox && heroImageBox.width > view.width * 0.5,
+    `home: hero photograph must take at least half the frame (got ${Math.round(heroImageBox?.width ?? 0)} of ${view.width})`,
+  );
+  check(
+    !!heroImageBox && heroImageBox.height > view.height * 0.6,
+    `home: hero photograph is too short (${Math.round(heroImageBox?.height ?? 0)}px of ${view.height})`,
+  );
+  check(
+    (await hero.locator("a[href='/catalog']").count()) > 0,
+    "home: hero CTA must point at the catalog",
   );
   // The header must carry the original Tilda lockup, not a text substitute.
   check(
@@ -133,8 +143,12 @@ try {
   await rail.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
   check(
-    (await rail.locator("[data-card]").count()) === 7,
-    "reading: expected seven cards in the rail",
+    (await rail.locator("[data-card]").count()) === 6,
+    "reading: expected six cards after the Blog card removal",
+  );
+  check(
+    (await rail.locator("a[href='/resources/blog']").count()) === 0,
+    "reading: removed Blog card returned to the rail",
   );
   check(
     await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
@@ -444,17 +458,26 @@ try {
   check(loadingCurtainCleared, "mobile: loading curtain remained over the completed page");
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
-  await mobileBurger.click();
-  const mobileMenuOpened = await mobilePage
-    .waitForFunction(() => {
-      const menu = document.querySelector("#site-menu");
-      if (!menu || menu.getAttribute("aria-hidden") !== "false") return false;
-      const style = getComputedStyle(menu);
-      return style.visibility === "visible" && style.clipPath === "inset(0px)";
-    }, undefined, { timeout: 5_000 })
-    .then(() => true)
-    .catch(() => false);
-  check(mobileMenuOpened, "mobile: burger menu did not open");
+  // The button ships in the server HTML, so it is clickable well before React
+  // has hydrated and an early click is simply dropped. On localhost hydration
+  // wins that race every time; against a deployed Worker it loses it every
+  // time, which read as a broken menu rather than as a test clicking too soon.
+  // So click until the menu answers, giving each click room to finish its
+  // transition before deciding it went nowhere.
+  const mobileMenu = mobilePage.locator("#site-menu");
+  const menuIsOpen = () =>
+    mobileMenu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)");
+  let mobileMenuOpen = false;
+  for (let attempt = 0; attempt < 6 && !mobileMenuOpen; attempt += 1) {
+    // Once it opens the button relabels itself to "Close menu" and this locator
+    // stops matching — which only happens after the loop has already won.
+    await mobileBurger.click({ timeout: 5_000 }).catch(() => {});
+    for (let tick = 0; tick < 8 && !mobileMenuOpen; tick += 1) {
+      await mobilePage.waitForTimeout(250);
+      mobileMenuOpen = await menuIsOpen();
+    }
+  }
+  check(mobileMenuOpen, "mobile: burger menu did not open");
   // Cabinet is no longer public. The region picker still moves from the bar
   // into the menu on small screens.
   check(

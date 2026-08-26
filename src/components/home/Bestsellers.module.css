@@ -1,3 +1,16 @@
+/* The ground.
+ *
+ * This used to be paper on the left and a hard panel of the product's colour
+ * over the right 46%. The pack shots are square artwork with their own solid
+ * background baked in, and they sit in the middle — straddling that seam — so
+ * every slide showed a coloured rectangle with a visible edge down its left
+ * half, which is the one thing the panel existed to prevent.
+ *
+ * So the ground is one uniform wash of the slide's own colour instead: the page
+ * takes the product's temperature, the copy never lands on a colour block, and
+ * the shot is simply allowed to be a card on it, which is what its shadow has
+ * been saying all along. The long transition on background-color is now the
+ * section's main beat. */
 .section {
   position: relative;
   min-height: 100vh;
@@ -6,29 +19,9 @@
   align-items: center;
   overflow: clip;
   background: var(--tbb-paper);
-  padding: var(--tbb-section) 0;
-}
-
-/* The colour field. It is the product's own colour, so it changes with the
-   slide — a long transition on background-color is the section's main beat. */
-.field {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 46%;
-  background: var(--field, var(--tbb-sand));
+  background: color-mix(in srgb, var(--field, var(--tbb-sand)) 20%, var(--tbb-paper));
   transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
-}
-
-/* A hairline of the next colour bleeding past the field keeps the edge from
-   looking like a flat cut. */
-.field::after {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 -1px;
-  width: 1px;
-  background: inherit;
+  padding: var(--tbb-section) 0;
 }
 
 .inner {
@@ -41,51 +34,119 @@
   display: grid;
   /* Equal outer columns is what actually centres the product. Weighting them
      differently (copy wider than controls) pushes the middle column off-centre,
-     which is the one thing this composition must not do. */
-  grid-template-columns: 1fr minmax(0, clamp(20rem, 34vw, 34rem)) 1fr;
+     which is the one thing this composition must not do.
+
+     `minmax(0, 1fr)` rather than `1fr`, because a bare `1fr` floors at
+     min-content: a long product name like MILKSHAKE grew the copy column until
+     the headline was lying across the artwork. Now the column holds its share
+     and the headline wraps inside it. */
+  grid-template-columns:
+    minmax(0, 1fr) minmax(0, clamp(19rem, 30vw, 31rem)) minmax(0, 1fr);
   align-items: center;
   gap: clamp(1.5rem, 3vw, 3rem);
 }
 
 /* ---- left column ---- */
 
+/* Above the stage: a turned card may drift this far, and copy that the artwork
+   can cover is copy nobody reads.
+
+   Spacing is a row gap rather than margins on the children, because
+   `design-tokens.css` carries `.tbb h2, .tbb p { margin: 0 }` — at (0,1,1) that
+   outranks a single class here, so a `margin-top` on the description was being
+   dropped and the copy closed up against the headline. A gap belongs to the
+   container and nothing can reset it. */
 .copy {
-  /* Above the stage: a turned card may drift this far, and copy that the
-     artwork can cover is copy nobody reads. */
   position: relative;
   z-index: 2;
-  max-width: 32ch;
+  /* The column is the measure. Capping the block at a text width instead used
+     to leave the headline — which is five times that size — free to spill out
+     of it and across the product. `.description` keeps its own measure below. */
+  min-width: 0;
+  max-width: 100%;
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(1.25rem, 2.6vw, 2rem);
 }
 
 .eyebrow {
   display: block;
-  margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
 }
 
+/* The same composition as the hero, so the page's two big statements speak with
+   one voice: "Premium" and "Bases" sit together as one quiet line of framing,
+   and the product name takes the rows below on its own.
+
+   The three parts are two text nodes either side of a span. Wrapping the text
+   nodes is what `.headingAffix` does in the markup; the reorder is visual only,
+   so the heading still serves "Premium <product> Bases" as one string. */
 .heading {
   font-family: var(--tbb-font-display);
-  font-size: clamp(2.25rem, 4.4vw, 4.25rem);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: clamp(0.8rem, 1.6vw, 1.4rem);
+  row-gap: clamp(0.2rem, 0.7vw, 0.5rem);
   text-transform: uppercase;
   margin: 0;
+  max-width: 100%;
 }
 
+.headingAffix {
+  order: 1;
+  font-size: clamp(0.7rem, 0.95vw, 0.9rem);
+  line-height: 1;
+  letter-spacing: 0.38em;
+  font-weight: 400;
+  color: var(--tbb-muted);
+}
+
+/* The two affixes are not adjacent — the product sits between them — so this
+   is the closing one by position, not by sibling combinator. */
+.headingAffix:last-child {
+  order: 2;
+}
+
+/* Binds the two framing words into one phrase. Generated content, so it never
+   reaches `textContent`. */
+.headingAffix:last-child::before {
+  content: "·";
+  margin-right: clamp(0.8rem, 1.6vw, 1.4rem);
+  color: var(--tbb-muted);
+}
+
+/* Full basis forces the break, so the product always lands on its own row
+   however long its name is.
+
+   `min-width: 0` is what lets that row then be narrower than the word inside
+   it, so MILKSHAKE takes the soft hyphen `Product.hyphenatedName` carries and
+   sets as MILK- / SHAKE inside the column instead of running out over the
+   artwork. `break-word` is the last resort for a name with no break marked.
+
+   The type is sized so that a name long enough to need two rows gets them at
+   every width, rather than only just failing to fit at some of them. */
 .headingProduct {
-  display: block;
+  order: 3;
+  flex-basis: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  font-size: clamp(2.8rem, 6vw, 6.4rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: var(--tbb-ink);
 }
 
 .description {
-  margin-top: clamp(1rem, 2vw, 1.5rem);
   color: var(--tbb-ink-soft);
   max-width: 34ch;
 }
 
 .specs {
-  margin-top: clamp(1.25rem, 2.5vw, 2rem);
   display: flex;
-  gap: clamp(1.25rem, 3vw, 2.5rem);
+  flex-wrap: wrap;
+  gap: 0.75rem clamp(1rem, 2.4vw, 2.5rem);
   border-top: 1px solid var(--tbb-line);
   padding-top: clamp(0.85rem, 1.6vw, 1.25rem);
 }
@@ -116,7 +177,6 @@
 }
 
 .cta {
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
@@ -224,8 +284,8 @@
   height: 100%;
   object-fit: contain;
   /* Two shadows, not one: the cast shadow gives the card weight, the tight
-     ambient one keeps the left edge — which sits on paper, not on the field —
-     from reading as a hard crop. */
+     ambient one keeps its edges off the wash so the square reads as a card
+     rather than a crop. */
   filter:
     drop-shadow(0 36px 56px rgba(26, 19, 17, 0.24))
     drop-shadow(0 2px 10px rgba(26, 19, 17, 0.1));
@@ -248,8 +308,8 @@
 
 /* ---- controls ---- */
 
-/* Everything below sits on the colour field, so it inherits ink derived from
-   that colour rather than assuming the field is light. */
+/* The controls sit on the wash now, not on a panel of full-strength colour, so
+   they take page ink at every slide instead of an ink derived per product. */
 .controls {
   position: relative;
   z-index: 2;
@@ -258,8 +318,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: clamp(1rem, 2.5vw, 1.75rem);
-  color: var(--on-field, var(--tbb-ink));
-  transition: color var(--tbb-dur-slow) var(--tbb-ease-inout);
+  color: var(--tbb-ink);
 }
 
 .arrows {
@@ -352,22 +411,18 @@
 }
 
 @media (max-width: 1023px) {
-  /* Below the desktop grid the composition is rebuilt, not squeezed: the field
-     becomes a band behind the product, copy sits under it, controls go inline. */
+  /* Below the desktop grid the composition is rebuilt, not squeezed: the
+     product takes the top of the frame, copy sits under it, controls go
+     inline. The ground is the same wash as on desktop, so the shot needs no
+     band of its own here either. */
   .section {
     min-height: 0;
     padding: var(--tbb-section) 0 clamp(3rem, 8vw, 5rem);
   }
 
-  /* Hidden on mobile: the band is drawn by the stage, so it always ends where
-     the product ends instead of running under the copy on tall slides. */
-  .field {
-    display: none;
-  }
-
   .inner {
     grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.5rem, 5vw, 2.5rem);
+    gap: clamp(2rem, 6vw, 3rem);
   }
 
   .stage {
@@ -375,16 +430,6 @@
     grid-row: 1;
     aspect-ratio: 1 / 0.8;
     width: auto;
-    /* Full-bleed past the page gutter. */
-    margin: 0 calc(var(--tbb-gutter) * -1);
-    padding: clamp(1.5rem, 6vw, 2.5rem) var(--tbb-gutter);
-    background: var(--field, var(--tbb-sand));
-    transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
-  }
-
-  .controls {
-    /* Back on paper once the band ends. */
-    color: var(--tbb-ink);
   }
 
   .copy {

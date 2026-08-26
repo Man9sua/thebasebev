@@ -72,38 +72,40 @@ async function waitForHome(page, viewport) {
   await page.waitForTimeout(250);
 }
 
-async function assertHeroRailMotion(page, viewport) {
-  // The class fallback lets this regression check diagnose an older deployed
-  // build before the stable data hooks themselves reach staging.
-  const track = page.locator("[data-hero-track], [data-hero] [class*='track']").first();
-  const marquee = page.locator("[data-hero-marquee], [data-hero] [class*='marquee']").first();
-  const readMotion = () =>
-    track.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return {
-        animationName: style.animationName,
-        playState: style.animationPlayState,
-        transform: style.transform,
-      };
-    });
-
-  const before = await readMotion();
-  await page.waitForTimeout(420);
-  const after = await readMotion();
-  check(before.animationName !== "none", `${viewport}: hero rail animation is missing`);
-  check(after.playState === "running", `${viewport}: hero rail is not running before hover`);
-  check(before.transform !== after.transform, `${viewport}: hero rail did not move before hover`);
-
-  await marquee.hover();
-  const hoverBefore = await readMotion();
-  await page.waitForTimeout(420);
-  const hoverAfter = await readMotion();
-  check(hoverAfter.playState === "running", `${viewport}: hero rail paused on pointer hover`);
+async function assertHeroPhotography(page, viewport) {
+  const hero = page.locator("[data-hero]");
+  const title = hero.locator("h1");
+  const image = hero.locator("img[fetchpriority='high']").first();
   check(
-    hoverBefore.transform !== hoverAfter.transform,
-    `${viewport}: hero rail stopped moving on pointer hover`,
+    (await title.textContent())?.replace(/\s+/g, " ").trim() === "Premium Cream Latte Bases",
+    `${viewport}: production hero H1 changed`,
   );
-  await page.mouse.move(1, 1);
+  const entranceSettled = await page
+    .waitForFunction(
+      () => {
+        const words = [...document.querySelectorAll("[data-hero] h1 > span > span")];
+        return words.length === 3 && words.every((word) => getComputedStyle(word).transform === "none");
+      },
+      undefined,
+      { timeout: 3_000 },
+    )
+    .then(() => true, () => false);
+  check(entranceSettled, `${viewport}: hero headline remained hidden after the intro`);
+  check((await image.count()) === 1, `${viewport}: critical hero photograph is missing`);
+  const imageBox = await image.boundingBox();
+  const view = page.viewportSize();
+  check(
+    !!imageBox && imageBox.height >= view.height * 0.9,
+    `${viewport}: hero photograph does not fill the scene height`,
+  );
+  check(
+    !!imageBox && imageBox.x + imageBox.width >= view.width - 1,
+    `${viewport}: hero photograph does not reach the right edge`,
+  );
+  check(
+    (await hero.locator("a[href='/catalog']").count()) === 1,
+    `${viewport}: hero catalog CTA is missing`,
+  );
 }
 
 async function assertReloadIntro(page, viewport) {
@@ -184,7 +186,7 @@ async function auditDesktop(browser, width, height) {
   await waitForHome(page, viewport);
 
   if (width === 1440) await assertReloadIntro(page, viewport);
-  await assertHeroRailMotion(page, viewport);
+  await assertHeroPhotography(page, viewport);
 
   let state = await readState(page);
   check(state.scene === 0 && state.sceneName === "hero", `${viewport}: hero is not initial scene`);

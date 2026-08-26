@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ElementType,
+  type ReactNode,
+} from "react";
 
 /**
  * Scroll-triggered reveal.
@@ -41,22 +48,36 @@ function getObserver() {
   return observer;
 }
 
+/** Which edge the element settles in from. */
+type RevealFrom = "bottom" | "left" | "right";
+
+const OFFSET: Record<RevealFrom, (distance: number) => string> = {
+  bottom: (distance) => `translate3d(0, ${distance}px, 0)`,
+  left: (distance) => `translate3d(${-distance}px, 0, 0)`,
+  right: (distance) => `translate3d(${distance}px, 0, 0)`,
+};
+
 type RevealProps = {
   children: ReactNode;
   /** Stagger within a group, in ms. */
   delay?: number;
   /** Distance travelled, in px. Keep it small — this is a settle, not a slide. */
   distance?: number;
+  from?: RevealFrom;
   as?: ElementType;
   className?: string;
+  /** Merged over the reveal's own inline style — for passing a stagger down. */
+  style?: CSSProperties;
 };
 
 export function Reveal({
   children,
   delay = 0,
   distance = 28,
+  from = "bottom",
   as: Tag = "div",
   className,
+  style,
 }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
   const [pending, setPending] = useState(false);
@@ -114,11 +135,18 @@ export function Reveal({
       ref={ref}
       className={className}
       data-reveal-state={visible ? "visible" : "pending"}
+      // Published so a stylesheet can animate the element's own parts in step
+      // with it — the rules that draw themselves out beside a flavour name have
+      // nothing else to hang off.
+      data-revealed={visible ? "true" : "false"}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "none" : `translate3d(0, ${distance}px, 0)`,
-        transition: `opacity var(--tbb-dur-slow) var(--tbb-ease) ${delay}ms, transform var(--tbb-dur-slow) var(--tbb-ease) ${delay}ms`,
+        transform: visible ? "none" : OFFSET[from](distance),
+        // The duration is a variable so a caller can shorten it for a long
+        // stagger, where the slow settle would still be running rows later.
+        transition: `opacity var(--reveal-dur, var(--tbb-dur-slow)) var(--tbb-ease) ${delay}ms, transform var(--reveal-dur, var(--tbb-dur-slow)) var(--tbb-ease) ${delay}ms`,
         willChange: visible ? "auto" : "opacity, transform",
+        ...style,
       }}
     >
       {children}

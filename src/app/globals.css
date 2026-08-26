@@ -1,5 +1,6 @@
 @import "../styles/design-tokens.css";
 @import "../styles/legacy-catalog.css";
+@import "../styles/legacy-repairs.css";
 
 html,
 body {

@@ -1,115 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isLoadingGateOpen, whenLoadingGateOpens } from "@/components/site/loading-gate";
-import {
-  HERO_MARQUEE_SLUGS,
-  HERO_SLUGS,
-  getProducts,
-  resolveProductColors,
-} from "@/data/products";
 import styles from "./Hero.module.css";
 
 /**
- * Marquee hero.
+ * Photographic hero.
  *
- * Centred copy over an endlessly scrolling rail of the pre-composed product
- * cards. The rail is the range argument — a buyer sees eleven finished products
- * in the first viewport instead of one — while the copy stays a single, static,
- * server-rendered block.
+ * One photograph running the height of the frame from its right edge, with the
+ * copy held on the left against a veil that fades the image out under the type.
  *
- * The h1 is deliberately fixed on Cream Latte. Production's homepage h1 is
- * "Premium / Cream Latte / Bases", so the wording is SEO surface, not a design
- * choice: it must be identical in the server HTML and must not rewrite itself
- * afterwards. `HERO_SLUGS[0]` is the single source for which product that is.
+ * The copy is about the company, not about one product. A hero built on a
+ * single base put the homepage's biggest words behind a product the visitor had
+ * no reason to have picked yet, and spent the only above-the-fold link on that
+ * one page. It now says what THE BASE makes and sends the visitor to the range.
  *
- * Motion is CSS only — one keyframed transform on the rail plus the staged
- * entrance below. No animation library: nothing here needs per-frame JS, and
- * the Worker bundle stays as small as the rest of the site.
+ * The h1 still reads "Premium … Bases" — that is the wording production ranks
+ * on, so it is SEO surface rather than a design choice, and it must be
+ * identical in the server HTML and must not rewrite itself afterwards. Only the
+ * middle of the phrase changed, from a product name to what the company sells.
  */
-
-const FEATURED = getProducts(HERO_SLUGS)[0];
 
 /**
- * The rail, resolved once at module scope.
+ * Decorative, so it carries an empty alt and its wrapper is hidden from the
+ * accessibility tree. Everything the section means is in the copy beside it.
  *
- * Nothing in it depends on render state, so the colours, the alternating tilt
- * and the loading hints are computed here instead of per tile per render.
+ * Cropped from the brand key visual: the original has the slogan and the
+ * lockup printed into it, and the page already carries both — the header logo
+ * and the h1 — so the crop keeps the photograph and drops the artwork.
  */
-const TILES = getProducts(HERO_MARQUEE_SLUGS).map((product, position) => ({
-  slug: product.slug,
-  route: product.route,
-  name: product.name,
-  image: product.image,
-  // Alternating tilt, straightened on hover — the same trick the pack shots use
-  // elsewhere: the rail reads as objects laid on a surface, not a filmstrip.
-  style: {
-    ["--tilt" as string]: position % 2 === 0 ? "-2.5deg" : "3.5deg",
-    // Matches the card's own field, so a rounded corner never shows paper.
-    ["--tile-bg" as string]: resolveProductColors(product).background,
-  } as CSSProperties,
-  // Only the first few cards are above the fold on the first paint; the rest
-  // scroll in.
-  eager: position < 3,
-  priority: position === 0,
-}));
-
-type Tile = (typeof TILES)[number];
-
-/**
- * The rail is rendered twice back to back and translated by exactly half its
- * width, which is what makes the loop seamless. The second pass is presentation
- * only, so `HeroTile` renders it without an anchor, without alt text and
- * without a tab stop — the same products are not announced or linked twice.
- */
-const PASSES = [
-  { key: "lead", clone: false },
-  { key: "loop", clone: true },
-] as const;
-
-function HeroTile({ tile, clone }: { tile: Tile; clone: boolean }) {
-  const art = tile.image && (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      className={styles.tileImage}
-      src={tile.image}
-      alt={clone ? "" : `${tile.name} base by THE BASE`}
-      loading={!clone && tile.eager ? "eager" : "lazy"}
-      fetchPriority={!clone && tile.priority ? "high" : undefined}
-      decoding="async"
-      draggable={false}
-    />
-  );
-
-  if (clone) {
-    return (
-      <div className={styles.tile} data-hero-tile style={tile.style} aria-hidden="true">
-        {art}
-      </div>
-    );
-  }
-
-  return (
-    <Link
-      href={tile.route}
-      className={styles.tile}
-      data-hero-tile
-      style={tile.style}
-      // Eleven links sit above the fold, each pointing at a legacy parity page
-      // that is expensive to render. Left on, Next prefetches all eleven the
-      // moment the rail scrolls into view. The Worker already returns
-      // intermittent Cloudflare 1102 (CPU limit) under concurrent renders of
-      // those pages — measured on staging both with and without this rail — so
-      // adding eleven speculative renders to the homepage is bandwidth and CPU
-      // spent on a showcase most visitors will not click through. Fetch on
-      // click instead.
-      prefetch={false}
-    >
-      {art}
-    </Link>
-  );
-}
+const BACKDROP = "/images/hero-taste-begins.jpg";
 
 function ArrowIcon() {
   return (
@@ -124,7 +45,7 @@ export function Hero() {
   const [ready, setReady] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
-  const railRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
 
   /**
    * Arm the entrance when the loading screen starts pulling away, so the
@@ -152,19 +73,18 @@ export function Hero() {
   }, []);
 
   /**
-   * Scroll hand-off into Bestsellers: the copy lifts away and the rail settles
-   * back as the hero leaves, so the two read as one movement rather than one
-   * block ending and another starting.
+   * Scroll hand-off into Bestsellers: the copy lifts away while the photograph
+   * drifts the other way, so the two sections read as one movement rather than
+   * one block ending and another starting.
    *
    * Written straight to `style` in a rAF loop that only runs while the hero is
-   * on screen — no state, no render per frame. The rail's own marquee transform
-   * lives on the inner track, so nothing here fights it.
+   * on screen — no state, no render per frame.
    */
   useEffect(() => {
     const hero = heroRef.current;
     const copy = copyRef.current;
-    const rail = railRef.current;
-    if (!hero || !copy || !rail) return;
+    const media = mediaRef.current;
+    if (!hero || !copy || !media) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let frame = 0;
@@ -178,8 +98,8 @@ export function Hero() {
 
       copy.style.transform = `translate3d(0, ${(eased * -70).toFixed(1)}px, 0)`;
       copy.style.opacity = Math.max(0, 1 - progress * 1.6).toFixed(3);
-      rail.style.transform = `scale(${(1 - eased * 0.06).toFixed(4)}) translate3d(0, ${(
-        eased * 26
+      media.style.transform = `scale(${(1 + eased * 0.06).toFixed(4)}) translate3d(0, ${(
+        eased * 34
       ).toFixed(1)}px, 0)`;
 
       frame = visible ? requestAnimationFrame(tick) : 0;
@@ -200,7 +120,7 @@ export function Hero() {
       if (frame) cancelAnimationFrame(frame);
       copy.style.transform = "";
       copy.style.opacity = "";
-      rail.style.transform = "";
+      media.style.transform = "";
     };
   }, []);
 
@@ -209,9 +129,17 @@ export function Hero() {
       ref={heroRef}
       className={`${styles.hero} ${motionArmed ? styles.motionArmed : ""} ${ready ? styles.ready : ""}`}
       data-hero
-      aria-label="THE BASE products"
+      aria-label="THE BASE"
     >
-      <span className={styles.wash} aria-hidden="true" />
+      <div ref={mediaRef} className={styles.media} aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={styles.photo} src={BACKDROP} alt="" fetchPriority="high" />
+      </div>
+
+      {/* Fades the photograph out from the left so the copy sits on paper
+          rather than on glassware. Without it the headline fights the image at
+          every scroll position and loses somewhere. */}
+      <span className={styles.veil} aria-hidden="true" />
 
       <div ref={copyRef} className={styles.inner}>
         <div className={styles.copy}>
@@ -219,15 +147,12 @@ export function Hero() {
             className={`tbb-label ${styles.tagline} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "180ms" }}
           >
-            Dry beverage base
+            Where taste begins
           </span>
 
-          {/*
-            Three lines, each rising out of its own mask. The hierarchy is size
-            and weight, not colour: "Premium" and "Bases" are small and tracked,
-            the product name carries the line. Text content stays the one string
-            production serves — "Premium Cream Latte Bases".
-          */}
+          {/* One word to a row, each rising out of its own mask. The DOM still
+              serves "Premium Cream Latte Bases" as one string, which is the
+              wording production ranks on and the string the smoke test reads. */}
           <h1 className={styles.title}>
             <span className={styles.line}>
               <span
@@ -239,15 +164,15 @@ export function Hero() {
             </span>{" "}
             <span className={styles.line}>
               <span
-                className={`${styles.lineInner} ${styles.titleProduct}`}
+                className={`${styles.lineInner} ${styles.titleLead}`}
                 style={{ ["--enter-delay" as string]: "400ms" }}
               >
-                {FEATURED.name}
+                Cream Latte
               </span>
             </span>{" "}
             <span className={styles.line}>
               <span
-                className={`${styles.lineInner} ${styles.titleAffix}`}
+                className={`${styles.lineInner} ${styles.titleLead}`}
                 style={{ ["--enter-delay" as string]: "520ms" }}
               >
                 Bases
@@ -259,16 +184,18 @@ export function Hero() {
             className={`${styles.description} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "640ms" }}
           >
-            {FEATURED.description}
+            THE BASE makes dry beverage bases in Dubai — over 600 flavours for
+            cafés, franchises and private label, built from a single scoop so the
+            drink tastes the same in every outlet.
           </p>
 
           <Link
-            href={FEATURED.route}
+            href="/catalog"
             className={`${styles.cta} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "730ms" }}
             prefetch={false}
           >
-            Shop {FEATURED.name}
+            Explore the catalog
             <ArrowIcon />
           </Link>
 
@@ -276,26 +203,11 @@ export function Hero() {
             className={`${styles.badges} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "820ms" }}
           >
-            <span className="tbb-label">From {FEATURED.price ?? "On request"}</span>
+            <span className="tbb-label">600+ flavours</span>
             <span className="tbb-label">Halal certified</span>
             <span className="tbb-label">HACCP audited</span>
             <span className="tbb-label">Made in Dubai</span>
           </p>
-        </div>
-      </div>
-
-      <div
-        ref={railRef}
-        className={`${styles.marquee} ${styles.enterMarquee}`}
-        data-hero-marquee
-        aria-label="THE BASE product range"
-      >
-        <div className={styles.track} data-hero-track>
-          {PASSES.map((pass) =>
-            TILES.map((tile) => (
-              <HeroTile key={`${pass.key}-${tile.slug}`} tile={tile} clone={pass.clone} />
-            )),
-          )}
         </div>
       </div>
     </section>

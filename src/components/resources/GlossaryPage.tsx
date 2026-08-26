@@ -78,7 +78,7 @@ export function GlossaryPage() {
       <section className={styles.hero} aria-labelledby="glossary-title">
         <div className={styles.heroInner}>
           <span className="tbb-label">Reference / 101 terms</span>
-          <h1 id="glossary-title">Beverage glossary</h1>
+          <h1 id="glossary-title">Glossary</h1>
           <p>
             Practical definitions for product development, beverage operations and B2B supply.
           </p>
