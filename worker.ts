@@ -109,7 +109,41 @@ async function staticFastPath(
   const directAsset = await environment.ASSETS.fetch(request);
   if (directAsset.status !== 404) return directAsset;
 
-  if (pathname.startsWith("/api/") || request.headers.has("RSC")) return null;
+  if (pathname.startsWith("/api/")) return null;
+
+  /**
+   * The router's own request for a page.
+   *
+   * Next asks for an RSC payload on every in-page navigation and prefetch — the
+   * same URL as the document, with an `RSC` header — and OpenNext cannot answer
+   * those here: it looks them up in an incremental cache the prerendered
+   * payloads are not in, so all of them came back 404 and the router fell back
+   * to a full page load every time. `prepare-static-fast-path.mjs` now copies
+   * the payloads beside the documents, so they are served the same way.
+   *
+   * A hovered link asks for a slice of the route tree instead, naming it in
+   * `Next-Router-Segment-Prefetch`; the build writes those beside the page as
+   * `<route>.segments/<slice>.segment.rsc`, so the header is the file name. It
+   * is used as a path, so it is checked like one.
+   */
+  if (request.headers.has("RSC")) {
+    const segment = request.headers.get("Next-Router-Segment-Prefetch");
+    if (segment && (!segment.startsWith("/") || segment.includes(".."))) return null;
+
+    const base = staticPageAssetPath(pathname).replace(/\.html$/, "");
+    const payload = await environment.ASSETS.fetch(
+      requestForAsset(request, segment ? `${base}.segments${segment}.segment.rsc` : `${base}.rsc`),
+    );
+    if (payload.status === 404) return null;
+
+    const headers = new Headers(payload.headers);
+    headers.set("Content-Type", "text/x-component; charset=utf-8");
+    headers.set(
+      "Vary",
+      "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+    );
+    return new Response(payload.body, { status: 200, headers });
+  }
 
   const pageAsset = await environment.ASSETS.fetch(
     requestForAsset(request, staticPageAssetPath(pathname)),

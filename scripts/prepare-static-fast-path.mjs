@@ -21,8 +21,22 @@ const copied = [];
 function walk(directory) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const absolute = path.join(directory, entry.name);
-    if (entry.isDirectory()) walk(absolute);
-    if (!entry.isFile() || path.extname(entry.name) !== ".html") continue;
+    if (entry.isDirectory()) {
+      walk(absolute);
+      continue;
+    }
+    // Three kinds of file, all three of them things the browser asks for:
+    // `<route>.html` is the document, `<route>.rsc` is the payload the router
+    // asks for on an in-page navigation — same URL, `RSC` header — and
+    // `<route>.segments/**.segment.rsc` is one slice of the route tree, which
+    // is what a hovered link prefetches.
+    //
+    // Only the documents were copied before, so every navigation and every
+    // prefetch on the deployed Worker came back 404: OpenNext answers those
+    // requests out of an incremental cache the prerendered payloads are not in.
+    // The router's answer to a 404 is a full page load, so the site had a
+    // client-side router that never got to do anything.
+    if (!entry.isFile() || ![".html", ".rsc"].includes(path.extname(entry.name))) continue;
 
     const relative = path.relative(sourceRoot, absolute);
     const destination = path.join(targetRoot, relative);
@@ -42,11 +56,20 @@ for (const metadataFile of ["robots.txt.body", "sitemap.xml.body"]) {
   copied.push(destinationName);
 }
 
-for (const required of ["index.html", "not-found.html", "robots.txt", "sitemap.xml"]) {
+for (const required of ["index.html", "index.rsc", "not-found.html", "robots.txt", "sitemap.xml"]) {
   if (!copied.includes(required)) throw new Error(`Static fast path is missing ${required}.`);
 }
 if (copied.length < 100) {
   throw new Error(`Static fast path unexpectedly contains only ${copied.length} files.`);
+}
+
+// Every document should have a payload beside it. A document without one still
+// serves; its navigations just go back to being full page loads, silently — so
+// say which ones rather than let the count drift.
+const documents = copied.filter((file) => file.endsWith(".html"));
+const orphans = documents.filter((file) => !copied.includes(file.replace(/\.html$/, ".rsc")));
+if (orphans.length) {
+  console.log(`No RSC payload for ${orphans.length} document(s): ${orphans.join(", ")}`);
 }
 
 const manifest = {
