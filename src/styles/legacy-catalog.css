@@ -7,22 +7,22 @@
  * the cart is a live business function and `audit:commerce` asserts its identity
  * and prices. What is touched is only how it looks.
  *
- * The composition came out of the reference the client sent: the photograph is
- * the card, the category rides it top-left as a badge, and the name and the
- * price share the line beneath it. Two things from that reference are not here,
- * both because our packaging prints its own name — setting the card's name over
- * the photograph put it straight on top of the pouch's own MILKSHAKE, and the
- * "new"/"-15%" flags have no data behind them, so the badge slot carries the
- * category, which does.
+ * Third pass at the composition, and the one that stops treating the pack shot
+ * as wallpaper. Before, the tinted rectangle was the card and the words were
+ * loose underneath it; now the whole card is one panel of paper — pouch,
+ * category, name, price, line of copy and the cart button all standing on the
+ * same surface — with the product's colour as a tab across the top of it,
+ * index-card fashion. Sixteen tabs down the page is what makes the range
+ * legible at a glance, and it uses the colour at the one size where a `#43201c`
+ * and a `#d7bd64` can sit in the same grid without one of them shouting.
  *
- * On paper rather than in the dark: the dark version was tried and pulled back,
- * so the palette is the site's own again and only the palette changed.
+ * That also lets the pouch be a pouch. It floats on the panel with no frame of
+ * its own, which is only readable because the panel is warm grey rather than
+ * white — a white pouch on a white page has no edge, which is what made the
+ * first version of this page look broken.
  *
  * `--tile` on each card is the product's own colour, written into the HTML by
- * `replateCatalogCards` in `site-pages.ts` — see the note there. It is mixed
- * down to a wash, because at full strength it put a white pouch on near-black
- * for chocolate, tea and vending and on almost-white for garnish and sugar
- * free: the product disappeared at both ends of the range.
+ * `replateCatalogCards` in `site-pages.ts` — see the note there.
  */
 
 /* ---- outranking the export ----
@@ -37,8 +37,6 @@
 
 .legacy-document .catg-wrap {
   font-family: var(--tbb-font-sans);
-
-  --catg-tile-base: var(--tbb-paper);
 
   /* The block's own variables, remapped so anything not restated below still
      lands in the site palette rather than in its Roboto/grey one. */
@@ -75,16 +73,16 @@
 
 .legacy-document .catg-inner {
   --catg-columns: 4;
-  --catg-gap: clamp(1rem, 1.6vw, 1.4rem);
+  --catg-gap: clamp(0.75rem, 1.2vw, 1.1rem);
   /* The export's head CSS carries several passes over this element, some of
      them important and some scoped to a record id that is not the one serving
      this page, so what it ends up as depends on which pass wins. Stated
      important here so the container is one wrapping line whatever they do. */
   display: flex !important;
   flex-wrap: wrap !important;
-  align-items: flex-start !important;
+  align-items: stretch !important;
   align-content: flex-start;
-  gap: 0 var(--catg-gap);
+  gap: var(--catg-gap);
   max-width: var(--tbb-max);
 }
 
@@ -162,39 +160,56 @@ html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-flt button.o
 /* ---- the card ----
  *
  * `display: contents` on `.catg-text` promotes its children to items of the
- * card's own grid, which is the whole trick: the category can then share the
- * tile's cell and sit on the photograph, and the name and the price can share
- * a line under it. Nothing in the markup moved. */
+ * card's own grid, which is what lets the card be a single panel: the pouch,
+ * the category, the name, the price, the copy and the button are all placed
+ * against one surface without a line of the markup moving. */
 
 .legacy-document .catg-card {
   flex: 0 0 calc((100% - (var(--catg-columns) - 1) * var(--catg-gap)) / var(--catg-columns));
-  align-self: flex-start;
-  margin-bottom: clamp(1.75rem, 2.6vw, 2.5rem);
 }
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto auto auto auto;
-  align-items: start;
+  /* Pack, category, name/price, copy, button. `1fr` on the copy is what keeps
+     the buttons on one baseline when one description runs to two lines and its
+     neighbour runs to one. */
+  grid-template-rows: auto auto auto 1fr auto;
+  /* Warmer and a shade deeper than the page it stands on, with a whisper of the
+     product in it. Both halves matter: a card lighter than the page would give
+     the white pouch nothing to stand against, and a card at the page's own
+     value would not read as a card at all. */
+  background: #f1ede6 !important;
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 10%, #f1ede6) !important;
+  /* The index tab — the one place the product colour runs at full strength,
+     which is only tolerable because it is four pixels tall. */
+  border: 0 !important;
+  border-top: 4px solid var(--tile, var(--tbb-sand)) !important;
+  padding: 0 clamp(0.9rem, 1.35vw, 1.25rem) clamp(1rem, 1.5vw, 1.35rem);
+  transition: background var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card:hover {
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 22%, #f1ede6) !important;
 }
 
 .legacy-document .catg-text {
   display: contents;
 }
 
-/* ---- the tile ---- */
+/* ---- the pack ----
+ *
+ * No frame of its own any more: the card is the surface it stands on. The pack
+ * shots arrive pre-plated — one canvas, one scale, one baseline, see
+ * `scripts/build-pack-shots.mjs` — so this only has to give them room. */
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-img-wrap {
-  background: var(--tbb-paper-warm) !important;
-  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 22%, var(--tbb-paper)) !important;
-  border: 1px solid var(--tbb-line) !important;
-  border-radius: 10px !important;
-  aspect-ratio: 0.74 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  aspect-ratio: 0.95 !important;
   overflow: hidden !important;
-  transition:
-    transform var(--tbb-dur) var(--tbb-ease),
-    box-shadow var(--tbb-dur-fast) var(--tbb-ease) !important;
+  transition: transform var(--tbb-dur) var(--tbb-ease) !important;
 }
 
 .legacy-document .catg-img-wrap {
@@ -203,52 +218,38 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   position: relative;
 }
 
-html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card:hover .catg-img-wrap {
-  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 32%, var(--tbb-paper)) !important;
-}
-
-/* The pack shots arrive pre-plated: one canvas, one scale, one baseline — see
-   `scripts/build-pack-shots.mjs`. So the tile just draws them, and the
-   per-image nudges the export needed (`--vy`, `--adj`) are gone with the
-   mismatch that made them necessary. */
+/* The export positions the pack absolutely and the `--adj` variant moves it
+   with `top`/`left`; both are reset to a plain full-bleed box so every pack
+   fills its cell identically and none of them escapes it. */
 .legacy-document .catg-img-wrap img {
-  object-position: center !important;
-  padding: 7% 11% 9% !important;
-  top: auto !important;
-  left: auto !important;
+  position: absolute !important;
+  inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 6% 8% 2% !important;
   transform: none;
 }
 
-/* ---- what sits on the tile ---- */
+/* ---- the words ---- */
 
-/* The category, in the slot the reference puts a "new" flag in. Paper rather
-   than ink, because it sits on a tinted tile and a dark chip on a pale wash is
-   heavier than anything else on the card. */
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-eyebrow {
-  display: inline-flex !important;
-  grid-column: 1;
-  grid-row: 1;
-  z-index: 2;
-  align-self: start;
-  justify-self: start;
-  margin: 0.85rem;
-  padding: 0.4rem 0.7rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(6px);
+  display: block !important;
+  grid-column: 1 / -1;
+  grid-row: 2;
   font-family: var(--tbb-font-sans);
   font-size: 0.625rem;
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
-  color: var(--tbb-ink-soft) !important;
+  text-align: left;
+  color: var(--tbb-muted) !important;
 }
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-name {
   grid-column: 1;
-  grid-row: 2;
-  padding-top: 0.9rem;
+  grid-row: 3;
+  padding-top: 0.5rem;
   font-family: var(--tbb-font-display);
   font-size: clamp(1rem, 1.25vw, 1.2rem);
   font-weight: 700;
@@ -260,9 +261,8 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-price {
   grid-column: 2;
-  grid-row: 2;
-  padding-top: 0.95rem;
-  padding-left: 0.75rem;
+  grid-row: 3;
+  padding: 0.5rem 0 0 0.75rem;
   justify-self: end;
   font-family: var(--tbb-font-display);
   font-size: 0.9375rem;
@@ -281,12 +281,10 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   -webkit-text-fill-color: currentColor !important;
 }
 
-/* ---- and what sits under it ---- */
-
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-sub {
   grid-column: 1 / -1;
-  grid-row: 3;
-  padding-top: 0.85rem;
+  grid-row: 4;
+  padding-top: 0.5rem;
   font-family: var(--tbb-font-sans);
   font-size: 0.8125rem;
   font-weight: 400;
@@ -302,16 +300,16 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
    sixteen is not a grid of sixteen black bars, filled on hover. */
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add {
   grid-column: 1 / -1;
-  grid-row: 4;
+  grid-row: 5;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin-top: 0.85rem;
-  padding: 0.75rem 1rem;
+  margin-top: 0.9rem;
+  padding: 0.7rem 1rem;
   border: 1px solid var(--tbb-line);
   border-radius: 999px;
-  background: transparent;
+  background: var(--tbb-paper);
   color: var(--tbb-ink) !important;
   font-family: var(--tbb-font-sans);
   font-size: var(--tbb-text-label);
@@ -342,10 +340,6 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   .legacy-document .catg-inner {
     --catg-columns: 2;
   }
-
-  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-eyebrow {
-    display: none !important;
-  }
 }
 
 /* ---- cursor tilt ----
@@ -354,8 +348,11 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
  * there for why it cannot come from a stylesheet. Everything around it lives
  * here, so a page without JS is simply the catalogue as exported.
  *
- * `perspective` belongs on the card, the tile's parent: set on the tile itself
- * it would have no effect, and set on the grid every tile would share one
+ * With the tile gone it is the pouch itself that turns, not a rectangle with a
+ * pouch printed on it, so the shadow the tile used to cast goes with it.
+ *
+ * `perspective` belongs on the card, the pack's parent: set on the pack itself
+ * it would have no effect, and set on the grid every pack would share one
  * vanishing point and the row would swing as a single plane.
  */
 
@@ -367,19 +364,14 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   transform-style: preserve-3d;
 }
 
-/* Immediate on the way in: a tile that eases towards the cursor lags behind it
+/* Immediate on the way in: a pack that eases towards the cursor lags behind it
    and reads as broken. The ease above is what plays on the way back out. */
 .legacy-document .catg-grid .catg-card[data-tilting] .catg-img-wrap {
-  transition:
-    transform 80ms linear,
-    box-shadow var(--tbb-dur-fast) var(--tbb-ease) !important;
-  box-shadow: 0 1.25rem 2.75rem rgba(0, 0, 0, 0.16);
+  transition: transform 80ms linear !important;
 }
 
-/* The pack shot rides forward so it leads the turn rather than sliding about
-   inside a flat rectangle. */
 .legacy-document .catg-grid .catg-card[data-tilting] .catg-img-wrap img {
-  transform: translateZ(26px) scale(1.04) !important;
+  transform: translateZ(26px) scale(1.03) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
