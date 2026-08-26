@@ -7,65 +7,50 @@
  * the cart is a live business function and `audit:commerce` asserts its identity
  * and prices. What is touched is only how it looks.
  *
- * The room is dark. A pack shot is a white pouch cut out on transparency, and on
- * paper it is a white object on a white page — the thing being sold has no edge.
- * On near-black it has one, and sixteen of them light up in a grid. The footer
- * below is already a dark surface and the header inverts over one, so the page
- * reads as one dark room rather than as a band.
+ * The composition came out of the reference the client sent: the photograph is
+ * the card, the category rides it top-left as a badge, and the name and the
+ * price share the line beneath it. Two things from that reference are not here,
+ * both because our packaging prints its own name — setting the card's name over
+ * the photograph put it straight on top of the pouch's own MILKSHAKE, and the
+ * "new"/"-15%" flags have no data behind them, so the badge slot carries the
+ * category, which does.
  *
- * The card follows the composition the client asked for: the photograph is the
- * card, the name and the price sit on it, and the category rides top-left as a
- * badge. Underneath, the two things a wholesale catalogue needs and a furniture
- * showroom does not — the line of description, and the button that puts the
- * product in the real cart.
+ * On paper rather than in the dark: the dark version was tried and pulled back,
+ * so the palette is the site's own again and only the palette changed.
  *
  * `--tile` on each card is the product's own colour, written into the HTML by
  * `replateCatalogCards` in `site-pages.ts` — see the note there. It is mixed
- * into the dark tile at a whisper, so a matcha card is a hair green and a jam
- * card a hair red without either becoming a colour block.
+ * down to a wash, because at full strength it put a white pouch on near-black
+ * for chocolate, tea and vending and on almost-white for garnish and sugar
+ * free: the product disappeared at both ends of the range.
  */
 
 /* ---- outranking the export ----
  *
  * The block ships several rounds of hand-written Tilda CSS on top of its own
  * stylesheet, and most of it is important and anchored on `#allrecords`: the
- * section is repainted `#FDFAF5`, the card is forced to `display: flex`, the
- * category line is forced to `display: none`. An important declaration can only
- * be answered by a more specific important declaration, so the rules below that
- * touch those properties carry the full ancestor chain. Everything the export
- * does not fight over is written normally.
- *
- * The page around the block, so the dark does not end at the section edge. */
-.legacy-document[data-source-file="page114743626.html"],
-.legacy-document[data-source-file="page114743626.html"] .t-records {
-  background: #0d0d0d !important;
-}
-
-html body .legacy-document #allrecords .t-container_100 .t-width .catg-wrap {
-  background: #0d0d0d !important;
-}
+ * card is forced to `display: flex`, the category line to `display: none`, the
+ * tiles to a colour each. An important declaration can only be answered by a
+ * more specific important declaration, so every rule below that touches one of
+ * those properties carries the full ancestor chain. Everything the export does
+ * not fight over is written normally. */
 
 .legacy-document .catg-wrap {
   font-family: var(--tbb-font-sans);
 
-  --catg-ink: #ffffff;
-  --catg-ink-soft: rgba(255, 255, 255, 0.66);
-  --catg-muted: rgba(255, 255, 255, 0.42);
-  --catg-line: rgba(255, 255, 255, 0.14);
-  --catg-tile-base: #232323;
+  --catg-tile-base: var(--tbb-paper);
 
   /* The block's own variables, remapped so anything not restated below still
-     lands in the dark palette rather than in its Roboto/grey one. */
-  --catg-bg: #0d0d0d;
-  --catg-eyebrow: var(--catg-muted);
-  --catg-card-bg: var(--catg-tile-base);
-  --catg-card-border: var(--catg-line);
-  --catg-name: var(--catg-ink);
-  --catg-sub: var(--catg-ink-soft);
-  --catg-pending: var(--catg-ink-soft);
+     lands in the site palette rather than in its Roboto/grey one. */
+  --catg-bg: var(--tbb-paper);
+  --catg-eyebrow: var(--tbb-muted);
+  --catg-card-bg: var(--tbb-paper-warm);
+  --catg-card-border: var(--tbb-line);
+  --catg-name: var(--tbb-ink);
+  --catg-sub: var(--tbb-muted);
+  /* "Price on request" is the one place the mark colour earns its keep here. */
+  --catg-pending: var(--tbb-accent);
 
-  background: var(--catg-bg);
-  color: var(--catg-ink);
   padding: calc(var(--tbb-header-h) + clamp(2rem, 5vw, 4rem)) var(--tbb-gutter)
     var(--tbb-section);
 }
@@ -123,7 +108,7 @@ html body .legacy-document #allrecords .t-container_100 .t-width .catg-wrap {
 /* ---- page head ---- */
 
 .legacy-document .catg-inner::before {
-  color: var(--catg-muted) !important;
+  color: var(--tbb-muted) !important;
   font-family: var(--tbb-font-sans) !important;
   letter-spacing: var(--tbb-tracking-label) !important;
 }
@@ -136,7 +121,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-h1 {
   letter-spacing: -0.02em;
   text-align: left;
   text-transform: uppercase;
-  color: var(--catg-ink) !important;
+  color: var(--tbb-ink) !important;
   margin-bottom: clamp(0.75rem, 1.4vw, 1.1rem);
 }
 
@@ -144,44 +129,42 @@ html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-lede {
   text-align: left;
   max-width: 52ch;
   font-size: var(--tbb-text-body);
-  color: var(--catg-ink-soft) !important;
+  color: var(--tbb-ink-soft) !important;
   margin-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
 }
 
 /* ---- filters ---- */
 
 .legacy-document .catg-flt {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--catg-line);
+  background: var(--tbb-paper-warm);
+  border-color: var(--tbb-line);
 }
 
 html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-flt button {
-  color: var(--catg-muted) !important;
+  color: var(--tbb-muted) !important;
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
 }
 
 html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-flt button:hover {
-  color: var(--catg-ink) !important;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--tbb-ink) !important;
+  background: rgba(255, 255, 255, 0.7);
 }
 
-/* The selected filter is the one solid surface in the block, which is how the
-   rest of the site marks a current state — inverted here, because the ink and
-   the paper have swapped. */
+/* The selected filter is the one solid ink surface in the block, which is how
+   the rest of the site marks a current state. */
 html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-flt button.on {
-  background: var(--catg-ink);
-  color: #0d0d0d !important;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark) !important;
   box-shadow: none;
 }
 
 /* ---- the card ----
  *
  * `display: contents` on `.catg-text` promotes its children to items of the
- * card's own grid, which is the whole trick: the name, the price and the
- * category can then share the tile's cell and sit on the photograph, while the
- * description and the button take rows of their own underneath. Nothing in the
- * markup moved. */
+ * card's own grid, which is the whole trick: the category can then share the
+ * tile's cell and sit on the photograph, and the name and the price can share
+ * a line under it. Nothing in the markup moved. */
 
 .legacy-document .catg-card {
   flex: 0 0 calc((100% - (var(--catg-columns) - 1) * var(--catg-gap)) / var(--catg-columns));
@@ -203,9 +186,9 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
 /* ---- the tile ---- */
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-img-wrap {
-  background: var(--catg-tile-base) !important;
-  background: color-mix(in srgb, var(--tile, #808080) 18%, var(--catg-tile-base)) !important;
-  border: 0 !important;
+  background: var(--tbb-paper-warm) !important;
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 22%, var(--tbb-paper)) !important;
+  border: 1px solid var(--tbb-line) !important;
   border-radius: 10px !important;
   aspect-ratio: 0.74 !important;
   overflow: hidden !important;
@@ -221,15 +204,13 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
 }
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card:hover .catg-img-wrap {
-  background: color-mix(in srgb, var(--tile, #808080) 28%, var(--catg-tile-base)) !important;
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 32%, var(--tbb-paper)) !important;
 }
 
 /* The pack shots arrive pre-plated: one canvas, one scale, one baseline — see
    `scripts/build-pack-shots.mjs`. So the tile just draws them, and the
    per-image nudges the export needed (`--vy`, `--adj`) are gone with the
-   mismatch that made them necessary. The name is set under the tile
-   rather than on it, because a pouch already prints its own name across its
-   lower third and the two collided. */
+   mismatch that made them necessary. */
 .legacy-document .catg-img-wrap img {
   object-position: center !important;
   padding: 7% 11% 9% !important;
@@ -242,7 +223,9 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
 
 /* ---- what sits on the tile ---- */
 
-/* The category, as the badge the reference puts a "new" flag in. */
+/* The category, in the slot the reference puts a "new" flag in. Paper rather
+   than ink, because it sits on a tinted tile and a dark chip on a pale wash is
+   heavier than anything else on the card. */
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-eyebrow {
   display: inline-flex !important;
   grid-column: 1;
@@ -253,13 +236,13 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   margin: 0.85rem;
   padding: 0.4rem 0.7rem;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.42);
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(6px);
   font-family: var(--tbb-font-sans);
   font-size: 0.625rem;
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82) !important;
+  color: var(--tbb-ink-soft) !important;
 }
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-name {
@@ -271,7 +254,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--catg-ink) !important;
+  color: var(--tbb-ink) !important;
   text-align: left;
 }
 
@@ -285,15 +268,14 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   font-size: 0.9375rem;
   font-weight: 500;
   letter-spacing: var(--tbb-tracking-display);
-  color: rgba(255, 255, 255, 0.78) !important;
+  color: var(--tbb-ink) !important;
   white-space: nowrap;
 }
 
 /* The export paints the name and the button through `-webkit-text-fill-color`,
-   which wins over `color` at paint time however specific the colour rule is —
-   so both were still being drawn in the light theme’s near-black on the dark
-   card while `getComputedStyle` insisted they were white. Following
-   `currentColor` hands the paint back to the colour above, hover included. */
+   which wins over `color` at paint time however specific the colour rule is.
+   Following `currentColor` hands the paint back to the colour above — which is
+   what lets the button invert on hover. */
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-name,
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add {
   -webkit-text-fill-color: currentColor !important;
@@ -312,12 +294,12 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   line-height: 1.45;
   text-transform: none;
   text-align: left;
-  color: var(--catg-muted) !important;
+  color: var(--tbb-muted) !important;
 }
 
 /* The add button is injected by the export's cart script, which gives it its
    own pill; this is the site's pill instead — outlined at rest so a grid of
-   sixteen is not a grid of sixteen white bars, filled on hover. */
+   sixteen is not a grid of sixteen black bars, filled on hover. */
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add {
   grid-column: 1 / -1;
   grid-row: 4;
@@ -327,10 +309,10 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   width: 100%;
   margin-top: 0.85rem;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--catg-line);
+  border: 1px solid var(--tbb-line);
   border-radius: 999px;
   background: transparent;
-  color: var(--catg-ink) !important;
+  color: var(--tbb-ink) !important;
   font-family: var(--tbb-font-sans);
   font-size: var(--tbb-text-label);
   font-weight: 500;
@@ -345,9 +327,9 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
 
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card:hover .tbc-add,
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add:hover {
-  background: var(--catg-ink);
-  border-color: var(--catg-ink);
-  color: #0d0d0d !important;
+  background: var(--tbb-ink);
+  border-color: var(--tbb-ink);
+  color: var(--tbb-on-dark) !important;
 }
 
 @media (max-width: 1100px) {
@@ -391,7 +373,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   transition:
     transform 80ms linear,
     box-shadow var(--tbb-dur-fast) var(--tbb-ease) !important;
-  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.55);
+  box-shadow: 0 1.25rem 2.75rem rgba(0, 0, 0, 0.16);
 }
 
 /* The pack shot rides forward so it leads the turn rather than sliding about
