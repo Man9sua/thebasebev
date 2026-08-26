@@ -18,7 +18,13 @@ const PRODUCT_ROUTES = new Set(PRODUCTS.map((product) => product.route));
  * forms and their popups, and the cookie banner all still live inside the
  * retagged `#t-header` / `#t-footer` containers.
  */
-export function LegacyPageShell({ page }: { page: SitePage }) {
+export function LegacyPageShell({
+  page,
+  runtimeOnly = false,
+}: {
+  page: SitePage;
+  runtimeOnly?: boolean;
+}) {
   const pageKind = PRODUCT_ROUTES.has(page.route)
     ? "product"
     : page.route === "/catalog"
@@ -32,13 +38,23 @@ export function LegacyPageShell({ page }: { page: SitePage }) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: page.headAssetsHtml }}
       />
-      <main
-        className={`legacy-document ${styles.shell} ${pageKind === "product" ? styles.product : ""}`}
-        data-source-file={page.file}
-        data-page-kind={pageKind}
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
-      />
+      {runtimeOnly ? (
+        <div
+          className={`legacy-document ${styles.shell} ${styles.runtimeOnly}`}
+          data-source-file={page.file}
+          data-page-kind="runtime"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
+        />
+      ) : (
+        <main
+          className={`legacy-document ${styles.shell} ${pageKind === "product" ? styles.product : ""}`}
+          data-source-file={page.file}
+          data-page-kind={pageKind}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
+        />
+      )}
     </>
   );
 }

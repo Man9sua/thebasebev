@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
+import { GlossaryPage } from "@/components/resources/GlossaryPage";
+import { ToolsPage } from "@/components/resources/ToolsPage";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import {
@@ -10,6 +12,7 @@ import {
   getStaticSiteParams,
   normalizeSitePath,
   SITE_ORIGIN,
+  withoutLegacyRecords,
 } from "@/lib/site-pages";
 
 type RouteProps = {
@@ -87,6 +90,34 @@ export default async function SiteRoute({ params }: RouteProps) {
   // themselves. Framing them in the shared shell would wrap a copy of the site
   // chrome around the site chrome, so they keep rendering exactly as exported.
   if (!page.usesSharedShell) return <LegacyDocument page={page} />;
+
+  if (route === "/resources/tools") {
+    const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261"]);
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <ToolsPage />
+        <LegacyPageShell page={runtimePage} runtimeOnly />
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  if (route === "/resources/glossary") {
+    const runtimePage = withoutLegacyRecords(page, [
+      "rec2427859911",
+      "rec2427859921",
+      "rec2427859931",
+    ]);
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <GlossaryPage />
+        <LegacyPageShell page={runtimePage} runtimeOnly />
+        <SiteFooter />
+      </div>
+    );
+  }
 
   // Everything else: one shared header and footer, with the old Tilda chrome
   // already removed from the markup server-side.

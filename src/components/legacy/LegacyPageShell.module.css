@@ -24,6 +24,13 @@
   scroll-margin-top: var(--tbb-header-h);
 }
 
+/* Custom React content already accounts for the fixed public header. This
+   companion document carries only the retained cart, forms, cookie banner and
+   shared CTA, so adding the page offset a second time would create a gap. */
+.runtimeOnly {
+  padding-top: 0;
+}
+
 /* The exported animation runtime cannot own content visibility. Its observers
    leave both product sections and an About form in waiting/started states on
    the Next lifecycle. Keep the stable, fully revealed end state for every

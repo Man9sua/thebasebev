@@ -410,6 +410,23 @@ function stripShellRecords(bodyHtml: string) {
   return result;
 }
 
+function stripLegacyRecordsHtml(source: string, recordIds: ReadonlySet<string>) {
+  if (!recordIds.size) return source;
+
+  return splitShellRecords(source)
+    .map((record) => {
+      if (!recordIds.has(record.id)) return record.html;
+
+      // A record slice ends where the next record begins. When the removed
+      // record is the last page-content block, that slice also contains the
+      // opening tag of the retained footer runtime. Preserve that structural
+      // tail or the browser repairs the malformed tree before React hydrates.
+      const footerAt = record.html.indexOf('<div id="t-footer"');
+      return footerAt >= 0 ? record.html.slice(footerAt) : "";
+    })
+    .join("");
+}
+
 function normalizeContentLandmarks(source: string, file: string) {
   if (file !== "page68443503.html") return source;
 
@@ -422,6 +439,9 @@ function normalizeContentLandmarks(source: string, file: string) {
 
 function prepareBodyHtml(rawBody: string, file: string, removeShell: boolean) {
   let result = removeShell ? stripShellRecords(rawBody) : rawBody;
+  if (file === "page147468696.html") {
+    result = stripLegacyRecordsHtml(result, new Set(["rec2361929781"]));
+  }
   result = normalizeContentLandmarks(result, file);
   result = removeInlineScriptContaining(result, '"twitter:card"');
   result = removeInlineScriptContaining(result, "/api/tildafeed");
@@ -461,6 +481,13 @@ export type SitePage = RouteDefinition & {
    */
   usesSharedShell: boolean;
 };
+
+export function withoutLegacyRecords(page: SitePage, recordIds: readonly string[]): SitePage {
+  return {
+    ...page,
+    bodyHtml: stripLegacyRecordsHtml(page.bodyHtml, new Set(recordIds)),
+  };
+}
 
 const pageCache = new Map<string, SitePage>();
 
