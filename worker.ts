@@ -72,6 +72,21 @@ function withDeploymentHeaders(
 
   if (new URL(request.url).pathname.startsWith("/api/")) {
     headers.set("Cache-Control", "no-store");
+  } else if (!isApprovedProductionHost) {
+    /**
+     * A preview must never be a stale preview.
+     *
+     * `workers.dev` caches at the edge, in front of this Worker, and it kept
+     * serving one page for hours after three deploys had replaced it — the
+     * version's own preview URL had the new page the whole time, so nothing
+     * inside the Worker could see the difference, let alone fix it. Reviewing a
+     * change against a copy of the change before it is worse than not being
+     * able to review it at all.
+     *
+     * Only previews. The real hostname keeps its caching, which is most of what
+     * makes the static fast path worth having.
+     */
+    headers.set("Cache-Control", "no-store");
   }
 
   return new Response(response.body, {
