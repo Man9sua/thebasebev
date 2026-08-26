@@ -1,8 +1,103 @@
 .section {
   background: var(--tbb-paper-warm);
-  padding: var(--tbb-section) 0;
+  /* No padding above: the film opens the section flush with the one before it.
+     The bottom keeps the usual rhythm. */
+  padding: 0 0 var(--tbb-section);
   overflow: clip;
 }
+
+/* ---- film ---- */
+
+/* `--fade` is how much of the frame is given over to the dissolve. It is read
+   by the gradient and by the figure that sits inside it, so the two cannot
+   drift apart. */
+.stage {
+  --fade: clamp(9rem, 22vh, 16rem);
+
+  position: relative;
+  width: 100%;
+  height: clamp(30rem, 84vh, 58rem);
+  background: var(--tbb-ink);
+}
+
+.film {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The footage is painted out into the page rather than stopping on an edge.
+   Opaque at the bottom so the last band is exactly the section colour, which is
+   what lets the proof points below read as the same surface. */
+.dissolve {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: var(--fade);
+  background: linear-gradient(
+    to bottom,
+    rgba(242, 242, 242, 0) 0%,
+    rgba(242, 242, 242, 0.55) 45%,
+    var(--tbb-paper-warm) 100%
+  );
+  pointer-events: none;
+}
+
+/* The film runs from near-black to near-white frame to frame, so the label
+   cannot rely on the footage staying dark. A short scrim under it costs
+   nothing on the dark frames and saves it on the bright ones. */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(6rem, 14vh, 10rem);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+
+.eyebrow {
+  position: absolute;
+  top: clamp(1.5rem, 4vw, 3rem);
+  left: var(--tbb-gutter);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  /* Over footage, not paper. */
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.mark {
+  color: var(--tbb-accent);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+/* Sits inside the dissolve, so the number appears to surface out of the fade
+   instead of being stamped on the film. */
+.headlineFigure {
+  position: absolute;
+  right: var(--tbb-gutter);
+  bottom: 0;
+  height: var(--fade);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.15rem;
+  text-align: right;
+}
+
+.figureValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+  line-height: 0.9;
+  letter-spacing: var(--tbb-tracking-display);
+  font-weight: 600;
+  color: var(--tbb-accent);
+}
+
+/* ---- everything on paper ---- */
 
 .inner {
   width: 100%;
@@ -11,82 +106,10 @@
   padding: 0 var(--tbb-gutter);
 }
 
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
-}
-
-/* The one flash of the mark colour in this section. */
-.mark {
-  color: var(--tbb-accent);
-  font-size: 0.9rem;
-  line-height: 1;
-}
-
-/* ---- film ---- */
-
-/* `--notch-*` are read by both the clip path and the panel that sits in the
-   hole, so the two can never drift apart. */
-.frame {
-  --notch-w: clamp(11rem, 26vw, 22rem);
-  --notch-h: clamp(5rem, 9vw, 7.5rem);
-
-  position: relative;
-  display: block;
-}
-
-.film {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 7;
-  object-fit: cover;
-  background: var(--tbb-ink);
-  border-radius: clamp(0.75rem, 1.6vw, 1.5rem);
-  /* A bite taken out of the bottom-right corner. The figure below fills it, so
-     the number reads as part of the frame rather than a card dropped on it. */
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - var(--notch-h)),
-    calc(100% - var(--notch-w)) calc(100% - var(--notch-h)),
-    calc(100% - var(--notch-w)) 100%,
-    0 100%
-  );
-}
-
-.headlineFigure {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: var(--notch-w);
-  height: var(--notch-h);
-  margin: 0;
-  padding-left: clamp(1rem, 2.5vw, 2rem);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 0.15rem;
-}
-
-.figureValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
-  line-height: 0.9;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-  color: var(--tbb-accent);
-}
-
-/* ---- facts ---- */
-
 .facts {
   display: flex;
   flex-wrap: wrap;
   gap: clamp(1.5rem, 5vw, 4rem);
-  margin-top: clamp(1.5rem, 3vw, 2.5rem);
   padding-bottom: clamp(2rem, 5vw, 3.5rem);
   border-bottom: 1px solid var(--tbb-line);
 }
@@ -103,8 +126,6 @@
   font-weight: 600;
   color: var(--tbb-ink);
 }
-
-/* ---- body ---- */
 
 .body {
   display: grid;
@@ -132,8 +153,6 @@
   color: var(--tbb-ink-soft);
   line-height: 1.55;
 }
-
-/* ---- aside ---- */
 
 .aside {
   text-align: right;
@@ -198,18 +217,8 @@
 }
 
 @media (max-width: 899px) {
-  /* The notch costs more than it gives once the frame is this narrow: the
-     figure would eat a third of the film. Square the corner and stack. */
-  .film {
-    aspect-ratio: 16 / 10;
-    clip-path: none;
-  }
-
-  .headlineFigure {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: clamp(1rem, 3vw, 1.5rem) 0 0;
+  .stage {
+    height: clamp(24rem, 62vh, 34rem);
   }
 
   .body {

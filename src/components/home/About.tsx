@@ -7,10 +7,13 @@ import styles from "./About.module.css";
  * Short company introduction — the editorial close before the footer, not a
  * second About page. It links out to /about-us rather than restating it.
  *
- * The frame is cut with a notch at the bottom right and the headline figure
- * sits in it, so the panel reads as part of the image rather than a card laid
- * on top. What plays inside is the brand film, which already shipped in
- * `public/video` and until now was rendered by nothing.
+ * The film runs edge to edge and full height, and its lower third dissolves
+ * into the section background rather than ending on a line, so the eye moves
+ * from the footage into the proof points without a cut. The label and the
+ * headline figure sit over the footage; everything below it is on paper.
+ *
+ * What plays is the brand film, which already shipped in `public/video` and
+ * until this section existed was rendered by nothing.
  */
 
 const FACTS = [
@@ -31,25 +34,28 @@ function Arrow() {
 export function About() {
   return (
     <section id="about" className={styles.section} aria-labelledby="about-title">
-      <div className={styles.inner}>
-        <Reveal className={styles.eyebrow}>
+      <div className={styles.stage}>
+        <BrandFilm className={styles.film} />
+
+        {/* Paints the footage out into the page. Sits above the film and below
+            everything written on it. */}
+        <span className={styles.dissolve} aria-hidden="true" />
+
+        <span className={styles.eyebrow}>
           <span className={styles.mark} aria-hidden="true">
             ✱
           </span>
           <span className="tbb-label">About</span>
-        </Reveal>
+        </span>
 
-        <Reveal className={styles.frame} delay={60}>
-          <BrandFilm className={styles.film} />
+        <p className={styles.headlineFigure}>
+          <span className={styles.figureValue}>600+</span>
+          <span className="tbb-label">Flavours in the range</span>
+        </p>
+      </div>
 
-          {/* Sits in the notch cut out of the frame above. */}
-          <p className={styles.headlineFigure}>
-            <span className={styles.figureValue}>600+</span>
-            <span className="tbb-label">Flavours in the range</span>
-          </p>
-        </Reveal>
-
-        <Reveal className={styles.facts} delay={120}>
+      <div className={styles.inner}>
+        <Reveal className={styles.facts}>
           {FACTS.map((fact) => (
             <span key={fact.label} className={styles.fact}>
               <span className={styles.factValue}>{fact.value}</span>
