@@ -265,7 +265,14 @@ function preserveCatalogPrices(source: string, file: string) {
 function replateCatalogCards(source: string, file: string) {
   if (file !== "page114743626.html") return source;
 
-  return source.replace(
+  // The grid is a dark room now, and `SiteHeader` already knows how to invert
+  // itself over a band that says so.
+  const withDarkSurface = source.replace(
+    '<section class="catg-wrap" id="catgWrap">',
+    '<section class="catg-wrap" id="catgWrap" data-surface="dark">',
+  );
+
+  return withDarkSurface.replace(
     /<a class="catg-card" href="\/([a-z-]+)">(\s*<div class="catg-img-wrap">\s*<img\b)([^>]*?)(\/?>)/g,
     (whole, slug: string, open: string, attributes: string, close: string) => {
       const alt = attributes.match(/\salt="[^"]*"/)?.[0] ?? "";
