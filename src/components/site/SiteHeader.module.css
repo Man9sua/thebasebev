@@ -11,9 +11,9 @@
      simply stays there. The old scrim existed to keep white icons legible over
      footage that ran from near-black to bright white. */
   color: var(--tbb-on-light);
-  transition:
-    color var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
+  /* Colour only. The bar itself is never transformed — the paper behind it
+     slides in, which is the `::after` below. */
+  transition: color var(--tbb-dur) var(--tbb-ease);
 }
 
 /* Transparent over the hero: the bar reads as part of the composition rather
@@ -56,10 +56,8 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Scrolling down hides the bar; scrolling up brings it back. */
-.hidden {
-  transform: translate3d(0, -100%, 0);
-}
+/* Nothing moves the bar any more. It is fixed, and once it has turned to paper
+   it stays put for the rest of the page. */
 
 .inner {
   position: relative;

@@ -183,11 +183,9 @@ try {
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
     "home: horizontal overflow on the page",
   );
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(700);
-
-  // Clicking a carousel control scrolls the page, and the bar hides on
-  // scroll-down by design, so come back to the top before touching the header.
+  // Clicking a carousel control scrolls the page; come back to the top so the
+  // header is over the hero and in the state the checks below expect. The bar
+  // itself no longer moves — it is fixed once it has turned to paper.
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 

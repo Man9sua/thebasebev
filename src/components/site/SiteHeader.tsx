@@ -12,7 +12,9 @@ import styles from "./SiteHeader.module.css";
  * centre deliberately empty. Navigation lives behind the burger.
  *
  * The bar starts transparent over the hero and turns to paper once past it, and
- * hides on scroll-down / returns on scroll-up.
+ * from then on it stays exactly where it is. It used to slide away on
+ * scroll-down and come back on scroll-up, which meant the one element on the
+ * page that is supposed to be a fixed point was the one that moved most.
  */
 
 type TildaCartWindow = Window & {
@@ -40,7 +42,6 @@ function SearchIcon() {
 
 export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   const [pastHero, setPastHero] = useState(false);
-  const [hidden, setHidden] = useState(false);
   // Derived, not stored: away from the hero the bar is always solid.
   const solid = !overHero || pastHero;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,7 +50,6 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   // Set while a section that declares itself dark sits under the bar.
   const [onDark, setOnDark] = useState(false);
   const barRef = useRef<HTMLElement>(null);
-  const lastY = useRef(0);
 
   /**
    * Solid state is driven by an IntersectionObserver on the hero rather than by
@@ -70,20 +70,6 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
     observer.observe(hero);
     return () => observer.disconnect();
   }, [overHero]);
-
-  // Direction only — plain arithmetic in the scroll handler, no frame loop.
-  useEffect(() => {
-    lastY.current = window.scrollY;
-
-    const onScroll = () => {
-      const y = window.scrollY;
-      setHidden(y > window.innerHeight * 0.86 && y > lastY.current + 4);
-      lastY.current = y;
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   /**
    * Surface adaptation, as on mercury.com: a thin observation band the height
@@ -165,7 +151,6 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           // An open overlay owns the whole screen, so the bar follows it
           // rather than whatever section happens to be underneath.
           onDark && !menuOpen && !searchOpen ? styles.inverted : "",
-          hidden && !menuOpen && !searchOpen ? styles.hidden : "",
           menuOpen ? styles.open : "",
         ]
           .filter(Boolean)
