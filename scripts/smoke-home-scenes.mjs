@@ -33,6 +33,16 @@ async function waitForHome(page, viewport) {
   const loader = page.locator("[data-loading-screen]");
   if (await loader.count()) {
     const values = [];
+    // Run independently of the screenshot/sample loop. The completed value is
+    // deliberately held for only one visual beat, and a remote browser can be
+    // descheduled between two Node-side polls even though a visitor sees it.
+    const reachedComplete = page
+      .waitForFunction(
+        () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") === "100",
+        undefined,
+        { timeout: 7_500 },
+      )
+      .then(() => true, () => false);
     await page.screenshot({
       path: path.join(artifactRoot, `${viewport}-intro.png`),
       fullPage: false,
@@ -45,7 +55,7 @@ async function waitForHome(page, viewport) {
     }
     check(!(await loader.count()), `${viewport}: intro loader did not leave the page`);
     check(values.length > 1 && values[0] < 100, `${viewport}: intro did not expose real progress`);
-    check(values.includes(100), `${viewport}: intro never exposed its completed 100% state`);
+    check(await reachedComplete, `${viewport}: intro never exposed its completed 100% state`);
     check(
       values.every((value, index) => index === 0 || value >= values[index - 1]),
       `${viewport}: intro progress moved backwards`,
