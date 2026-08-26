@@ -434,7 +434,17 @@ try {
   check(loadingGateWasArmed, "mobile: first-visit loading gate was not armed");
   if (loadingGateWasArmed) {
     const progress = mobilePage.locator("[data-loading-screen][role='progressbar']");
-    check(await progress.isVisible(), "mobile: semantic loading progress was not visible");
+    // The Worker can deliver the document before the CSS chunk has finished
+    // applying. The gate and progressbar are already in the server HTML, but
+    // an immediate `isVisible()` can sample the default hidden rule between
+    // DOMContentLoaded and the first styled frame. Wait for the state a user
+    // can actually paint, while keeping the assertion bounded well below the
+    // loader's own completion window.
+    const progressWasVisible = await progress
+      .waitFor({ state: "visible", timeout: 1_500 })
+      .then(() => true)
+      .catch(() => false);
+    check(progressWasVisible, "mobile: semantic loading progress was not visible");
     check(
       (await progress.getAttribute("aria-valuemax")) === "100",
       "mobile: loading progress is missing its 0-100 semantic range",
