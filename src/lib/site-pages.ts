@@ -347,6 +347,63 @@ function dropRecord(source: string, recordId: string) {
 }
 
 /**
+ * Tilda template debris, by exported page.
+ *
+ * Three of the parity pages were built on stock Tilda themes and were still
+ * carrying pieces of the theme rather than pieces of the site. None of it is
+ * content anybody wrote for THE BASE, and two of the entries were actively
+ * damaging:
+ *
+ * `/rnd` ended in a full calorie calculator in Russian — "Узнай свою дневную
+ * норму за 30 секунд" — and, because the theme set it as a heading, that
+ * calculator was the page's only `h1`. An English R&D page for Dubai was
+ * telling Google its subject was daily calorie intake, in another language.
+ * `PageIntro` gives the page a heading of its own; the wording is in
+ * `data/page-intros.ts`.
+ *
+ * `/wholesale-strategy` opened with the theme's demo hero — "Refreshing Taste
+ * Awaits" over a stock photograph of a bottle of Mineragua, someone else's
+ * sparkling water — above a second navigation bar whose three tabs point at
+ * sections the page does not have, and below that the theme's own credit block,
+ * again in Russian, ending "Вы можете удалить этот блок". Removed, the page
+ * opens on its real heading, "Wholesale Beverage Distribution in GCC".
+ *
+ * `/private-labeling` carried its `h1` at the foot of the page, under nothing,
+ * followed by two blocks that are empty in the export. Its opening block is
+ * dropped too and reappears as `PageIntro`, because the theme set both headings
+ * in a serif no other page on this site uses.
+ *
+ * Everything here is a removal from the served markup only. The export on disk
+ * is the parity reference and stays as exported.
+ */
+const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
+  // /rnd
+  "page155598016.html": [
+    "rec2493779621", // Russian calorie calculator, and the page's only h1
+    "rec2493750131", // Russian Unsplash credit block
+    "rec2493746891", // the theme's own burger menu, a second header
+    "rec2496175441", // empty in the export, and a white band between two dark ones
+  ],
+  // /wholesale-strategy
+  "page147468696.html": [
+    "rec2361929261", // second nav bar; its three tabs have no sections
+    "rec2361929271", // "Refreshing Taste Awaits" over a competitor's bottle
+    "rec2361929781", // Russian Unsplash credit block
+  ],
+  // /private-labeling
+  "page120311356.html": [
+    "rec2507342601", // serif opening block — PageIntro replaces it
+    "rec1937227721", // the h1, orphaned at the foot of the page
+    "rec1937217991", // empty in the export
+    "rec2360860451", // empty in the export
+  ],
+};
+
+function dropTemplateDebris(source: string, file: string) {
+  return (REMOVED_BODY_RECORDS[file] ?? []).reduce(dropRecord, source);
+}
+
+/**
  * Drop every block on a product page that React now renders itself.
  *
  * All of them are Tilda "zero blocks": the hero, the four figures, the
@@ -590,6 +647,7 @@ export function getSitePage(route: string): SitePage | undefined {
     localizeHeroTailwind,
     removeLegacyAnalyticsRuntime,
     (value) => dropReplacedRecords(value, definition.file),
+    (value) => dropTemplateDebris(value, definition.file),
     deferLegacyImages,
     useResizedLegacyImages,
     (value) => replateCatalogCards(value, definition.file),

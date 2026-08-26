@@ -16,7 +16,21 @@ import styles from "./LegacyPageShell.module.css";
  * forms and their popups, and the cookie banner all still live inside the
  * retagged `#t-header` / `#t-footer` containers.
  */
-export function LegacyPageShell({ page }: { page: SitePage }) {
+export function LegacyPageShell({
+  page,
+  opensPage = true,
+}: {
+  page: SitePage;
+  /**
+   * Whether this document is the first thing on the page.
+   *
+   * The shared header is fixed, so whatever opens a page has to reserve its
+   * height. When React renders a hero or a page head above this — a product
+   * page, `/rnd`, `/private-labeling` — that component has already reserved it,
+   * and the spacer here would be a band of dead page between the two.
+   */
+  opensPage?: boolean;
+}) {
   return (
     <>
       <div
@@ -25,7 +39,7 @@ export function LegacyPageShell({ page }: { page: SitePage }) {
         dangerouslySetInnerHTML={{ __html: page.headAssetsHtml }}
       />
       <main
-        className={`legacy-document ${styles.shell}`}
+        className={`legacy-document ${styles.shell} ${opensPage ? styles.opensPage : ""}`}
         data-source-file={page.file}
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: page.bodyHtml }}

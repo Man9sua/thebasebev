@@ -1,0 +1,20 @@
+/**
+ * Corrections to exported blocks that are broken as exported.
+ *
+ * Nothing here is design. Each rule fixes something the export renders wrong on
+ * its own, and each one names the record it belongs to, so a rule cannot
+ * quietly grow to cover a page it was never checked against. Fixing them here
+ * rather than in `tilda_export/` keeps the export as the parity reference.
+ *
+ * Add a rule only with the record id, what is wrong, and how it was measured.
+ */
+
+/* /rnd — the page's opening block sets its title and body to black and its own
+   background to #292929: 1.4:1, which is not dim, it is unreadable. Every other
+   block on that page is white on the same grey. Measured in the browser, not
+   guessed from the markup — Tilda writes the colour from a theme variable that
+   is not defined here. */
+#rec2493746911 .t1127__title,
+#rec2493746911 .t1127__descr {
+  color: var(--tbb-on-dark);
+}

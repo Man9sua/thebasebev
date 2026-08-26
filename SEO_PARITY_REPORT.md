@@ -1,11 +1,11 @@
 # SEO parity report
 
-Generated: 2026-08-26T17:13:07.249Z
+Generated: 2026-08-26T17:41:51.946Z
 
 - Production: `https://thebasebev.com`
 - Target: `http://127.0.0.1:3100`
 - Canonical public routes: 29
-- Critical failures: 1
+- Critical failures: 2
 - Non-blocking link/alt observations: 58
 - Preview transport noindex expected: no
 
@@ -24,7 +24,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/sitemap` | 200 | 200 | PASS | 30/33 | 13/0/5 | Critical fields match |
 | `/resources/glossary` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
 | `/resources/tools` | 200 | 200 | PASS | 28/32 | 13/0/5 | Critical fields match |
-| `/rnd` | 200 | 200 | PASS | 28/32 | 17/0/9 | Critical fields match |
+| `/rnd` | 200 | 200 | FAIL | 28/32 | 17/0/9 | h1 mismatch |
 | `/raf-coffee` | 200 | 200 | PASS | 28/32 | 19/0/10 | Critical fields match |
 | `/cream-latte` | 200 | 200 | PASS | 28/32 | 19/0/10 | Critical fields match |
 | `/chai-latte` | 200 | 200 | PASS | 28/32 | 19/0/10 | Critical fields match |
@@ -46,6 +46,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 ## Critical failures
 
 - /: h1 mismatch
+- /rnd: h1 mismatch
 
 ## Non-blocking observations
 

@@ -7,6 +7,12 @@
    flow, so a real block wrapper is exactly what its own <body> used to be. */
 .shell {
   display: block;
+}
+
+/* Only when the document is the first thing on the page — otherwise whatever
+   React rendered above it has already cleared the bar, and this would show up
+   as a band of empty page between the two. */
+.opensPage {
   padding-top: var(--tbb-header-h);
 }
 
