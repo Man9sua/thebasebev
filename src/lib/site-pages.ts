@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getProduct } from "@/data/products";
 import legacyImageVariants from "@/data/legacy-image-variants.json";
+import productDetailsJson from "@/data/product-details.json";
 
 export const SITE_ORIGIN = "https://thebasebev.com";
 export const EXPORT_LAST_MODIFIED = new Date("2026-08-20T20:38:39.000Z");
@@ -69,6 +70,25 @@ const tildaProductPaths = [
   "888812727292-sugar-syrop",
   "975474893862-matcha",
 ];
+
+type ProductDetail = {
+  h1: string | null;
+  heroRecord: string | null;
+  tagline: string | null;
+  weight: string | null;
+  description: string[];
+  features: { label: string; value: string }[];
+  specs: { label: string; value: string }[];
+};
+
+export const productDetails = productDetailsJson as Record<string, ProductDetail>;
+
+/** Product slug -> the exported page it is served from. Derived, not repeated. */
+const PRODUCT_PAGE_FILES: Record<string, string> = Object.fromEntries(
+  friendlyRoutes
+    .filter((definition) => productDetails[definition.route.slice(1)])
+    .map((definition) => [definition.route.slice(1), definition.file]),
+);
 
 const exportRoot = path.join(process.cwd(), "tilda_export", "project12027355");
 // Keep the audited legacy aliases explicit. Reading the export directory at
@@ -275,6 +295,45 @@ function replateCatalogCards(source: string, file: string) {
       return `<a class="catg-card" href="/${slug}"${style}>${open}${alt} src="/images/pack-${slug}.webp"${close}`;
     },
   );
+}
+
+/**
+ * Drop the product pages' hero block.
+ *
+ * It is a Tilda "zero block": name, tagline, weight, both paragraphs, the price
+ * buttons and the four selling points are all absolutely positioned elements
+ * whose coordinates are applied by script at runtime. That script does not
+ * finish here, so the block occupies its full 949px and paints nothing — the
+ * blank coloured rectangle at the top of every product page.
+ *
+ * `ProductHero` renders the same copy as ordinary markup instead, so the block
+ * is removed rather than hidden: leaving it would put every line of the hero in
+ * the document twice, including a second `h1`.
+ *
+ * `scripts/build-product-details.mjs` records which block that is per product.
+ * Removal counts `<div>` depth from the opening tag, because the block is a
+ * couple of hundred kilobytes of nested markup and a regex cannot see its end.
+ */
+function dropProductHero(source: string, file: string) {
+  const slug = Object.entries(PRODUCT_PAGE_FILES).find(([, value]) => value === file)?.[0];
+  const recordId = slug ? productDetails[slug]?.heroRecord : null;
+  if (!recordId) return source;
+
+  const start = source.search(new RegExp(`<div[^>]*id="${recordId}"`));
+  if (start < 0) return source;
+
+  const tags = /<div\b|<\/div\s*>/gi;
+  tags.lastIndex = start;
+
+  let depth = 0;
+  for (let tag = tags.exec(source); tag; tag = tags.exec(source)) {
+    depth += tag[0].startsWith("</") ? -1 : 1;
+    if (depth === 0) return source.slice(0, start) + source.slice(tags.lastIndex);
+  }
+
+  // Unbalanced markup: leave the page exactly as exported rather than cut it
+  // off at the wrong place.
+  return source;
 }
 
 /**
@@ -494,6 +553,7 @@ export function getSitePage(route: string): SitePage | undefined {
     (value) => removeInlineScriptContaining(value, "/api/tildafeed"),
     localizeHeroTailwind,
     removeLegacyAnalyticsRuntime,
+    (value) => dropProductHero(value, definition.file),
     deferLegacyImages,
     useResizedLegacyImages,
     (value) => replateCatalogCards(value, definition.file),

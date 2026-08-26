@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
+import { ProductHero } from "@/components/product/ProductHero";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { getProduct } from "@/data/products";
 import {
   getSitePage,
   getStaticSiteParams,
@@ -88,11 +90,19 @@ export default async function SiteRoute({ params }: RouteProps) {
   // chrome around the site chrome, so they keep rendering exactly as exported.
   if (!page.usesSharedShell) return <LegacyDocument page={page} />;
 
+  // A product page opens with React and continues with the export. The block
+  // React replaces is the one that was painting nothing — see `ProductHero` —
+  // and `site-pages.ts` has already cut it out of the markup below, so the two
+  // do not both claim the copy or the `h1`. Everything the export still owns
+  // on these pages, the tabs and the FAQ and the lead forms, is untouched.
+  const product = getProduct(route.slice(1));
+
   // Everything else: one shared header and footer, with the old Tilda chrome
   // already removed from the markup server-side.
   return (
     <div className="tbb">
       <SiteHeader />
+      {product && <ProductHero product={product} />}
       <LegacyPageShell page={page} />
       <SiteFooter />
     </div>

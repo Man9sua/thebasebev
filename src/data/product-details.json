@@ -1,0 +1,723 @@
+{
+  "milkshake": {
+    "h1": "Milkshake Base Powder – Thick, Creamy & Easy to Blend",
+    "heroRecord": "rec860335353",
+    "tagline": "Creamy. Convenient. Thick.",
+    "weight": "500g",
+    "description": [
+      "Milkshake is a classic treat loved for its thick, creamy texture and rich flavor.",
+      "Our premix powder makes it easy to create without the need for ice cream and syrup, blending perfectly with dairy or plant-based milk."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "30 seconds"
+      },
+      {
+        "label": "No Ice Cream or Freezers",
+        "value": "Save on equipment, works with any blender"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 17 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "12 oz"
+      }
+    ]
+  },
+  "frappe": {
+    "h1": "Frappe Base for Smooth, Creamy Blended Beverages",
+    "heroRecord": "rec860351176",
+    "tagline": "Cold. Refreshing. Smooth.",
+    "weight": "500g",
+    "description": [
+      "Frappe is a smooth, creamy blended drink, perfect for hot weather or as a dessert-style beverage."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "30 seconds"
+      },
+      {
+        "label": "No Ice Cream or Freezers",
+        "value": "Save on equipment, works with any blender"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 14 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "16 oz"
+      }
+    ]
+  },
+  "iced-tea": {
+    "h1": "Iced Tea Base for Refreshing, Crisp, Ready-to-Mix Beverages",
+    "heroRecord": "rec860392934",
+    "tagline": "Crisp. Refreshing. Flavorful.",
+    "weight": "500g",
+    "description": [
+      "Iced tea is a refreshing, cool drink with a clean, crisp flavor that’s perfect for hot days."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need to brew tea and extra ingredients"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "12 oz"
+      }
+    ]
+  },
+  "cordial": {
+    "h1": "Cordial Drink Powders – Add Bold Fruit & Spice Flavors",
+    "heroRecord": "rec860603406",
+    "tagline": "Sweet. Fruity. Flavorful.",
+    "weight": "500g",
+    "description": [
+      "Cordial is a sweet, flavorful premix powder that adds a burst of fruit or spice to drinks."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Ready to Drink",
+        "value": "Ready-to-drink beverages in hot climate"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste, just great taste"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 33 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "12 oz"
+      }
+    ]
+  },
+  "raf-coffee": {
+    "h1": "Raf Coffee",
+    "heroRecord": "rec859872922",
+    "tagline": "Smooth. Velvety. Irresistible.",
+    "weight": "500g",
+    "description": [
+      "Raf Coffee is a globally loved signature drink, known for its delicate, ice-cream-like taste.",
+      "Our premix powder replaces cream while preserving the same flavor and texture, working perfectly with plant-based and lactose-free milk."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "Just add milk and espresso"
+      },
+      {
+        "label": "No Refrigeration",
+        "value": "Dry mix, no cold storage needed"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz"
+      }
+    ]
+  },
+  "chai-latte": {
+    "h1": "Chai Latte Base – Authentic, Spiced, and Easy to Prepare",
+    "heroRecord": "rec860240544",
+    "tagline": "Spiced. Aromatic. Comforting.",
+    "weight": "500g",
+    "description": [
+      "Chai latte is a warm, spiced drink loved for its bold, comforting flavor.",
+      "Our premix powder makes it easy to prepare, delivering the authentic taste of chai without the need for extra spices."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need to brew tea and extra spices"
+      },
+      {
+        "label": "No Refrigeration",
+        "value": "Dry mix, no cold storage needed"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 Sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 20 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz"
+      }
+    ]
+  },
+  "matcha": {
+    "h1": "Matcha Beverage Base – Perfect for Cafés, Franchises & OEM",
+    "heroRecord": "rec860641052",
+    "tagline": "Savory. Vibrant. Refreshing.",
+    "weight": "500g",
+    "description": [
+      "Matcha is a vibrant, earthy drink loved for its rich flavor and smooth texture.",
+      "Our premix powder makes it easy to prepare, delivering the authentic taste of matcha without the need for whisking."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need for bowl, sifter, and whisk"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz"
+      }
+    ]
+  },
+  "chocolate": {
+    "h1": "Chocolate Beverage Base for Cafés, Bars & OEM Use",
+    "heroRecord": "rec860798129",
+    "tagline": "Smooth. Soft. Sweet.",
+    "weight": "500g",
+    "description": [
+      "Chocolate is a rich, creamy premix powder that makes preparing indulgent hot chocolate and cold cocoa drinks easy."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Natural Taste",
+        "value": "Free from sweeteners and artificial colorings"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "40 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 14 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz"
+      }
+    ]
+  },
+  "cream-latte": {
+    "h1": "Cream Latte Base – Rich, Smooth, and Easy to Prepare",
+    "heroRecord": "rec860215404",
+    "tagline": "Creamy. Soft. Velvety.",
+    "weight": "500g",
+    "description": [
+      "Cream Latte is a popular drink loved for its rich, creamy texture and smooth coffee flavor.",
+      "Our premix powder makes it easy to prepare without the need for fresh cream, working perfectly with dairy or plant-based milk."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "Just add milk and espresso"
+      },
+      {
+        "label": "No Refrigeration",
+        "value": "Dry mix, no cold storage needed"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz"
+      }
+    ]
+  },
+  "jam": {
+    "h1": "Premium Jam and Fruit Fillings for Cafés, Bakeries & Beverages",
+    "heroRecord": "rec860870149",
+    "tagline": "Sweet. Fruity. Thick.",
+    "weight": "500g",
+    "description": [],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months, preservative-free"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "Dissolves effortlessly in hot water for fast preparation"
+      },
+      {
+        "label": "Space-Efficient",
+        "value": "Compact packaging lowers transport costs"
+      },
+      {
+        "label": "Convenient",
+        "value": "No need for processing or straining raw ingredients"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "15 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 33 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz"
+      }
+    ]
+  },
+  "topping": {
+    "h1": "Professional Toppings for Drinks and Desserts",
+    "heroRecord": "rec860613123",
+    "tagline": "Creamy. Light. Decorative.",
+    "weight": "500g",
+    "description": [],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Quick to Prepare",
+        "value": "No need to brew tea and extra ingredients"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Space-Saving Packaging",
+        "value": "Compact and easy to store"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "1 min"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 45 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "50g"
+      }
+    ]
+  },
+  "garnish": {
+    "h1": "Professional Garnishes for Beverages and Desserts",
+    "heroRecord": "rec860881290",
+    "tagline": "Aesthetic. Decorative. Flavorful.",
+    "weight": "50g",
+    "description": [],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months, preservative-free"
+      },
+      {
+        "label": "Versatile use",
+        "value": "A variety of beverages, coffee, cocktails and milkshakes"
+      },
+      {
+        "label": "Customizable",
+        "value": "Offers a variety of unique flavors"
+      },
+      {
+        "label": "Enhances Presentation",
+        "value": "Improves appearance, aroma, and flavor"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "10 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "50 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 100 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "0.5 g"
+      }
+    ]
+  },
+  "sugar-syrup": {
+    "h1": "Sugar Syrup for Cafés, Bars & Beverage Brands",
+    "heroRecord": "rec860803878",
+    "tagline": "Compact. Sweet. Effortless.",
+    "weight": "500g",
+    "description": [
+      "Sugar syrup is an analog of liquid syrup, perfect for enhancing drinks with smooth, balanced sweetness.",
+      "It blends effortlessly, simplifying preparation for busy operations."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Space-Efficient",
+        "value": "Compact packaging lowers transport costs"
+      },
+      {
+        "label": "Precise Portioning",
+        "value": "Accurate control over sweetness levels"
+      },
+      {
+        "label": "Safe & Convenient",
+        "value": "No glass bottles, no breakage risk"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 83 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "6 oz"
+      }
+    ]
+  },
+  "tea": {
+    "h1": "Tea-Based Drink Powders for Cafés, Bars & OEM Projects",
+    "heroRecord": "rec860922831",
+    "tagline": null,
+    "weight": null,
+    "description": [
+      "Tea is a delightful infusion that easily dissolves in hot water, providing a comforting and flavorful experience with every sip."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "Hassle-free",
+        "value": "No mess, no waste - just great taste!"
+      },
+      {
+        "label": "Natural Taste",
+        "value": "Free from sweeteners and artificial colorings."
+      },
+      {
+        "label": "Consistent-quality",
+        "value": "Guaranteed premium taste everytime"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "100 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 100 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "6 oz"
+      }
+    ]
+  },
+  "sugar-free": {
+    "h1": "Sugar-Free Beverage Bases for Cafés, Restaurants & Distributors",
+    "heroRecord": "rec860897623",
+    "tagline": null,
+    "weight": null,
+    "description": [
+      "Sugar Free is a convenient premix powder to enhance any drink with a bold, recognizable flavor without the added sweetness."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months"
+      },
+      {
+        "label": "No Risk of Leakage",
+        "value": "Powder eliminates spills and mess common with liquids"
+      },
+      {
+        "label": "No added sweetness",
+        "value": "Delivers a pure flavour profile"
+      },
+      {
+        "label": "Precise Dosage",
+        "value": "Offers exact measurements, full control over taste"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "100 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 100 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "6 oz"
+      }
+    ]
+  },
+  "vending": {
+    "h1": "Vending Machine Drink Powders for Automatic Dispensing",
+    "heroRecord": "rec860861276",
+    "tagline": "Convenient. Reliable. Instant.",
+    "weight": "500g",
+    "description": [
+      "Vending is a reliable premix powder designed for high-volume beverage service in self-serve machines.",
+      "It ensures quick preparation with consistent quality, making it ideal for busy settings."
+    ],
+    "features": [
+      {
+        "label": "Long Shelf Life",
+        "value": "18 months, preservative-free"
+      },
+      {
+        "label": "Space-Efficient",
+        "value": "Compact packaging lowers transport costs"
+      },
+      {
+        "label": "Consistent Quality",
+        "value": "Ensures the same great taste every time"
+      },
+      {
+        "label": "Versatile Options",
+        "value": "Easily create multiple flavors"
+      }
+    ],
+    "specs": [
+      {
+        "label": "Prep Time",
+        "value": "30 sec"
+      },
+      {
+        "label": "Packaging",
+        "value": "500 g"
+      },
+      {
+        "label": "Proportions",
+        "value": "1 Doypack = 25 Cups"
+      },
+      {
+        "label": "Per Serving",
+        "value": "8 oz"
+      }
+    ]
+  }
+}

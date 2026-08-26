@@ -1,0 +1,239 @@
+/**
+ * Product hero.
+ *
+ * Copy on the left, the pouch on the right against a wash of the product's own
+ * colour — the same device the catalogue uses, so arriving here from a
+ * catalogue card feels like the card opening rather than like another site.
+ * `--tile` is the product colour, set inline by the component.
+ */
+
+.hero {
+  position: relative;
+  background: var(--tbb-paper);
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 14%, var(--tbb-paper));
+  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 4vw, 3.25rem)) var(--tbb-gutter)
+    clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+}
+
+/* Spacing is a row gap, not margins: `design-tokens.css` resets every `p` and
+   `h1` margin to zero at a specificity a single class here cannot answer. */
+.copy {
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(0.9rem, 1.8vw, 1.4rem);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-muted);
+}
+
+.breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--tbb-ink);
+}
+
+/*
+ * The page's own `h1`, verbatim — it is SEO surface, not a design decision, and
+ * it is a full sentence rather than a product name. So it is set at heading
+ * size rather than display size: "Iced Tea Base for Refreshing, Crisp,
+ * Ready-to-Mix Beverages" at hero scale is four lines of shouting.
+ */
+.title {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.6rem, 2.9vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-ink);
+  max-width: 22ch;
+}
+
+.tagline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  font-weight: 500;
+  color: var(--tbb-ink-soft);
+}
+
+.weight {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  font-family: var(--tbb-font-sans);
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-ink);
+}
+
+.body {
+  display: grid;
+  row-gap: 0.6rem;
+  max-width: 54ch;
+}
+
+.paragraph {
+  font-size: var(--tbb-text-body);
+  line-height: 1.5;
+  color: var(--tbb-ink-soft);
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: var(--tbb-muted);
+}
+
+.priceValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-display);
+  color: var(--tbb-ink);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--tbb-ink);
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.primary {
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+}
+
+.primary svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.primary:hover,
+.secondary:hover {
+  transform: translate3d(0, -2px, 0);
+}
+
+.secondary {
+  background: transparent;
+  border-color: var(--tbb-line);
+  color: var(--tbb-ink);
+}
+
+.secondary:hover {
+  border-color: var(--tbb-ink);
+}
+
+/* ---- selling points ---- */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.9rem, 1.8vw, 1.5rem) clamp(1.25rem, 2.5vw, 2.5rem);
+  width: 100%;
+  max-width: 46rem;
+  margin: 0;
+  padding-top: clamp(0.5rem, 1.4vw, 1rem);
+  border-top: 1px solid var(--tbb-line);
+}
+
+.feature {
+  display: grid;
+  row-gap: 0.2rem;
+}
+
+.featureLabel {
+  font-family: var(--tbb-font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--tbb-ink);
+}
+
+.featureValue {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--tbb-muted);
+}
+
+/* ---- the pouch ---- */
+
+.stage {
+  display: grid;
+  place-items: center;
+}
+
+/* Sized against the copy beside it rather than against the column: the plate is
+   720x960 with the pouch inset in it, so filling the column made the pouch
+   taller than everything it was meant to sit next to. */
+.pack {
+  width: min(21rem, 100%);
+  height: auto;
+  filter: drop-shadow(0 30px 50px rgba(26, 19, 17, 0.18));
+}
+
+@media (max-width: 899px) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Pouch first on a phone: it is what identifies the page at a glance, and it
+     is what the visitor tapped in the catalogue. */
+  .stage {
+    order: -1;
+  }
+
+  .pack {
+    max-width: min(18rem, 68%);
+  }
+
+  .features {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
