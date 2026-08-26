@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Reveal } from "@/components/motion/Reveal";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
 import { resizedImage } from "@/lib/images";
 
@@ -164,7 +165,7 @@ export function Bestsellers() {
       data-product-count={PRODUCTS.length}
     >
       <div className={styles.inner}>
-        <div className={styles.copy}>
+        <Reveal className={styles.copy}>
           <span className={`tbb-label ${styles.eyebrow}`}>Bestsellers</span>
 
           {/* The affixes are wrapped so the stylesheet can place them: bare text
@@ -215,7 +216,7 @@ export function Bestsellers() {
             Explore {active.name}
             <Arrow />
           </Link>
-        </div>
+        </Reveal>
 
         <div
           className={styles.stage}
@@ -327,7 +328,7 @@ export function Bestsellers() {
           })}
         </div>
 
-        <div className={styles.controls}>
+        <Reveal className={styles.controls} delay={120}>
           <div className={styles.arrows}>
             <button
               type="button"
@@ -362,7 +363,7 @@ export function Bestsellers() {
               </button>
             ))}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
