@@ -27,7 +27,10 @@
 .statement {
   font-family: var(--tbb-font-display);
   font-size: var(--tbb-text-h3);
-  line-height: 1.25;
+  /* Important for the same reason as `.wordmark` below — Tilda's stylesheets
+     force 1.7 on every `p` of a parity page, which opened this block up by
+     60px there and nowhere else. */
+  line-height: 1.25 !important;
   font-weight: 400;
   margin-top: clamp(0.75rem, 2vw, 1.25rem);
   color: var(--tbb-paper);
@@ -128,13 +131,15 @@
    * Restated here rather than only inherited from the wrap.
    *
    * The wrap sets `line-height: 0.78` and every redesigned page inherited it,
-   * but a parity page also loads Tilda's stylesheets, and those set a
-   * line-height on `p` directly — which beats inheritance however tight the
-   * wrap is. At `40cqw` that turned a 437px block into a 952px one, and the
+   * but a parity page also loads Tilda's stylesheets, and those carry
+   * `html body p { line-height: 1.7 !important }` — which beats inheritance
+   * however tight the wrap is, and beats a plain declaration here however
+   * specific. At `40cqw` that turned a 437px block into a 952px one, and the
    * extra 500px of empty black under the word was the gap showing on every
-   * legacy page and on none of the React ones.
+   * legacy page and on none of the React ones. Hence the `!important`: it is
+   * answering one.
    */
-  line-height: 0.78;
+  line-height: 0.78 !important;
   color: transparent;
   -webkit-text-stroke: 0;
   background: linear-gradient(
