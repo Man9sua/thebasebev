@@ -1,86 +1,93 @@
 .hero {
   position: relative;
-  width: 100%;
-  min-height: 100vh;
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  /* The header sits over this section, so the copy starts below it. */
-  padding: calc(var(--tbb-header-h) + clamp(1rem, min(4vw, 4vh), 3rem)) 0 0;
+  display: grid;
+  align-items: center;
   overflow: clip;
-  /* Paper, not the product colour: the rail below is made of pre-composed
-     cards that carry their own colour field, so the space around them stays
-     neutral or the whole frame turns to mud. */
   background: var(--tbb-paper);
-  isolation: isolate;
 }
 
-/* A soft paper vignette that lifts the centre of the frame behind the copy. */
-.wash {
+/* ---- photograph ---- */
+
+.media {
   position: absolute;
-  z-index: -1;
-  left: 50%;
-  top: 38%;
-  width: min(110vw, 84rem);
-  aspect-ratio: 1 / 0.62;
-  transform: translate3d(-50%, -50%, 0);
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    var(--tbb-paper-warm) 0%,
-    rgba(242, 242, 242, 0) 100%
-  );
-  opacity: 0.9;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 1200ms var(--tbb-ease),
+    transform 1600ms var(--tbb-ease);
+  will-change: transform, opacity;
 }
 
-/* ---- centre: the copy ---- */
+.ready .media {
+  opacity: 1;
+  transform: none;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The right edge is where the image is allowed to be loudest, so it is
+     anchored there and any crop is taken off the quiet left side. */
+  object-position: right center;
+}
+
+/* Fades the photograph out from the left so the copy sits on paper rather than
+   on syrup. Angled rather than straight so the boundary is never a vertical
+   line the eye can find. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 1) 24%,
+    rgba(255, 255, 255, 0.88) 42%,
+    rgba(255, 255, 255, 0.3) 62%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  pointer-events: none;
+}
+
+/* ---- copy ---- */
 
 .inner {
   position: relative;
-  flex: 1 1 auto;
-  display: grid;
-  place-items: center;
+  z-index: 1;
   width: 100%;
   max-width: var(--tbb-max);
   margin: 0 auto;
-  padding: clamp(0.5rem, min(3vw, 2vh), 2.5rem) var(--tbb-gutter);
+  padding: calc(var(--tbb-header-h) + clamp(2rem, 6vh, 5rem)) var(--tbb-gutter)
+    clamp(3rem, 8vh, 6rem);
+  will-change: transform, opacity;
 }
 
 .copy {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  /* Wide enough that the product name stays on one line — a two-line headline
-     costs a third of the frame and unbalances the lockup. The prose underneath
-     sets its own, much narrower measure. */
-  max-width: min(94vw, 64rem);
+  max-width: min(46ch, 52%);
 }
 
 .tagline {
   display: inline-block;
-  padding: 0.55rem 1.15rem;
+  padding: 0.55rem 1.1rem;
   border: 1px solid var(--tbb-line);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--tbb-paper) 65%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--tbb-muted);
+  background: rgba(255, 255, 255, 0.6);
 }
 
-/* Two rows, not three: "Premium" and "Bases" sit together as one quiet line of
-   framing, and the product name gets the whole second row to itself.
-
-   The reorder is visual only — `order` moves the boxes, the DOM keeps serving
-   "Premium Cream Latte Bases" in that order, which is the string production
-   ranks on and the one the smoke test reads. */
+/* ---- headline ----
+ *
+ * Two rows: "Premium" and "Bases" sit together as one quiet line of framing,
+ * and the product name takes the row below on its own. `order` moves the boxes
+ * only — the DOM keeps serving "Premium Cream Latte Bases" in that order, which
+ * is the string production ranks on and the one the smoke test reads. */
 .title {
   font-family: var(--tbb-font-display);
   text-transform: uppercase;
-  margin: clamp(0.6rem, min(2vw, 2.4vh), 1.4rem) 0 0;
+  margin: clamp(0.8rem, 2.5vh, 1.6rem) 0 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: baseline;
   column-gap: clamp(0.9rem, 2vw, 1.6rem);
   row-gap: clamp(0.2rem, 0.8vw, 0.6rem);
@@ -94,27 +101,23 @@
   order: 2;
 }
 
-/* Full basis forces the break, so the product always lands on its own row
-   however long its name is. */
+/* Full basis forces the break, so the product always lands on its own row. */
 .line:nth-child(2) {
   order: 3;
   flex-basis: 100%;
 }
 
-/* Binds the two framing words into one phrase instead of two stray labels.
-   Generated content, so it never reaches `textContent`. */
+/* Binds the two framing words into one phrase. Generated content, so it never
+   reaches `textContent`. */
 .line:nth-child(3) .lineInner::before {
   content: "·";
   margin-right: clamp(0.9rem, 2vw, 1.6rem);
   color: var(--tbb-muted);
 }
 
-/* The mask each part rises out of. Each is its own box, which is what makes the
-   staggered reveal work, and what the row layout above arranges. The h1's
-   text content stays the one string production serves.
-
-   The padding/margin pair gives descenders room inside the mask; without it the
-   overflow clip shaves the bottom of the type at rest, not only mid-reveal. */
+/* The mask each part rises out of. The padding/margin pair gives descenders
+   room inside it; without it the clip shaves the type at rest, not only
+   mid-reveal. */
 .line {
   display: block;
   overflow: hidden;
@@ -124,70 +127,66 @@
 
 .lineInner {
   display: block;
+  transform: translate3d(0, 108%, 0);
+  transition: transform 1100ms var(--tbb-ease);
+  transition-delay: var(--enter-delay, 0ms);
 }
 
-/* "Premium" and "Bases": small, tracked, quiet. They frame the product name
-   instead of competing with it, and that framing is what carries the hierarchy
-   now that no line is coloured — the brand red goes back to being a mark
-   colour, which is all the Guidebook ever asked it to be. */
+.ready .lineInner {
+  transform: none;
+}
+
 .titleAffix {
-  font-size: clamp(0.8rem, min(1.5vw, 2vh), 1.35rem);
+  font-size: clamp(0.75rem, 1.05vw, 1rem);
   font-weight: 400;
-  letter-spacing: 0.34em;
-  /* Tracking hangs empty space off the last letter; pull it back so the line
-     stays optically centred over the one below. */
-  text-indent: 0.34em;
-  line-height: 1.6;
+  letter-spacing: 0.4em;
+  line-height: 1.4;
   color: var(--tbb-muted);
 }
 
-/* The product name is the headline: one big ink line, height-aware as well as
-   width-aware so it and the rail both clear a 720px laptop viewport. */
 .titleProduct {
-  font-size: clamp(3rem, min(10vw, 14vh), 9rem);
+  font-size: clamp(3rem, min(9vw, 15vh), 8.5rem);
   font-weight: 700;
-  line-height: 0.94;
+  line-height: 0.88;
   letter-spacing: -0.03em;
   color: var(--tbb-ink);
 }
 
 .description {
-  margin: clamp(0.75rem, min(2.2vw, 2.6vh), 1.6rem) 0 0;
+  margin: clamp(1rem, 2.5vh, 1.75rem) 0 0;
   color: var(--tbb-ink-soft);
   font-size: clamp(1rem, 1.25vw, 1.1875rem);
-  max-width: 44ch;
+  max-width: 42ch;
 }
 
 .cta {
-  margin-top: clamp(1rem, min(3vw, 3.4vh), 2.25rem);
+  margin-top: clamp(1.25rem, 3vh, 2.25rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1rem 2rem;
-  /* Ink, not the brand red: the red belongs to the logo, and a red pill under a
-     black headline puts two focal points in a frame that only needs one. */
+  padding: 1.05rem 1.9rem;
+  border-radius: 999px;
   background: var(--tbb-ink);
-  color: var(--tbb-paper);
+  color: var(--tbb-on-dark);
   text-decoration: none;
   font-size: var(--tbb-text-label);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
-  border-radius: 999px;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
+  font-weight: 500;
   transition:
-    transform var(--tbb-dur-fast) var(--tbb-ease),
-    background var(--tbb-dur-fast) var(--tbb-ease),
-    box-shadow var(--tbb-dur-fast) var(--tbb-ease);
+    gap var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cta svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
 }
 
 .cta:hover {
+  gap: 1.25rem;
   transform: translate3d(0, -2px, 0);
-  background: var(--tbb-ink-soft);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
-}
-
-.cta:active {
-  transform: scale(0.97);
 }
 
 .cta:focus-visible {
@@ -195,246 +194,56 @@
   outline-offset: 3px;
 }
 
-.cta svg {
-  width: 14px;
-  height: 14px;
-  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.cta:hover svg {
-  transform: translate3d(4px, 0, 0);
-}
-
 .badges {
-  margin: clamp(0.9rem, min(2.6vw, 3vh), 2rem) 0 0;
+  margin: clamp(1.25rem, 3vh, 2rem) 0 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem clamp(0.9rem, 2vw, 1.6rem);
-  max-width: 46rem;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
   color: var(--tbb-muted);
 }
 
-.badges span + span::before {
-  content: "";
-  display: inline-block;
-  width: 3px;
-  height: 3px;
-  margin-right: clamp(0.9rem, 2vw, 1.6rem);
-  border-radius: 50%;
-  background: currentColor;
-  vertical-align: middle;
-}
-
-/* ---- bottom: the product rail ---- */
-
-.marquee {
-  position: relative;
-  width: 100%;
-  /* The cards bleed off the bottom edge; the hero's `overflow: clip` does the
-     cropping, which keeps the rail feeling like it continues past the fold. */
-  margin-bottom: clamp(-2.5rem, -2.5vw, -1.25rem);
-  overflow: hidden;
-  /* Fade at both ends so cards enter and leave instead of popping at the edge. */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 7%,
-    #000 93%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 7%,
-    #000 93%,
-    transparent 100%
-  );
-  /* Room for the tilt and the hover lift, so neither is clipped. */
-  padding: clamp(1rem, min(3vw, 2.4vh), 2rem) 0;
-}
-
-.track {
-  display: flex;
-  width: max-content;
-  /* The gap lives on the tiles, not here: with a uniform per-tile margin the
-     two passes are exactly the same width, so translating by -50% lands on the
-     start of the second pass with no drift. A flex `gap` would not. */
-  animation: heroMarquee var(--marquee-duration, 78s) linear infinite;
-  will-change: transform;
-}
-
-/* Pausing on hover or keyboard focus is what makes the cards clickable. */
-.marquee:hover .track,
-.track:focus-within {
-  animation-play-state: paused;
-}
-
-@keyframes heroMarquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.tile {
-  position: relative;
-  flex: 0 0 auto;
-  display: block;
-  width: clamp(15rem, min(31vw, 44vh), 34rem);
-  /* The card artwork's own ratio, so nothing is cropped through its lockup. */
-  aspect-ratio: 1081 / 951;
-  margin-right: clamp(0.75rem, 1.6vw, 1.5rem);
-  border-radius: clamp(0.9rem, 1.4vw, 1.5rem);
-  overflow: hidden;
-  /* Matches the card's own field, so a rounded corner never shows paper. */
-  background: var(--tile-bg, var(--tbb-paper-warm));
-  transform: rotate(var(--tilt, 0deg));
-  box-shadow:
-    0 22px 48px rgba(0, 0, 0, 0.16),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-  transition:
-    transform var(--tbb-dur-fast) var(--tbb-ease),
-    box-shadow var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.tile:hover,
-.tile:focus-visible {
-  /* Straightens and lifts: the card the pointer is on leaves the rail. */
-  transform: rotate(0deg) translate3d(0, -10px, 0) scale(1.03);
-  box-shadow:
-    0 34px 64px rgba(0, 0, 0, 0.22),
-    0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.tile:focus-visible {
-  outline: 2px solid var(--tbb-ink);
-  outline-offset: 4px;
-}
-
-.tileImage {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ---- entrance ----
-   Staged: wash, then the rail rising into place, then the headline lines coming
-   out of their masks, then the copy beneath. Every step is opacity+transform
-   only, and each element is laid out in its final position, so nothing reflows
-   and there is no CLS.
-
-   Durations are long and the ease is soft — that slowness is the character of
-   the design, not an accident. */
+/* ---- staged entrance ---- */
 
 .enter {
   opacity: 0;
-  transform: translate3d(0, 22px, 0);
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity 900ms var(--tbb-ease),
+    transform 900ms var(--tbb-ease);
+  transition-delay: var(--enter-delay, 0ms);
 }
 
 .ready .enter {
   opacity: 1;
   transform: none;
-  transition:
-    opacity 900ms var(--tbb-ease) var(--enter-delay, 0ms),
-    transform 900ms var(--tbb-ease) var(--enter-delay, 0ms);
 }
 
-/* The headline reveal: each line starts below its own mask and slides up into
-   it. No fade — a masked line that also fades reads as blurry rather than as
-   type arriving, and the mask alone is the sharper effect. */
-.lineInner {
-  transform: translate3d(0, 106%, 0);
-}
-
-.ready .lineInner {
-  transform: none;
-  transition: transform 1150ms var(--tbb-ease) var(--enter-delay, 0ms);
-}
-
-.enterMarquee {
-  opacity: 0;
-  /* Rises and settles from slightly small, so the rail arrives as one object
-     rather than sliding in like a strip of film. */
-  transform: scale(0.94) translate3d(0, 56px, 0);
-}
-
-.ready .enterMarquee {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 1500ms var(--tbb-ease) 100ms,
-    transform 1500ms var(--tbb-ease) 100ms;
-}
-
-.wash {
-  opacity: 0;
-}
-
-.ready .wash {
-  opacity: 0.9;
-  transition: opacity 1200ms var(--tbb-ease);
-}
-
-@media (max-width: 1023px) {
-  .titleProduct {
-    font-size: clamp(2.6rem, min(13vw, 9vh), 5rem);
+@media (max-width: 899px) {
+  /* No room for a side-by-side split: the veil covers the whole frame instead,
+     lightly, and the copy runs the full width over it. */
+  .veil {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.82) 45%,
+      rgba(255, 255, 255, 0.55) 100%
+    );
   }
 
-  .titleAffix {
-    letter-spacing: 0.28em;
-    text-indent: 0.28em;
+  .photo {
+    object-position: center;
   }
 
-  .tile {
-    /* Roughly three quarters of the screen: big enough to read a pack shot,
-       narrow enough that the next card is always visibly on its way in. */
-    width: clamp(14rem, 76vw, 26rem);
-  }
-
-  .track {
-    /* Fewer cards fit, so the same speed reads as faster — slow it down. */
-    --marquee-duration: 58s;
-  }
-
-  .badges {
-    gap: 0.4rem 1rem;
-  }
-
-  .badges span + span::before {
-    margin-right: 1rem;
+  .copy {
+    max-width: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .enter,
-  .enterMarquee,
+  .media,
   .lineInner,
-  .wash {
+  .enter {
     opacity: 1;
-    transform: none;
-  }
-
-  .ready .wash {
-    opacity: 0.9;
-  }
-
-  .track {
-    animation: none;
-  }
-
-  /* Nothing moves on its own, so the rail becomes something to scroll by hand. */
-  .marquee {
-    overflow-x: auto;
-  }
-
-  .tile,
-  .tile:hover,
-  .tile:focus-visible {
     transform: none;
     transition: none;
   }

@@ -19,8 +19,12 @@ import { useEffect } from "react";
  * better than anything we would simulate.
  */
 
-/** Higher settles faster. Low enough to feel like glide, not lag. */
-const LERP = 0.1;
+/** Higher settles faster. Low enough to feel like glide, not lag.
+ *
+ * 0.1 still landed abruptly — a wheel notch was most of the way there within a
+ * few frames, so the glide was over before it read as one. 0.07 stretches the
+ * tail without crossing into the lag that makes a page feel unresponsive. */
+const LERP = 0.07;
 const SETTLE_EPSILON = 0.4;
 /** Trackpads report far smaller deltas than mice; both should feel the same. */
 const WHEEL_MULTIPLIER = 1;

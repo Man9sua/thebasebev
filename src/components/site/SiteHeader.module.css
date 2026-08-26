@@ -231,15 +231,7 @@
   border-bottom-color: rgba(255, 255, 255, 0.14);
 }
 
-/* The mark is a fixed two-colour SVG, so it cannot inherit `color`. Knocking it
-   back to a single white silhouette keeps the shape exactly and stays legible;
-   tinting it would misprint the brand red. */
-.inverted .logo img {
-  filter: brightness(0) invert(1);
-}
-
-/* Declared after `.logo img` so it applies to both palettes: the knock-out
-   should ease in with the rest of the bar, not snap. */
-.logo img {
-  transition: filter var(--tbb-dur) var(--tbb-ease);
-}
+/* The mark is deliberately left alone on dark surfaces. It was knocked back to
+   a white silhouette here, which meant the logo changed as the page scrolled —
+   a brand mark that mutates reads as a glitch. The red block carries it against
+   the footer on its own. */

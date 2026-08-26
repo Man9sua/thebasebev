@@ -271,30 +271,6 @@ export const PRODUCTS: Product[] = [
 export const HERO_SLUGS = ["cream-latte", "matcha", "chocolate"] as const;
 
 /**
- * Shown in the hero marquee, in order.
- *
- * Every slug here has to point at one of the pre-composed product cards — the
- * 1081x951 artwork that already carries its own colour field, pack shot and
- * certification marks. The marquee crops every tile to that one ratio, so a
- * product whose artwork is a bare transparent pouch (raf-coffee, tea,
- * sugar-free, topping, garnish) is left out rather than cropped through its own
- * lockup. Add a slug here the moment its card artwork lands.
- */
-export const HERO_MARQUEE_SLUGS = [
-  "cream-latte",
-  "chocolate",
-  "iced-tea",
-  "jam",
-  "cordial",
-  "chai-latte",
-  "matcha",
-  "frappe",
-  "milkshake",
-  "sugar-syrup",
-  "vending",
-] as const;
-
-/**
  * Featured in the Bestsellers carousel, in order.
  *
  * Same five products, in the same order, as the hero slider running on

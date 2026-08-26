@@ -42,29 +42,32 @@ try {
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage is the redesigned surface: a video hero, then the Bestsellers
-  // carousel. Navigation, product grid and the region picker moved out of the
-  // old hover mega-menu into the full-screen menu panel, so they are asserted
-  // there rather than on hover.
+  // The homepage is the redesigned surface: a photographic hero, then the
+  // Bestsellers carousel. Navigation, product grid and the region picker moved
+  // out of the old hover mega-menu into the full-screen menu panel, so they are
+  // asserted there rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("#bestsellers").waitFor();
   await page.waitForTimeout(900);
 
-  // The hero is a marquee of pre-composed product cards: no video, a rail that
-  // is rendered twice so the loop is seamless, and tiles big enough to read.
+  // The hero is one full-bleed photograph with the copy held on the left. It
+  // replaced a marquee of product tiles, so the rail assertions are gone; what
+  // still matters is that it is a picture and not video, that the picture
+  // actually covers the frame, and that the CTA still points at the product the
+  // h1 names.
   const hero = page.locator("section[data-hero]");
   check((await hero.locator("video").count()) === 0, "home: hero must not use video");
-  const heroTiles = hero.locator("[data-hero-tile]");
-  const heroTileCount = await heroTiles.count();
-  check(
-    heroTileCount >= 20 && heroTileCount % 2 === 0,
-    `home: hero marquee needs both passes of a duplicated rail (got ${heroTileCount})`,
-  );
-  const heroTileBox = await heroTiles.first().boundingBox();
+  const heroImage = hero.locator("img").first();
+  check((await heroImage.count()) === 1, "home: hero is missing its photograph");
+  const heroImageBox = await heroImage.boundingBox();
   const view = page.viewportSize();
   check(
-    !!heroTileBox && heroTileBox.height > view.height * 0.18,
-    `home: hero marquee tile is too small (${Math.round(heroTileBox?.height ?? 0)}px of ${view.height})`,
+    !!heroImageBox && heroImageBox.width >= view.width - 1,
+    `home: hero photograph must run full bleed (got ${Math.round(heroImageBox?.width ?? 0)} of ${view.width})`,
+  );
+  check(
+    !!heroImageBox && heroImageBox.height > view.height * 0.6,
+    `home: hero photograph is too short (${Math.round(heroImageBox?.height ?? 0)}px of ${view.height})`,
   );
   check(
     (await hero.locator("a[href='/cream-latte']").count()) > 0,
