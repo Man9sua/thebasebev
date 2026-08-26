@@ -66,7 +66,14 @@ try {
   // asserted there rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("#bestsellers").waitFor();
-  await page.waitForTimeout(900);
+  const homepageLoader = page.locator("[data-loading-screen]");
+  if (await homepageLoader.isVisible()) {
+    await homepageLoader.waitFor({ state: "hidden", timeout: 8_000 });
+  }
+  // The loader opens the shared entrance gate while its curtain leaves. Give
+  // the hero and the scene controller one frame to settle before sending the
+  // first desktop wheel event.
+  await page.waitForTimeout(250);
 
   // The hero is one photograph anchored to the right edge with the copy held on
   // the left. It replaced a marquee of product tiles, so the rail assertions are
@@ -537,7 +544,12 @@ try {
   });
   const reducedPage = await reduced.newPage();
   observe(reducedPage, "reduced-motion");
-  await reducedPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  // These fallbacks are CSS-driven. On a remote origin DOMContentLoaded can
+  // precede the last render-blocking stylesheet in Playwright's no-JS context,
+  // which observes a transient browser-default `display: block` that a real
+  // painted frame never exposes. Assert once the document and its styles are
+  // render-ready instead of racing the stylesheet response.
+  await reducedPage.goto(`${baseUrl}/`, { waitUntil: "load" });
   check(
     (await reducedPage.locator("html[data-tbb-loading='1']").count()) === 0,
     "reduced-motion: initial loading gate must be skipped",
@@ -555,7 +567,7 @@ try {
   });
   const noScriptPage = await noScript.newPage();
   observe(noScriptPage, "no-script");
-  await noScriptPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  await noScriptPage.goto(`${baseUrl}/`, { waitUntil: "load" });
   check(
     await noScriptPage.locator("section[data-hero] h1").isVisible(),
     "no-script: homepage hero content is not visible",
