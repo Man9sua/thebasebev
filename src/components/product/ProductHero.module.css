@@ -56,6 +56,14 @@
   --pack-top: 137.73;
   --pack-width: 529.27;
   --pack-height: 676.55;
+  /*
+   * The two places the page deliberately leaves the design, both asked for
+   * after seeing it built and both named so they are one line to re-tune: how
+   * far left of its measured column the whole product group is pulled, and how
+   * far below its measured box the drink stands.
+   */
+  --group-shift: 50;
+  --glass-drop: 34;
   /* Where the design's header ends, and so where its `top` values stop being
      the page's and start being this section's — the reported tops are counted
      from the top of the page. 68 is this site's own header at the frame's
@@ -97,18 +105,31 @@
   z-index: 0;
   display: grid;
   justify-items: start;
-  font-family: var(--tbb-font-display);
-  font-size: calc(204 * var(--u));
-  font-weight: 800;
-  line-height: 0.76;
-  letter-spacing: -0.035em;
-  white-space: nowrap;
-  color: rgba(255, 255, 255, 0.3);
+  width: calc(586.75 * var(--u));
   user-select: none;
 }
 
-.onDark .mark {
-  color: rgba(255, 255, 255, 0.12);
+/*
+ * The word itself, painted rather than placed: the artwork is white at half
+ * opacity, so it is used as a mask over a colour this can choose. The height is
+ * the artwork's own proportion at the group's measured width — 1174 x 568 at
+ * 586.75 across — so nothing is squashed. The letters are cut by the artwork's
+ * own edges, which is what puts the B against the side of the page.
+ */
+.markWord {
+  width: 100%;
+  aspect-ratio: 1174 / 568;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-mask-image: url("/images/mark-base.webp");
+  mask-image: url("/images/mark-base.webp");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.onDark .markWord {
+  background: rgba(255, 255, 255, 0.24);
 }
 
 /*
@@ -117,20 +138,33 @@
  * own colour to stand on — Topping's is #eeebe1 — and white on that is nothing
  * at all, so there the mark is a grey ghost instead.
  */
-.plain .mark {
-  color: color-mix(in srgb, var(--tbb-ink) 7%, transparent);
+.plain .markWord {
+  background: color-mix(in srgb, var(--tbb-ink) 14%, transparent);
 }
 
+/* Type, not artwork: only "BASE" came as a vector. It is small enough and quiet
+   enough that the page's own face carries it. */
 .markThe {
-  font-size: 0.3em;
+  font-family: var(--tbb-font-display);
+  font-size: calc(34 * var(--u));
   font-weight: 700;
+  line-height: calc(38 * var(--u));
   letter-spacing: -0.02em;
-  padding-left: 0.09em;
+  padding-left: 0.02em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.onDark .markThe {
+  color: rgba(255, 255, 255, 0.24);
+}
+
+.plain .markThe {
+  color: color-mix(in srgb, var(--tbb-ink) 14%, transparent);
 }
 
 .stage {
   position: absolute;
-  left: calc(var(--pack-left) * var(--u));
+  left: calc((var(--pack-left) - var(--group-shift)) * var(--u));
   top: calc(var(--tbb-header-h) + (var(--pack-top) - var(--head)) * var(--u));
   z-index: 0;
   width: calc(var(--pack-width) * var(--u));
@@ -161,7 +195,7 @@
 .glass {
   position: absolute;
   left: calc((var(--glass-left) - var(--pack-left)) / var(--pack-width) * 100%);
-  top: calc((var(--glass-top) - var(--pack-top)) / var(--pack-height) * 100%);
+  top: calc((var(--glass-top) - var(--pack-top) + var(--glass-drop)) / var(--pack-height) * 100%);
   z-index: 1;
   width: calc(var(--glass-width) / var(--pack-width) * 100%);
   height: calc(var(--glass-height) / var(--pack-height) * 100%);
@@ -184,7 +218,7 @@
  */
 .seals {
   position: absolute;
-  left: calc(86.7 * var(--u));
+  left: calc((86.7 - var(--group-shift)) * var(--u));
   top: calc(var(--tbb-header-h) + (657 - var(--head)) * var(--u));
   z-index: 1;
   display: flex;
@@ -468,7 +502,12 @@
 
   .mark {
     top: calc(var(--tbb-header-h) + 11vw);
-    font-size: clamp(4.5rem, 21vw, 9rem);
+    width: min(92vw, 30rem);
+  }
+
+  .markThe {
+    font-size: clamp(1.1rem, 5vw, 1.6rem);
+    line-height: 1.2;
   }
 
   /*

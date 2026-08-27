@@ -61,7 +61,12 @@ function Seal({
   glyph?: string;
 }) {
   return (
-    <svg className={styles.seal} viewBox="0 0 100 100" role="img" aria-label={`${title} ${caption}`}>
+    <svg
+      className={styles.seal}
+      viewBox="0 0 100 100"
+      role="img"
+      aria-label={`${title} ${caption}`}
+    >
       <circle cx="50" cy="50" r="49" fill="var(--tbb-paper)" />
       <circle cx="50" cy="50" r="47" fill="none" stroke={tint} strokeWidth="3.5" />
       <circle
@@ -110,72 +115,86 @@ export function ProductHero({ product }: { product: Product }) {
       style={{
         ["--tile" as string]: product.backgroundColor,
         ...(banner
-          ? { ["--band" as string]: banner.band, ["--band-foot" as string]: banner.bandFoot }
+          ? {
+              ["--band" as string]: banner.band,
+              ["--band-foot" as string]: banner.bandFoot,
+            }
           : {}),
       }}
       aria-labelledby="product-title"
     >
-      {/* The design frame. Everything inside is placed by its measurement in
-          that frame — see the note over `--u` in the stylesheet. */}
+      {/*
+        The product's half of the page hangs off the section rather than off the
+        measured frame, so that on a monitor wider than the frame the mark still
+        runs off the side of the page the way the design draws it, instead of
+        starting somewhere out in the middle. Below the frame's own width the two
+        are the same edge and nothing moves.
+      */}
+      {/*
+        The brand mark at display size, standing behind everything the way it
+        does on every one of the client's key visuals. "BASE" is the owner's
+        own vector rather than type — it is a condensed face this project does
+        not carry, and drawing it with the page's own would be a different
+        word in a different voice. It is painted through a mask rather than
+        placed as a picture so the wash can still be chosen per product: white
+        over a key visual, a grey ghost over the pale fallback.
+      */}
+      <span className={styles.mark} aria-hidden="true">
+        <span className={styles.markThe}>the</span>
+        <span className={styles.markWord} />
+      </span>
+
+      {/*
+        The cut-out pack shot, not the key visual, and the reason is in the
+        artwork: every one of the eleven banners runs the pouch off the right
+        of its own frame. Measured, not assumed — the last column of every
+        source is pack, at every height below the pouch's shoulder. The design
+        stands the product on the left, where that cut would land in the
+        middle of the page and read as a sliced pack.
+
+        The drink the design stands in front of it is not part of this: it is
+        a layer of its own there and a layer of its own here — see below.
+      */}
+      <div className={styles.stage}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={styles.pack}
+          src={`/images/pack-${product.slug}.webp`}
+          alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
+          fetchPriority="high"
+        />
+
+        {/*
+          The drink, in front of the pouch. It is a layer of its own in the
+          design with a box of its own, given here as a share of the pack's
+          group rather than of the frame — that is the one reading that holds
+          on a phone too, where the group shrinks and the frame is gone.
+          Decoration beside the pack shot, hence no alt.
+        */}
+        {glass?.image && (
+          <div
+            className={styles.glass}
+            style={{
+              ["--glass-left" as string]: glass.left,
+              ["--glass-top" as string]: glass.top,
+              ["--glass-width" as string]: glass.width,
+              ["--glass-height" as string]: glass.height,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={glass.image} alt="" />
+          </div>
+        )}
+      </div>
+
+      <div className={styles.seals}>
+        <Seal tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
+        <Seal tint="#0f7a3d" title="HALAL" caption="CERTIFIED" glyph="حلال" />
+      </div>
+
+      {/* The design frame, which from here down is the copy's own measure —
+          see the note over `--u` in the stylesheet. */}
       <div className={styles.frame}>
-        {/*
-          The brand mark at display size, standing behind everything the way it
-          does on every one of the client's key visuals. It is set rather than
-          drawn so it stays sharp at any width and costs no request.
-        */}
-        <span className={styles.mark} aria-hidden="true">
-          <span className={styles.markThe}>the</span>
-          <span>BASE</span>
-        </span>
-
-        {/*
-          The cut-out pack shot, not the key visual, and the reason is in the
-          artwork: every one of the eleven banners runs the pouch off the right
-          of its own frame. Measured, not assumed — the last column of every
-          source is pack, at every height below the pouch's shoulder. The design
-          stands the product on the left, where that cut would land in the
-          middle of the page and read as a sliced pack.
-
-          The drink the design stands in front of it is not part of this: it is
-          a layer of its own there and a layer of its own here — see below.
-        */}
-        <div className={styles.stage}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className={styles.pack}
-            src={`/images/pack-${product.slug}.webp`}
-            alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
-            fetchPriority="high"
-          />
-
-          {/*
-            The drink, in front of the pouch. It is a layer of its own in the
-            design with a box of its own, given here as a share of the pack's
-            group rather than of the frame — that is the one reading that holds
-            on a phone too, where the group shrinks and the frame is gone.
-            Decoration beside the pack shot, hence no alt.
-          */}
-          {glass?.image && (
-            <div
-              className={styles.glass}
-              style={{
-                ["--glass-left" as string]: glass.left,
-                ["--glass-top" as string]: glass.top,
-                ["--glass-width" as string]: glass.width,
-                ["--glass-height" as string]: glass.height,
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={glass.image} alt="" />
-            </div>
-          )}
-        </div>
-
-        <div className={styles.seals}>
-          <Seal tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
-          <Seal tint="#0f7a3d" title="HALAL" caption="CERTIFIED" glyph="حلال" />
-        </div>
-
         <div className={styles.copy}>
           <Reveal delay={60} distance={20}>
             {/*
