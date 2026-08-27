@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   CATALOG_GROUPS,
@@ -10,6 +9,7 @@ import {
   type CatalogGroupId,
   type CatalogProduct,
 } from "@/data/catalog";
+import { SiteLink } from "@/components/site/SiteLink";
 import catalogTiles from "@/data/catalog-tiles.json";
 import { addCartItem } from "@/lib/cart-store";
 import styles from "./CatalogPage.module.css";
@@ -37,21 +37,21 @@ function ProductCard({ product, eager }: { product: CatalogProduct; eager: boole
 
   return (
     <article className={styles.card} data-catalog-card data-product-slug={product.slug}>
-      <Link className={styles.imageLink} href={product.route} prefetch={false}>
+      <SiteLink className={styles.imageLink} href={product.route}>
         <Image
-          className={product.slug === "tea" ? styles.teaImage : styles.image}
+          className={styles.image}
           src={tiles[product.slug]?.image ?? product.image ?? `/images/pack-${product.slug}.webp`}
           alt={`${product.name} beverage base by THE BASE`}
           fill
           sizes="(max-width: 719px) 92vw, (max-width: 1099px) 46vw, 31vw"
           loading={eager ? "eager" : "lazy"}
         />
-      </Link>
+      </SiteLink>
 
       <div className={styles.titleRow}>
-        <Link className={styles.name} data-catalog-name href={product.route} prefetch={false}>
+        <SiteLink className={styles.name} data-catalog-name href={product.route}>
           {name}
-        </Link>
+        </SiteLink>
         <span className={styles.price} data-catalog-price>
           {product.price ?? "Price on request"}
         </span>
@@ -72,9 +72,9 @@ function ProductCard({ product, eager }: { product: CatalogProduct; eager: boole
           {added ? "Added" : "Add to cart"}
         </button>
       ) : (
-        <Link className={styles.action} data-cart-add href="/contacts" prefetch={false}>
+        <SiteLink className={styles.action} data-cart-add href="/contacts">
           Request price
-        </Link>
+        </SiteLink>
       )}
     </article>
   );

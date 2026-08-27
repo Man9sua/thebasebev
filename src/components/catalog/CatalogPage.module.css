@@ -97,7 +97,14 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /*
+   * Four, and the tile is four by five — see `scripts/build-catalog-tiles.mjs`.
+   * The tiles are built so the pouch shows whole, which a square could not do:
+   * the key visuals run it off the right of their own frame, so cropping one to
+   * a square cut it on eleven products and left it standing complete on the
+   * other five — two treatments in one grid.
+   */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(3.25rem, 5vw, 5.5rem) clamp(1rem, 1.8vw, 1.75rem);
   margin-top: clamp(2.5rem, 5vw, 4.5rem);
 }
@@ -111,29 +118,20 @@
 .imageLink {
   position: relative;
   display: block;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 5;
   margin-bottom: clamp(0.9rem, 1.4vw, 1.2rem);
   overflow: hidden;
   background: var(--tbb-paper-warm);
 }
 
-.image,
-.teaImage {
+.image {
   object-fit: cover;
   object-position: center;
   transition: transform var(--tbb-dur) var(--tbb-ease) !important;
 }
 
-.teaImage {
-  transform: scale(1.08);
-}
-
 .card:hover .image {
   transform: scale(1.025);
-}
-
-.card:hover .teaImage {
-  transform: scale(1.105);
 }
 
 .imageLink:focus-visible,
@@ -198,7 +196,13 @@
   border-bottom-color: var(--tbb-ink);
 }
 
-@media (max-width: 1099px) {
+@media (max-width: 1179px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 859px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -224,8 +228,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .image,
-  .teaImage {
+  .image {
     transition: none !important;
   }
 }

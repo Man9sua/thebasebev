@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/components/cart/useCart";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { RegionPicker } from "@/components/site/RegionPicker";
+import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
 import styles from "./SiteHeader.module.css";
@@ -140,13 +140,13 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
       >
         {/* Original Tilda paths, inlined so the small `the` mark can inherit
             the animated header colour without recolouring the red block. */}
-        <Link href="/" className={styles.logo} aria-label="THE BASE — home" prefetch={false}>
+        <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
           {/* The Tilda runtime on parity routes re-sets src and adds
               decoding/fetchpriority on every img it finds, this one included.
               The rewrite is cosmetic, but React would still read it as a
               mismatch on a node it owns. */}
           <BrandLogo />
-        </Link>
+        </SiteLink>
 
         <div className={styles.actions}>
           {/* Ported from production. Display-only there and here — see
@@ -155,15 +155,14 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             <RegionPicker />
           </span>
 
-          <Link
+          <SiteLink
             href={cartHref}
             className={styles.action}
             aria-label={cartLabel}
-            prefetch={false}
           >
             <CartIcon />
             {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
-          </Link>
+          </SiteLink>
 
           <button
             type="button"

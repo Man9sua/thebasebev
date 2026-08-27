@@ -45,6 +45,11 @@
 .inner {
   position: relative;
   z-index: 1;
+  display: grid;
+  align-content: center;
+  /* The picture is as tall as the section, so the section needs a height of its
+     own to stand the words against rather than taking whatever the words are. */
+  min-height: clamp(24rem, 36vw, 34rem);
   width: 100%;
   max-width: var(--tbb-measure-wide);
   margin: 0 auto;
@@ -74,7 +79,7 @@
   line-height: 0.76;
   letter-spacing: -0.035em;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.3);
   user-select: none;
 }
 
@@ -103,7 +108,7 @@
   position: absolute;
   inset: 0 0 0 auto;
   z-index: 0;
-  width: min(46%, 36rem);
+  width: min(58%, 46rem);
   /* The copy is what makes the section tall, and on a short one — Raf Coffee's
      h1 is two words — the picture would have nothing to stand in. */
   min-height: clamp(22rem, 34vw, 32rem);
@@ -147,14 +152,19 @@
 
 /* ---- the words ---- */
 
-/* Spacing is a row gap, not margins: `design-tokens.css` resets every `p` and
-   `h1` margin to zero at a specificity a single class here cannot answer. */
+/*
+ * Spacing is a row gap, not margins: `design-tokens.css` resets every `p` and
+ * `h1` margin to zero at a specificity a single class here cannot answer. The
+ * gap is the small one; the three places that need more air — under the
+ * breadcrumb, under the title, above the price — ask for it themselves, so the
+ * block reads as four steps rather than one even list.
+ */
 .copy {
   display: grid;
   justify-items: start;
-  row-gap: clamp(0.75rem, 1.5vw, 1.15rem);
+  row-gap: clamp(0.5rem, 0.9vw, 0.7rem);
   /* Ends before the picture starts. */
-  max-width: min(34rem, 50%);
+  max-width: min(32rem, 44%);
 }
 
 .breadcrumb {
@@ -183,6 +193,7 @@
  * The two sizes are chosen in the markup, by the length of the line.
  */
 .title {
+  padding-top: clamp(0.35rem, 1vw, 0.9rem);
   font-family: var(--tbb-font-display);
   font-size: clamp(1.75rem, 3.1vw, 2.9rem);
   font-weight: 700;
@@ -200,11 +211,15 @@
   max-width: 12ch;
 }
 
+/* The three words under the title are a caption, not a sentence: set small and
+   letterspaced, they stop reading as the first line of the copy below. */
 .tagline {
+  padding-top: clamp(0.5rem, 1.2vw, 0.9rem);
   font-family: var(--tbb-font-sans);
-  font-size: 0.9375rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
   color: var(--ink-soft);
 }
 
@@ -212,7 +227,7 @@
   display: grid;
   row-gap: 0.7rem;
   max-width: 46ch;
-  padding-top: clamp(0.25rem, 1vw, 0.75rem);
+  padding-top: clamp(0.9rem, 2vw, 1.5rem);
 }
 
 .paragraph {
@@ -225,7 +240,7 @@
   display: grid;
   justify-items: start;
   row-gap: clamp(0.9rem, 1.6vw, 1.35rem);
-  padding-top: clamp(0.5rem, 1.4vw, 1rem);
+  padding-top: clamp(1.25rem, 2.6vw, 2rem);
 }
 
 .price {

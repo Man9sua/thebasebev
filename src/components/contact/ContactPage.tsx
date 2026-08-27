@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY } from "@/lib/site-config";
 import styles from "./ContactPage.module.css";
 
@@ -116,9 +116,9 @@ export function ContactPage() {
                 <input name="privacy-consent" type="checkbox" required />
                 <span>
                   I consent to THE BASE processing this inquiry as described in the{" "}
-                  <Link href="/privacy" prefetch={false}>
+                  <SiteLink href="/privacy">
                     Privacy Policy
-                  </Link>
+                  </SiteLink>
                   .
                 </span>
               </label>

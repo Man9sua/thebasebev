@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { isLoadingGateOpen, whenLoadingGateOpens } from "@/components/site/loading-gate";
 import styles from "./Hero.module.css";
 
@@ -189,15 +189,14 @@ export function Hero() {
             drink tastes the same in every outlet.
           </p>
 
-          <Link
+          <SiteLink
             href="/catalog"
             className={`${styles.cta} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "730ms" }}
-            prefetch={false}
           >
             Explore the catalog
             <ArrowIcon />
-          </Link>
+          </SiteLink>
 
           <p
             className={`${styles.badges} ${styles.enter}`}

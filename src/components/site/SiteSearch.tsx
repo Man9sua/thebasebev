@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { resizedImage } from "@/lib/images";
 import { SITE_NAV } from "@/lib/site-config";
@@ -143,11 +143,10 @@ export function SiteSearch({
                 className={styles.item}
                 style={{ transitionDelay: open ? `${200 + index * 35}ms` : "0ms" }}
               >
-                <Link
+                <SiteLink
                   href={hit.href}
                   className={styles.result}
                   onClick={close}
-                  prefetch={false}
                 >
                   <span
                     className={styles.swatch}
@@ -160,16 +159,16 @@ export function SiteSearch({
                     <span className={styles.resultName}>{hit.name}</span>
                     <span className={styles.resultKind}>{hit.kind}</span>
                   </span>
-                </Link>
+                </SiteLink>
               </span>
             ))}
           </div>
         ) : (
           <p className={styles.empty}>
             Nothing matches “{query.trim()}”. Try a product name, or{" "}
-            <Link href="/contacts" onClick={close} prefetch={false}>
+            <SiteLink href="/contacts" onClick={close}>
               contact us
-            </Link>
+            </SiteLink>
             .
           </p>
         )}

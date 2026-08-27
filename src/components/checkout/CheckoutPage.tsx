@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useCart } from "@/components/cart/useCart";
 import { BrandLogo } from "@/components/site/BrandLogo";
+import { SiteLink } from "@/components/site/SiteLink";
 import { CATALOG_PRODUCTS, getCheckoutProductId } from "@/data/catalog";
 import catalogTiles from "@/data/catalog-tiles.json";
 import { removeCartItem, setCartItemQuantity } from "@/lib/cart-store";
@@ -92,12 +92,12 @@ export function CheckoutPage() {
   return (
     <div className={`tbb ${styles.page}`}>
       <header className={styles.header}>
-        <Link href="/catalog" className={styles.back} prefetch={false}>
+        <SiteLink href="/catalog" className={styles.back}>
           <span aria-hidden="true">←</span> Back to catalog
-        </Link>
-        <Link href="/" className={styles.logo} aria-label="THE BASE — home" prefetch={false}>
+        </SiteLink>
+        <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
           <BrandLogo />
-        </Link>
+        </SiteLink>
         <span className={styles.mode}>Stripe test mode</span>
       </header>
 
