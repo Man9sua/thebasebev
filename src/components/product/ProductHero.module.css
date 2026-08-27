@@ -1,19 +1,16 @@
 /**
  * Product hero.
  *
- * The words on the left, the product on the right, running off the edge of the
- * page — which is the composition the client's own key visuals are built in and
- * the reason it is not the other way round. Every one of the eleven runs the
- * pouch off the right of its frame, so that edge is a cut wherever it lands;
- * put against the page's own edge it reads as the picture continuing past the
- * screen, and put anywhere else it reads as a sliced pack. The picture's other
- * three edges are empty wash and are feathered into the panel.
+ * The product on the left, standing on the brand mark with the two seals under
+ * it, and the words in a column on the right — the owner's design file. The
+ * picture is the cut-out pouch rather than the key visual, because every one of
+ * those frames cuts the pouch at its right edge; see the note in the component.
  *
- * The panel is not a flat colour but the wash from the picture, continued —
- * `--band` is that wash at the head and `--band-foot` at the foot, both sampled
- * from it in `scripts/build-product-heroes.mjs`, so the two ramps are one ramp.
- * Products without a banner fall back to a wash of `--tile`, their own colour,
- * with the pack shot standing on it.
+ * The panel is not a flat colour but that key visual's own wash — `--band` at
+ * the head and `--band-foot` at the foot, both sampled from it in
+ * `scripts/build-product-heroes.mjs`, so the pack stands on the ramp its own
+ * artwork was built on. Products without a key visual fall back to a wash of
+ * `--tile`, their registry colour.
  */
 
 .hero {
@@ -24,12 +21,10 @@
   --ink: var(--tbb-ink);
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);
-  --rule: rgba(0, 0, 0, 0.14);
   --chip: rgba(255, 255, 255, 0.72);
-  /* How much of the mark the picture is allowed to cover before it has faded
-     out of the way. Named once because the picture's mask and the mark's own
-     position are two halves of the same measurement. */
-  --dissolve: 34%;
+  /* The product's share of the width. The copy takes what is left, which is why
+     the two are written from one number. */
+  --stage: min(52%, 44rem);
 }
 
 /* Tea's wash is near-black and Jam's is burgundy, so the ink is measured from
@@ -38,7 +33,6 @@
   --ink: #ffffff;
   --ink-soft: rgba(255, 255, 255, 0.78);
   --ink-muted: rgba(255, 255, 255, 0.55);
-  --rule: rgba(255, 255, 255, 0.22);
   --chip: rgba(255, 255, 255, 0.14);
 }
 
@@ -47,9 +41,12 @@
   z-index: 1;
   display: grid;
   align-content: center;
+  /* The copy is the page's right-hand column; the picture beside it is out of
+     the flow, so this is what puts the words there. */
+  justify-items: end;
   /* The picture is as tall as the section, so the section needs a height of its
      own to stand the words against rather than taking whatever the words are. */
-  min-height: clamp(24rem, 36vw, 34rem);
+  min-height: clamp(26rem, 39vw, 37rem);
   width: 100%;
   max-width: var(--tbb-measure-wide);
   margin: 0 auto;
@@ -62,7 +59,7 @@
 /*
  * The brand mark at display size, bleeding off the left of the page. The whole
  * word never fits beside a column of copy, and a mark cropped by the page edge
- * is the device the client's own banners use — where the copy also sits over
+ * is the device the client's own banners use — where the pack also stands on
  * it, because at this contrast it is texture rather than type.
  */
 .mark {
@@ -104,53 +101,78 @@
   padding-left: 0.09em;
 }
 
-.media {
-  /* `<picture>` is inline by default, and an inline box takes no height — which
-     is why the band the phone sets below did nothing until this was here. */
-  display: block;
+/* The picture and the seals are one column, so the seals can be hung off its
+   foot rather than measured against the page a second time. */
+.stage {
   position: absolute;
-  inset: 0 0 0 auto;
+  inset: 0 auto 0 0;
   z-index: 0;
-  width: min(58%, 46rem);
-  /* The copy is what makes the section tall, and on a short one — Raf Coffee's
-     h1 is two words — the picture would have nothing to stand in. */
-  min-height: clamp(22rem, 34vw, 32rem);
+  width: var(--stage);
 }
 
-/* `contain`, not `cover`. The crop is a tall narrow strip and the section is a
-   wide one, so covering it would magnify the pouch until the top of it was
-   outside the page. Contained and set against the right edge, the whole group
-   shows and the only cut is the one the banner itself made. */
-.banner {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: right bottom;
-  /*
-   * Feathered on the left and at the head, where the crop is empty wash. The
-   * panel's ramp and the crop's own are close but not identical — the panel is
-   * as tall as the section and the crop is as tall as itself — so a straight
-   * edge would show as a faint line. The right edge is not feathered and must
-   * not be: it is the pouch, and fading it takes a bite out of the pack. The
-   * foot needs nothing; the picture stands on the bottom of the panel.
-   */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 var(--dissolve)),
-    linear-gradient(to bottom, transparent 0%, #000 26%);
-  mask-image: linear-gradient(to right, transparent 0%, #000 var(--dissolve)),
-    linear-gradient(to bottom, transparent 0%, #000 26%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-}
-
-/* The fallback for products with no banner yet: the cut-out standing on the
-   wash, centred, with room around it. */
+/*
+ * `contain`, not `cover`: the cut-out is a tall pouch and the column is a wide
+ * box, and covering it would magnify the pack until its shoulders were outside
+ * the page. It stands on the foot of the column with air around it, so the mark
+ * behind shows past it on both sides the way the design draws it.
+ */
 .pack {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
-  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 3vw, 3rem) 0;
+  padding: clamp(2rem, 5vw, 4.5rem) clamp(1rem, 3vw, 3rem) clamp(1.25rem, 2.5vw, 2.5rem);
   filter: drop-shadow(0 30px 50px rgba(26, 19, 17, 0.18));
+}
+
+/* ---- the seals ---- */
+
+/*
+ * Under the pack, in the corner of the picture column, which is where the
+ * design puts them and also the one part of every crop that is empty wash at
+ * every product. They are over the picture rather than beside it so the column
+ * keeps its full width for the pack.
+ */
+.seals {
+  position: absolute;
+  left: var(--tbb-gutter);
+  bottom: clamp(1.5rem, 3.5vw, 2.75rem);
+  z-index: 1;
+  display: flex;
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+}
+
+.seal {
+  width: clamp(3.4rem, 5vw, 4.6rem);
+  height: auto;
+  filter: drop-shadow(0 8px 18px rgba(26, 19, 17, 0.18));
+}
+
+/* Set, not drawn: the seals take the page's own typeface, so they sit with the
+   rest of the page instead of reading as two pasted logos. */
+.sealTitle,
+.sealCaption,
+.sealGlyph {
+  font-family: var(--tbb-font-display);
+  text-anchor: middle;
+}
+
+.sealGlyph {
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.sealTitle {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.sealCaption {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
 }
 
 /* ---- the words ---- */
@@ -166,8 +188,8 @@
   display: grid;
   justify-items: start;
   row-gap: clamp(0.5rem, 0.9vw, 0.7rem);
-  /* Ends before the picture starts. */
-  max-width: min(32rem, 44%);
+  /* Starts after the picture ends. */
+  width: min(34rem, calc(100% - var(--stage)));
 }
 
 .breadcrumb {
@@ -243,7 +265,7 @@
   display: grid;
   justify-items: start;
   row-gap: clamp(0.9rem, 1.6vw, 1.35rem);
-  padding-top: clamp(1.25rem, 2.6vw, 2rem);
+  padding-top: clamp(1.1rem, 2.2vw, 1.7rem);
 }
 
 .price {
@@ -271,6 +293,71 @@
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   color: var(--ink);
+}
+
+/* ---- the margin figures ---- */
+
+/*
+ * The design's closing argument: what the drink earns made the old way against
+ * what it earns made with the base. Two readings of one measure, so they stand
+ * on one card divided by the word between them rather than in two boxes.
+ */
+.margin {
+  display: grid;
+  justify-items: start;
+  row-gap: 0.7rem;
+}
+
+.marginTitle {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.marginCard {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 1.8vw, 1.6rem);
+  padding: clamp(0.85rem, 1.4vw, 1.15rem) clamp(1rem, 1.8vw, 1.5rem);
+  border-radius: 1rem;
+  background: var(--chip);
+}
+
+.marginSide {
+  display: grid;
+  justify-items: start;
+  row-gap: 0.5rem;
+}
+
+.marginLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Always a white pill with dark type on it, on every wash: the figure is the
+   one thing in the hero that has to be read at a glance, and on Tea or Jam a
+   pill that took the panel's ink would sink into the panel. */
+.marginValue {
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.6rem;
+  background: var(--tbb-paper);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: var(--tbb-tracking-display);
+  color: var(--tbb-ink);
+}
+
+.marginVs {
+  align-self: center;
+  font-size: var(--tbb-text-label);
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-muted);
 }
 
 .actions {
@@ -304,22 +391,35 @@
   color: var(--tbb-on-dark);
 }
 
-.primary svg {
-  width: 14px;
-  height: 14px;
-  flex: none;
-}
-
 .primary:hover,
 .secondary:hover {
   transform: translate3d(0, -2px, 0);
 }
 
 /* White rather than an outline: the design pairs a solid dark pill with a solid
-   light one, and on Chocolate or Jam an outlined button would all but vanish. */
+   light one, and on a pale wash an outlined button would all but vanish. */
 .secondary {
   background: var(--tbb-paper);
   color: var(--tbb-ink);
+}
+
+/* On Tea, Jam or Chocolate the pair has to swap. A black pill on a near-black
+   or burgundy panel sinks into it while the white one beside it reads as the
+   primary — the hierarchy the design draws, inverted. So there the solid light
+   pill leads and the second becomes the outline. */
+.onDark .primary {
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+}
+
+.onDark .secondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--tbb-on-dark);
+}
+
+.onDark .secondary:hover {
+  border-color: var(--tbb-on-dark);
 }
 
 @media (max-width: 899px) {
@@ -329,44 +429,40 @@
    * markup, so taking it out of the flow's exception — it is absolute on a wide
    * screen — is all that is needed to stack it there.
    */
-  .media {
+  .stage {
     /* Relative rather than static: the mark is a positioned element and would
        otherwise paint over the picture instead of behind it. */
     position: relative;
     z-index: 1;
     width: 100%;
-    height: clamp(17rem, 82vw, 26rem);
-    min-height: 0;
-    margin-top: var(--tbb-header-h);
+    padding-top: var(--tbb-header-h);
   }
 
-  /*
-   * The picture here is the cut-out pack for every product — see the note in
-   * the component — so it wants none of what the banner needs: no fade into the
-   * panel, because a cut-out has no wash to hide, and no right edge to stand
-   * against, because it is whole.
-   *
-   * It stands in the middle of its band with air around it, at about half the
-   * screen's width. That is the proportion the wide screen sets: there the
-   * pouch is a part of the picture and not the whole of it, and filling a phone
-   * with a pack shot reads as a different page rather than the same one narrow.
-   */
-  .banner,
+  /* A band the width of the screen rather than a column, with the pouch smaller
+     in it: filling a phone with a pack shot reads as a different page rather
+     than the same one narrow. */
   .pack {
-    object-fit: contain;
-    object-position: center bottom;
+    height: clamp(17rem, 82vw, 26rem);
     padding: clamp(0.75rem, 3vw, 1.75rem) var(--tbb-gutter) 0;
-    -webkit-mask-image: none;
-    mask-image: none;
     filter: drop-shadow(0 22px 40px rgba(26, 19, 17, 0.16));
   }
 
+  /* A row under the pack rather than a corner of it: at this width the pack
+     fills the band and there is no corner left to stand in. */
+  .seals {
+    position: static;
+    justify-content: center;
+    padding-top: clamp(0.9rem, 3vw, 1.4rem);
+  }
+
   .inner {
+    justify-items: start;
+    min-height: 0;
     padding-top: clamp(1.25rem, 4vw, 2rem);
   }
 
   .copy {
-    max-width: none;
+    width: 100%;
   }
 
   /* Parked in the band's upper left, which is the part of the picture that is

@@ -2,6 +2,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { SiteLink } from "@/components/site/SiteLink";
 import type { Product } from "@/data/products";
 import productHeroes from "@/data/product-heroes.json";
+import { productMargins } from "@/data/product-margins";
 import { isDark } from "@/lib/contrast";
 import { productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
@@ -16,14 +17,14 @@ import styles from "./ProductHero.module.css";
  * never saw the name, the price or a way to order. `site-pages.ts` drops that
  * block; this renders the same copy as ordinary markup.
  *
- * The words are a column on the left and the product is on the right, running
- * off the edge of the page — the composition the client's own key visuals are
- * built in, which is why the picture is a crop of one rather than a new
- * photograph; see `scripts/build-product-heroes.mjs`. The panel behind it
- * continues that banner's own wash, sampled at the head and at the foot, so
- * there is no edge where the picture stops and the page starts. Eleven products
- * have a banner; the rest have only the cut-out pack shot, which every product
- * falls back to on a phone — see the note over the picture below.
+ * The composition is the owner's design file: the product stands on the left
+ * over the brand mark, the two certification seals sit under it, and the words
+ * are a column on the right that ends on the margin figures and the two calls
+ * to action. The panel behind the pouch is the wash of that product's own key
+ * visual, sampled at the head and at the foot by
+ * `scripts/build-product-heroes.mjs`, so the pack stands on its own artwork's
+ * colour rather than on a flat tint. Five products have no key visual yet and
+ * fall back to a wash mixed from their registry colour.
  *
  * The copy is the page's own, lifted out of the export by
  * `scripts/build-product-details.mjs` rather than rewritten — these pages carry
@@ -34,10 +35,41 @@ import styles from "./ProductHero.module.css";
 
 const heroes = productHeroes as Record<string, { image: string; band: string; bandFoot: string }>;
 
-function Arrow() {
+/**
+ * The two certifications the site claims everywhere — the homepage hero, the
+ * About figures, the Bestsellers spec list — set here as the seals the design
+ * puts under the pack.
+ *
+ * Drawn rather than fetched: no certifier's artwork ships with this project,
+ * and reproducing a certification body's own mark from a screenshot is not
+ * ours to do. These are the site's own badges carrying the site's own claim,
+ * which is the same claim the three components above already make in words.
+ */
+function Seal({ tint, title, caption, glyph }: { tint: string; title: string; caption: string; glyph?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className={styles.seal} viewBox="0 0 100 100" role="img" aria-label={`${title} ${caption}`}>
+      <circle cx="50" cy="50" r="49" fill="var(--tbb-paper)" />
+      <circle cx="50" cy="50" r="47" fill="none" stroke={tint} strokeWidth="3.5" />
+      <circle
+        cx="50"
+        cy="50"
+        r="41"
+        fill="none"
+        stroke={tint}
+        strokeWidth="1.2"
+        strokeDasharray="3 3.4"
+      />
+      {glyph && (
+        <text className={styles.sealGlyph} x="50" y="42" fill={tint}>
+          {glyph}
+        </text>
+      )}
+      <text className={styles.sealTitle} x="50" y={glyph ? 62 : 52} fill={tint}>
+        {title}
+      </text>
+      <text className={styles.sealCaption} x="50" y={glyph ? 74 : 66} fill={tint}>
+        {caption}
+      </text>
     </svg>
   );
 }
@@ -45,6 +77,7 @@ function Arrow() {
 export function ProductHero({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   const banner = heroes[product.slug];
+  const margin = productMargins[product.slug];
   // The registry's description is the fallback for the three pages whose own
   // copy does not open by naming the product, which is how the extractor
   // recognises it.
@@ -77,34 +110,37 @@ export function ProductHero({ product }: { product: Product }) {
         <span>BASE</span>
       </span>
 
-      {/*
-        Two pictures, and the reason is in the artwork: every one of the eleven
-        key visuals runs the pouch off the right of its own frame. Measured, not
-        assumed — the crop's last column is pack at every height below the
-        pouch's shoulder, and the source banner cuts it in the same place.
-        There is no whole pouch in that photography.
+      {/* The product's half of the page: the picture, and the seals under it. */}
+      <div className={styles.stage}>
+        {/*
+          The cut-out pack shot, not the key visual, and the reason is in the
+          artwork: every one of the eleven banners runs the pouch off the right
+          of its own frame. Measured, not assumed — the last column of every
+          source is pack, at every height below the pouch's shoulder. While the
+          picture stood in a right-hand column that cut could be put against the
+          page's own edge, where it read as the picture carrying on past the
+          screen. The design stands the product on the left, where the same cut
+          lands in the middle of the page and reads as a sliced pack.
 
-        On a wide screen that edge is put against the edge of the page, where a
-        cut reads as the picture carrying on past the screen. A phone has no
-        such room: the frame is barely wider than the pouch, so the cut lands in
-        plain sight and the pack simply looks chopped. There the page shows the
-        cut-out pack shot instead, which is whole — at the cost of the drink
-        beside it, which only the banner has.
-
-        `<picture>` rather than two elements, so only the one that is used is
-        ever fetched.
-      */}
-      <picture className={styles.media}>
-        {banner && <source media="(min-width: 900px)" srcSet={banner.image} />}
+          So the wide screen now shows what the phone always did: the pouch on
+          its own, whole, standing on the banner's wash. What it costs is the
+          drink beside it, which exists only inside those frames. Restoring it
+          needs artwork the client has not supplied — a key visual with the
+          whole pouch inside the frame, or the glass as its own cut-out.
+        */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          className={banner ? styles.banner : styles.pack}
+          className={styles.pack}
           src={`/images/pack-${product.slug}.webp`}
-          // Described rather than hidden: the fallback this element carries is
-          // the pack on its own, which is the product and not decoration.
           alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
           fetchPriority="high"
         />
-      </picture>
+
+        <div className={styles.seals}>
+          <Seal tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
+          <Seal tint="#0f7a3d" title="HALAL" caption="CERTIFIED" glyph="حلال" />
+        </div>
+      </div>
 
       <div className={styles.inner}>
         <div className={styles.copy}>
@@ -162,6 +198,31 @@ export function ProductHero({ product }: { product: Product }) {
             </p>
 
             {/*
+              Only for the products whose figures the owner has actually given —
+              see `product-margins.ts`. The block is the design's closing
+              argument, and it is the one thing on the page that must never be
+              filled in by inference.
+            */}
+            {margin && (
+              <div className={styles.margin}>
+                <h2 className={styles.marginTitle}>Approximately Profit Margin</h2>
+                <div className={styles.marginCard}>
+                  <div className={styles.marginSide}>
+                    <p className={styles.marginLabel}>with {margin.comparedWith}</p>
+                    <p className={styles.marginValue}>{margin.legacy}</p>
+                  </div>
+                  <span className={styles.marginVs} aria-hidden="true">
+                    vs
+                  </span>
+                  <div className={styles.marginSide}>
+                    <p className={styles.marginLabel}>with THE BASE</p>
+                    <p className={styles.marginValue}>{margin.base}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/*
               Both hrefs are popup hooks the export still owns — `#sample` is the
               free-sample form, `#form` the partner enquiry — and they are the
               two the original buttons pointed at. The first was `#order` here,
@@ -173,7 +234,6 @@ export function ProductHero({ product }: { product: Product }) {
             <div className={styles.actions}>
               <a href="#sample" className={styles.primary}>
                 Request a sample
-                <Arrow />
               </a>
               <a href="#form" className={styles.secondary}>
                 {product.price ? "Place order" : "Request pricing"}
