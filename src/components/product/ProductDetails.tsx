@@ -20,8 +20,15 @@ import styles from "./ProductDetails.module.css";
  * column it was drawn under. What is rendered here is the page's own content —
  * these pages carry two years of ranking — set as ordinary semantic markup.
  *
+ * Four sections, each one panel of its own: the figures and the reasons to buy,
+ * the comparison against the recipe it replaces, the flavours, and how it is
+ * made. They alternate between paper and a tint of the product's colour, and
+ * everything that is data — a figure, a flavour, a diagram — stands on a white
+ * card, so the page reads as a specification sheet rather than as five blocks
+ * left over from a page builder.
+ *
  * The FAQ below it was Tilda's one working block on the page; it is replaced
- * for consistency, and gains the `FAQPage` structured data it never had.
+ * for consistency.
  */
 
 const SECTION_IDS = {
@@ -71,26 +78,23 @@ export function ProductDetails({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   if (!detail) return null;
 
-  const { specs, calculation, flavors, usage, faq } = detail;
+  const { specs, features, calculation, flavors, usage, faq } = detail;
 
   // Only the sections this product actually has. Every one of the sixteen has
   // all four today, but a page that lost one should lose its tab with it rather
   // than keep an anchor pointing at nothing.
   const tabs: ProductTab[] = [
-    { id: SECTION_IDS.specifications, label: "Specifications", present: specs.length > 0 },
+    {
+      id: SECTION_IDS.specifications,
+      label: "Specifications",
+      present: specs.length > 0 || features.length > 0,
+    },
     { id: SECTION_IDS.calculation, label: "Calculation", present: Boolean(calculation) },
     { id: SECTION_IDS.flavors, label: "Flavors", present: Boolean(flavors) },
     { id: SECTION_IDS.usage, label: "Usage", present: Boolean(usage) },
   ]
     .filter((tab) => tab.present)
     .map(({ id, label }) => ({ id, label }));
-
-  // Flavour lists run from two names to twenty-one. Two columns only once there
-  // are enough to fill them — Tea has three, and split in two the third one
-  // sits alone in the middle of the page looking like a mistake.
-  const flavorColumns = (flavors?.items.length ?? 0) > 6 ? 2 : 1;
-  // How tall each column is, and so the index the second one starts at.
-  const flavorRows = Math.ceil((flavors?.items.length ?? 0) / flavorColumns);
 
   // The page's own column, not the one it is compared against. Every product
   // happens to put it last, but the label is what actually says so.
@@ -105,22 +109,54 @@ export function ProductDetails({ product }: { product: Product }) {
     <div className={styles.root} style={{ ["--tile" as string]: product.backgroundColor }}>
       {tabs.length > 1 && <ProductTabs tabs={tabs} />}
 
-      {specs.length > 0 && (
+      {(specs.length > 0 || features.length > 0) && (
         <section id={SECTION_IDS.specifications} className={styles.section}>
           <div className={styles.inner}>
             <h2 className="tbb-visually-hidden">{product.name} specifications</h2>
-            <dl className={styles.specs}>
-              {specs.map((spec, index) => (
-                <Reveal key={spec.label} as="div" className={styles.spec} delay={index * 80}>
-                  {spec.icon && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img className={styles.specIcon} src={spec.icon} alt="" width={44} height={44} />
-                  )}
-                  <dt className={`tbb-label ${styles.specLabel}`}>{spec.label}</dt>
-                  <dd className={styles.specValue}>{spec.value}</dd>
-                </Reveal>
-              ))}
-            </dl>
+
+            {/* The four figures, on one card divided by hairlines rather than
+                four columns of their own. They are one reading — a dose, a
+                pack, a yield, a cup — and a single surface is what says so. */}
+            {specs.length > 0 && (
+              <Reveal as="dl" className={styles.specs}>
+                {specs.map((spec) => (
+                  <div key={spec.label} className={styles.spec}>
+                    {spec.icon && (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        className={styles.specIcon}
+                        src={spec.icon}
+                        alt=""
+                        width={44}
+                        height={44}
+                      />
+                    )}
+                    <dt className={`tbb-label ${styles.specLabel}`}>{spec.label}</dt>
+                    <dd className={styles.specValue}>{spec.value}</dd>
+                  </div>
+                ))}
+              </Reveal>
+            )}
+
+            {/* The selling points used to sit in the hero, under the buttons,
+                where they competed with the one thing the hero is for. They are
+                a section's worth of content, so they are a section. */}
+            {features.length > 0 && (
+              <dl className={styles.features}>
+                {features.map((feature, index) => (
+                  <Reveal
+                    key={feature.label}
+                    as="div"
+                    className={styles.feature}
+                    delay={index * 70}
+                    distance={18}
+                  >
+                    <dt className={styles.featureLabel}>{feature.label}</dt>
+                    <dd className={styles.featureValue}>{feature.value}</dd>
+                  </Reveal>
+                ))}
+              </dl>
+            )}
           </div>
         </section>
       )}
@@ -133,38 +169,40 @@ export function ProductDetails({ product }: { product: Product }) {
             </Reveal>
 
             {/* The table is wider than a phone and is allowed to scroll inside
-                its own box, so the page body never scrolls sideways. */}
-            <Reveal className={styles.tableWrap} delay={80}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    {calculation.columns.map((column, index) => (
-                      <th
-                        key={column}
-                        scope="col"
-                        data-ours={index === ours ? "true" : undefined}
-                      >
-                        {column}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {calculation.rows.map((row) => (
-                    <tr key={String(row[0])}>
-                      <th scope="row">{String(row[0] ?? "")}</th>
-                      {row.slice(1).map((value, index) => (
-                        <td
-                          key={calculation.columns[index + 1]}
-                          data-ours={index + 1 === ours ? "true" : undefined}
+                its own card, so the page body never scrolls sideways. */}
+            <Reveal className={styles.card} delay={80}>
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      {calculation.columns.map((column, index) => (
+                        <th
+                          key={column}
+                          scope="col"
+                          data-ours={index === ours ? "true" : undefined}
                         >
-                          <Cell value={value} />
-                        </td>
+                          {column}
+                        </th>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {calculation.rows.map((row) => (
+                      <tr key={String(row[0])}>
+                        <th scope="row">{String(row[0] ?? "")}</th>
+                        {row.slice(1).map((value, index) => (
+                          <td
+                            key={calculation.columns[index + 1]}
+                            data-ours={index + 1 === ours ? "true" : undefined}
+                          >
+                            <Cell value={value} />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </Reveal>
           </div>
         </section>
@@ -172,60 +210,40 @@ export function ProductDetails({ product }: { product: Product }) {
 
       {flavors && (
         <section id={SECTION_IDS.flavors} className={styles.section}>
-          <div className={`${styles.inner} ${styles.flavorLayout}`}>
-            <div>
-              <Reveal as="h2" className={styles.title}>
-                Flavors
-              </Reveal>
-
-              {/*
-                Two columns filled downwards, the way the block was laid out, so
-                the list still reads in its own order. Each name arrives from the
-                side its column is on — left column from the left, right column
-                from the right — with its rule drawing out ahead of it, and the
-                stagger runs by row so the two sides close on the middle
-                together.
-              */}
-              <ul
-                className={styles.flavors}
-                style={{
-                  ["--rows" as string]: flavorRows,
-                  ["--columns" as string]: flavorColumns,
-                }}
-              >
-                {flavors.items.map((flavour, index) => {
-                  const left = index < flavorRows;
-                  const stagger = (index % flavorRows) * 60;
-
-                  return (
-                    <Reveal
-                      key={flavour}
-                      as="li"
-                      className={`${styles.flavor} ${left ? styles.fromLeft : styles.fromRight}`}
-                      from={left ? "left" : "right"}
-                      distance={40}
-                      delay={stagger}
-                      // The rule is drawn by the stylesheet, so the row's place
-                      // in the stagger has to reach it as a value it can read.
-                      style={{ ["--row-delay" as string]: `${stagger}ms` }}
-                    >
-                      <span className={styles.flavorRule} aria-hidden="true" />
-                      <span className={styles.flavorName}>{flavour}</span>
-                    </Reveal>
-                  );
-                })}
-              </ul>
-            </div>
-
-            <Reveal className={styles.custom} delay={120} distance={20}>
-              <h3 className={styles.customTitle}>Custom Flavors</h3>
-              {flavors.note && <p className={styles.customNote}>{flavors.note}</p>}
-              {flavors.cta && (
-                <a className={styles.customCta} href={flavors.cta.href}>
-                  {flavors.cta.label}
-                </a>
-              )}
+          <div className={styles.inner}>
+            <Reveal as="h2" className={styles.title}>
+              Flavors
             </Reveal>
+
+            <div className={styles.flavorLayout}>
+              {/* Named things of the same kind, so they are set as one field of
+                  chips that wraps to whatever width there is. The lists run
+                  from two names to twenty-one and a column count fixed for
+                  either end reads as a mistake at the other. */}
+              <ul className={styles.flavors}>
+                {flavors.items.map((flavour, index) => (
+                  <Reveal
+                    key={flavour}
+                    as="li"
+                    className={styles.flavor}
+                    delay={Math.min(index, 12) * 45}
+                    distance={16}
+                  >
+                    {flavour}
+                  </Reveal>
+                ))}
+              </ul>
+
+              <Reveal className={styles.custom} delay={120} distance={20}>
+                <h3 className={styles.customTitle}>Custom Flavors</h3>
+                {flavors.note && <p className={styles.customNote}>{flavors.note}</p>}
+                {flavors.cta && (
+                  <a className={styles.customCta} href={flavors.cta.href}>
+                    {flavors.cta.label}
+                  </a>
+                )}
+              </Reveal>
+            </div>
           </div>
         </section>
       )}
@@ -244,7 +262,11 @@ export function ProductDetails({ product }: { product: Product }) {
               ))}
             </Reveal>
             {usage.image && (
-              <Reveal delay={140} className={styles.usageFigure}>
+              /* The diagram is drawn in grey line on nothing, so on a tinted
+                 band it goes soft. A white card gives it the paper it was drawn
+                 for, and is also what lets it scroll on a phone without taking
+                 the page with it. */
+              <Reveal delay={140} className={`${styles.card} ${styles.usageFigure}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   className={styles.usageImage}

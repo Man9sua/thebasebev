@@ -3,18 +3,24 @@
  *
  * Four bands of the same rhythm, alternating between paper and a wash of the
  * product's own colour, so the page reads as one surface continuing under the
- * hero rather than as five blocks stacked. `--tile` is the product colour and
- * is the only colour any of this names; everything else is a token.
+ * hero rather than as five blocks stacked. Inside them everything that is data
+ * — the figures, the comparison, the diagram — stands on a white card with the
+ * same radius the hero's buttons are cut to, which is what holds four unrelated
+ * kinds of content to one design.
+ *
+ * `--tile` is the product colour and is the only colour any of this names;
+ * everything else is a token.
  */
 
 .root {
   position: relative;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
+  --card-radius: 1.25rem;
 }
 
 .section {
-  padding: clamp(3rem, 7vw, 6rem) 0;
+  padding: clamp(2.75rem, 6vw, 5rem) 0;
   /* The tab bar is sticky, so an anchored section has to stop below it rather
      than under it. */
   scroll-margin-top: calc(var(--tbb-header-h) + 3.5rem);
@@ -27,42 +33,60 @@
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
+  /* Not `--tbb-max`. A four-column table at 1600px puts most of a metre between
+     a figure and the label it belongs to; see the note on the token. */
+  max-width: var(--tbb-measure);
   margin: 0 auto;
   padding: 0 var(--tbb-gutter);
 }
 
 .title {
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
+  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
   font-weight: 700;
   line-height: var(--tbb-leading-tight);
   letter-spacing: -0.015em;
   text-transform: uppercase;
-  margin-bottom: clamp(1.5rem, 3.5vw, 2.75rem);
+  margin-bottom: clamp(1.25rem, 2.8vw, 2rem);
+}
+
+.card {
+  padding: clamp(1.1rem, 2.4vw, 2rem);
+  border-radius: var(--card-radius);
+  background: var(--tbb-paper);
 }
 
 /* ---- the four figures ---- */
 
+/*
+ * A hairline between the cells rather than a border around each: they are one
+ * reading of the same product, not four cards. The line is the container's own
+ * background showing through a one-pixel gap, so it lands wherever the cells
+ * happen to break — no rule has to know how many columns there are this time.
+ */
 .specs {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: clamp(1.5rem, 3vw, 2.5rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
   margin: 0;
+  border-radius: var(--card-radius);
+  background: var(--tbb-line);
+  overflow: clip;
 }
 
 .spec {
   display: grid;
   justify-items: start;
-  row-gap: 0.4rem;
-  padding-top: clamp(0.9rem, 1.8vw, 1.4rem);
-  border-top: 2px solid var(--tbb-ink);
+  align-content: start;
+  row-gap: 0.3rem;
+  padding: clamp(1.1rem, 2.2vw, 1.75rem);
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 9%, var(--tbb-paper));
 }
 
 .specIcon {
-  width: clamp(2.25rem, 3.4vw, 2.75rem);
+  width: clamp(1.9rem, 2.6vw, 2.4rem);
   height: auto;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 
 .specLabel {
@@ -72,10 +96,42 @@
 .specValue {
   margin: 0;
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.15rem, 1.9vw, 1.6rem);
+  font-size: clamp(1.05rem, 1.6vw, 1.4rem);
   font-weight: 600;
   line-height: 1.15;
   color: var(--tbb-ink);
+}
+
+/* ---- reasons to buy ---- */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: clamp(1.1rem, 2.2vw, 2rem);
+  margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+}
+
+.feature {
+  display: grid;
+  align-content: start;
+  row-gap: 0.35rem;
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--tbb-ink);
+}
+
+.featureLabel {
+  font-family: var(--tbb-font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--tbb-ink);
+}
+
+.featureValue {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--tbb-muted);
 }
 
 /* ---- the comparative table ---- */
@@ -89,14 +145,14 @@
 
 .table {
   width: 100%;
-  min-width: 34rem;
+  min-width: 32rem;
   border-collapse: collapse;
   text-align: left;
 }
 
 .table th,
 .table td {
-  padding: clamp(0.7rem, 1.4vw, 1rem) clamp(0.75rem, 1.6vw, 1.25rem);
+  padding: clamp(0.65rem, 1.2vw, 0.9rem) clamp(0.7rem, 1.4vw, 1.1rem);
   border-bottom: 1px solid var(--tbb-line);
   vertical-align: middle;
 }
@@ -157,68 +213,36 @@
 
 .flavorLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-  gap: clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
+  gap: clamp(1.5rem, 3.5vw, 3rem);
   align-items: start;
 }
 
-/* Filled down the first column and then down the second, which is how the
-   block was laid out — `--rows` is how tall each column is. */
+/*
+ * One wrapping field of chips rather than columns. The lists run from two names
+ * to twenty-one, and any fixed column count reads as a mistake at one end of
+ * that range or the other — Tea's three names split in two left the third alone
+ * in the middle of the page.
+ */
 .flavors {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: repeat(var(--columns, 1), minmax(0, 1fr));
-  grid-template-rows: repeat(var(--rows, 1), auto);
-  gap: 0 clamp(1.5rem, 3vw, 3rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .flavor {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.6rem, 1.2vw, 1rem);
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--tbb-line);
-  /* Short enough that a column of twenty has finished before the reader has
-     scrolled past it; the slow site-wide settle would still be running. */
-  --reveal-dur: var(--tbb-dur);
-}
-
-.fromLeft {
-  flex-direction: row;
-  text-align: left;
-}
-
-/* The right-hand column mirrors: its rule sits on the outer edge and draws
-   inwards, so the two columns open away from the middle of the page. */
-.fromRight {
-  flex-direction: row-reverse;
-  text-align: right;
-}
-
-.flavorRule {
-  flex: none;
-  width: clamp(1.25rem, 3vw, 3rem);
-  height: 1px;
-  background: var(--tile, var(--tbb-accent));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--tbb-dur) var(--tbb-ease) var(--row-delay, 0ms);
-}
-
-.fromRight .flavorRule {
-  transform-origin: right;
-}
-
-.flavor[data-revealed="true"] .flavorRule {
-  transform: scaleX(1);
-}
-
-.flavorName {
-  font-size: var(--tbb-text-body);
+  padding: 0.6rem 1.05rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 14%, var(--tbb-paper));
+  font-size: 0.875rem;
+  line-height: 1.2;
   color: var(--tbb-ink);
+  /* Short, because a field of twenty of these has finished before the reader
+     has scrolled past it; the slow site-wide settle would still be running. */
+  --reveal-dur: var(--tbb-dur);
 }
 
 .custom {
@@ -226,10 +250,10 @@
   top: calc(var(--tbb-header-h) + 5rem);
   display: grid;
   justify-items: start;
-  row-gap: 1rem;
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  border-radius: 1.25rem;
-  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 18%, var(--tbb-paper));
+  row-gap: 0.9rem;
+  padding: clamp(1.35rem, 2.6vw, 2rem);
+  border-radius: var(--card-radius);
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 22%, var(--tbb-paper));
 }
 
 .customTitle {
@@ -242,7 +266,7 @@
 
 .customNote {
   font-size: var(--tbb-text-body);
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--tbb-ink-soft);
 }
 
@@ -275,20 +299,33 @@
 
 .usageLine {
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
   font-weight: 500;
   line-height: 1.35;
   color: var(--tbb-ink-soft);
 }
 
+.usageFigure {
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  /* The diagram is drawn a thousand pixels wide and its labels do not reflow,
+     so below that width it keeps a legible size and scrolls inside its own
+     card, the same as the table above it. */
+  overflow-x: auto;
+}
+
 .usageImage {
+  display: block;
   width: 100%;
-  max-width: 62rem;
+  min-width: 30rem;
   height: auto;
-  margin-top: clamp(1.75rem, 4vw, 3rem);
+  margin: 0 auto;
 }
 
 @media (max-width: 899px) {
+  .specs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .flavorLayout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -299,32 +336,7 @@
 }
 
 @media (max-width: 599px) {
-  /* One column of flavours on a phone: the names are longer than half of a
-     360px screen. The rules all run from the left; the second half of the list
-     still arrives from the right, which is what closes the column. */
-  .flavors {
-    grid-auto-flow: row;
+  .specs {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-  }
-
-  /* The diagram is drawn a thousand pixels wide and its labels do not reflow;
-     scaled to a phone it is unreadable, so it keeps a legible width and scrolls
-     inside its own box, the same as the table above it. */
-  .usageFigure {
-    overflow-x: auto;
-  }
-
-  .usageImage {
-    min-width: 30rem;
-  }
-
-  .fromRight {
-    flex-direction: row;
-    text-align: left;
-  }
-
-  .fromRight .flavorRule {
-    transform-origin: left;
   }
 }

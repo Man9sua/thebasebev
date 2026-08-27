@@ -79,10 +79,16 @@
  * columns. Dissolving the groups puts all sixteen on one wrapping line. */
 
 .legacy-document .catg-inner {
-  /* Three, as in the reference. Four fitted when the tile was a small cut-out
-     on a panel; a photograph wants the size, and at three the pouch on it is
-     about as large as it is on the product page. */
-  --catg-columns: 3;
+  /*
+   * Four. Three is what the reference uses, but the reference runs at about
+   * 1200px and this page ran at 1600 — the same three tiles came out over 500px
+   * square, which is a pack shot the size of the real pouch and half the
+   * catalogue off the bottom of the screen. Narrowing the measure and adding a
+   * column brings a tile back to roughly a third of that area, which is the
+   * size the reference actually reads at, and puts all sixteen products within
+   * four rows.
+   */
+  --catg-columns: 4;
   --catg-gap: clamp(0.9rem, 1.6vw, 1.6rem);
   /* Rows are pushed much further apart than columns: with no panel around the
      card, the gap under the type is the only thing separating one product from
@@ -100,7 +106,7 @@
      of this same flex container and carry their own spacing, so a row gap here
      would open the head as well; the cards space themselves instead. */
   gap: 0 var(--catg-gap);
-  max-width: var(--tbb-max);
+  max-width: var(--tbb-measure-wide);
 }
 
 /* `:not(.is-hidden)` is what keeps the filters working: they hide a whole
@@ -395,7 +401,13 @@ html body
   line-height: 0 !important;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1180px) {
+  .legacy-document .catg-inner {
+    --catg-columns: 3;
+  }
+}
+
+@media (max-width: 860px) {
   .legacy-document .catg-inner {
     --catg-columns: 2;
   }

@@ -27,3 +27,6 @@ Desktop.ini
 .vscode/
 *.swp
 *~
+
+# Local Claude Code dev-server launcher — machine-specific paths.
+.claude/launch.json

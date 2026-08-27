@@ -16,12 +16,14 @@ import styles from "./ProductHero.module.css";
  * never saw the name, the price or a way to order. `site-pages.ts` drops that
  * block; this renders the same copy as ordinary markup.
  *
- * The picture is the client's own key visual for the product, cut down to the
- * part of it that carries no type — see `scripts/build-product-heroes.mjs`. The
- * band behind the copy is the colour sampled from the banner at the cut, so the
- * two are one surface rather than a photograph pasted onto a page. Eleven
- * products have a banner; the rest fall back to the pack shot on a wash of
- * their own colour.
+ * The composition follows the client's own design for this page: the product
+ * stands on the left against the brand watermark, and the words are a column of
+ * their own on the right. That is also how the supplied key visuals are built,
+ * which is why the picture here is a crop of one rather than a new photograph —
+ * see `scripts/build-product-heroes.mjs`. The panel behind it continues the
+ * banner's own wash, sampled at the head and at the foot, so there is no edge
+ * where the picture stops and the page starts. Eleven products have a banner;
+ * the rest fall back to the pack shot on a wash of their own colour.
  *
  * The copy is the page's own, lifted out of the export by
  * `scripts/build-product-details.mjs` rather than rewritten — these pages carry
@@ -30,7 +32,7 @@ import styles from "./ProductHero.module.css";
  * against the live site character for character.
  */
 
-const heroes = productHeroes as Record<string, { image: string; band: string }>;
+const heroes = productHeroes as Record<string, { image: string; band: string; bandFoot: string }>;
 
 function Arrow() {
   return (
@@ -48,22 +50,54 @@ export function ProductHero({ product }: { product: Product }) {
   // recognises it.
   const paragraphs = detail?.description.length ? detail.description : [product.description];
 
-  // A banner sets the band; without one the page mixes the product colour down
-  // to a wash, which is always light. Ink is measured either way rather than
-  // assumed — Tea's band is near-black and Jam's is burgundy.
-  const band = banner?.band;
-  const onDark = band ? isDark(band) : false;
+  // A banner sets the wash; without one the page mixes the product colour down
+  // to a tint, which is always light. Ink is measured either way rather than
+  // assumed — Tea's wash is near-black and Jam's is burgundy.
+  const onDark = banner ? isDark(banner.band) : false;
+  const heading = detail?.h1 ?? product.headline;
 
   return (
     <section
-      className={`${styles.hero} ${onDark ? styles.onDark : ""}`}
+      className={`${styles.hero} ${onDark ? styles.onDark : ""} ${banner ? "" : styles.plain}`}
       style={{
         ["--tile" as string]: product.backgroundColor,
-        ...(band ? { ["--band" as string]: band } : {}),
+        ...(banner
+          ? { ["--band" as string]: banner.band, ["--band-foot" as string]: banner.bandFoot }
+          : {}),
       }}
       aria-labelledby="product-title"
     >
       <div className={styles.inner}>
+        <div className={styles.stage}>
+          {/*
+            The brand mark at display size, standing behind the product the way
+            it does on every one of the client's key visuals. It is set rather
+            than drawn so it stays sharp at any width and costs no request; the
+            picture is laid over its right-hand half and dissolves into it, so
+            the letters read as something the pouch is standing in front of.
+          */}
+          <span className={styles.mark} aria-hidden="true">
+            <span className={styles.markThe}>the</span>
+            <span>BASE</span>
+          </span>
+
+          <div className={styles.media}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className={banner ? styles.banner : styles.pack}
+              src={banner?.image ?? `/images/pack-${product.slug}.webp`}
+              // The banner is decoration beside copy that already says all of
+              // this; the pack shot on its own is the product, so it is
+              // described.
+              alt={
+                banner ? "" : `${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`
+              }
+              aria-hidden={banner ? "true" : undefined}
+              fetchPriority="high"
+            />
+          </div>
+        </div>
+
         <div className={styles.copy}>
           <Reveal as="p" className={styles.breadcrumb} distance={12}>
             <Link href="/catalog">Catalog</Link>
@@ -72,15 +106,28 @@ export function ProductHero({ product }: { product: Product }) {
           </Reveal>
 
           <Reveal delay={60} distance={20}>
-            <h1 id="product-title" className={styles.title}>
-              {detail?.h1 ?? product.headline}
+            {/*
+              Fifteen of the sixteen `h1`s are a full SEO sentence — "Iced Tea
+              Base for Refreshing, Crisp, Ready-to-Mix Beverages" — and only Raf
+              Coffee's is a name. So the size follows the line rather than being
+              fixed: a name gets the display scale the design draws it at, a
+              sentence gets heading scale, because at display scale it is four
+              lines of shouting. The wording itself is never touched; it is what
+              these pages rank on and `audit:seo-parity` compares it character
+              for character.
+            */}
+            <h1
+              id="product-title"
+              className={styles.title}
+              data-short={heading.length <= 24 ? "true" : undefined}
+            >
+              {heading}
             </h1>
           </Reveal>
 
           {detail?.tagline && (
             <Reveal as="p" className={styles.tagline} delay={120} distance={16}>
               {detail.tagline}
-              {detail.weight && <span className={styles.weight}>{detail.weight}</span>}
             </Reveal>
           )}
 
@@ -98,6 +145,7 @@ export function ProductHero({ product }: { product: Product }) {
                 <>
                   <span className="tbb-label">From</span>
                   <span className={styles.priceValue}>{product.price}</span>
+                  {detail?.weight && <span className={styles.weight}>{detail.weight}</span>}
                 </>
               ) : (
                 <span className={styles.priceValue}>Price on request</span>
@@ -105,46 +153,25 @@ export function ProductHero({ product }: { product: Product }) {
             </p>
 
             {/*
-              Both hrefs are popup hooks the export still owns — `#form` is the
-              partner enquiry, `#sample` the free-sample form — and they are the
+              Both hrefs are popup hooks the export still owns — `#sample` is the
+              free-sample form, `#form` the partner enquiry — and they are the
               two the original buttons pointed at. The first was `#order` here,
               which no page has a hook for, so the page's primary call to action
-              did nothing at all.
+              did nothing at all. The sample leads now, as it does in the design:
+              this is a wholesale page, and a buyer asks for the pouch before
+              they ask for the sheet.
             */}
             <div className={styles.actions}>
-              <a href="#form" className={styles.primary}>
-                Place order
+              <a href="#sample" className={styles.primary}>
+                Request a sample
                 <Arrow />
               </a>
-              <a href="#sample" className={styles.secondary}>
-                Request a sample
+              <a href="#form" className={styles.secondary}>
+                {product.price ? "Place order" : "Request pricing"}
               </a>
             </div>
           </Reveal>
-
-          {detail?.features.length ? (
-            <Reveal as="dl" className={styles.features} delay={290} distance={16}>
-              {detail.features.map((feature) => (
-                <div key={feature.label} className={styles.feature}>
-                  <dt className={styles.featureLabel}>{feature.label}</dt>
-                  <dd className={styles.featureValue}>{feature.value}</dd>
-                </div>
-              ))}
-            </Reveal>
-          ) : null}
         </div>
-      </div>
-
-      <div className={styles.media} aria-hidden={banner ? "true" : undefined}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className={banner ? styles.banner : styles.pack}
-          src={banner?.image ?? `/images/pack-${product.slug}.webp`}
-          // The banner is decoration beside copy that already says all of this;
-          // the pack shot on its own is the product, so it is described.
-          alt={banner ? "" : `${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
-          fetchPriority="high"
-        />
       </div>
     </section>
   );

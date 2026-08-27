@@ -18,7 +18,9 @@
 .list {
   display: flex;
   gap: clamp(1.25rem, 3vw, 3rem);
-  max-width: var(--tbb-max);
+  /* The same measure the sections below it use, so a tab stands over the
+     section it names. */
+  max-width: var(--tbb-measure);
   margin: 0 auto;
   padding: 0 var(--tbb-gutter);
   list-style: none;

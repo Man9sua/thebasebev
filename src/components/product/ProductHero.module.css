@@ -1,53 +1,165 @@
 /**
  * Product hero.
  *
- * One coloured band across the page with the copy held on the left and the
- * client's key visual filling the right edge. `--band` is the colour sampled
- * from that visual at the point it was cut, so the picture has no left edge to
- * see: the band simply continues it. Products without a banner fall back to a
- * wash of `--tile`, their own colour, with the pack shot standing on it.
+ * Two columns on one coloured panel: the product standing on the left in front
+ * of the brand mark, the words on the right. The panel is not a flat colour but
+ * the wash from the client's own key visual, continued — `--band` is that wash
+ * at the head and `--band-foot` at the foot, both sampled from the picture in
+ * `scripts/build-product-heroes.mjs`. So the picture has no edge to see: the
+ * page simply keeps going where it stops. Products without a banner fall back
+ * to a wash of `--tile`, their own colour, with the pack shot standing on it.
  */
 
 .hero {
   position: relative;
   overflow: clip;
-  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 14%, var(--tbb-paper));
-  background: var(--band, color-mix(in srgb, var(--tile, var(--tbb-sand)) 14%, var(--tbb-paper)));
+  --wash: color-mix(in srgb, var(--tile, var(--tbb-sand)) 26%, var(--tbb-paper));
+  background: linear-gradient(180deg, var(--band, var(--wash)), var(--band-foot, var(--wash)));
   --ink: var(--tbb-ink);
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);
-  --rule: var(--tbb-line);
+  --rule: rgba(0, 0, 0, 0.14);
   --chip: rgba(255, 255, 255, 0.72);
+  /* How much of the mark the picture is allowed to cover before it has faded
+     out of the way. Named once because the picture's mask and the mark's own
+     position are two halves of the same measurement. */
+  --dissolve: 18%;
 }
 
-/* Tea's band is near-black and Jam's is burgundy, so the ink is measured from
-   the band rather than assumed — see `isDark` in `lib/contrast`. */
+/* Tea's wash is near-black and Jam's is burgundy, so the ink is measured from
+   the wash rather than assumed — see `isDark` in `lib/contrast`. */
 .onDark {
   --ink: #ffffff;
   --ink-soft: rgba(255, 255, 255, 0.78);
   --ink-muted: rgba(255, 255, 255, 0.55);
-  --rule: rgba(255, 255, 255, 0.18);
+  --rule: rgba(255, 255, 255, 0.22);
   --chip: rgba(255, 255, 255, 0.14);
 }
 
 .inner {
   position: relative;
   z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  /* Stretch, so the picture's column reaches the foot of the panel and the
+     picture can stand on it instead of floating above a strip of colour. The
+     copy centres itself against it. */
+  align-items: stretch;
+  gap: clamp(1.5rem, 4vw, 4rem);
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: var(--tbb-measure-wide);
   margin: 0 auto;
-  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 4vw, 3.25rem)) var(--tbb-gutter)
-    clamp(2.5rem, 5vw, 4.5rem);
+  padding: calc(var(--tbb-header-h) + clamp(1.25rem, 3vw, 2.5rem)) var(--tbb-gutter) 0;
 }
+
+/* ---- the product ---- */
+
+.stage {
+  position: relative;
+  min-height: clamp(21rem, 38vw, 33rem);
+}
+
+/*
+ * The brand mark at display size. It bleeds off the left of the page — the
+ * whole word never fits beside a column of copy, and a mark cropped by the page
+ * edge is the device the client's own banners use.
+ */
+.mark {
+  position: absolute;
+  left: calc(-1 * var(--tbb-gutter) - 0.08em);
+  top: 50%;
+  z-index: 0;
+  display: grid;
+  justify-items: start;
+  transform: translateY(-46%);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(5rem, 11vw, 11.5rem);
+  font-weight: 800;
+  line-height: 0.76;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.62);
+  user-select: none;
+}
+
+.onDark .mark {
+  color: rgba(255, 255, 255, 0.12);
+}
+
+/*
+ * White is the mark's colour on a banner, because a banner brings a wash strong
+ * enough to hold it. The five products still waiting for one have only a tint
+ * of their own colour to stand on — Topping's is #eeebe1 — and white on that is
+ * nothing at all, so there the mark is a grey ghost instead.
+ */
+.plain .mark {
+  color: color-mix(in srgb, var(--tbb-ink) 7%, transparent);
+}
+
+.markThe {
+  font-size: 0.3em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding-left: 0.09em;
+}
+
+.media {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: 1;
+  width: min(94%, 38rem);
+}
+
+/* `contain`, not `cover`. The crop is a tall narrow strip and the stage is a
+   squarer box, so covering it would magnify the pouch until the top of it was
+   outside the page. Contained, the whole group shows — and because the panel
+   continues the crop's own wash, the space either side of it is not
+   letterboxing, it is the picture carrying on. */
+.banner {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: right bottom;
+  /*
+   * Feathered on three edges. The panel's ramp and the crop's own are close but
+   * not identical — the panel is as tall as the section and the crop is as tall
+   * as itself — so every straight edge would otherwise show as a faint line.
+   * The left edge is given the longest fade because it is doing a second job:
+   * the mark behind stays readable up to the point the pouch takes over, which
+   * is roughly a seventh of the crop's width. The foot needs nothing; the
+   * picture stands on the bottom of the panel and ends with it.
+   */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 var(--dissolve)),
+    linear-gradient(to left, transparent 0%, #000 5%),
+    linear-gradient(to bottom, transparent 0%, #000 22%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 var(--dissolve)),
+    linear-gradient(to left, transparent 0%, #000 5%),
+    linear-gradient(to bottom, transparent 0%, #000 22%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* The fallback for products with no banner yet: the cut-out standing on the
+   wash, centred, with room around it. */
+.pack {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 3vw, 3rem) 0;
+  filter: drop-shadow(0 30px 50px rgba(26, 19, 17, 0.18));
+}
+
+/* ---- the words ---- */
 
 /* Spacing is a row gap, not margins: `design-tokens.css` resets every `p` and
    `h1` margin to zero at a specificity a single class here cannot answer. */
 .copy {
+  align-self: center;
   display: grid;
   justify-items: start;
-  row-gap: clamp(0.9rem, 1.8vw, 1.4rem);
-  /* Ends before the picture starts. */
-  max-width: min(48rem, 54%);
+  row-gap: clamp(0.75rem, 1.5vw, 1.15rem);
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
 }
 
 .breadcrumb {
@@ -71,75 +183,80 @@
 }
 
 /*
- * The page's own `h1`, verbatim — it is SEO surface, not a design decision, and
- * it is a full sentence rather than a product name. So it is set at heading
- * size rather than display size: "Iced Tea Base for Refreshing, Crisp,
- * Ready-to-Mix Beverages" at hero scale is four lines of shouting.
+ * The page's own `h1`, verbatim — SEO surface, not a design decision. It is
+ * left in its own case: the design sets these names as words, not as a shout.
+ * The two sizes are chosen in the markup, by the length of the line.
  */
 .title {
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.6rem, 2.9vw, 2.5rem);
+  font-size: clamp(1.75rem, 3.1vw, 2.9rem);
   font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
   color: var(--ink);
-  max-width: 22ch;
+  max-width: 20ch;
+}
+
+/* A product name rather than a sentence — Raf Coffee is the only one today —
+   set at the display scale the design draws it at. */
+.title[data-short="true"] {
+  font-size: clamp(2.3rem, 4.4vw, 4rem);
+  letter-spacing: -0.03em;
+  max-width: 12ch;
 }
 
 .tagline {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1rem, 1.4vw, 1.25rem);
-  font-weight: 500;
-  color: var(--ink-soft);
-}
-
-.weight {
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--chip);
   font-family: var(--tbb-font-sans);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
 }
 
 .body {
   display: grid;
-  row-gap: 0.6rem;
-  max-width: 52ch;
+  row-gap: 0.7rem;
+  max-width: 46ch;
+  padding-top: clamp(0.25rem, 1vw, 0.75rem);
 }
 
 .paragraph {
   font-size: var(--tbb-text-body);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--ink-soft);
 }
 
 .buy {
   display: grid;
   justify-items: start;
-  row-gap: clamp(0.9rem, 1.6vw, 1.25rem);
+  row-gap: clamp(0.9rem, 1.6vw, 1.35rem);
+  padding-top: clamp(0.5rem, 1.4vw, 1rem);
 }
 
 .price {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 0.6rem;
   color: var(--ink-muted);
 }
 
 .priceValue {
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  font-size: clamp(1.3rem, 1.9vw, 1.65rem);
   font-weight: 600;
   letter-spacing: var(--tbb-tracking-display);
+  color: var(--ink);
+}
+
+.weight {
+  align-self: center;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--chip);
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
   color: var(--ink);
 }
 
@@ -154,9 +271,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 0.95rem 1.7rem;
+  padding: 1rem 1.8rem;
   border-radius: 999px;
-  border: 1px solid var(--ink);
+  border: 1px solid transparent;
   font-size: var(--tbb-text-label);
   font-weight: 500;
   letter-spacing: var(--tbb-tracking-label);
@@ -170,8 +287,8 @@
 }
 
 .primary {
-  background: var(--ink);
-  color: var(--band, var(--tbb-paper));
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
 }
 
 .primary svg {
@@ -185,110 +302,34 @@
   transform: translate3d(0, -2px, 0);
 }
 
+/* White rather than an outline: the design pairs a solid dark pill with a solid
+   light one, and on Chocolate or Jam an outlined button would all but vanish. */
 .secondary {
-  background: transparent;
-  border-color: var(--rule);
-  color: var(--ink);
-}
-
-.secondary:hover {
-  border-color: var(--ink);
-}
-
-/* ---- selling points ---- */
-
-.features {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.9rem, 1.8vw, 1.5rem) clamp(1.25rem, 2.5vw, 2.5rem);
-  width: 100%;
-  margin: 0;
-  padding-top: clamp(0.5rem, 1.4vw, 1rem);
-  border-top: 1px solid var(--rule);
-}
-
-.feature {
-  display: grid;
-  row-gap: 0.2rem;
-}
-
-.featureLabel {
-  font-family: var(--tbb-font-display);
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.featureValue {
-  margin: 0;
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  color: var(--ink-muted);
-}
-
-/* ---- the picture ---- */
-
-.media {
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: min(50%, 44rem);
-  pointer-events: none;
-}
-
-/* `contain`, not `cover`. The crop is a tall narrow strip and the band is a
-   short wide one, so covering it would magnify the pouch until the top of it
-   was outside the page. Contained, the whole strip shows — and because the band
-   is the strip's own background colour, the space either side of it is not
-   letterboxing, it is the picture continuing. Bottom-right so the pouch stands
-   on the fold of the band rather than floating in it. */
-.banner {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: right bottom;
-  /* The band is one flat colour and the banner behind the pouch is a gradient,
-     so the two agree at the height the colour was sampled from and nowhere
-     else. Fading the picture in over its first fifth hides the join at every
-     height, and costs nothing: that strip is empty background. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 20%);
-  mask-image: linear-gradient(to right, transparent 0%, #000 20%);
-}
-
-/* The fallback for products with no banner yet: the cut-out standing on the
-   wash, centred, with room around it. */
-.pack {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
-  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 3vw, 3rem) 0;
-  filter: drop-shadow(0 30px 50px rgba(26, 19, 17, 0.18));
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
 }
 
 @media (max-width: 899px) {
-  /* The picture stops being a column and becomes a band under the copy, so
+  /* The picture stops being a column and becomes a band above the copy, so
      neither has to survive at half a phone's width. */
-  .media {
-    position: static;
-    width: 100%;
-    height: clamp(16rem, 52vw, 24rem);
-  }
-
-  .banner {
-    object-position: center bottom;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
-  }
-
   .inner {
-    padding-bottom: clamp(1.5rem, 5vw, 2.5rem);
-  }
-
-  .copy {
-    max-width: none;
-  }
-
-  .features {
     grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1rem, 4vw, 2rem);
+  }
+
+  .stage {
+    min-height: clamp(17rem, 62vw, 26rem);
+  }
+
+  .mark {
+    font-size: clamp(4.5rem, 22vw, 9rem);
+  }
+
+  .media {
+    width: min(86%, 26rem);
+  }
+
+  .title {
+    max-width: none;
   }
 }

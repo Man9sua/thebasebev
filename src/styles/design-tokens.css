@@ -61,6 +61,16 @@
   --tbb-gutter: clamp(1.25rem, 4.5vw, 4.5rem);
   --tbb-section: clamp(5rem, 12vw, 11rem);
   --tbb-max: 100rem;
+  /*
+   * Narrower measures for pages that are read rather than looked at. `--tbb-max`
+   * is a stage width: it suits the home page, where a full-bleed photograph is
+   * meant to fill the screen. Run a catalogue grid or a product page out to it
+   * and the same number of things simply get bigger — three tiles at 1600px are
+   * half a metre of pack shot each, and a four-column table puts a metre of air
+   * between the figure and the label it belongs to.
+   */
+  --tbb-measure-wide: 86rem;
+  --tbb-measure: 76rem;
 
   /* ---- motion ----
    * Long durations and a soft ease are the whole character of this design.

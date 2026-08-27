@@ -30,22 +30,42 @@ const SOURCES = path.resolve("assets/product-heroes");
 const IMAGES = path.resolve("public/images");
 const MANIFEST = path.resolve("src/data/product-heroes.json");
 
-/** Where the artwork stops and the product starts, on the shared 1684px template. */
-const CUT = 1000;
-/** Read the wash a little in from the cut and a little down from the top edge. */
-const SAMPLE = { left: 6, top: 60 };
+/**
+ * Where the artwork stops and the product starts, on the shared 1684px
+ * template. 860 rather than the 1000 this started at: at 1000 the cut passed
+ * straight through the glass standing in front of the pouch, which was fine
+ * while the picture filled a narrow right-hand column and the glass could look
+ * like it was leaving the page. The hero now stands the picture in a column of
+ * its own, where a glass sliced down the middle simply reads as a mistake, so
+ * the cut moves left until the whole group is inside it. What it picks up in
+ * exchange is more of the banner's own type, which the patches below erase.
+ */
+const CUT = 860;
+/**
+ * Where the wash is read, a little in from the cut so the sample is background
+ * and not the fade at the very edge. Twice, not once: every banner's wash is a
+ * vertical ramp, and on Jam it travels from #661a1f at the top to #8c3e44 at
+ * the foot. One sample would match the picture at one height and show a seam at
+ * every other, so the page continues the ramp rather than a colour.
+ */
+const SAMPLE = { left: 6, head: 60, foot: 60 };
 /**
  * Where the banner text can reach past the cut, measured on the template. Two
  * regions, not one: the product name is set large and runs furthest right, and
  * the line of copy under it runs less far but sits lower — a single rectangle
  * covering both would reach into the pouch.
  */
-/** Above this much variation the region holds product, not just a stray letter. */
-const BUSY = 27;
+/**
+ * Above this much variation the region holds product, not just a stray letter.
+ * The threshold is loose because the thing it has to tell apart from type is a
+ * photograph, not a gradient: Tea's sachets read 55 here, while the busiest
+ * wash-with-a-word-on-it — Jam's, which is a strong dark-red ramp — reads 46.
+ */
+const BUSY = 50;
 
 const PATCHES = [
-  { left: 0, top: 60, width: 330, height: 250 },
-  { left: 0, top: 300, width: 210, height: 270 },
+  { left: 0, top: 60, width: 470, height: 260 },
+  { left: 0, top: 300, width: 360, height: 280 },
 ];
 
 /** Opaque through the middle, gone at every edge, so the patch has no outline. */
@@ -122,17 +142,24 @@ for (const file of fs.readdirSync(SOURCES).sort()) {
 
   fs.writeFileSync(path.join(IMAGES, `hero-${slug}.webp`), buffer);
 
-  const { data } = await sharp(buffer)
-    .extract({ left: SAMPLE.left, top: SAMPLE.top, width: 1, height: 1 })
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+  const read = async (top) => {
+    const { data } = await sharp(buffer)
+      .extract({ left: SAMPLE.left, top, width: 1, height: 1 })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    return hex({ r: data[0], g: data[1], b: data[2] });
+  };
 
   manifest[slug] = {
     image: `/images/hero-${slug}.webp`,
-    band: hex({ r: data[0], g: data[1], b: data[2] }),
+    band: await read(SAMPLE.head),
+    bandFoot: await read(metadata.height - SAMPLE.foot),
   };
 
-  console.log(`hero-${slug}.webp  ${metadata.width - left}x${metadata.height}  band ${manifest[slug].band}`);
+  console.log(
+    `hero-${slug}.webp  ${metadata.width - left}x${metadata.height}` +
+      `  band ${manifest[slug].band} → ${manifest[slug].bandFoot}`,
+  );
 }
 
 fs.writeFileSync(MANIFEST, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
