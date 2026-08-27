@@ -148,10 +148,24 @@ html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-h1 {
 
 html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-lede {
   text-align: left;
-  max-width: 52ch;
   font-size: var(--tbb-text-body);
   color: var(--tbb-ink-soft) !important;
   margin-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
+}
+
+/*
+ * The lede is given its reading measure only once the filter row exists.
+ *
+ * The row is written by the export's own script, and it is what makes the head
+ * end and the grid begin: it is the flex item that takes a whole line. The lede
+ * asks for a whole line too, but `max-width` shrinks the box back to the words,
+ * so between first paint and that script the line still had room on it and the
+ * first two tiles flowed up beside the lede — the catalogue opened with a hole
+ * where its top-left corner should be. Until the row lands, the lede keeps the
+ * full width it asked for and nothing can share its line.
+ */
+html body .legacy-document #allrecords .catg-wrap .catg-inner:has(.catg-flt) .catg-lede {
+  max-width: 52ch;
 }
 
 /* ---- filters ---- */

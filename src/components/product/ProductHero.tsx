@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
+import { SiteLink } from "@/components/site/SiteLink";
 import type { Product } from "@/data/products";
 import productHeroes from "@/data/product-heroes.json";
 import { isDark } from "@/lib/contrast";
@@ -100,7 +100,7 @@ export function ProductHero({ product }: { product: Product }) {
 
         <div className={styles.copy}>
           <Reveal as="p" className={styles.breadcrumb} distance={12}>
-            <Link href="/catalog">Catalog</Link>
+            <SiteLink href="/catalog">Catalog</SiteLink>
             <span aria-hidden="true">/</span>
             <span>{product.name}</span>
           </Reveal>

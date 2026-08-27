@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { BrandFilm } from "@/components/home/BrandFilm";
 import { Reveal } from "@/components/motion/Reveal";
+import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./About.module.css";
 
 /**
@@ -92,10 +92,10 @@ export function About() {
             <p className={styles.asidePrompt}>
               Ready to put your own name on the pouch?
             </p>
-            <Link href="/about-us" className={styles.cta}>
+            <SiteLink href="/about-us" className={styles.cta}>
               More about the company
               <Arrow />
-            </Link>
+            </SiteLink>
           </Reveal>
         </div>
       </div>

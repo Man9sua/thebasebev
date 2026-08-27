@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RegionPicker } from "@/components/site/RegionPicker";
+import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
 import styles from "./SiteHeader.module.css";
@@ -159,7 +159,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         {/* The original lockup, lifted verbatim out of the Tilda header and
             saved as public/images/base-logo.svg — the same paths the old site
             shipped, not redrawn and not re-typeset. */}
-        <Link href="/" className={styles.logo} aria-label="THE BASE — home">
+        <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
           {/* The Tilda runtime on parity routes re-sets src and adds
               decoding/fetchpriority on every img it finds, this one included.
               The rewrite is cosmetic, but React would still read it as a
@@ -173,7 +173,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             height={80}
             draggable={false}
           />
-        </Link>
+        </SiteLink>
 
         <div className={styles.actions}>
           {/* Ported from production. Display-only there and here — see
@@ -182,7 +182,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             <RegionPicker />
           </span>
 
-          <Link
+          <SiteLink
             href="/catalog"
             className={styles.action}
             onClick={openCart}
@@ -190,7 +190,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           >
             <CartIcon />
             {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
-          </Link>
+          </SiteLink>
 
           <button
             type="button"

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY, FOOTER_LINKS, SOCIAL_LINKS } from "@/lib/site-config";
 import styles from "./SiteFooter.module.css";
 
@@ -42,27 +42,27 @@ export function SiteFooter() {
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Products</span>
             {FOOTER_LINKS.products.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <SiteLink key={item.href} className={styles.link} href={item.href}>
                 {item.label}
-              </Link>
+              </SiteLink>
             ))}
           </div>
 
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Company</span>
             {FOOTER_LINKS.company.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <SiteLink key={item.href} className={styles.link} href={item.href}>
                 {item.label}
-              </Link>
+              </SiteLink>
             ))}
           </div>
 
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Resources</span>
             {FOOTER_LINKS.resources.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <SiteLink key={item.href} className={styles.link} href={item.href}>
                 {item.label}
-              </Link>
+              </SiteLink>
             ))}
 
             <span
@@ -93,9 +93,9 @@ export function SiteFooter() {
           </span>
           <span className={styles.legalLinks}>
             {FOOTER_LINKS.legal.map((item) => (
-              <Link key={item.href} className={styles.link} href={item.href}>
+              <SiteLink key={item.href} className={styles.link} href={item.href}>
                 {item.label}
-              </Link>
+              </SiteLink>
             ))}
           </span>
         </div>

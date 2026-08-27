@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
 import { resizedImage } from "@/lib/images";
 
@@ -163,10 +163,10 @@ export function Bestsellers() {
             </span>
           </div>
 
-          <Link href={active.route} className={styles.cta}>
+          <SiteLink href={active.route} className={styles.cta}>
             Explore {active.name}
             <Arrow />
-          </Link>
+          </SiteLink>
         </div>
 
         <div className={styles.stage} aria-live="polite">

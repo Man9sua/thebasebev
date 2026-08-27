@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { HOMEPAGE_ENTRIES } from "@/data/posts";
 import styles from "./BlogCarousel.module.css";
 
@@ -199,7 +199,7 @@ export function BlogCarousel() {
         onClickCapture={onClickCapture}
       >
         {HOMEPAGE_ENTRIES.map((entry) => (
-          <Link key={entry.href} href={entry.href} className={styles.card} data-card>
+          <SiteLink key={entry.href} href={entry.href} className={styles.card} data-card>
             <span className={styles.frame}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -229,7 +229,7 @@ export function BlogCarousel() {
                 </time>
               )}
             </span>
-          </Link>
+          </SiteLink>
         ))}
       </div>
 
