@@ -57,13 +57,22 @@
   --pack-width: 529.27;
   --pack-height: 676.55;
   /*
-   * The two places the page deliberately leaves the design, both asked for
-   * after seeing it built and both named so they are one line to re-tune: how
-   * far left of its measured column the whole product group is pulled, and how
-   * far below its measured box the drink stands.
+   * Where the page deliberately leaves the design. Every one of these was asked
+   * for after seeing it built, and each is named so it stays one line to
+   * re-tune rather than a number buried in a rule. The measurements above are
+   * never edited to absorb them, so what the page departs from the file by is
+   * always written down.
    */
+  /* How far left of its measured column the whole product group is pulled. */
   --group-shift: 50;
-  --glass-drop: 34;
+  /* How far below its measured box the drink stands, and the seals below
+     theirs. */
+  --glass-drop: 70;
+  --seals-drop: 45;
+  /* Both pictures a little smaller than the design draws them, each shrinking
+     onto its own foot so it keeps standing where it stood. */
+  --pack-scale: 0.92;
+  --glass-scale: 0.95;
   /* Where the design's header ends, and so where its `top` values stop being
      the page's and start being this section's — the reported tops are counted
      from the top of the page. 68 is this site's own header at the frame's
@@ -84,10 +93,16 @@
   width: min(100%, 90rem);
   margin-inline: auto;
   padding-top: var(--tbb-header-h);
-  /* The pack's foot is the lowest thing in the frame — 814.28 counted from the
-     page top — plus air under it. Replace with the frame's own height once it
-     is measured. */
-  min-height: calc(var(--tbb-header-h) + (814.28 - var(--head) + 60) * var(--u));
+  /*
+   * The pack's foot is the lowest thing the design measures — 814.28 counted
+   * from the page top — and the floor is the air under it. 90 rather than the
+   * 60 it opened at, because `--glass-drop` stands the drink lower than the
+   * design does and on nine of the twelve products its base was landing within
+   * a few pixels of this edge, where `overflow: clip` took a slice off it.
+   * Replace the arithmetic with the frame's own height once that is measured.
+   */
+  --floor: 90;
+  min-height: calc(var(--tbb-header-h) + (814.28 - var(--head) + var(--floor)) * var(--u));
 }
 
 /* ---- the product ---- */
@@ -180,6 +195,8 @@
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
+  transform: scale(var(--pack-scale));
+  transform-origin: bottom center;
   filter: drop-shadow(0 calc(30 * var(--u)) calc(50 * var(--u)) rgba(26, 19, 17, 0.18));
 }
 
@@ -199,6 +216,8 @@
   z-index: 1;
   width: calc(var(--glass-width) / var(--pack-width) * 100%);
   height: calc(var(--glass-height) / var(--pack-height) * 100%);
+  transform: scale(var(--glass-scale));
+  transform-origin: bottom center;
 }
 
 .glass img {
@@ -219,7 +238,7 @@
 .seals {
   position: absolute;
   left: calc((86.7 - var(--group-shift)) * var(--u));
-  top: calc(var(--tbb-header-h) + (657 - var(--head)) * var(--u));
+  top: calc(var(--tbb-header-h) + (657 - var(--head) + var(--seals-drop)) * var(--u));
   z-index: 1;
   display: flex;
   gap: calc(26 * var(--u));
