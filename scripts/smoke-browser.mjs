@@ -104,9 +104,10 @@ try {
     (await hero.locator("a[href='/catalog']").count()) > 0,
     "home: hero CTA must point at the catalog",
   );
-  // The header must carry the original Tilda lockup, not a text substitute.
+  // The header carries the original Tilda path geometry inline so the small
+  // `the` mark can interpolate with the header surface colour.
   check(
-    (await page.locator("header a[href='/'] img[src$='base-logo.svg']").count()) === 1,
+    (await page.locator("header a[href='/'] svg[data-brand-logo][viewBox='0 0 175 80']").count()) === 1,
     "header: original BASE logo asset missing",
   );
 
@@ -273,15 +274,15 @@ try {
   );
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
-  await page.locator(".catg-card").first().waitFor();
+  await page.locator("[data-catalog-card]").first().waitFor();
   await page.waitForTimeout(1_200);
-  check((await page.locator(".catg-card").count()) === 16, "catalog: expected 16 product cards");
-  check((await page.locator(".catg-price").count()) === 16, "catalog: expected a price or request label on every card");
-  const catalogPrices = await page.locator(".catg-card").evaluateAll((cards) =>
+  check((await page.locator("[data-catalog-card]").count()) === 16, "catalog: expected 16 product cards");
+  check((await page.locator("[data-catalog-price]").count()) === 16, "catalog: expected a price or request label on every card");
+  const catalogPrices = await page.locator("[data-catalog-card]").evaluateAll((cards) =>
     Object.fromEntries(
       cards.map((card) => [
-        card.querySelector(".catg-name")?.textContent?.trim() ?? "",
-        card.querySelector(".catg-price")?.textContent?.trim() ?? "",
+        card.querySelector("[data-catalog-name]")?.textContent?.trim() ?? "",
+        card.querySelector("[data-catalog-price]")?.textContent?.trim() ?? "",
       ]),
     ),
   );
@@ -306,37 +307,31 @@ try {
   for (const [name, expectedPrice] of Object.entries(expectedCatalogPrices)) {
     check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
   }
-  check((await page.locator(".catg-flt button").count()) === 5, "catalog: expected All plus four filters");
+  check((await page.locator("[data-catalog-filters] button").count()) === 5, "catalog: expected All plus four filters");
   check(
     !(await page.locator("#rec2839951603 .js-store-grid-cont-preloader").isVisible()),
     "catalog: hidden Tilda store preloader leaked into the public grid",
   );
-  await page.locator('.catg-flt button[data-f="Cold & Refreshing"]').click();
-  check((await page.locator(".catg-card:not(.is-hidden)").count()) === 4, "catalog: cold filter did not leave four cards");
+  await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
+  check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
 
-  await page.locator(".catg-card:not(.is-hidden) .tbc-add").first().click();
+  await page.locator("[data-catalog-card] [data-cart-add]").first().click();
   await page.waitForTimeout(200);
-  const cartProducts = await page.evaluate(() =>
-    Array.isArray(window.tcart?.products) ? window.tcart.products : [],
-  );
-  check(cartProducts.length === 1, "catalog: add-to-cart did not create one cart item");
-  check(cartProducts[0]?.name === "Milkshake", "catalog: unexpected cart product");
-  check(Number(cartProducts[0]?.price) === 45.38, "catalog: cart product price changed");
-  await page.waitForTimeout(900);
-  // The shared header owns the cart control now; its label gains the item
-  // count once the Tilda cart reports one, so match on the prefix.
-  await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
-  await page.waitForTimeout(500);
-  const openCartText = await page.evaluate(() => {
-    const cart = [...document.querySelectorAll('[class*="t706__cartwin"]')].find((element) => {
-      const style = getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
-    });
-    return cart?.textContent ?? "";
+  const cartProducts = await page.evaluate(() => {
+    try {
+      return JSON.parse(localStorage.getItem("thebase:cart:v1") ?? "[]");
+    } catch {
+      return [];
+    }
   });
-  check(/Milkshake/.test(openCartText), "catalog: cart dialog did not open with the selected product");
-  check(/45\.38/.test(openCartText), "catalog: cart dialog did not preserve the selected price");
+  check(cartProducts.length === 1, "catalog: add-to-cart did not create one cart item");
+  check(cartProducts[0]?.slug === "milkshake", "catalog: unexpected cart product");
+  check(cartProducts[0]?.quantity === 1, "catalog: cart quantity changed");
+  await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
+  await page.waitForURL(`${baseUrl}/checkout`);
+  const checkoutText = await page.locator("main").textContent();
+  check(/Milkshake/i.test(checkoutText ?? ""), "catalog: checkout page lost the selected product");
+  check(/45\.38/.test(checkoutText ?? ""), "catalog: checkout page did not preserve the selected price");
 
   await page.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
   await page.locator("h1").first().waitFor();
@@ -396,8 +391,12 @@ try {
   const contactForm = page.locator("#form860957415");
   await contactForm.waitFor();
   await contactForm.locator('input[name="name"]').fill("Browser Smoke");
+  await contactForm.locator('input[name="company"]').fill("THE BASE QA");
   await contactForm.locator('input[name="email"]').fill("smoke@example.com");
-  const consent = contactForm.locator('input[name="bch_privacy_agreement"]');
+  await contactForm.locator('input[name="Phone"]').fill("500000000");
+  await contactForm.locator('input[name="country"]').fill("United Arab Emirates");
+  await contactForm.locator('textarea[name="text"]').fill("Browser-safe form error UX check.");
+  const consent = contactForm.locator('input[name="privacy-consent"]');
   if (await consent.count()) {
     await consent.evaluate((input) => {
       input.checked = true;

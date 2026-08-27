@@ -6,12 +6,16 @@
 maps friendly and audited legacy paths to the corresponding static Tilda export.
 
 1. `/` renders the React `HomePage`.
-2. Normal public routes render one `SiteHeader`, a `LegacyPageShell`, and one
-   `SiteFooter`.
-3. Standalone exported header/footer aliases render `LegacyDocument` without a
+2. `/catalog` and `/contacts` render native page bodies between the shared
+   `SiteHeader` and `SiteFooter`.
+3. Remaining normal public routes render one `SiteHeader`, a
+   `LegacyPageShell`, and one `SiteFooter`.
+4. `/checkout` is a dedicated native, non-indexable cart review and Stripe Test
+   Mode handoff route.
+5. Standalone exported header/footer aliases render `LegacyDocument` without a
    second shell.
-4. `/cabinet` permanently redirects to `/`; it is not a public application.
-5. Unknown routes use the application 404.
+6. `/cabinet` permanently redirects to `/`; it is not a public application.
+7. Unknown routes use the application 404.
 
 ## Canonical shared shell
 
@@ -19,8 +23,8 @@ maps friendly and audited legacy paths to the corresponding static Tilda export.
   cart and mobile drawer. No account/cabinet UI.
 - `SiteFooter`: the homepage footer is the canonical implementation on every
   public route, including the large responsive BASE wordmark.
-- Tilda shell records are stripped server-side, while JSON-LD, cart, lead forms,
-  cookie consent and required integrations are retained.
+- Tilda shell records and the global Tilda cart are stripped server-side, while
+  JSON-LD, required lead forms, cookie consent and integrations are retained.
 
 ## Homepage
 
@@ -43,10 +47,19 @@ Motion must still fall back to ordinary visible document flow when unavailable.
 
 1. Shared header.
 2. Local catalogue heading and four filters.
-3. Four groups with 16 local product cards.
-4. Hidden Tilda store data used only for product lookup/cart/popup integration.
-5. Shared lead/cart records retained from the export.
+3. One deterministic native grid with 16 registry-backed product cards.
+4. Native cart state containing only validated slugs and quantities.
+5. Dedicated `/checkout` review route for a populated cart; empty redirects to
+   `/catalog`.
 6. Shared footer.
+
+## Contacts
+
+1. Shared header.
+2. Native editorial contact hero.
+3. Direct commercial channels and business hours.
+4. Native semantic lead form wired to the central `/api/leads` bridge.
+5. Shared footer.
 
 ## Product template
 

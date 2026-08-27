@@ -1,8 +1,9 @@
 # Stripe Test Mode proof of concept
 
-Status: staging Test Mode E2E verified on 2026-08-26. It is not connected to the
-legacy Tilda cart, production order creation, Odoo, Telegram, Stripe Live, or
-the production domain.
+Status: staging Test Mode E2E verified on 2026-08-26. The endpoint is now the
+secure handoff for the native staging `/checkout` page; it remains isolated
+from the removed Tilda cart, production order creation, Odoo, Telegram, Stripe
+Live, and the production domain.
 
 ## Endpoints
 
@@ -14,6 +15,8 @@ the production domain.
 The checkout endpoint is guarded so it can run only on localhost or the exact
 THE BASE staging hostname. It rejects live or unrecognized secret-key prefixes.
 Success and cancel URLs are fixed server-side to the staging origin.
+The native checkout can supply a validated contact email; Stripe collects the
+billing address, a supported delivery country and payment authentication.
 
 Example request shape:
 

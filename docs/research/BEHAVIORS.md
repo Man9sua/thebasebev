@@ -38,14 +38,16 @@ is kept in the ignored `.audit-artifacts/` directory.
 
 ## Catalog
 
-- Four local category filters plus All show/hide the 16 locally declared cards.
-- A hidden Tilda Store record remains because product lookup, cart and popup
-  actions use it. Its own store filters are not visible and must stay disabled;
-  requesting them returns non-JSON error text and creates a browser console
-  error without adding any user-facing function.
-- Existing audited prices remain server-seeded. Cart quantity is capped at ten.
+- Four local category filters plus All render the 16 checked-in product cards.
+- The friendly `/catalog` route no longer mounts Tilda Store, its async filter
+  shim, or `.catg-*` hooks. This prevents legacy observers from mutating the
+  native grid after a client navigation from an exported product page.
+- Existing audited prices remain server-seeded. The native cart persists only
+  product slug and quantity, and caps quantity at ten.
 - Product framing is based on the meaningful opaque area of each source asset,
   not one uniform scale applied to every transparent canvas.
+- An empty cart link returns to `/catalog`; a populated cart opens the dedicated
+  `/checkout` review page. Stripe Test Mode remains the server-side payment POC.
 
 ## Product pages
 
@@ -55,7 +57,16 @@ is kept in the ignored `.audit-artifacts/` directory.
   Production Tilda removes/completes those animation classes and shows them.
 - Content must be visible without Tilda animation JavaScript. Animation may
   enhance entrance motion but must never decide whether the content exists.
-- Tilda slider/zoom, cart/product actions and lead popups remain intact.
+- Tilda slider/zoom and lead popups remain intact. The removed global Tilda cart
+  is replaced by the native catalogue/cart/checkout boundary.
+
+## Contacts
+
+- `/contacts` is native React rather than an exported absolute-positioned form.
+- Its semantic controls remain usable without Tilda form JavaScript and submit
+  through the shared `LeadAttributionBridge` to `/api/leads`.
+- The form keeps the audited field contract and first-touch attribution while
+  the page body follows the homepage's editorial light/dark visual system.
 
 ## Loading and images
 

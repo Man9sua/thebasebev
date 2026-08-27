@@ -13,7 +13,7 @@
   color: var(--tbb-on-light);
   /* Colour only. The bar itself is never transformed — the paper behind it
      slides in, which is the `::after` below. */
-  transition: color var(--tbb-dur) var(--tbb-ease);
+  transition: color 620ms var(--tbb-ease);
 }
 
 /* Transparent over the hero: the bar reads as part of the composition rather
@@ -38,7 +38,10 @@
   inset: 0;
   background: var(--tbb-paper);
   transform: translate3d(0, -101%, 0);
-  transition: transform var(--tbb-dur) var(--tbb-ease);
+  transition:
+    transform var(--tbb-dur) var(--tbb-ease),
+    background-color 620ms var(--tbb-ease),
+    border-color 620ms var(--tbb-ease);
   pointer-events: none;
   border-bottom: 1px solid var(--tbb-line);
 }
@@ -70,12 +73,13 @@
   z-index: 1;
   display: inline-flex;
   align-items: center;
+  color: inherit;
   text-decoration: none;
 }
 
 /* Height-driven, width auto: the lockup's aspect ratio is never touched, and
    it is the same asset at every breakpoint — only the scale changes. */
-.logo img {
+.logo svg {
   display: block;
   height: clamp(1.5rem, 2.1vw, 2rem);
   width: auto;
@@ -229,7 +233,5 @@
   border-bottom-color: rgba(255, 255, 255, 0.14);
 }
 
-/* The mark is deliberately left alone on dark surfaces. It was knocked back to
-   a white silhouette here, which meant the logo changed as the page scrolled —
-   a brand mark that mutates reads as a glitch. The red block carries it against
-   the footer on its own. */
+/* BrandLogo draws only `the` with currentColor. It therefore interpolates to
+   white with the controls while the red BASE block remains unchanged. */

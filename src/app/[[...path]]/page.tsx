@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CatalogPage } from "@/components/catalog/CatalogPage";
+import { ContactPage } from "@/components/contact/ContactPage";
 import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
@@ -13,6 +15,7 @@ import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
+import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 import {
   getSitePage,
   getStaticSiteParams,
@@ -96,6 +99,24 @@ export default async function SiteRoute({ params }: RouteProps) {
   // themselves. Framing them in the shared shell would wrap a copy of the site
   // chrome around the site chrome, so they keep rendering exactly as exported.
   if (!page.usesSharedShell) return <LegacyDocument page={page} />;
+
+  if (route === "/catalog" || route === "/contacts") {
+    const structuredData = getLegacyStructuredData(page.file);
+    return (
+      <div className="tbb">
+        {structuredData.map((block, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: block }}
+          />
+        ))}
+        <SiteHeader />
+        {route === "/catalog" ? <CatalogPage /> : <ContactPage />}
+        <SiteFooter />
+      </div>
+    );
+  }
 
   if (route === "/resources/tools") {
     const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261"]);

@@ -34,7 +34,7 @@ Generated: 2026-08-26
 
 Browser coverage includes the marquee hero, loading gate, header, fullscreen menu,
 region control, search/navigation links, bestseller carousel, reading rail,
-catalog filters/prices, add-to-cart, cart dialog, product sample popup, safe lead
+catalog filters/prices, add-to-cart, dedicated cart review/checkout, product sample popup, safe lead
 error UX, and cross-route first-touch attribution. The lead response is mocked in
 browser smoke, so that test can never create a CRM record.
 
@@ -53,7 +53,7 @@ response reported `livemode=false`. No Live key or Stripe Live resource was
 used. One AED 45.38 Test Checkout completed as paid. The real
 `checkout.session.completed` event and one duplicate resend both reached the
 staging webhook with HTTP 200 and valid signatures. The Checkout POC remains
-detached from the site cart and from Odoo.
+connected only to the native staging cart review and detached from Odoo.
 
 ## Remote staging status
 

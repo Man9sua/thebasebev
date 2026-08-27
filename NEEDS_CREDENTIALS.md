@@ -62,7 +62,8 @@ Confirm the owned active GTM container, whether it already emits GA4 `page_view`
 - fulfilment/notification recipients
 - credentialed checkout/order error and success tests
 
-Cart/catalogue UI is verified, but no real order was submitted.
+Native cart/catalogue/checkout UI is verified in Test Mode, but no production
+order was submitted and no Live payment contract exists.
 
 ## Future direct Odoo integration — NEEDS CREDENTIALS LATER
 

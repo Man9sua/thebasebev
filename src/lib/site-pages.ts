@@ -557,8 +557,6 @@ function deferLegacyImages(source: string) {
  * elements also carry things the site still depends on:
  *
  * - all of the page's JSON-LD (`rec2483211811`);
- * - the Tilda cart and its form (`rec2989879303`) — `SiteHeader` calls
- *   `tcart__openCart()`, so the cart *is* this markup;
  * - four of the nine owned lead forms (`rec861442702`, `rec1855213141`,
  *   `rec1855223381`, `rec1855232921`) and their popup triggers;
  * - the cookie-consent banner (`rec913700125`).
@@ -574,6 +572,7 @@ const REMOVED_SHELL_RECORDS = new Set([
   "rec913703869", //  hidden strapline, already display:none
   "rec860980632", //  old nav column, already display:none, duplicate nav links
   "rec859870796", //  visible footer nav — SiteFooter replaces it
+  "rec2989879303", // legacy Tilda cart/form — native /checkout replaces it
 ]);
 
 const SHELL_CONTAINERS = [

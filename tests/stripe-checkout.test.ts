@@ -27,6 +27,7 @@ function checkoutRequest(body: unknown) {
 function validPayload() {
   return {
     currency: "AED",
+    email: "buyer@example.com",
     items: [{ productId: "389328196132", quantity: 2 }],
   };
 }
@@ -77,8 +78,16 @@ test("valid checkout uses server price, AED and staging return URLs", async () =
   );
   assert.equal(
     capturedParams?.cancel_url,
-    "https://the-base-staging.mansua.workers.dev/catalog?stripe_checkout=cancelled",
+    "https://the-base-staging.mansua.workers.dev/checkout?stripe_checkout=cancelled",
   );
+  assert.equal(capturedParams?.customer_email, "buyer@example.com");
+  assert.equal(capturedParams?.billing_address_collection, "required");
+  assert.deepEqual(capturedParams?.shipping_address_collection?.allowed_countries, [
+    "AE",
+    "SA",
+    "KZ",
+    "GB",
+  ]);
   assert.equal(capturedParams?.metadata?.tb_request_id, "tb_test_unit-request-id");
   assert.equal(capturedOptions?.idempotencyKey, "tb_test_unit-request-id");
 });
@@ -95,6 +104,17 @@ test("invalid product is rejected before Stripe is called", async () => {
 
   assert.equal(response.status, 422);
   assert.equal(body.error.code, "INVALID_PRODUCT");
+});
+
+test("invalid customer email is rejected before Stripe is called", async () => {
+  const response = await handleStripeTestCheckout(
+    checkoutRequest({ ...validPayload(), email: "not-an-email" }),
+    checkoutDependencies(),
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 422);
+  assert.equal(body.error.code, "INVALID_EMAIL");
 });
 
 test("tampered client price is rejected", async () => {

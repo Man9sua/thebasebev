@@ -57,6 +57,15 @@ const controlledRoutes = [
     })),
   ),
   {
+    route: "/checkout",
+    type: "technical checkout page",
+    expectedStatus: 200,
+    indexable: false,
+    canonical: true,
+    sitemap: false,
+    reason: "Cart review and Stripe Test handoff; intentionally excluded from search",
+  },
+  {
     route: "/_not-found",
     type: "technical 404 boundary",
     expectedStatus: 404,
@@ -126,8 +135,8 @@ if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.leng
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
   );
 }
-if (controlledRoutes.length !== 112) {
-  throw new Error(`Expected 112 controlled routes, received ${controlledRoutes.length}.`);
+if (controlledRoutes.length !== 113) {
+  throw new Error(`Expected 113 controlled routes, received ${controlledRoutes.length}.`);
 }
 if (redirectRows.length !== 6) throw new Error(`Expected six redirects, received ${redirectRows.length}.`);
 
@@ -247,7 +256,7 @@ Target: \`${targetOrigin}\`
 - Friendly routes: ${friendlyRoutes.length} (${friendlyRoutes.filter((route) => route.indexable).length} canonical/indexable + ${friendlyRoutes.filter((route) => !route.indexable).length} excluded).
 - Direct \`pageNNNN.html\` compatibility aliases: ${pageFiles.length}.
 - Tilda product compatibility aliases: ${productSlugs.length * 2}.
-- Technical/metadata/API routes: 7.
+- Technical/metadata/API routes: 8.
 - **Controlled route total: ${controlledRoutes.length}.**
 - Permanent redirects (not generated pages): ${redirectRows.length}.
 - Sitemap members: ${sitemapPaths.size}.

@@ -12,7 +12,7 @@
 ## Runtime contract
 
 - Local filters and all 16 card links remain functional.
-- Hidden Tilda product data remains available to cart/product-popup code.
-- Hidden Tilda store filters stay disabled because the local UI replaces them.
-- Prices and quantities continue to be validated by the existing commerce
-  layer; CSS and image framing do not alter commerce data.
+- The friendly catalogue does not mount hidden Tilda product data, store
+  filters, cart markup or `.catg-*` observer hooks.
+- Prices and quantities continue to be validated by the native server-owned
+  commerce registry; CSS and image framing do not alter commerce data.

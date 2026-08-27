@@ -15,8 +15,8 @@ const PRODUCT_ROUTES = new Set(PRODUCTS.map((product) => product.route));
  * the old footer nav and the dead duplicate menus from the markup — server-side,
  * so no copy of the old chrome is ever sent, let alone painted and then hidden.
  *
- * What stays is deliberate: the page's JSON-LD, the Tilda cart, the owned lead
- * forms and their popups, and the cookie banner all still live inside the
+ * What stays is deliberate: the page's JSON-LD, the owned lead forms and their
+ * popups, and the cookie banner all still live inside the
  * retagged `#t-header` / `#t-footer` containers.
  */
 export function LegacyPageShell({
@@ -25,7 +25,7 @@ export function LegacyPageShell({
   opensPage = true,
 }: {
   page: SitePage;
-  /** Render retained cart/forms/cookie runtime beside a native React page. */
+  /** Render retained forms/cookie runtime beside a native React page. */
   runtimeOnly?: boolean;
   /**
    * Whether this document is the first thing on the page.

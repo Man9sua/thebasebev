@@ -79,8 +79,8 @@ For the current Tilda-to-Next.js parity migration:
 - do not replace the production payment path yet;
 - do not add Stripe Live keys or production payment logic to Next.js;
 - the isolated Stripe Test Mode proof of concept in `STRIPE_TEST_POC.md` is an
-  explicitly authorized experiment and is not connected to the legacy cart or
-  any Odoo/Telegram/order side effect;
+  explicitly authorized experiment connected only to the native staging cart
+  review, never the removed legacy cart or any Odoo/Telegram/order side effect;
 - do not create Odoo orders, invoices, or transactions during audit;
 - keep checkout/order delivery marked blocked until the business contract is confirmed;
 - preserve any existing external payment behavior until separately audited.
