@@ -129,29 +129,37 @@ async function fromPack(slug) {
   // fraction of the tile without removing it makes the pouch smaller than the
   // fraction says — which is part of what left these five looking like a
   // different set beside the photographed eleven.
-  // Bounded on both sides: Sugar Free is two sachets lying flat rather than a
-  // standing pouch, and set to the pouch height it would be wider than the tile.
+  //
+  // Height only. Bounding the width as well is the obvious guard against a
+  // subject wider than the tile, and it is wrong here: Sugar Free is two
+  // sachets lying flat rather than a standing pouch, so the width bound caught
+  // it first and shrank it until it sat in the middle of a wide empty margin —
+  // a picture with a frame drawn round it, next to ten that had none.
   const scaled = await sharp(file)
     .trim()
-    .resize({
-      width: Math.round(WIDTH * 0.82),
-      height: Math.round(HEIGHT * (POUCH + BLEED)),
-      fit: "inside",
-    })
+    .resize({ height: Math.round(HEIGHT * (POUCH + BLEED)) })
     .toBuffer();
   const { width, height } = await sharp(scaled).metadata();
 
-  // Standing on the bottom edge and running a little past it, the way the pouch
-  // does in every one of the banners. What runs past is cut here rather than
-  // composited past the edge, which sharp declines to do.
+  // Standing on the bottom edge and running past it, and past the sides too
+  // where the subject is wider than the tile, the way the pouch does in every
+  // one of the banners. What runs past is cut here rather than composited past
+  // the edge, which sharp declines to do.
+  const left = Math.round((WIDTH - width) / 2);
   const top = HEIGHT - Math.round(HEIGHT * POUCH);
+  const window = {
+    left: Math.max(0, -left),
+    top: Math.max(0, -top),
+    width: Math.min(width - Math.max(0, -left), WIDTH - Math.max(0, left)),
+    height: Math.min(height - Math.max(0, -top), HEIGHT - Math.max(0, top)),
+  };
   const pouch =
-    top + height > HEIGHT
-      ? await sharp(scaled).extract({ left: 0, top: 0, width, height: HEIGHT - top }).toBuffer()
-      : scaled;
+    window.width === width && window.height === height
+      ? scaled
+      : await sharp(scaled).extract(window).toBuffer();
 
   return sharp(field(lighten(colour, 0.22), colour))
-    .composite([{ input: pouch, left: Math.round((WIDTH - width) / 2), top }])
+    .composite([{ input: pouch, left: Math.max(0, left), top: Math.max(0, top) }])
     .webp({ quality: 82 })
     .toBuffer();
 }
