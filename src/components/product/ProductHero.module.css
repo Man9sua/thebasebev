@@ -333,6 +333,19 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* The five products still waiting for a key visual stand on a wash mixed from
+   their registry colour, which is far paler than the one the design draws them
+   on — Topping's is #eeebe1. The card all but vanishes into it and the white
+   `vs` with it, so both are given something to sit on until the artwork
+   arrives. */
+.plain .marginCard {
+  background: rgba(0, 0, 0, 0.075);
+}
+
+.plain .marginVs {
+  color: var(--ink-muted);
+}
+
 .marginSide {
   display: grid;
   justify-items: start;

@@ -222,7 +222,7 @@ export function ProductHero({ product }: { product: Product }) {
               <h2 className={styles.marginTitle}>Approximately Profit Margin</h2>
               <div className={styles.marginCard}>
                 <div className={styles.marginSide}>
-                  <p className={styles.marginLabel}>with {margin.comparedWith}</p>
+                  <p className={styles.marginLabel}>{margin.legacyLabel}</p>
                   <p className={styles.marginValue}>{margin.legacy}</p>
                 </div>
                 <span className={styles.marginVs} aria-hidden="true">
