@@ -105,6 +105,9 @@
 }
 
 .media {
+  /* `<picture>` is inline by default, and an inline box takes no height — which
+     is why the band the phone sets below did nothing until this was here. */
+  display: block;
   position: absolute;
   inset: 0 0 0 auto;
   z-index: 0;
@@ -332,31 +335,30 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    /*
-     * Taller than it looks like it needs to be, because the crop is a tall
-     * narrow strip and it is fitted by height: in a short band the pouch came
-     * out a third of the screen wide, adrift in the middle of it. At this height
-     * it fills three quarters of the width, which is the size a product is
-     * meant to be at the top of its own page.
-     */
-    height: clamp(21rem, 104vw, 32rem);
+    height: clamp(17rem, 82vw, 26rem);
     min-height: 0;
     margin-top: var(--tbb-header-h);
   }
 
   /*
-   * The picture here is the cut-out pack, not the banner — see the note in the
-   * component — so it wants none of what the banner needs: no fade into the
+   * The picture here is the cut-out pack for every product — see the note in
+   * the component — so it wants none of what the banner needs: no fade into the
    * panel, because a cut-out has no wash to hide, and no right edge to stand
-   * against, because it is whole. It stands in the middle of its band with air
-   * around it, on the ground its shadow gives it.
+   * against, because it is whole.
+   *
+   * It stands in the middle of its band with air around it, at about half the
+   * screen's width. That is the proportion the wide screen sets: there the
+   * pouch is a part of the picture and not the whole of it, and filling a phone
+   * with a pack shot reads as a different page rather than the same one narrow.
    */
-  .banner {
+  .banner,
+  .pack {
+    object-fit: contain;
     object-position: center bottom;
-    padding: clamp(1rem, 5vw, 2.5rem) var(--tbb-gutter) 0;
+    padding: clamp(0.75rem, 3vw, 1.75rem) var(--tbb-gutter) 0;
     -webkit-mask-image: none;
     mask-image: none;
-    filter: drop-shadow(0 24px 44px rgba(26, 19, 17, 0.18));
+    filter: drop-shadow(0 22px 40px rgba(26, 19, 17, 0.16));
   }
 
   .inner {
