@@ -144,6 +144,29 @@
   filter: drop-shadow(0 calc(30 * var(--u)) calc(50 * var(--u)) rgba(26, 19, 17, 0.18));
 }
 
+/*
+ * The drink, in front of the pouch. Its box is per-product and comes in on the
+ * element as four unitless numbers — Matcha's layer is 327.14 x 534.17 at
+ * 301.34, 280.11 — so the arithmetic here is the same as everywhere else in
+ * this file and only the measurements change. See `data/product-glass.ts`.
+ */
+.glass {
+  position: absolute;
+  left: calc(var(--glass-left) * var(--u));
+  top: calc(var(--tbb-header-h) + (var(--glass-top) - var(--head)) * var(--u));
+  z-index: 0;
+  width: calc(var(--glass-width) * var(--u));
+  height: calc(var(--glass-height) * var(--u));
+}
+
+.glass img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
 /* ---- the seals ---- */
 
 /*
@@ -443,6 +466,13 @@
 
   .pack {
     filter: drop-shadow(0 22px 40px rgba(26, 19, 17, 0.16));
+  }
+
+  /* The glass is placed by its coordinates in the wide frame, and there is no
+     phone frame in the design to place it by here. Rather than invent one, the
+     band keeps the pouch on its own. */
+  .glass {
+    display: none;
   }
 
   /* A row under the pack rather than a corner of it: at this width the pack

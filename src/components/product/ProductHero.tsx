@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
+import { productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productMargins } from "@/data/product-margins";
 import { isDark } from "@/lib/contrast";
@@ -91,6 +92,7 @@ export function ProductHero({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   const banner = heroes[product.slug];
   const margin = productMargins[product.slug];
+  const glass = productGlass[product.slug];
   // The registry's description is the fallback for the three pages whose own
   // copy does not open by naming the product, which is how the extractor
   // recognises it.
@@ -134,9 +136,8 @@ export function ProductHero({ product }: { product: Product }) {
           stands the product on the left, where that cut would land in the
           middle of the page and read as a sliced pack.
 
-          What it costs is the drink beside the pouch, which the design does
-          have and this cannot: it exists only inside those frames, composed
-          with the pack. Restoring it needs that group exported out of Figma.
+          The drink the design stands in front of it is not part of this: it is
+          a layer of its own there and a layer of its own here — see below.
         */}
         <div className={styles.stage}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -147,6 +148,26 @@ export function ProductHero({ product }: { product: Product }) {
             fetchPriority="high"
           />
         </div>
+
+        {/*
+          The drink, in front of the pouch — its own layer in the design and its
+          own measured box, so it is placed against the frame rather than nested
+          in the pack's group. Decoration beside the pack shot, hence no alt.
+        */}
+        {glass?.image && (
+          <div
+            className={styles.glass}
+            style={{
+              ["--glass-left" as string]: glass.left,
+              ["--glass-top" as string]: glass.top,
+              ["--glass-width" as string]: glass.width,
+              ["--glass-height" as string]: glass.height,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={glass.image} alt="" />
+          </div>
+        )}
 
         <div className={styles.seals}>
           <Seal tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
