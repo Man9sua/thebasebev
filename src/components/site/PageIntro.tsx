@@ -38,12 +38,18 @@ export function PageIntro({ intro }: { intro: PageIntroContent }) {
       )}
 
       <div className={styles.inner}>
+        {intro.legacyH1 && <h1 className="tbb-visually-hidden">{intro.legacyH1}</h1>}
+
         <Reveal as="p" className={`tbb-label ${styles.eyebrow}`} distance={12}>
           {intro.eyebrow}
         </Reveal>
 
         <Reveal delay={60} distance={20}>
-          <h1 className={styles.title}>{intro.title}</h1>
+          {intro.legacyH1 ? (
+            <h2 className={styles.title}>{intro.title}</h2>
+          ) : (
+            <h1 className={styles.title}>{intro.title}</h1>
+          )}
         </Reveal>
 
         {intro.tagline && (

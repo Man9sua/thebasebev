@@ -1,13 +1,13 @@
 # Prelaunch QA record
 
-Generated: 2026-08-24
+Generated: 2026-08-26
 
 ## Build under test
 
 - Branch: `integration/prelaunch`
-- Merge baseline: `8e4cf79`
+- Merge baseline: `182b233`
 - Cloudflare staging deployment: `the-base-staging`
-- Deployed version: `daa6c072-728d-4c24-9e96-7856b048b41f`
+- Deployed version: `c47d3688-fe4f-4088-adb7-2b9bc2314fcf`
 - URL: `https://the-base-staging.mansua.workers.dev`
 - Custom domain: none
 
@@ -30,11 +30,11 @@ Generated: 2026-08-24
 | SEO parity | PASS; 29 canonical routes, zero critical failures |
 | Analytics isolation | PASS |
 | npm audit | PASS; zero vulnerabilities |
-| Production-readiness orchestrator | PARTIAL; local gates passed, stopped at remote route audit because staging returned HTTP 429 / Error 1027 |
+| Production-readiness orchestrator | PASS against Cloudflare staging |
 
 Browser coverage includes the marquee hero, loading gate, header, fullscreen menu,
 region control, search/navigation links, bestseller carousel, reading rail,
-catalog filters/prices, add-to-cart, cart dialog, product sample popup, safe lead
+catalog filters/prices, add-to-cart, dedicated cart review/checkout, product sample popup, safe lead
 error UX, and cross-route first-touch attribution. The lead response is mocked in
 browser smoke, so that test can never create a CRM record.
 
@@ -50,23 +50,25 @@ written to reports.
 
 Stripe SDK authentication passed with a Test Mode key and a read-only API
 response reported `livemode=false`. No Live key or Stripe Live resource was
-used. The Checkout POC remains detached from the site cart and from Odoo.
+used. One AED 45.38 Test Checkout completed as paid. The real
+`checkout.session.completed` event and one duplicate resend both reached the
+staging webhook with HTTP 200 and valid signatures. The Checkout POC remains
+connected only to the native staging cart review and detached from Odoo.
 
 ## Remote staging status
 
-The build and server-only staging secrets were deployed successfully. Directly
-after deployment, both Workers in account `mansua` began returning HTTP 429 /
-Cloudflare Error 1027 because the account exhausted its Workers Free daily
-request allowance. Consequently the post-deploy HTTP/browser/SEO/crawler suite
-cannot produce valid application evidence until the allowance resets at
-00:00 UTC (or the owner explicitly upgrades the plan).
+The staging Worker in account `mansua` is healthy. The full remote suite passed:
+39 public routes and five redirects, browser interaction and nine responsive
+viewports, 29 canonical SEO routes, commerce without order submission, and nine
+search/AI crawler user agents. The Worker returns transport-level
+`noindex, nofollow` on `workers.dev`, while canonicals remain on
+`https://thebasebev.com`.
 
 Do not work around this by deploying to personal account `indukok667`.
 
 ## Remaining manual gates
 
-- Re-run `npm run audit:production-readiness -- https://the-base-staging.mansua.workers.dev` after the Cloudflare quota resets.
-- Create the Test Mode Stripe webhook endpoint and configure `STRIPE_WEBHOOK_SECRET`.
+- Stripe Test E2E is complete; production payment architecture remains a separate owner decision.
 - Confirm Telegram notification ownership and provide staging bot/chat credentials if parity is required.
 - Confirm the authoritative GTM/GA property and consent behavior before cutover.
 - Production domain, DNS, Tilda and Search Console changes require separate human approval.

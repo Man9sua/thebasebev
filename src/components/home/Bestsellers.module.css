@@ -23,7 +23,6 @@
   transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
   padding: var(--tbb-section) 0;
 }
-
 .inner {
   position: relative;
   z-index: 1;
@@ -221,6 +220,7 @@
      because these cards sit close together — a deeper camera flattens the
      rotation until the side shots look merely scaled rather than turned. */
   perspective: 1200px;
+  touch-action: pan-y;
 }
 
 /* Cards are stacked on one another and moved only by transform, so images stay

@@ -1,8 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useCart } from "@/components/cart/useCart";
+import { BrandLogo } from "@/components/site/BrandLogo";
 import { RegionPicker } from "@/components/site/RegionPicker";
-import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
 import styles from "./SiteHeader.module.css";
@@ -16,11 +19,6 @@ import styles from "./SiteHeader.module.css";
  * scroll-down and come back on scroll-up, which meant the one element on the
  * page that is supposed to be a fixed point was the one that moved most.
  */
-
-type TildaCartWindow = Window & {
-  tcart?: { products?: unknown[] };
-  tcart__openCart?: () => void;
-};
 
 function CartIcon() {
   return (
@@ -41,12 +39,18 @@ function SearchIcon() {
 }
 
 export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
+  const pathname = usePathname();
   const [pastHero, setPastHero] = useState(false);
   // Derived, not stored: away from the hero the bar is always solid.
   const solid = !overHero || pastHero;
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const cart = useCart();
+  const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0);
+  const cartHref = cart.ready && cartCount > 0 ? "/checkout" : "/catalog";
+  const cartLabel = cartCount
+    ? `Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`
+    : "Cart";
   // Set while a section that declares itself dark sits under the bar.
   const [onDark, setOnDark] = useState(false);
   const barRef = useRef<HTMLElement>(null);
@@ -69,7 +73,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, [overHero]);
+  }, [overHero, pathname]);
 
   /**
    * Surface adaptation, as on mercury.com: a thin observation band the height
@@ -114,33 +118,10 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
       window.removeEventListener("resize", build);
       observer?.disconnect();
     };
-  }, []);
+  }, [pathname]);
 
-  /**
-   * The legacy Tilda cart is the real cart. Where its runtime is on the page
-   * (every parity route) the icon opens it and mirrors its count; on the
-   * redesigned homepage, which does not load that runtime, it takes the user to
-   * the catalog where the cart lives. No second cart is invented.
-   */
-  useEffect(() => {
-    const readCart = () => {
-      const tilda = window as TildaCartWindow;
-      setCartCount(tilda.tcart?.products?.length ?? 0);
-    };
-
-    readCart();
-    const timer = window.setInterval(readCart, 1500);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const openCart = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
-    const tilda = window as TildaCartWindow;
-    if (typeof tilda.tcart__openCart === "function") {
-      event.preventDefault();
-      tilda.tcart__openCart();
-    }
-  }, []);
-
+  // Cart state is native and shared across every route. Empty means catalogue;
+  // a populated cart means the dedicated review/checkout page.
   return (
     <>
       <header
@@ -155,25 +136,17 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         ]
           .filter(Boolean)
           .join(" ")}
+        data-header-theme={onDark ? "dark" : solid ? "light" : "hero"}
       >
-        {/* The original lockup, lifted verbatim out of the Tilda header and
-            saved as public/images/base-logo.svg — the same paths the old site
-            shipped, not redrawn and not re-typeset. */}
-        <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
+        {/* Original Tilda paths, inlined so the small `the` mark can inherit
+            the animated header colour without recolouring the red block. */}
+        <Link href="/" className={styles.logo} aria-label="THE BASE — home" prefetch={false}>
           {/* The Tilda runtime on parity routes re-sets src and adds
               decoding/fetchpriority on every img it finds, this one included.
               The rewrite is cosmetic, but React would still read it as a
               mismatch on a node it owns. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            suppressHydrationWarning
-            src="/images/base-logo.svg"
-            alt="THE BASE — Beverage Production"
-            width={175}
-            height={80}
-            draggable={false}
-          />
-        </SiteLink>
+          <BrandLogo />
+        </Link>
 
         <div className={styles.actions}>
           {/* Ported from production. Display-only there and here — see
@@ -182,15 +155,15 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             <RegionPicker />
           </span>
 
-          <SiteLink
-            href="/catalog"
+          <Link
+            href={cartHref}
             className={styles.action}
-            onClick={openCart}
-            aria-label={cartCount ? `Cart, ${cartCount} items` : "Cart"}
+            aria-label={cartLabel}
+            prefetch={false}
           >
             <CartIcon />
             {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
-          </SiteLink>
+          </Link>
 
           <button
             type="button"

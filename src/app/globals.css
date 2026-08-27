@@ -12,6 +12,15 @@ body.t-body {
   padding: 0;
 }
 
+/* Tilda's zoom runtime can leave fixed controls mounted after client
+   navigation. These are the stray +/- and close controls that appeared at the
+   left edge of native pages. */
+body > .t-zoomer__container,
+body > .t-zoomer__wrapper,
+.t-zoomer__container:not(.t-zoomer__active) {
+  display: none !important;
+}
+
 .legacy-head-assets,
 .legacy-document {
   display: contents;

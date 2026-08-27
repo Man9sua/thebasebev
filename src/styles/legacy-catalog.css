@@ -152,19 +152,37 @@ html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-lede {
   margin-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
 }
 
-/*
- * The lede is given its reading measure only once the filter row exists.
- *
- * The row is written by the export's own script, and it is what makes the head
- * end and the grid begin: it is the flex item that takes a whole line. The lede
- * asks for a whole line too, but `max-width` shrinks the box back to the words,
- * so between first paint and that script the line still had room on it and the
- * first two tiles flowed up beside the lede — the catalogue opened with a hole
- * where its top-left corner should be. Until the row lands, the lede keeps the
- * full width it asked for and nothing can share its line.
- */
-html body .legacy-document #allrecords .catg-wrap .catg-inner:has(.catg-flt) .catg-lede {
-  max-width: 52ch;
+
+/* The adjusted sources are full transparent canvases, so the old uniform 65%
+   box made the opaque product occupy barely half of the card. Alpha-bound
+   measurements put the ordinary canvases in one 88% system. */
+.legacy-document .catg-card .catg-img--adj {
+  --adj: 88%;
+  --vy: 48%;
+}
+
+/* Tea and Sugar Free already use nearly the full source canvas and only need a
+   modest increase to match the pouch cards. */
+.legacy-document .catg-card[href="/tea"] .catg-img--adj,
+.legacy-document .catg-card[href="/sugar-free"] .catg-img--adj {
+  --adj: 92%;
+  --vy: 50%;
+}
+
+/* Garnish is the measured exception: its meaningful pixels occupy only the
+   lower 55% of a tall transparent source. Enlarge/reposition the canvas while
+   keeping the product's opaque bounds inside the frame. */
+.legacy-document .catg-card[href="/garnish"] .catg-img--adj {
+  --adj: 112%;
+  --vy: 38%;
+}
+
+/* The Tilda record stays in the DOM as cart/product data, but its six loading
+   placeholders are not part of the visible catalogue. The export hid the
+   loaded grid and forgot the separate preloader container. */
+.legacy-document #rec2839951603 .js-store-grid-cont-preloader {
+  display: none !important;
+
 }
 
 /* ---- filters ---- */

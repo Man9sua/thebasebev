@@ -5,7 +5,6 @@
   padding: 0 0 var(--tbb-section);
   overflow: clip;
 }
-
 /* ---- film ---- */
 
 /* `--fade` is how much of the frame is given over to the dissolve. It is read

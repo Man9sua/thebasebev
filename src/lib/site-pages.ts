@@ -49,7 +49,6 @@ const friendlyRoutes: RouteDefinition[] = [
   { route: "/terms", file: "page68443067.html", indexable: false },
   { route: "/privacy", file: "page68443503.html", indexable: false },
   { route: "/thank-you-form", file: "page77849746.html", indexable: false },
-  { route: "/cabinet", file: "page154764216.html", indexable: false },
   { route: "/retail", file: "page114837666.html", indexable: false },
   { route: "/knowledge-recipes", file: "page154758576.html", indexable: false },
   { route: "/not-found", file: "page115314536.html", indexable: false },
@@ -167,6 +166,8 @@ const allPageFiles = [
   "page77849746.html",
 ] as const;
 
+const standaloneShellFiles = new Set(["page62362389.html", "page62447481.html"]);
+
 const routeDefinitions: RouteDefinition[] = [
   ...friendlyRoutes,
   ...allPageFiles.map((file) => ({ route: `/${file}`, file, indexable: false })),
@@ -258,6 +259,36 @@ function localizeHeroTailwind(source: string) {
   return removeInlineScriptContaining(withLocalStylesheet, "tailwind.config");
 }
 
+function setHtmlAttribute(tag: string, name: string, value: string) {
+  const attribute = new RegExp(`\\s${name}\\s*=\\s*["'][^"']*["']`, "i");
+  if (attribute.test(tag)) return tag.replace(attribute, ` ${name}="${value}"`);
+  return tag.replace(/>$/, ` ${name}="${value}">`);
+}
+
+/**
+ * Promote only the first local images that the exported document considers
+ * lazy. Tilda normally copies `data-original` into `src` after first paint;
+ * doing that for the small above-the-fold set on the server avoids visible
+ * assembly while keeping every later image lazy.
+ */
+function promoteCriticalImages(source: string, limit = 4) {
+  let promoted = 0;
+
+  return source.replace(/<img\b[^>]*>/gi, (tag) => {
+    if (promoted >= limit) return tag;
+    const original = tag.match(/\bdata-original\s*=\s*["']([^"']+)["']/i)?.[1] ?? "";
+    if (!/^\/?images\//i.test(original)) return tag;
+
+    promoted += 1;
+    const src = `/${original.replace(/^\//, "")}`;
+    let result = setHtmlAttribute(tag, "src", src);
+    result = setHtmlAttribute(result, "loading", "eager");
+    result = setHtmlAttribute(result, "decoding", "async");
+    if (promoted <= 2) result = setHtmlAttribute(result, "fetchpriority", "high");
+    return result;
+  });
+}
+
 const catalogPriceFallback = {
   milkshake: { price: "45.38", cur: "AED" },
   frappe: { price: "49.40", cur: "AED" },
@@ -287,6 +318,35 @@ function preserveCatalogPrices(source: string, file: string) {
       `var store=${JSON.stringify(catalogPriceFallback)};\nvar scards=`,
     )
     .replace(/if\(!scards\.length\) return;\s*scards\.forEach/, "scards.forEach");
+}
+
+function stabilizeCatalogRuntime(source: string, file: string) {
+  if (file !== "page114743626.html") return source;
+
+  // The visible catalogue has its own local filters. Keeping Tilda's hidden
+  // store filters enabled makes the legacy runtime request getfilters(), whose
+  // current response is non-JSON error text; product loading/cart still use the
+  // store record and are intentionally left enabled.
+  return source.replace(/hideFilters:false/g, "hideFilters:true");
+}
+
+function installCatalogFilterShim(source: string, file: string) {
+  if (file !== "page114743626.html") return source;
+
+  // `t_store_init` calls the remote filter endpoint even with hideFilters=true.
+  // The visible catalogue has its own local filters, so resolve that optional
+  // legacy step with an empty result. DOMContentLoaded covers a warm async
+  // script; the short poll covers the same script arriving afterwards, before
+  // Tilda's own 100 ms t_onFuncLoad retry.
+  return `${source}<script>(function(){
+function disable(){
+if(typeof window.t_store_init!=="function")return false;
+window.t_store_loadFilters=function(options,done){if(typeof done==="function")done();};
+return true;
+}
+document.addEventListener("DOMContentLoaded",disable,{once:true});
+var tries=0,timer=setInterval(function(){if(disable()||++tries>200)clearInterval(timer);},10);
+})();</script>`;
 }
 
 /**
@@ -497,8 +557,6 @@ function deferLegacyImages(source: string) {
  * elements also carry things the site still depends on:
  *
  * - all of the page's JSON-LD (`rec2483211811`);
- * - the Tilda cart and its form (`rec2989879303`) — `SiteHeader` calls
- *   `tcart__openCart()`, so the cart *is* this markup;
  * - four of the nine owned lead forms (`rec861442702`, `rec1855213141`,
  *   `rec1855223381`, `rec1855232921`) and their popup triggers;
  * - the cookie-consent banner (`rec913700125`).
@@ -514,6 +572,7 @@ const REMOVED_SHELL_RECORDS = new Set([
   "rec913703869", //  hidden strapline, already display:none
   "rec860980632", //  old nav column, already display:none, duplicate nav links
   "rec859870796", //  visible footer nav — SiteFooter replaces it
+  "rec2989879303", // legacy Tilda cart/form — native /checkout replaces it
 ]);
 
 const SHELL_CONTAINERS = [
@@ -599,6 +658,33 @@ function stripShellRecords(bodyHtml: string) {
   return result;
 }
 
+function stripLegacyRecordsHtml(source: string, recordIds: ReadonlySet<string>) {
+  if (!recordIds.size) return source;
+
+  return splitShellRecords(source)
+    .map((record) => {
+      if (!recordIds.has(record.id)) return record.html;
+
+      // A record slice ends where the next record begins. When the removed
+      // record is the last page-content block, that slice also contains the
+      // opening tag of the retained footer runtime. Preserve that structural
+      // tail or the browser repairs the malformed tree before React hydrates.
+      const footerAt = record.html.indexOf('<div id="t-footer"');
+      return footerAt >= 0 ? record.html.slice(footerAt) : "";
+    })
+    .join("");
+}
+
+function normalizeContentLandmarks(source: string, file: string) {
+  if (file !== "page68443503.html") return source;
+
+  // The application already provides the page landmark. This is a visual
+  // heading wrapper inside the Privacy article, not a second site header.
+  return source
+    .replace('<header class="privacy-header">', '<div class="privacy-header">')
+    .replace("</header>", "</div>");
+}
+
 export type SitePage = RouteDefinition & {
   title: string;
   description: string;
@@ -615,11 +701,18 @@ export type SitePage = RouteDefinition & {
   headAssetsHtml: string;
   /**
    * Whether the shared React header/footer should render around this document.
-   * False for the two standalone header/footer aliases, which are the exported
-   * chrome itself and would otherwise be framed by a copy of themselves.
+   * False only for the two standalone header/footer aliases, which are the
+   * exported chrome itself and would otherwise be framed by a copy of itself.
    */
   usesSharedShell: boolean;
 };
+
+export function withoutLegacyRecords(page: SitePage, recordIds: readonly string[]): SitePage {
+  return {
+    ...page,
+    bodyHtml: stripLegacyRecordsHtml(page.bodyHtml, new Set(recordIds)),
+  };
+}
 
 const pageCache = new Map<string, SitePage>();
 
@@ -637,7 +730,7 @@ export function getSitePage(route: string): SitePage | undefined {
   const source = fs.readFileSync(path.join(exportRoot, definition.file), "utf8");
   const assetsMatch = source.match(/<!-- Assets -->([\s\S]*?)<\/head>/i);
   const rawBody = extractBody(source, definition.file);
-  const usesSharedShell = hasLegacyShell(rawBody);
+  const usesSharedShell = !standaloneShellFiles.has(definition.file);
 
   /**
    * What the export is put through on its way out, in order. Written as a list
@@ -654,9 +747,12 @@ export function getSitePage(route: string): SitePage | undefined {
     removeLegacyAnalyticsRuntime,
     (value) => dropReplacedRecords(value, definition.file),
     (value) => dropTemplateDebris(value, definition.file),
+    (value) => normalizeContentLandmarks(value, definition.file),
+    (value) => stabilizeCatalogRuntime(value, definition.file),
     deferLegacyImages,
     useResizedLegacyImages,
     (value) => replateCatalogCards(value, definition.file),
+    promoteCriticalImages,
   ]);
 
   const headAssetsHtml = applyAll(assetsMatch?.[1] ?? "", [
@@ -665,6 +761,8 @@ export function getSitePage(route: string): SitePage | undefined {
     removeLegacyAnalyticsRuntime,
     useResizedLegacyImages,
     (value) => preserveCatalogPrices(value, definition.file),
+    (value) => stabilizeCatalogRuntime(value, definition.file),
+    (value) => installCatalogFilterShim(value, definition.file),
   ]);
 
   const result: SitePage = {

@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SiteLink } from "@/components/site/SiteLink";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
 import { resizedImage } from "@/lib/images";
 
@@ -24,6 +24,10 @@ const PRODUCTS = getProducts(BESTSELLER_SLUGS);
 const AUTOPLAY_MS = 7000;
 /** Slots either side of the centre card, so the rail wraps symmetrically. */
 const HALF = Math.floor(PRODUCTS.length / 2);
+const SWIPE_THRESHOLD_PX = 44;
+const DRAG_INTENT_PX = 10;
+const TRACKPAD_IDLE_MS = 180;
+const TRACKPAD_LOCK_MS = 420;
 
 function Arrow({ back = false }: { back?: boolean }) {
   return (
@@ -46,10 +50,6 @@ export function Bestsellers() {
   // to be torn down and rebuilt on every change.
   const indexRef = useRef(index);
 
-  useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
-
   const active = PRODUCTS[index];
 
   const goTo = useCallback((next: number) => {
@@ -57,26 +57,24 @@ export function Bestsellers() {
       const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
       if (resolved === current) return current;
 
-      // Drop the copy out first, then swap it under cover of the fade, so the
-      // text never visibly rewrites itself mid-transition.
       setSwapping(true);
       window.clearTimeout(swapTimer.current);
       swapTimer.current = window.setTimeout(() => setSwapping(false), 260);
+      indexRef.current = resolved;
       return resolved;
     });
   }, []);
 
   useEffect(() => () => window.clearTimeout(swapTimer.current), []);
 
-  // Advance on its own, but only while the section is actually on screen —
-  // a carousel cycling out of view is wasted work and wasted battery.
+  // Natural document scrolling owns section visibility, so autoplay follows
+  // the section itself instead of an external scene controller.
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let timer: number | undefined;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         window.clearInterval(timer);
@@ -94,7 +92,6 @@ export function Bestsellers() {
     };
   }, [goTo]);
 
-
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault();
@@ -102,6 +99,102 @@ export function Bestsellers() {
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
       goTo(index + 1);
+    }
+  };
+
+  const completeSwipe = (startX: number, startY: number, endX: number, endY: number) => {
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      return false;
+    }
+    goTo(indexRef.current + (deltaX < 0 ? 1 : -1));
+    return true;
+  };
+
+  const stageRef = useRef<HTMLDivElement>(null);
+  const swipe = useRef({ active: false, pointerId: 0, startX: 0, startY: 0 });
+  const wheel = useRef({ deltaX: 0, lastAt: 0, lockedUntil: 0 });
+  const suppressClick = useRef(false);
+
+  // A horizontal two-finger trackpad gesture has no pointer events. Listen
+  // natively so it can be cancelled without React's passive wheel delegation,
+  // while a vertical wheel remains ordinary page scroll.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const onWheel = (event: WheelEvent) => {
+      const scale = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? window.innerWidth
+          : 1;
+      const deltaX = event.deltaX * scale;
+      const deltaY = event.deltaY * scale;
+
+      if (Math.abs(deltaX) < 4 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      event.preventDefault();
+
+      const now = performance.now();
+      if (now - wheel.current.lastAt > TRACKPAD_IDLE_MS) wheel.current.deltaX = 0;
+      wheel.current.lastAt = now;
+      if (now < wheel.current.lockedUntil) return;
+
+      wheel.current.deltaX += deltaX;
+      if (Math.abs(wheel.current.deltaX) < SWIPE_THRESHOLD_PX) return;
+
+      goTo(indexRef.current + (wheel.current.deltaX > 0 ? 1 : -1));
+      wheel.current = { deltaX: 0, lastAt: now, lockedUntil: now + TRACKPAD_LOCK_MS };
+    };
+
+    stage.addEventListener("wheel", onWheel, { passive: false });
+    return () => stage.removeEventListener("wheel", onWheel);
+  }, [goTo]);
+
+  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
+    suppressClick.current = false;
+    swipe.current = {
+      active: true,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const gesture = swipe.current;
+    if (!gesture.active || gesture.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+    if (Math.abs(deltaX) > DRAG_INTENT_PX && Math.abs(deltaX) > Math.abs(deltaY)) {
+      suppressClick.current = true;
+      event.preventDefault();
+    }
+  };
+  const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    const gesture = swipe.current;
+    swipe.current = { ...gesture, active: false };
+    if (!gesture.active || gesture.pointerId !== event.pointerId) return;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    suppressClick.current = completeSwipe(
+      gesture.startX,
+      gesture.startY,
+      event.clientX,
+      event.clientY,
+    ) || suppressClick.current;
+  };
+
+  const onPointerCancel = (event: React.PointerEvent<HTMLDivElement>) => {
+    swipe.current = { ...swipe.current, active: false };
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
     }
   };
 
@@ -114,6 +207,9 @@ export function Bestsellers() {
       aria-roledescription="carousel"
       aria-label="Bestsellers"
       onKeyDown={onKeyDown}
+      data-active-product={active.slug}
+      data-active-product-index={index}
+      data-product-count={PRODUCTS.length}
     >
       <div className={styles.inner}>
         <div className={styles.copy}>
@@ -163,13 +259,28 @@ export function Bestsellers() {
             </span>
           </div>
 
-          <SiteLink href={active.route} className={styles.cta}>
+          <Link href={active.route} className={styles.cta} prefetch={false}>
             Explore {active.name}
             <Arrow />
-          </SiteLink>
+          </Link>
         </div>
 
-        <div className={styles.stage} aria-live="polite">
+        <div
+          ref={stageRef}
+          className={styles.stage}
+          aria-live="polite"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onDragStart={(event) => event.preventDefault()}
+          onClickCapture={(event) => {
+            if (!suppressClick.current) return;
+            suppressClick.current = false;
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onPointerCancel={onPointerCancel}
+        >
           {PRODUCTS.map((product, slide) => {
             // Signed distance from the centre, wrapped so the rail is a loop.
             const forward = (slide - index + PRODUCTS.length) % PRODUCTS.length;
@@ -227,8 +338,10 @@ export function Bestsellers() {
                       // five of them made the homepage an 8.8 MB page.
                       src={resizedImage(product.image) ?? product.image}
                       alt={`${product.name} base by THE BASE`}
-                      // Only the first slide is above the fold on load.
-                      loading={slide === 0 ? "eager" : "lazy"}
+                      // The coverflow exposes the active card and both
+                      // neighbours. Keep those three decoded so a click/swipe
+                      // never reveals an empty stage; distant cards stay lazy.
+                      loading={depth <= 1 ? "eager" : "lazy"}
                       decoding="async"
                       draggable={false}
                     />

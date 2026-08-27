@@ -63,7 +63,8 @@ export function whenLoadingGateOpens(run: () => void, timeoutMs = 6000): () => v
  *
  * It stays quiet for anyone the animation would be wrong for: no JavaScript
  * (the script never runs, and the screen's CSS keeps it hidden without the
- * attribute), a repeat view in the same tab, or reduced-motion.
+ * attribute) or reduced-motion. A full homepage document load always arms the
+ * curtain; client-side route changes do not rerun this head script.
  *
  * The path test is what keeps this in the shared layout without leaking: only
  * the homepage renders a loading screen, and arming the gate anywhere else
@@ -71,9 +72,6 @@ export function whenLoadingGateOpens(run: () => void, timeoutMs = 6000): () => v
  */
 export const LOADING_GATE_SCRIPT = `(function(){try{
 if(location.pathname!=='/')return;
-if(sessionStorage.getItem('${"tbb:seen"}')==='1')return;
 if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 document.documentElement.setAttribute('${GATE_ATTRIBUTE}','1');
 }catch(e){}})();`;
-
-export const LOADING_SEEN_KEY = "tbb:seen";

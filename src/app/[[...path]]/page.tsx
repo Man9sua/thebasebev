@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CatalogPage } from "@/components/catalog/CatalogPage";
+import { ContactPage } from "@/components/contact/ContactPage";
 import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
+import { GlossaryPage } from "@/components/resources/GlossaryPage";
+import { ToolsPage } from "@/components/resources/ToolsPage";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { ProductHero } from "@/components/product/ProductHero";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -11,11 +15,13 @@ import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
+import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 import {
   getSitePage,
   getStaticSiteParams,
   normalizeSitePath,
   SITE_ORIGIN,
+  withoutLegacyRecords,
 } from "@/lib/site-pages";
 
 type RouteProps = {
@@ -93,6 +99,52 @@ export default async function SiteRoute({ params }: RouteProps) {
   // themselves. Framing them in the shared shell would wrap a copy of the site
   // chrome around the site chrome, so they keep rendering exactly as exported.
   if (!page.usesSharedShell) return <LegacyDocument page={page} />;
+
+  if (route === "/catalog" || route === "/contacts") {
+    const structuredData = getLegacyStructuredData(page.file);
+    return (
+      <div className="tbb">
+        {structuredData.map((block, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: block }}
+          />
+        ))}
+        <SiteHeader />
+        {route === "/catalog" ? <CatalogPage /> : <ContactPage />}
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  if (route === "/resources/tools") {
+    const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261"]);
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <ToolsPage />
+        <LegacyPageShell page={runtimePage} runtimeOnly />
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  if (route === "/resources/glossary") {
+    const runtimePage = withoutLegacyRecords(page, [
+      "rec2427859911",
+      "rec2427859921",
+      "rec2427859931",
+    ]);
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <GlossaryPage />
+        <LegacyPageShell page={runtimePage} runtimeOnly />
+        <SiteFooter />
+      </div>
+    );
+  }
 
   // A product page is React down to the FAQ and the export from there on. The
   // eight blocks React replaces — the hero, the tab strip, the four figures,

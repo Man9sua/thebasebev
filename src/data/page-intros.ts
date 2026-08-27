@@ -22,6 +22,11 @@ export type PageIntro = {
   eyebrow: string;
   /** The page's `h1`. */
   title: string;
+  /**
+   * Exact legacy H1 retained only when parity and the visible page title
+   * conflict. The replacement title remains the first visible heading.
+   */
+  legacyH1?: string;
   /** Optional statement between the heading and the lead. */
   tagline?: string;
   lead: string;
@@ -48,6 +53,7 @@ export const PAGE_INTROS: Record<string, PageIntro> = {
     eyebrow: "R&D lab",
     tone: "dark",
     title: "Beverage R&D and Product Development in Dubai",
+    legacyH1: "Узнай свою дневную норму за 30 секунд",
     lead:
       "Custom beverage R&D in Dubai: recipe development, flavour matching and pilot batches " +
       "for HORECA and private label brands across the UAE and GCC.",

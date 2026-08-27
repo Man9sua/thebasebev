@@ -65,6 +65,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* Also blocking, and for the same reason: the first touch must be
             recorded before a click can navigate away from the landing page. */}
         <script dangerouslySetInnerHTML={{ __html: FIRST_TOUCH_SCRIPT }} />
+        {/* React streams the resolved static route into an S:* container and
+            swaps it over the route fallback with an inline script. If scripts
+            are disabled, reveal that already-rendered document directly. */}
+        <noscript>
+          <style>{`
+            [data-route-loading-fallback] { display: none !important; }
+            body > div[id^="S:"][hidden] { display: block !important; }
+          `}</style>
+        </noscript>
         <link rel="alternate" type="application/rss+xml" title="THE BASE" href="/rss.xml" />
       </head>
       <body className="t-body" suppressHydrationWarning>

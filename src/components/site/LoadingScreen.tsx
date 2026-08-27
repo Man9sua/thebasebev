@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { LOADING_SEEN_KEY, isLoadingGateOpen, openLoadingGate } from "./loading-gate";
+import { useEffect, useState } from "react";
+import { isLoadingGateOpen, openLoadingGate } from "./loading-gate";
 import styles from "./LoadingScreen.module.css";
 
 /**
@@ -12,27 +12,28 @@ import styles from "./LoadingScreen.module.css";
  * so the hero is uncovered from the top edge down and plays its own entrance
  * into the space as it appears.
  *
- * The count is driven by real signals — fonts, the window load event, the first
- * rail cards decoding — not a fake timer, because the point of holding the
- * first paint back is that the type and the pack shots have actually arrived by
+ * The count is driven by real signals — fonts, the window load event and the
+ * critical hero art decoding — not a fake timer, because the point of holding
+ * the first paint back is that the type and key visual have actually arrived by
  * the time anyone sees them. `MAX_MS` caps the whole thing regardless, so a
  * slow image can never strand a visitor behind a blank screen.
  *
  * It renders on the server too, but the CSS keeps it invisible unless the
- * inline gate script has armed it. So no-JS visitors, repeat views in the same
- * tab and reduced-motion all get the page directly, with no flash and nothing
- * to dismiss.
+ * inline gate script has armed it. So no-JS visitors and reduced-motion users
+ * get the page directly, with no flash and nothing to dismiss. Every full
+ * homepage document load is armed; client-side navigation does not execute the
+ * head script again and therefore does not create an extra curtain.
  */
 
-/** Long enough to read the count; a 200ms flash is worse than none. */
-const MIN_MS = 1200;
 /** Hard ceiling. Nothing may hold the page longer than this. */
 const MAX_MS = 2600;
-/** How many rail cards have to decode before we call the hero "arrived". */
+/** Maximum critical hero images to wait for. */
 const WATCHED_IMAGES = 3;
 
 const LIFT_MS = 520;
 const OPEN_MS = 1000;
+/** A brief readable hold for the completed 100% state before the number lifts. */
+const COMPLETE_FRAME_MS = 320;
 
 type Phase = "counting" | "lifting" | "opening";
 
@@ -46,14 +47,13 @@ export function LoadingScreen() {
   );
   const [phase, setPhase] = useState<Phase>("counting");
   const [value, setValue] = useState(0);
-  const timers = useRef<number[]>([]);
 
   useEffect(() => {
     if (!armed) return;
 
-    const started = performance.now();
     let frame = 0;
     let shown = 0;
+    const scheduled: number[] = [];
 
     // ---- real progress signals ----
     const signals = { fonts: false, load: false, art: false };
@@ -64,10 +64,15 @@ export function LoadingScreen() {
     if (document.fonts) document.fonts.ready.then(settle("fonts"), settle("fonts"));
     else settle("fonts")();
 
+    const markLoaded = settle("load");
     if (document.readyState === "complete") signals.load = true;
-    else window.addEventListener("load", settle("load"), { once: true });
+    else window.addEventListener("load", markLoaded, { once: true });
 
-    const art = [...document.querySelectorAll<HTMLImageElement>("[data-hero-tile] img")]
+    const art = [
+      ...document.querySelectorAll<HTMLImageElement>(
+        "[data-hero] img[fetchpriority='high'], [data-hero-tile] img",
+      ),
+    ]
       .slice(0, WATCHED_IMAGES)
       .map((image) =>
         image.complete
@@ -85,47 +90,40 @@ export function LoadingScreen() {
       finished = true;
       window.clearTimeout(deadMansSwitch);
       setValue(100);
-      setPhase("lifting");
-      timers.current.push(
+      scheduled.push(
         window.setTimeout(() => {
-          setPhase("opening");
-          // The hero starts arriving as the panel begins to move, so the two
-          // read as one gesture rather than a screen leaving and a page
-          // starting.
-          openLoadingGate();
-          try {
-            sessionStorage.setItem(LOADING_SEEN_KEY, "1");
-          } catch {
-            // Private-mode storage refusals are not worth failing over; the
-            // screen simply shows again on the next navigation.
-          }
-        }, LIFT_MS),
+          setPhase("lifting");
+          scheduled.push(
+            window.setTimeout(() => {
+              setPhase("opening");
+              // The hero starts arriving as the panel begins to move, so the
+              // two read as one gesture rather than a screen leaving and a
+              // page starting.
+              openLoadingGate();
+            },
+            LIFT_MS),
+          );
+        }, COMPLETE_FRAME_MS),
       );
     };
 
     const tick = () => {
-      const elapsed = performance.now() - started;
       const done = Object.values(signals).filter(Boolean).length;
 
       /**
-       * Two ceilings, and the count obeys whichever is lower.
-       *
-       * The signals stop it from claiming to be finished while the fonts and
-       * pack shots are still in flight; the clock stops it from sprinting to 99
-       * in 300ms on a warm cache and then sitting there, which is what makes a
-       * progress number feel fake. On a fast connection the two land together
-       * and the count reads as one even climb.
+       * The target advances only when a real readiness signal resolves. The
+       * easing is presentation, not a minimum wait: on a warm cache the count
+       * catches up immediately and exits, while a slow critical image holds
+       * only its own share of progress.
        */
-      const bySignal = 0.1 + 0.9 * (done / 3);
-      const byClock = elapsed / MIN_MS;
-      const target = Math.min(1, bySignal, byClock);
+      const target = 0.08 + 0.92 * (done / 3);
 
       // Ease towards the target rather than snapping to it, so a signal
       // resolving mid-count reads as the number catching up, not jumping.
-      shown += (target * 100 - shown) * 0.14;
+      shown += (target * 100 - shown) * 0.18;
       setValue(Math.min(99, Math.round(shown)));
 
-      if (elapsed >= MAX_MS || (target >= 1 && shown > 97)) {
+      if (target >= 1 && shown > 97) {
         finish();
         return;
       }
@@ -146,10 +144,10 @@ export function LoadingScreen() {
      */
     const deadMansSwitch = window.setTimeout(finish, MAX_MS + 400);
 
-    const scheduled = timers.current;
     return () => {
       cancelAnimationFrame(frame);
       window.clearTimeout(deadMansSwitch);
+      window.removeEventListener("load", markLoaded);
       for (const timer of scheduled) window.clearTimeout(timer);
     };
   }, [armed]);
@@ -170,7 +168,11 @@ export function LoadingScreen() {
       className={`${styles.screen} ${phase === "opening" ? styles.open : ""}`}
       // Purely a curtain: it never takes a click, so an impatient visitor
       // reaches the page underneath and automation is never blocked by it.
-      aria-hidden="true"
+      role="progressbar"
+      aria-label="Loading THE BASE"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={value}
       data-loading-screen
     >
       <div className={styles.mask}>

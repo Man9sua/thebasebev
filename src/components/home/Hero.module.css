@@ -26,12 +26,17 @@
      mask dissolves the edge itself, at every height. */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
   mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+  opacity: 1;
+  transform: none;
+  will-change: transform, opacity;
+}
+
+.motionArmed .media {
   opacity: 0;
   transform: scale(1.06);
   transition:
     opacity 1200ms var(--tbb-ease),
     transform 1600ms var(--tbb-ease);
-  will-change: transform, opacity;
 }
 
 .ready .media {
@@ -106,7 +111,7 @@
  * One word to a row, each in its own mask so it can rise on its own beat. A
  * grid rather than the reordered flex row this used to be: with the product
  * name gone from the middle, the three parts already read top to bottom in DOM
- * order — "Premium Beverage Bases", the string production ranks on and the one
+ * order — "Premium Cream Latte Bases", the production H1 and the one
  * the smoke test reads — so nothing needs moving. */
 .title {
   font-family: var(--tbb-font-display);
@@ -128,6 +133,10 @@
 
 .lineInner {
   display: block;
+  transform: none;
+}
+
+.motionArmed .lineInner {
   transform: translate3d(0, 108%, 0);
   transition: transform 1100ms var(--tbb-ease);
   transition-delay: var(--enter-delay, 0ms);
@@ -145,8 +154,7 @@
   color: var(--tbb-muted);
 }
 
-/* Two big rows now instead of one, so the type is a step smaller than the
-   single-word headline it replaces — otherwise "Beverage / Bases" runs past the
+/* Two large rows now instead of one, so Cream Latte and Bases stay inside the
    fold on a laptop. */
 .titleLead {
   font-size: clamp(2.9rem, min(8vw, 12vh), 7.5rem);
@@ -207,7 +215,7 @@
 
 /* ---- staged entrance ---- */
 
-.enter {
+.motionArmed .enter {
   opacity: 0;
   transform: translate3d(0, 16px, 0);
   transition:
@@ -249,9 +257,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .media,
-  .lineInner,
-  .enter {
+  .motionArmed .media,
+  .motionArmed .lineInner,
+  .motionArmed .enter {
     opacity: 1;
     transform: none;
     transition: none;

@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
       { source: "/raf-cofeee", destination: "/raf-coffee", statusCode: 301 },
       { source: "/raf-cofee", destination: "/raf-coffee", statusCode: 301 },
       { source: "/functional-wellness", destination: "/catalog", statusCode: 301 },
+      { source: "/cabinet", destination: "/", statusCode: 301 },
     ];
   },
 };

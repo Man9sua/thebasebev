@@ -1,8 +1,9 @@
 # Stripe Test Mode proof of concept
 
-Status: isolated test-only API implementation. It is not connected to the
-legacy Tilda cart, production order creation, Odoo, Telegram, Stripe Live, or
-the production domain.
+Status: staging Test Mode E2E verified on 2026-08-26. The endpoint is now the
+secure handoff for the native staging `/checkout` page; it remains isolated
+from the removed Tilda cart, production order creation, Odoo, Telegram, Stripe
+Live, and the production domain.
 
 ## Endpoints
 
@@ -14,6 +15,8 @@ the production domain.
 The checkout endpoint is guarded so it can run only on localhost or the exact
 THE BASE staging hostname. It rejects live or unrecognized secret-key prefixes.
 Success and cancel URLs are fixed server-side to the staging origin.
+The native checkout can supply a validated contact email; Stripe collects the
+billing address, a supported delivery country and payment authentication.
 
 Example request shape:
 
@@ -42,10 +45,18 @@ production decision; this POC is not production payment architecture.
 
 ## Webhook status
 
-`STRIPE_WEBHOOK_SECRET` must be created by a human for the staging endpoint in
-Stripe Test Mode. Until it is configured, the webhook returns a safe 503 and
-the application still builds. Signatures are verified against the exact raw
-request body.
+The staging Test Mode webhook endpoint is enabled for
+`checkout.session.completed`, and its signing secret is stored only in ignored
+local environment configuration and as a Cloudflare staging Worker secret.
+Signatures are verified against the exact raw request body. Unsigned and
+invalid-signature requests return 400; correctly signed Test events return 200.
+
+One server-priced AED 45.38 Checkout Session completed as paid in Test Mode.
+Its real `checkout.session.completed` event was resent through the official
+Stripe CLI and Cloudflare observed HTTP 200 on the exact staging URL. A second
+resend of the same event also returned HTTP 200 without business side effects.
+No full session, event, payment, or signing-secret identifiers are retained in
+project documentation.
 
 The proof of concept only acknowledges verified test events. It deliberately
 does not create an order or trigger any external integration. A bounded

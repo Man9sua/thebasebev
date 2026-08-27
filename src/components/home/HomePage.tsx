@@ -22,8 +22,8 @@ export function HomePage() {
 
   return (
     <div className="tbb">
-      {/* First in the tree: its inline script has to run before the header and
-          the hero are parsed, or there is a frame of page before the curtain. */}
+      {/* The server-rendered curtain is first so the head gate can cover the
+          initial frame before the shared header and hero are painted. */}
       <LoadingScreen />
 
       {structuredData.map((block, index) => (

@@ -1,6 +1,6 @@
 # Analytics audit
 
-Generated: 2026-08-24T12:46:25.253Z
+Generated: 2026-08-26T23:32:51.433Z
 
 ## Export inventory
 
@@ -28,7 +28,7 @@ No new analytics property or ID was created.
 
 ## Target verification
 
-- Target: `http://127.0.0.1:3000`
+- Target: `https://the-base-staging.mansua.workers.dev`
 - HTTP status: 200
 - Legacy tracker markers in server HTML: none
 

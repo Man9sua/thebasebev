@@ -34,6 +34,7 @@ type CatalogProductId = keyof typeof STRIPE_TEST_CATALOG;
 
 type ValidatedCheckout = Readonly<{
   currency: "aed";
+  email?: string;
   items: ReadonlyArray<
     Readonly<{
       productId: CatalogProductId;
@@ -104,6 +105,14 @@ function validateCheckoutPayload(input: unknown): CheckoutValidation {
     return { ok: false, code: "INVALID_ITEMS" };
   }
 
+  const email = typeof input.email === "string" ? input.email.trim() : undefined;
+  if (
+    email !== undefined &&
+    (email.length < 3 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+  ) {
+    return { ok: false, code: "INVALID_EMAIL" };
+  }
+
   const seenProductIds = new Set<string>();
   const items: ValidatedCheckout["items"][number][] = [];
 
@@ -147,7 +156,7 @@ function validateCheckoutPayload(input: unknown): CheckoutValidation {
     });
   }
 
-  return { ok: true, data: { currency: "aed", items } };
+  return { ok: true, data: { currency: "aed", email, items } };
 }
 
 function stripeSecretMode(secretKey: string | undefined) {
@@ -269,7 +278,12 @@ export async function handleStripeTestCheckout(
       },
     })),
     success_url: `${STRIPE_TEST_STAGING_ORIGIN}/thank-you-order?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${STRIPE_TEST_STAGING_ORIGIN}/catalog?stripe_checkout=cancelled`,
+    cancel_url: `${STRIPE_TEST_STAGING_ORIGIN}/checkout?stripe_checkout=cancelled`,
+    customer_email: validation.data.email,
+    billing_address_collection: "required",
+    shipping_address_collection: {
+      allowed_countries: ["AE", "SA", "KZ", "GB"],
+    },
     metadata: safeMetadata,
     payment_intent_data: { metadata: safeMetadata },
   };

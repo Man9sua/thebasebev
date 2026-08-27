@@ -19,8 +19,10 @@ const checks = [
   ["analytics isolation", ["run", "audit:analytics", "--", target]],
   ["HTTP smoke", ["run", "smoke:http", "--", target]],
   ["browser smoke", ["run", "smoke:browser", "--", target]],
+  ["homepage scene smoke", ["run", "smoke:home-scenes", "--", target]],
   ["commerce audit", ["run", "audit:commerce", "--", target]],
   ["crawler audit", ["run", "audit:crawlers", "--", target]],
+  ["Cloudflare source/target parity", ["run", "audit:cloudflare-parity"]],
   ["npm audit", ["audit", "--audit-level=high"]],
 ];
 

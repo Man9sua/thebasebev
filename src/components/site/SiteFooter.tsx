@@ -1,6 +1,48 @@
-import { SiteLink } from "@/components/site/SiteLink";
+import Link from "next/link";
 import { COMPANY, FOOTER_LINKS, SOCIAL_LINKS } from "@/lib/site-config";
 import styles from "./SiteFooter.module.css";
+
+function SocialIcon({ label }: { label: string }) {
+  if (label === "Instagram") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle
+          cx="17.5"
+          cy="6.7"
+          r="0.8"
+          fill="currentColor"
+          stroke="none"
+        />
+      </svg>
+    );
+  }
+
+  if (label === "LinkedIn") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6.1" cy="6.2" r="1.3" fill="currentColor" stroke="none" />
+        <path d="M5 9.2v9.5M10 18.7v-9.5m0 4.2c.7-2.8 6.8-3.8 6.8 1.6v3.7" />
+      </svg>
+    );
+  }
+
+  if (label === "YouTube") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 7.3c-.2-1-1-1.8-2-2-1.7-.5-10.3-.5-12 0-1 .2-1.8 1-2 2-.5 1.8-.5 7.6 0 9.4.2 1 1 1.8 2 2 1.7.5 10.3.5 12 0 1-.2 1.8-1 2-2 .5-1.8.5-7.6 0-9.4Z" />
+        <path d="m10 9 5 3-5 3Z" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14.5 20v-7h2.4l.4-2.8h-2.8V8.4c0-.8.2-1.4 1.4-1.4h1.5V4.5c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.1H9V13h2.5v7" />
+    </svg>
+  );
+}
 
 /**
  * Global footer.
@@ -42,27 +84,27 @@ export function SiteFooter() {
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Products</span>
             {FOOTER_LINKS.products.map((item) => (
-              <SiteLink key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
-              </SiteLink>
+              </Link>
             ))}
           </div>
 
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Company</span>
             {FOOTER_LINKS.company.map((item) => (
-              <SiteLink key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
-              </SiteLink>
+              </Link>
             ))}
           </div>
 
           <div className={styles.column}>
             <span className={`tbb-label ${styles.columnTitle}`}>Resources</span>
             {FOOTER_LINKS.resources.map((item) => (
-              <SiteLink key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
-              </SiteLink>
+              </Link>
             ))}
 
             <span
@@ -75,12 +117,14 @@ export function SiteFooter() {
               {SOCIAL_LINKS.map((item) => (
                 <a
                   key={item.href}
-                  className={styles.link}
+                  className={styles.socialLink}
                   href={item.href}
                   target="_blank"
                   rel="noreferrer noopener"
+                  aria-label={item.label}
                 >
-                  {item.label}
+                  <SocialIcon label={item.label} />
+                  <span className="tbb-visually-hidden">{item.label}</span>
                 </a>
               ))}
             </span>
@@ -93,9 +137,9 @@ export function SiteFooter() {
           </span>
           <span className={styles.legalLinks}>
             {FOOTER_LINKS.legal.map((item) => (
-              <SiteLink key={item.href} className={styles.link} href={item.href}>
+              <Link key={item.href} className={styles.link} href={item.href} prefetch={false}>
                 {item.label}
-              </SiteLink>
+              </Link>
             ))}
           </span>
         </div>

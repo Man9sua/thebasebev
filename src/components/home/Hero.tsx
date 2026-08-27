@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { SiteLink } from "@/components/site/SiteLink";
-import { whenLoadingGateOpens } from "@/components/site/loading-gate";
+import { isLoadingGateOpen, whenLoadingGateOpens } from "@/components/site/loading-gate";
 import styles from "./Hero.module.css";
 
 /**
@@ -41,6 +41,7 @@ function ArrowIcon() {
 }
 
 export function Hero() {
+  const [motionArmed, setMotionArmed] = useState(false);
   const [ready, setReady] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
@@ -52,11 +53,24 @@ export function Hero() {
    * having already played behind a curtain.
    *
    * With no loading screen — no JS gate, a repeat view, reduced motion — the
-   * gate is already open and this runs on the frame after mount.
-   * `whenLoadingGateOpens` carries its own timeout, so the hero is never left
-   * invisible waiting on a screen that failed to finish.
+   * stable server render remains visible and no entrance is armed.
+   * `whenLoadingGateOpens` carries its own timeout, so an armed hero is never
+   * left invisible waiting on a screen that failed to finish.
    */
-  useEffect(() => whenLoadingGateOpens(() => setReady(true)), []);
+  useEffect(() => {
+    // The server/default render is visible. We only arm hidden start styles
+    // when the inline script has already confirmed that a loading curtain is
+    // covering the page; if that gate never existed, there is nothing to wait
+    // for and no content can get stranded off-screen.
+    if (isLoadingGateOpen()) return;
+
+    const frame = requestAnimationFrame(() => setMotionArmed(true));
+    const stopWaiting = whenLoadingGateOpens(() => setReady(true));
+    return () => {
+      cancelAnimationFrame(frame);
+      stopWaiting();
+    };
+  }, []);
 
   /**
    * Scroll hand-off into Bestsellers: the copy lifts away while the photograph
@@ -113,23 +127,10 @@ export function Hero() {
   return (
     <section
       ref={heroRef}
-      className={`${styles.hero} ${ready ? styles.ready : ""}`}
+      className={`${styles.hero} ${motionArmed ? styles.motionArmed : ""} ${ready ? styles.ready : ""}`}
       data-hero
       aria-label="THE BASE"
     >
-      {/*
-        The entrance is armed from JavaScript, so without it every staged
-        element would sit at its `opacity: 0` start state forever. This is the
-        one case where the hero has to be legible with no script at all.
-      */}
-      <noscript>
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `.${styles.enter},.${styles.lineInner},.${styles.media}{opacity:1!important;transform:none!important}`,
-          }}
-        />
-      </noscript>
-
       <div ref={mediaRef} className={styles.media} aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className={styles.photo} src={BACKDROP} alt="" fetchPriority="high" />
@@ -150,7 +151,7 @@ export function Hero() {
           </span>
 
           {/* One word to a row, each rising out of its own mask. The DOM still
-              serves "Premium Beverage Bases" as one string, which is the
+              serves "Premium Cream Latte Bases" as one string, which is the
               wording production ranks on and the string the smoke test reads. */}
           <h1 className={styles.title}>
             <span className={styles.line}>
@@ -166,7 +167,7 @@ export function Hero() {
                 className={`${styles.lineInner} ${styles.titleLead}`}
                 style={{ ["--enter-delay" as string]: "400ms" }}
               >
-                Beverage
+                Cream Latte
               </span>
             </span>{" "}
             <span className={styles.line}>
@@ -188,14 +189,15 @@ export function Hero() {
             drink tastes the same in every outlet.
           </p>
 
-          <SiteLink
+          <Link
             href="/catalog"
             className={`${styles.cta} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "730ms" }}
+            prefetch={false}
           >
             Explore the catalog
             <ArrowIcon />
-          </SiteLink>
+          </Link>
 
           <p
             className={`${styles.badges} ${styles.enter}`}

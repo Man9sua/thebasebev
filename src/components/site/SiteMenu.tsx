@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { useRef } from "react";
-import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { COMPANY, FOOTER_LINKS, SITE_NAV } from "@/lib/site-config";
 import { RegionPicker } from "./RegionPicker";
@@ -44,9 +44,14 @@ export function SiteMenu({
               className={styles.item}
               style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
             >
-              <SiteLink href={item.href} className={styles.navLink} onClick={onClose}>
+              <Link
+                href={item.href}
+                className={styles.navLink}
+                onClick={onClose}
+                prefetch={false}
+              >
                 {item.label}
-              </SiteLink>
+              </Link>
             </span>
           ))}
         </nav>
@@ -62,10 +67,11 @@ export function SiteMenu({
           <ul className={styles.productList}>
             {PRODUCTS.map((product) => (
               <li key={product.slug}>
-                <SiteLink
+                <Link
                   href={product.route}
                   className={styles.productLink}
                   onClick={onClose}
+                  prefetch={false}
                 >
                   <span
                     className={styles.productSwatch}
@@ -73,7 +79,7 @@ export function SiteMenu({
                     aria-hidden="true"
                   />
                   {product.name}
-                </SiteLink>
+                </Link>
               </li>
             ))}
           </ul>
@@ -94,13 +100,15 @@ export function SiteMenu({
           </div>
 
           <div className={styles.metaGroup}>
-            <span className="tbb-label">Account</span>
-            <SiteLink className={styles.metaLink} href="/cabinet" onClick={onClose}>
-              Cabinet
-            </SiteLink>
-            <SiteLink className={styles.metaLink} href="/contacts" onClick={onClose}>
+            <span className="tbb-label">Contact</span>
+            <Link
+              className={styles.metaLink}
+              href="/contacts"
+              onClick={onClose}
+              prefetch={false}
+            >
               Contact us
-            </SiteLink>
+            </Link>
           </div>
 
           <div className={`${styles.metaGroup} ${styles.metaRegion}`}>
@@ -111,14 +119,15 @@ export function SiteMenu({
           <div className={styles.metaGroup}>
             <span className="tbb-label">Legal</span>
             {FOOTER_LINKS.legal.map((item) => (
-              <SiteLink
+              <Link
                 key={item.href}
                 className={styles.metaLink}
                 href={item.href}
                 onClick={onClose}
+                prefetch={false}
               >
                 {item.label}
-              </SiteLink>
+              </Link>
             ))}
           </div>
         </div>

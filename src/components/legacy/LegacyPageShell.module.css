@@ -14,9 +14,55 @@
    as a band of empty page between the two. */
 .opensPage {
   padding-top: var(--tbb-header-h);
+  font-family: var(--tbb-font-sans);
+  color: var(--tbb-ink);
+  background: var(--tbb-paper);
+
+  /* Tilda templates read these variables before falling back to Arial. Using
+     the shared tokens keeps legacy content inside the same type system as the
+     React homepage without rewriting its layout. */
+  --t-headline-font: var(--tbb-font-display);
+  --t-text-font: var(--tbb-font-sans);
 }
 
 /* Anchor links land below the bar rather than behind it. */
 .shell :global(.t-rec) {
   scroll-margin-top: var(--tbb-header-h);
+}
+
+/* Custom React content already accounts for the fixed public header. This
+   companion document carries only the retained cart, forms, cookie banner and
+   shared CTA, so adding the page offset a second time would create a gap. */
+.runtimeOnly {
+  padding-top: 0;
+}
+
+/* The exported animation runtime cannot own content visibility. Its observers
+   leave both product sections and an About form in waiting/started states on
+   the Next lifecycle. Keep the stable, fully revealed end state for every
+   shared-shell legacy page; the React homepage retains its own guarded motion
+   system. */
+main.shell.shell :global(.t-animate),
+main.shell.shell :global(.t-animate_wait),
+main.shell.shell :global(.t-animate_started) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  transition-delay: 0ms !important;
+}
+
+.product :global(h1),
+.product :global(h2),
+.product :global(h3),
+.product :global(.t-title),
+.product :global(.t-name) {
+  font-family: var(--tbb-font-display) !important;
+}
+
+.product :global(.t-text),
+.product :global(.t-descr),
+.product :global(button),
+.product :global(input),
+.product :global(textarea) {
+  font-family: var(--tbb-font-sans) !important;
 }

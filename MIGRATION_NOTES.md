@@ -58,7 +58,7 @@ These files stay available as references during parity work; they should not bec
 - Attribution capture: name, email, phone, country, form name, landing page, referrer, and all UTM fields, including `utm_source=chatgpt.com`.
 - Catalog/product registry, cart state, original quantity rules including the 10-item cap, order review, checkout/submission, and `/thank-you-order` flow.
 - Dynamic catalog/recipe feeds and their detail routes once a real data source is identified.
-- Tilda Members placeholders (`/cabinet`, `/knowledge-recipes`) as a separate future module, not part of the public marketing-site runtime.
+- `/cabinet` permanently redirects to `/`; the future Partner Hub remains a separate module. `/knowledge-recipes` stays as an audited non-indexable compatibility route.
 
 ### D. Preserve or isolate as external integrations
 
