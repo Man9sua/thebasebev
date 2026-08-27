@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
+import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
+import { FIRST_TOUCH_SCRIPT } from "@/components/forms/first-touch";
+import { LOADING_GATE_SCRIPT } from "@/components/site/loading-gate";
 import "./globals.css";
 
 /**
@@ -53,10 +56,29 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={exo2.variable} suppressHydrationWarning>
       <head>
         <base href="/" />
+        {/*
+          Blocking and first, because it has to decide whether the homepage's
+          loading screen is showing before a single pixel is painted. It is a
+          no-op on every other route — see LOADING_GATE_SCRIPT.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: LOADING_GATE_SCRIPT }} />
+        {/* Also blocking, and for the same reason: the first touch must be
+            recorded before a click can navigate away from the landing page. */}
+        <script dangerouslySetInnerHTML={{ __html: FIRST_TOUCH_SCRIPT }} />
+        {/* React streams the resolved static route into an S:* container and
+            swaps it over the route fallback with an inline script. If scripts
+            are disabled, reveal that already-rendered document directly. */}
+        <noscript>
+          <style>{`
+            [data-route-loading-fallback] { display: none !important; }
+            body > div[id^="S:"][hidden] { display: block !important; }
+          `}</style>
+        </noscript>
         <link rel="alternate" type="application/rss+xml" title="THE BASE" href="/rss.xml" />
       </head>
       <body className="t-body" suppressHydrationWarning>
         {children}
+        <LeadAttributionBridge />
         <Analytics />
       </body>
     </html>

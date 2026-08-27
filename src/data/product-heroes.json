@@ -1,0 +1,46 @@
+{
+  "chai-latte": {
+    "image": "/images/hero-chai-latte.webp",
+    "band": "#dec9be"
+  },
+  "chocolate": {
+    "image": "/images/hero-chocolate.webp",
+    "band": "#684941"
+  },
+  "cordial": {
+    "image": "/images/hero-cordial.webp",
+    "band": "#7590b0"
+  },
+  "cream-latte": {
+    "image": "/images/hero-cream-latte.webp",
+    "band": "#e2c5c1"
+  },
+  "frappe": {
+    "image": "/images/hero-frappe.webp",
+    "band": "#bc9068"
+  },
+  "iced-tea": {
+    "image": "/images/hero-iced-tea.webp",
+    "band": "#e1cb83"
+  },
+  "jam": {
+    "image": "/images/hero-jam.webp",
+    "band": "#6c1d23"
+  },
+  "matcha": {
+    "image": "/images/hero-matcha.webp",
+    "band": "#71b782"
+  },
+  "milkshake": {
+    "image": "/images/hero-milkshake.webp",
+    "band": "#e1b9c4"
+  },
+  "raf-coffee": {
+    "image": "/images/hero-raf-coffee.webp",
+    "band": "#e8ddc3"
+  },
+  "tea": {
+    "image": "/images/hero-tea.webp",
+    "band": "#161616"
+  }
+}

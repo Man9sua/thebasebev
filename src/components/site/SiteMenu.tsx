@@ -34,7 +34,7 @@ export function SiteMenu({
       tabIndex={-1}
       // Keeps the panel and everything in it out of the tab order and the
       // accessibility tree while it is clipped away.
-      {...(open ? {} : { inert: "" as unknown as boolean })}
+      inert={!open}
     >
       <div className={styles.body}>
         <nav className={styles.nav}>
@@ -44,7 +44,12 @@ export function SiteMenu({
               className={styles.item}
               style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
             >
-              <Link href={item.href} className={styles.navLink} onClick={onClose}>
+              <Link
+                href={item.href}
+                className={styles.navLink}
+                onClick={onClose}
+                prefetch={false}
+              >
                 {item.label}
               </Link>
             </span>
@@ -66,6 +71,7 @@ export function SiteMenu({
                   href={product.route}
                   className={styles.productLink}
                   onClick={onClose}
+                  prefetch={false}
                 >
                   <span
                     className={styles.productSwatch}
@@ -94,11 +100,13 @@ export function SiteMenu({
           </div>
 
           <div className={styles.metaGroup}>
-            <span className="tbb-label">Account</span>
-            <Link className={styles.metaLink} href="/cabinet" onClick={onClose}>
-              Cabinet
-            </Link>
-            <Link className={styles.metaLink} href="/contacts" onClick={onClose}>
+            <span className="tbb-label">Contact</span>
+            <Link
+              className={styles.metaLink}
+              href="/contacts"
+              onClick={onClose}
+              prefetch={false}
+            >
               Contact us
             </Link>
           </div>
@@ -116,6 +124,7 @@ export function SiteMenu({
                 className={styles.metaLink}
                 href={item.href}
                 onClick={onClose}
+                prefetch={false}
               >
                 {item.label}
               </Link>

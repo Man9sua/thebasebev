@@ -1,0 +1,526 @@
+/**
+ * Brand skin for the exported catalogue block.
+ *
+ * `/catalog` is still the Tilda export: sixteen `.catg-card`s in four category
+ * grids, four filters, and the add-to-cart wiring that drives the real cart.
+ * None of that is touched here — no markup, no script, no class names — because
+ * the cart is a live business function and `audit:commerce` asserts its identity
+ * and prices. What is touched is only how it looks.
+ *
+ * Composition follows the reference the client gave — Onyx Coffee Lab's shop —
+ * and the whole of that reference is one idea: the picture is the card. A big
+ * square photograph carrying its own colour, and under it type on the bare page
+ * with no panel, no border, no radius and no shadow anywhere. Everything the
+ * previous pass added to hold a mismatched cut-out together — the warm panel,
+ * the colour tab across the top, the outlined pill — was scaffolding for
+ * artwork that has since been replaced, and it is all gone.
+ *
+ * What made that possible is the artwork. `scripts/build-catalog-tiles.mjs`
+ * cuts one square tile per product out of the client's own key visuals, so
+ * every tile is the same crop of the same template: the pouch, the drink made
+ * from it, and the product's colour behind both. A white cut-out needed a
+ * surface to stand on; a photograph is its own surface.
+ *
+ * Under it, three lines in the reference's rhythm — name against price, the
+ * line of copy, then the category set small and letterspaced — and the cart
+ * action last, as a rule-under-text link rather than a button. Onyx has no cart
+ * control on the card at all; this catalogue does, because the cart is a live
+ * business function `audit:commerce` asserts, so it is kept and made quiet.
+ *
+ * None of the markup, the script or the class names are touched. `--tile` on
+ * each card is the product's own colour, written into the HTML by
+ * `replateCatalogCards` in `site-pages.ts` — see the note there.
+ */
+
+/* ---- outranking the export ----
+ *
+ * The block ships several rounds of hand-written Tilda CSS on top of its own
+ * stylesheet, and most of it is important and anchored on `#allrecords`: the
+ * card is forced to `display: flex`, the category line to `display: none`, the
+ * tiles to a colour each. An important declaration can only be answered by a
+ * more specific important declaration, so every rule below that touches one of
+ * those properties carries the full ancestor chain. Everything the export does
+ * not fight over is written normally. */
+
+.legacy-document .catg-wrap {
+  font-family: var(--tbb-font-sans);
+
+  /* The block's own variables, remapped so anything not restated below still
+     lands in the site palette rather than in its Roboto/grey one. */
+  --catg-bg: var(--tbb-paper);
+  --catg-eyebrow: var(--tbb-muted);
+  --catg-card-bg: var(--tbb-paper-warm);
+  --catg-card-border: var(--tbb-line);
+  --catg-name: var(--tbb-ink);
+  --catg-sub: var(--tbb-muted);
+  /* "Price on request" is the one place the mark colour earns its keep here. */
+  --catg-pending: var(--tbb-accent);
+
+  padding: calc(var(--tbb-header-h) + clamp(2rem, 5vw, 4rem)) var(--tbb-gutter)
+    var(--tbb-section);
+}
+
+/* The block sets `font` shorthand on several elements, which resets the family
+   it would otherwise inherit. */
+.legacy-document .catg-wrap h1,
+.legacy-document .catg-wrap h2,
+.legacy-document .catg-wrap h3,
+.legacy-document .catg-wrap button,
+.legacy-document .catg-wrap a {
+  font-family: var(--tbb-font-sans);
+}
+
+/* ---- one grid, not four ----
+ *
+ * The export splits the sixteen cards into four category groups, each its own
+ * grid — and hides the heading above each one, because the filter row already
+ * names the categories. So all four breaks read as holes: Coffee & Specialty
+ * has five products, which left Cream Latte alone on a row beside three empty
+ * columns. Dissolving the groups puts all sixteen on one wrapping line. */
+
+.legacy-document .catg-inner {
+  /* Three, as in the reference. Four fitted when the tile was a small cut-out
+     on a panel; a photograph wants the size, and at three the pouch on it is
+     about as large as it is on the product page. */
+  --catg-columns: 3;
+  --catg-gap: clamp(0.9rem, 1.6vw, 1.6rem);
+  /* Rows are pushed much further apart than columns: with no panel around the
+     card, the gap under the type is the only thing separating one product from
+     the picture of the next. */
+  --catg-row-gap: clamp(2.5rem, 4.5vw, 4rem);
+  /* The export's head CSS carries several passes over this element, some of
+     them important and some scoped to a record id that is not the one serving
+     this page, so what it ends up as depends on which pass wins. Stated
+     important here so the container is one wrapping line whatever they do. */
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  align-content: flex-start;
+  /* Columns only. The heading, the lede and the filter row are full-width items
+     of this same flex container and carry their own spacing, so a row gap here
+     would open the head as well; the cards space themselves instead. */
+  gap: 0 var(--catg-gap);
+  max-width: var(--tbb-max);
+}
+
+/* `:not(.is-hidden)` is what keeps the filters working: they hide a whole
+   category by putting `is-hidden` on its group, and the export's own
+   `.catg-group.is-hidden { display: none !important }` carries the same weight
+   as this rule would — so rather than depend on which stylesheet the browser
+   read last, this simply declines to match a group that is meant to be gone. */
+.legacy-document .catg-group:not(.is-hidden),
+.legacy-document .catg-grid {
+  display: contents !important;
+}
+
+.legacy-document .catg-inner::before,
+.legacy-document .catg-h1,
+.legacy-document .catg-lede,
+.legacy-document .catg-flt {
+  flex: 0 0 100%;
+}
+
+/* ---- page head ---- */
+
+.legacy-document .catg-inner::before {
+  color: var(--tbb-muted) !important;
+  font-family: var(--tbb-font-sans) !important;
+  letter-spacing: var(--tbb-tracking-label) !important;
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-h1 {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h2);
+  font-weight: 700;
+  line-height: var(--tbb-leading-tight);
+  letter-spacing: -0.02em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--tbb-ink) !important;
+  margin-bottom: clamp(0.75rem, 1.4vw, 1.1rem);
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-lede {
+  text-align: left;
+  max-width: 52ch;
+  font-size: var(--tbb-text-body);
+  color: var(--tbb-ink-soft) !important;
+  margin-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
+}
+
+/* The adjusted sources are full transparent canvases, so the old uniform 65%
+   box made the opaque product occupy barely half of the card. Alpha-bound
+   measurements put the ordinary canvases in one 88% system. */
+.legacy-document .catg-card .catg-img--adj {
+  --adj: 88%;
+  --vy: 48%;
+}
+
+/* Tea and Sugar Free already use nearly the full source canvas and only need a
+   modest increase to match the pouch cards. */
+.legacy-document .catg-card[href="/tea"] .catg-img--adj,
+.legacy-document .catg-card[href="/sugar-free"] .catg-img--adj {
+  --adj: 92%;
+  --vy: 50%;
+}
+
+/* Garnish is the measured exception: its meaningful pixels occupy only the
+   lower 55% of a tall transparent source. Enlarge/reposition the canvas while
+   keeping the product's opaque bounds inside the frame. */
+.legacy-document .catg-card[href="/garnish"] .catg-img--adj {
+  --adj: 112%;
+  --vy: 38%;
+}
+
+/* The Tilda record stays in the DOM as cart/product data, but its six loading
+   placeholders are not part of the visible catalogue. The export hid the
+   loaded grid and forgot the separate preloader container. */
+.legacy-document #rec2839951603 .js-store-grid-cont-preloader {
+  display: none !important;
+}
+
+/* ---- filters ---- */
+
+.legacy-document .catg-flt {
+  background: var(--tbb-paper-warm);
+  border-color: var(--tbb-line);
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-flt button {
+  color: var(--tbb-muted) !important;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-flt button:hover {
+  color: var(--tbb-ink) !important;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* The selected filter is the one solid ink surface in the block, which is how
+   the rest of the site marks a current state. */
+html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-flt button.on {
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark) !important;
+  box-shadow: none;
+}
+
+/* ---- the card ----
+ *
+ * `display: contents` on `.catg-text` promotes its children to items of the
+ * card's own grid, so the picture, the category, the name, the price, the copy
+ * and the button can be placed in any order the composition wants without a
+ * line of the markup moving. */
+
+.legacy-document .catg-card {
+  flex: 0 0 calc((100% - (var(--catg-columns) - 1) * var(--catg-gap)) / var(--catg-columns));
+  margin-bottom: var(--catg-row-gap);
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  /* Picture, name/price, copy, category, cart. `1fr` on the copy is what keeps
+     the last two lines on one baseline across a row when one description runs
+     to two lines and its neighbour runs to one. */
+  grid-template-rows: auto auto 1fr auto auto;
+  /* No panel: the tile is the card and the type stands on the page. */
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0;
+}
+
+.legacy-document .catg-text {
+  display: contents;
+}
+
+/* ---- the picture ----
+ *
+ * A square, edge to edge, carrying the product's own colour because the colour
+ * is in the photograph — see `scripts/build-catalog-tiles.mjs`. Square rather
+ * than the export's 0.95, because the tiles are cut square and a box of another
+ * shape would either letterbox them or crop them twice. */
+
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-img-wrap {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  aspect-ratio: 1 !important;
+  overflow: hidden !important;
+  transition: transform var(--tbb-dur) var(--tbb-ease) !important;
+}
+
+.legacy-document .catg-img-wrap {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: relative;
+  margin-bottom: clamp(0.9rem, 1.4vw, 1.25rem);
+}
+
+/* The export positions the picture absolutely and the `--adj` variant moves it
+   with `top`/`left`; both are reset to a plain full-bleed box. `cover`, not
+   `contain`: the tile is already the right crop, so any letterboxing here would
+   be a second frame around a picture that has one.
+   Full chain and important, because the export states
+   `html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap img
+   { object-fit: contain !important }` — an important declaration at a
+   specificity a short selector cannot answer. */
+html body
+  .legacy-document
+  #allrecords
+  .catg-wrap
+  .catg-group
+  .catg-grid
+  .catg-card
+  .catg-img-wrap
+  img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  padding: 0 !important;
+  /* Important, and it matters most of all here. The export carries a hand-tuned
+     scale per product, keyed on the card's href — `.catg-card[href="/frappe"]
+     .catg-img-wrap img { transform: scale(0.788) !important }` and several more
+     — written to drag sixteen mismatched renders towards each other. The tiles
+     are one crop of one template, so every one of those corrections is now a
+     distortion, and this is what switches them all off at once. */
+  transform: none !important;
+}
+
+/* ---- the words ---- */
+
+/* The category, last of the three lines and set the way the reference sets its
+   roast level — small, letterspaced, the quietest thing in the block. */
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-eyebrow {
+  display: block !important;
+  grid-column: 1 / -1;
+  grid-row: 4;
+  padding-top: 0.35rem;
+  font-family: var(--tbb-font-sans);
+  font-size: 0.625rem;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--tbb-muted) !important;
+}
+
+/* Not the display face and not bold. The reference sets its product names in
+   the body face, letterspaced and at reading weight, and that is what stops a
+   grid of sixteen names from shouting over the photographs. */
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-name {
+  grid-column: 1;
+  grid-row: 2;
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(0.875rem, 1.05vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  color: var(--tbb-ink) !important;
+  text-align: left;
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-price {
+  grid-column: 2;
+  grid-row: 2;
+  padding-left: 0.75rem;
+  justify-self: end;
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(0.875rem, 1.05vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  color: var(--tbb-ink) !important;
+  white-space: nowrap;
+}
+
+/* The export paints the name and the button through `-webkit-text-fill-color`,
+   which wins over `color` at paint time however specific the colour rule is.
+   Following `currentColor` hands the paint back to the colour above — which is
+   what lets the button invert on hover. */
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-name,
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add {
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-sub {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  padding-top: 0.4rem;
+  font-family: var(--tbb-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-transform: none;
+  text-align: left;
+  color: var(--tbb-muted) !important;
+}
+
+/* The add button is injected by the export's cart script, which gives it its
+   own pill. The reference has no cart control on the card at all, and a pill
+   under every tile would put sixteen buttons on the page and take it straight
+   back to looking like a store template — so this is a link with a rule under
+   it, sitting in the type block as its last line.
+
+   It stays a real, always-visible control rather than something that appears on
+   hover: it is the cart, `audit:commerce` clicks it, and a hover-only
+   affordance does not exist on a phone. */
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  justify-self: start;
+  /* Important on everything the export also states important: it ships
+     `width: 100% !important` and `border-radius: 999px !important` for this
+     element at a specificity a short selector cannot answer, which is why the
+     card kept its pill however this rule was written. */
+  display: inline-flex !important;
+  align-items: center;
+  width: auto !important;
+  height: auto !important;
+  margin: 0.85rem 0 0 !important;
+  padding: 0 0 0.25rem !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--tbb-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--tbb-ink) !important;
+  font-family: var(--tbb-font-sans) !important;
+  font-size: 0.625rem !important;
+  font-weight: 500 !important;
+  letter-spacing: var(--tbb-tracking-label) !important;
+  text-transform: uppercase !important;
+  cursor: pointer;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card:hover .tbc-add,
+html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add:hover {
+  border-bottom-color: var(--tbb-ink) !important;
+  background: transparent !important;
+  color: var(--tbb-ink) !important;
+}
+
+/* Three products are price on request, and for those the export hides the
+   button's own "Add to cart" with `font-size: 0` and prints "Request price"
+   from an `::after` in its place. Restating the font size above, at a
+   specificity that beat it, brought the hidden label back — so the card read
+   "ADD TO CART REQUEST PRICE". Matched on the card having no price rather than
+   on the three hrefs the export names, so a product that gains or loses a price
+   does not need a second edit here. */
+html body
+  .legacy-document
+  #allrecords
+  .catg-wrap
+  .catg-group
+  .catg-grid
+  .catg-card:has(.catg-price--req)
+  .tbc-add {
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+@media (max-width: 1100px) {
+  .legacy-document .catg-inner {
+    --catg-columns: 2;
+  }
+}
+
+@media (max-width: 760px) {
+  /* Two cards to a 390px phone leaves about 160px of card, and the name and the
+     price were sharing that row: "MILKSHAKE" is one word and cannot wrap, so it
+     ran straight under "45.38 AED", and "ICED TEA" lost its second word
+     entirely. Below this width they take a row each — the price under the name,
+     left-aligned with it, because there is no longer an opposite edge for it to
+     sit against. */
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card {
+    grid-template-columns: minmax(0, 1fr);
+    /* Picture, name, price, copy, category, cart. */
+    grid-template-rows: auto auto auto 1fr auto auto;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-price {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: start;
+    padding: 0.15rem 0 0;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-sub {
+    grid-row: 4;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-eyebrow {
+    grid-row: 5;
+  }
+
+  html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .tbc-add {
+    grid-row: 6;
+  }
+}
+
+/* ---- cursor tilt ----
+ *
+ * The transform itself is written inline by `LegacyCatalogTilt` — see the note
+ * there for why it cannot come from a stylesheet. Everything around it lives
+ * here, so a page without JS is simply the catalogue as exported.
+ *
+ * What turns is the photograph, and what it leans into is a small push of the
+ * picture towards the reader — no shadow and no lift, because the tile has no
+ * edge of its own to cast one from.
+ *
+ * `perspective` belongs on the card, the tile's parent: set on the tile itself
+ * it would have no effect, and set on the grid every tile would share one
+ * vanishing point and the row would swing as a single plane.
+ */
+
+.legacy-document .catg-grid .catg-card {
+  perspective: 900px;
+}
+
+.legacy-document .catg-grid .catg-card .catg-img-wrap {
+  transform-style: preserve-3d;
+}
+
+/* Immediate on the way in: a pack that eases towards the cursor lags behind it
+   and reads as broken. The ease above is what plays on the way back out. */
+.legacy-document .catg-grid .catg-card[data-tilting] .catg-img-wrap {
+  transition: transform 80ms linear !important;
+}
+
+/* Full chain, because the rule that flattens the export's per-product scale
+   hacks is written at that chain too, and would otherwise flatten this with
+   them. */
+html body
+  .legacy-document
+  #allrecords
+  .catg-wrap
+  .catg-group
+  .catg-grid
+  .catg-card[data-tilting]
+  .catg-img-wrap
+  img {
+  transform: translateZ(26px) scale(1.03) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legacy-document .catg-grid .catg-card .catg-img-wrap,
+  html body
+    .legacy-document
+    #allrecords
+    .catg-wrap
+    .catg-group
+    .catg-grid
+    .catg-card[data-tilting]
+    .catg-img-wrap
+    img {
+    transform: none !important;
+    transition: none;
+  }
+}

@@ -1,59 +1,86 @@
-# Behavior audit
+# Public UI behavior audit
 
-## Responsive reference
+Audit baseline: `https://the-base-staging.mansua.workers.dev`, with production
+Tilda used read-only where the exported runtime was ambiguous. Browser evidence
+is kept in the ignored `.audit-artifacts/` directory.
 
-Reference captures are stored in `docs/design-references/` for 1440×1000, 768×1000, and 390×844. The local export and production screenshots have identical SHA-256 hashes at all three viewports.
+## Shared shell
 
-## Header
+- Every public marketing route renders the same React `SiteHeader` and
+  `SiteFooter`. The two standalone Tilda header/footer aliases intentionally do
+  not use the shell and are technical parity routes, not public navigation.
+- Header interactions are keyboard-accessible: menu/search/region close on
+  Escape, focus returns to the opener, and body scroll is restored on cleanup.
+- The public account icon, Account group, Cabinet link, and `/cabinet` prefetch
+  are migration leftovers. No commerce or lead flow depends on that page.
+- `/cabinet` is an empty, non-indexable Tilda Members shell; the public behavior
+  after this pass is a permanent redirect to `/`.
 
-- The header remains fixed above page content.
-- Desktop Catalog opens a four-column mega-menu on hover; the chevron rotates 180 degrees over 0.2 s.
-- Desktop link underlines animate with a 0.22 s transform.
-- Country selector is click-driven, contains a search input, and closes on outside click/Escape.
-- Search is click-driven, filters known site destinations, accepts Enter, and closes on Escape.
-- Burger navigation appears below 1100 px and is click-driven.
-- Cart badge is synchronized periodically with the Tilda cart state.
-- The source contains a 22 s ticker-marquee implementation, but the final production CSS hides the ticker. It must not become visible during parity migration.
+## Homepage
 
-## Homepage hero
-
-- Five slides.
-- Autoplay delay: 6500 ms.
-- Controls: previous/next arrows, dot buttons, keyboard, and touch swipe.
-- Autoplay pauses on mouseenter, focusin, or pointerdown.
-- Slide content uses opacity/visibility and transforms; text lifts from 14 px with a 0.6 s transition.
-- Reduced-motion removes slide, lift, arrow, and dot transitions.
-- Desktop is a two-column image/text composition. Tablet and mobile stack image above centered copy.
+- The current design is a product-first React homepage, not the old five-slide
+  Tilda carousel. The first viewport contains the Cream Latte copy and a
+  continuously moving product-card rail; the remaining sections use stacked
+  scroll transitions.
+- The canonical content order is Hero, Bestsellers, manufacturing collage,
+  Reading, About and Footer. Mobile restacks that content; desktop retains the
+  wide three-column Bestsellers, twelve-column collage, two-column About and
+  four-column footer instead of squeezing them into the mobile measure.
+- The browser owns vertical document scrolling. Bestsellers has one active
+  product state shared by arrows, dots, autoplay, keyboard, bidirectional
+  pointer/touch swipes and dominant horizontal trackpad gestures.
+- The 0-100 intro is shown once per tab. Progress is derived from fonts,
+  document readiness and the first three hero images. It has a safety timeout,
+  but no artificial minimum delay.
+- Reduced-motion and no-JS users receive visible content immediately.
+- Scroll reveal is progressive enhancement: server/default content is visible;
+  JS may arm and animate an element only when the browser supports it.
 
 ## Catalog
 
-- Four click filters plus All; filtered groups/cards are shown/hidden without navigation.
-- Card images scale on hover; cards reveal as they enter the viewport.
-- Product-card copy is patched from a local 16-item description registry.
-- Add to cart uses a 13-item product/price registry and the Tilda cart/product-popup flow.
-- Existing custom code caps total cart quantity at 10 and disables plus/buy controls at the limit.
+- Four local category filters plus All render the 16 checked-in product cards.
+- The friendly `/catalog` route no longer mounts Tilda Store, its async filter
+  shim, or `.catg-*` hooks. This prevents legacy observers from mutating the
+  native grid after a client navigation from an exported product page.
+- Existing audited prices remain server-seeded. The native cart persists only
+  product slug and quantity, and caps quantity at ten.
+- Product framing is based on the meaningful opaque area of each source asset,
+  not one uniform scale applied to every transparent canvas.
+- An empty cart link returns to `/catalog`; a populated cart opens the dedicated
+  `/checkout` review page. Stripe Test Mode remains the server-side payment POC.
 
-## Product and content pages
+## Product pages
 
-- Product pages use Tilda slider/zoom/swipe modules for imagery.
-- Repeated section reveal behavior uses `IntersectionObserver` where supported and immediate visibility when reduced motion is requested.
-- Popup CTAs (`#partner`, `#custom`, `#sample`, `#brand-flavor`) open full responsive zero-block forms.
-- Escape closes custom popups/menus.
+- Sixteen friendly product routes share the exported Tilda product template.
+- The local Tilda animation runtime currently leaves 35-40 meaningful hero,
+  pricing and benefit elements at `opacity: 0`, even after a complete scroll.
+  Production Tilda removes/completes those animation classes and shows them.
+- Content must be visible without Tilda animation JavaScript. Animation may
+  enhance entrance motion but must never decide whether the content exists.
+- Tilda slider/zoom and lead popups remain intact. The removed global Tilda cart
+  is replaced by the native catalogue/cart/checkout boundary.
 
-## Forms
+## Contacts
 
-- Required fields: full name, email, phone, and consent for the four shared lead variants.
-- Existing UI displays required/email/name/phone/minlength errors.
-- Successful shared lead submission redirects to `/thank-you-form`.
-- The Next.js integration must additionally attach landing page, referrer, form name, country, and all five UTM values, including `utm_source=chatgpt.com`.
+- `/contacts` is native React rather than an exported absolute-positioned form.
+- Its semantic controls remain usable without Tilda form JavaScript and submit
+  through the shared `LeadAttributionBridge` to `/api/leads`.
+- The form keeps the audited field contract and first-touch attribution while
+  the page body follows the homepage's editorial light/dark visual system.
 
-## Cookies and analytics
+## Loading and images
 
-- Cookie banner appears before consent and exposes Accept All and Cookie Settings.
-- Analytics/advertising categories are configurable.
-- The original includes two GTM containers plus direct GA4. Migration must avoid accidental duplicate initialization while preserving existing destinations.
+- The route `loading.tsx` skeleton is reserved for client route transitions.
+- Initial homepage reveal waits only for above-the-fold resources.
+- Legacy documents promote only their first few local `data-original` images to
+  eager server-rendered `src` values. Remaining images stay lazy.
+- Images retain intrinsic layout or an explicit aspect ratio to avoid CLS.
 
-## Known original behavior to preserve during parity
+## Responsive and accessibility contract
 
-- At 390 px the hero and cookie banner currently clip some content at the inline end. This is an original production behavior visible in the reference screenshot and is not silently redesigned during clone-stage.
-- Static canonical URLs omit the trailing slash, while a shared client script currently changes them after load. The server-rendered Next metadata will follow the canonical values from the static export; the conflict is recorded in migration notes.
+- Audit widths: 320, 360, 375, 390, 414, 430, 768, 1024, 1280, 1366, 1440,
+  1536 and 1920 px.
+- No document-level horizontal overflow, clipped public footer wordmark,
+  overlapping header controls or animation-dependent invisible content.
+- Focus indicators, semantic links/buttons, alt text, loader status, keyboard
+  navigation and `prefers-reduced-motion` remain available.

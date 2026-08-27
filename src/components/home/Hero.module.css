@@ -1,370 +1,267 @@
 .hero {
   position: relative;
-  width: 100%;
-  min-height: 100vh;
   min-height: 100svh;
-  display: flex;
+  display: grid;
   align-items: center;
-  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 4vw, 3rem)) 0
-    clamp(2rem, 5vw, 4rem);
   overflow: clip;
-  /* Paper, not the product colour: the field below is a soft wash so the pack
-     shot stays the brightest, most saturated thing in the frame. */
   background: var(--tbb-paper);
-  isolation: isolate;
 }
 
-/* A soft paper vignette, not a colour halo: the pack shots are pre-composed
-   cards that carry their own background, so tinting the space around them only
-   muddies the edge. This just lifts the centre of the frame. */
-.wash {
+/* ---- photograph ---- */
+
+/* The photograph is a tall frame, not a wide one — it is a crop of a key visual
+   rather than a landscape plate — so a full-bleed box would have to overscan it
+   by half again to fill the viewport, and all that survived was one glass at
+   1.4x.
+ *
+   Anchored to the right instead, in a box cut to roughly the crop's own 0.88,
+   so on a laptop the shot plays back whole: both glasses, the lockup, no
+   overscan. The veil then carries it into the paper the copy sits on, so there
+   is no vertical edge where the box begins. */
+.media {
   position: absolute;
-  z-index: -1;
-  left: 50%;
-  top: 50%;
-  width: min(96vw, 78rem);
-  aspect-ratio: 1 / 0.7;
-  transform: translate3d(-50%, -50%, 0);
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    var(--tbb-paper-warm) 0%,
-    rgba(247, 241, 232, 0) 100%
-  );
-  opacity: 0.9;
+  inset: 0 0 0 47%;
+  /* The box has a left edge and the veil is angled, so at the foot of the frame
+     the gradient runs out before the edge does and leaves a vertical line. The
+     mask dissolves the edge itself, at every height. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+  opacity: 1;
+  transform: none;
+  will-change: transform, opacity;
 }
+
+.motionArmed .media {
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 1200ms var(--tbb-ease),
+    transform 1600ms var(--tbb-ease);
+}
+
+.ready .media {
+  opacity: 1;
+  transform: none;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* On a frame wider than the crop there is height to give up, and the lockup
+     sits in the top eighth of it — so what goes is the foot of the picture. */
+  object-position: 50% 22%;
+}
+
+/* Fades the photograph out from the left so the copy sits on paper rather than
+   on glassware. Angled rather than straight so the boundary is never a vertical
+   line the eye can find. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 1) 40%,
+    rgba(255, 255, 255, 0.84) 50%,
+    rgba(255, 255, 255, 0.26) 65%,
+    rgba(255, 255, 255, 0) 78%
+  );
+  pointer-events: none;
+}
+
+/* ---- copy ---- */
 
 .inner {
   position: relative;
+  z-index: 1;
   width: 100%;
   max-width: var(--tbb-max);
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
-  display: grid;
-  /* Equal outer columns so the product sits on the true centre of the frame. */
-  grid-template-columns: 1fr minmax(0, clamp(19rem, 44vw, 46rem)) 1fr;
-  align-items: center;
-  gap: clamp(1rem, 2.5vw, 3rem);
+  padding: calc(var(--tbb-header-h) + clamp(2rem, 6vh, 5rem)) var(--tbb-gutter)
+    clamp(3rem, 8vh, 6rem);
+  will-change: transform, opacity;
 }
 
-/* ---- left: editorial copy ---- */
+/* Grid with a row gap, not margins on the children.
 
+   `design-tokens.css` carries `.tbb h1, .tbb p { margin: 0 }`, and at (0,1,1)
+   that outranks any single class here — every `margin-top` set on the headline,
+   the description or the badges was being dropped on the floor, which is what
+   closed the gaps up. A gap belongs to the container, so nothing can reset it. */
 .copy {
-  max-width: 26ch;
+  /* Ends before the photograph's box begins, so the copy sits on paper the
+     whole way across rather than running under the masked edge. */
+  max-width: min(46ch, 45%);
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(1.4rem, 3.4vh, 2.25rem);
 }
 
-.category {
-  display: block;
-  margin-bottom: clamp(0.9rem, 2vw, 1.4rem);
+.tagline {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
 }
 
+/* ---- headline ----
+ *
+ * One word to a row, each in its own mask so it can rise on its own beat. A
+ * grid rather than the reordered flex row this used to be: with the product
+ * name gone from the middle, the three parts already read top to bottom in DOM
+ * order — "Premium Cream Latte Bases", the production H1 and the one
+ * the smoke test reads — so nothing needs moving. */
 .title {
   font-family: var(--tbb-font-display);
-  font-size: clamp(2.5rem, 5vw, 5rem);
-  line-height: 0.94;
-  letter-spacing: -0.025em;
-  font-weight: 700;
   text-transform: uppercase;
-  margin: 0;
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(0.2rem, 0.8vw, 0.6rem);
 }
 
-.titleProduct {
+/* The mask each part rises out of. The padding/margin pair gives descenders
+   room inside it; without it the clip shaves the type at rest, not only
+   mid-reveal. */
+.line {
   display: block;
-  color: var(--product-accent, var(--tbb-accent));
-  transition: color var(--tbb-dur-slow) var(--tbb-ease-inout);
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.lineInner {
+  display: block;
+  transform: none;
+}
+
+.motionArmed .lineInner {
+  transform: translate3d(0, 108%, 0);
+  transition: transform 1100ms var(--tbb-ease);
+  transition-delay: var(--enter-delay, 0ms);
+}
+
+.ready .lineInner {
+  transform: none;
+}
+
+.titleAffix {
+  font-size: clamp(0.75rem, 1.05vw, 1rem);
+  font-weight: 400;
+  letter-spacing: 0.4em;
+  line-height: 1.4;
+  color: var(--tbb-muted);
+}
+
+/* Two large rows now instead of one, so Cream Latte and Bases stay inside the
+   fold on a laptop. */
+.titleLead {
+  font-size: clamp(2.9rem, min(8vw, 12vh), 7.5rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  color: var(--tbb-ink);
 }
 
 .description {
-  margin-top: clamp(1rem, 2vw, 1.5rem);
   color: var(--tbb-ink-soft);
-  max-width: 30ch;
+  font-size: clamp(1rem, 1.25vw, 1.1875rem);
+  max-width: 42ch;
 }
 
 .cta {
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1rem 1.75rem;
+  padding: 1.05rem 1.9rem;
+  border-radius: 999px;
   background: var(--tbb-ink);
-  color: var(--tbb-paper);
+  color: var(--tbb-on-dark);
   text-decoration: none;
   font-size: var(--tbb-text-label);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
-  border-radius: 999px;
+  font-weight: 500;
   transition:
-    transform var(--tbb-dur-fast) var(--tbb-ease),
-    background var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.cta:hover {
-  transform: translate3d(0, -2px, 0);
-  background: var(--tbb-ink-soft);
+    gap var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .cta svg {
   width: 14px;
   height: 14px;
-  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+  flex: none;
 }
 
-.cta:hover svg {
-  transform: translate3d(4px, 0, 0);
+.cta:hover {
+  gap: 1.25rem;
+  transform: translate3d(0, -2px, 0);
 }
 
-/* ---- centre: the product ---- */
-
-.stage {
-  grid-column: 2;
-  position: relative;
-  aspect-ratio: 1 / 0.95;
-  display: grid;
-  place-items: center;
-}
-
-.slide {
-  grid-area: 1 / 1;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  opacity: 0;
-  transform: scale(0.96);
-  transition:
-    opacity var(--tbb-dur-slow) var(--tbb-ease),
-    transform var(--tbb-dur-slow) var(--tbb-ease);
-  pointer-events: none;
-}
-
-.slideActive {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-}
-
-.shot {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 4px;
-  /* Two shadows: a long cast one for weight, a tight one so the card's edge
-     reads as deliberate against paper rather than as a crop. */
-  filter:
-    drop-shadow(0 52px 72px rgba(26, 19, 17, 0.24))
-    drop-shadow(0 4px 14px rgba(26, 19, 17, 0.13));
-}
-
-/* ---- right: metadata ---- */
-
-.meta {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: clamp(1.25rem, 3vw, 2.25rem);
-  text-align: right;
-}
-
-.price {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.25rem, 1.9vw, 1.75rem);
-  font-weight: 600;
-  line-height: 1;
-}
-
-.metaBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.badges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-/* Product switcher — numbered, quiet, no dots-and-arrows carousel furniture. */
-.switcher {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  align-items: flex-end;
-}
-
-.step {
-  appearance: none;
-  border: 0;
-  background: none;
-  padding: 0.2rem 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  color: var(--tbb-muted);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  font-variant-numeric: tabular-nums;
-  transition: color var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.stepLine {
-  display: block;
-  width: 1.5rem;
-  height: 1px;
-  background: currentColor;
-  transform-origin: left center;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.step:hover {
-  color: var(--tbb-ink);
-}
-
-.stepActive {
-  color: var(--tbb-ink);
-}
-
-.stepActive .stepLine {
-  transform: scaleX(2);
-  background: var(--product-accent, var(--tbb-accent));
-}
-
-.step:focus-visible {
+.cta:focus-visible {
   outline: 2px solid var(--tbb-ink);
   outline-offset: 3px;
 }
 
-/* ---- entrance ----
-   Staged: wash, then product, then copy, then CTA. Every step is
-   opacity+transform only, and each element is laid out in its final position,
-   so nothing reflows and there is no CLS. */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  /* Split, so a wrapped row does not sit tight against the one above it. */
+  column-gap: clamp(0.9rem, 2vw, 1.75rem);
+  row-gap: 0.6rem;
+  color: var(--tbb-muted);
+}
 
-.enter {
+/* ---- staged entrance ---- */
+
+.motionArmed .enter {
   opacity: 0;
-  transform: translate3d(0, 30px, 0);
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity 900ms var(--tbb-ease),
+    transform 900ms var(--tbb-ease);
+  transition-delay: var(--enter-delay, 0ms);
 }
 
 .ready .enter {
   opacity: 1;
   transform: none;
-  transition:
-    opacity 1100ms var(--tbb-ease) var(--enter-delay, 0ms),
-    transform 1100ms var(--tbb-ease) var(--enter-delay, 0ms);
 }
 
-.enterProduct {
-  opacity: 0;
-  transform: scale(0.94) translate3d(0, 30px, 0);
-}
-
-.ready .enterProduct {
-  opacity: 1;
-  transform: scale(1) translate3d(0, 0, 0);
-  transition:
-    opacity 1400ms var(--tbb-ease) 120ms,
-    transform 1400ms var(--tbb-ease) 120ms;
-}
-
-.wash {
-  opacity: 0;
-}
-
-.ready .wash {
-  opacity: 0.9;
-  transition: opacity 1200ms var(--tbb-ease);
-}
-
-@media (max-width: 1023px) {
-  /* Rebuilt, not squeezed: product first and still dominant, copy under it,
-     metadata folded into a single row. */
-  .hero {
-    align-items: flex-start;
+@media (max-width: 899px) {
+  /* No room for a side-by-side split: the photograph takes the whole frame, the
+     veil covers all of it lightly, and the copy runs the full width over it. */
+  .media {
+    inset: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
-  .inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.25rem, 4vw, 2rem);
-    justify-items: center;
-    text-align: center;
+  .veil {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.86) 45%,
+      rgba(255, 255, 255, 0.74) 100%
+    );
   }
 
-  .stage {
-    grid-column: 1;
-    grid-row: 1;
-    width: min(100%, 26rem);
-    /* Keeps the pack shot the largest thing on a small screen. */
-    aspect-ratio: 1 / 0.9;
+  .photo {
+    object-position: center;
   }
 
   .copy {
-    grid-column: 1;
-    grid-row: 2;
-    max-width: 34ch;
-  }
-
-  .description {
     max-width: none;
-  }
-
-  .meta {
-    grid-column: 1;
-    grid-row: 3;
-    justify-self: center;
-    align-items: center;
-    text-align: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: clamp(1rem, 4vw, 2rem);
-  }
-
-  .switcher {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .badges {
-    flex-direction: row;
-    gap: 1rem;
-  }
-
-  .wash {
-    width: 118vw;
-    top: 34%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .enter,
-  .enterProduct,
-  .wash {
+  .motionArmed .media,
+  .motionArmed .lineInner,
+  .motionArmed .enter {
     opacity: 1;
     transform: none;
+    transition: none;
   }
-
-  .ready .wash {
-    opacity: 0.9;
-  }
-}
-
-/* Copy swap when the hero product changes — the same small drop the
-   Bestsellers copy uses, so both sections speak one motion language. */
-.swap {
-  transition:
-    opacity var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.swapOut {
-  opacity: 0;
-  transform: translate3d(0, 14px, 0);
-}
-
-.titleProduct {
-  transition:
-    opacity 260ms var(--tbb-ease),
-    color var(--tbb-dur-slow) var(--tbb-ease-inout);
 }

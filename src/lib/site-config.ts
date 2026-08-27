@@ -23,21 +23,26 @@ export const BRAND_VIDEO = {
  * Display-only for now — see RegionPicker. The shape matches the future
  * locale/currency model in PROJECT_CONTEXT.md so wiring it up later is a data
  * change rather than a rewrite.
+ *
+ * No `flag` field, deliberately. Emoji flags are regional-indicator pairs and
+ * Windows ships no glyphs for them, so every browser there falls back to
+ * drawing the two letters — which is the country code the picker already
+ * prints beside it. The result was "AE AE" for every Windows visitor. The code
+ * on its own renders the same everywhere.
  */
 export type Region = {
   short: string;
   label: string;
   name: string;
-  flag: string;
   currency: string;
 };
 
 export const REGIONS: Region[] = [
-  { short: "AE", label: "UAE (EN)", name: "United Arab Emirates", flag: "🇦🇪", currency: "AED" },
-  { short: "SA", label: "KSA (EN)", name: "Saudi Arabia", flag: "🇸🇦", currency: "SAR" },
-  { short: "KZ", label: "KZ (RU)", name: "Kazakhstan", flag: "🇰🇿", currency: "KZT" },
-  { short: "RU", label: "RU (RU)", name: "Russia", flag: "🇷🇺", currency: "RUB" },
-  { short: "UK", label: "UK (EN)", name: "United Kingdom", flag: "🇬🇧", currency: "GBP" },
+  { short: "AE", label: "UAE (EN)", name: "United Arab Emirates", currency: "AED" },
+  { short: "SA", label: "KSA (EN)", name: "Saudi Arabia", currency: "SAR" },
+  { short: "KZ", label: "KZ (RU)", name: "Kazakhstan", currency: "KZT" },
+  { short: "RU", label: "RU (RU)", name: "Russia", currency: "RUB" },
+  { short: "UK", label: "UK (EN)", name: "United Kingdom", currency: "GBP" },
 ];
 
 export const SITE_NAV = [
@@ -46,7 +51,7 @@ export const SITE_NAV = [
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
   { label: "Resources", href: "/resources" },
-  { label: "About", href: "/about-us" },
+  { label: "About", href: "/#about" },
   { label: "Contacts", href: "/contacts" },
 ] as const;
 
@@ -76,14 +81,21 @@ export const FOOTER_LINKS = {
 } as const;
 
 /** Taken from the existing site — every value appears in the Tilda export. */
+/**
+ * `phoneAlt` used to carry +971 58 932 7887. It is retired: the export still
+ * contains it in 37 files, and the site ships a `fixPhone` script that rewrites
+ * every occurrence — links, text nodes and WhatsApp numbers — to the number
+ * below on page load. Publishing it from the shared footer meant the React shell
+ * was the one place still advertising a number the business rewrites away, and
+ * `fixPhone` duly corrected it after hydration, which is what broke hydration on
+ * every parity page. One number, and it is this one.
+ */
 export const COMPANY = {
   legalName: "The Base Beverage LLC",
   city: "Dubai",
   country: "United Arab Emirates",
   phone: "+971 50 989 0429",
   phoneHref: "tel:+971509890429",
-  phoneAlt: "+971 58 932 7887",
-  phoneAltHref: "tel:+971589327887",
   email: "info@thebasebev.com",
   emailHref: "mailto:info@thebasebev.com",
 } as const;

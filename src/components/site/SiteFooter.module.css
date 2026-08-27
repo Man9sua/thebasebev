@@ -5,7 +5,6 @@
   padding: var(--tbb-section) 0 0;
   overflow: clip;
 }
-
 .inner {
   width: 100%;
   max-width: var(--tbb-max);
@@ -27,7 +26,10 @@
 .statement {
   font-family: var(--tbb-font-display);
   font-size: var(--tbb-text-h3);
-  line-height: 1.25;
+  /* Important for the same reason as `.wordmark` below — Tilda's stylesheets
+     force 1.7 on every `p` of a parity page, which opened this block up by
+     60px there and nowhere else. */
+  line-height: 1.25 !important;
   font-weight: 400;
   margin-top: clamp(0.75rem, 2vw, 1.25rem);
   color: var(--tbb-paper);
@@ -70,7 +72,39 @@
 .social {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
+  gap: 0.55rem;
+}
+
+.socialLink {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  transition:
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.socialLink svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.socialLink:hover,
+.socialLink:focus-visible {
+  color: var(--tbb-ink);
+  background: var(--tbb-on-dark);
+  transform: translateY(-2px);
 }
 
 .legal {
@@ -124,6 +158,19 @@
   letter-spacing: -0.05em;
   text-align: center;
   white-space: nowrap;
+  /*
+   * Restated here rather than only inherited from the wrap.
+   *
+   * The wrap sets `line-height: 0.78` and every redesigned page inherited it,
+   * but a parity page also loads Tilda's stylesheets, and those carry
+   * `html body p { line-height: 1.7 !important }` — which beats inheritance
+   * however tight the wrap is, and beats a plain declaration here however
+   * specific. At `40cqw` that turned a 437px block into a 952px one, and the
+   * extra 500px of empty black under the word was the gap showing on every
+   * legacy page and on none of the React ones. Hence the `!important`: it is
+   * answering one.
+   */
+  line-height: 0.78 !important;
   color: transparent;
   -webkit-text-stroke: 0;
   background: linear-gradient(

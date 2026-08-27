@@ -184,6 +184,7 @@ export type LegacyMappableLead = LeadAttributionFields & {
  */
 export function toTildaLeadPayload(
   lead: LegacyMappableLead,
+  context?: { requestId?: string; receivedAt?: string },
 ): Record<string, string> {
   const fields = legacyFieldNames(lead.formType);
   const payload: Record<string, string> = {};
@@ -198,7 +199,6 @@ export function toTildaLeadPayload(
   put(fields.name, lead.name);
   put(fields.email, lead.email);
   put(fields.phone, lead.phone);
-  put(fields.message, lead.message);
   put("company", lead.company);
   put("country", lead.country);
 
@@ -222,6 +222,34 @@ export function toTildaLeadPayload(
   }
 
   put("client_timestamp", lead.clientTimestamp);
+  put("request_id", context?.requestId);
+  put("server_timestamp", context?.receivedAt);
+
+  // The current Odoo automation has no first-class fields for the complete
+  // attribution contract. Keep the flat Tilda keys for compatible adapters and
+  // also append a deterministic block to the existing message/description
+  // channel so Odoo cannot silently discard first touch or the request id.
+  const attributionLines = [
+    "--- THE BASE ATTRIBUTION ---",
+    `request_id: ${context?.requestId ?? "not-provided"}`,
+    `server_timestamp: ${context?.receivedAt ?? "not-provided"}`,
+    `client_timestamp: ${lead.clientTimestamp}`,
+    `form_name: ${lead.formName}`,
+    `form_type: ${lead.formType}`,
+    `landing_page: ${lead.landingPage}`,
+    `submission_page: ${lead.submissionPage}`,
+    `referrer: ${lead.referrer || "direct"}`,
+    `country: ${lead.country || "not-provided"}`,
+    `utm_source: ${lead.utm_source || "not-provided"}`,
+    `utm_medium: ${lead.utm_medium || "not-provided"}`,
+    `utm_campaign: ${lead.utm_campaign || "not-provided"}`,
+    `utm_content: ${lead.utm_content || "not-provided"}`,
+    `utm_term: ${lead.utm_term || "not-provided"}`,
+  ];
+  put(
+    fields.message,
+    [lead.message?.trim(), attributionLines.join("\n")].filter(Boolean).join("\n\n"),
+  );
 
   if (lead.order !== undefined && lead.order !== null) {
     payload.order_json = JSON.stringify(lead.order);

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
+const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
 const reportPath = process.argv[3] ?? "ROUTE_INDEXABILITY_AUDIT.md";
 const siteSource = fs.readFileSync("src/lib/site-pages.ts", "utf8");
 const nextConfig = fs.readFileSync("next.config.ts", "utf8");
@@ -57,6 +57,15 @@ const controlledRoutes = [
     })),
   ),
   {
+    route: "/checkout",
+    type: "technical checkout page",
+    expectedStatus: 200,
+    indexable: false,
+    canonical: true,
+    sitemap: false,
+    reason: "Cart review and Stripe Test handoff; intentionally excluded from search",
+  },
+  {
     route: "/_not-found",
     type: "technical 404 boundary",
     expectedStatus: 404,
@@ -93,6 +102,24 @@ const controlledRoutes = [
     reason: "POST-only lead delivery boundary; GET is intentionally rejected",
   },
   {
+    route: "/api/checkout/stripe",
+    type: "dynamic API",
+    expectedStatus: 405,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "POST-only Stripe Test checkout boundary; GET is intentionally rejected",
+  },
+  {
+    route: "/api/stripe/webhook",
+    type: "dynamic API",
+    expectedStatus: 405,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "POST-only Stripe Test webhook boundary; GET is intentionally rejected",
+  },
+  {
     route: "/api/health",
     type: "dynamic API",
     expectedStatus: 200,
@@ -103,23 +130,43 @@ const controlledRoutes = [
   },
 ];
 
-if (friendlyRoutes.length !== 39 || pageFiles.length !== 41 || productSlugs.length !== 13) {
+if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.length !== 13) {
   throw new Error(
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
   );
 }
-if (controlledRoutes.length !== 111) {
-  throw new Error(`Expected 111 controlled routes, received ${controlledRoutes.length}.`);
+if (controlledRoutes.length !== 113) {
+  throw new Error(`Expected 113 controlled routes, received ${controlledRoutes.length}.`);
 }
-if (redirectRows.length !== 5) throw new Error(`Expected five redirects, received ${redirectRows.length}.`);
+if (redirectRows.length !== 6) throw new Error(`Expected six redirects, received ${redirectRows.length}.`);
 
-const sitemapResponse = await fetch(`${targetOrigin}/sitemap.xml`);
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function fetchWithPropagationRetry(url, options, expectedStatus) {
+  const maximumAttempts = expectedStatus === 200 ? 8 : 3;
+  for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
+    const response = await fetch(url, options);
+    const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
+    if (!retryable || attempt === maximumAttempts) return response;
+    await response.arrayBuffer();
+    await delay(Math.min(attempt * 2_000, 10_000));
+  }
+  throw new Error(`Unreachable retry state for ${url}`);
+}
+
+const sitemapResponse = await fetchWithPropagationRetry(
+  `${targetOrigin}/sitemap.xml`,
+  { headers: { "User-Agent": "THE-BASE-Route-Indexability-Audit/1.0" } },
+  200,
+);
 const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== 29) {
-  throw new Error(`Expected 29 target sitemap URLs, received ${sitemapPaths.size}.`);
+  throw new Error(
+    `Expected HTTP 200 with 29 target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,
+  );
 }
 
 function meta(html, name) {
@@ -140,10 +187,14 @@ function getCanonical(html) {
 }
 
 async function inspect(entry) {
-  const response = await fetch(`${targetOrigin}${entry.route}`, {
-    redirect: "manual",
-    headers: { "User-Agent": "THE-BASE-Route-Indexability-Audit/1.0" },
-  });
+  const response = await fetchWithPropagationRetry(
+    `${targetOrigin}${entry.route}`,
+    {
+      redirect: "manual",
+      headers: { "User-Agent": "THE-BASE-Route-Indexability-Audit/1.0" },
+    },
+    entry.expectedStatus,
+  );
   const body = await response.text();
   const robots = meta(body, "robots");
   const canonicalValue = getCanonical(body);
@@ -166,9 +217,10 @@ async function worker() {
   while (cursor < controlledRoutes.length) {
     const index = cursor++;
     audited[index] = await inspect(controlledRoutes[index]);
+    await delay(250);
   }
 }
-await Promise.all(Array.from({ length: 8 }, () => worker()));
+await Promise.all(Array.from({ length: 1 }, () => worker()));
 
 const redirectAudits = [];
 for (const redirect of redirectRows) {
@@ -204,12 +256,12 @@ Target: \`${targetOrigin}\`
 - Friendly routes: ${friendlyRoutes.length} (${friendlyRoutes.filter((route) => route.indexable).length} canonical/indexable + ${friendlyRoutes.filter((route) => !route.indexable).length} excluded).
 - Direct \`pageNNNN.html\` compatibility aliases: ${pageFiles.length}.
 - Tilda product compatibility aliases: ${productSlugs.length * 2}.
-- Technical/metadata/API routes: 5.
+- Technical/metadata/API routes: 8.
 - **Controlled route total: ${controlledRoutes.length}.**
 - Permanent redirects (not generated pages): ${redirectRows.length}.
 - Sitemap members: ${sitemapPaths.size}.
 
-The 111 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The ${controlledRoutes.length} controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
 
 ## Generated and technical routes
 

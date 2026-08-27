@@ -120,13 +120,8 @@ export function RegionPicker({ compact = false }: { compact?: boolean }) {
         aria-expanded={open}
         aria-label={`Region: ${region.name}. Change region`}
       >
-        <span className={styles.flag} aria-hidden="true">
-          {region.flag}
-        </span>
+        <span className={styles.code}>{region.short}</span>
         <span className={styles.label}>{region.label}</span>
-        <span className={styles.short} aria-hidden="true">
-          {region.short}
-        </span>
       </button>
 
       <div className={styles.panel} role="listbox" aria-label="Regions" hidden={!open}>
@@ -152,9 +147,7 @@ export function RegionPicker({ compact = false }: { compact?: boolean }) {
                 aria-selected={item.short === region.short}
               >
                 <span className={styles.optionName}>
-                  <span className={styles.flag} aria-hidden="true">
-                    {item.flag}
-                  </span>
+                  <span className={styles.code}>{item.short}</span>
                   {item.name}
                 </span>
                 <span className={styles.currency}>{item.currency}</span>

@@ -1,4 +1,3 @@
-import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
 import type { SitePage } from "@/lib/site-pages";
 
 type LegacyDocumentProps = {
@@ -19,7 +18,6 @@ export function LegacyDocument({ page }: LegacyDocumentProps) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
       />
-      <LeadAttributionBridge />
     </>
   );
 }

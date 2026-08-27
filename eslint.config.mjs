@@ -8,6 +8,8 @@ export default defineConfig([
   globalIgnores([
     ".next/**",
     ".open-next/**",
+    ".wrangler/**",
+    ".audit-artifacts/**",
     "node_modules/**",
     "public/**",
     "tilda_export/**",

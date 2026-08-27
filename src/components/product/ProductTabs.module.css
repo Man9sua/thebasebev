@@ -1,0 +1,72 @@
+/**
+ * Sticky section bar.
+ *
+ * It sits below the site header rather than at the very top, because that
+ * header hides on scroll-down and comes back on scroll-up — parked at 0 the two
+ * would trade places over each other.
+ */
+
+.bar {
+  position: sticky;
+  top: var(--tbb-header-h);
+  z-index: 20;
+  background: color-mix(in srgb, var(--tbb-paper) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+.list {
+  display: flex;
+  gap: clamp(1.25rem, 3vw, 3rem);
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+  list-style: none;
+  /* The row is short enough to fit on a phone only just; when it does not, it
+     scrolls sideways rather than wrapping into a second sticky line. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: block;
+  position: relative;
+  padding: clamp(0.9rem, 1.6vw, 1.15rem) 0;
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--tbb-muted);
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+/* The underline is drawn as a scaled pseudo-element rather than a border, so
+   moving between tabs stays on the compositor and never reflows the bar. */
+.tab::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 2px;
+  background: var(--tile, var(--tbb-accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.tab:hover {
+  color: var(--tbb-ink);
+}
+
+.tab[aria-current="true"] {
+  color: var(--tbb-ink);
+}
+
+.tab[aria-current="true"]::after {
+  transform: scaleX(1);
+}

@@ -1,29 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { HERO_SLUGS, getProducts, resolveProductColors } from "@/data/products";
+import { useEffect, useRef, useState } from "react";
+import { isLoadingGateOpen, whenLoadingGateOpens } from "@/components/site/loading-gate";
 import styles from "./Hero.module.css";
 
 /**
- * Product-first hero.
+ * Photographic hero.
  *
- * The first viewport is the product: copy left, pack shot dead centre and
- * dominant, metadata right. The background is paper with one soft wash of the
- * product's own colour behind it, so the field works for the product instead of
- * competing with it.
+ * One photograph running the height of the frame from its right edge, with the
+ * copy held on the left against a veil that fades the image out under the type.
  *
- * Colours come from `resolveProductColors`, never from this component, so the
- * real palette can land in the data without touching any UI.
+ * The copy is about the company, not about one product. A hero built on a
+ * single base put the homepage's biggest words behind a product the visitor had
+ * no reason to have picked yet, and spent the only above-the-fold link on that
+ * one page. It now says what THE BASE makes and sends the visitor to the range.
  *
- * This section carries the page `h1`. Production's homepage h1 is
- * "Premium / Cream Latte / Bases", so the first hero product is cream-latte and
- * that shape survives the redesign.
+ * The h1 still reads "Premium … Bases" — that is the wording production ranks
+ * on, so it is SEO surface rather than a design choice, and it must be
+ * identical in the server HTML and must not rewrite itself afterwards. Only the
+ * middle of the phrase changed, from a product name to what the company sells.
  */
 
-const PRODUCTS = getProducts(HERO_SLUGS);
-/** Slow enough to read a product. This is a hero, not a slideshow. */
-const ADVANCE_MS = 9000;
+/**
+ * Decorative, so it carries an empty alt and its wrapper is hidden from the
+ * accessibility tree. Everything the section means is in the copy beside it.
+ *
+ * Cropped from the brand key visual: the original has the slogan and the
+ * lockup printed into it, and the page already carries both — the header logo
+ * and the h1 — so the crop keeps the photograph and drops the artwork.
+ */
+const BACKDROP = "/images/hero-taste-begins.jpg";
 
 function ArrowIcon() {
   return (
@@ -34,70 +41,50 @@ function ArrowIcon() {
 }
 
 export function Hero() {
-  const [index, setIndex] = useState(0);
+  const [motionArmed, setMotionArmed] = useState(false);
   const [ready, setReady] = useState(false);
-  const [swapping, setSwapping] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
-  const indexRef = useRef(0);
-  const swapTimer = useRef<number | undefined>(undefined);
+  const mediaRef = useRef<HTMLDivElement>(null);
 
-  const active = PRODUCTS[index];
-  const colors = resolveProductColors(active);
-
+  /**
+   * Arm the entrance when the loading screen starts pulling away, so the
+   * headline rises into a frame the visitor is actually watching instead of
+   * having already played behind a curtain.
+   *
+   * With no loading screen — no JS gate, a repeat view, reduced motion — the
+   * stable server render remains visible and no entrance is armed.
+   * `whenLoadingGateOpens` carries its own timeout, so an armed hero is never
+   * left invisible waiting on a screen that failed to finish.
+   */
   useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
+    // The server/default render is visible. We only arm hidden start styles
+    // when the inline script has already confirmed that a loading curtain is
+    // covering the page; if that gate never existed, there is nothing to wait
+    // for and no content can get stranded off-screen.
+    if (isLoadingGateOpen()) return;
 
-  // Arm the entrance on the frame after mount, so the transition actually runs
-  // instead of being collapsed into the first paint.
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setReady(true));
-    // rAF is not serviced in a background tab; this makes sure the hero is
-    // never left invisible on a page the user has not looked at yet.
-    const fallback = window.setTimeout(() => setReady(true), 400);
+    const frame = requestAnimationFrame(() => setMotionArmed(true));
+    const stopWaiting = whenLoadingGateOpens(() => setReady(true));
     return () => {
-      cancelAnimationFrame(raf);
-      window.clearTimeout(fallback);
+      cancelAnimationFrame(frame);
+      stopWaiting();
     };
   }, []);
 
-  const goTo = useCallback((next: number) => {
-    setIndex((current) => {
-      const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
-      if (resolved === current) return current;
-      // Drop the copy out first so the text never visibly rewrites itself.
-      setSwapping(true);
-      window.clearTimeout(swapTimer.current);
-      swapTimer.current = window.setTimeout(() => setSwapping(false), 280);
-      return resolved;
-    });
-  }, []);
-
-  useEffect(() => () => window.clearTimeout(swapTimer.current), []);
-
-  useEffect(() => {
-    if (PRODUCTS.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const timer = window.setInterval(() => goTo(indexRef.current + 1), ADVANCE_MS);
-    return () => window.clearInterval(timer);
-  }, [goTo]);
-
   /**
-   * Scroll hand-off into Bestsellers: the product eases back and the copy lifts
-   * away as the hero leaves, so the two read as one movement rather than one
-   * block ending and another starting.
+   * Scroll hand-off into Bestsellers: the copy lifts away while the photograph
+   * drifts the other way, so the two sections read as one movement rather than
+   * one block ending and another starting.
    *
    * Written straight to `style` in a rAF loop that only runs while the hero is
    * on screen — no state, no render per frame.
    */
   useEffect(() => {
     const hero = heroRef.current;
-    const stage = stageRef.current;
     const copy = copyRef.current;
-    if (!hero || !stage || !copy) return;
+    const media = mediaRef.current;
+    if (!hero || !copy || !media) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let frame = 0;
@@ -109,11 +96,11 @@ export function Hero() {
       const progress = Math.min(1, Math.max(0, -rect.top / window.innerHeight));
       const eased = progress * progress;
 
-      stage.style.transform = `scale(${(1 - eased * 0.12).toFixed(4)}) translate3d(0, ${(
-        eased * -40
+      copy.style.transform = `translate3d(0, ${(eased * -70).toFixed(1)}px, 0)`;
+      copy.style.opacity = Math.max(0, 1 - progress * 1.6).toFixed(3);
+      media.style.transform = `scale(${(1 + eased * 0.06).toFixed(4)}) translate3d(0, ${(
+        eased * 34
       ).toFixed(1)}px, 0)`;
-      copy.style.transform = `translate3d(0, ${(eased * -60).toFixed(1)}px, 0)`;
-      copy.style.opacity = (Math.max(0, 1 - progress * 1.6)).toFixed(3);
 
       frame = visible ? requestAnimationFrame(tick) : 0;
     };
@@ -131,134 +118,96 @@ export function Hero() {
     return () => {
       observer.disconnect();
       if (frame) cancelAnimationFrame(frame);
-      stage.style.transform = "";
       copy.style.transform = "";
       copy.style.opacity = "";
+      media.style.transform = "";
     };
   }, []);
 
   return (
     <section
       ref={heroRef}
-      className={`${styles.hero} ${ready ? styles.ready : ""}`}
+      className={`${styles.hero} ${motionArmed ? styles.motionArmed : ""} ${ready ? styles.ready : ""}`}
       data-hero
-      aria-label="THE BASE products"
-      style={{
-        ["--product-bg" as string]: colors.background,
-        ["--product-accent" as string]: colors.accent,
-      }}
+      aria-label="THE BASE"
     >
-      <span className={styles.wash} aria-hidden="true" />
+      <div ref={mediaRef} className={styles.media} aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={styles.photo} src={BACKDROP} alt="" fetchPriority="high" />
+      </div>
 
-      <div className={styles.inner}>
-        <div ref={copyRef} className={styles.copy}>
+      {/* Fades the photograph out from the left so the copy sits on paper
+          rather than on glassware. Without it the headline fights the image at
+          every scroll position and loses somewhere. */}
+      <span className={styles.veil} aria-hidden="true" />
+
+      <div ref={copyRef} className={styles.inner}>
+        <div className={styles.copy}>
           <span
-            className={`tbb-label ${styles.category} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "420ms" }}
+            className={`tbb-label ${styles.tagline} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "180ms" }}
           >
-            Dry beverage base
+            Where taste begins
           </span>
 
-          <h1
-            className={`${styles.title} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "500ms" }}
-          >
-            Premium{" "}
-            <span
-              className={styles.titleProduct}
-              style={{ opacity: swapping ? 0 : 1 }}
-            >
-              {active.name}
+          {/* One word to a row, each rising out of its own mask. The DOM still
+              serves "Premium Cream Latte Bases" as one string, which is the
+              wording production ranks on and the string the smoke test reads. */}
+          <h1 className={styles.title}>
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleAffix}`}
+                style={{ ["--enter-delay" as string]: "300ms" }}
+              >
+                Premium
+              </span>
             </span>{" "}
-            Bases
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleLead}`}
+                style={{ ["--enter-delay" as string]: "400ms" }}
+              >
+                Cream Latte
+              </span>
+            </span>{" "}
+            <span className={styles.line}>
+              <span
+                className={`${styles.lineInner} ${styles.titleLead}`}
+                style={{ ["--enter-delay" as string]: "520ms" }}
+              >
+                Bases
+              </span>
+            </span>
           </h1>
 
           <p
-            className={`${styles.description} ${styles.enter} ${styles.swap} ${
-              swapping ? styles.swapOut : ""
-            }`}
-            style={{ ["--enter-delay" as string]: "600ms" }}
+            className={`${styles.description} ${styles.enter}`}
+            style={{ ["--enter-delay" as string]: "640ms" }}
           >
-            {active.description}
+            THE BASE makes dry beverage bases in Dubai — over 600 flavours for
+            cafés, franchises and private label, built from a single scoop so the
+            drink tastes the same in every outlet.
           </p>
 
           <Link
-            href={active.route}
+            href="/catalog"
             className={`${styles.cta} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "760ms" }}
+            style={{ ["--enter-delay" as string]: "730ms" }}
+            prefetch={false}
           >
-            Shop {active.name}
+            Explore the catalog
             <ArrowIcon />
           </Link>
-        </div>
 
-        <div
-          ref={stageRef}
-          className={`${styles.stage} ${styles.enterProduct}`}
-          aria-live="polite"
-        >
-          {PRODUCTS.map((product, slide) => (
-            <div
-              key={product.slug}
-              className={`${styles.slide} ${slide === index ? styles.slideActive : ""}`}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${slide + 1} of ${PRODUCTS.length}: ${product.name}`}
-              aria-hidden={slide !== index}
-            >
-              {product.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  className={styles.shot}
-                  src={product.image}
-                  alt={`${product.name} base by THE BASE`}
-                  // The first product is the largest thing above the fold.
-                  loading={slide === 0 ? "eager" : "lazy"}
-                  fetchPriority={slide === 0 ? "high" : undefined}
-                  decoding="async"
-                  draggable={false}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.meta}>
-          <div
-            className={`${styles.metaBlock} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "660ms" }}
-          >
-            <span className="tbb-label">From</span>
-            <span className={styles.price}>{active.price ?? "On request"}</span>
-          </div>
-
-          <div
+          <p
             className={`${styles.badges} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "700ms" }}
+            style={{ ["--enter-delay" as string]: "820ms" }}
           >
+            <span className="tbb-label">600+ flavours</span>
             <span className="tbb-label">Halal certified</span>
             <span className="tbb-label">HACCP audited</span>
             <span className="tbb-label">Made in Dubai</span>
-          </div>
-
-          <div
-            className={`${styles.switcher} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "820ms" }}
-          >
-            {PRODUCTS.map((product, slide) => (
-              <button
-                key={product.slug}
-                type="button"
-                className={`${styles.step} ${slide === index ? styles.stepActive : ""}`}
-                onClick={() => goTo(slide)}
-                aria-label={`Show ${product.name}`}
-                aria-current={slide === index}
-              >
-                {String(slide + 1).padStart(2, "0")}
-                <span className={styles.stepLine} aria-hidden="true" />
-              </button>
-            ))}
-          </div>
+          </p>
         </div>
       </div>
     </section>

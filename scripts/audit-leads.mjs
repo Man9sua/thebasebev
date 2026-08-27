@@ -283,6 +283,15 @@ check(
 check("attribution: landing_page preserved", typeof delivered.landing_page === "string");
 check("attribution: current_page preserved", typeof delivered.current_page === "string");
 check(
+  "attribution: request id preserved upstream",
+  delivered.request_id === okBody.requestId,
+);
+check(
+  "attribution: server timestamp preserved upstream",
+  typeof delivered.server_timestamp === "string" &&
+    !Number.isNaN(Date.parse(delivered.server_timestamp)),
+);
+check(
   "attribution: referrer preserved",
   delivered.referrer === "https://chatgpt.com/",
 );
@@ -295,6 +304,12 @@ check("mapping: name sent as legacy `name`", delivered.name === "TEST NEXT MIGRA
 check("mapping: email sent as legacy `email`", delivered.email === "audit@thebasebev.com");
 check("mapping: phone sent as legacy `Phone`", delivered.Phone === "+971500000000");
 check("mapping: message sent as legacy `text`", typeof delivered.text === "string");
+check(
+  "mapping: structured attribution survives in the description channel",
+  delivered.text.includes("--- THE BASE ATTRIBUTION ---") &&
+    delivered.text.includes(`request_id: ${okBody.requestId}`) &&
+    delivered.text.includes("utm_source: chatgpt.com"),
+);
 check(
   "mapping: tildaspec-formname sent",
   delivered["tildaspec-formname"] === "Contact Us",
@@ -314,7 +329,7 @@ const orderDelivered = upstream.received.at(-1) ?? {};
 check(
   "mapping: order form uses capitalised cart vocabulary",
   orderDelivered.Name === "TEST NEXT MIGRATION" &&
-    orderDelivered.Comments === "audit order",
+    orderDelivered.Comments.startsWith("audit order\n\n--- THE BASE ATTRIBUTION ---"),
   JSON.stringify(Object.keys(orderDelivered)),
 );
 

@@ -11,9 +11,9 @@
      simply stays there. The old scrim existed to keep white icons legible over
      footage that ran from near-black to bright white. */
   color: var(--tbb-on-light);
-  transition:
-    color var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
+  /* Colour only. The bar itself is never transformed — the paper behind it
+     slides in, which is the `::after` below. */
+  transition: color 620ms var(--tbb-ease);
 }
 
 /* Transparent over the hero: the bar reads as part of the composition rather
@@ -38,7 +38,10 @@
   inset: 0;
   background: var(--tbb-paper);
   transform: translate3d(0, -101%, 0);
-  transition: transform var(--tbb-dur) var(--tbb-ease);
+  transition:
+    transform var(--tbb-dur) var(--tbb-ease),
+    background-color 620ms var(--tbb-ease),
+    border-color 620ms var(--tbb-ease);
   pointer-events: none;
   border-bottom: 1px solid var(--tbb-line);
 }
@@ -56,10 +59,8 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Scrolling down hides the bar; scrolling up brings it back. */
-.hidden {
-  transform: translate3d(0, -100%, 0);
-}
+/* Nothing moves the bar any more. It is fixed, and once it has turned to paper
+   it stays put for the rest of the page. */
 
 .inner {
   position: relative;
@@ -72,12 +73,13 @@
   z-index: 1;
   display: inline-flex;
   align-items: center;
+  color: inherit;
   text-decoration: none;
 }
 
 /* Height-driven, width auto: the lockup's aspect ratio is never touched, and
    it is the same asset at every breakpoint — only the scale changes. */
-.logo img {
+.logo svg {
   display: block;
   height: clamp(1.5rem, 2.1vw, 2rem);
   width: auto;
@@ -205,9 +207,31 @@
     height: 19px;
   }
 
-  /* Account moves into the menu on mobile — the bar keeps cart, search, burger
-     so the tap targets stay comfortable instead of shrinking. */
+  /* Region moves into the menu on mobile; the bar keeps cart, search and the
+     burger so the tap targets stay comfortable instead of shrinking. */
   .desktopOnly {
     display: none;
   }
 }
+
+/* Surface adaptation — see the observer in SiteHeader.tsx. Over a section that
+   declares itself dark the bar inverts rather than keeping a paper slab on top
+   of it, which is what makes the header read as part of the page rather than a
+   panel floating above it. */
+.inverted {
+  color: var(--tbb-on-dark);
+}
+
+/* The paper wash exists to lift dark icons off the hero; on a dark surface it
+   would do the opposite. */
+.inverted::before {
+  opacity: 0;
+}
+
+.inverted::after {
+  background: var(--tbb-ink);
+  border-bottom-color: rgba(255, 255, 255, 0.14);
+}
+
+/* BrandLogo draws only `the` with currentColor. It therefore interpolates to
+   white with the controls while the red BASE block remains unchanged. */

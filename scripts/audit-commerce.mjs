@@ -52,77 +52,68 @@ try {
       return {
         title: document.title,
         bodyClasses: document.body.className,
-        catalogCards: [...document.querySelectorAll(".catg-card")].map((element) => ({
-          name: element.querySelector(".catg-name")?.textContent?.trim() ?? null,
-          price: element.querySelector(".catg-price")?.textContent?.trim() ?? null,
+        catalogCards: [...document.querySelectorAll("[data-catalog-card]")].map((element) => ({
+          name: element.querySelector("[data-catalog-name]")?.textContent?.trim() ?? null,
+          price: element.querySelector("[data-catalog-price]")?.textContent?.trim() ?? null,
           href: element instanceof HTMLAnchorElement ? element.getAttribute("href") : null,
         })),
         controls,
         productData,
-        tildaCartNodes: document.querySelectorAll('[class*="t706"], [class*="carticon"], .t-store__card__btn').length,
-        tildaCartGlobals: {
-          tcart: typeof window.tcart !== "undefined",
-          tcartProducts: Array.isArray(window.tcart?.products) ? window.tcart.products.length : null,
-          tcartOpen: typeof window.tcart__openCart === "function",
-        },
+        legacyCartNodes: document.querySelectorAll('[class*="t706__cartwin"]').length,
+        nativeCartControl: Boolean(document.querySelector('header a[aria-label^="Cart"]')),
       };
     });
 
     console.log(JSON.stringify({ route, ...audit }, null, 2));
 
-    if (!audit.tildaCartGlobals.tcart || !audit.tildaCartGlobals.tcartOpen) {
-      failures.push(`${route}: Tilda compatibility cart runtime is unavailable`);
-    }
+    if (!audit.nativeCartControl) failures.push(`${route}: native cart control is unavailable`);
+    if (audit.legacyCartNodes > 0) failures.push(`${route}: legacy Tilda cart is still mounted`);
     if (route === "/catalog" && audit.catalogCards.length !== 16) {
       failures.push(`/catalog: expected 16 visible catalogue cards, received ${audit.catalogCards.length}`);
     }
 
     if (route === "/catalog") {
-      const addButton = page.locator(".tbc-add").first();
+      const addButton = page.locator("[data-cart-add]").first();
       await addButton.click();
       await page.waitForTimeout(150);
       const afterAdd = await page.evaluate(() => ({
         url: location.pathname,
-        buttonText: document.querySelector(".tbc-add")?.textContent?.trim() ?? null,
-        products: Array.isArray(window.tcart?.products)
-          ? window.tcart.products.map((product) => ({
-              id: product.id,
-              name: product.name,
-              price: product.price,
-              quantity: product.quantity,
-            }))
-          : [],
+        buttonText: document.querySelector("[data-cart-add]")?.textContent?.trim() ?? null,
+        products: (() => {
+          try {
+            return JSON.parse(localStorage.getItem("thebase:cart:v1") ?? "[]");
+          } catch {
+            return [];
+          }
+        })(),
       }));
 
-      const cartButton = page.locator('.tbh-ico[aria-label="Cart"]').first();
+      const cartButton = page.locator('header a[aria-label^="Cart"]').first();
       if (await cartButton.count()) {
-        await page.waitForTimeout(900);
         await cartButton.click();
-        await page.waitForTimeout(500);
+        await page.waitForURL(`${baseUrl}/checkout`);
       }
-      const cartDialog = await page.evaluate(() => {
-        const nodes = [...document.querySelectorAll('[class*="t706__cartwin"]')];
-        const visibleNodes = nodes.filter((element) => {
-          const style = getComputedStyle(element);
-          const rect = element.getBoundingClientRect();
-          return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
-        });
+      const checkoutPage = await page.evaluate(() => {
+        const main = document.querySelector("main");
         return {
-          visible: visibleNodes.length > 0,
-          text: visibleNodes.map((element) => element.textContent?.replace(/\s+/g, " ").trim()).join(" ").slice(0, 600),
-          formIds: visibleNodes.flatMap((element) =>
-            [...element.querySelectorAll("form")].map((form) => form.id || null),
-          ),
+          visible: Boolean(main),
+          text: main?.textContent?.replace(/\s+/g, " ").trim().slice(0, 600) ?? "",
+          path: location.pathname,
         };
       });
-      console.log(JSON.stringify({ route, afterAdd, cartDialog }, null, 2));
+      console.log(JSON.stringify({ route, afterAdd, checkoutPage }, null, 2));
       if (afterAdd.url !== "/catalog") failures.push(`/catalog: add-to-cart navigated to ${afterAdd.url}`);
       if (afterAdd.products.length !== 1) failures.push(`/catalog: expected one cart item`);
-      if (afterAdd.products[0]?.name !== "Milkshake" || Number(afterAdd.products[0]?.price) !== 45.38) {
-        failures.push(`/catalog: Milkshake cart identity/price changed`);
+      if (afterAdd.products[0]?.slug !== "milkshake" || afterAdd.products[0]?.quantity !== 1) {
+        failures.push(`/catalog: Milkshake cart identity/quantity changed`);
       }
-      if (!cartDialog.visible || !/Milkshake/.test(cartDialog.text) || !/45\.38/.test(cartDialog.text)) {
-        failures.push(`/catalog: populated checkout dialog did not open`);
+      if (
+        checkoutPage.path !== "/checkout" ||
+        !checkoutPage.visible ||
+        !/Milkshake/.test(checkoutPage.text) ||
+        !/45\.38/.test(checkoutPage.text)
+      ) {
+        failures.push(`/catalog: populated checkout page did not open`);
       }
     }
   }

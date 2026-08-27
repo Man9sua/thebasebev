@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useCart } from "@/components/cart/useCart";
+import { BrandLogo } from "@/components/site/BrandLogo";
 import { RegionPicker } from "@/components/site/RegionPicker";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
@@ -12,13 +15,10 @@ import styles from "./SiteHeader.module.css";
  * centre deliberately empty. Navigation lives behind the burger.
  *
  * The bar starts transparent over the hero and turns to paper once past it, and
- * hides on scroll-down / returns on scroll-up.
+ * from then on it stays exactly where it is. It used to slide away on
+ * scroll-down and come back on scroll-up, which meant the one element on the
+ * page that is supposed to be a fixed point was the one that moved most.
  */
-
-type TildaCartWindow = Window & {
-  tcart?: { products?: unknown[] };
-  tcart__openCart?: () => void;
-};
 
 function CartIcon() {
   return (
@@ -38,24 +38,22 @@ function SearchIcon() {
   );
 }
 
-function AccountIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-      <circle cx="12" cy="9" r="3.2" />
-      <path d="M5.5 19a6.5 6.5 0 0 1 13 0" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
+  const pathname = usePathname();
   const [pastHero, setPastHero] = useState(false);
-  const [hidden, setHidden] = useState(false);
   // Derived, not stored: away from the hero the bar is always solid.
   const solid = !overHero || pastHero;
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
-  const lastY = useRef(0);
+  const cart = useCart();
+  const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0);
+  const cartHref = cart.ready && cartCount > 0 ? "/checkout" : "/catalog";
+  const cartLabel = cartCount
+    ? `Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`
+    : "Cart";
+  // Set while a section that declares itself dark sits under the bar.
+  const [onDark, setOnDark] = useState(false);
+  const barRef = useRef<HTMLElement>(null);
 
   /**
    * Solid state is driven by an IntersectionObserver on the hero rather than by
@@ -75,71 +73,79 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, [overHero]);
-
-  // Direction only — plain arithmetic in the scroll handler, no frame loop.
-  useEffect(() => {
-    lastY.current = window.scrollY;
-
-    const onScroll = () => {
-      const y = window.scrollY;
-      setHidden(y > window.innerHeight * 0.86 && y > lastY.current + 4);
-      lastY.current = y;
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [overHero, pathname]);
 
   /**
-   * The legacy Tilda cart is the real cart. Where its runtime is on the page
-   * (every parity route) the icon opens it and mirrors its count; on the
-   * redesigned homepage, which does not load that runtime, it takes the user to
-   * the catalog where the cart lives. No second cart is invented.
+   * Surface adaptation, as on mercury.com: a thin observation band the height
+   * of the bar is pinned to the top of the viewport, and any element that
+   * declares `data-surface="dark"` flips the bar to its inverted palette while
+   * it is inside that band. The footer is the dark surface today; marking a
+   * section is all it takes to add another.
+   *
+   * The band is expressed as a bottom `rootMargin` that collapses the root to
+   * the header strip, so this costs one observer and no scroll maths.
    */
   useEffect(() => {
-    const readCart = () => {
-      const tilda = window as TildaCartWindow;
-      setCartCount(tilda.tcart?.products?.length ?? 0);
+    const surfaces = Array.from(document.querySelectorAll("[data-surface='dark']"));
+    if (!surfaces.length) return;
+
+    const lit = new Set<Element>();
+    let observer: IntersectionObserver | null = null;
+
+    const build = () => {
+      observer?.disconnect();
+      lit.clear();
+      const height = barRef.current?.offsetHeight ?? 0;
+      const below = Math.max(window.innerHeight - height, 0);
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) lit.add(entry.target);
+            else lit.delete(entry.target);
+          }
+          setOnDark(lit.size > 0);
+        },
+        { rootMargin: `0px 0px -${below}px 0px`, threshold: 0 },
+      );
+
+      surfaces.forEach((surface) => observer?.observe(surface));
     };
 
-    readCart();
-    const timer = window.setInterval(readCart, 1500);
-    return () => window.clearInterval(timer);
-  }, []);
+    build();
+    window.addEventListener("resize", build);
+    return () => {
+      window.removeEventListener("resize", build);
+      observer?.disconnect();
+    };
+  }, [pathname]);
 
-  const openCart = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
-    const tilda = window as TildaCartWindow;
-    if (typeof tilda.tcart__openCart === "function") {
-      event.preventDefault();
-      tilda.tcart__openCart();
-    }
-  }, []);
-
+  // Cart state is native and shared across every route. Empty means catalogue;
+  // a populated cart means the dedicated review/checkout page.
   return (
     <>
       <header
+        ref={barRef}
         className={[
           styles.header,
           solid || menuOpen || searchOpen ? styles.solid : "",
-          hidden && !menuOpen && !searchOpen ? styles.hidden : "",
+          // An open overlay owns the whole screen, so the bar follows it
+          // rather than whatever section happens to be underneath.
+          onDark && !menuOpen && !searchOpen ? styles.inverted : "",
           menuOpen ? styles.open : "",
         ]
           .filter(Boolean)
           .join(" ")}
+        data-header-theme={onDark ? "dark" : solid ? "light" : "hero"}
       >
-        {/* The original lockup, lifted verbatim out of the Tilda header and
-            saved as public/images/base-logo.svg — the same paths the old site
-            shipped, not redrawn and not re-typeset. */}
-        <Link href="/" className={styles.logo} aria-label="THE BASE — home">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/base-logo.svg"
-            alt="THE BASE — Beverage Production"
-            width={175}
-            height={80}
-            draggable={false}
-          />
+        {/* Original Tilda paths, inlined so the small `the` mark can inherit
+            the animated header colour without recolouring the red block. */}
+        <Link href="/" className={styles.logo} aria-label="THE BASE — home" prefetch={false}>
+          {/* The Tilda runtime on parity routes re-sets src and adds
+              decoding/fetchpriority on every img it finds, this one included.
+              The rewrite is cosmetic, but React would still read it as a
+              mismatch on a node it owns. */}
+          <BrandLogo />
         </Link>
 
         <div className={styles.actions}>
@@ -150,10 +156,10 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           </span>
 
           <Link
-            href="/catalog"
+            href={cartHref}
             className={styles.action}
-            onClick={openCart}
-            aria-label={cartCount ? `Cart, ${cartCount} items` : "Cart"}
+            aria-label={cartLabel}
+            prefetch={false}
           >
             <CartIcon />
             {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
@@ -171,14 +177,6 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           >
             <SearchIcon />
           </button>
-
-          <Link
-            href="/cabinet"
-            className={`${styles.action} ${styles.desktopOnly}`}
-            aria-label="Account"
-          >
-            <AccountIcon />
-          </Link>
 
           <button
             type="button"

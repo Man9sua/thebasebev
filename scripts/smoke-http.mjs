@@ -40,7 +40,6 @@ const publicRoutes = [
   "/terms",
   "/privacy",
   "/thank-you-form",
-  "/cabinet",
   "/retail",
   "/knowledge-recipes",
   "/not-found",
@@ -53,6 +52,7 @@ const redirects = new Map([
   ["/raf-cofeee", "/raf-coffee"],
   ["/raf-cofee", "/raf-coffee"],
   ["/functional-wellness", "/catalog"],
+  ["/cabinet", "/"],
 ]);
 
 const failures = [];
@@ -63,7 +63,7 @@ for (const route of publicRoutes) {
   if (response.status !== 200) failures.push(`${route}: expected 200, received ${response.status}`);
   if (!/<html[^>]+lang=["']en["']/i.test(html)) failures.push(`${route}: missing static lang=en`);
   if (!/<title[^>]*>[^<]+<\/title>/i.test(html)) failures.push(`${route}: missing title`);
-  if (!["/cabinet", "/knowledge-recipes", "/link"].includes(route) && !/<h1\b/i.test(html)) {
+  if (!["/knowledge-recipes", "/link"].includes(route) && !/<h1\b/i.test(html)) {
     failures.push(`${route}: missing crawler-visible H1`);
   }
   if (route === "/" && (workerTarget || productionTarget)) {
@@ -129,23 +129,11 @@ if (
 const lead = await fetch(`${baseUrl}/api/leads`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    name: "Smoke Test",
-    email: "smoke@example.com",
-    formName: "Contact Us",
-    consent: true,
-    landingPage: `${baseUrl}/?utm_source=chatgpt.com`,
-    submissionPage: `${baseUrl}/contacts`,
-    referrer: "https://chatgpt.com/",
-    utm_source: "chatgpt.com",
-    utm_medium: null,
-    utm_campaign: null,
-    utm_content: null,
-    utm_term: null,
-    clientTimestamp: new Date().toISOString(),
-  }),
+  // Intentionally invalid: smoke/readiness must never create a CRM record,
+  // even when the target has a real LEAD_API_URL configured.
+  body: JSON.stringify({}),
 });
-if (lead.status !== 503) failures.push(`/api/leads: expected unconfigured 503, received ${lead.status}`);
+if (lead.status !== 400) failures.push(`/api/leads: expected safe validation 400, received ${lead.status}`);
 if ((workerTarget || productionTarget) && !/no-store/i.test(lead.headers.get("cache-control") ?? "")) {
   failures.push("/api/leads: expected no-store response on Worker target");
 }
@@ -154,5 +142,5 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`HTTP smoke passed: ${publicRoutes.length} routes, ${redirects.size} redirects, SEO endpoints, branded 404, deployment headers, health, and lead API guard.`);
+  console.log(`HTTP smoke passed: ${publicRoutes.length} routes, ${redirects.size} redirects, SEO endpoints, branded 404, deployment headers, health, and non-delivering lead API validation.`);
 }
