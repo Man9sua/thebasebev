@@ -24,6 +24,7 @@ export type ProductMargin = {
 };
 
 export const productMargins: Record<string, ProductMargin> = {
-  // Supplied by the owner in the product-page design, 2026-08-27.
+  // Both read off the owner's own product-page frames, 2026-08-27.
   "raf-coffee": { comparedWith: "Syrup", legacy: "61.52 %", base: "78.04 %" },
+  matcha: { comparedWith: "Syrup", legacy: "76.53 %", base: "88.57 %" },
 };

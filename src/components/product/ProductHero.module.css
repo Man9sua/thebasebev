@@ -1,16 +1,42 @@
 /**
- * Product hero.
+ * Product hero, laid out to the owner's Figma frame.
  *
- * The product on the left, standing on the brand mark with the two seals under
- * it, and the words in a column on the right — the owner's design file. The
- * picture is the cut-out pouch rather than the key visual, because every one of
- * those frames cuts the pouch at its right edge; see the note in the component.
+ * Every length below the media query is the layer's own measurement in that
+ * frame multiplied by `--u`, one design pixel — so `calc(529.27 * var(--u))` is
+ * literally the width Figma reports for the pack group. Written that way on
+ * purpose: the numbers stay checkable against the file instead of being
+ * translated once into round CSS and drifting from it afterwards.
  *
- * The panel is not a flat colour but that key visual's own wash — `--band` at
- * the head and `--band-foot` at the foot, both sampled from it in
- * `scripts/build-product-heroes.mjs`, so the pack stands on the ramp its own
- * artwork was built on. Products without a key visual fall back to a wash of
- * `--tile`, their registry colour.
+ * The frame is 1240 wide. It is reproduced at its own size up to 1440, where it
+ * stops growing so the type does not run away on a wide monitor; below that
+ * `--u` shrinks with the window and the whole composition scales as one, which
+ * is what the design does when it is resized. The wash behind it always bleeds
+ * the full width.
+ *
+ * `--band` is that product's key visual sampled at the head and `--band-foot`
+ * at the foot — see `scripts/build-product-heroes.mjs` — so the pack stands on
+ * the ramp its own artwork was built on. Products without a key visual fall
+ * back to a wash of `--tile`, their registry colour.
+ *
+ * Not yet measured, and marked where they are used: the frame's own height, and
+ * where the design's header ends — the reported tops are counted from the top
+ * of the page, header included.
+ *
+ * The `!important` below is not decoration, and neither are the two-class
+ * selectors. The exported Tilda sheet is global, and `public/css/custom.css`
+ * carries `html body p { line-height: 1.7 }` and `html body h1, html body
+ * [class*="title"] { font-weight: 300 }` — both `!important`, and the second
+ * outranks a single class, which is why this page's heading had been rendering
+ * light and every paragraph a line and a half taller than it was set. Where a
+ * rule below is written against `.copy` as well as its own class, that is what
+ * it is for. Only the properties that sheet actually takes are answered.
+ *
+ * One it takes and this does not answer: `html body *` forces Roboto over the
+ * brand face on every element of a page served through the legacy shell — the
+ * header, the tab strip, the specification cards and the footer along with this
+ * hero. Correcting it here alone would leave one block of the page in a
+ * different typeface from the rest of it, so it belongs to a change that covers
+ * the shell, not to this one.
  */
 
 .hero {
@@ -21,10 +47,14 @@
   --ink: var(--tbb-ink);
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);
-  --chip: rgba(255, 255, 255, 0.72);
-  /* The product's share of the width. The copy takes what is left, which is why
-     the two are written from one number. */
-  --stage: min(52%, 44rem);
+  /* One design pixel: a 1240-wide frame in a 100vw section, held at the 1440
+     frame once the window is wider than that. */
+  --u: min(0.0806452vw, 1.16129px);
+  /* Where the design's header ends, and so where its `top` values stop being
+     the page's and start being this section's — the reported tops are counted
+     from the top of the page. 68 is this site's own header at the frame's
+     width, which lands every measured top on its number. */
+  --head: 68;
 }
 
 /* Tea's wash is near-black and Jam's is burgundy, so the ink is measured from
@@ -33,45 +63,36 @@
   --ink: #ffffff;
   --ink-soft: rgba(255, 255, 255, 0.78);
   --ink-muted: rgba(255, 255, 255, 0.55);
-  --chip: rgba(255, 255, 255, 0.14);
 }
 
-.inner {
+.frame {
   position: relative;
-  z-index: 1;
-  display: grid;
-  align-content: center;
-  /* The copy is the page's right-hand column; the picture beside it is out of
-     the flow, so this is what puts the words there. */
-  justify-items: end;
-  /* The picture is as tall as the section, so the section needs a height of its
-     own to stand the words against rather than taking whatever the words are. */
-  min-height: clamp(26rem, 39vw, 37rem);
-  width: 100%;
-  max-width: var(--tbb-measure-wide);
-  margin: 0 auto;
-  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 3.5vw, 3rem)) var(--tbb-gutter)
-    clamp(2.5rem, 5vw, 4rem);
+  width: min(100%, 90rem);
+  margin-inline: auto;
+  padding-top: var(--tbb-header-h);
+  /* The pack's foot is the lowest thing in the frame — 814.28 counted from the
+     page top — plus air under it. Replace with the frame's own height once it
+     is measured. */
+  min-height: calc(var(--tbb-header-h) + (814.28 - var(--head) + 60) * var(--u));
 }
 
 /* ---- the product ---- */
 
 /*
- * The brand mark at display size, bleeding off the left of the page. The whole
- * word never fits beside a column of copy, and a mark cropped by the page edge
- * is the device the client's own banners use — where the pack also stands on
- * it, because at this contrast it is texture rather than type.
+ * The brand mark at display size, flush to the frame's left edge and mostly
+ * behind the pack — the device the client's own key visuals use, where at this
+ * contrast it is texture rather than type. Figma reports the group as
+ * 586.75 x 322.06 at 0, 208.36; the size below is the type size that fills it.
  */
 .mark {
   position: absolute;
   left: 0;
-  top: 50%;
+  top: calc(var(--tbb-header-h) + (208.36 - var(--head)) * var(--u));
   z-index: 0;
   display: grid;
   justify-items: start;
-  transform: translateY(-46%);
   font-family: var(--tbb-font-display);
-  font-size: clamp(5rem, 11vw, 12rem);
+  font-size: calc(204 * var(--u));
   font-weight: 800;
   line-height: 0.76;
   letter-spacing: -0.035em;
@@ -85,10 +106,10 @@
 }
 
 /*
- * White is the mark's colour on a banner, because a banner brings a wash strong
- * enough to hold it. The five products still waiting for one have only a tint
- * of their own colour to stand on — Topping's is #eeebe1 — and white on that is
- * nothing at all, so there the mark is a grey ghost instead.
+ * White is the mark's colour on a key visual's wash, which is strong enough to
+ * hold it. The five products still waiting for one have only a tint of their
+ * own colour to stand on — Topping's is #eeebe1 — and white on that is nothing
+ * at all, so there the mark is a grey ghost instead.
  */
 .plain .mark {
   color: color-mix(in srgb, var(--tbb-ink) 7%, transparent);
@@ -101,52 +122,48 @@
   padding-left: 0.09em;
 }
 
-/* The picture and the seals are one column, so the seals can be hung off its
-   foot rather than measured against the page a second time. */
+/* The pack group: 529.27 x 676.55 at 106.85, 137.73. */
 .stage {
   position: absolute;
-  inset: 0 auto 0 0;
+  left: calc(106.85 * var(--u));
+  top: calc(var(--tbb-header-h) + (137.73 - var(--head)) * var(--u));
   z-index: 0;
-  width: var(--stage);
+  width: calc(529.27 * var(--u));
+  height: calc(676.55 * var(--u));
 }
 
-/*
- * `contain`, not `cover`: the cut-out is a tall pouch and the column is a wide
- * box, and covering it would magnify the pack until its shoulders were outside
- * the page. It stands on the foot of the column with air around it, so the mark
- * behind shows past it on both sides the way the design draws it.
- */
+/* `contain`, not `cover`: the cut-out is a tall pouch and the group is a wider
+   box, and covering it would magnify the pack until its shoulders were outside
+   the frame. It stands on the foot of the group, as the design draws it. */
 .pack {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
-  padding: clamp(2rem, 5vw, 4.5rem) clamp(1rem, 3vw, 3rem) clamp(1.25rem, 2.5vw, 2.5rem);
-  filter: drop-shadow(0 30px 50px rgba(26, 19, 17, 0.18));
+  filter: drop-shadow(0 calc(30 * var(--u)) calc(50 * var(--u)) rgba(26, 19, 17, 0.18));
 }
 
 /* ---- the seals ---- */
 
 /*
- * Under the pack, in the corner of the picture column, which is where the
- * design puts them and also the one part of every crop that is empty wash at
- * every product. They are over the picture rather than beside it so the column
- * keeps its full width for the pack.
+ * Over the pack's lower left, slightly outside the group — the design puts them
+ * at 86.7, 657, about 74.5 across with 26 between, so they are placed against
+ * the frame rather than against the pack.
  */
 .seals {
   position: absolute;
-  left: var(--tbb-gutter);
-  bottom: clamp(1.5rem, 3.5vw, 2.75rem);
+  left: calc(86.7 * var(--u));
+  top: calc(var(--tbb-header-h) + (657 - var(--head)) * var(--u));
   z-index: 1;
   display: flex;
-  gap: clamp(0.6rem, 1.2vw, 1rem);
+  gap: calc(26 * var(--u));
 }
 
 .seal {
-  width: clamp(3.4rem, 5vw, 4.6rem);
+  width: calc(74.5 * var(--u));
   height: auto;
-  filter: drop-shadow(0 8px 18px rgba(26, 19, 17, 0.18));
+  filter: drop-shadow(0 calc(8 * var(--u)) calc(18 * var(--u)) rgba(26, 19, 17, 0.18));
 }
 
 /* Set, not drawn: the seals take the page's own typeface, so they sit with the
@@ -178,121 +195,71 @@
 /* ---- the words ---- */
 
 /*
- * Spacing is a row gap, not margins: `design-tokens.css` resets every `p` and
- * `h1` margin to zero at a specificity a single class here cannot answer. The
- * gap is the small one; the three places that need more air — under the
- * breadcrumb, under the title, above the price — ask for it themselves, so the
- * block reads as four steps rather than one even list.
+ * The right-hand column: 419.15 wide at 642.32, opening at 172.55.
+ *
+ * Everything under it is spaced by the distance between two layers' tops in the
+ * design, less the height of the one above — a gap rather than a coordinate,
+ * because fifteen of the sixteen `h1`s are a three-line sentence where the
+ * design's is one word, and absolute tops would only be right for Matcha.
  */
 .copy {
+  position: relative;
+  z-index: 1;
   display: grid;
   justify-items: start;
-  row-gap: clamp(0.5rem, 0.9vw, 0.7rem);
-  /* Starts after the picture ends. */
-  width: min(34rem, calc(100% - var(--stage)));
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--ink-muted);
-}
-
-.breadcrumb a {
-  color: inherit;
-  text-decoration: none;
-  transition: color var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.breadcrumb a:hover {
-  color: var(--ink);
+  margin-left: calc(642.32 * var(--u));
+  padding-top: calc((172.55 - var(--head)) * var(--u));
+  width: calc(419.15 * var(--u));
 }
 
 /*
  * The page's own `h1`, verbatim — SEO surface, not a design decision. It is
  * left in its own case: the design sets these names as words, not as a shout.
- * The two sizes are chosen in the markup, by the length of the line.
+ * The two sizes are chosen in the markup, by the length of the line; the design
+ * only draws the short one, at 48 over a 66.41 line.
  */
-.title {
-  padding-top: clamp(0.35rem, 1vw, 0.9rem);
+.copy .title {
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.75rem, 3.1vw, 2.9rem);
-  font-weight: 700;
-  line-height: 1.04;
-  letter-spacing: -0.025em;
+  font-size: calc(33 * var(--u));
+  font-weight: 700 !important;
+  line-height: 1.384;
+  letter-spacing: -0.025em !important;
   color: var(--ink);
-  max-width: 20ch;
 }
 
-/* A product name rather than a sentence — Raf Coffee is the only one today —
-   set at the display scale the design draws it at. */
-.title[data-short="true"] {
-  font-size: clamp(2.3rem, 4.4vw, 4rem);
-  letter-spacing: -0.03em;
-  max-width: 12ch;
+/* A product name rather than a sentence — Matcha and Raf Coffee are the two
+   today — set at the display scale the design draws it at. */
+.copy .title[data-short="true"] {
+  font-size: calc(48 * var(--u));
+  letter-spacing: -0.03em !important;
 }
 
-/* The three words under the title are a caption, not a sentence: set small and
-   letterspaced, they stop reading as the first line of the copy below. */
-.tagline {
-  padding-top: clamp(0.5rem, 1.2vw, 0.9rem);
+/*
+ * 232.46 against an `h1` whose box ends at 238.96: the two overlap by six and a
+ * half, which is the leading the design's line boxes carry rather than a
+ * negative gap anyone drew. Reproduced as one so the caption lands where it
+ * lands in the file.
+ */
+.copy .tagline {
+  margin-top: calc(-6.5 * var(--u));
   font-family: var(--tbb-font-sans);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
+  font-size: calc(15 * var(--u));
+  font-weight: 400 !important;
+  line-height: calc(41.09 * var(--u)) !important;
   color: var(--ink-soft);
 }
 
 .body {
   display: grid;
-  row-gap: 0.7rem;
-  max-width: 46ch;
-  padding-top: clamp(0.9rem, 2vw, 1.5rem);
+  row-gap: calc(8 * var(--u));
+  padding-top: calc(19.53 * var(--u));
+  width: 100%;
 }
 
 .paragraph {
-  font-size: var(--tbb-text-body);
-  line-height: 1.55;
+  font-size: calc(14.5 * var(--u));
+  line-height: 1.25 !important;
   color: var(--ink-soft);
-}
-
-.buy {
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.9rem, 1.6vw, 1.35rem);
-  padding-top: clamp(1.1rem, 2.2vw, 1.7rem);
-}
-
-.price {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  color: var(--ink-muted);
-}
-
-.priceValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.3rem, 1.9vw, 1.65rem);
-  font-weight: 600;
-  letter-spacing: var(--tbb-tracking-display);
-  color: var(--ink);
-}
-
-.weight {
-  align-self: center;
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  background: var(--chip);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--ink);
 }
 
 /* ---- the margin figures ---- */
@@ -305,26 +272,29 @@
 .margin {
   display: grid;
   justify-items: start;
-  row-gap: 0.7rem;
+  row-gap: calc(23.4 * var(--u));
+  padding-top: calc(71.98 * var(--u));
 }
 
-.marginTitle {
+.copy .marginTitle {
   font-family: var(--tbb-font-display);
-  font-size: clamp(0.95rem, 1.25vw, 1.1rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: calc(16 * var(--u));
+  font-weight: 700 !important;
+  line-height: calc(22 * var(--u));
+  letter-spacing: -0.01em !important;
   color: var(--ink);
 }
 
-/* A shade deeper than the panel, not lighter: in the design the card sits back
-   and the two white figures on it come forward. `--chip`, which the weight pill
-   uses, is the opposite reading and would flatten the pair. */
+/* 346.91 x 110.41, radius 20 — and a shade deeper than the panel, so the two
+   white figures on it come forward. */
 .marginCard {
   display: flex;
   align-items: center;
-  gap: clamp(0.9rem, 1.8vw, 1.6rem);
-  padding: clamp(0.85rem, 1.4vw, 1.15rem) clamp(1rem, 1.8vw, 1.5rem);
-  border-radius: 1rem;
+  justify-content: space-between;
+  width: calc(346.91 * var(--u));
+  height: calc(110.41 * var(--u));
+  padding-inline: calc(22 * var(--u));
+  border-radius: calc(20 * var(--u));
   background: rgba(0, 0, 0, 0.055);
 }
 
@@ -335,12 +305,13 @@
 .marginSide {
   display: grid;
   justify-items: start;
-  row-gap: 0.5rem;
+  row-gap: calc(10 * var(--u));
 }
 
 .marginLabel {
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: calc(14 * var(--u));
+  font-weight: 500 !important;
+  line-height: calc(22 * var(--u)) !important;
   color: var(--ink);
 }
 
@@ -348,13 +319,13 @@
    one thing in the hero that has to be read at a glance, and on Tea or Jam a
    pill that took the panel's ink would sink into the panel. */
 .marginValue {
-  padding: 0.45rem 0.85rem;
-  border-radius: 0.6rem;
+  padding: calc(9 * var(--u)) calc(13 * var(--u));
+  border-radius: calc(8 * var(--u));
   background: var(--tbb-paper);
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-  font-weight: 700;
-  letter-spacing: var(--tbb-tracking-display);
+  font-size: calc(16 * var(--u));
+  font-weight: 700 !important;
+  line-height: calc(20 * var(--u)) !important;
   color: var(--tbb-ink);
 }
 
@@ -362,32 +333,37 @@
    than a third thing to read, which is also why it is `aria-hidden`. */
 .marginVs {
   align-self: center;
-  font-size: var(--tbb-text-label);
+  font-size: calc(13 * var(--u));
   font-weight: 700;
-  letter-spacing: var(--tbb-tracking-label);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--tbb-paper);
 }
 
+/* ---- the buttons ---- */
+
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: calc(17.6 * var(--u));
+  padding-top: calc(38.19 * var(--u));
 }
 
+/* Sentence case, not the label caps the rest of the site uses: the design sets
+   both of these as words. */
 .primary,
 .secondary {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 1rem 1.8rem;
+  justify-content: center;
+  height: calc(47.4 * var(--u));
+  padding-inline: calc(28 * var(--u));
   border-radius: 999px;
   border: 1px solid transparent;
-  font-size: var(--tbb-text-label);
-  font-weight: 500;
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
+  font-size: calc(13 * var(--u));
+  font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
   transition:
     background var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease),
@@ -431,28 +407,41 @@
   border-color: var(--tbb-on-dark);
 }
 
+/* ---- the phone ---- */
+
+/*
+ * There is no phone frame in the design file, so this is not measured: the two
+ * columns become one band and one block of words, and sizes go back to the
+ * page's own fluid scale. Holding `--u` here would render the whole hero at a
+ * third of the design's size.
+ */
 @media (max-width: 899px) {
-  /*
-   * The picture stops being a column and becomes a band above the copy, so
-   * neither has to survive at half a phone's width. It comes first in the
-   * markup, so taking it out of the flow's exception — it is absolute on a wide
-   * screen — is all that is needed to stack it there.
-   */
-  .stage {
-    /* Relative rather than static: the mark is a positioned element and would
-       otherwise paint over the picture instead of behind it. */
-    position: relative;
-    z-index: 1;
+  .frame {
     width: 100%;
-    padding-top: var(--tbb-header-h);
+    padding-top: 0;
+    min-height: 0;
+  }
+
+  .mark {
+    top: calc(var(--tbb-header-h) + 11vw);
+    font-size: clamp(4.5rem, 21vw, 9rem);
   }
 
   /* A band the width of the screen rather than a column, with the pouch smaller
      in it: filling a phone with a pack shot reads as a different page rather
      than the same one narrow. */
-  .pack {
+  .stage {
+    position: relative;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
     height: clamp(17rem, 82vw, 26rem);
+    margin-top: var(--tbb-header-h);
     padding: clamp(0.75rem, 3vw, 1.75rem) var(--tbb-gutter) 0;
+  }
+
+  .pack {
     filter: drop-shadow(0 22px 40px rgba(26, 19, 17, 0.16));
   }
 
@@ -461,28 +450,90 @@
   .seals {
     position: static;
     justify-content: center;
+    gap: 0.75rem;
     padding-top: clamp(0.9rem, 3vw, 1.4rem);
   }
 
-  .inner {
-    justify-items: start;
-    min-height: 0;
-    padding-top: clamp(1.25rem, 4vw, 2rem);
+  .seal {
+    width: clamp(3.4rem, 13vw, 4.6rem);
   }
 
   .copy {
+    margin-left: 0;
     width: 100%;
+    padding: clamp(1.25rem, 4vw, 2rem) var(--tbb-gutter) clamp(2.5rem, 8vw, 4rem);
   }
 
-  /* Parked in the band's upper left, which is the part of the picture that is
-     empty wash — rather than half way down a section the copy has made tall. */
-  .mark {
-    top: calc(var(--tbb-header-h) + 11vw);
-    transform: none;
-    font-size: clamp(4.5rem, 21vw, 9rem);
+  .copy .title,
+  .copy .title[data-short="true"] {
+    font-size: clamp(1.75rem, 7.5vw, 2.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em !important;
   }
 
-  .title {
-    max-width: none;
+  .copy .tagline {
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    line-height: 1.4 !important;
+  }
+
+  .body {
+    row-gap: 0.7rem;
+    padding-top: 1rem;
+  }
+
+  .paragraph {
+    font-size: var(--tbb-text-body);
+    line-height: 1.55 !important;
+  }
+
+  .margin {
+    row-gap: 0.75rem;
+    padding-top: 1.75rem;
+  }
+
+  .copy .marginTitle {
+    font-size: 1rem;
+    line-height: 1.375 !important;
+  }
+
+  .marginCard {
+    width: 100%;
+    max-width: 22rem;
+    height: auto;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1.25rem;
+  }
+
+  .marginSide {
+    row-gap: 0.5rem;
+  }
+
+  .marginLabel {
+    font-size: 0.85rem;
+    line-height: 1.4 !important;
+  }
+
+  .marginValue {
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 1.05rem;
+    line-height: 1.25 !important;
+  }
+
+  .marginVs {
+    font-size: 0.75rem;
+  }
+
+  .actions {
+    gap: 0.75rem;
+    padding-top: 1.75rem;
+  }
+
+  .primary,
+  .secondary {
+    height: 3rem;
+    padding-inline: 1.6rem;
+    font-size: 0.85rem;
   }
 }
