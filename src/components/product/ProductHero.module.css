@@ -50,6 +50,12 @@
   /* One design pixel: a 1240-wide frame in a 100vw section, held at the 1440
      frame once the window is wider than that. */
   --u: min(0.0806452vw, 1.16129px);
+  /* The pack's group in the design frame. Named because the stage is drawn
+     from it and the drink in front of it is measured against it. */
+  --pack-left: 106.85;
+  --pack-top: 137.73;
+  --pack-width: 529.27;
+  --pack-height: 676.55;
   /* Where the design's header ends, and so where its `top` values stop being
      the page's and start being this section's — the reported tops are counted
      from the top of the page. 68 is this site's own header at the frame's
@@ -122,14 +128,13 @@
   padding-left: 0.09em;
 }
 
-/* The pack group: 529.27 x 676.55 at 106.85, 137.73. */
 .stage {
   position: absolute;
-  left: calc(106.85 * var(--u));
-  top: calc(var(--tbb-header-h) + (137.73 - var(--head)) * var(--u));
+  left: calc(var(--pack-left) * var(--u));
+  top: calc(var(--tbb-header-h) + (var(--pack-top) - var(--head)) * var(--u));
   z-index: 0;
-  width: calc(529.27 * var(--u));
-  height: calc(676.55 * var(--u));
+  width: calc(var(--pack-width) * var(--u));
+  height: calc(var(--pack-height) * var(--u));
 }
 
 /* `contain`, not `cover`: the cut-out is a tall pouch and the group is a wider
@@ -147,16 +152,19 @@
 /*
  * The drink, in front of the pouch. Its box is per-product and comes in on the
  * element as four unitless numbers — Matcha's layer is 327.14 x 534.17 at
- * 301.34, 280.11 — so the arithmetic here is the same as everywhere else in
- * this file and only the measurements change. See `data/product-glass.ts`.
+ * 301.34, 280.11 — which are frame coordinates, the same as every other
+ * measurement in this file. Turned into a share of the pack's group here rather
+ * than used directly, because that is the one reading that survives the phone,
+ * where the group is a band of its own and the frame is gone.
+ * See `data/product-glass.ts`.
  */
 .glass {
   position: absolute;
-  left: calc(var(--glass-left) * var(--u));
-  top: calc(var(--tbb-header-h) + (var(--glass-top) - var(--head)) * var(--u));
-  z-index: 0;
-  width: calc(var(--glass-width) * var(--u));
-  height: calc(var(--glass-height) * var(--u));
+  left: calc((var(--glass-left) - var(--pack-left)) / var(--pack-width) * 100%);
+  top: calc((var(--glass-top) - var(--pack-top)) / var(--pack-height) * 100%);
+  z-index: 1;
+  width: calc(var(--glass-width) / var(--pack-width) * 100%);
+  height: calc(var(--glass-height) / var(--pack-height) * 100%);
 }
 
 .glass img {
@@ -450,30 +458,31 @@
     font-size: clamp(4.5rem, 21vw, 9rem);
   }
 
-  /* A band the width of the screen rather than a column, with the pouch smaller
-     in it: filling a phone with a pack shot reads as a different page rather
-     than the same one narrow. */
+  /*
+   * The group keeps its own proportions and is centred instead of stretching to
+   * the screen: the drink is placed as a share of this box, so a box of another
+   * shape would slide it off the pouch. Narrower than the screen as well —
+   * filling a phone with a pack shot reads as a different page rather than the
+   * same one narrow.
+   */
   .stage {
     position: relative;
     z-index: 1;
     left: 0;
     top: 0;
-    width: 100%;
-    height: clamp(17rem, 82vw, 26rem);
-    margin-top: var(--tbb-header-h);
-    padding: clamp(0.75rem, 3vw, 1.75rem) var(--tbb-gutter) 0;
+    width: min(100%, 19rem);
+    height: auto;
+    aspect-ratio: var(--pack-width) / var(--pack-height);
+    margin: var(--tbb-header-h) auto 0;
+    padding: clamp(0.75rem, 3vw, 1.75rem) 0 0;
   }
 
   .pack {
     filter: drop-shadow(0 22px 40px rgba(26, 19, 17, 0.16));
   }
 
-  /* The glass is placed by its coordinates in the wide frame, and there is no
-     phone frame in the design to place it by here. Rather than invent one, the
-     band keeps the pouch on its own. */
-  .glass {
-    display: none;
-  }
+  /* Nothing to change: the drink is a share of the group, and the group is
+     still the group. */
 
   /* A row under the pack rather than a corner of it: at this width the pack
      fills the band and there is no corner left to stand in. */

@@ -147,27 +147,29 @@ export function ProductHero({ product }: { product: Product }) {
             alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
             fetchPriority="high"
           />
-        </div>
 
-        {/*
-          The drink, in front of the pouch — its own layer in the design and its
-          own measured box, so it is placed against the frame rather than nested
-          in the pack's group. Decoration beside the pack shot, hence no alt.
-        */}
-        {glass?.image && (
-          <div
-            className={styles.glass}
-            style={{
-              ["--glass-left" as string]: glass.left,
-              ["--glass-top" as string]: glass.top,
-              ["--glass-width" as string]: glass.width,
-              ["--glass-height" as string]: glass.height,
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={glass.image} alt="" />
-          </div>
-        )}
+          {/*
+            The drink, in front of the pouch. It is a layer of its own in the
+            design with a box of its own, given here as a share of the pack's
+            group rather than of the frame — that is the one reading that holds
+            on a phone too, where the group shrinks and the frame is gone.
+            Decoration beside the pack shot, hence no alt.
+          */}
+          {glass?.image && (
+            <div
+              className={styles.glass}
+              style={{
+                ["--glass-left" as string]: glass.left,
+                ["--glass-top" as string]: glass.top,
+                ["--glass-width" as string]: glass.width,
+                ["--glass-height" as string]: glass.height,
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={glass.image} alt="" />
+            </div>
+          )}
+        </div>
 
         <div className={styles.seals}>
           <Seal tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
