@@ -68,7 +68,7 @@
   /* How far below its measured box the drink stands, and the seals below
      theirs. */
   --glass-drop: 95;
-  --seals-drop: 165;
+  --seals-drop: 215;
   /* Both pictures a little smaller than the design draws them, each shrinking
      onto its own foot so it keeps standing where it stood. */
   --pack-scale: 0.92;
