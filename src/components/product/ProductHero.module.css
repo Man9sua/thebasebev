@@ -344,10 +344,19 @@
     margin-top: var(--tbb-header-h);
   }
 
+  /*
+   * The picture here is the cut-out pack, not the banner — see the note in the
+   * component — so it wants none of what the banner needs: no fade into the
+   * panel, because a cut-out has no wash to hide, and no right edge to stand
+   * against, because it is whole. It stands in the middle of its band with air
+   * around it, on the ground its shadow gives it.
+   */
   .banner {
-    /* Against the right edge here too, for the reason it is there on a wide
-       screen: that edge of the crop is where the banner cut the pouch. */
-    object-position: right bottom;
+    object-position: center bottom;
+    padding: clamp(1rem, 5vw, 2.5rem) var(--tbb-gutter) 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+    filter: drop-shadow(0 24px 44px rgba(26, 19, 17, 0.18));
   }
 
   .inner {

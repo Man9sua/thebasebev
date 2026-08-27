@@ -16,14 +16,14 @@ import styles from "./ProductHero.module.css";
  * never saw the name, the price or a way to order. `site-pages.ts` drops that
  * block; this renders the same copy as ordinary markup.
  *
- * The composition follows the client's own design for this page: the product
- * stands on the left against the brand watermark, and the words are a column of
- * their own on the right. That is also how the supplied key visuals are built,
- * which is why the picture here is a crop of one rather than a new photograph —
- * see `scripts/build-product-heroes.mjs`. The panel behind it continues the
- * banner's own wash, sampled at the head and at the foot, so there is no edge
- * where the picture stops and the page starts. Eleven products have a banner;
- * the rest fall back to the pack shot on a wash of their own colour.
+ * The words are a column on the left and the product is on the right, running
+ * off the edge of the page — the composition the client's own key visuals are
+ * built in, which is why the picture is a crop of one rather than a new
+ * photograph; see `scripts/build-product-heroes.mjs`. The panel behind it
+ * continues that banner's own wash, sampled at the head and at the foot, so
+ * there is no edge where the picture stops and the page starts. Eleven products
+ * have a banner; the rest have only the cut-out pack shot, which every product
+ * falls back to on a phone — see the note over the picture below.
  *
  * The copy is the page's own, lifted out of the export by
  * `scripts/build-product-details.mjs` rather than rewritten — these pages carry
@@ -78,30 +78,35 @@ export function ProductHero({ product }: { product: Product }) {
       </span>
 
       {/*
-        Pinned to the right edge of the page, and it has to be that edge.
-        Every one of the eleven key visuals runs the pouch off the right of its
-        own frame — measured, not assumed: the last column of all eleven crops
-        is product at every height below the pouch's shoulder. So wherever that
-        edge lands is where the pouch is cut. Against the edge of the page it
-        reads as the picture carrying on past the screen; anywhere else on the
-        page it reads as a pack sliced down the middle, which is what it looked
-        like when the picture sat between the copy and the gutter.
+        Two pictures, and the reason is in the artwork: every one of the eleven
+        key visuals runs the pouch off the right of its own frame. Measured, not
+        assumed — the crop's last column is pack at every height below the
+        pouch's shoulder, and the source banner cuts it in the same place.
+        There is no whole pouch in that photography.
+
+        On a wide screen that edge is put against the edge of the page, where a
+        cut reads as the picture carrying on past the screen. A phone has no
+        such room: the frame is barely wider than the pouch, so the cut lands in
+        plain sight and the pack simply looks chopped. There the page shows the
+        cut-out pack shot instead, which is whole — at the cost of the drink
+        beside it, which only the banner has.
+
+        `<picture>` rather than two elements, so only the one that is used is
+        ever fetched.
       */}
-      <div className={styles.media}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      <picture className={styles.media}>
+        {banner && <source media="(min-width: 900px)" srcSet={banner.image} />}
         <img
           className={banner ? styles.banner : styles.pack}
-          src={banner?.image ?? `/images/pack-${product.slug}.webp`}
-          // The banner is decoration beside copy that already says all of this;
-          // the pack shot on its own is the product, so it is described.
-          alt={banner ? "" : `${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
-          aria-hidden={banner ? "true" : undefined}
+          src={`/images/pack-${product.slug}.webp`}
+          // Described rather than hidden: the fallback this element carries is
+          // the pack on its own, which is the product and not decoration.
+          alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
           fetchPriority="high"
         />
-      </div>
+      </picture>
 
       <div className={styles.inner}>
-
         <div className={styles.copy}>
           <Reveal as="p" className={styles.breadcrumb} distance={12}>
             <SiteLink href="/catalog">Catalog</SiteLink>
