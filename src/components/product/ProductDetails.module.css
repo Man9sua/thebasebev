@@ -1,12 +1,11 @@
 /**
- * Product detail sections.
+ * Product detail panes.
  *
- * Four bands of the same rhythm, alternating between paper and a wash of the
- * product's own colour, so the page reads as one surface continuing under the
- * hero rather than as five blocks stacked. Inside them everything that is data
- * — the figures, the comparison, the diagram — stands on a white card with the
- * same radius the hero's buttons are cut to, which is what holds four unrelated
- * kinds of content to one design.
+ * One pane shows at a time — the tab bar above them decides which, see
+ * `ProductTabs` — so they are all one surface rather than alternating bands:
+ * a band that alternates with nothing looks arbitrary. What carries the
+ * product's colour instead is the card inside a pane, which is where the data
+ * is: the figures, the comparison, the diagram.
  *
  * `--tile` is the product colour and is the only colour any of this names;
  * everything else is a token.
@@ -19,25 +18,22 @@
   --card-radius: 1.25rem;
 }
 
-.section {
-  padding: clamp(2.75rem, 6vw, 5rem) 0;
-  /* The tab bar is sticky, so an anchored section has to stop below it rather
-     than under it. */
-  scroll-margin-top: calc(var(--tbb-header-h) + 3.5rem);
-}
-
-/* Every other band, mixed down far enough that the ink on it is unchanged. */
-.tinted {
-  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 9%, var(--tbb-paper));
-}
-
-.inner {
+.pane {
   width: 100%;
   /* Not `--tbb-max`. A four-column table at 1600px puts most of a metre between
      a figure and the label it belongs to; see the note on the token. */
   max-width: var(--tbb-measure);
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
+  padding: clamp(2.25rem, 5vw, 3.75rem) var(--tbb-gutter);
+  /* The tab strip is sticky, so anything anchored — the FAQ is — has to stop
+     below it rather than under it. */
+  scroll-margin-top: calc(var(--tbb-header-h) + 3.5rem);
+}
+
+/* Not a pane: the FAQ sits under the tab strip and is always open, so it needs
+   the line the strip's own border no longer draws for it. */
+.faq {
+  border-top: 1px solid var(--tbb-line);
 }
 
 .title {
@@ -50,10 +46,12 @@
   margin-bottom: clamp(1.25rem, 2.8vw, 2rem);
 }
 
+/* The product's colour, mixed down far enough that the ink on it is unchanged
+   and the grey line of the usage diagram still reads. */
 .card {
   padding: clamp(1.1rem, 2.4vw, 2rem);
   border-radius: var(--card-radius);
-  background: var(--tbb-paper);
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 7%, var(--tbb-paper));
 }
 
 /* ---- the four figures ---- */

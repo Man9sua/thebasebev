@@ -1,5 +1,5 @@
 /**
- * Sticky section bar.
+ * Sticky tab strip.
  *
  * It sits below the site header rather than at the very top, because that
  * header hides on scroll-down and comes back on scroll-up — parked at 0 the two
@@ -18,12 +18,11 @@
 .list {
   display: flex;
   gap: clamp(1.25rem, 3vw, 3rem);
-  /* The same measure the sections below it use, so a tab stands over the
-     section it names. */
+  /* The same measure the panes below it use, so a tab stands over the pane it
+     opens. */
   max-width: var(--tbb-measure);
   margin: 0 auto;
   padding: 0 var(--tbb-gutter);
-  list-style: none;
   /* The row is short enough to fit on a phone only just; when it does not, it
      scrolls sideways rather than wrapping into a second sticky line. */
   overflow-x: auto;
@@ -34,17 +33,23 @@
   display: none;
 }
 
+/* A button now, not a link — the strip switches panes rather than travelling to
+   them — so it has a button's defaults to undo. */
 .tab {
   display: block;
   position: relative;
+  appearance: none;
+  border: 0;
+  background: none;
   padding: clamp(0.9rem, 1.6vw, 1.15rem) 0;
+  font-family: inherit;
   font-size: var(--tbb-text-label);
   font-weight: 500;
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   white-space: nowrap;
-  text-decoration: none;
   color: var(--tbb-muted);
+  cursor: pointer;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
@@ -65,10 +70,10 @@
   color: var(--tbb-ink);
 }
 
-.tab[aria-current="true"] {
+.tab[aria-selected="true"] {
   color: var(--tbb-ink);
 }
 
-.tab[aria-current="true"]::after {
+.tab[aria-selected="true"]::after {
   transform: scaleX(1);
 }
