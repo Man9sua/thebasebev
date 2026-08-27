@@ -67,8 +67,8 @@
   --group-shift: 50;
   /* How far below its measured box the drink stands, and the seals below
      theirs. */
-  --glass-drop: 70;
-  --seals-drop: 45;
+  --glass-drop: 95;
+  --seals-drop: 75;
   /* Both pictures a little smaller than the design draws them, each shrinking
      onto its own foot so it keeps standing where it stood. */
   --pack-scale: 0.92;
@@ -95,13 +95,18 @@
   padding-top: var(--tbb-header-h);
   /*
    * The pack's foot is the lowest thing the design measures — 814.28 counted
-   * from the page top — and the floor is the air under it. 90 rather than the
-   * 60 it opened at, because `--glass-drop` stands the drink lower than the
-   * design does and on nine of the twelve products its base was landing within
-   * a few pixels of this edge, where `overflow: clip` took a slice off it.
-   * Replace the arithmetic with the frame's own height once that is measured.
+   * from the page top — and the floor is the air under it.
+   *
+   * Written against `--glass-drop` rather than as a number of its own, because
+   * the drink is what reaches lowest once it is dropped below its measured box:
+   * at 70 its base was landing within a few pixels of this edge on nine of the
+   * twelve products, where `overflow: clip` took a slice off it. Tying the two
+   * together keeps roughly twenty pixels of clearance under the lowest of them
+   * whatever the drop is set to, so lowering the drink again cannot quietly
+   * start cutting it. Replace the arithmetic with the frame's own height once
+   * that is measured.
    */
-  --floor: 90;
+  --floor: calc(20 + var(--glass-drop));
   min-height: calc(var(--tbb-header-h) + (814.28 - var(--head) + var(--floor)) * var(--u));
 }
 
