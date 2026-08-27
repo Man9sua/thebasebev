@@ -67,36 +67,40 @@ export function ProductHero({ product }: { product: Product }) {
       }}
       aria-labelledby="product-title"
     >
-      <div className={styles.inner}>
-        <div className={styles.stage}>
-          {/*
-            The brand mark at display size, standing behind the product the way
-            it does on every one of the client's key visuals. It is set rather
-            than drawn so it stays sharp at any width and costs no request; the
-            picture is laid over its right-hand half and dissolves into it, so
-            the letters read as something the pouch is standing in front of.
-          */}
-          <span className={styles.mark} aria-hidden="true">
-            <span className={styles.markThe}>the</span>
-            <span>BASE</span>
-          </span>
+      {/*
+        The brand mark at display size, standing behind everything the way it
+        does on every one of the client's key visuals. It is set rather than
+        drawn so it stays sharp at any width and costs no request.
+      */}
+      <span className={styles.mark} aria-hidden="true">
+        <span className={styles.markThe}>the</span>
+        <span>BASE</span>
+      </span>
 
-          <div className={styles.media}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className={banner ? styles.banner : styles.pack}
-              src={banner?.image ?? `/images/pack-${product.slug}.webp`}
-              // The banner is decoration beside copy that already says all of
-              // this; the pack shot on its own is the product, so it is
-              // described.
-              alt={
-                banner ? "" : `${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`
-              }
-              aria-hidden={banner ? "true" : undefined}
-              fetchPriority="high"
-            />
-          </div>
-        </div>
+      {/*
+        Pinned to the right edge of the page, and it has to be that edge.
+        Every one of the eleven key visuals runs the pouch off the right of its
+        own frame — measured, not assumed: the last column of all eleven crops
+        is product at every height below the pouch's shoulder. So wherever that
+        edge lands is where the pouch is cut. Against the edge of the page it
+        reads as the picture carrying on past the screen; anywhere else on the
+        page it reads as a pack sliced down the middle, which is what it looked
+        like when the picture sat between the copy and the gutter.
+      */}
+      <div className={styles.media}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={banner ? styles.banner : styles.pack}
+          src={banner?.image ?? `/images/pack-${product.slug}.webp`}
+          // The banner is decoration beside copy that already says all of this;
+          // the pack shot on its own is the product, so it is described.
+          alt={banner ? "" : `${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
+          aria-hidden={banner ? "true" : undefined}
+          fetchPriority="high"
+        />
+      </div>
+
+      <div className={styles.inner}>
 
         <div className={styles.copy}>
           <Reveal as="p" className={styles.breadcrumb} distance={12}>

@@ -1,13 +1,19 @@
 /**
  * Product hero.
  *
- * Two columns on one coloured panel: the product standing on the left in front
- * of the brand mark, the words on the right. The panel is not a flat colour but
- * the wash from the client's own key visual, continued — `--band` is that wash
- * at the head and `--band-foot` at the foot, both sampled from the picture in
- * `scripts/build-product-heroes.mjs`. So the picture has no edge to see: the
- * page simply keeps going where it stops. Products without a banner fall back
- * to a wash of `--tile`, their own colour, with the pack shot standing on it.
+ * The words on the left, the product on the right, running off the edge of the
+ * page — which is the composition the client's own key visuals are built in and
+ * the reason it is not the other way round. Every one of the eleven runs the
+ * pouch off the right of its frame, so that edge is a cut wherever it lands;
+ * put against the page's own edge it reads as the picture continuing past the
+ * screen, and put anywhere else it reads as a sliced pack. The picture's other
+ * three edges are empty wash and are feathered into the panel.
+ *
+ * The panel is not a flat colour but the wash from the picture, continued —
+ * `--band` is that wash at the head and `--band-foot` at the foot, both sampled
+ * from it in `scripts/build-product-heroes.mjs`, so the two ramps are one ramp.
+ * Products without a banner fall back to a wash of `--tile`, their own colour,
+ * with the pack shot standing on it.
  */
 
 .hero {
@@ -23,7 +29,7 @@
   /* How much of the mark the picture is allowed to cover before it has faded
      out of the way. Named once because the picture's mask and the mark's own
      position are two halves of the same measurement. */
-  --dissolve: 18%;
+  --dissolve: 34%;
 }
 
 /* Tea's wash is near-black and Jam's is burgundy, so the ink is measured from
@@ -39,46 +45,36 @@
 .inner {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
-  /* Stretch, so the picture's column reaches the foot of the panel and the
-     picture can stand on it instead of floating above a strip of colour. The
-     copy centres itself against it. */
-  align-items: stretch;
-  gap: clamp(1.5rem, 4vw, 4rem);
   width: 100%;
   max-width: var(--tbb-measure-wide);
   margin: 0 auto;
-  padding: calc(var(--tbb-header-h) + clamp(1.25rem, 3vw, 2.5rem)) var(--tbb-gutter) 0;
+  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 3.5vw, 3rem)) var(--tbb-gutter)
+    clamp(2.5rem, 5vw, 4rem);
 }
 
 /* ---- the product ---- */
 
-.stage {
-  position: relative;
-  min-height: clamp(21rem, 38vw, 33rem);
-}
-
 /*
- * The brand mark at display size. It bleeds off the left of the page — the
- * whole word never fits beside a column of copy, and a mark cropped by the page
- * edge is the device the client's own banners use.
+ * The brand mark at display size, bleeding off the left of the page. The whole
+ * word never fits beside a column of copy, and a mark cropped by the page edge
+ * is the device the client's own banners use — where the copy also sits over
+ * it, because at this contrast it is texture rather than type.
  */
 .mark {
   position: absolute;
-  left: calc(-1 * var(--tbb-gutter) - 0.08em);
+  left: 0;
   top: 50%;
   z-index: 0;
   display: grid;
   justify-items: start;
   transform: translateY(-46%);
   font-family: var(--tbb-font-display);
-  font-size: clamp(5rem, 11vw, 11.5rem);
+  font-size: clamp(5rem, 11vw, 12rem);
   font-weight: 800;
   line-height: 0.76;
   letter-spacing: -0.035em;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.5);
   user-select: none;
 }
 
@@ -106,35 +102,34 @@
 .media {
   position: absolute;
   inset: 0 0 0 auto;
-  z-index: 1;
-  width: min(94%, 38rem);
+  z-index: 0;
+  width: min(46%, 36rem);
+  /* The copy is what makes the section tall, and on a short one — Raf Coffee's
+     h1 is two words — the picture would have nothing to stand in. */
+  min-height: clamp(22rem, 34vw, 32rem);
 }
 
-/* `contain`, not `cover`. The crop is a tall narrow strip and the stage is a
-   squarer box, so covering it would magnify the pouch until the top of it was
-   outside the page. Contained, the whole group shows — and because the panel
-   continues the crop's own wash, the space either side of it is not
-   letterboxing, it is the picture carrying on. */
+/* `contain`, not `cover`. The crop is a tall narrow strip and the section is a
+   wide one, so covering it would magnify the pouch until the top of it was
+   outside the page. Contained and set against the right edge, the whole group
+   shows and the only cut is the one the banner itself made. */
 .banner {
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: right bottom;
   /*
-   * Feathered on three edges. The panel's ramp and the crop's own are close but
-   * not identical — the panel is as tall as the section and the crop is as tall
-   * as itself — so every straight edge would otherwise show as a faint line.
-   * The left edge is given the longest fade because it is doing a second job:
-   * the mark behind stays readable up to the point the pouch takes over, which
-   * is roughly a seventh of the crop's width. The foot needs nothing; the
-   * picture stands on the bottom of the panel and ends with it.
+   * Feathered on the left and at the head, where the crop is empty wash. The
+   * panel's ramp and the crop's own are close but not identical — the panel is
+   * as tall as the section and the crop is as tall as itself — so a straight
+   * edge would show as a faint line. The right edge is not feathered and must
+   * not be: it is the pouch, and fading it takes a bite out of the pack. The
+   * foot needs nothing; the picture stands on the bottom of the panel.
    */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 var(--dissolve)),
-    linear-gradient(to left, transparent 0%, #000 5%),
-    linear-gradient(to bottom, transparent 0%, #000 22%);
+    linear-gradient(to bottom, transparent 0%, #000 26%);
   mask-image: linear-gradient(to right, transparent 0%, #000 var(--dissolve)),
-    linear-gradient(to left, transparent 0%, #000 5%),
-    linear-gradient(to bottom, transparent 0%, #000 22%);
+    linear-gradient(to bottom, transparent 0%, #000 26%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
@@ -155,11 +150,11 @@
 /* Spacing is a row gap, not margins: `design-tokens.css` resets every `p` and
    `h1` margin to zero at a specificity a single class here cannot answer. */
 .copy {
-  align-self: center;
   display: grid;
   justify-items: start;
   row-gap: clamp(0.75rem, 1.5vw, 1.15rem);
-  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+  /* Ends before the picture starts. */
+  max-width: min(34rem, 50%);
 }
 
 .breadcrumb {
@@ -310,23 +305,38 @@
 }
 
 @media (max-width: 899px) {
-  /* The picture stops being a column and becomes a band above the copy, so
-     neither has to survive at half a phone's width. */
-  .inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1rem, 4vw, 2rem);
+  /*
+   * The picture stops being a column and becomes a band above the copy, so
+   * neither has to survive at half a phone's width. It comes first in the
+   * markup, so taking it out of the flow's exception — it is absolute on a wide
+   * screen — is all that is needed to stack it there.
+   */
+  .media {
+    /* Relative rather than static: the mark is a positioned element and would
+       otherwise paint over the picture instead of behind it. */
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: clamp(17rem, 62vw, 26rem);
+    min-height: 0;
+    margin-top: var(--tbb-header-h);
   }
 
-  .stage {
-    min-height: clamp(17rem, 62vw, 26rem);
+  .banner {
+    object-position: center bottom;
+  }
+
+  .inner {
+    padding-top: clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .copy {
+    max-width: none;
   }
 
   .mark {
     font-size: clamp(4.5rem, 22vw, 9rem);
-  }
-
-  .media {
-    width: min(86%, 26rem);
+    top: 30%;
   }
 
   .title {
