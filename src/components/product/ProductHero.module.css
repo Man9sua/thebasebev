@@ -332,13 +332,22 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    height: clamp(17rem, 62vw, 26rem);
+    /*
+     * Taller than it looks like it needs to be, because the crop is a tall
+     * narrow strip and it is fitted by height: in a short band the pouch came
+     * out a third of the screen wide, adrift in the middle of it. At this height
+     * it fills three quarters of the width, which is the size a product is
+     * meant to be at the top of its own page.
+     */
+    height: clamp(21rem, 104vw, 32rem);
     min-height: 0;
     margin-top: var(--tbb-header-h);
   }
 
   .banner {
-    object-position: center bottom;
+    /* Against the right edge here too, for the reason it is there on a wide
+       screen: that edge of the crop is where the banner cut the pouch. */
+    object-position: right bottom;
   }
 
   .inner {
@@ -349,9 +358,12 @@
     max-width: none;
   }
 
+  /* Parked in the band's upper left, which is the part of the picture that is
+     empty wash — rather than half way down a section the copy has made tall. */
   .mark {
-    font-size: clamp(4.5rem, 22vw, 9rem);
-    top: 30%;
+    top: calc(var(--tbb-header-h) + 11vw);
+    transform: none;
+    font-size: clamp(4.5rem, 21vw, 9rem);
   }
 
   .title {
