@@ -38,6 +38,8 @@ const targetOnlyRedirects = new Map([["/cabinet", "/"]]);
 // observation for this explicit list.
 const intentionalContentMigrations = new Set([
   "/",
+  "/catalog",
+  "/contacts",
   "/wholesale-strategy",
   "/private-labeling",
   "/resources/glossary",
@@ -96,6 +98,7 @@ const removedShellRecords = new Set([
   "rec913703869",
   "rec860980632",
   "rec859870796",
+  "rec2989879303",
 ]);
 
 function splitShellRecords(inner) {

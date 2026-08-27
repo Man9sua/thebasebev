@@ -39,6 +39,10 @@
   color: var(--tbb-muted);
 }
 
+.eyebrow::after {
+  content: " \00b7  Dubai";
+}
+
 .title {
   max-width: 12ch;
   margin-top: clamp(1.5rem, 3vw, 2.5rem) !important;

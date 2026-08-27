@@ -15,10 +15,12 @@ export function ContactPage() {
       <section className={styles.hero} aria-labelledby="contact-title">
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>Get in touch · Dubai</p>
-            <h1 id="contact-title" className={styles.title}>
-              Start with the drink you want to build.
+            <h1 id="contact-title" className={styles.eyebrow}>
+              Contact Us
             </h1>
+            <p className={styles.title}>
+              Start with the drink you want to build.
+            </p>
           </div>
           <div className={styles.heroAside}>
             <p>

@@ -9,7 +9,7 @@
 ## Structure
 
 1. Shared header.
-2. Large light editorial hero with preserved contact intent and oversized display typography.
+2. Large light editorial hero with the preserved `Contact Us` H1 and oversized display typography.
 3. Contact channels and business hours.
 4. Dark conversation section containing the native form.
 5. Shared footer.
