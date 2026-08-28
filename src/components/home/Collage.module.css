@@ -197,18 +197,21 @@
 }
 
 @media (max-width: 599px) {
-  /*
-   * One column of pictures: at this width two of them are thumbnails. The
-   * columns dissolve rather than stack — `display: contents` hands the tiles
-   * straight to the grid, where their `order` puts them back into the order
-   * the essay is written in. Stacked instead, the page would read down one
-   * column and then back up to the top for the other.
-   */
+  /* Two across on a phone as well, which is what keeps this a composition
+     rather than a stack of postcards. Tighter gaps and a smaller plate under
+     the captions are what pays for it. */
   .grid {
-    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
   }
 
   .column {
-    display: contents;
+    gap: 0.5rem;
+  }
+
+  .caption {
+    left: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.3rem 0.55rem;
+    font-size: 0.5625rem;
   }
 }

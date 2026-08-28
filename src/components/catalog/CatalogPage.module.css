@@ -222,8 +222,44 @@
     border-radius: 1.5rem;
   }
 
+  /*
+   * Two across on a phone as well. One made a column of half-page tiles that
+   * took four screens to scroll and showed a visitor one product at a time,
+   * which is the opposite of what a catalogue is for. The card pays for the
+   * width by giving up the side-by-side title row and a little of everything
+   * else — at this size the price no longer fits beside the name.
+   */
   .grid {
+    gap: clamp(2rem, 7vw, 2.75rem) 0.75rem;
+  }
+
+  .titleRow {
     grid-template-columns: minmax(0, 1fr);
+    gap: 0.15rem;
+  }
+
+  .name,
+  .price {
+    font-size: 0.8125rem;
+  }
+
+  .description {
+    margin-top: 0.4rem !important;
+    font-size: 0.8rem;
+    /* Three lines and no more, so the tiles in a row stay level with each
+       other rather than stepping wherever the copy happens to end. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .category {
+    margin-top: 0.9rem !important;
+  }
+
+  .action {
+    margin-top: 0.7rem;
   }
 }
 

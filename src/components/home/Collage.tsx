@@ -116,16 +116,8 @@ const FIGURES = [
   { value: "1", label: "Roof, formulation to dispatch" },
 ];
 
-/**
- * The two picture columns, each tile carrying where it stands in the essay.
- * That index becomes its `order`, which does nothing while the columns are two
- * — the tiles are already in order within each — and everything when a phone
- * folds them into one, where without it the reading would run down one column
- * and then back up for the other.
- */
-const COLUMNS = [0, 1].map((column) =>
-  TILES.map((tile, index) => ({ tile, index })).filter((entry) => entry.tile.column === column),
-);
+/** The two picture columns, in the order the essay is written in. */
+const COLUMNS = [0, 1].map((column) => TILES.filter((tile) => tile.column === column));
 
 export function Collage() {
   return (
@@ -159,13 +151,13 @@ export function Collage() {
         <div className={styles.grid}>
           {COLUMNS.map((column, columnIndex) => (
             <div key={columnIndex} className={styles.column}>
-              {column.map(({ tile, index }, position) => (
+              {column.map((tile, index) => (
                 <Reveal
                   key={tile.src}
                   as="figure"
                   className={styles.tile}
-                  style={{ ["--ratio" as string]: tile.ratio, order: index }}
-                  delay={position * 80}
+                  style={{ ["--ratio" as string]: tile.ratio }}
+                  delay={index * 80}
                   distance={24}
                 >
                   <Parallax className={styles.layer} speed={tile.speed}>
