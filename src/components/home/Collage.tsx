@@ -11,17 +11,22 @@ import styles from "./Collage.module.css";
  * tile keeping its own proportion, so the block has a rhythm rather than a grid
  * of equal rectangles. Each tile parallaxes at its own speed.
  *
- * The order is the argument the heading makes — formulation, the product,
- * making it, the people, the brand in the café, dispatch, sixty markets — so
+ * The order is the argument the heading makes — formulation, research, the
+ * product, making it, dispatch, sixty markets, the brand in the café, and the
+ * drink in someone's hand. It ends where "from base to cup" says it ends, so
  * the column reads top to bottom rather than being eight pictures in a bag.
  *
- * Two of the photographs it used to carry are gone rather than rearranged: one
- * was a guest holding a cup with COSTA COFFEE legible across it, the other a
- * pile of capsules with the Nespresso "N" on every one. Both are a competitor's
- * mark on this company's homepage, and the second is a category THE BASE does
- * not even sell. Two more were generic stock — a bowl of coffee beans and a
- * warehouse aisle — and gave way to pictures that are actually of this
- * business.
+ * Every one of them is a photograph. Three had to go for reasons that are not
+ * design: a guest holding a cup with COSTA COFFEE legible across it and a pile
+ * of capsules stamped with the Nespresso "N" — a competitor's mark on this
+ * company's homepage, the second in a category THE BASE does not even sell —
+ * and, separately, two generated images that read as generated, a woman in a
+ * branded coat and a truck at night, both delivered at 600x440 where the real
+ * photography here is 1680 wide.
+ *
+ * That is worth keeping in mind when this set is refreshed: the pool in
+ * `public/images` mixes stock photographs with composed artwork, and the second
+ * kind shows.
  *
  * Server-rendered: nothing here needs client state, so only the parallax and
  * reveal wrappers ship JavaScript.
@@ -72,25 +77,11 @@ const TILES: Tile[] = [
     speed: 0.07,
   },
   {
-    src: "/images/tild3635-3534-4562-a230-386630306263__3_1.jpg",
-    alt: "Production technician in a THE BASE coat",
-    column: 0,
-    ratio: "4 / 3",
-    speed: 0.14,
-  },
-  {
-    src: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
-    alt: "THE BASE branded apron worn by a barista",
-    column: 1,
-    ratio: "4 / 5",
-    speed: 0.09,
-  },
-  {
-    src: "/images/tild3663-3430-4638-b336-316531626361__mask_group_4.jpg",
-    alt: "THE BASE delivery truck on the road at night",
+    src: "/images/tild3433-6466-4661-b034-656563323035__photo-1627309366653-.jpg",
+    alt: "Warehouse racking stocked with product",
     caption: "Dispatch",
     column: 0,
-    ratio: "4 / 3",
+    ratio: "2 / 1",
     speed: 0.08,
   },
   {
@@ -100,6 +91,21 @@ const TILES: Tile[] = [
     column: 1,
     ratio: "16 / 9",
     speed: 0.12,
+  },
+  {
+    src: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
+    alt: "THE BASE branded apron worn by a barista",
+    column: 0,
+    ratio: "4 / 5",
+    speed: 0.09,
+  },
+  {
+    src: "/images/tild6132-3863-4132-a630-386136393833__photo-1725268093455-.jpg",
+    alt: "Four mixed drinks raised in a toast",
+    caption: "To cup",
+    column: 1,
+    ratio: "4 / 3",
+    speed: 0.14,
   },
 ];
 
