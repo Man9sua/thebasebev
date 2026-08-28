@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
-import { productGlass } from "@/data/product-glass";
+import { PACK_BOX, productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productMargins } from "@/data/product-margins";
 import { isDark } from "@/lib/contrast";
@@ -114,6 +114,10 @@ export function ProductHero({ product }: { product: Product }) {
       className={`${styles.hero} ${onDark ? styles.onDark : ""} ${banner ? "" : styles.plain}`}
       style={{
         ["--tile" as string]: product.backgroundColor,
+        ["--pack-left" as string]: PACK_BOX.left,
+        ["--pack-top" as string]: PACK_BOX.top,
+        ["--pack-width" as string]: PACK_BOX.width,
+        ["--pack-height" as string]: PACK_BOX.height,
         ...(banner
           ? {
               ["--band" as string]: banner.band,
@@ -129,10 +133,9 @@ export function ProductHero({ product }: { product: Product }) {
         runs off the side of the page the way the design draws it, instead of
         starting somewhere out in the middle. Below the frame's own width the two
         are the same edge and nothing moves.
-      */}
-      {/*
-        The brand mark at display size, standing behind everything the way it
-        does on every one of the client's key visuals. "BASE" is the owner's
+
+        First of it, the brand mark at display size, standing behind everything
+        the way it does on every one of the client's key visuals. "BASE" is the owner's
         own vector rather than type — it is a condensed face this project does
         not carry, and drawing it with the page's own would be a different
         word in a different voice. It is painted through a mask rather than

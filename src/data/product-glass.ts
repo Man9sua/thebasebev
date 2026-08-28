@@ -25,6 +25,17 @@
  * the same layer name, that is also what identified which drink was which.
  */
 
+/**
+ * The pouch's own group in that same frame, which is what the numbers below are
+ * measured against — the drink's box is only meaningful beside it.
+ *
+ * Exported because two surfaces stand the drink on the pouch and both have to
+ * read the relationship the same way: the product hero and the homepage
+ * carousel. Written once here rather than copied into each stylesheet, where
+ * the two copies would drift the first time either is re-measured.
+ */
+export const PACK_BOX = { left: 106.85, top: 137.73, width: 529.27, height: 676.55 };
+
 export type ProductGlass = {
   /** `/images/glass-<slug>.webp`, or null until the artwork exists. */
   image: string | null;
