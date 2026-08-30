@@ -66,12 +66,8 @@ try {
   // asserted there rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("#bestsellers").waitFor();
-  const homepageLoader = page.locator("[data-loading-screen]");
-  if (await homepageLoader.isVisible()) {
-    await homepageLoader.waitFor({ state: "hidden", timeout: 8_000 });
-  }
-  // The loader opens the shared entrance gate while its curtain leaves. Give
-  // the hero and the scene controller one frame to settle before sending the
+  // Nothing covers the page any more — the loading screen is gone — so this is
+  // just a frame for the hero and the scene controller to settle in before the
   // first desktop wheel event.
   await page.waitForTimeout(250);
 
@@ -427,28 +423,6 @@ try {
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  const loadingGateWasArmed = await mobilePage.evaluate(
-    () => document.documentElement.getAttribute("data-tbb-loading") === "1",
-  );
-  check(loadingGateWasArmed, "mobile: first-visit loading gate was not armed");
-  if (loadingGateWasArmed) {
-    const progress = mobilePage.locator("[data-loading-screen][role='progressbar']");
-    // The Worker can deliver the document before the CSS chunk has finished
-    // applying. The gate and progressbar are already in the server HTML, but
-    // an immediate `isVisible()` can sample the default hidden rule between
-    // DOMContentLoaded and the first styled frame. Wait for the state a user
-    // can actually paint, while keeping the assertion bounded well below the
-    // loader's own completion window.
-    const progressWasVisible = await progress
-      .waitFor({ state: "visible", timeout: 1_500 })
-      .then(() => true)
-      .catch(() => false);
-    check(progressWasVisible, "mobile: semantic loading progress was not visible");
-    check(
-      (await progress.getAttribute("aria-valuemax")) === "100",
-      "mobile: loading progress is missing its 0-100 semantic range",
-    );
-  }
   // On a remote Worker the static HTML can arrive before its client chunks.
   // The attribution bridge writes this key from a React effect, giving the
   // smoke test a deterministic hydration signal before it clicks the menu.
@@ -456,19 +430,6 @@ try {
     (storageKey) => sessionStorage.getItem(storageKey) !== null,
     firstTouchStorageKey,
   );
-  // A first visit also runs the homepage loading screen after hydration. Wait
-  // for its explicit gate instead of clicking through an entrance transition.
-  await mobilePage.waitForFunction(
-    () => document.documentElement.getAttribute("data-tbb-loading") !== "1",
-    undefined,
-    { timeout: 7_000 },
-  );
-  const loadingCurtainCleared = await mobilePage
-    .locator("[data-loading-screen]")
-    .waitFor({ state: "hidden", timeout: 3_000 })
-    .then(() => true)
-    .catch(() => false);
-  check(loadingCurtainCleared, "mobile: loading curtain remained over the completed page");
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
   // The button ships in the server HTML, so it is clickable well before React
@@ -557,10 +518,6 @@ try {
   // render-ready instead of racing the stylesheet response.
   await reducedPage.goto(`${baseUrl}/`, { waitUntil: "load" });
   check(
-    (await reducedPage.locator("html[data-tbb-loading='1']").count()) === 0,
-    "reduced-motion: initial loading gate must be skipped",
-  );
-  check(
     await reducedPage.locator("section[data-hero] h1").isVisible(),
     "reduced-motion: homepage hero content is not immediately visible",
   );
@@ -577,10 +534,6 @@ try {
   check(
     await noScriptPage.locator("section[data-hero] h1").isVisible(),
     "no-script: homepage hero content is not visible",
-  );
-  check(
-    !(await noScriptPage.locator("[data-loading-screen]").isVisible()),
-    "no-script: non-dismissible loading screen is visible",
   );
   await noScript.close();
   console.log("Browser smoke phase passed: no JavaScript");

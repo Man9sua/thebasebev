@@ -34,43 +34,10 @@ async function capture(page, viewport, label) {
   });
 }
 
-async function waitForHome(page, viewport) {
+/** The document, and one frame for the hero to settle in. */
+async function waitForHome(page) {
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("[data-hero]").waitFor();
-
-  const loader = page.locator("[data-loading-screen]");
-  const introVisible = await loader.isVisible();
-  check(introVisible, `${viewport}: intro loader was not visible on document load`);
-  if (introVisible) {
-    const values = [];
-    const reachedComplete = page
-      .waitForFunction(
-        () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") === "100",
-        undefined,
-        { timeout: 7_500 },
-      )
-      .then(() => true, () => false);
-
-    await capture(page, viewport, "intro");
-    const deadline = Date.now() + 8_000;
-    while ((await loader.count()) && Date.now() < deadline) {
-      const rawValue = await page.evaluate(
-        () => document.querySelector("[data-loading-screen]")?.getAttribute("aria-valuenow") ?? null,
-      );
-      const value = rawValue === null ? Number.NaN : Number(rawValue);
-      if (Number.isFinite(value) && values.at(-1) !== value) values.push(value);
-      await page.waitForTimeout(80);
-    }
-
-    check(!(await loader.count()), `${viewport}: intro loader did not leave the page`);
-    check(values.length > 1 && values[0] < 100, `${viewport}: intro did not expose real progress`);
-    check(await reachedComplete, `${viewport}: intro never exposed its completed 100% state`);
-    check(
-      values.every((value, index) => index === 0 || value >= values[index - 1]),
-      `${viewport}: intro progress moved backwards`,
-    );
-  }
-
   await page.waitForTimeout(250);
 }
 
@@ -324,7 +291,7 @@ async function auditDesktop(browser, width, height) {
   const context = await browser.newContext({ viewport: { width, height } });
   const page = await context.newPage();
   observe(page, viewport);
-  await waitForHome(page, viewport);
+  await waitForHome(page);
   await assertHero(page, viewport);
   await assertDesktopComposition(page, viewport);
   await capture(page, viewport, "hero");
@@ -346,7 +313,7 @@ async function auditMobile(browser) {
   });
   const page = await context.newPage();
   observe(page, viewport);
-  await waitForHome(page, viewport);
+  await waitForHome(page);
   await assertHero(page, viewport);
   await capture(page, viewport, "hero");
   await assertNaturalScroll(page, viewport, () =>

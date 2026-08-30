@@ -3,7 +3,6 @@ import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
 import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
 import { FIRST_TOUCH_SCRIPT } from "@/components/forms/first-touch";
-import { LOADING_GATE_SCRIPT } from "@/components/site/loading-gate";
 import "./globals.css";
 
 /**
@@ -56,12 +55,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={exo2.variable} suppressHydrationWarning>
       <head>
         <base href="/" />
-        {/*
-          Blocking and first, because it has to decide whether the homepage's
-          loading screen is showing before a single pixel is painted. It is a
-          no-op on every other route — see LOADING_GATE_SCRIPT.
-        */}
-        <script dangerouslySetInnerHTML={{ __html: LOADING_GATE_SCRIPT }} />
         {/* Also blocking, and for the same reason: the first touch must be
             recorded before a click can navigate away from the landing page. */}
         <script dangerouslySetInnerHTML={{ __html: FIRST_TOUCH_SCRIPT }} />

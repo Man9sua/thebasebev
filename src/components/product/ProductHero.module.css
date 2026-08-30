@@ -31,12 +31,9 @@
  * rule below is written against `.copy` as well as its own class, that is what
  * it is for. Only the properties that sheet actually takes are answered.
  *
- * One it takes and this does not answer: `html body *` forces Roboto over the
- * brand face on every element of a page served through the legacy shell — the
- * header, the tab strip, the specification cards and the footer along with this
- * hero. Correcting it here alone would leave one block of the page in a
- * different typeface from the rest of it, so it belongs to a change that covers
- * the shell, not to this one.
+ * It used to take a third — `html body *` forced Roboto over the brand face on
+ * every element of a page served through the legacy shell, this hero included.
+ * That rule now names Exo 2, so nothing here has to answer it.
  */
 
 .hero {

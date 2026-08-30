@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { isLoadingGateOpen, whenLoadingGateOpens } from "@/components/site/loading-gate";
 import styles from "./Hero.module.css";
 
 /**
@@ -41,36 +40,9 @@ function ArrowIcon() {
 }
 
 export function Hero() {
-  const [motionArmed, setMotionArmed] = useState(false);
-  const [ready, setReady] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * Arm the entrance when the loading screen starts pulling away, so the
-   * headline rises into a frame the visitor is actually watching instead of
-   * having already played behind a curtain.
-   *
-   * With no loading screen — no JS gate, a repeat view, reduced motion — the
-   * stable server render remains visible and no entrance is armed.
-   * `whenLoadingGateOpens` carries its own timeout, so an armed hero is never
-   * left invisible waiting on a screen that failed to finish.
-   */
-  useEffect(() => {
-    // The server/default render is visible. We only arm hidden start styles
-    // when the inline script has already confirmed that a loading curtain is
-    // covering the page; if that gate never existed, there is nothing to wait
-    // for and no content can get stranded off-screen.
-    if (isLoadingGateOpen()) return;
-
-    const frame = requestAnimationFrame(() => setMotionArmed(true));
-    const stopWaiting = whenLoadingGateOpens(() => setReady(true));
-    return () => {
-      cancelAnimationFrame(frame);
-      stopWaiting();
-    };
-  }, []);
 
   /**
    * Scroll hand-off into Bestsellers: the copy lifts away while the photograph
@@ -127,7 +99,7 @@ export function Hero() {
   return (
     <section
       ref={heroRef}
-      className={`${styles.hero} ${motionArmed ? styles.motionArmed : ""} ${ready ? styles.ready : ""}`}
+      className={styles.hero}
       data-hero
       aria-label="THE BASE"
     >
@@ -150,9 +122,19 @@ export function Hero() {
             Where taste begins
           </span>
 
-          {/* One word to a row, each rising out of its own mask. The DOM still
-              serves "Premium Cream Latte Bases" as one string, which is the
-              wording production ranks on and the string the smoke test reads. */}
+          {/*
+            One word to a row. The DOM serves the three as one string.
+
+            It read "Premium Cream Latte Bases" — the wording live production
+            still carries, and what `audit:seo-parity` compares this page's h1
+            against character for character. The owner asked for the product
+            name out of it: a homepage headline that names one of sixteen
+            products describes the catalogue wrongly. "Beverage" takes its
+            place, so the phrase the page ranks on — Premium … Bases — is
+            intact and only the product goes. Expect / to report an h1
+            mismatch against production until production carries this wording
+            too.
+          */}
           <h1 className={styles.title}>
             <span className={styles.line}>
               <span
@@ -167,7 +149,7 @@ export function Hero() {
                 className={`${styles.lineInner} ${styles.titleLead}`}
                 style={{ ["--enter-delay" as string]: "400ms" }}
               >
-                Cream Latte
+                Beverage
               </span>
             </span>{" "}
             <span className={styles.line}>
