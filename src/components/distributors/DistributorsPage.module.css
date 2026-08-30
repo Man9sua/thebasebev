@@ -1,10 +1,11 @@
 /**
  * Become a distributor.
  *
- * The hero is kept as it stood — dark, a key visual behind it, the four figures
- * under the buttons. Under it the page alternates paper and warm paper with one
- * dark band at the foot, and separates by hairline rather than by shadow, which
- * is how the rest of this site separates things.
+ * Nothing here styles the hero: that is the export's own record, which carries
+ * its own `<style>` — see the note in the component. This is everything under
+ * it, alternating paper and warm paper with one dark band at the foot, and
+ * separating by hairline rather than by shadow, which is how the rest of this
+ * site separates things.
  *
  * The product strip borrows the catalogue's frame exactly: a 4:5 tile, the
  * category above the name, no panel around it. That is the point of it — the
@@ -58,97 +59,6 @@
   max-width: 52ch;
 }
 
-/* ---- the hero, kept ---- */
-
-.hero {
-  position: relative;
-  overflow: clip;
-  min-height: min(86svh, 44rem);
-  display: flex;
-  align-items: flex-end;
-  padding: calc(var(--tbb-header-h) + clamp(3.5rem, 9vw, 7rem)) 0 clamp(2.5rem, 6vw, 4.5rem);
-  background: var(--tbb-ink-black);
-}
-
-/*
- * The three pouches, overlapped and stepped back into the frame's right half.
- * Each takes its place from `--slot`, so the group is one arithmetic rather
- * than three hand-placed boxes.
- */
-.heroArt {
-  position: absolute;
-  inset: 0;
-  overflow: clip;
-}
-
-.heroPack {
-  position: absolute;
-  right: calc(2% + var(--slot) * 13%);
-  bottom: calc(-14% + var(--slot) * 6%);
-  width: calc(34% - var(--slot) * 5%);
-  min-width: 12rem;
-  object-fit: contain;
-  transform: rotate(calc(var(--slot) * -5deg));
-  opacity: calc(1 - var(--slot) * 0.18);
-  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
-}
-
-.heroVeil {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    rgba(10, 10, 10, 0.94) 0%,
-    rgba(10, 10, 10, 0.84) 42%,
-    rgba(10, 10, 10, 0.35) 74%,
-    rgba(10, 10, 10, 0.12) 100%
-  );
-}
-
-.heroInner {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: var(--tbb-measure-wide);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.9rem, 2vw, 1.4rem);
-  color: var(--tbb-on-dark);
-}
-
-.hero .eyebrow {
-  color: rgba(255, 255, 255, 0.62);
-}
-
-.page .heroTitle {
-  font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  font-weight: 700 !important;
-  line-height: 1.02;
-  letter-spacing: -0.02em !important;
-  color: var(--tbb-on-dark);
-  max-width: 16ch;
-  text-transform: uppercase;
-}
-
-.heroLede {
-  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-  line-height: 1.55 !important;
-  color: rgba(255, 255, 255, 0.78);
-  max-width: 54ch;
-}
-
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  padding-top: clamp(0.3rem, 1vw, 0.6rem);
-}
-
-.primary,
-.secondary,
 .stepsCta,
 .submit {
   display: inline-flex;
@@ -170,54 +80,9 @@
     transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.primary {
-  background: var(--tbb-paper);
-  color: var(--tbb-ink);
-}
-
-.secondary {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: var(--tbb-on-dark);
-}
-
-.primary:hover,
-.secondary:hover,
 .stepsCta:hover,
 .submit:hover {
   transform: translate3d(0, -2px, 0);
-}
-
-.secondary:hover {
-  border-color: var(--tbb-on-dark);
-}
-
-/* The four figures, on a rule under the buttons the way the old hero set them. */
-.heroFigures {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1.5rem, 4vw, 3.5rem);
-  margin: clamp(0.75rem, 2vw, 1.5rem) 0 0;
-  padding-top: clamp(1rem, 2.4vw, 1.75rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  width: 100%;
-}
-
-.heroFigure {
-  display: grid;
-  row-gap: 0.15rem;
-}
-
-.heroFigureValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
-  font-weight: 700;
-  line-height: 1;
-  color: var(--tbb-on-dark);
-}
-
-.heroFigureLabel {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ---- why partners choose us ---- */
@@ -735,24 +600,6 @@
 }
 
 @media (max-width: 639px) {
-  .hero {
-    min-height: 0;
-  }
-
-  .heroActions {
-    width: 100%;
-  }
-
-  .primary,
-  .secondary {
-    flex: 1 1 auto;
-    justify-content: center;
-  }
-
-  .heroFigures {
-    gap: 1rem 2rem;
-  }
-
   .reasonList,
   .twoColumns {
     grid-template-columns: minmax(0, 1fr);

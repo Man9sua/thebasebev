@@ -8,9 +8,13 @@ import styles from "./DistributorsPage.module.css";
  * Become a distributor.
  *
  * A React page in place of the exported Tilda document, the way `/catalog`,
- * `/contacts` and `/rnd` already are. The hero is kept as it stood — the same
- * words, the same four figures, the same two calls to action — and everything
- * under it is rebuilt.
+ * `/contacts` and `/rnd` already are — except for the hero, which is not
+ * rebuilt at all. It is the export's own record, `rec3169672103`, rendered as
+ * it stands: a hand-written `<section class="dsth">` that carries its own
+ * `<style>` and its own pouch photography. Redrawing it here reproduced the
+ * words but not the picture, which is not what "keep the hero" means.
+ *
+ * Everything under it is rebuilt.
  *
  * The product strip is the one place the old page really fell down: it drew its
  * own square tiles of a pouch on a flat colour, while `/catalog` two clicks away
@@ -27,20 +31,8 @@ import styles from "./DistributorsPage.module.css";
 
 const tiles = catalogTiles as Record<string, { image: string }>;
 
-/** The three pouches the exported hero stood together, front to back. */
-const HERO_PACKS = [
-  "/images/w/tild3334-3061-4431-a366-333338646666__hero-raf.webp",
-  "/images/w/tild3539-3639-4431-b963-333932383239__hero-matcha.webp",
-  "/images/w/tild3065-3261-4639-a232-303433373631__hero-frappe.webp",
-];
-
-/** The hero's four figures, unchanged. */
-const FIGURES = [
-  { value: "600+", label: "Flavours" },
-  { value: "16", label: "Product lines" },
-  { value: "18", label: "Months shelf life" },
-  { value: "UAE", label: "Own production" },
-];
+/** The exported hero, kept whole. */
+export const DISTRIBUTORS_HERO_RECORD = "rec3169672103";
 
 const REASONS = [
   {
@@ -137,64 +129,24 @@ const FAQ = [
   },
 ];
 
-export function DistributorsPage() {
+export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
   const strip = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((p) => p.slug === slug)).filter(
     (product) => product !== undefined,
   );
 
   return (
     <main className={styles.page}>
-      <section className={styles.hero} aria-labelledby="dist-title">
-        {/*
-          Three pouches rather than one photograph: these are the same cut-outs
-          the exported hero composed, each on its own transparency, so the group
-          can be laid out here instead of arriving pre-flattened at one size.
-        */}
-        <span className={styles.heroArt} aria-hidden="true">
-          {HERO_PACKS.map((pack, index) => (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              key={pack}
-              className={styles.heroPack}
-              style={{ ["--slot" as string]: index }}
-              src={pack}
-              alt=""
-              fetchPriority={index === 0 ? "high" : "auto"}
-            />
-          ))}
-        </span>
-        <span className={styles.heroVeil} aria-hidden="true" />
-
-        <div className={styles.heroInner}>
-          <span className={`tbb-label ${styles.eyebrow}`}>Wholesale partnership</span>
-          <h1 id="dist-title" className={styles.heroTitle}>
-            Become a distributor of The Base
-          </h1>
-          <p className={styles.heroLede}>
-            Dry beverage premixes produced in our own UAE facility. One pouch replaces cream, syrups
-            and toppings — no refrigeration, 18 months shelf life, consistent taste across every
-            outlet.
-          </p>
-
-          <div className={styles.heroActions}>
-            <a href="#distributor-form" className={styles.primary}>
-              Apply for distribution <span aria-hidden="true">↓</span>
-            </a>
-            <SiteLink href="/catalog" className={styles.secondary}>
-              View catalogue
-            </SiteLink>
-          </div>
-
-          <dl className={styles.heroFigures}>
-            {FIGURES.map((figure) => (
-              <div key={figure.label} className={styles.heroFigure}>
-                <dt className={styles.heroFigureValue}>{figure.value}</dt>
-                <dd className={`tbb-label ${styles.heroFigureLabel}`}>{figure.label}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+      {/*
+        The exported hero, untouched — see the note at the top of this file. It
+        is rendered here rather than by `LegacyDocument` so it can open this
+        page's own `<main>` instead of a second one.
+      */}
+      <div
+        className="legacy-document"
+        data-legacy-record={DISTRIBUTORS_HERO_RECORD}
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: heroHtml }}
+      />
 
       <section className={styles.reasons} aria-labelledby="dist-reasons">
         <div className={styles.inner}>

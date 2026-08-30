@@ -707,6 +707,22 @@ export type SitePage = RouteDefinition & {
   usesSharedShell: boolean;
 };
 
+/**
+ * One exported record's markup, on its own.
+ *
+ * The counterpart to `withoutLegacyRecords`: that one keeps a document and drops
+ * records from it, this one keeps a record and drops the document. It exists for
+ * a page that is otherwise React but has one block worth keeping exactly as the
+ * export draws it — `/distributors` keeps its hero that way, styles and all,
+ * because the record carries its own `<style>` and its own class names.
+ *
+ * Returns an empty string when the record is not on the page, so a caller that
+ * loses its record renders nothing rather than the whole document.
+ */
+export function legacyRecordHtml(page: SitePage, recordId: string): string {
+  return splitShellRecords(page.bodyHtml).find((record) => record.id === recordId)?.html ?? "";
+}
+
 export function withoutLegacyRecords(page: SitePage, recordIds: readonly string[]): SitePage {
   return {
     ...page,
