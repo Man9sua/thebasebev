@@ -1,0 +1,766 @@
+/**
+ * Become a distributor.
+ *
+ * The hero is kept as it stood — dark, a key visual behind it, the four figures
+ * under the buttons. Under it the page alternates paper and warm paper with one
+ * dark band at the foot, and separates by hairline rather than by shadow, which
+ * is how the rest of this site separates things.
+ *
+ * The product strip borrows the catalogue's frame exactly: a 4:5 tile, the
+ * category above the name, no panel around it. That is the point of it — the
+ * page asking someone to stock the catalogue should show the catalogue, not a
+ * second version of it.
+ *
+ * `!important` where it appears is answering the exported Tilda sheet, which is
+ * global on this route: `html body p { line-height: 1.7 }` and `html body h1,
+ * html body [class*="title"] { font-weight: 300 }` both carry it, and the second
+ * outranks a single class — hence the two-class selectors on headings.
+ */
+
+.page {
+  background: var(--tbb-paper);
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-measure-wide);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+}
+
+.eyebrow {
+  display: block;
+  color: var(--tbb-muted);
+}
+
+.sectionHead {
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(0.6rem, 1.4vw, 1rem);
+  max-width: 46rem;
+  margin-bottom: clamp(2.25rem, 5vw, 4rem);
+}
+
+.page .sectionTitle {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h2);
+  font-weight: 600 !important;
+  line-height: 1.04;
+  letter-spacing: var(--tbb-tracking-display) !important;
+  color: var(--tbb-ink);
+  max-width: 18ch;
+}
+
+.sectionLede {
+  font-size: var(--tbb-text-body);
+  line-height: 1.55 !important;
+  color: var(--tbb-ink-soft);
+  max-width: 52ch;
+}
+
+/* ---- the hero, kept ---- */
+
+.hero {
+  position: relative;
+  overflow: clip;
+  min-height: min(86svh, 44rem);
+  display: flex;
+  align-items: flex-end;
+  padding: calc(var(--tbb-header-h) + clamp(3.5rem, 9vw, 7rem)) 0 clamp(2.5rem, 6vw, 4.5rem);
+  background: var(--tbb-ink-black);
+}
+
+/*
+ * The three pouches, overlapped and stepped back into the frame's right half.
+ * Each takes its place from `--slot`, so the group is one arithmetic rather
+ * than three hand-placed boxes.
+ */
+.heroArt {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+
+.heroPack {
+  position: absolute;
+  right: calc(2% + var(--slot) * 13%);
+  bottom: calc(-14% + var(--slot) * 6%);
+  width: calc(34% - var(--slot) * 5%);
+  min-width: 12rem;
+  object-fit: contain;
+  transform: rotate(calc(var(--slot) * -5deg));
+  opacity: calc(1 - var(--slot) * 0.18);
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
+}
+
+.heroVeil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(10, 10, 10, 0.94) 0%,
+    rgba(10, 10, 10, 0.84) 42%,
+    rgba(10, 10, 10, 0.35) 74%,
+    rgba(10, 10, 10, 0.12) 100%
+  );
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--tbb-measure-wide);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(0.9rem, 2vw, 1.4rem);
+  color: var(--tbb-on-dark);
+}
+
+.hero .eyebrow {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.page .heroTitle {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h2);
+  font-weight: 700 !important;
+  line-height: 1.02;
+  letter-spacing: -0.02em !important;
+  color: var(--tbb-on-dark);
+  max-width: 16ch;
+  text-transform: uppercase;
+}
+
+.heroLede {
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  line-height: 1.55 !important;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 54ch;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: clamp(0.3rem, 1vw, 0.6rem);
+}
+
+.primary,
+.secondary,
+.stepsCta,
+.submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 3rem;
+  padding-inline: 1.6rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: var(--tbb-text-label);
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.primary {
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+}
+
+.secondary {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: var(--tbb-on-dark);
+}
+
+.primary:hover,
+.secondary:hover,
+.stepsCta:hover,
+.submit:hover {
+  transform: translate3d(0, -2px, 0);
+}
+
+.secondary:hover {
+  border-color: var(--tbb-on-dark);
+}
+
+/* The four figures, on a rule under the buttons the way the old hero set them. */
+.heroFigures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  margin: clamp(0.75rem, 2vw, 1.5rem) 0 0;
+  padding-top: clamp(1rem, 2.4vw, 1.75rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+}
+
+.heroFigure {
+  display: grid;
+  row-gap: 0.15rem;
+}
+
+.heroFigureValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--tbb-on-dark);
+}
+
+.heroFigureLabel {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ---- why partners choose us ---- */
+
+.reasons {
+  padding: var(--tbb-section) 0;
+}
+
+.reasonList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 2.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--tbb-line);
+}
+
+.reason {
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(0.35rem, 0.9vw, 0.6rem);
+  padding-top: clamp(1.1rem, 2.4vw, 1.75rem);
+}
+
+.reasonNumber {
+  font-family: var(--tbb-font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  color: var(--tbb-muted);
+}
+
+.page .reasonTitle {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 600 !important;
+  line-height: 1.2;
+  letter-spacing: -0.01em !important;
+  color: var(--tbb-ink);
+}
+
+.reasonBody {
+  font-size: 0.9375rem;
+  line-height: 1.55 !important;
+  color: var(--tbb-ink-soft);
+}
+
+/* ---- four steps ---- */
+
+.steps {
+  padding: var(--tbb-section) 0;
+  background: var(--tbb-paper-warm);
+}
+
+.stepList {
+  display: grid;
+  gap: 0;
+  margin: 0 0 clamp(1.75rem, 3.5vw, 2.75rem);
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--tbb-line);
+}
+
+.step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(1rem, 2.5vw, 2rem);
+  align-items: start;
+  padding: clamp(1.1rem, 2.4vw, 1.75rem) 0;
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+.stepNumber {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--tbb-ink);
+  font-family: var(--tbb-font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tbb-ink);
+}
+
+.page .stepTitle {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 600 !important;
+  line-height: 1.2;
+  letter-spacing: -0.01em !important;
+  color: var(--tbb-ink);
+}
+
+.stepBody {
+  margin-top: 0.3rem !important;
+  font-size: 0.9375rem;
+  line-height: 1.55 !important;
+  color: var(--tbb-ink-soft);
+  max-width: 60ch;
+}
+
+.stepsCta {
+  background: var(--tbb-ink);
+  color: var(--tbb-paper);
+}
+
+/* ---- tiers ---- */
+
+.tiers {
+  padding: var(--tbb-section) 0;
+}
+
+.tierGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.75rem);
+}
+
+.tier {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  row-gap: clamp(0.4rem, 1vw, 0.7rem);
+  padding: clamp(1.25rem, 2.6vw, 2rem);
+  border: 1px solid var(--tbb-line);
+  border-radius: clamp(0.5rem, 1vw, 0.9rem);
+}
+
+/* The middle tier is the one most partners take, so it is the one the eye
+   lands on: inverted rather than badged. */
+.tierFeatured {
+  background: var(--tbb-ink-black);
+  border-color: var(--tbb-ink-black);
+  color: var(--tbb-on-dark);
+}
+
+.tierEyebrow {
+  color: var(--tbb-muted);
+}
+
+.tierFeatured .tierEyebrow {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tierName {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: inherit;
+}
+
+.tierItems {
+  display: grid;
+  row-gap: 0.5rem;
+  margin: clamp(0.5rem, 1.2vw, 0.9rem) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+  color: var(--tbb-ink-soft);
+  width: 100%;
+}
+
+.tierFeatured .tierItems {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.tierItems li {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--tbb-line);
+}
+
+.tierFeatured .tierItems li {
+  border-top-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ---- the product strip ---- */
+
+.range {
+  padding: var(--tbb-section) 0;
+  background: var(--tbb-paper-warm);
+}
+
+.rangeHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.rangeHead .sectionHead {
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.rangeLink {
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--tbb-line);
+  padding-bottom: 0.25rem;
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.rangeLink:hover {
+  border-bottom-color: var(--tbb-ink);
+}
+
+.rangeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 2.5rem) clamp(1rem, 1.8vw, 1.75rem);
+}
+
+/* The catalogue's own card, minus the price and the cart button: a 4:5 tile,
+   the category above the name, nothing drawn around it. */
+.card {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+}
+
+.cardMedia {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  margin-bottom: clamp(0.6rem, 1.2vw, 0.9rem);
+  background: var(--tbb-paper);
+}
+
+.cardImage {
+  object-fit: cover;
+  object-position: center;
+  transition: transform var(--tbb-dur) var(--tbb-ease) !important;
+}
+
+.card:hover .cardImage {
+  transform: scale(1.025);
+}
+
+.cardCategory {
+  margin: 0 0 0.25rem !important;
+  color: var(--tbb-muted);
+}
+
+.cardName {
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--tbb-ink);
+}
+
+/* ---- FAQ ---- */
+
+.faq {
+  padding: var(--tbb-section) 0;
+}
+
+.faqInner {
+  width: 100%;
+  max-width: var(--tbb-measure-wide);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+.faqCopy {
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(0.6rem, 1.4vw, 1rem);
+}
+
+.faqCopy .sectionTitle {
+  max-width: 14ch;
+}
+
+.faqLink {
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--tbb-line);
+  padding-bottom: 0.25rem;
+}
+
+.faqLink:hover {
+  border-bottom-color: var(--tbb-ink);
+}
+
+.faqList {
+  border-top: 1px solid var(--tbb-line);
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+.faqQuestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(0.9rem, 2vw, 1.35rem) 0;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-weight: 600;
+  color: var(--tbb-ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.faqQuestion::-webkit-details-marker {
+  display: none;
+}
+
+/* A plus that becomes a minus. Drawn with content rather than an icon so it
+   costs no request and follows the type. */
+.faqQuestion::after {
+  content: "+";
+  font-size: 1.2em;
+  font-weight: 400;
+  color: var(--tbb-muted);
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.faqItem[open] .faqQuestion::after {
+  content: "−";
+  color: var(--tbb-ink);
+}
+
+.faqAnswer {
+  padding: 0 0 clamp(1rem, 2vw, 1.35rem);
+  font-size: 0.9375rem;
+  line-height: 1.6 !important;
+  color: var(--tbb-ink-soft);
+  max-width: 62ch;
+}
+
+/* ---- the application ---- */
+
+.form {
+  background: var(--tbb-ink-black);
+  color: var(--tbb-on-dark);
+  padding: var(--tbb-section) 0;
+  scroll-margin-top: var(--tbb-header-h);
+}
+
+.formInner {
+  width: 100%;
+  max-width: var(--tbb-measure-wide);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+.formCopy {
+  display: grid;
+  justify-items: start;
+  row-gap: clamp(0.6rem, 1.5vw, 1.1rem);
+}
+
+.form .eyebrow {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.form .sectionTitle,
+.page .form .sectionTitle {
+  color: var(--tbb-on-dark);
+}
+
+.form .sectionLede {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.callLink {
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-on-dark);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  padding-bottom: 0.25rem;
+}
+
+.callLink:hover {
+  border-bottom-color: var(--tbb-on-dark);
+}
+
+.formCard {
+  background: var(--tbb-paper);
+  border-radius: clamp(0.75rem, 1.4vw, 1.25rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  color: var(--tbb-ink);
+}
+
+.inputs {
+  display: grid;
+  row-gap: clamp(0.9rem, 1.8vw, 1.25rem);
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+}
+
+.field {
+  display: grid;
+  row-gap: 0.35rem;
+  min-width: 0;
+}
+
+.field > span {
+  font-size: var(--tbb-text-label);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-muted);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 0.5rem;
+  background: var(--tbb-paper);
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--tbb-ink);
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--tbb-ink);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.consent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: start;
+  font-size: 0.8125rem;
+  line-height: 1.5 !important;
+  color: var(--tbb-muted);
+}
+
+.consent input {
+  margin-top: 0.15rem;
+}
+
+.consent a {
+  color: var(--tbb-ink);
+}
+
+.error {
+  color: var(--tbb-accent);
+  font-size: 0.875rem;
+}
+
+.success {
+  padding-top: 1rem;
+  font-size: 0.9375rem;
+  color: var(--tbb-ink);
+}
+
+.submit {
+  justify-self: start;
+  border: 0;
+  background: var(--tbb-ink);
+  color: var(--tbb-paper);
+  font-family: inherit;
+}
+
+@media (max-width: 1023px) {
+  .reasonList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tierGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .faqInner,
+  .formInner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .faqCopy .sectionTitle {
+    max-width: 22ch;
+  }
+}
+
+@media (max-width: 639px) {
+  .hero {
+    min-height: 0;
+  }
+
+  .heroActions {
+    width: 100%;
+  }
+
+  .primary,
+  .secondary {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .heroFigures {
+    gap: 1rem 2rem;
+  }
+
+  .reasonList,
+  .twoColumns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Two across, like the catalogue itself on a phone. */
+  .rangeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
+import { DistributorsPage } from "@/components/distributors/DistributorsPage";
 import { RndPage } from "@/components/rnd/RndPage";
 import { ContactPage } from "@/components/contact/ContactPage";
 import { HomePage } from "@/components/home/HomePage";
@@ -101,7 +102,12 @@ export default async function SiteRoute({ params }: RouteProps) {
   // chrome around the site chrome, so they keep rendering exactly as exported.
   if (!page.usesSharedShell) return <LegacyDocument page={page} />;
 
-  if (route === "/catalog" || route === "/contacts" || route === "/rnd") {
+  if (
+    route === "/catalog" ||
+    route === "/contacts" ||
+    route === "/rnd" ||
+    route === "/distributors"
+  ) {
     const structuredData = getLegacyStructuredData(page.file);
     return (
       <div className="tbb">
@@ -113,7 +119,15 @@ export default async function SiteRoute({ params }: RouteProps) {
           />
         ))}
         <SiteHeader />
-        {route === "/catalog" ? <CatalogPage /> : route === "/rnd" ? <RndPage /> : <ContactPage />}
+        {route === "/catalog" ? (
+          <CatalogPage />
+        ) : route === "/rnd" ? (
+          <RndPage />
+        ) : route === "/distributors" ? (
+          <DistributorsPage />
+        ) : (
+          <ContactPage />
+        )}
         <SiteFooter />
       </div>
     );
