@@ -55,22 +55,28 @@ The Tilda export contains overlapping identifiers:
 
 Confirm the owned active GTM container, whether it already emits GA4 `page_view`, the authoritative GA4 measurement ID, consent requirements, and whether AdSense should remain. Do not enable the full list. The code gives GTM precedence and uses direct GA only when no GTM ID is configured.
 
-## Orders/payments — NEEDS CONTRACT
+## Commerce fulfillment — NEEDS CONFIGURATION
 
-- owned order receiver and payload contract
-- payment provider/account contract, if online payment is intended
-- fulfilment/notification recipients
-- credentialed checkout/order error and success tests
+- approved exact Odoo product ID/default-code mapping for all 13 paid products
+- dedicated least-privilege staging Odoo JSON-2 write credential
+- shipping zones/rates and free-delivery threshold, if any
+- authoritative VAT/tax configuration
+- decision on Odoo Inventory as the availability source
+- invoice/external Stripe payment reconciliation policy
+- approved Telegram manager destination and PII policy
 
-Native cart/catalogue/checkout UI is verified in Test Mode, but no production
-order was submitted and no Live payment contract exists.
+Stripe Test checkout and signature verification are configured. D1 persistence
+is configured in staging. Stripe Live remains out of scope and unconfigured.
 
-## Future direct Odoo integration — NEEDS CREDENTIALS LATER
+## Direct Odoo commerce integration — NEEDS DEDICATED WRITE CREDENTIAL
 
 - `ODOO_URL`
-- `ODOO_API_KEY`
-- model/field mapping and access policy
+- optional `ODOO_DATABASE` for multi-database hosts
+- dedicated `ODOO_API_KEY`
+- `ODOO_PRODUCT_MAPPING_JSON`
+- explicit `ODOO_COMMERCE_ENABLED=true` only after validation
 
-The current migration preserves the existing Tilda-compatible webhook contract.
-A future direct API must use a dedicated least-privilege integration credential;
-the read-only audit credential must not be repurposed automatically.
+Read-only authentication to Odoo 19.0+e JSON-2 is verified. The current local
+audit credential must not be copied into Cloudflare or repurposed for writes.
+`ODOO_LOGIN` remains documented for operational ownership but JSON-2 uses the
+API key rather than exposing a password to the application.

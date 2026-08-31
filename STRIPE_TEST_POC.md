@@ -1,14 +1,17 @@
 # Stripe Test Mode proof of concept
 
-Status: staging Test Mode E2E verified on 2026-08-26. The endpoint is now the
-secure handoff for the native staging `/checkout` page; it remains isolated
-from the removed Tilda cart, production order creation, Odoo, Telegram, Stripe
-Live, and the production domain.
+Status: the original staging Test Mode E2E was verified on 2026-08-26. On
+2026-08-31 the proof of concept was extended with D1 order storage and a
+webhook-only fulfillment pipeline. Odoo and Telegram remain disabled in
+staging until their explicit configuration gates are satisfied. Stripe Live,
+the production domain and Tilda remain untouched.
 
 ## Endpoints
 
 - Checkout: `POST /api/checkout/stripe`
 - Webhook: `POST /api/stripe/webhook`
+- Verified status: `GET /api/checkout/session/:session_id`
+- Success page: `GET /checkout/success?session_id=...`
 - Staging webhook URL:
   `https://the-base-staging.mansua.workers.dev/api/stripe/webhook`
 
@@ -35,8 +38,9 @@ Example request shape:
 Amounts, price IDs and totals are not accepted from the client. The immutable
 server catalog is the price source. Products, integer quantities and AED are
 validated before Stripe is called. Each session receives a random, non-PII
-`tb_request_id` in Checkout Session and PaymentIntent metadata and as the
-Stripe idempotency key.
+internal order reference in Checkout Session and PaymentIntent metadata and as
+the Stripe idempotency key. A D1 snapshot is saved before Stripe is called.
+Metadata is identity only; prices and line items are revalidated server-side.
 
 Checkout bodies are limited to 16 KiB and guarded by a best-effort 10/minute
 per-isolate IP limiter. Webhook bodies are limited to 1 MiB before signature
@@ -58,12 +62,11 @@ resend of the same event also returned HTTP 200 without business side effects.
 No full session, event, payment, or signing-secret identifiers are retained in
 project documentation.
 
-The proof of concept only acknowledges verified test events. It deliberately
-does not create an order or trigger any external integration. A bounded
-in-memory event ID registry demonstrates duplicate-delivery handling within a
-single Worker isolate. This is not durable across isolates or deployments;
-production payment processing must replace it with an atomic D1/KV-backed
-event claim before adding side effects.
+Verified supported events are persisted in D1. Event IDs and Checkout Session
+IDs are unique, and an atomic fulfillment claim prevents a second Odoo order
+across Worker isolates and deployments. Paid orders remain retryable after a
+transient integration failure. The browser success page only reads a
+server-verified status and never performs fulfillment.
 
 ## Environment
 
@@ -73,6 +76,8 @@ Only variable names belong in Git:
 STRIPE_SECRET_KEY=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 STRIPE_WEBHOOK_SECRET=
+ODOO_COMMERCE_ENABLED=
+ODOO_PRODUCT_MAPPING_JSON=
 ```
 
 Never commit actual values. Only Stripe Test Mode credentials are accepted by
@@ -81,4 +86,7 @@ this proof of concept.
 `npm run verify:stripe-auth` performs a read-only SDK/API check and prints only
 mode/status booleans. `npm run test:stripe` runs checkout, tampering,
 quantity/currency, size, missing-env, host/Live-key, signature and duplicate
-event tests without contacting Stripe.
+event, retry, Odoo mapping/customer/order, notification and verified-success
+tests without contacting Stripe or writing to Odoo.
+
+See `COMMERCE_PRODUCTION_READINESS.md` for current production blockers.

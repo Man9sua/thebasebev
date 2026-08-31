@@ -11,7 +11,7 @@ page metadata, and emits the exported body on the server. This keeps meaningful
 content available in the initial HTML while Tilda blocks are replaced section by
 section.
 
-This is not yet a Tilda-free implementation. The compatibility document executes the retained export scripts in the initial server response, and the critical homepage/header/catalog/cart/product-order/form paths are covered by browser smoke tests. Those tests are evidence for the audited paths, not a claim that every legacy popup, calculator, or product interaction has already been ported. A typed lead bridge/API boundary replaces opaque Tilda submission for allowlisted lead forms. Staging lead delivery has one controlled Odoo proof; order delivery remains outside the migration contract.
+This is not yet a Tilda-free implementation. The compatibility document executes the retained export scripts in the initial server response, and the critical homepage/header/catalog/cart/product-order/form paths are covered by browser smoke tests. Those tests are evidence for the audited paths, not a claim that every legacy popup, calculator, or product interaction has already been ported. A typed lead bridge/API boundary replaces opaque Tilda submission for allowlisted lead forms. Commerce now has a staging-only Stripe Test + D1 fulfillment boundary; Odoo writes remain disabled until the exact product mapping and dedicated credential are approved.
 
 ## Stack
 
@@ -66,6 +66,10 @@ npm.cmd run audit:analytics -- http://127.0.0.1:3000
 
 `audit:commerce` prints the visible catalogue price map, product metadata, cart state, and checkout-dialog evidence. It adds one item only in an isolated browser context and never submits an order.
 
+`npm run test:stripe` covers checkout validation, persistent fulfillment
+semantics, Odoo JSON-2 customer/order behavior, failure recovery and the
+server-verified success page without contacting Stripe or writing to Odoo.
+
 The export in `tilda_export/project12027355` is a build-time input. Keep it available when running a clean build; it is the current source of truth for legacy page bodies and metadata.
 
 ## Cloudflare Workers
@@ -100,6 +104,16 @@ npm.cmd run deploy:production-preview
 This command targets `the-base-production` on `workers.dev` only. It does not attach `thebasebev.com`.
 
 The configured staging Worker name is `the-base-staging`. The repository does not configure the production domain and this workflow must not be used to change `thebasebev.com`, its DNS, or the existing Tilda project. Version `daa6c072-728d-4c24-9e96-7856b048b41f` was deployed on 2026-08-24. Post-deploy smoke is temporarily blocked by Cloudflare Error 1027 because account `mansua` exhausted its Free daily Worker request quota; repeat the remote suite after the 00:00 UTC reset.
+
+The staging Worker binds D1 database `the-base-commerce-staging`. Apply checked-in
+commerce migrations explicitly to staging with:
+
+```powershell
+npx.cmd wrangler d1 migrations apply the-base-commerce-staging --remote --env staging
+```
+
+Do not point this binding or command at a production database without a
+separately reviewed production migration plan.
 
 Current verified staging deployment:
 
@@ -138,7 +152,10 @@ NEXT_PUBLIC_GTM_ID=
 LEAD_API_URL=
 LEAD_API_KEY=
 ODOO_URL=
+ODOO_DATABASE=
 ODOO_API_KEY=
+ODOO_COMMERCE_ENABLED=
+ODOO_PRODUCT_MAPPING_JSON=
 ```
 
 Do not commit real secrets. `.env.example` documents the intended boundary. The local `/api/leads` route validates a typed payload and forwards it to server-only `LEAD_API_URL`; `LEAD_API_KEY` is optional for the current upstream. Staging stores the endpoint as a Worker secret. Without an endpoint it intentionally returns a service-unavailable response and does not pretend a lead was delivered.
@@ -201,6 +218,7 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 - [Prelaunch merge matrix](./PRELAUNCH_MERGE_MATRIX.md)
 - [Prelaunch QA record](./MANUAL_QA.md)
 - [Stripe Test Mode POC](./STRIPE_TEST_POC.md)
+- [Commerce production readiness](./COMMERCE_PRODUCTION_READINESS.md)
 
 ## Delivery status
 

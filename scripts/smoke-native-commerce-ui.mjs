@@ -52,7 +52,10 @@ try {
   check((await page.getByText("AED 45.38", { exact: true }).count()) > 0, "checkout summary price changed");
   await page.screenshot({ path: `${artifacts}/checkout-desktop.png`, fullPage: true });
 
-  await page.evaluate(() => localStorage.removeItem("thebase:cart:v1"));
+  await page.evaluate(() => {
+    localStorage.removeItem("thebase:cart:v1");
+    localStorage.removeItem("thebase:cart:v2");
+  });
   await page.goto(`${baseUrl}/checkout`, { waitUntil: "domcontentloaded" });
   await page.waitForURL(`${baseUrl}/catalog`);
 

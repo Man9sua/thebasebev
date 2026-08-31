@@ -20,6 +20,8 @@
     "audit:leads": "node scripts/audit-leads.mjs",
     "test:lead-live": "node scripts/test-lead-live.mjs",
     "verify:lead-odoo": "node scripts/verify-odoo-test-lead.mjs",
+    "audit:odoo-commerce": "node scripts/audit-odoo-commerce.mjs",
+    "audit:odoo-mapping": "node scripts/audit-odoo-product-mapping.mjs",
     "audit:crawlers": "node scripts/audit-crawlers.mjs",
     "audit:seo-parity": "node scripts/audit-seo-parity.mjs",
     "audit:routes": "node scripts/audit-route-indexability.mjs",

@@ -81,7 +81,8 @@ try {
         buttonText: document.querySelector("[data-cart-add]")?.textContent?.trim() ?? null,
         products: (() => {
           try {
-            return JSON.parse(localStorage.getItem("thebase:cart:v1") ?? "[]");
+            const state = JSON.parse(localStorage.getItem("thebase:cart:v2") ?? "{}");
+            return state?.version === 2 && Array.isArray(state.items) ? state.items : [];
           } catch {
             return [];
           }

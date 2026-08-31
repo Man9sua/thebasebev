@@ -1,12 +1,18 @@
 import Stripe from "stripe";
+import { CommerceIntegrationError, integrationErrorCode } from "./commerce/errors";
+import { fulfillStripeCheckout } from "./commerce/fulfillment";
+import type { CommerceNotifier } from "./commerce/notification";
+import type { OdooCommerceService } from "./commerce/odoo";
+import type { StripeCommerceClient } from "./commerce/stripe-session";
+import type { CommerceRepository } from "./commerce/types";
 
-const DEFAULT_EVENT_REGISTRY_LIMIT = 1_000;
 const MAX_WEBHOOK_BODY_BYTES = 1024 * 1024;
 
 export type VerifiedStripeEvent = Readonly<{
   id: string;
   type: string;
   livemode: boolean;
+  sessionId?: string | null;
 }>;
 
 export type VerifyStripeEvent = (
@@ -15,28 +21,14 @@ export type VerifyStripeEvent = (
   webhookSecret: string,
 ) => Promise<VerifiedStripeEvent>;
 
-export class InMemoryStripeEventRegistry {
-  private readonly eventIds = new Set<string>();
-
-  constructor(private readonly limit = DEFAULT_EVENT_REGISTRY_LIMIT) {}
-
-  claim(eventId: string) {
-    if (this.eventIds.has(eventId)) return false;
-
-    this.eventIds.add(eventId);
-    if (this.eventIds.size > this.limit) {
-      const oldestEventId = this.eventIds.values().next().value;
-      if (oldestEventId) this.eventIds.delete(oldestEventId);
-    }
-
-    return true;
-  }
-}
-
 export type StripeWebhookDependencies = Readonly<{
   webhookSecret?: string;
-  eventRegistry: InMemoryStripeEventRegistry;
+  repository: CommerceRepository;
+  stripeClient: StripeCommerceClient;
+  odoo: OdooCommerceService | null;
+  notifier: CommerceNotifier;
   verifyEvent?: VerifyStripeEvent;
+  now?: () => Date;
 }>;
 
 export async function verifyStripeWebhookEvent(
@@ -52,7 +44,16 @@ export async function verifyStripeWebhookEvent(
     Stripe.createSubtleCryptoProvider(),
   );
 
-  return { id: event.id, type: event.type, livemode: event.livemode };
+  const object = event.data.object as { id?: string };
+  return {
+    id: event.id,
+    type: event.type,
+    livemode: event.livemode,
+    sessionId:
+      typeof object?.id === "string" && object.id.startsWith("cs_")
+        ? object.id
+        : null,
+  };
 }
 
 function apiError(status: number, code: string, message: string) {
@@ -148,18 +149,82 @@ export async function handleStripeTestWebhook(
     );
   }
 
-  const firstDelivery = dependencies.eventRegistry.claim(event.id);
+  const supportedEvents = new Set([
+    "checkout.session.completed",
+    "checkout.session.async_payment_succeeded",
+    "checkout.session.async_payment_failed",
+  ]);
+  if (!supportedEvents.has(event.type)) {
+    return Response.json(
+      { ok: true, received: true, ignored: true, processed: false, testMode: true },
+      { status: 200, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  if (!event.sessionId?.startsWith("cs_test_")) {
+    return apiError(422, "STRIPE_SESSION_ID_INVALID", "The Stripe event is invalid.");
+  }
 
-  // Proof of concept only: verified events are acknowledged but deliberately
-  // do not create an order, write to Odoo, or send Telegram notifications.
-  return Response.json(
-    {
-      ok: true,
-      received: true,
-      duplicate: !firstDelivery,
-      processed: false,
-      testMode: true,
-    },
-    { status: 200, headers: { "Cache-Control": "no-store" } },
-  );
+  const now = (dependencies.now?.() ?? new Date()).toISOString();
+  let claim;
+  try {
+    claim = await dependencies.repository.claimWebhookEvent({
+      eventId: event.id,
+      eventType: event.type,
+      sessionId: event.sessionId,
+      now,
+    });
+  } catch {
+    return apiError(
+      503,
+      "COMMERCE_STORAGE_UNAVAILABLE",
+      "Commerce storage is temporarily unavailable.",
+    );
+  }
+  try {
+    const result = await fulfillStripeCheckout({
+      eventId: event.id,
+      eventType: event.type,
+      sessionId: event.sessionId,
+      repository: dependencies.repository,
+      stripe: dependencies.stripeClient,
+      odoo: dependencies.odoo,
+      notifier: dependencies.notifier,
+      now: dependencies.now,
+    });
+    if (!result.processed) {
+      await dependencies.repository.markWebhookFailed(
+        event.id,
+        "ODOO_COMMERCE_NOT_CONFIGURED",
+      );
+      return apiError(
+        503,
+        "COMMERCE_FULFILLMENT_PENDING",
+        "The paid order was saved and fulfillment is pending configuration.",
+      );
+    }
+    await dependencies.repository.markWebhookProcessed(event.id, now);
+    return Response.json(
+      {
+        ok: true,
+        received: true,
+        duplicate: claim.duplicateEvent || result.duplicateSession,
+        processed: result.processed,
+        fulfillmentStatus: result.status,
+        testMode: true,
+      },
+      { status: 200, headers: { "Cache-Control": "no-store" } },
+    );
+  } catch (reason) {
+    const code = integrationErrorCode(reason);
+    await dependencies.repository.markWebhookFailed(event.id, code).catch(() => undefined);
+    const retryable =
+      reason instanceof CommerceIntegrationError ? reason.retryable : true;
+    return apiError(
+      retryable ? 503 : 422,
+      code,
+      retryable
+        ? "Commerce fulfillment is temporarily unavailable."
+        : "The paid session failed commerce validation.",
+    );
+  }
 }

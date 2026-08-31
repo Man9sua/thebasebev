@@ -1,0 +1,80 @@
+.page {
+  min-height: 100svh;
+  padding: clamp(1.5rem, 4vw, 4rem);
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+}
+
+.logo {
+  display: block;
+  width: 5rem;
+  color: inherit;
+}
+
+.card {
+  width: min(100%, 46rem);
+  margin: clamp(5rem, 12vh, 9rem) auto 0;
+  padding-block: clamp(2rem, 5vw, 4rem);
+  border-block: 1px solid var(--tbb-line);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.card h1 {
+  margin: 0;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.5rem, 7vw, 5.75rem);
+  font-weight: 500;
+  line-height: 0.95;
+}
+
+.card > p:not(.eyebrow) {
+  max-width: 42rem;
+  margin: 1.5rem 0 0;
+  line-height: 1.55;
+}
+
+.details {
+  display: grid;
+  gap: 0;
+  margin: 2.5rem 0 0;
+}
+
+.details div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.35fr) 1fr;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--tbb-line);
+}
+
+.details dt {
+  color: var(--tbb-muted);
+}
+
+.details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.action {
+  display: inline-flex;
+  margin-top: 2rem;
+  padding: 0.9rem 1.5rem;
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-paper);
+  text-decoration: none;
+}
+
+@media (max-width: 520px) {
+  .details div {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}

@@ -90,13 +90,17 @@ partners.thebasebev.com
 
 See `AGENTS.md`, `CLOUDFLARE_MIGRATION.md`, `PRODUCTION_CUTOVER.md`, and `ROLLBACK_PLAN.md` before infrastructure work.
 
-## Stripe Test staging status
+## Commerce staging status
 
-The isolated Stripe proof of concept has a verified Test Mode Checkout and
-signed staging webhook path. One AED test payment completed successfully, and
-both the real `checkout.session.completed` delivery and one duplicate resend
-returned HTTP 200. It creates no Odoo order, invoice, payment transaction, or
-Telegram message and must not be treated as production payment architecture.
-The native `/checkout` page now uses this Test Mode endpoint as its secure
-payment handoff: THE BASE reviews trusted catalogue items and quantities first,
-then Stripe collects billing/delivery details, card data and authentication.
+The native `/checkout` uses Stripe Test Mode with server-authoritative AED
+pricing. D1 now stores checkout snapshots, paid orders and persistent webhook
+idempotency. The success page verifies its Stripe Session server-side and does
+not create commercial records.
+
+The Odoo 19 JSON-2 customer/Sales Order adapter is implemented behind an
+explicit disabled-by-default gate. Production Odoo was audited read-only only;
+no customer or Sales Order was written. All 13 paid website products require an
+approved exact `default_code` mapping and a dedicated staging write credential
+before an Odoo E2E. Shipping, tax, inventory enforcement, accounting
+reconciliation and manager notification are also configuration blockers. See
+`COMMERCE_PRODUCTION_READINESS.md`.

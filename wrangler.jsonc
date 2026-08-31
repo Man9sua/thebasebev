@@ -12,11 +12,27 @@
   "observability": {
     "enabled": true
   },
+  "d1_databases": [
+    {
+      "binding": "COMMERCE_DB",
+      "database_name": "the-base-commerce-staging",
+      "database_id": "2f72ccbc-95ae-43f7-9622-5341892d9306",
+      "migrations_dir": "migrations/commerce"
+    }
+  ],
   "env": {
     "staging": {
       "name": "the-base-staging",
       "workers_dev": true,
       "preview_urls": true,
+      "d1_databases": [
+        {
+          "binding": "COMMERCE_DB",
+          "database_name": "the-base-commerce-staging",
+          "database_id": "2f72ccbc-95ae-43f7-9622-5341892d9306",
+          "migrations_dir": "migrations/commerce"
+        }
+      ],
       "vars": {
         "APP_ENV": "staging"
       }

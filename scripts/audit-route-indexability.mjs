@@ -66,6 +66,15 @@ const controlledRoutes = [
     reason: "Cart review and Stripe Test handoff; intentionally excluded from search",
   },
   {
+    route: "/checkout/success",
+    type: "technical payment status page",
+    expectedStatus: 200,
+    indexable: false,
+    canonical: true,
+    sitemap: false,
+    reason: "Server-verified Stripe Test payment status; intentionally excluded from search",
+  },
+  {
     route: "/_not-found",
     type: "technical 404 boundary",
     expectedStatus: 404,
@@ -120,6 +129,15 @@ const controlledRoutes = [
     reason: "POST-only Stripe Test webhook boundary; GET is intentionally rejected",
   },
   {
+    route: "/api/checkout/session/invalid",
+    type: "dynamic API",
+    expectedStatus: 400,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "Session status API rejects invalid Stripe Test session identifiers",
+  },
+  {
     route: "/api/health",
     type: "dynamic API",
     expectedStatus: 200,
@@ -128,6 +146,15 @@ const controlledRoutes = [
     sitemap: false,
     reason: "No-store deployment health probe",
   },
+  {
+    route: "/api/health/commerce",
+    type: "dynamic API",
+    expectedStatus: 200,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "No-store commerce dependency health probe without secrets or PII",
+  },
 ];
 
 if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.length !== 13) {
@@ -135,8 +162,8 @@ if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.leng
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
   );
 }
-if (controlledRoutes.length !== 113) {
-  throw new Error(`Expected 113 controlled routes, received ${controlledRoutes.length}.`);
+if (controlledRoutes.length !== 116) {
+  throw new Error(`Expected 116 controlled routes, received ${controlledRoutes.length}.`);
 }
 if (redirectRows.length !== 6) throw new Error(`Expected six redirects, received ${redirectRows.length}.`);
 

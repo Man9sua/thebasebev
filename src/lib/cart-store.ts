@@ -6,7 +6,9 @@ export type CartState = Readonly<{
   items: readonly CartItem[];
 }>;
 
-const STORAGE_KEY = "thebase:cart:v1";
+const STORAGE_KEY = "thebase:cart:v2";
+const LEGACY_STORAGE_KEY = "thebase:cart:v1";
+const CART_SCHEMA_VERSION = 2;
 const MAX_QUANTITY = 10;
 const SERVER_STATE: CartState = Object.freeze({ ready: false, items: Object.freeze([]) });
 
@@ -43,7 +45,28 @@ function validItems(value: unknown): CartItem[] {
 function readStoredItems(): CartItem[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? validItems(JSON.parse(raw)) : [];
+    if (raw) return parseStoredCart(raw);
+    const legacy = window.localStorage.getItem(LEGACY_STORAGE_KEY);
+    return legacy ? validItems(JSON.parse(legacy)) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function parseStoredCart(raw: string): CartItem[] {
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      !Array.isArray(parsed) &&
+      "version" in parsed &&
+      "items" in parsed &&
+      parsed.version === CART_SCHEMA_VERSION
+    ) {
+      return validItems(parsed.items);
+    }
+    return [];
   } catch {
     return [];
   }
@@ -70,7 +93,11 @@ function hydrate() {
 function persist(items: readonly CartItem[]) {
   hydrate();
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ version: CART_SCHEMA_VERSION, items }),
+    );
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
   } catch {
     // Storage can be unavailable in hardened/private contexts. Keep the cart
     // usable for the current document instead of turning an Add button into an

@@ -1,4 +1,7 @@
 import type Stripe from "stripe";
+import { COMMERCE_CATALOG, type CommerceCatalogProduct } from "./commerce/catalog";
+import { getCommerceCheckoutConfiguration } from "./commerce/config";
+import type { CommerceOrder, CommerceRepository } from "./commerce/types";
 
 export const STRIPE_TEST_STAGING_ORIGIN =
   "https://the-base-staging.mansua.workers.dev";
@@ -7,30 +10,11 @@ const MAX_LINE_ITEMS = 20;
 const MAX_QUANTITY_PER_ITEM = 100;
 const MAX_CHECKOUT_BODY_BYTES = 16 * 1024;
 
-type StripeTestProduct = Readonly<{
-  name: string;
-  unitAmount: number;
-}>;
-
 // Test-only, server-authoritative snapshot of the prices preserved from the
 // audited Tilda export. The API never accepts an amount supplied by a client.
-export const STRIPE_TEST_CATALOG = Object.freeze({
-  "194500823312": { name: "Sugar Free", unitAmount: 1422 },
-  "207187094752": { name: "Frappe", unitAmount: 4940 },
-  "293702296702": { name: "Iced Tea", unitAmount: 4281 },
-  "296069682122": { name: "Chocolate", unitAmount: 6788 },
-  "316933484392": { name: "Garnish", unitAmount: 491 },
-  "324849428612": { name: "Jam", unitAmount: 6494 },
-  "389328196132": { name: "Milkshake", unitAmount: 4538 },
-  "466013811412": { name: "Raf", unitAmount: 3874 },
-  "778280145182": { name: "Cordial", unitAmount: 5015 },
-  "781170478702": { name: "Cream Latte", unitAmount: 3876 },
-  "827401503212": { name: "Chai Latte", unitAmount: 5205 },
-  "888812727292": { name: "Sugar Syrop", unitAmount: 4882 },
-  "975474893862": { name: "Matcha", unitAmount: 7042 },
-} satisfies Record<string, StripeTestProduct>);
+export const STRIPE_TEST_CATALOG = COMMERCE_CATALOG;
 
-type CatalogProductId = keyof typeof STRIPE_TEST_CATALOG;
+type CatalogProductId = string;
 
 type ValidatedCheckout = Readonly<{
   currency: "aed";
@@ -39,7 +23,7 @@ type ValidatedCheckout = Readonly<{
     Readonly<{
       productId: CatalogProductId;
       quantity: number;
-      product: StripeTestProduct;
+      product: CommerceCatalogProduct;
     }>
   >;
 }>;
@@ -64,7 +48,10 @@ export type StripeCheckoutClient = Readonly<{
 export type StripeCheckoutDependencies = Readonly<{
   secretKey?: string;
   createClient: (secretKey: string) => StripeCheckoutClient;
+  repository: CommerceRepository;
+  environment?: Record<string, string | undefined>;
   createRequestId?: () => string;
+  now?: () => Date;
 }>;
 
 const FORBIDDEN_CLIENT_PRICE_FIELDS = new Set([
@@ -128,7 +115,7 @@ function validateCheckoutPayload(input: unknown): CheckoutValidation {
     const productId = item.productId;
     if (
       typeof productId !== "string" ||
-      !Object.hasOwn(STRIPE_TEST_CATALOG, productId)
+      !Object.hasOwn(COMMERCE_CATALOG, productId)
     ) {
       return { ok: false, code: "INVALID_PRODUCT" };
     }
@@ -147,12 +134,12 @@ function validateCheckoutPayload(input: unknown): CheckoutValidation {
       return { ok: false, code: "INVALID_QUANTITY" };
     }
 
-    const typedProductId = productId as CatalogProductId;
-    seenProductIds.add(typedProductId);
+    const typedProductId = productId;
+    seenProductIds.add(productId);
     items.push({
       productId: typedProductId,
       quantity,
-      product: STRIPE_TEST_CATALOG[typedProductId],
+      product: COMMERCE_CATALOG[typedProductId],
     });
   }
 
@@ -258,32 +245,116 @@ export async function handleStripeTestCheckout(
     );
   }
 
-  const requestId = `tb_test_${
+  const orderId = `tb_order_${
     dependencies.createRequestId?.() ?? crypto.randomUUID()
   }`;
+  const requestId = orderId;
+  const createdAt = (dependencies.now?.() ?? new Date()).toISOString();
+  const amountSubtotal = validation.data.items.reduce(
+    (total, item) => total + item.product.unitAmount * item.quantity,
+    0,
+  );
+  let checkoutConfiguration;
+  try {
+    checkoutConfiguration = getCommerceCheckoutConfiguration(
+      dependencies.environment ?? {},
+      amountSubtotal,
+    );
+  } catch {
+    return apiError(
+      503,
+      "COMMERCE_CONFIGURATION_INVALID",
+      "Commerce configuration is incomplete.",
+    );
+  }
+
+  const order: CommerceOrder = {
+    id: orderId,
+    internalReference: orderId,
+    cartVersion: 2,
+    checkoutPolicy: checkoutConfiguration.policy,
+    status: "checkout_pending",
+    currency: "aed",
+    amountSubtotal,
+    amountDiscount: 0,
+    amountShipping: checkoutConfiguration.policy.expectedShippingAmount,
+    amountTax: 0,
+    amountTotal:
+      amountSubtotal + checkoutConfiguration.policy.expectedShippingAmount,
+    customerEmail: validation.data.email,
+    fulfillmentStatus: "pending",
+    notificationStatus: "not_configured",
+    createdAt,
+    updatedAt: createdAt,
+    items: validation.data.items.map(({ product, quantity }) => ({
+      productKey: product.productKey,
+      websiteProductId: product.websiteProductId,
+      websiteSku: product.websiteSku,
+      productName: product.name,
+      quantity,
+      unitAmount: product.unitAmount,
+      subtotalAmount: product.unitAmount * quantity,
+      discountAmount: 0,
+      taxAmount: 0,
+      totalAmount: product.unitAmount * quantity,
+    })),
+  };
+
+  try {
+    await dependencies.repository.createCheckoutOrder(order);
+  } catch {
+    return apiError(
+      503,
+      "COMMERCE_STORAGE_UNAVAILABLE",
+      "Secure checkout storage is temporarily unavailable.",
+    );
+  }
+
   const safeMetadata = {
     tb_request_id: requestId,
-    integration: "stripe_test_poc",
+    tb_order_id: orderId,
+    cart_version: "2",
+    integration: "stripe_test_commerce",
   };
 
   const params: Stripe.Checkout.SessionCreateParams = {
     mode: "payment",
     payment_method_types: ["card"],
+    client_reference_id: orderId,
     line_items: validation.data.items.map(({ product, quantity }) => ({
       quantity,
+      metadata: {
+        tb_product_key: product.productKey,
+        tb_website_product_id: product.websiteProductId,
+        tb_website_sku: product.websiteSku,
+      },
       price_data: {
         currency: validation.data.currency,
         unit_amount: product.unitAmount,
-        product_data: { name: product.name },
+        product_data: {
+          name: product.name,
+          metadata: {
+            tb_product_key: product.productKey,
+            tb_website_product_id: product.websiteProductId,
+            tb_website_sku: product.websiteSku,
+          },
+        },
       },
     })),
-    success_url: `${STRIPE_TEST_STAGING_ORIGIN}/thank-you-order?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${STRIPE_TEST_STAGING_ORIGIN}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${STRIPE_TEST_STAGING_ORIGIN}/checkout?stripe_checkout=cancelled`,
     customer_email: validation.data.email,
+    customer_creation: "always",
     billing_address_collection: "required",
     shipping_address_collection: {
-      allowed_countries: ["AE", "SA", "KZ", "GB"],
+      allowed_countries: checkoutConfiguration.allowedCountries,
     },
+    shipping_options: checkoutConfiguration.shippingOptions,
+    automatic_tax: {
+      enabled: checkoutConfiguration.policy.automaticTaxEnabled,
+    },
+    allow_promotion_codes: checkoutConfiguration.policy.promotionCodesEnabled,
+    phone_number_collection: { enabled: true },
     metadata: safeMetadata,
     payment_intent_data: { metadata: safeMetadata },
   };
@@ -298,12 +369,18 @@ export async function handleStripeTestCheckout(
       !session.id.startsWith("cs_test_") ||
       !session.url
     ) {
+      await dependencies.repository.markCheckoutFailed(
+        orderId,
+        "STRIPE_TEST_SESSION_REJECTED",
+      );
       return apiError(
         502,
         "STRIPE_TEST_SESSION_REJECTED",
         "Stripe did not return a valid Test Mode Checkout Session.",
       );
     }
+
+    await dependencies.repository.attachStripeSession(orderId, session.id);
 
     return Response.json(
       {
@@ -312,6 +389,7 @@ export async function handleStripeTestCheckout(
           sessionId: session.id,
           url: session.url,
           requestId,
+          orderReference: orderId,
           currency: "AED",
           testMode: true,
         },
@@ -319,6 +397,9 @@ export async function handleStripeTestCheckout(
       { status: 201, headers: { "Cache-Control": "no-store" } },
     );
   } catch {
+    await dependencies.repository
+      .markCheckoutFailed(orderId, "STRIPE_TEST_UNAVAILABLE")
+      .catch(() => undefined);
     return apiError(
       502,
       "STRIPE_TEST_UNAVAILABLE",
