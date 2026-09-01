@@ -324,25 +324,38 @@
 }
 
 /*
- * The page's own `h1`, verbatim — SEO surface, not a design decision. It is
- * left in its own case: the design sets these names as words, not as a shout.
- * The two sizes are chosen in the markup, by the length of the line; the design
- * only draws the short one, at 48 over a 66.41 line.
+ * The product's name, at the display scale the design draws it at: 48 over a
+ * 66.41 line, which is the 1.384 below. Left in its own case — the design sets
+ * these as words, not as a shout.
  */
 .copy .title {
   font-family: var(--tbb-font-display);
-  font-size: calc(33 * var(--u));
+  font-size: calc(48 * var(--u));
   font-weight: 700 !important;
   line-height: 1.384;
-  letter-spacing: -0.025em !important;
+  letter-spacing: -0.03em !important;
   color: var(--ink);
 }
 
-/* A product name rather than a sentence — Matcha and Raf Coffee are the two
-   today — set at the display scale the design draws it at. */
-.copy .title[data-short="true"] {
-  font-size: calc(48 * var(--u));
-  letter-spacing: -0.03em !important;
+/*
+ * Production's own `h1`, a level down. Deliberately quieter than the tagline
+ * under it — it is the wording the page ranks on rather than a line the design
+ * asked for, and the design has nothing here at all, so it takes the smallest
+ * type in the column and the muted ink.
+ *
+ * The negative top is the design's own overlap between the `h1`'s line box and
+ * whatever follows it — 232.46 against a box ending at 238.96 — so the block
+ * under the name starts where the file puts it whether that block is this or
+ * the tagline.
+ */
+.copy .headline {
+  margin-top: calc(-6.5 * var(--u));
+  font-family: var(--tbb-font-sans);
+  font-size: calc(13.5 * var(--u));
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  color: var(--ink-muted);
 }
 
 /*
@@ -351,6 +364,11 @@
  * negative gap anyone drew. Reproduced as one so the caption lands where it
  * lands in the file.
  */
+/* Its own gap once the headline has taken the overlap above. */
+.copy .headline + .tagline {
+  margin-top: calc(9 * var(--u));
+}
+
 .copy .tagline {
   margin-top: calc(-6.5 * var(--u));
   font-family: var(--tbb-font-sans);
@@ -613,11 +631,20 @@
     padding: clamp(1.25rem, 4vw, 2rem) var(--tbb-gutter) clamp(2.5rem, 8vw, 4rem);
   }
 
-  .copy .title,
-  .copy .title[data-short="true"] {
+  .copy .title {
     font-size: clamp(1.75rem, 7.5vw, 2.6rem);
     line-height: 1.1;
     letter-spacing: -0.025em !important;
+  }
+
+  .copy .headline {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    line-height: 1.45 !important;
+  }
+
+  .copy .headline + .tagline {
+    margin-top: 0.5rem;
   }
 
   .copy .tagline {

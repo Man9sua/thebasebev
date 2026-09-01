@@ -113,7 +113,13 @@ export function ProductHero({ product }: { product: Product }) {
   // to a tint, which is always light. Ink is measured either way rather than
   // assumed — Tea's wash is near-black and Jam's is burgundy.
   const onDark = banner ? isDark(banner.band) : false;
-  const heading = detail?.h1 ?? product.headline;
+  // The design's h1 is the product's name, and that is what the page now leads
+  // with. The sentence it used to lead with is production's own h1 and what
+  // these pages rank on, so it is kept directly under as an h2 rather than
+  // dropped — except on Raf Coffee, where production's h1 is the name already.
+  const title = product.hyphenatedName ?? product.name;
+  const headline = detail?.h1 ?? product.headline;
+  const showHeadline = headline !== product.name;
   const pack = packBox(product.slug);
 
   return (
@@ -207,24 +213,23 @@ export function ProductHero({ product }: { product: Product }) {
       <div className={styles.frame}>
         <div className={styles.copy}>
           <Reveal delay={60} distance={20}>
-            {/*
-              Fifteen of the sixteen `h1`s are a full SEO sentence — "Iced Tea
-              Base for Refreshing, Crisp, Ready-to-Mix Beverages" — and only Raf
-              Coffee's and Matcha's are a name. So the size follows the line
-              rather than being fixed: a name gets the display scale the design
-              draws it at, a sentence gets a smaller one, because at display
-              scale it is four lines of shouting. The wording itself is never
-              touched; it is what these pages rank on and `audit:seo-parity`
-              compares it character for character.
-            */}
-            <h1
-              id="product-title"
-              className={styles.title}
-              data-short={heading.length <= 24 ? "true" : undefined}
-            >
-              {heading}
+            {/* Always a name now, so always the display scale the design draws
+                it at — there is no long line left for the size to follow. */}
+            <h1 id="product-title" className={styles.title}>
+              {title}
             </h1>
           </Reveal>
+
+          {/*
+            Not decoration: this is the wording production ranks on, moved a
+            level down rather than deleted. `audit:seo-parity` knows about the
+            move and still fails if the phrase stops appearing on the page.
+          */}
+          {showHeadline && (
+            <Reveal as="h2" className={styles.headline} delay={90} distance={16}>
+              {headline}
+            </Reveal>
+          )}
 
           {detail?.tagline && (
             <Reveal as="p" className={styles.tagline} delay={120} distance={16}>

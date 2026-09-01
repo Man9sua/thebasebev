@@ -18,6 +18,10 @@ function decodeHtml(value = "") {
     .trim();
 }
 
+function all(html, expression) {
+  return [...html.matchAll(expression)].map((match) => decodeHtml(match[1])).filter(Boolean);
+}
+
 function first(html, expression) {
   return decodeHtml(html.match(expression)?.[1] ?? "");
 }
@@ -128,6 +132,7 @@ async function fetchSnapshot(origin, route) {
     title: first(html, /<title[^>]*>([\s\S]*?)<\/title>/i),
     description: meta(html, "description"),
     h1: first(html, /<h1\b[^>]*>([\s\S]*?)<\/h1>/i),
+    h2: all(html, /<h2\b[^>]*>([\s\S]*?)<\/h2>/gi),
     canonical: canonical(html),
     robots: meta(html, "robots"),
     jsonLdTypes: structuredDataTypes(html),
@@ -173,14 +178,30 @@ await Promise.all(Array.from({ length: 1 }, () => worker()));
 
 const criticalFailures = [];
 const warnings = [];
+const declared = [];
 const rows = [];
 
 for (const { route, production, target } of results) {
   const issues = [];
   if (production.status !== 200) issues.push(`production status ${production.status}`);
   if (target.status !== 200) issues.push(`target status ${target.status}`);
-  for (const field of ["title", "description", "h1", "canonical"]) {
+  for (const field of ["title", "description", "canonical"]) {
     if (production[field] !== target[field]) issues.push(`${field} mismatch`);
+  }
+
+  /*
+   * The product pages deliberately lead with the product's name and carry
+   * production's own h1 as the h2 under it — the owner's call, taken knowing
+   * this file is what guards it. So a differing h1 is allowed only while
+   * production's wording is still on the page as a heading. Drop the phrase
+   * altogether and this is a critical failure again.
+   */
+  if (production.h1 !== target.h1) {
+    if (production.h1 && target.h2.includes(production.h1)) {
+      declared.push(`${route}: h1 is now "${target.h1}"; production wording kept as h2`);
+    } else {
+      issues.push("h1 mismatch");
+    }
   }
   if (normalizeRobots(production.robots) !== normalizeRobots(target.robots)) {
     issues.push("robots/indexability mismatch");
@@ -237,6 +258,7 @@ Generated: ${new Date().toISOString()}
 - Target: \`${targetOrigin}\`
 - Canonical public routes: ${routes.length}
 - Critical failures: ${criticalFailures.length}
+- Declared h1 demotions (production wording kept as h2): ${declared.length}
 - Non-blocking link/alt observations: ${warnings.length}
 - Preview transport noindex expected: ${previewTarget ? "yes" : "no"}
 
@@ -249,6 +271,13 @@ ${rows.join("\n")}
 ## Critical failures
 
 ${criticalFailures.length ? criticalFailures.map((item) => `- ${item}`).join("\n") : "- None."}
+
+## Declared h1 demotions
+
+These pages lead with the product's name and carry production's wording as the
+h2 under it. The parity check still fails if that wording leaves the page.
+
+${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 
 ## Non-blocking observations
 
@@ -263,5 +292,6 @@ if (criticalFailures.length) {
   process.exitCode = 1;
 } else {
   console.log(`SEO parity audit passed for ${routes.length} canonical routes; report written to ${reportPath}.`);
+  if (declared.length) console.log(`${declared.length} declared h1 demotions; production wording still present as h2.`);
   if (warnings.length) console.log(`${warnings.length} non-blocking link/alt observations are documented.`);
 }
