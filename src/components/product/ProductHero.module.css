@@ -7,20 +7,23 @@
  * purpose: the numbers stay checkable against the file instead of being
  * translated once into round CSS and drifting from it afterwards.
  *
- * The frame is 1240 wide. It is reproduced at its own size up to 1440, where it
- * stops growing so the type does not run away on a wide monitor; below that
- * `--u` shrinks with the window and the whole composition scales as one, which
- * is what the design does when it is resized. The wash behind it always bleeds
- * the full width.
+ * The frame is 1200 wide and its hero band 821.75 tall, opening at 104.02 —
+ * read out of `forme.fig` itself rather than off a screenshot, which is where
+ * every number in this file now comes from. The frame is reproduced at its own
+ * size up to 1440, where it stops growing so the type does not run away on a
+ * wide monitor; below that `--u` shrinks with the window and the whole
+ * composition scales as one, which is what the design does when it is resized.
+ * The wash behind it always bleeds the full width.
+ *
+ * Two of the nineteen product frames in the file — Matcha and Raf Coffee, the
+ * two the owner measured from — carry the 821.75 band; the rest still carry an
+ * earlier 691.02 one that the pack's own group hangs 19 below. The taller is
+ * the finished layout and the one reproduced here.
  *
  * `--band` is that product's key visual sampled at the head and `--band-foot`
  * at the foot — see `scripts/build-product-heroes.mjs` — so the pack stands on
  * the ramp its own artwork was built on. Products without a key visual fall
  * back to a wash of `--tile`, their registry colour.
- *
- * Not yet measured, and marked where they are used: the frame's own height, and
- * where the design's header ends — the reported tops are counted from the top
- * of the page, header included.
  *
  * The `!important` below is not decoration, and neither are the two-class
  * selectors. The exported Tilda sheet is global, and `public/css/custom.css`
@@ -44,9 +47,9 @@
   --ink: var(--tbb-ink);
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);
-  /* One design pixel: a 1240-wide frame in a 100vw section, held at the 1440
+  /* One design pixel: a 1200-wide frame in a 100vw section, held at the 1440
      frame once the window is wider than that. */
-  --u: min(0.0806452vw, 1.16129px);
+  --u: min(0.0833333vw, 1.2px);
   /* `--pack-left`, `--pack-top`, `--pack-width` and `--pack-height` are the
      pouch's group in the design frame, set on the section from `PACK_BOX` in
      `data/product-glass.ts` — the stage is drawn from them and the drink in
@@ -70,10 +73,13 @@
   --pack-scale: 0.92;
   --glass-scale: 0.95;
   /* Where the design's header ends, and so where its `top` values stop being
-     the page's and start being this section's — the reported tops are counted
-     from the top of the page. 68 is this site's own header at the frame's
-     width, which lands every measured top on its number. */
-  --head: 68;
+     the page's and start being this section's — every top below is counted from
+     the top of the page. The header instance measures 1200 x 103.66 at 0.36, so
+     it closes at 104.02, which is also where the hero's own ground begins. */
+  --head: 104.02;
+  /* And where that ground ends: 104.02 + 821.75. Not `--band-foot`, which this
+     section already carries as the key visual's closing colour. */
+  --hero-bottom: 925.77;
 }
 
 /* Tea's wash is near-black and Jam's is burgundy, so the ink is measured from
@@ -90,21 +96,22 @@
   margin-inline: auto;
   padding-top: var(--tbb-header-h);
   /*
-   * The pack's foot is the lowest thing the design measures — 814.28 counted
-   * from the page top — and the floor is the air under it.
+   * The band's own foot, which is now measured — but the page is allowed to
+   * stand two things below it, so whichever reaches lowest sets the floor.
    *
-   * Written against the two drops rather than as a number of its own, because
-   * whichever of them is pushed furthest is what reaches lowest: at a drop of
-   * 70 the drink's base was landing within a few pixels of this edge on nine of
-   * the twelve products, where `overflow: clip` took a slice off it, and the
-   * seals are now heading the same way. Each term leaves about twenty pixels
-   * under its own element — the offsets differ because the two start from
-   * different measured tops — and the larger wins, so lowering either again
-   * cannot quietly start cutting it. Replace the arithmetic with the frame's
-   * own height once that is measured.
+   * The pack's group ends at 814.28 and the lower seal at 738.52, both counted
+   * from the page top; each is carried down by a drop the owner asked for after
+   * seeing it built, and each term leaves twenty under its own element. Without
+   * this the drink was landing within a few pixels of the edge on nine of the
+   * twelve products and `overflow: clip` took a slice off it, so lowering
+   * either drop again cannot quietly start cutting it.
    */
-  --floor: max(calc(20 + var(--glass-drop)), calc(var(--seals-drop) - 60));
-  min-height: calc(var(--tbb-header-h) + (814.28 - var(--head) + var(--floor)) * var(--u));
+  --floor: max(
+    var(--hero-bottom),
+    calc(814.28 + var(--glass-drop) + 20),
+    calc(738.52 + var(--seals-drop) + 20)
+  );
+  min-height: calc(var(--tbb-header-h) + (var(--floor) - var(--head)) * var(--u));
 }
 
 /* ---- the product ---- */
@@ -233,23 +240,41 @@
 /* ---- the seals ---- */
 
 /*
- * Over the pack's lower left, slightly outside the group — the design puts them
- * at 86.7, 657, about 74.5 across with 26 between, so they are placed against
- * the frame rather than against the pack.
+ * Over the pack's lower left, slightly outside the group and placed against the
+ * frame rather than against the pack.
+ *
+ * The design's two are not a pair: one is 79.23 square at 81.80, 649.20 and the
+ * other 108.02 x 99.40 at 162.88, 639.12 — different sizes, different tops, all
+ * but touching. So each carries its own box rather than sharing a row, and the
+ * wrapper is only there to group them in the markup.
+ *
+ * The seals themselves are drawn here rather than lifted from the file, so each
+ * keeps its own square; the wider box is taken at its measured width.
  */
 .seals {
-  position: absolute;
-  left: calc((86.7 - var(--group-shift)) * var(--u));
-  top: calc(var(--tbb-header-h) + (657 - var(--head) + var(--seals-drop)) * var(--u));
-  z-index: 1;
-  display: flex;
-  gap: calc(26 * var(--u));
+  display: contents;
 }
 
 .seal {
-  width: calc(74.5 * var(--u));
+  position: absolute;
+  left: calc((var(--seal-x) - var(--group-shift)) * var(--u));
+  top: calc(var(--tbb-header-h) + (var(--seal-y) - var(--head) + var(--seals-drop)) * var(--u));
+  z-index: 1;
+  width: calc(var(--seal-w) * var(--u));
   height: auto;
   filter: drop-shadow(0 calc(8 * var(--u)) calc(18 * var(--u)) rgba(26, 19, 17, 0.18));
+}
+
+.sealWide {
+  --seal-x: 162.88;
+  --seal-y: 639.12;
+  --seal-w: 108.02;
+}
+
+.sealSmall {
+  --seal-x: 81.8;
+  --seal-y: 649.2;
+  --seal-w: 79.23;
 }
 
 /* Set, not drawn: the seals take the page's own typeface, so they sit with the
@@ -375,11 +400,14 @@
    white figures on it come forward. */
 .marginCard {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   width: calc(346.91 * var(--u));
   height: calc(110.41 * var(--u));
-  padding-inline: calc(22 * var(--u));
+  padding-inline: calc(27.56 * var(--u));
+  /* The card opens at 508.40 and the first label sits at 525.03, so the two
+     stacks start 16.63 down rather than centred in it. */
+  padding-top: calc(16.63 * var(--u));
   border-radius: calc(20 * var(--u));
   background: rgba(0, 0, 0, 0.055);
 }
@@ -404,7 +432,7 @@
 .marginSide {
   display: grid;
   justify-items: start;
-  row-gap: calc(10 * var(--u));
+  row-gap: calc(8.9 * var(--u));
 }
 
 .marginLabel {
@@ -418,20 +446,25 @@
    one thing in the hero that has to be read at a glance, and on Tea or Jam a
    pill that took the panel's ink would sink into the panel. */
 .marginValue {
-  padding: calc(9 * var(--u)) calc(13 * var(--u));
+  display: grid;
+  place-items: center;
+  width: calc(90 * var(--u));
+  height: calc(42 * var(--u));
   border-radius: calc(8 * var(--u));
   background: var(--tbb-paper);
   font-family: var(--tbb-font-display);
   font-size: calc(16 * var(--u));
   font-weight: 700 !important;
-  line-height: calc(20 * var(--u)) !important;
+  line-height: calc(22 * var(--u)) !important;
   color: var(--tbb-ink);
 }
 
 /* White, as the design sets it — a separator between the two readings rather
    than a third thing to read, which is also why it is `aria-hidden`. */
 .marginVs {
-  align-self: center;
+  /* 565.42 against the labels' 525.03 — level with the figures, not with the
+     card. */
+  margin-top: calc(40.39 * var(--u));
   font-size: calc(13 * var(--u));
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -444,8 +477,8 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: calc(17.6 * var(--u));
-  padding-top: calc(38.19 * var(--u));
+  gap: calc(16.34 * var(--u));
+  padding-top: calc(39.55 * var(--u));
 }
 
 /* Sentence case, not the label caps the rest of the site uses: the design sets
@@ -455,8 +488,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: calc(47.4 * var(--u));
-  padding-inline: calc(28 * var(--u));
+  height: calc(50 * var(--u));
   border-radius: 999px;
   border: 1px solid transparent;
   font-size: calc(13 * var(--u));
@@ -470,7 +502,10 @@
     transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
+/* Both are drawn to their own width in the design — 173 and 155 — rather than
+   to the width of the words inside them. */
 .primary {
+  width: calc(173 * var(--u));
   background: var(--tbb-ink);
   color: var(--tbb-on-dark);
 }
@@ -483,6 +518,7 @@
 /* White rather than an outline: the design pairs a solid dark pill with a solid
    light one, and on a pale wash an outlined button would all but vanish. */
 .secondary {
+  width: calc(155 * var(--u));
   background: var(--tbb-paper);
   color: var(--tbb-ink);
 }
@@ -560,13 +596,14 @@
   /* A row under the pack rather than a corner of it: at this width the pack
      fills the band and there is no corner left to stand in. */
   .seals {
-    position: static;
+    display: flex;
     justify-content: center;
     gap: 0.75rem;
     padding-top: clamp(0.9rem, 3vw, 1.4rem);
   }
 
   .seal {
+    position: static;
     width: clamp(3.4rem, 13vw, 4.6rem);
   }
 
@@ -610,6 +647,7 @@
   }
 
   .marginCard {
+    align-items: center;
     width: 100%;
     max-width: 22rem;
     height: auto;
@@ -627,6 +665,8 @@
   }
 
   .marginValue {
+    width: auto;
+    height: auto;
     padding: 0.5rem 0.8rem;
     border-radius: 0.5rem;
     font-size: 1.05rem;
@@ -634,6 +674,7 @@
   }
 
   .marginVs {
+    margin-top: 0;
     font-size: 0.75rem;
   }
 
@@ -644,6 +685,7 @@
 
   .primary,
   .secondary {
+    width: auto;
     height: 3rem;
     padding-inline: 1.6rem;
     font-size: 0.85rem;

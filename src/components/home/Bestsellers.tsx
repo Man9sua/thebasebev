@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { PACK_BOX, productGlass } from "@/data/product-glass";
+import { packBox, productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
 
@@ -58,6 +58,7 @@ export function Bestsellers() {
   const indexRef = useRef(index);
 
   const active = PRODUCTS[index];
+  const pack = packBox(active.slug);
 
   const goTo = useCallback((next: number) => {
     setIndex((current) => {
@@ -211,10 +212,10 @@ export function Bestsellers() {
       style={{
         ["--band" as string]: HEROES[active.slug]?.band ?? active.backgroundColor,
         ["--band-foot" as string]: HEROES[active.slug]?.bandFoot ?? active.backgroundColor,
-        ["--pack-left" as string]: PACK_BOX.left,
-        ["--pack-top" as string]: PACK_BOX.top,
-        ["--pack-width" as string]: PACK_BOX.width,
-        ["--pack-height" as string]: PACK_BOX.height,
+        ["--pack-left" as string]: pack.left,
+        ["--pack-top" as string]: pack.top,
+        ["--pack-width" as string]: pack.width,
+        ["--pack-height" as string]: pack.height,
       }}
       aria-roledescription="carousel"
       aria-label="Bestsellers"

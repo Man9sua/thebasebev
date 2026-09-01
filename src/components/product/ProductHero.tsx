@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
-import { PACK_BOX, productGlass } from "@/data/product-glass";
+import { packBox, productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productMargins } from "@/data/product-margins";
 import { isDark } from "@/lib/contrast";
@@ -48,13 +48,19 @@ const heroes = productHeroes as Record<string, { image: string; band: string; ba
  * and reproducing a certification body's own mark from a screenshot is not
  * ours to do. These are the site's own badges carrying the site's own claim,
  * which is the same claim the three components above already make in words.
+ *
+ * `box` picks which of the design's two boxes the badge stands in — they are
+ * different sizes at different heights, so neither the size nor the placement
+ * is shared. See `.sealSmall` and `.sealWide` in the stylesheet.
  */
 function Seal({
+  box,
   tint,
   title,
   caption,
   glyph,
 }: {
+  box: "small" | "wide";
   tint: string;
   title: string;
   caption: string;
@@ -62,7 +68,7 @@ function Seal({
 }) {
   return (
     <svg
-      className={styles.seal}
+      className={`${styles.seal} ${box === "wide" ? styles.sealWide : styles.sealSmall}`}
       viewBox="0 0 100 100"
       role="img"
       aria-label={`${title} ${caption}`}
@@ -108,16 +114,17 @@ export function ProductHero({ product }: { product: Product }) {
   // assumed — Tea's wash is near-black and Jam's is burgundy.
   const onDark = banner ? isDark(banner.band) : false;
   const heading = detail?.h1 ?? product.headline;
+  const pack = packBox(product.slug);
 
   return (
     <section
       className={`${styles.hero} ${onDark ? styles.onDark : ""} ${banner ? "" : styles.plain}`}
       style={{
         ["--tile" as string]: product.backgroundColor,
-        ["--pack-left" as string]: PACK_BOX.left,
-        ["--pack-top" as string]: PACK_BOX.top,
-        ["--pack-width" as string]: PACK_BOX.width,
-        ["--pack-height" as string]: PACK_BOX.height,
+        ["--pack-left" as string]: pack.left,
+        ["--pack-top" as string]: pack.top,
+        ["--pack-width" as string]: pack.width,
+        ["--pack-height" as string]: pack.height,
         ...(banner
           ? {
               ["--band" as string]: banner.band,
@@ -191,8 +198,8 @@ export function ProductHero({ product }: { product: Product }) {
       </div>
 
       <div className={styles.seals}>
-        <Seal tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
-        <Seal tint="#0f7a3d" title="HALAL" caption="CERTIFIED" glyph="حلال" />
+        <Seal box="small" tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
+        <Seal box="wide" tint="#0f7a3d" title="HALAL" caption="CERTIFIED" glyph="حلال" />
       </div>
 
       {/* The design frame, which from here down is the copy's own measure —
