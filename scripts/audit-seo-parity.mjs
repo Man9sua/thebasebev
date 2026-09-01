@@ -176,6 +176,18 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: 1 }, () => worker()));
 
+/*
+ * The one page whose production h1 is not worth preserving. Live Tilda serves
+ * /rnd under a Russian line left behind by a calculator widget -- "find out
+ * your daily norm in 30 seconds" -- which describes neither the page nor the
+ * business. It is named here with the exact string so that if production is
+ * ever corrected, this stops matching and the page comes back under the
+ * ordinary rule instead of staying quietly exempt.
+ */
+const H1_NOT_PRESERVED = new Map([
+  ["/rnd", "Узнай свою дневную норму за 30 секунд"],
+]);
+
 const criticalFailures = [];
 const warnings = [];
 const declared = [];
@@ -197,7 +209,9 @@ for (const { route, production, target } of results) {
    * altogether and this is a critical failure again.
    */
   if (production.h1 !== target.h1) {
-    if (production.h1 && target.h2.includes(production.h1)) {
+    if (H1_NOT_PRESERVED.get(route) === production.h1) {
+      declared.push(`${route}: production h1 is a stray widget line, deliberately not carried over`);
+    } else if (production.h1 && target.h2.includes(production.h1)) {
       declared.push(`${route}: h1 is now "${target.h1}"; production wording kept as h2`);
     } else {
       issues.push("h1 mismatch");
@@ -258,7 +272,7 @@ Generated: ${new Date().toISOString()}
 - Target: \`${targetOrigin}\`
 - Canonical public routes: ${routes.length}
 - Critical failures: ${criticalFailures.length}
-- Declared h1 demotions (production wording kept as h2): ${declared.length}
+- Declared h1 changes: ${declared.length}
 - Non-blocking link/alt observations: ${warnings.length}
 - Preview transport noindex expected: ${previewTarget ? "yes" : "no"}
 
@@ -272,10 +286,12 @@ ${rows.join("\n")}
 
 ${criticalFailures.length ? criticalFailures.map((item) => `- ${item}`).join("\n") : "- None."}
 
-## Declared h1 demotions
+## Declared h1 changes
 
-These pages lead with the product's name and carry production's wording as the
-h2 under it. The parity check still fails if that wording leaves the page.
+Product pages lead with the product's name and carry production's wording as
+the h2 under it; the check still fails if that wording leaves the page. One
+route is exempt outright because production's own h1 is wrong -- see
+\`H1_NOT_PRESERVED\` in this script.
 
 ${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 
@@ -292,6 +308,6 @@ if (criticalFailures.length) {
   process.exitCode = 1;
 } else {
   console.log(`SEO parity audit passed for ${routes.length} canonical routes; report written to ${reportPath}.`);
-  if (declared.length) console.log(`${declared.length} declared h1 demotions; production wording still present as h2.`);
+  if (declared.length) console.log(`${declared.length} declared h1 changes; each is listed with its reason in the report.`);
   if (warnings.length) console.log(`${warnings.length} non-blocking link/alt observations are documented.`);
 }
