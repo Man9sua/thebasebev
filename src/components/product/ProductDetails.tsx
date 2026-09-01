@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
+import { popupAnchorProps } from "@/lib/legacy-popups";
 import { productDetails } from "@/lib/site-pages";
 import { ProductFaq } from "./ProductFaq";
 import { ProductTabs, type ProductPane } from "./ProductTabs";
@@ -111,7 +112,14 @@ export function ProductDetails({ product }: { product: Product }) {
                 <div key={spec.label} className={styles.spec}>
                   {spec.icon && (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img className={styles.specIcon} src={spec.icon} alt="" width={44} height={44} />
+                    <img
+                      className={styles.specIcon}
+                      src={spec.icon}
+                      alt=""
+                      width={44}
+                      height={44}
+                      decoding="async"
+                    />
                   )}
                   <dt className={`tbb-label ${styles.specLabel}`}>{spec.label}</dt>
                   <dd className={styles.specValue}>{spec.value}</dd>
@@ -222,8 +230,15 @@ export function ProductDetails({ product }: { product: Product }) {
             <Reveal className={styles.custom} delay={120} distance={20}>
               <h3 className={styles.customTitle}>Custom Flavors</h3>
               {flavors.note && <p className={styles.customNote}>{flavors.note}</p>}
+              {/* `#flavor` is one of the export's popups, so the link carries
+                  the dialog attributes Tilda's runtime would write onto it
+                  anyway — see `popupAnchorProps`. */}
               {flavors.cta && (
-                <a className={styles.customCta} href={flavors.cta.href}>
+                <a
+                  className={styles.customCta}
+                  href={flavors.cta.href}
+                  {...popupAnchorProps(flavors.cta.href)}
+                >
                   {flavors.cta.label}
                 </a>
               )}
