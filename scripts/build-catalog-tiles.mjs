@@ -54,17 +54,24 @@ const WIDTH = 860;
 const HEIGHT = Math.round((WIDTH * 5) / 4);
 
 /**
- * The box the pouch stands in, as a fraction of the tile.
+ * The box the product stands in, as a fraction of the tile — and there are two,
+ * chosen by how much of its own outline the product actually fills.
  *
- * It is fitted inside both bounds rather than set by height alone. The banners
- * ran their pouch off the bottom edge and off the sides, which suited a picture
- * of a drink being made; a shelf wants the product whole, with air around it,
- * the way any catalogue photographs a pack. Both bounds also mean the one
- * product that is not a standing pouch — Sugar Free is two sachets lying flat —
- * fits by its width instead of running out of the frame.
+ * A standing pouch fills 92% of its bounding box, so that box is the product
+ * and it wants air around it, the way any catalogue photographs a pack. Tea and
+ * Sugar Free are not pouches but two sachets thrown down at an angle: they fill
+ * 67% and 62% of theirs, and the rest of the box is already air. Fitted to the
+ * same fraction as a pouch they came out visibly smaller than everything beside
+ * them, with a wide margin of flat colour that read as a mat around a picture.
+ *
+ * So a sparse arrangement is given the whole tile to fill. Its own emptiness is
+ * the margin, and the two of them now carry the same weight in the row as the
+ * fourteen pouches.
  */
-const BOX_WIDTH = 0.72;
-const BOX_HEIGHT = 0.78;
+const DENSE = { width: 0.72, height: 0.78 };
+const SPARSE = { width: 1, height: 1 };
+/** Below this share of opaque pixels, the outline is mostly air, not product. */
+const DENSITY = 0.8;
 /** Where its middle sits: a little below the tile's, so it stands rather than floats. */
 const BASELINE = 0.54;
 
@@ -117,6 +124,14 @@ function lighten(hex, amount) {
   return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
 }
 
+/** What share of a cut-out's own bounding box is product rather than air. */
+async function density(image) {
+  const { data, info } = await sharp(image).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  let opaque = 0;
+  for (let index = 3; index < data.length; index += 4) if (data[index] > 24) opaque += 1;
+  return opaque / (info.width * info.height);
+}
+
 /** The frame around a cut-out pouch, which is now every tile. */
 async function fromPack(slug) {
   const file = path.join(IMAGES, `pack-${slug}.webp`);
@@ -132,11 +147,12 @@ async function fromPack(slug) {
   // fraction of the tile without removing it makes the pouch smaller than the
   // fraction says — and by a different amount on every product, which is
   // exactly what a grid of sixteen cannot have.
-  const pouch = await sharp(file)
-    .trim()
+  const trimmed = await sharp(file).trim().toBuffer();
+  const box = (await density(trimmed)) >= DENSITY ? DENSE : SPARSE;
+  const pouch = await sharp(trimmed)
     .resize({
-      width: Math.round(WIDTH * BOX_WIDTH),
-      height: Math.round(HEIGHT * BOX_HEIGHT),
+      width: Math.round(WIDTH * box.width),
+      height: Math.round(HEIGHT * box.height),
       fit: "inside",
     })
     .toBuffer();
