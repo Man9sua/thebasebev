@@ -46,7 +46,11 @@
  * heading — and on the paler products it read as washed out rather than as
  * live. The question is now black at rest, on hover and while open, like the
  * rest of the page's type; the ring around the chevron carries the pointer
- * instead.
+ * instead, and its open state is a neutral fill.
+ *
+ * Nothing in this file names the product's colour any more. The sections around
+ * it still do — see `--tile` in `ProductDetails.module.css` — but those are
+ * panel backgrounds rather than type.
  */
 .icon {
   display: grid;
@@ -72,10 +76,14 @@
   height: 14px;
 }
 
+/* Filled rather than tinted: this was the last of the product's colour in the
+   FAQ, and one pale mauve or green ring among otherwise neutral type read as a
+   stray rather than as a state. The turn of the chevron says which one is open;
+   the fill only has to say it louder. */
 .icon[data-open="true"] {
   transform: rotate(180deg);
   border-color: transparent;
-  background: color-mix(in srgb, var(--tile, var(--tbb-accent)) 22%, var(--tbb-paper));
+  background: var(--tbb-paper-warm);
 }
 
 .answer {
