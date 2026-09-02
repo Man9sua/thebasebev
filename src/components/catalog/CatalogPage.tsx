@@ -15,8 +15,15 @@ import { addCartItem } from "@/lib/cart-store";
 import styles from "./CatalogPage.module.css";
 
 type Filter = "all" | CatalogGroupId;
+
 const tiles = catalogTiles as Record<string, { image: string }>;
-const CATALOG_NAMES: Partial<Record<string, string>> = {
+
+/*
+ * Four products are listed under a longer name than the shelf needs. The name
+ * on the page is the shelf's, not the registry's; the registry keeps the full
+ * one because the product page and the structured data both use it.
+ */
+const SHELF_NAMES: Partial<Record<string, string>> = {
   jam: "Jam",
   garnish: "Garnish",
   topping: "Topping",
@@ -33,43 +40,51 @@ function ProductCard({ product, eager }: { product: CatalogProduct; eager: boole
     return () => window.clearTimeout(timer);
   }, [added]);
 
-  const name = CATALOG_NAMES[product.slug] ?? product.name;
+  const name = SHELF_NAMES[product.slug] ?? product.name;
 
   return (
     <article className={styles.card} data-catalog-card data-product-slug={product.slug}>
-      <SiteLink className={styles.imageLink} href={product.route}>
-        <Image
-          className={styles.image}
-          src={tiles[product.slug]?.image ?? product.image ?? `/images/pack-${product.slug}.webp`}
-          alt={`${product.name} beverage base by THE BASE`}
-          fill
-          sizes="(max-width: 719px) 92vw, (max-width: 1099px) 46vw, 31vw"
-          loading={eager ? "eager" : "lazy"}
-        />
-      </SiteLink>
+      <div className={styles.frame}>
+        <SiteLink className={styles.imageLink} href={product.route} tabIndex={-1} aria-hidden>
+          <Image
+            className={styles.image}
+            src={tiles[product.slug]?.image ?? product.image ?? `/images/pack-${product.slug}.webp`}
+            alt=""
+            fill
+            sizes="(max-width: 639px) 46vw, (max-width: 1099px) 31vw, 23vw"
+            loading={eager ? "eager" : "lazy"}
+          />
+        </SiteLink>
+        {/* On the tile rather than under the copy: it costs the card no row and
+            the grid reads as sorted at a glance. */}
+        <span className={styles.tag}>{product.categoryLabel}</span>
+      </div>
 
       <div className={styles.titleRow}>
-        <SiteLink className={styles.name} data-catalog-name href={product.route}>
-          {name}
-        </SiteLink>
+        <h3 className={styles.heading}>
+          <SiteLink className={styles.name} data-catalog-name href={product.route}>
+            {name}
+          </SiteLink>
+        </h3>
         <span className={styles.price} data-catalog-price>
           {product.price ?? "Price on request"}
         </span>
       </div>
+
       <p className={styles.description}>{product.description}</p>
-      <p className={styles.category}>{product.categoryLabel}</p>
 
       {checkoutId ? (
         <button
           className={styles.action}
           data-cart-add
+          data-added={added ? "true" : undefined}
           type="button"
           onClick={() => {
             addCartItem(product.slug);
             setAdded(true);
           }}
         >
-          {added ? "Added" : "Add to cart"}
+          {added ? "Added to cart" : "Add to cart"}
         </button>
       ) : (
         <SiteLink className={styles.action} data-cart-add href="/contacts">
@@ -93,43 +108,61 @@ export function CatalogPage() {
   return (
     <main className={styles.page}>
       <section className={styles.intro} aria-labelledby="catalog-title">
-        <p className={styles.eyebrow}>Catalogue</p>
-        <h1 id="catalog-title" className={styles.title}>
-          Beverage Base Premixes — Wholesale Catalogue
-        </h1>
+        <div className={styles.introText}>
+          <h1 id="catalog-title" className={styles.title}>
+            Shop
+          </h1>
+          {/*
+            Production's own h1 for this route, a level down — the wording the
+            page ranks on, kept on the page rather than dropped when the shelf
+            took its own name. `audit:seo-parity` checks it is still here.
+          */}
+          <h2 className={styles.headline}>Beverage Base Premixes — Wholesale Catalogue</h2>
+        </div>
         <p className={styles.lede}>
           Dry premixes for cafes, restaurants and hotels. Bulk and private label supply
           across the UAE and worldwide.
         </p>
-
-        <div className={styles.filters} data-catalog-filters aria-label="Filter catalogue">
-          <button
-            type="button"
-            className={filter === "all" ? styles.filterActive : styles.filter}
-            aria-pressed={filter === "all"}
-            data-f="All"
-            onClick={() => setFilter("all")}
-          >
-            All <span>{CATALOG_PRODUCTS.length}</span>
-          </button>
-          {CATALOG_GROUPS.map((group) => (
-            <button
-              key={group.id}
-              type="button"
-              className={filter === group.id ? styles.filterActive : styles.filter}
-              aria-pressed={filter === group.id}
-              data-f={group.label}
-              onClick={() => setFilter(group.id)}
-            >
-              {group.label} <span>{group.slugs.length}</span>
-            </button>
-          ))}
-        </div>
       </section>
 
-      <section className={styles.grid} aria-live="polite" aria-label="Catalogue products">
+      {/*
+        Sticky: sixteen products are four screens of scrolling, and a filter row
+        that scrolls away with the heading is a filter row nobody uses twice.
+      */}
+      <div className={styles.bar}>
+        <div className={styles.barInner}>
+          <div className={styles.filters} data-catalog-filters aria-label="Filter the shop">
+            <button
+              type="button"
+              className={filter === "all" ? styles.filterActive : styles.filter}
+              aria-pressed={filter === "all"}
+              data-f="All"
+              onClick={() => setFilter("all")}
+            >
+              All <span>{CATALOG_PRODUCTS.length}</span>
+            </button>
+            {CATALOG_GROUPS.map((group) => (
+              <button
+                key={group.id}
+                type="button"
+                className={filter === group.id ? styles.filterActive : styles.filter}
+                aria-pressed={filter === group.id}
+                data-f={group.label}
+                onClick={() => setFilter(group.id)}
+              >
+                {group.label} <span>{group.slugs.length}</span>
+              </button>
+            ))}
+          </div>
+          <p className={styles.count} aria-live="polite">
+            {products.length} {products.length === 1 ? "product" : "products"}
+          </p>
+        </div>
+      </div>
+
+      <section className={styles.grid} aria-label="Products">
         {products.map((product, index) => (
-          <ProductCard key={product.slug} product={product} eager={index < 3} />
+          <ProductCard key={product.slug} product={product} eager={index < 4} />
         ))}
       </section>
     </main>

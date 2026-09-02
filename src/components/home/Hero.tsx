@@ -176,7 +176,7 @@ export function Hero() {
             className={`${styles.cta} ${styles.enter}`}
             style={{ ["--enter-delay" as string]: "730ms" }}
           >
-            Explore the catalog
+            Explore the shop
             <ArrowIcon />
           </SiteLink>
 

@@ -46,7 +46,7 @@ export const REGIONS: Region[] = [
 ];
 
 export const SITE_NAV = [
-  { label: "Catalog", href: "/catalog" },
+  { label: "Shop", href: "/catalog" },
   { label: "Private Label", href: "/private-labeling" },
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
@@ -57,7 +57,7 @@ export const SITE_NAV = [
 
 export const FOOTER_LINKS = {
   products: [
-    { label: "Catalog", href: "/catalog" },
+    { label: "Shop", href: "/catalog" },
     { label: "Private Labeling", href: "/private-labeling" },
     { label: "Sugar Free", href: "/sugar-free" },
     { label: "Vending", href: "/vending" },

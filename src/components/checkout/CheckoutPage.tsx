@@ -93,7 +93,7 @@ export function CheckoutPage() {
     <div className={`tbb ${styles.page}`}>
       <header className={styles.header}>
         <SiteLink href="/catalog" className={styles.back}>
-          <span aria-hidden="true">←</span> Back to catalog
+          <span aria-hidden="true">←</span> Back to shop
         </SiteLink>
         <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
           <BrandLogo />
