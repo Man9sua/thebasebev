@@ -1,6 +1,6 @@
 # SEO parity report
 
-Generated: 2026-09-02T14:29:24.913Z
+Generated: 2026-09-02T14:53:58.363Z
 
 - Production: `https://thebasebev.com`
 - Target: `https://the-base-staging.mansua.workers.dev`
@@ -38,7 +38,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/chocolate` | 200 | 200 | PASS | 28/31 | 19/0/10 | Critical fields match |
 | `/sugar-syrup` | 200 | 200 | PASS | 28/31 | 19/0/10 | Critical fields match |
 | `/vending` | 200 | 200 | PASS | 28/31 | 19/0/10 | Critical fields match |
-| `/jam` | 200 | 200 | PASS | 28/31 | 18/0/9 | Critical fields match |
+| `/jam` | 200 | 200 | PASS | 28/31 | 19/0/10 | Critical fields match |
 | `/garnish` | 200 | 200 | PASS | 28/31 | 18/0/9 | Critical fields match |
 | `/sugar-free` | 200 | 200 | PASS | 28/31 | 18/0/9 | Critical fields match |
 | `/tea` | 200 | 200 | PASS | 28/31 | 18/0/9 | Critical fields match |
@@ -125,7 +125,7 @@ route is exempt outright because production's own h1 is wrong -- see
 - /vending: internal links differ (-0/+3)
 - /vending: image alt stats differ ({"total":44,"missing":0,"empty":34} vs {"total":19,"missing":0,"empty":10})
 - /jam: internal links differ (-0/+3)
-- /jam: image alt stats differ ({"total":44,"missing":0,"empty":34} vs {"total":18,"missing":0,"empty":9})
+- /jam: image alt stats differ ({"total":44,"missing":0,"empty":34} vs {"total":19,"missing":0,"empty":10})
 - /garnish: internal links differ (-0/+3)
 - /garnish: image alt stats differ ({"total":36,"missing":0,"empty":28} vs {"total":18,"missing":0,"empty":9})
 - /sugar-free: internal links differ (-0/+3)
