@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   CATALOG_GROUPS,
   CATALOG_PRODUCTS,
@@ -45,7 +45,10 @@ function amount(product: CatalogProduct): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-function sortProducts(products: CatalogProduct[], sort: Sort): CatalogProduct[] {
+function sortProducts(
+  products: CatalogProduct[],
+  sort: Sort,
+): CatalogProduct[] {
   if (sort === "featured") return products;
   const sorted = [...products];
   if (sort === "name") {
@@ -57,7 +60,8 @@ function sortProducts(products: CatalogProduct[], sort: Sort): CatalogProduct[] 
   sorted.sort((a, b) => {
     const left = amount(a);
     const right = amount(b);
-    if (left === null || right === null) return left === right ? 0 : left === null ? 1 : -1;
+    if (left === null || right === null)
+      return left === right ? 0 : left === null ? 1 : -1;
     return sort === "price-asc" ? left - right : right - left;
   });
   return sorted;
@@ -85,10 +89,19 @@ function ProductCard({
       data-in-cart={quantity > 0 ? "true" : undefined}
     >
       <div className={styles.frame}>
-        <SiteLink className={styles.imageLink} href={product.route} tabIndex={-1} aria-hidden>
+        <SiteLink
+          className={styles.imageLink}
+          href={product.route}
+          tabIndex={-1}
+          aria-hidden
+        >
           <Image
             className={styles.image}
-            src={tiles[product.slug]?.image ?? product.image ?? `/images/pack-${product.slug}.webp`}
+            src={
+              tiles[product.slug]?.image ??
+              product.image ??
+              `/images/pack-${product.slug}.webp`
+            }
             alt=""
             fill
             sizes="(max-width: 639px) 46vw, (max-width: 1099px) 31vw, 23vw"
@@ -100,7 +113,11 @@ function ProductCard({
 
       <div className={styles.titleRow}>
         <h3 className={styles.heading}>
-          <SiteLink className={styles.name} data-catalog-name href={product.route}>
+          <SiteLink
+            className={styles.name}
+            data-catalog-name
+            href={product.route}
+          >
             {name}
           </SiteLink>
         </h3>
@@ -132,7 +149,11 @@ function ProductCard({
           Add to cart
         </button>
       ) : (
-        <div className={styles.stepper} role="group" aria-label={`${name} quantity`}>
+        <div
+          className={styles.stepper}
+          role="group"
+          aria-label={`${name} quantity`}
+        >
           <button
             className={styles.step}
             type="button"
@@ -185,10 +206,36 @@ function Shelf({
   );
 }
 
-export function CatalogPage({ weights = {} }: { weights?: Record<string, string | null> }) {
+export function CatalogPage({
+  weights = {},
+}: {
+  weights?: Record<string, string | null>;
+}) {
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<Sort>("featured");
   const cart = useCart();
+  const shelfRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * Sorting and filtering both re-lay the whole shelf, and sorting collapses
+   * the four range headings as well — so the page shortens under whoever asked
+   * for it, and from halfway down the only visible effect is that the tiles
+   * under the cursor are suddenly different ones. Anyone who has scrolled past
+   * the top of the shelf is taken back to it, which is where the answer to
+   * "sort by price" actually is. Nobody already at the top is moved.
+   */
+  const reshelve = useCallback((change: () => void) => {
+    change();
+    const shelf = shelfRef.current;
+    if (!shelf || shelf.getBoundingClientRect().top >= 0) return;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    shelf.scrollIntoView({
+      behavior: reduced ? "auto" : "smooth",
+      block: "start",
+    });
+  }, []);
 
   const quantities = useMemo(() => {
     const map: Record<string, number> = {};
@@ -226,13 +273,15 @@ export function CatalogPage({ weights = {} }: { weights?: Record<string, string 
             page ranks on, kept on the page rather than dropped when the shelf
             took its own name. `audit:seo-parity` checks it is still here.
           */}
-          <h2 className={styles.headline}>Beverage Base Premixes — Wholesale Catalogue</h2>
+          <h2 className={styles.headline}>
+            Beverage Base Premixes — Wholesale Catalogue
+          </h2>
         </div>
 
         <div className={styles.introSide}>
           <p className={styles.lede}>
-            Dry premixes for cafes, restaurants and hotels. Bulk and private label supply
-            across the UAE and worldwide.
+            Dry premixes for cafes, restaurants and hotels. Bulk and private
+            label supply across the UAE and worldwide.
           </p>
           <dl className={styles.facts}>
             <div>
@@ -257,13 +306,17 @@ export function CatalogPage({ weights = {} }: { weights?: Record<string, string 
       */}
       <div className={styles.bar}>
         <div className={styles.barInner}>
-          <div className={styles.filters} data-catalog-filters aria-label="Filter the shop">
+          <div
+            className={styles.filters}
+            data-catalog-filters
+            aria-label="Filter the shop"
+          >
             <button
               type="button"
               className={filter === "all" ? styles.filterActive : styles.filter}
               aria-pressed={filter === "all"}
               data-f="All"
-              onClick={() => setFilter("all")}
+              onClick={() => reshelve(() => setFilter("all"))}
             >
               All <span>{CATALOG_PRODUCTS.length}</span>
             </button>
@@ -271,10 +324,12 @@ export function CatalogPage({ weights = {} }: { weights?: Record<string, string 
               <button
                 key={group.id}
                 type="button"
-                className={filter === group.id ? styles.filterActive : styles.filter}
+                className={
+                  filter === group.id ? styles.filterActive : styles.filter
+                }
                 aria-pressed={filter === group.id}
                 data-f={group.label}
-                onClick={() => setFilter(group.id)}
+                onClick={() => reshelve(() => setFilter(group.id))}
               >
                 {group.label} <span>{group.slugs.length}</span>
               </button>
@@ -283,7 +338,13 @@ export function CatalogPage({ weights = {} }: { weights?: Record<string, string 
 
           <label className={styles.sort}>
             <span>Sort</span>
-            <select value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
+            <select
+              value={sort}
+              onChange={(event) => {
+                const next = event.target.value as Sort;
+                reshelve(() => setSort(next));
+              }}
+            >
               {SORTS.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.label}
@@ -294,34 +355,47 @@ export function CatalogPage({ weights = {} }: { weights?: Record<string, string 
         </div>
       </div>
 
-      {grouped ? (
-        CATALOG_GROUPS.map((group, groupIndex) => {
-          const inGroup = products.filter((product) => product.categoryId === group.id);
-          return (
-            <section key={group.id} className={styles.range} aria-label={group.label}>
-              <header className={styles.rangeHead}>
-                <h2 className={styles.rangeName}>{group.label}</h2>
-                <span className={styles.rangeCount}>{inGroup.length}</span>
-              </header>
-              <Shelf
-                products={inGroup}
-                weights={weights}
-                quantities={quantities}
-                offset={groupIndex === 0 ? 0 : 4}
-              />
-            </section>
-          );
-        })
-      ) : (
-        <section className={styles.range} aria-label="Products">
-          <Shelf products={products} weights={weights} quantities={quantities} offset={0} />
-        </section>
-      )}
+      <div className={styles.shelf} ref={shelfRef}>
+        {grouped ? (
+          CATALOG_GROUPS.map((group, groupIndex) => {
+            const inGroup = products.filter(
+              (product) => product.categoryId === group.id,
+            );
+            return (
+              <section
+                key={group.id}
+                className={styles.range}
+                aria-label={group.label}
+              >
+                <header className={styles.rangeHead}>
+                  <h2 className={styles.rangeName}>{group.label}</h2>
+                  <span className={styles.rangeCount}>{inGroup.length}</span>
+                </header>
+                <Shelf
+                  products={inGroup}
+                  weights={weights}
+                  quantities={quantities}
+                  offset={groupIndex === 0 ? 0 : 4}
+                />
+              </section>
+            );
+          })
+        ) : (
+          <section className={styles.range} aria-label="Products">
+            <Shelf
+              products={products}
+              weights={weights}
+              quantities={quantities}
+              offset={0}
+            />
+          </section>
+        )}
+      </div>
 
       <section className={styles.close}>
         <p className={styles.closeText}>
-          Ordering for a chain, or putting your own name on the pouch? We quote bulk
-          volumes and private label runs directly.
+          Ordering for a chain, or putting your own name on the pouch? We quote
+          bulk volumes and private label runs directly.
         </p>
         <SiteLink className={styles.closeLink} href="/contacts">
           Request a price list <span aria-hidden="true">→</span>

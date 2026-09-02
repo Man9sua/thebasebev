@@ -223,14 +223,36 @@
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   cursor: pointer;
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
+.sort select:hover {
+  border-bottom-color: var(--tbb-ink);
+}
+
+/*
+ * Ink, not the accent.
+ *
+ * A `select` matches `:focus-visible` on a plain mouse click — unlike a button,
+ * because clicking one opens a listbox and the browser assumes the keyboard is
+ * next — so the accent ring here was a red rectangle around the control every
+ * time anyone used it, which reads as a validation error rather than as focus.
+ * It stays a proper two-pixel ring, in the same ink as the type.
+ */
 .sort select:focus-visible {
-  outline: 2px solid var(--tbb-accent);
+  outline: 2px solid var(--tbb-ink);
   outline-offset: 2px;
+  border-bottom-color: var(--tbb-ink);
 }
 
 /* ---- the ranges ---- */
+
+/* The shelf as one thing, so re-sorting has somewhere to scroll back to. The
+   margin clears the site header and the sticky filter bar, which would
+   otherwise sit over the first row it just brought into view. */
+.shelf {
+  scroll-margin-top: calc(var(--tbb-header-h) + 4rem);
+}
 
 .range {
   padding-inline: var(--tbb-gutter);
