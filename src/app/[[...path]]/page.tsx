@@ -214,8 +214,16 @@ export default async function SiteRoute({ params }: RouteProps) {
   }
 
   if (route === "/resources/glossary") {
+    const structuredData = getLegacyStructuredData(page.file);
     return (
       <div className="tbb">
+        {structuredData.map((block, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: block }}
+          />
+        ))}
         <SiteHeader />
         <GlossaryPage />
         <SiteFooter />

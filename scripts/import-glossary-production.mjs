@@ -324,7 +324,10 @@ async function importGlossary() {
         description: page?.description ?? "",
         canonical: page?.canonical || sourceUrl,
         openGraphTitle: page?.openGraphTitle ?? "",
-        openGraphDescription: normalizeText((page?.openGraphDescription ?? "").replace(/<[^>]+>/g, " ")),
+        // Tilda intentionally publishes escaped line-break markup in many
+        // og:description values. Keep the decoded value verbatim so Next.js
+        // re-escapes it to the exact production metadata contract.
+        openGraphDescription: page?.openGraphDescription ?? "",
       },
     };
   });
