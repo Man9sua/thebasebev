@@ -1,6 +1,6 @@
 # Route indexability audit
 
-Generated: 2026-08-26T23:32:02.242Z
+Generated: 2026-09-01T17:28:51.769Z
 
 Target: `https://the-base-staging.mansua.workers.dev`
 
@@ -9,12 +9,12 @@ Target: `https://the-base-staging.mansua.workers.dev`
 - Friendly routes: 38 (29 canonical/indexable + 9 excluded).
 - Direct `pageNNNN.html` compatibility aliases: 41.
 - Tilda product compatibility aliases: 26.
-- Technical/metadata/API routes: 7.
-- **Controlled route total: 112.**
+- Technical/metadata/API routes: 8.
+- **Controlled route total: 113.**
 - Permanent redirects (not generated pages): 6.
 - Sitemap members: 29.
 
-The 112 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The 113 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
 
 ## Generated and technical routes
 
@@ -125,6 +125,7 @@ The 112 controlled routes explain why the application can generate far more outp
 | `/tproduct/888812727292-sugar-syrop` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
 | `/catalog/tproduct/975474893862-matcha` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
 | `/tproduct/975474893862-matcha` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
+| `/checkout` | technical checkout page | 200 | NO | YES | NO | Cart review and Stripe Test handoff; intentionally excluded from search |
 | `/_not-found` | technical 404 boundary | 404 | NO | NO | NO | Framework/native error boundary |
 | `/robots.txt` | technical SEO endpoint | 200 | NO | NO | NO | Crawler policy endpoint, not a search result page |
 | `/sitemap.xml` | technical SEO endpoint | 200 | NO | NO | NO | Sitemap document, not a sitemap member |

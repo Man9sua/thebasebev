@@ -4,6 +4,7 @@ import { packBox, productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productMargins } from "@/data/product-margins";
 import { isDark } from "@/lib/contrast";
+import { popupAnchorProps } from "@/lib/legacy-popups";
 import { productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
 
@@ -178,6 +179,7 @@ export function ProductHero({ product }: { product: Product }) {
           src={`/images/pack-${product.slug}.webp`}
           alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
           fetchPriority="high"
+          decoding="async"
         />
 
         {/*
@@ -198,7 +200,7 @@ export function ProductHero({ product }: { product: Product }) {
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={glass.image} alt="" />
+            <img src={glass.image} alt="" decoding="async" />
           </div>
         )}
       </div>
@@ -279,12 +281,15 @@ export function ProductHero({ product }: { product: Product }) {
             eleven products that do have a price: the frame shows no price, so
             the second button asks for one rather than offering to take an order
             against a figure the page never gave.
+
+            The dialog attributes are Tilda's own, written here rather than
+            waited for — see `popupAnchorProps`.
           */}
           <Reveal className={styles.actions} delay={250} distance={16}>
-            <a href="#sample" className={styles.primary}>
+            <a href="#sample" className={styles.primary} {...popupAnchorProps("#sample")}>
               Request a sample
             </a>
-            <a href="#form" className={styles.secondary}>
+            <a href="#form" className={styles.secondary} {...popupAnchorProps("#form")}>
               Request pricing
             </a>
           </Reveal>

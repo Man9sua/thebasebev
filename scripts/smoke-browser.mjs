@@ -10,6 +10,7 @@ const artifactRoot = path.resolve(".visual-artifacts");
 const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
 const failures = [];
 const pageErrors = [];
+const hydrationErrors = [];
 const localResponseErrors = [];
 
 fs.mkdirSync(artifactRoot, { recursive: true });
@@ -18,7 +19,25 @@ function check(condition, message) {
   if (!condition) failures.push(message);
 }
 
+// React reports a hydration mismatch through `console.error`, not as a page
+// error, so nothing here used to see it: every product page logged one for
+// months while this smoke passed. The cause is always the same shape — the
+// exported Tilda runtime rewriting a node React owns before React reaches it —
+// and the report names the attributes, so it is worth failing on.
+const hydrationMarkers = [
+  "hydrated but some attributes",
+  "Hydration failed",
+  "did not match",
+];
+
 function observe(page, label) {
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const text = message.text();
+    if (hydrationMarkers.some((marker) => text.includes(marker))) {
+      hydrationErrors.push(`${label}: ${text.split("\n")[0]}`);
+    }
+  });
   page.on("pageerror", (error) => pageErrors.push(`${label}: ${error.message}`));
   page.on("response", (response) => {
     const url = new URL(response.url());
@@ -543,12 +562,13 @@ try {
 }
 
 for (const error of [...new Set(pageErrors)]) failures.push(`pageerror: ${error}`);
+for (const error of [...new Set(hydrationErrors)]) failures.push(`hydration: ${error}`);
 for (const error of [...new Set(localResponseErrors)]) failures.push(`response: ${error}`);
 
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters/framing, cart, visible product content, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }
