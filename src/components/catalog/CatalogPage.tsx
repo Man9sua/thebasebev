@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   CATALOG_GROUPS,
   CATALOG_PRODUCTS,
@@ -10,6 +10,7 @@ import {
   type CatalogProduct,
 } from "@/data/catalog";
 import { SiteLink } from "@/components/site/SiteLink";
+import { SortMenu } from "./SortMenu";
 import { useCart } from "@/components/cart/useCart";
 import catalogTiles from "@/data/catalog-tiles.json";
 import { addCartItem, setCartItemQuantity } from "@/lib/cart-store";
@@ -32,7 +33,7 @@ const SHELF_NAMES: Partial<Record<string, string>> = {
   "sugar-syrup": "Syrup",
 };
 
-const SORTS: { id: Sort; label: string }[] = [
+const SORTS: readonly { id: Sort; label: string }[] = [
   { id: "featured", label: "Featured" },
   { id: "price-asc", label: "Price, low to high" },
   { id: "price-desc", label: "Price, high to low" },
@@ -215,6 +216,33 @@ export function CatalogPage({
   const [sort, setSort] = useState<Sort>("featured");
   const cart = useCart();
   const shelfRef = useRef<HTMLDivElement>(null);
+  const filtersRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * The rule under the live filter, measured rather than drawn on the button
+   * itself: a border on each button can only appear and disappear, and what the
+   * row wants is for the mark to travel to the label that was just picked.
+   *
+   * Laid out before paint so it is never seen in the wrong place, and re-read on
+   * resize because the labels reflow. The row scrolls sideways on a phone and
+   * the rule scrolls with it, which is why the offsets are the button's own
+   * inside the row rather than anything read off the viewport.
+   */
+  const [rule, setRule] = useState<{ x: number; w: number } | null>(null);
+  const measureRule = useCallback(() => {
+    const live = filtersRef.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (live) setRule({ x: live.offsetLeft, w: live.offsetWidth });
+  }, []);
+
+  useLayoutEffect(measureRule, [measureRule, filter]);
+
+  useEffect(() => {
+    const row = filtersRef.current;
+    if (!row || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measureRule);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [measureRule]);
 
   /*
    * Sorting and filtering both re-lay the whole shelf, and sorting collapses
@@ -310,6 +338,7 @@ export function CatalogPage({
             className={styles.filters}
             data-catalog-filters
             aria-label="Filter the shop"
+            ref={filtersRef}
           >
             <button
               type="button"
@@ -334,24 +363,24 @@ export function CatalogPage({
                 {group.label} <span>{group.slugs.length}</span>
               </button>
             ))}
+            {rule && (
+              <span
+                className={styles.rule}
+                aria-hidden="true"
+                style={{
+                  ["--rule-x" as string]: `${rule.x}px`,
+                  ["--rule-w" as string]: `${rule.w}px`,
+                }}
+              />
+            )}
           </div>
 
-          <label className={styles.sort}>
-            <span>Sort</span>
-            <select
-              value={sort}
-              onChange={(event) => {
-                const next = event.target.value as Sort;
-                reshelve(() => setSort(next));
-              }}
-            >
-              {SORTS.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <SortMenu
+            label="Sort"
+            value={sort}
+            options={SORTS}
+            onChange={(next) => reshelve(() => setSort(next))}
+          />
         </div>
       </div>
 

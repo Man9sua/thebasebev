@@ -9,25 +9,24 @@
  * a flat colour. Two treatments in one grid, and the reason it read as a set of
  * pictures borrowed from different places.
  *
- * So every tile is now built the same way: the product whole, fitted to the
- * tile's height, standing on a field of its own colour with air either side.
- * Nothing is cropped and nothing is scaled to fill.
+ * So every tile is built the same way: the pouch whole, fitted to the tile's
+ * height, standing on a field of its own colour with air either side. Nothing
+ * is cropped and nothing is scaled to fill.
  *
- * Where the product comes from still differs, because the artwork does. Eleven
- * products have a key visual, and the tile takes the cut of it the product page
- * uses — `hero-<slug>.webp`, the part with no type on it, see
- * `build-product-heroes.mjs` — so the tile carries the drink as well as the
- * pouch. The field behind it is that banner's own wash, continued: `band` at the
- * head and `bandFoot` at the foot are sampled from the picture, and because the
- * picture is fitted to the same height, its ramp and the field's are the same
- * ramp. There is no edge to see and nothing to feather.
+ * The pouch, and only the pouch. Eleven of the tiles used to be a cut of the
+ * client's key visual, which carries the made drink as well — a glass, a
+ * garnish, ice, steam — and next to five plain pouches that read as sixteen
+ * pictures rather than sixteen products. The shop sells the pouch; the drink is
+ * what the product page is for. So all sixteen are now `pack-<slug>.webp`, the
+ * cut-out, and the grid is one thing photographed sixteen times.
  *
- * The other five — topping, garnish, sugar syrup, sugar free, vending — have no
- * key visual, only a cut-out pouch, so the tile is that pouch at the height the
- * pouches in the other eleven come out at, on a ramp of the product's own
- * colour. It is the same frame with a quieter picture in it. Drop a banner into
- * `assets/product-heroes/<slug>.webp`, re-run this and `build-product-heroes`,
- * and that product joins the other eleven.
+ * What still differs is the colour behind it, and it differs the same way the
+ * product page's own wash does — same three sources, same order, so a tile and
+ * the hero it leads to stand on the same colour:
+ *
+ *   1. the banner's sampled pair, `band` and `bandFoot` (eleven products);
+ *   2. the frame's own fill from `forme.fig`, in `product-washes.ts` (five);
+ *   3. the registry colour, lightened at the head — the fallback, unreached.
  *
  * Run: node scripts/build-catalog-tiles.mjs
  */
@@ -55,17 +54,35 @@ const WIDTH = 860;
 const HEIGHT = Math.round((WIDTH * 5) / 4);
 
 /**
- * How tall the pouch stands in a tile built from a cut-out, as a fraction of
- * the tile. Measured off the banners rather than chosen: the pouch fills the
- * bottom three quarters of every one of them, so a cut-out set to the same
- * fraction stands at the same height as its neighbours in the row.
+ * The box the pouch stands in, as a fraction of the tile.
+ *
+ * It is fitted inside both bounds rather than set by height alone. The banners
+ * ran their pouch off the bottom edge and off the sides, which suited a picture
+ * of a drink being made; a shelf wants the product whole, with air around it,
+ * the way any catalogue photographs a pack. Both bounds also mean the one
+ * product that is not a standing pouch — Sugar Free is two sachets lying flat —
+ * fits by its width instead of running out of the frame.
  */
-const POUCH = 0.84;
-/** The banners run their pouch a little past the bottom edge; the cut-outs match. */
-const BLEED = 0.02;
+const BOX_WIDTH = 0.72;
+const BOX_HEIGHT = 0.78;
+/** Where its middle sits: a little below the tile's, so it stands rather than floats. */
+const BASELINE = 0.54;
 
 /** The wash sampled from each key visual — see `build-product-heroes.mjs`. */
 const heroes = JSON.parse(fs.readFileSync(HEROES, "utf8"));
+
+/**
+ * The frame fills for the five products with no banner, read out of
+ * `product-washes.ts` rather than copied, so the tile and the hero cannot drift
+ * apart. Regex rather than an import because this script is plain JavaScript.
+ */
+const washes = Object.fromEntries(
+  [
+    ...fs
+      .readFileSync(path.resolve("src/data/product-washes.ts"), "utf8")
+      .matchAll(/"?([a-z-]+)"?: { from: "(#[0-9a-f]{6})", to: "(#[0-9a-f]{6})" }/g),
+  ].map((match) => [match[1], { from: match[2], to: match[3] }]),
+);
 
 /** Product colours, read from the registry so they stay written down once. */
 const COLOURS = Object.fromEntries(
@@ -100,66 +117,39 @@ function lighten(hex, amount) {
   return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
 }
 
-/**
- * A tile from the product page's own crop of the key visual.
- *
- * The crop is a touch narrower than the tile, so it covers rather than fits and
- * loses a strip off the top — anchored at the bottom, because the bottom is
- * where the product stands and the top is the empty part of the wash. Every one
- * of the eleven is the same template at the same size, so every tile comes out
- * with the pouch at the same height in the frame.
- */
-async function fromHero(slug) {
-  const file = path.join(IMAGES, path.basename(heroes[slug].image));
-  if (!fs.existsSync(file)) return null;
-
-  return sharp(file)
-    .resize(WIDTH, HEIGHT, { fit: "cover", position: "bottom" })
-    .webp({ quality: 82 })
-    .toBuffer();
-}
-
-/** The same frame around a cut-out pouch, for the products with no key visual. */
+/** The frame around a cut-out pouch, which is now every tile. */
 async function fromPack(slug) {
   const file = path.join(IMAGES, `pack-${slug}.webp`);
   if (!fs.existsSync(file)) return null;
 
   const colour = COLOURS[slug] ?? "#e5e5e5";
-  // Trimmed first: the cut-outs carry transparent margin, and scaling to a
+  const [head, foot] = heroes[slug]
+    ? [heroes[slug].band, heroes[slug].bandFoot]
+    : washes[slug]
+      ? [washes[slug].from, washes[slug].to]
+      : [lighten(colour, 0.22), colour];
+  // Trimmed first: the cut-outs carry transparent margin, and fitting one to a
   // fraction of the tile without removing it makes the pouch smaller than the
-  // fraction says — which is part of what left these five looking like a
-  // different set beside the photographed eleven.
-  //
-  // Height only. Bounding the width as well is the obvious guard against a
-  // subject wider than the tile, and it is wrong here: Sugar Free is two
-  // sachets lying flat rather than a standing pouch, so the width bound caught
-  // it first and shrank it until it sat in the middle of a wide empty margin —
-  // a picture with a frame drawn round it, next to ten that had none.
-  const scaled = await sharp(file)
+  // fraction says — and by a different amount on every product, which is
+  // exactly what a grid of sixteen cannot have.
+  const pouch = await sharp(file)
     .trim()
-    .resize({ height: Math.round(HEIGHT * (POUCH + BLEED)) })
+    .resize({
+      width: Math.round(WIDTH * BOX_WIDTH),
+      height: Math.round(HEIGHT * BOX_HEIGHT),
+      fit: "inside",
+    })
     .toBuffer();
-  const { width, height } = await sharp(scaled).metadata();
+  const { width, height } = await sharp(pouch).metadata();
 
-  // Standing on the bottom edge and running past it, and past the sides too
-  // where the subject is wider than the tile, the way the pouch does in every
-  // one of the banners. What runs past is cut here rather than composited past
-  // the edge, which sharp declines to do.
-  const left = Math.round((WIDTH - width) / 2);
-  const top = HEIGHT - Math.round(HEIGHT * POUCH);
-  const window = {
-    left: Math.max(0, -left),
-    top: Math.max(0, -top),
-    width: Math.min(width - Math.max(0, -left), WIDTH - Math.max(0, left)),
-    height: Math.min(height - Math.max(0, -top), HEIGHT - Math.max(0, top)),
-  };
-  const pouch =
-    window.width === width && window.height === height
-      ? scaled
-      : await sharp(scaled).extract(window).toBuffer();
-
-  return sharp(field(lighten(colour, 0.22), colour))
-    .composite([{ input: pouch, left: Math.max(0, left), top: Math.max(0, top) }])
+  return sharp(field(head, foot))
+    .composite([
+      {
+        input: pouch,
+        left: Math.round((WIDTH - width) / 2),
+        top: Math.round(HEIGHT * BASELINE - height / 2),
+      },
+    ])
     .webp({ quality: 82 })
     .toBuffer();
 }
@@ -169,8 +159,8 @@ const built = [];
 const missing = [];
 
 for (const slug of Object.keys(COLOURS).sort()) {
-  const source = heroes[slug] ? "banner" : "pack";
-  const tile = heroes[slug] ? await fromHero(slug) : await fromPack(slug);
+  const source = heroes[slug] ? "banner-wash" : washes[slug] ? "frame-wash" : "colour";
+  const tile = await fromPack(slug);
 
   if (!tile) {
     missing.push(slug);
@@ -179,7 +169,7 @@ for (const slug of Object.keys(COLOURS).sort()) {
 
   fs.writeFileSync(path.join(IMAGES, `tile-${slug}.webp`), tile);
   manifest[slug] = { image: `/images/tile-${slug}.webp`, source };
-  built.push(`${slug}${source === "pack" ? " (pack)" : ""}`);
+  built.push(`${slug} (${source})`);
 }
 
 fs.writeFileSync(
