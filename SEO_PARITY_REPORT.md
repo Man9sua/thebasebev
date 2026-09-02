@@ -1,12 +1,12 @@
 # SEO parity report
 
-Generated: 2026-09-01T18:06:21.504Z
+Generated: 2026-09-02T14:29:24.913Z
 
 - Production: `https://thebasebev.com`
 - Target: `https://the-base-staging.mansua.workers.dev`
 - Canonical public routes: 29
 - Critical failures: 0
-- Declared h1 changes: 17
+- Declared h1 changes: 18
 - Non-blocking link/alt observations: 58
 - Preview transport noindex expected: yes
 
@@ -42,7 +42,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/garnish` | 200 | 200 | PASS | 28/31 | 18/0/9 | Critical fields match |
 | `/sugar-free` | 200 | 200 | PASS | 28/31 | 18/0/9 | Critical fields match |
 | `/tea` | 200 | 200 | PASS | 28/31 | 18/0/9 | Critical fields match |
-| `/catalog` | 200 | 200 | PASS | 29/31 | 16/0/0 | Critical fields match |
+| `/catalog` | 200 | 200 | PASS | 29/31 | 16/0/16 | Critical fields match |
 
 ## Critical failures
 
@@ -72,6 +72,7 @@ route is exempt outright because production's own h1 is wrong -- see
 - /garnish: h1 is now "Garnishes"; production wording kept as h2
 - /sugar-free: h1 is now "Sugar Free"; production wording kept as h2
 - /tea: h1 is now "Tea"; production wording kept as h2
+- /catalog: h1 is now "Shop"; production wording kept as h2
 
 ## Non-blocking observations
 
@@ -132,4 +133,4 @@ route is exempt outright because production's own h1 is wrong -- see
 - /tea: internal links differ (-0/+3)
 - /tea: image alt stats differ ({"total":32,"missing":0,"empty":23} vs {"total":18,"missing":0,"empty":9})
 - /catalog: internal links differ (-1/+3)
-- /catalog: image alt stats differ ({"total":34,"missing":0,"empty":10} vs {"total":16,"missing":0,"empty":0})
+- /catalog: image alt stats differ ({"total":34,"missing":0,"empty":10} vs {"total":16,"missing":0,"empty":16})
