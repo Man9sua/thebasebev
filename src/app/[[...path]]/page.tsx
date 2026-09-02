@@ -10,6 +10,7 @@ import { ContactPage } from "@/components/contact/ContactPage";
 import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
+import { GlossaryArticlePage } from "@/components/resources/GlossaryArticlePage";
 import { GlossaryPage } from "@/components/resources/GlossaryPage";
 import { ToolsPage } from "@/components/resources/ToolsPage";
 import { ProductDetails } from "@/components/product/ProductDetails";
@@ -21,6 +22,12 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SitemapPage } from "@/components/sitemap/SitemapPage";
 import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
+import {
+  GLOSSARY_ENTRIES,
+  findGlossaryEntryByPath,
+  getRelatedGlossaryEntries,
+  type GlossaryEntry,
+} from "@/data/glossary";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 import {
   getSitePage,
@@ -38,11 +45,52 @@ type RouteProps = {
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getStaticSiteParams();
+  const glossaryParams = GLOSSARY_ENTRIES.map(({ path }) => ({
+    path: path.replace(/^\//, "").split("/"),
+  }));
+
+  return [...getStaticSiteParams(), ...glossaryParams];
+}
+
+function glossaryMetadata(entry: GlossaryEntry): Metadata {
+  const title = entry.seo.title || entry.title;
+  const description = entry.seo.description || entry.excerpt || undefined;
+  const canonical = entry.seo.canonical || `${SITE_ORIGIN}${entry.path}`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+      languages: {
+        en: canonical,
+        "x-default": canonical,
+      },
+    },
+    robots: { index: true, follow: true },
+    openGraph: {
+      // Production Tilda exposes these detail pages as `website`; keep that
+      // exact SEO contract during migration even though the body is an article.
+      type: "website",
+      url: canonical,
+      title: entry.seo.openGraphTitle || title,
+      description: entry.seo.openGraphDescription || description,
+    },
+    twitter: {
+      card: "summary",
+      site: "@thebasebev",
+      title,
+      description,
+    },
+    authors: [{ name: "The Base Beverage LLC" }],
+  };
 }
 
 export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
   const route = normalizeSitePath((await params).path);
+  const glossaryEntry = findGlossaryEntryByPath(route);
+  if (glossaryEntry) return glossaryMetadata(glossaryEntry);
+
   const page = getSitePage(route);
   if (!page) return {};
 
@@ -95,6 +143,21 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
 
 export default async function SiteRoute({ params }: RouteProps) {
   const route = normalizeSitePath((await params).path);
+  const glossaryEntry = findGlossaryEntryByPath(route);
+
+  if (glossaryEntry) {
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <GlossaryArticlePage
+          entry={glossaryEntry}
+          relatedEntries={getRelatedGlossaryEntries(glossaryEntry)}
+        />
+        <SiteFooter />
+      </div>
+    );
+  }
+
   const page = getSitePage(route);
   if (!page) notFound();
 
@@ -151,16 +214,10 @@ export default async function SiteRoute({ params }: RouteProps) {
   }
 
   if (route === "/resources/glossary") {
-    const runtimePage = withoutLegacyRecords(page, [
-      "rec2427859911",
-      "rec2427859921",
-      "rec2427859931",
-    ]);
     return (
       <div className="tbb">
         <SiteHeader />
         <GlossaryPage />
-        <LegacyPageShell page={runtimePage} runtimeOnly />
         <SiteFooter />
       </div>
     );

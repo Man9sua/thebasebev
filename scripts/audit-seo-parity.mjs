@@ -4,6 +4,8 @@ const productionOrigin = "https://thebasebev.com";
 const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
 const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
+const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
+const expectedSitemapRoutes = 29 + glossaryContent.entries.length;
 
 function decodeHtml(value = "") {
   return value
@@ -157,8 +159,14 @@ const routes = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => 
   return url.pathname !== "/" ? url.pathname.replace(/\/$/, "") : "/";
 });
 
-if (sitemapResponse.status !== 200 || routes.length !== 29 || new Set(routes).size !== 29) {
-  throw new Error(`Expected 29 unique target sitemap URLs, received ${routes.length}.`);
+if (
+  sitemapResponse.status !== 200 ||
+  routes.length !== expectedSitemapRoutes ||
+  new Set(routes).size !== expectedSitemapRoutes
+) {
+  throw new Error(
+    `Expected ${expectedSitemapRoutes} unique target sitemap URLs, received ${routes.length}.`,
+  );
 }
 
 const results = new Array(routes.length);

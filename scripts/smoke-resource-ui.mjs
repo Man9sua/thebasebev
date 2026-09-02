@@ -98,7 +98,11 @@ async function auditViewport(browser, viewport) {
   if (viewport.width === 390 || viewport.width === 1440) {
     const glossarySearch = page.getByRole("searchbox", { name: "Search glossary" });
     await glossarySearch.fill("Brix");
-    check((await page.locator("[data-glossary-term]").count()) === 2, `${label}: glossary search did not find both Brix entries`);
+    const exactBrixTitles = await page.locator("[data-glossary-term] h2").allTextContents();
+    check(
+      exactBrixTitles.filter((title) => title.trim() === "Brix").length === 2,
+      `${label}: glossary search did not retain both Brix entries`,
+    );
     await glossarySearch.fill("");
     await page.getByRole("button", { name: "HoReCa & business" }).click();
     const businessCount = await page.locator("[data-glossary-term]").count();
