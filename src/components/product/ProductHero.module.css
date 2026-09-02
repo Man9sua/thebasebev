@@ -42,8 +42,29 @@
 .hero {
   position: relative;
   overflow: clip;
+  /*
+   * Three washes, in order of what the product actually has.
+   *
+   * A banner gives `--band` and `--band-foot`, sampled at the head and the foot
+   * of its crop, and the section continues that colour to the left of the
+   * artwork as a vertical run — which is what the banner itself does.
+   *
+   * With no banner the section takes the fill the product's own frame carries,
+   * which is a radial: light behind the pouch, colour toward the edges. It is
+   * centred on the pouch rather than on the section, because that is where the
+   * design puts the light and the copy on the right wants the quieter half.
+   *
+   * `--tile` mixed down to a tint is the last resort, and nothing reaches it
+   * today: every product has one of the two above.
+   */
   --wash: color-mix(in srgb, var(--tile, var(--tbb-sand)) 26%, var(--tbb-paper));
-  background: linear-gradient(180deg, var(--band, var(--wash)), var(--band-foot, var(--wash)));
+  background:
+    radial-gradient(
+      120% 105% at 30% 42%,
+      var(--wash-from, transparent),
+      var(--wash-to, transparent)
+    ),
+    linear-gradient(180deg, var(--band, var(--wash)), var(--band-foot, var(--wash)));
   --ink: var(--tbb-ink);
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);

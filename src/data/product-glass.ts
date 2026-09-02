@@ -75,9 +75,18 @@ export const productGlass: Record<string, ProductGlass> = {
   chocolate: { image: "/images/glass-chocolate.webp", left: 304.29, top: 292.52, width: 328.57, height: 536.51, pack: { left: 106.38, top: 136.73, width: 531.59, height: 692.31 } },
   "sugar-syrup": { image: "/images/glass-sugar-syrup.webp", left: 296.85, top: 292.58, width: 328.57, height: 536.51, pack: { left: 106.63, top: 136.78, width: 531.59, height: 692.31 } },
   vending: { image: "/images/glass-vending.webp", left: 313.56, top: 282.91, width: 321.55, height: 525.04, pack: { left: 106.15, top: 132.7, width: 536.33, height: 675.25 } },
+  jam: { image: "/images/glass-jam.webp", left: 312.82, top: 307.38, width: 319.4, height: 521.5, pack: { left: 106.85, top: 137.73, width: 532.69, height: 691.17 } },
 
-  // Still to come. Sugar Free's artwork has arrived but its frame measures the
-  // whole mask group — the glass together with the sachets flying around it —
-  // and the picture supplied is the glass on its own, so the two do not
-  // describe the same box. Jam, Garnish and Tea have neither yet.
+  /*
+   * Sugar Free, Garnish and Tea are not waiting on a measurement: their frames
+   * have no drink layer at all. Sugar Free is built from sachets and fruit
+   * cut-outs, Garnish from the pouch alone, and Tea from a cup photograph with
+   * loose leaves around it — three compositions rather than the pouch-and-glass
+   * the other thirteen share. There is nothing here for them to carry.
+   *
+   * Jam above is the one card the file draws shifted, its whole group starting
+   * at -164.77, 55.35 where every other starts near 106, 137. Both boxes are
+   * translated by that one delta, so the drink keeps its place on the pouch and
+   * the pouch stands where the other twelve stand.
+   */
 };

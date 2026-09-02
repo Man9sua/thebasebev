@@ -53,7 +53,19 @@ export const PAGE_INTROS: Record<string, PageIntro> = {
     eyebrow: "R&D lab",
     tone: "dark",
     title: "Beverage R&D and Product Development in Dubai",
-    legacyH1: "Узнай свою дневную норму за 30 секунд",
+    /*
+     * No `legacyH1`. Production serves this route under "Узнай свою дневную
+     * норму за 30 секунд" -- the heading of a calorie calculator sitting on the
+     * page in Tilda block #rec2493779621, describing neither the page nor the
+     * business. It was being reproduced here as a hidden h1 for parity, which
+     * meant hiding a sentence from readers and showing it to crawlers. The
+     * route is named in `H1_NOT_PRESERVED` in `scripts/audit-seo-parity.mjs`
+     * instead, by its exact string, so the exemption expires the moment
+     * production is corrected.
+     *
+     * Dead either way today: /rnd renders `RndPage`, which returns before this
+     * file is reached.
+     */
     lead:
       "Custom beverage R&D in Dubai: recipe development, flavour matching and pilot batches " +
       "for HORECA and private label brands across the UAE and GCC.",

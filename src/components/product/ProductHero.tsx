@@ -3,6 +3,7 @@ import type { Product } from "@/data/products";
 import { packBox, productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productMargins } from "@/data/product-margins";
+import { productWashes } from "@/data/product-washes";
 import { isDark } from "@/lib/contrast";
 import { popupAnchorProps } from "@/lib/legacy-popups";
 import { productDetails } from "@/lib/site-pages";
@@ -105,15 +106,17 @@ export function ProductHero({ product }: { product: Product }) {
   const banner = heroes[product.slug];
   const margin = productMargins[product.slug];
   const glass = productGlass[product.slug];
+  // The five products with no banner stand on the wash their own frame carries.
+  const wash = banner ? undefined : productWashes[product.slug];
   // The registry's description is the fallback for the three pages whose own
   // copy does not open by naming the product, which is how the extractor
   // recognises it.
   const paragraphs = detail?.description.length ? detail.description : [product.description];
 
-  // A banner sets the wash; without one the page mixes the product colour down
-  // to a tint, which is always light. Ink is measured either way rather than
-  // assumed — Tea's wash is near-black and Jam's is burgundy.
-  const onDark = banner ? isDark(banner.band) : false;
+  // A banner sets the wash, and where there is none the frame's own fill does.
+  // Ink is measured off whichever it is rather than assumed — Tea's wash is
+  // near-black, Jam's is burgundy, and Vending's outer stop is darker still.
+  const onDark = isDark(banner?.band ?? wash?.to ?? "#ffffff");
   // The design's h1 is the product's name, and that is what the page now leads
   // with. The sentence it used to lead with is production's own h1 and what
   // these pages rank on, so it is kept directly under as an h2 rather than
@@ -125,7 +128,7 @@ export function ProductHero({ product }: { product: Product }) {
 
   return (
     <section
-      className={`${styles.hero} ${onDark ? styles.onDark : ""} ${banner ? "" : styles.plain}`}
+      className={`${styles.hero} ${onDark ? styles.onDark : ""} ${banner || wash ? "" : styles.plain}`}
       style={{
         ["--tile" as string]: product.backgroundColor,
         ["--pack-left" as string]: pack.left,
@@ -137,7 +140,12 @@ export function ProductHero({ product }: { product: Product }) {
               ["--band" as string]: banner.band,
               ["--band-foot" as string]: banner.bandFoot,
             }
-          : {}),
+          : wash
+            ? {
+                ["--wash-from" as string]: wash.from,
+                ["--wash-to" as string]: wash.to,
+              }
+            : {}),
       }}
       aria-labelledby="product-title"
     >

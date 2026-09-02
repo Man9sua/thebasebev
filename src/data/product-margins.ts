@@ -45,6 +45,16 @@ export const productMargins: Record<string, ProductMargin> = {
   "sugar-syrup": { legacyLabel: "with Syrup", legacy: "68.70 %", base: "85.30 %" },
   vending: { legacyLabel: "with Syrup", legacy: "56.10 %", base: "78.80 %" },
   "sugar-free": { legacyLabel: "with Syrup", legacy: "21 %", base: "78.6 %" },
+  garnish: { legacyLabel: "with Syrup", legacy: "85.00 %", base: "98.25 %" },
+  tea: { legacyLabel: "with Syrup", legacy: "60 %", base: "98.60 %" },
 
-  // Jam, Garnish and Tea have no frame yet, so they carry no figures.
+  /*
+   * Jam is the one frame whose two figures are withheld. It reads 88.40 %
+   * against 86.87 %, which puts the base behind the syrup -- and the frame
+   * says the same in its detailed breakdown further down, so it is not a
+   * transcription slip in one place. Printing it would have the page argue
+   * against the product it sells, and swapping the two to make it read the
+   * other way would be inventing a financial claim. It stays out until the
+   * owner says which is right.
+   */
 };
