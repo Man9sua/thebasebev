@@ -1,6 +1,6 @@
 # SEO parity report
 
-Generated: 2026-09-02T14:53:58.363Z
+Generated: 2026-09-02T15:45:16.959Z
 
 - Production: `https://thebasebev.com`
 - Target: `https://the-base-staging.mansua.workers.dev`
