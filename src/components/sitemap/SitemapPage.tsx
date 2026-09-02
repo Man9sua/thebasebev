@@ -92,9 +92,6 @@ function SitemapLinkList({ links }: { links: readonly SitemapLink[] }) {
         <li key={link.href}>
           <Link className={styles.link} href={link.href} prefetch={false}>
             <span>{link.label}</span>
-            <span className={styles.arrow} aria-hidden="true">
-              &rarr;
-            </span>
           </Link>
         </li>
       ))}
@@ -140,7 +137,7 @@ export function SitemapPage() {
                 href="/catalog"
                 prefetch={false}
               >
-                All Products <span aria-hidden="true">&rarr;</span>
+                All Products
               </Link>
             </div>
 
