@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   CATALOG_GROUPS,
   CATALOG_PRODUCTS,
@@ -10,11 +10,13 @@ import {
   type CatalogProduct,
 } from "@/data/catalog";
 import { SiteLink } from "@/components/site/SiteLink";
+import { useCart } from "@/components/cart/useCart";
 import catalogTiles from "@/data/catalog-tiles.json";
-import { addCartItem } from "@/lib/cart-store";
+import { addCartItem, setCartItemQuantity } from "@/lib/cart-store";
 import styles from "./CatalogPage.module.css";
 
 type Filter = "all" | CatalogGroupId;
+type Sort = "featured" | "price-asc" | "price-desc" | "name";
 
 const tiles = catalogTiles as Record<string, { image: string }>;
 
@@ -30,20 +32,58 @@ const SHELF_NAMES: Partial<Record<string, string>> = {
   "sugar-syrup": "Syrup",
 };
 
-function ProductCard({ product, eager }: { product: CatalogProduct; eager: boolean }) {
-  const [added, setAdded] = useState(false);
-  const checkoutId = getCheckoutProductId(product.slug);
+const SORTS: { id: Sort; label: string }[] = [
+  { id: "featured", label: "Featured" },
+  { id: "price-asc", label: "Price, low to high" },
+  { id: "price-desc", label: "Price, high to low" },
+  { id: "name", label: "Name, A to Z" },
+];
 
-  useEffect(() => {
-    if (!added) return;
-    const timer = window.setTimeout(() => setAdded(false), 1400);
-    return () => window.clearTimeout(timer);
-  }, [added]);
+/** The figure in "45.38 AED", or null on the five sold by quotation. */
+function amount(product: CatalogProduct): number | null {
+  const value = Number.parseFloat(product.price ?? "");
+  return Number.isFinite(value) ? value : null;
+}
 
+function sortProducts(products: CatalogProduct[], sort: Sort): CatalogProduct[] {
+  if (sort === "featured") return products;
+  const sorted = [...products];
+  if (sort === "name") {
+    sorted.sort((a, b) => a.name.localeCompare(b.name));
+    return sorted;
+  }
+  // Quoted products carry no figure to sort by, so they hold the end of the
+  // shelf either way rather than sorting as zero and leading it.
+  sorted.sort((a, b) => {
+    const left = amount(a);
+    const right = amount(b);
+    if (left === null || right === null) return left === right ? 0 : left === null ? 1 : -1;
+    return sort === "price-asc" ? left - right : right - left;
+  });
+  return sorted;
+}
+
+function ProductCard({
+  product,
+  weight,
+  quantity,
+  eager,
+}: {
+  product: CatalogProduct;
+  weight: string | null;
+  quantity: number;
+  eager: boolean;
+}) {
+  const sellable = Boolean(getCheckoutProductId(product.slug));
   const name = SHELF_NAMES[product.slug] ?? product.name;
 
   return (
-    <article className={styles.card} data-catalog-card data-product-slug={product.slug}>
+    <article
+      className={styles.card}
+      data-catalog-card
+      data-product-slug={product.slug}
+      data-in-cart={quantity > 0 ? "true" : undefined}
+    >
       <div className={styles.frame}>
         <SiteLink className={styles.imageLink} href={product.route} tabIndex={-1} aria-hidden>
           <Image
@@ -55,9 +95,7 @@ function ProductCard({ product, eager }: { product: CatalogProduct; eager: boole
             loading={eager ? "eager" : "lazy"}
           />
         </SiteLink>
-        {/* On the tile rather than under the copy: it costs the card no row and
-            the grid reads as sorted at a glance. */}
-        <span className={styles.tag}>{product.categoryLabel}</span>
+        {quantity > 0 && <span className={styles.inCart}>In cart</span>}
       </div>
 
       <div className={styles.titleRow}>
@@ -71,44 +109,115 @@ function ProductCard({ product, eager }: { product: CatalogProduct; eager: boole
         </span>
       </div>
 
+      <p className={styles.meta}>{weight ? `${weight} pouch` : ""}</p>
       <p className={styles.description}>{product.description}</p>
 
-      {checkoutId ? (
-        <button
-          className={styles.action}
-          data-cart-add
-          data-added={added ? "true" : undefined}
-          type="button"
-          onClick={() => {
-            addCartItem(product.slug);
-            setAdded(true);
-          }}
-        >
-          {added ? "Added to cart" : "Add to cart"}
-        </button>
-      ) : (
+      {/*
+       * Wholesale buyers order in multiples, so once a product is in the cart
+       * the button becomes the quantity rather than staying a button that has
+       * already been pressed. `data-cart-add` stays on the first press, which
+       * is what the smoke and the commerce audit reach for.
+       */}
+      {!sellable ? (
         <SiteLink className={styles.action} data-cart-add href="/contacts">
           Request price
         </SiteLink>
+      ) : quantity === 0 ? (
+        <button
+          className={styles.action}
+          data-cart-add
+          type="button"
+          onClick={() => addCartItem(product.slug)}
+        >
+          Add to cart
+        </button>
+      ) : (
+        <div className={styles.stepper} role="group" aria-label={`${name} quantity`}>
+          <button
+            className={styles.step}
+            type="button"
+            aria-label={`Remove one ${name}`}
+            onClick={() => setCartItemQuantity(product.slug, quantity - 1)}
+          >
+            −
+          </button>
+          <span className={styles.quantity} aria-live="polite">
+            {quantity} in cart
+          </span>
+          <button
+            className={styles.step}
+            type="button"
+            aria-label={`Add one ${name}`}
+            disabled={quantity >= 10}
+            onClick={() => addCartItem(product.slug)}
+          >
+            +
+          </button>
+        </div>
       )}
     </article>
   );
 }
 
-export function CatalogPage() {
+function Shelf({
+  products,
+  weights,
+  quantities,
+  offset,
+}: {
+  products: CatalogProduct[];
+  weights: Record<string, string | null>;
+  quantities: Record<string, number>;
+  offset: number;
+}) {
+  return (
+    <div className={styles.grid}>
+      {products.map((product, index) => (
+        <ProductCard
+          key={product.slug}
+          product={product}
+          weight={weights[product.slug] ?? null}
+          quantity={quantities[product.slug] ?? 0}
+          eager={offset + index < 4}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function CatalogPage({ weights = {} }: { weights?: Record<string, string | null> }) {
   const [filter, setFilter] = useState<Filter>("all");
-  const products = useMemo(
-    () =>
+  const [sort, setSort] = useState<Sort>("featured");
+  const cart = useCart();
+
+  const quantities = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const item of cart.items) map[item.slug] = item.quantity;
+    return map;
+  }, [cart.items]);
+
+  const products = useMemo(() => {
+    const picked =
       filter === "all"
         ? CATALOG_PRODUCTS
-        : CATALOG_PRODUCTS.filter((product) => product.categoryId === filter),
-    [filter],
-  );
+        : CATALOG_PRODUCTS.filter((product) => product.categoryId === filter);
+    return sortProducts(picked, sort);
+  }, [filter, sort]);
+
+  /*
+   * The whole range is four ranges, and a flat run of sixteen tiles says so
+   * nowhere. Left alone it is laid out under its own headings, which is both
+   * the structure and a second way to read what is on offer. Sorting is a
+   * question about the whole shelf, so it collapses the sections — as does
+   * filtering, where the one heading left would only repeat the filter.
+   */
+  const grouped = filter === "all" && sort === "featured";
+  const lines = cart.items.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <main className={styles.page}>
       <section className={styles.intro} aria-labelledby="catalog-title">
-        <div className={styles.introText}>
+        <div>
           <h1 id="catalog-title" className={styles.title}>
             Shop
           </h1>
@@ -119,10 +228,27 @@ export function CatalogPage() {
           */}
           <h2 className={styles.headline}>Beverage Base Premixes — Wholesale Catalogue</h2>
         </div>
-        <p className={styles.lede}>
-          Dry premixes for cafes, restaurants and hotels. Bulk and private label supply
-          across the UAE and worldwide.
-        </p>
+
+        <div className={styles.introSide}>
+          <p className={styles.lede}>
+            Dry premixes for cafes, restaurants and hotels. Bulk and private label supply
+            across the UAE and worldwide.
+          </p>
+          <dl className={styles.facts}>
+            <div>
+              <dt>Products</dt>
+              <dd>{CATALOG_PRODUCTS.length}</dd>
+            </div>
+            <div>
+              <dt>Ranges</dt>
+              <dd>{CATALOG_GROUPS.length}</dd>
+            </div>
+            <div>
+              <dt>Made in</dt>
+              <dd>Dubai</dd>
+            </div>
+          </dl>
+        </div>
       </section>
 
       {/*
@@ -154,17 +280,66 @@ export function CatalogPage() {
               </button>
             ))}
           </div>
-          <p className={styles.count} aria-live="polite">
-            {products.length} {products.length === 1 ? "product" : "products"}
-          </p>
+
+          <label className={styles.sort}>
+            <span>Sort</span>
+            <select value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
+              {SORTS.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </div>
 
-      <section className={styles.grid} aria-label="Products">
-        {products.map((product, index) => (
-          <ProductCard key={product.slug} product={product} eager={index < 4} />
-        ))}
+      {grouped ? (
+        CATALOG_GROUPS.map((group, groupIndex) => {
+          const inGroup = products.filter((product) => product.categoryId === group.id);
+          return (
+            <section key={group.id} className={styles.range} aria-label={group.label}>
+              <header className={styles.rangeHead}>
+                <h2 className={styles.rangeName}>{group.label}</h2>
+                <span className={styles.rangeCount}>{inGroup.length}</span>
+              </header>
+              <Shelf
+                products={inGroup}
+                weights={weights}
+                quantities={quantities}
+                offset={groupIndex === 0 ? 0 : 4}
+              />
+            </section>
+          );
+        })
+      ) : (
+        <section className={styles.range} aria-label="Products">
+          <Shelf products={products} weights={weights} quantities={quantities} offset={0} />
+        </section>
+      )}
+
+      <section className={styles.close}>
+        <p className={styles.closeText}>
+          Ordering for a chain, or putting your own name on the pouch? We quote bulk
+          volumes and private label runs directly.
+        </p>
+        <SiteLink className={styles.closeLink} href="/contacts">
+          Request a price list <span aria-hidden="true">→</span>
+        </SiteLink>
       </section>
+
+      {/* Only once something is in it: a running total is reassurance while the
+          shelf is long, and noise before anything has been chosen. */}
+      {lines > 0 && (
+        <div className={styles.tray} role="status">
+          <span>
+            {lines} {lines === 1 ? "item" : "items"} in cart
+          </span>
+          <SiteLink className={styles.trayLink} href="/checkout">
+            Checkout <span aria-hidden="true">→</span>
+          </SiteLink>
+        </div>
+      )}
     </main>
   );
 }

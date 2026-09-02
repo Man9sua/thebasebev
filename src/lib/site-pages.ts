@@ -108,6 +108,20 @@ export type ProductDetail = {
 
 export const productDetails = productDetailsJson as Record<string, ProductDetail>;
 
+/**
+ * Pack sizes for the shop, by slug.
+ *
+ * The shop is a client component and `product-details.json` is sixty-four
+ * kilobytes of page copy, so it is read here — on the server — and the dozen
+ * short strings it actually needs are handed down as a prop. Tea and Sugar Free
+ * are sold in no single size and carry null.
+ */
+export function catalogWeights(): Record<string, string | null> {
+  return Object.fromEntries(
+    Object.entries(productDetails).map(([slug, detail]) => [slug, detail.weight ?? null]),
+  );
+}
+
 /** Catalogue tile per product — see `scripts/build-catalog-tiles.mjs`. */
 const catalogTiles = catalogTilesJson as Record<string, { image: string }>;
 
