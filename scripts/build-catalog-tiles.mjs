@@ -64,12 +64,16 @@ const HEIGHT = Math.round((WIDTH * 5) / 4);
  * same fraction as a pouch they came out visibly smaller than everything beside
  * them, with a wide margin of flat colour that read as a mat around a picture.
  *
- * So a sparse arrangement is given the whole tile to fill. Its own emptiness is
- * the margin, and the two of them now carry the same weight in the row as the
- * fourteen pouches.
+ * So a sparse arrangement is not fitted into the tile at all — it is grown past
+ * it and cropped to it, the way a photograph is cropped, with a little over so
+ * it clears the edges rather than meeting them. Its own emptiness is the margin,
+ * and the two of them now carry the same weight in the row as the fourteen
+ * pouches. What the crop takes is the empty corner of the arrangement; the
+ * sachets sit in the middle of it.
  */
 const DENSE = { width: 0.72, height: 0.78 };
-const SPARSE = { width: 1, height: 1 };
+/** How far past the tile a sparse arrangement is grown before it is cropped. */
+const SPARSE_BLEED = 1.06;
 /** Below this share of opaque pixels, the outline is mostly air, not product. */
 const DENSITY = 0.8;
 /** Where its middle sits: a little below the tile's, so it stands rather than floats. */
@@ -132,6 +136,47 @@ async function density(image) {
   return opaque / (info.width * info.height);
 }
 
+/** A pouch, fitted inside the tile with air around it and standing on the baseline. */
+async function standing(trimmed) {
+  const input = await sharp(trimmed)
+    .resize({
+      width: Math.round(WIDTH * DENSE.width),
+      height: Math.round(HEIGHT * DENSE.height),
+      fit: "inside",
+    })
+    .toBuffer();
+  const { width, height } = await sharp(input).metadata();
+  return {
+    input,
+    left: Math.round((WIDTH - width) / 2),
+    top: Math.round(HEIGHT * BASELINE - height / 2),
+  };
+}
+
+/**
+ * A sparse arrangement, grown past the tile and cropped back to it. Cropped
+ * here rather than composited over the edge, which sharp declines to do.
+ */
+async function filling(trimmed) {
+  const grown = await sharp(trimmed)
+    .resize({
+      width: Math.round(WIDTH * SPARSE_BLEED),
+      height: Math.round(HEIGHT * SPARSE_BLEED),
+      fit: "outside",
+    })
+    .toBuffer();
+  const { width, height } = await sharp(grown).metadata();
+  const input = await sharp(grown)
+    .extract({
+      left: Math.round((width - WIDTH) / 2),
+      top: Math.round((height - HEIGHT) / 2),
+      width: WIDTH,
+      height: HEIGHT,
+    })
+    .toBuffer();
+  return { input, left: 0, top: 0 };
+}
+
 /** The frame around a cut-out pouch, which is now every tile. */
 async function fromPack(slug) {
   const file = path.join(IMAGES, `pack-${slug}.webp`);
@@ -148,24 +193,11 @@ async function fromPack(slug) {
   // fraction says — and by a different amount on every product, which is
   // exactly what a grid of sixteen cannot have.
   const trimmed = await sharp(file).trim().toBuffer();
-  const box = (await density(trimmed)) >= DENSITY ? DENSE : SPARSE;
-  const pouch = await sharp(trimmed)
-    .resize({
-      width: Math.round(WIDTH * box.width),
-      height: Math.round(HEIGHT * box.height),
-      fit: "inside",
-    })
-    .toBuffer();
-  const { width, height } = await sharp(pouch).metadata();
+  const layer =
+    (await density(trimmed)) >= DENSITY ? await standing(trimmed) : await filling(trimmed);
 
   return sharp(field(head, foot))
-    .composite([
-      {
-        input: pouch,
-        left: Math.round((WIDTH - width) / 2),
-        top: Math.round(HEIGHT * BASELINE - height / 2),
-      },
-    ])
+    .composite([layer])
     .webp({ quality: 82 })
     .toBuffer();
 }
