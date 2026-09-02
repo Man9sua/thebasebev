@@ -18,6 +18,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { PageIntro } from "@/components/site/PageIntro";
 import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SitemapPage } from "@/components/sitemap/SitemapPage";
 import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
@@ -159,6 +160,21 @@ export default async function SiteRoute({ params }: RouteProps) {
       <div className="tbb">
         <SiteHeader />
         <GlossaryPage />
+        <LegacyPageShell page={runtimePage} runtimeOnly />
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  if (route === "/sitemap") {
+    const runtimePage = withoutLegacyRecords(page, [
+      "rec2493125951",
+      "rec2503542591",
+    ]);
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <SitemapPage />
         <LegacyPageShell page={runtimePage} runtimeOnly />
         <SiteFooter />
       </div>
