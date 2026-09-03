@@ -32,18 +32,23 @@
   pointer-events: none;
 }
 
+/*
+ * The bar's own plate, and the design's: `Rectangle 321`, 1200 x 103, filled
+ * #ffffff under a drop shadow of 0/0, blur 8, spread 0 at 6% black. The rule
+ * that used to close the bar is gone — the file separates it from the page with
+ * the shadow instead.
+ */
 .header::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--tbb-paper);
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
   transform: translate3d(0, -101%, 0);
   transition:
     transform var(--tbb-dur) var(--tbb-ease),
-    background-color 620ms var(--tbb-ease),
-    border-color 620ms var(--tbb-ease);
+    background-color 620ms var(--tbb-ease);
   pointer-events: none;
-  border-bottom: 1px solid var(--tbb-line);
 }
 
 /* Past the hero the bar becomes paper and the type flips to ink. */
@@ -77,8 +82,19 @@
   text-decoration: none;
 }
 
-/* Height-driven, width auto: the lockup's aspect ratio is never touched, and
-   it is the same asset at every breakpoint — only the scale changes. */
+/*
+ * Height-driven, width auto: the lockup's aspect ratio is never touched, and it
+ * is the same asset at every breakpoint — only the scale changes.
+ *
+ * The design's logo group is 142.61 x 82.13, and that box is deliberately NOT
+ * taken. The file's lockup is a near-square red mark (77.95 x 82.13) beside a
+ * grey "Beverage Production"; this project carries the wider mark the live site
+ * and the Tilda original both use (142.88 x 79.12). Set to the file's height,
+ * ours comes out 179.64 wide against the file's 142.61 — nearly a third wider,
+ * and it swallows the bar. Two different marks, so the box does not transplant,
+ * and the size the site already had stands until the file's own lockup is
+ * available as an asset.
+ */
 .logo svg {
   display: block;
   height: clamp(1.5rem, 2.1vw, 2rem);
@@ -96,6 +112,54 @@
   display: flex;
   align-items: center;
   gap: clamp(0.35rem, 1.1vw, 0.9rem);
+}
+
+/*
+ * The design's call to action: `Frame 156`, 189 x 50, radius 100, filled black,
+ * with "Get your best deal now" set in 14 over a 50 line, white, and 10 of
+ * padding inside a horizontal Auto Layout.
+ *
+ * It points at /contacts rather than at a popup: the file gives it no target,
+ * and the export's own lead popups only exist on routes served through the
+ * legacy shell — this bar is on every route.
+ */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 189px;
+  height: 50px;
+  padding: 0 10px;
+  border-radius: 100px;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+  font-family: var(--tbb-font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 50px;
+  letter-spacing: 0;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cta:hover {
+  opacity: 0.86;
+}
+
+.cta:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Below the design's own frame width the bar has to hold the logo, four
+   controls and this; the controls are the half anyone reaches for. */
+@media (max-width: 1099px) {
+  .cta {
+    display: none;
+  }
 }
 
 .action {

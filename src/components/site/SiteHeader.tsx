@@ -149,6 +149,12 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         </SiteLink>
 
         <div className={styles.actions}>
+          {/* The design's own call to action — see `.cta`. It is the one thing
+              the file's header carries that this bar did not. */}
+          <SiteLink href="/contacts" className={styles.cta}>
+            Get your best deal now
+          </SiteLink>
+
           {/* Ported from production. Display-only there and here — see
               RegionPicker. Moves into the menu on small screens. */}
           <span className={styles.desktopOnly}>

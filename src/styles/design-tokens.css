@@ -83,7 +83,13 @@
   --tbb-dur: 720ms;
   --tbb-dur-slow: 1200ms;
 
-  --tbb-header-h: clamp(3.75rem, 5.5vw, 5.25rem);
+  /*
+   * 103px, the height of the header symbol in `forme.fig` — 1200 x 103.66,
+   * with its white plate drawn at 1200 x 103. Held from the design's own frame
+   * width up; below it the bar scales down to the 60px it needs on a phone,
+   * which the file has no frame for.
+   */
+  --tbb-header-h: clamp(3.75rem, 8.5833vw, 6.4375rem);
 }
 
 /* Shared surface reset for redesigned sections. */
