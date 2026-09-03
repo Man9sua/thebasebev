@@ -1,50 +1,24 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
-import { GLOSSARY_TERMS, type GlossaryTerm } from "@/data/glossary";
+import {
+  GLOSSARY_ENTRIES,
+  categoryLabel,
+  type GlossaryCategory,
+} from "@/data/glossary";
 import styles from "./GlossaryPage.module.css";
 
-type Category = "all" | "ingredients" | "tech" | "business";
+type CategoryFilter = "all" | GlossaryCategory;
 
-const CATEGORIES: Array<{ value: Category; label: string }> = [
+const CATEGORIES: Array<{ value: CategoryFilter; label: string }> = [
   { value: "all", label: "All terms" },
   { value: "ingredients", label: "Ingredients & bases" },
   { value: "tech", label: "Beverage tech" },
   { value: "business", label: "HoReCa & business" },
 ];
 
-const CATEGORY_LABELS: Record<Exclude<Category, "all">, string> = {
-  ingredients: "ingredients & bases",
-  tech: "beverage tech",
-  business: "HoReCa & business",
-};
-
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-const BUSINESS_TERMS = new Set([
-  "Authenticity Premium", "Beverage Cost %", "CapEx", "Category Anchor", "Contract Manufacturing",
-  "Crossover Drink", "Cup Cost", "Deskilling", "EXW", "FOB", "CIF", "Franchise Uniformity",
-  "Habit Loop", "HS Code", "Incoterms", "Landed Cost", "Lead Time", "Lot Number", "LTO",
-  "Menu Engineering", "Mise en Place", "MOQ", "Net Margin per Cup", "ODM", "OEM", "OpEx",
-  "Peak Hour", "Portion Control", "Premiumization", "Private Label", "Signature Drink", "SKU",
-  "Ticket Time", "Trade Marketing", "Waste Log", "White Label",
-]);
-
-const TECH_TERMS = new Set([
-  "Agglomeration", "Ambient Shelf Life", "Anti caking Agent", "Astringency", "Brix", "Bulk Density",
-  "Caramelization", "Certificate of Analysis", "Ceremonial vs Culinary Matcha", "Cold Chain",
-  "Danger Zone", "Dial In", "Dispersibility", "Dose Weight", "Doypack", "Emulsion", "Encapsulation",
-  "Frappe", "Freddo", "GMP", "HACCP", "Halal Certification", "Homogenization", "Hygroscopicity",
-  "Instantization", "ISO 22000", "Maillard Reaction", "Mouthfeel", "Nitro Cold Brew", "Overrun",
-  "Sensory Panel", "Solubility", "Stabilizer", "Steam Wand", "Theaflavins", "Volatile Terpenes",
-  "Water Activity",
-]);
-
-function categoryFor(term: GlossaryTerm): Exclude<Category, "all"> {
-  if (BUSINESS_TERMS.has(term.title)) return "business";
-  if (TECH_TERMS.has(term.title)) return "tech";
-  return "ingredients";
-}
 
 function displayDate(value: string) {
   const [year, month, day] = value.split("-");
@@ -53,31 +27,45 @@ function displayDate(value: string) {
 
 export function GlossaryPage() {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<Category>("all");
+  const [category, setCategory] = useState<CategoryFilter>("all");
   const [letter, setLetter] = useState("all");
 
   const availableLetters = useMemo(
-    () => new Set(GLOSSARY_TERMS.map((term) => term.title.charAt(0).toUpperCase())),
+    () => new Set(GLOSSARY_ENTRIES.map((term) => term.title.charAt(0).toUpperCase())),
     [],
   );
 
   const filtered = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("en");
-    return GLOSSARY_TERMS.filter((term) => {
-      const matchesQuery =
-        !normalizedQuery ||
-        `${term.title} ${term.definition}`.toLocaleLowerCase("en").includes(normalizedQuery);
-      const matchesCategory = category === "all" || categoryFor(term) === category;
+
+    return GLOSSARY_ENTRIES.filter((term) => {
+      const searchableText = [
+        term.title,
+        term.excerpt,
+        categoryLabel(term.category),
+        term.bodyText,
+      ]
+        .join(" ")
+        .toLocaleLowerCase("en");
+      const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
+      const matchesCategory = category === "all" || term.category === category;
       const matchesLetter = letter === "all" || term.title.charAt(0).toUpperCase() === letter;
+
       return matchesQuery && matchesCategory && matchesLetter;
     });
   }, [category, letter, query]);
+
+  function clearFilters() {
+    setQuery("");
+    setCategory("all");
+    setLetter("all");
+  }
 
   return (
     <main className={styles.page} data-glossary-page>
       <section className={styles.hero} aria-labelledby="glossary-title">
         <div className={styles.heroInner}>
-          <span className="tbb-label">Reference / 101 terms</span>
+          <span className="tbb-label">Reference / {GLOSSARY_ENTRIES.length} terms</span>
           <h1 id="glossary-title">Glossary</h1>
           <p>
             Practical definitions for product development, beverage operations and B2B supply.
@@ -143,16 +131,11 @@ export function GlossaryPage() {
         </div>
 
         <div className={styles.resultBar} aria-live="polite">
-          <span>{filtered.length} {filtered.length === 1 ? "term" : "terms"}</span>
+          <span>
+            {filtered.length} {filtered.length === 1 ? "term" : "terms"}
+          </span>
           {(query || category !== "all" || letter !== "all") && (
-            <button
-              type="button"
-              onClick={() => {
-                setQuery("");
-                setCategory("all");
-                setLetter("all");
-              }}
-            >
+            <button type="button" onClick={clearFilters}>
               Clear filters
             </button>
           )}
@@ -160,15 +143,30 @@ export function GlossaryPage() {
 
         {filtered.length ? (
           <div className={styles.grid} data-glossary-grid>
-            {filtered.map((term, index) => (
-              <article key={`${term.title}-${index}`} className={styles.term} data-glossary-term>
+            {filtered.map((term) => (
+              <Link
+                key={term.uid}
+                className={styles.term}
+                href={term.path}
+                prefetch={false}
+                data-glossary-term
+                data-glossary-uid={term.uid}
+              >
                 <div className={styles.termMeta}>
-                  <span>{CATEGORY_LABELS[categoryFor(term)]}</span>
+                  <span>{categoryLabel(term.category)}</span>
                   <time dateTime={term.published}>{displayDate(term.published)}</time>
                 </div>
-                <h2>{term.title}</h2>
-                {term.definition && <p>{term.definition}</p>}
-              </article>
+                <div className={styles.termHeading}>
+                  <h2>{term.title}</h2>
+                  <span className={styles.termArrow} aria-hidden="true">
+                    ↗
+                  </span>
+                </div>
+                {term.excerpt && <p>{term.excerpt}</p>}
+                {term.contentStatus === "empty-production-source" && (
+                  <span className={styles.sourceStatus}>Source article has no published copy</span>
+                )}
+              </Link>
             ))}
           </div>
         ) : (

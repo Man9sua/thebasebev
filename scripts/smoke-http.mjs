@@ -1,9 +1,13 @@
+import fs from "node:fs";
+
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const targetUrl = new URL(baseUrl);
 const workerTarget = targetUrl.hostname.endsWith(".workers.dev");
 const productionTarget = ["thebasebev.com", "www.thebasebev.com"].includes(
   targetUrl.hostname.toLowerCase(),
 );
+const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
+const expectedSitemapUrls = 29 + glossaryContent.entries.length;
 
 const publicRoutes = [
   "/",
@@ -106,8 +110,8 @@ if (robots.status !== 200 || !robotsText.includes("Allow: /") || !robotsText.inc
 const sitemap = await fetch(`${baseUrl}/sitemap.xml`);
 const sitemapText = await sitemap.text();
 const sitemapUrls = sitemapText.match(/<loc>/g)?.length ?? 0;
-if (sitemap.status !== 200 || sitemapUrls !== 29) {
-  failures.push(`/sitemap.xml: expected 29 URLs, received ${sitemapUrls}`);
+if (sitemap.status !== 200 || sitemapUrls !== expectedSitemapUrls) {
+  failures.push(`/sitemap.xml: expected ${expectedSitemapUrls} URLs, received ${sitemapUrls}`);
 }
 
 const missing = await fetch(`${baseUrl}/this-route-must-not-exist`, { redirect: "manual" });

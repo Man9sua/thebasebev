@@ -4,6 +4,8 @@ const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.worker
 const reportPath = process.argv[3] ?? "ROUTE_INDEXABILITY_AUDIT.md";
 const siteSource = fs.readFileSync("src/lib/site-pages.ts", "utf8");
 const nextConfig = fs.readFileSync("next.config.ts", "utf8");
+const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
+const glossaryRoutes = glossaryContent.entries.map((entry) => entry.path);
 
 function block(source, start, end) {
   const startIndex = source.indexOf(start);
@@ -35,6 +37,15 @@ const controlledRoutes = [
     reason: entry.indexable
       ? `Canonical production page from ${entry.file}`
       : `Preserved non-indexable route from ${entry.file}`,
+  })),
+  ...glossaryRoutes.map((route) => ({
+    route,
+    type: "glossary article",
+    expectedStatus: 200,
+    indexable: true,
+    canonical: true,
+    sitemap: true,
+    reason: "Published production Glossary article preserved at its canonical path",
   })),
   ...pageFiles.map((file) => ({
     route: `/${file}`,
@@ -135,8 +146,11 @@ if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.leng
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
   );
 }
-if (controlledRoutes.length !== 113) {
-  throw new Error(`Expected 113 controlled routes, received ${controlledRoutes.length}.`);
+const expectedControlledRoutes = 113 + glossaryRoutes.length;
+if (controlledRoutes.length !== expectedControlledRoutes) {
+  throw new Error(
+    `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
+  );
 }
 if (redirectRows.length !== 6) throw new Error(`Expected six redirects, received ${redirectRows.length}.`);
 
@@ -163,9 +177,10 @@ const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
-if (sitemapResponse.status !== 200 || sitemapPaths.size !== 29) {
+const expectedSitemapRoutes = 29 + glossaryRoutes.length;
+if (sitemapResponse.status !== 200 || sitemapPaths.size !== expectedSitemapRoutes) {
   throw new Error(
-    `Expected HTTP 200 with 29 target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,
+    `Expected HTTP 200 with ${expectedSitemapRoutes} target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,
   );
 }
 

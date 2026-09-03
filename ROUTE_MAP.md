@@ -21,7 +21,7 @@ Status meanings:
 | `page151592086.html` | `/resources/blog` | PARTIAL | Indexable listing content is preserved; feed freshness is not guaranteed by the static export. |
 | `page120311356.html` | `/private-labeling` | PARTIAL | Indexable content is preserved; lead flow is incomplete. |
 | `page155556086.html` | `/sitemap` | PARTIAL | Human-readable sitemap page is preserved; links still need built HTTP smoke. |
-| `page151592696.html` | `/resources/glossary` | PARTIAL | Indexable glossary content is preserved. |
+| `page151592696.html` | `/resources/glossary` | DONE | Native searchable 101-term listing; every card links to a statically generated production article path. No Tilda feed/runtime dependency. |
 | `page151679366.html` | `/resources/tools` | PARTIAL | Content is preserved; custom calculators/interactions need explicit ports and tests. |
 | `page155598016.html` | `/rnd` | PARTIAL | Original mixed-language calorie-calculator/H1 mismatch is intentionally preserved. |
 | `page62448803.html` | `/raf-coffee` | PARTIAL | Product-template markup is preserved; tabs/gallery/CTA behavior needs verification. |
@@ -51,7 +51,11 @@ Status meanings:
 | `page115314536.html` | `/not-found` | DONE | Source route is registered and unknown paths return the branded body with HTTP 404. |
 | `page65943847.html` | `/link` | PARTIAL | Outside sitemap; original crawler handling is documented for verification. |
 
-The 29 canonical indexable friendly routes are the sitemap candidates. Compatibility/noindex routes are intentionally excluded from that count.
+The 29 canonical indexable friendly routes plus 101 audited Glossary articles are sitemap candidates. Compatibility/noindex routes are intentionally excluded.
+
+## Glossary article routes
+
+All 101 production `/tpost/<uid>-<slug>` Glossary URLs are preserved 1:1 as statically generated, indexable pages. The complete title-to-URL audit is maintained in `docs/research/glossary/PRODUCTION_GLOSSARY_INVENTORY.md`; all entries return 200 and retain their production canonical. The one empty production source article (`Matcha`, UID `tfm5mybkl1`) remains a valid 200 route without invented copy.
 
 ## Legacy HTML aliases
 
@@ -87,7 +91,7 @@ The 29 canonical indexable friendly routes are the sitemap candidates. Compatibi
 | Route | HTTP behavior | Indexable | Sitemap | Status / reason |
 | --- | --- | --- | --- | --- |
 | `/robots.txt` | 200 | NO | NO | DONE — crawler policy document |
-| `/sitemap.xml` | 200 | NO | NO | DONE — contains exactly 29 canonical public pages |
+| `/sitemap.xml` | 200 | NO | NO | DONE — contains 29 canonical public pages plus 101 canonical Glossary articles |
 | `/api/health` | 200 JSON, `no-store` | NO | NO | DONE — safe deployment probe returning only `status: ok` |
 | `/api/leads` GET | 405 | NO | NO | DONE — POST-only typed delivery boundary |
 | `/api/leads` POST invalid payload | 400 | NO | NO | DONE — safe validation boundary used by automated smoke |
@@ -96,7 +100,7 @@ The 29 canonical indexable friendly routes are the sitemap candidates. Compatibi
 | `/checkout` | 200 when populated; empty cart client-redirects to `/catalog` | NO | NO | DONE — native cart review and Stripe Test Mode handoff; no Tilda cart modal |
 | unknown path | branded 404 | NO | NO | DONE — native not-found boundary |
 
-`ROUTE_INDEXABILITY_AUDIT.md` accounts for all 113 generated/technical routes plus the five redirects and records why each item is or is not indexable.
+`ROUTE_INDEXABILITY_AUDIT.md` accounts for the existing 113 controlled routes plus 101 Glossary article routes and records why each item is or is not indexable.
 
 ## Deployment and integration gates
 

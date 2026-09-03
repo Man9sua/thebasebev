@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { GLOSSARY_ENTRIES } from "@/data/glossary";
 import { SITE_ORIGIN, sitemapRoutes } from "@/lib/site-pages";
 
 const auditedLastModified = {
@@ -38,7 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     throw new Error(`Expected 29 audited sitemap routes, received ${sitemapRoutes.length}.`);
   }
 
-  return sitemapRoutes.map(({ route }) => {
+  const publicPages = sitemapRoutes.map(({ route }) => {
     const lastModified = auditedLastModified[route as keyof typeof auditedLastModified];
 
     if (!lastModified) {
@@ -50,4 +51,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
     };
   });
+
+  const glossaryArticles = GLOSSARY_ENTRIES.map((entry) => ({
+    url: `${SITE_ORIGIN}${entry.path}`,
+    lastModified: `${entry.published}T00:00:00.000Z`,
+  }));
+
+  return [...publicPages, ...glossaryArticles];
 }
