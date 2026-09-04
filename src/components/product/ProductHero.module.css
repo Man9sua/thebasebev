@@ -584,21 +584,34 @@
 /* ---- the phone ---- */
 
 /*
- * There is no phone frame in the design file, so this is not measured: the two
- * columns become one band and one block of words, and sizes go back to the
- * page's own fluid scale. Holding `--u` here would render the whole hero at a
- * third of the design's size.
+ * The phone, and it is measured after all.
+ *
+ * `Untitled.site` carries the mobile card — a row of sixteen, each 360 across
+ * in a 375 frame — and its product band is a 368.9 x 395.7 wash with four
+ * things on it: the pouch, the drink overlapping it, and the two seals stacked
+ * at the top right rather than in a row underneath, which is where this page
+ * used to put them.
+ *
+ * Every offset below is that file's, divided by the band's own 368.9 and
+ * written in vw. The band is the phone's full width there, so a share of the
+ * band and a share of the viewport are the same number, and the composition
+ * holds its proportions on any phone rather than only on a 375.
  */
 @media (max-width: 899px) {
+  /* The words open at 283 into the band, which is on the wash rather than
+     under it — the file runs the wash 395.7 deep and sets the name over it. The
+     copy carries its own top padding, so the band is short by that much. */
   .frame {
     width: 100%;
-    padding-top: 0;
+    padding-top: calc(var(--tbb-header-h) + 71.39vw);
     min-height: 0;
   }
 
+  /* 366 x 200.8 at -0.7, 10.9 — the mark runs the full width of the band. */
   .mark {
-    top: calc(var(--tbb-header-h) + 11vw);
-    width: min(92vw, 30rem);
+    top: calc(var(--tbb-header-h) + 2.95vw);
+    left: -0.19vw;
+    width: 99.21vw;
   }
 
   .markThe {
@@ -613,16 +626,30 @@
    * filling a phone with a pack shot reads as a different page rather than the
    * same one narrow.
    */
+  /* The pouch: 151.4 x 220.4 at 85.6, 16.5 inside the band. */
   .stage {
-    position: relative;
+    position: absolute;
     z-index: 1;
-    left: 0;
-    top: 0;
-    width: min(100%, 19rem);
+    left: 23.2vw;
+    top: calc(var(--tbb-header-h) + 4.47vw);
+    width: 41.04vw;
     height: auto;
-    aspect-ratio: var(--pack-width) / var(--pack-height);
-    margin: var(--tbb-header-h) auto 0;
-    padding: clamp(0.75rem, 3vw, 1.75rem) 0 0;
+    aspect-ratio: 151.4 / 220.4;
+    margin: 0;
+    padding: 0;
+  }
+
+  /*
+   * The drink: 128.4 x 209.7 at 161.9, 72.3, which is where the file puts it
+   * rather than where the desktop's pack group would. As a share of the pouch
+   * beside it, so the pair keeps its overlap at any width.
+   */
+  .glass {
+    left: 50.4%;
+    top: 25.32%;
+    width: 84.81%;
+    height: 95.14%;
+    transform: none;
   }
 
   .pack {
@@ -632,18 +659,31 @@
   /* Nothing to change: the drink is a share of the group, and the group is
      still the group. */
 
-  /* A row under the pack rather than a corner of it: at this width the pack
-     fills the band and there is no corner left to stand in. */
+  /*
+   * Stacked at the top right of the band, which is where the file puts them:
+   * 65.5 x 60.3 at 313.8, 25.8 and 48 x 48 at 322.5, 88.3. They used to sit in
+   * a row underneath.
+   */
   .seals {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    padding-top: clamp(0.9rem, 3vw, 1.4rem);
+    display: contents;
   }
 
   .seal {
-    position: static;
-    width: clamp(3.4rem, 13vw, 4.6rem);
+    position: absolute;
+    width: auto;
+    height: auto;
+  }
+
+  .sealWide {
+    left: 74.3vw;
+    top: calc(var(--tbb-header-h) + 6.99vw);
+    width: 17.75vw;
+  }
+
+  .sealSmall {
+    left: 76.66vw;
+    top: calc(var(--tbb-header-h) + 23.94vw);
+    width: 13.01vw;
   }
 
   .copy {
