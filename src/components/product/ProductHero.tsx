@@ -1,8 +1,10 @@
+import type { CSSProperties } from "react";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
 import { packBox, productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productMargins } from "@/data/product-margins";
+import { productMobile } from "@/data/product-mobile";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
 import { isDark } from "@/lib/contrast";
@@ -98,30 +100,67 @@ export function ProductHero({ product }: { product: Product }) {
   const showHeadline = headline !== product.name;
   const pack = packBox(product.slug);
 
+  /*
+   * The phone's own card — a different wash, a panel under the copy and its own
+   * box for the drink. See `data/product-mobile.ts`; the stylesheet reads these
+   * only below its media query, so nothing here reaches the desktop.
+   *
+   * Garnish and Sugar Free have no wash in that file because their cards are
+   * collages rather than a pouch on a ramp, so they fall back to the flat fill
+   * their desktop frame carries.
+   */
+  const phone = productMobile[product.slug];
+  const phoneWash = phone?.washIn
+    ? { from: phone.washIn, to: phone.washOut ?? phone.washIn }
+    : productWashes[product.slug];
+  // Ink on the phone is measured off the panel rather than off the wash: the
+  // wash carries no words there, and Chocolate's panel is dark where its own
+  // desktop band is darker still.
+  const phoneDark = phone ? isDark(phone.panel) : false;
+
+  const vars: CSSProperties & Record<string, string | number> = {
+    "--tile": product.backgroundColor,
+    "--pack-left": pack.left,
+    "--pack-top": pack.top,
+    "--pack-width": pack.width,
+    "--pack-height": pack.height,
+  };
+  if (productShadows[product.slug]) vars["--shade"] = productShadows[product.slug];
+  if (banner) {
+    vars["--band"] = banner.band;
+    vars["--band-foot"] = banner.bandFoot;
+  } else if (wash) {
+    vars["--wash-from"] = wash.from;
+    vars["--wash-to"] = wash.to;
+  }
+  if (phone) {
+    vars["--m-panel"] = phone.panel;
+    vars["--m-mark-color"] = phone.mark.color;
+    vars["--m-mark-alpha"] = `${phone.mark.opacity * 100}%`;
+    if (phoneWash) {
+      vars["--m-wash-from"] = phoneWash.from;
+      vars["--m-wash-to"] = phoneWash.to;
+    }
+    if (phone.shade) vars["--m-shade"] = phone.shade;
+    if (phone.glass) {
+      vars["--m-glass-left"] = phone.glass.left;
+      vars["--m-glass-top"] = phone.glass.top;
+      vars["--m-glass-width"] = phone.glass.width;
+      vars["--m-glass-height"] = phone.glass.height;
+    }
+  }
+
   return (
     <section
-      className={`${styles.hero} ${onDark ? styles.onDark : ""} ${banner || wash ? "" : styles.plain}`}
-      style={{
-        ["--tile" as string]: product.backgroundColor,
-        ...(productShadows[product.slug]
-          ? { ["--shade" as string]: productShadows[product.slug] }
-          : {}),
-        ["--pack-left" as string]: pack.left,
-        ["--pack-top" as string]: pack.top,
-        ["--pack-width" as string]: pack.width,
-        ["--pack-height" as string]: pack.height,
-        ...(banner
-          ? {
-              ["--band" as string]: banner.band,
-              ["--band-foot" as string]: banner.bandFoot,
-            }
-          : wash
-            ? {
-                ["--wash-from" as string]: wash.from,
-                ["--wash-to" as string]: wash.to,
-              }
-            : {}),
-      }}
+      className={[
+        styles.hero,
+        onDark ? styles.onDark : "",
+        banner || wash ? "" : styles.plain,
+        phoneDark ? styles.panelDark : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      style={vars}
       aria-labelledby="product-title"
     >
       {/*

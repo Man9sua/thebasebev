@@ -229,9 +229,12 @@
  *
  * The file fills them with a linear gradient to nothing at three quarters; here
  * it is radial, because a ground shadow reads from its middle outwards and the
- * file gives no direction for the linear one. Drawn only where the design draws
- * one: Sugar Free and Tea have none, and with `--shade` unset the gradient is
- * not a valid value, so nothing paints.
+ * file gives no direction for the linear one. It holds the colour over the
+ * middle third before it starts to fade, because the file's linear is at full
+ * strength across half of each ellipse and a radial that fades from its centre
+ * is a far lighter mark than the one the design draws. Painted only where the
+ * design paints one: Sugar Free and Tea have none, and with `--shade` unset the
+ * gradient is not a valid value, so nothing appears.
  */
 .stage::after,
 .glass::after {
@@ -239,7 +242,7 @@
   position: absolute;
   z-index: -1;
   border-radius: 50%;
-  background: radial-gradient(closest-side, var(--shade), transparent 75%);
+  background: radial-gradient(closest-side, var(--shade) 30%, transparent 80%);
   pointer-events: none;
 }
 
@@ -598,215 +601,359 @@
 /* ---- the phone ---- */
 
 /*
- * The phone, and it is measured after all.
+ * The phone, and it is a card of its own rather than the desktop narrowed.
  *
- * `Untitled.site` carries the mobile card — a row of sixteen, each 360 across
- * in a 375 frame — and its product band is a 368.9 x 395.7 wash with four
- * things on it: the pouch, the drink overlapping it, and the two seals stacked
- * at the top right rather than in a row underneath, which is where this page
- * used to put them.
+ * `Untitled.site` draws one per product: a 360-wide column under a 108-tall
+ * header, a radial wash behind the pouch, and the copy on a panel of its own
+ * with two rounded top corners. Every number below is that file's, and the
+ * per-product half of them — wash, panel, mark, the drink's box — comes in on
+ * the section from `data/product-mobile.ts`.
  *
- * Every offset below is that file's, divided by the band's own 368.9 and
- * written in vw. The band is the phone's full width there, so a share of the
- * band and a share of the viewport are the same number, and the composition
- * holds its proportions on any phone rather than only on a 375.
+ * `--p` is one pixel of that 360 card. It stops growing at 1.2px so a tablet
+ * gets the phone's composition centred at 432 rather than a pouch a third of a
+ * metre wide, and `--x0` is where the card's left edge then falls. The wash and
+ * the panel still run the full width, as they do in the file.
  */
 @media (max-width: 899px) {
-  /* The words open at 283 into the band, which is on the wash rather than
-     under it — the file runs the wash 395.7 deep and sets the name over it. The
-     copy carries its own top padding, so the band is short by that much. */
+  .hero {
+    --p: min(0.2777778vw, 1.2px);
+    --x0: calc(50% - 180 * var(--p));
+    /*
+     * The pouch, and this is the box the design actually shows rather than the
+     * one it draws. The file's layer is 151.4 x 220.4 at 83.3, 13.6, but its
+     * image fill is cropped: the artwork inside covers 81.5% of that box across
+     * and 91.5% down, 11.51 in from either corner. So the standing pouch is
+     * 123.45 x 201.61 at 94.81, 25.11, and that — not the layer — is what the
+     * drink is measured beside and what the ground shadow lies under.
+     */
+    --ink-x: 94.81;
+    --ink-y: 25.11;
+    --ink-w: 123.45;
+    --ink-h: 201.61;
+    /* Words live on the panel here, never on the wash, so the ink is measured
+       off the panel — see `phoneDark` in the component. */
+    --ink: var(--tbb-ink);
+    --ink-soft: var(--tbb-ink-soft);
+    --ink-muted: var(--tbb-muted);
+
+    /*
+     * The wash: a 368.9 x 395.7 rectangle at -2.3, -2.9, filled with a radial
+     * the file centres at 32.3%, 37.9% of it and runs out to 65.6% x 55.3% —
+     * the ellipse Figma's own gradient matrix describes, inverted and measured.
+     * It is painted as the section's background rather than as an element,
+     * because the panel below covers everything past 268.7 anyway and the outer
+     * colour carries the rest of the width.
+     */
+    background-color: var(--m-wash-to);
+    background-image: radial-gradient(
+      65.6% 55.3% at 32.3% 37.9%,
+      var(--m-wash-from) 24.6%,
+      var(--m-wash-to) 100%
+    );
+    background-repeat: no-repeat;
+    /* Wider than the card the wash is drawn on, once `--p` has stopped growing:
+       otherwise a tablet gets the phone's rectangle centred with a seam either
+       side of it, where the design has the wash running edge to edge. */
+    background-size: max(100%, calc(368.9 * var(--p))) calc(395.7 * var(--p));
+    background-position: center calc(var(--tbb-header-h) - 2.9 * var(--p));
+  }
+
+  .panelDark {
+    --ink: #ffffff;
+    --ink-soft: rgba(255, 255, 255, 0.8);
+    --ink-muted: rgba(255, 255, 255, 0.6);
+  }
+
+  /* The panel opens at 268.7, and the copy carries it. */
   .frame {
     width: 100%;
-    padding-top: calc(var(--tbb-header-h) + 71.39vw);
+    padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
     min-height: 0;
   }
 
-  /* 366 x 200.8 at -0.7, 10.9 — the mark runs the full width of the band. */
+  /* 366 x 200.8 at -3, 8 — the same lockup as the desktop's, at 0.624 of it,
+     which is where the 21.2 over a 23.7 line below comes from. */
   .mark {
-    top: calc(var(--tbb-header-h) + 2.95vw);
-    left: -0.19vw;
-    width: 99.21vw;
+    left: calc(var(--x0) - 3 * var(--p));
+    top: calc(var(--tbb-header-h) + 8 * var(--p));
+    width: calc(366 * var(--p));
   }
 
-  .markThe {
-    font-size: clamp(1.1rem, 5vw, 1.6rem);
-    line-height: 1.2;
+  .markThe,
+  .onDark .markThe,
+  .plain .markThe {
+    font-size: calc(21.2 * var(--p));
+    line-height: calc(23.7 * var(--p));
+    color: color-mix(in srgb, var(--m-mark-color) var(--m-mark-alpha), transparent);
   }
 
-  /*
-   * The group keeps its own proportions and is centred instead of stretching to
-   * the screen: the drink is placed as a share of this box, so a box of another
-   * shape would slide it off the pouch. Narrower than the screen as well —
-   * filling a phone with a pack shot reads as a different page rather than the
-   * same one narrow.
-   */
-  /* The pouch: 151.4 x 220.4 at 85.6, 16.5 inside the band. */
+  /* White on eleven of the sixteen, its own colour on Chocolate, Jam and
+     Topping, and at an opacity the file sets per product. */
+  .markWord,
+  .onDark .markWord,
+  .plain .markWord {
+    background: color-mix(in srgb, var(--m-mark-color) var(--m-mark-alpha), transparent);
+  }
+
   .stage {
     position: absolute;
     z-index: 1;
-    left: 23.2vw;
-    top: calc(var(--tbb-header-h) + 4.47vw);
-    width: 41.04vw;
-    height: auto;
-    aspect-ratio: 151.4 / 220.4;
-    margin: 0;
-    padding: 0;
+    left: calc(var(--x0) + var(--ink-x) * var(--p));
+    top: calc(var(--tbb-header-h) + var(--ink-y) * var(--p));
+    width: calc(var(--ink-w) * var(--p));
+    height: calc(var(--ink-h) * var(--p));
   }
 
   /*
-   * The drink: 128.4 x 209.7 at 161.9, 72.3, which is where the file puts it
-   * rather than where the desktop's pack group would. As a share of the pouch
-   * beside it, so the pair keeps its overlap at any width.
+   * The pack shot inside it, sized past the stage rather than into it.
+   *
+   * `build-pack-shots.mjs` fits every pouch to 88% of a 720 x 960 sheet
+   * standing on its 95.5% line and centres it across, so the artwork begins
+   * 8.52% of its own height above the stage and is 113.64% of it tall. Given
+   * that, the visible pouch lands exactly on the box above — and a pack that is
+   * not a doypack, like the tea and sugar-free sachets, keeps the same baseline
+   * instead of being stretched to this one's width.
+   *
+   * No drop shadow: the design gives the pouch a ground shadow instead, and the
+   * two together read as two light sources.
+   *
+   * Written against the stage as well as itself because `.tbb img` in the
+   * global sheet caps every picture at `max-width: 100%`, and a single class
+   * does not outrank it — which had the pouch clamped to the stage and
+   * letterboxed inside it at two thirds the size the design draws.
    */
+  .stage .pack {
+    position: absolute;
+    left: 50%;
+    top: -8.523%;
+    width: auto;
+    height: 113.636%;
+    max-width: none;
+    transform: translateX(-50%);
+    filter: none;
+  }
+
+  /* The drink's own layer, in the card's coordinates, as a share of the pouch
+     beside it — so the pair keeps its overlap at any width. */
   .glass {
-    left: 50.4%;
-    top: 25.32%;
-    width: 84.81%;
-    height: 95.14%;
+    left: calc((var(--m-glass-left) - var(--ink-x)) / var(--ink-w) * 100%);
+    top: calc((var(--m-glass-top) - var(--ink-y)) / var(--ink-h) * 100%);
+    width: calc(var(--m-glass-width) / var(--ink-w) * 100%);
+    height: calc(var(--m-glass-height) / var(--ink-h) * 100%);
     transform: none;
   }
 
-  /* The phone's own pair: 181.2 x 37.7 centred at 236.7, 224.25 and 88.4 x 35.3
-     at 285.1, 240.55, against the pouch and the drink where the site file puts
-     them. Both sit further right than the desktop's. */
+  /*
+   * The ground shadows, and on the phone the file draws them in one place for
+   * every product: `Ellipse 27` 181.2 x 37.7 at 104.1, 202.5 under the pouch,
+   * `Ellipse 28` 88.4 x 35.3 at 198.9, 220.1 under the drink. Each is turned
+   * into a share of the object it belongs to, so it follows that product's own
+   * box. Raf Coffee and Topping draw their second a little smaller; the common
+   * pair is used for all thirteen, which is a couple of pixels on a shadow.
+   */
   .stage::after {
-    left: 99.8%;
-    top: 94.3%;
-    width: 119.7%;
-    height: 17.1%;
+    left: 80.92%;
+    top: 97.34%;
+    width: 146.78%;
+    height: 18.7%;
   }
 
   .glass::after {
-    left: 96%;
-    top: 80.2%;
-    width: 68.8%;
-    height: 16.8%;
+    left: 61.59%;
+    top: 84.15%;
+    width: 75.62%;
+    height: 18.49%;
   }
 
-  .pack {
-    filter: drop-shadow(0 22px 40px rgba(26, 19, 17, 0.16));
+  /* Vending is the one product whose phone shadow is not its desktop one. */
+  .stage::after,
+  .glass::after {
+    background: radial-gradient(closest-side, var(--m-shade, var(--shade)) 30%, transparent 80%);
   }
 
-  /* Nothing to change: the drink is a share of the group, and the group is
-     still the group. */
-
-  /*
-   * Stacked at the top right of the band, which is where the file puts them:
-   * 65.5 x 60.3 at 313.8, 25.8 and 48 x 48 at 322.5, 88.3. They used to sit in
-   * a row underneath.
-   */
-  .seals {
-    display: contents;
-  }
-
-  .seal {
-    position: absolute;
-    width: auto;
-    height: auto;
-  }
-
+  /* Stacked at the top right of the wash: 65.5 x 60.3 at 271.8, 22.9 and a 48
+     circle at 271.5, 85.4. */
   .sealWide {
-    left: 74.3vw;
-    top: calc(var(--tbb-header-h) + 6.99vw);
-    width: 17.75vw;
+    left: calc(var(--x0) + 271.8 * var(--p));
+    top: calc(var(--tbb-header-h) + 22.9 * var(--p));
+    width: calc(65.5 * var(--p));
   }
 
   .sealSmall {
-    left: 76.66vw;
-    top: calc(var(--tbb-header-h) + 23.94vw);
-    width: 13.01vw;
+    left: calc(var(--x0) + 271.5 * var(--p));
+    top: calc(var(--tbb-header-h) + 85.4 * var(--p));
+    width: calc(48 * var(--p));
   }
 
+  /* ---- the panel ---- */
+
+  /*
+   * The copy is the panel: 360 wide with 20 off its top corners, opening 11.4
+   * above the name and holding a 308-wide column — 162.7 of words, 16 of gap
+   * and the 129.5 the margin figures stand in.
+   *
+   * The figures are placed in the second column at row 1 and spanned down to
+   * the buttons, so a page with three lines of copy and a page with six both
+   * put the card level with the name and the buttons under both. `grid-row: 20`
+   * is that: the rows between are empty and have no height. Where a product has
+   * no figures at all the column is not there to leave a gap.
+   */
   .copy {
-    margin-left: 0;
     width: 100%;
-    padding: clamp(1.25rem, 4vw, 2rem) var(--tbb-gutter) clamp(2.5rem, 8vw, 4rem);
+    margin-left: 0;
+    padding: calc(11.4 * var(--p)) calc(50% - 154 * var(--p)) calc(48 * var(--p));
+    border-radius: calc(20 * var(--p)) calc(20 * var(--p)) 0 0;
+    background: var(--m-panel);
+    grid-template-columns: calc(162.7 * var(--p)) calc(129.5 * var(--p));
+    column-gap: calc(16 * var(--p));
+    row-gap: 0;
+    align-content: start;
+  }
+
+  .copy > * {
+    grid-column: 1;
+  }
+
+  .copy:not(:has(.margin)) {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .copy .title {
-    font-size: clamp(1.75rem, 7.5vw, 2.6rem);
-    line-height: 1.1;
-    letter-spacing: -0.025em !important;
+    font-size: calc(18 * var(--p));
+    line-height: 1.25;
+    letter-spacing: -0.02em !important;
   }
 
+  /* Production's own `h1`, which the design has nothing for — kept as the
+     quietest line on the panel rather than dropped. */
   .copy .headline {
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
+    margin-top: calc(4 * var(--p));
+    font-size: calc(9 * var(--p));
     line-height: 1.45 !important;
   }
 
   .copy .headline + .tagline {
-    margin-top: 0.5rem;
+    margin-top: calc(5 * var(--p));
   }
 
   .copy .tagline {
-    margin-top: 0.6rem;
-    font-size: 0.8rem;
-    line-height: 1.4 !important;
+    margin-top: calc(5 * var(--p));
+    font-size: calc(10 * var(--p));
+    line-height: 1.45 !important;
   }
 
   .body {
-    row-gap: 0.7rem;
-    padding-top: 1rem;
+    row-gap: calc(7 * var(--p));
+    padding-top: calc(12 * var(--p));
   }
 
   .paragraph {
-    font-size: var(--tbb-text-body);
-    line-height: 1.55 !important;
+    font-size: calc(10 * var(--p));
+    line-height: 1.6 !important;
   }
 
+  /* ---- the margin figures ---- */
+
+  /*
+   * On the phone the two readings stack inside one card rather than standing
+   * side by side under a heading: 129.5 x 185.8 at 20.8 below the name, 15 off
+   * its corners, white at three tenths over the panel. So the block is the card
+   * here and the row inside it is only a column.
+   */
   .margin {
-    row-gap: 0.75rem;
-    padding-top: 1.75rem;
+    grid-column: 2;
+    grid-row: 1 / 20;
+    width: calc(129.5 * var(--p));
+    margin-top: calc(20.8 * var(--p));
+    padding: calc(13.2 * var(--p)) calc(15.7 * var(--p)) calc(16 * var(--p));
+    border-radius: calc(15 * var(--p));
+    background: rgba(255, 255, 255, 0.3);
+    row-gap: calc(8 * var(--p));
   }
 
   .copy .marginTitle {
-    font-size: 1rem;
-    line-height: 1.375 !important;
+    font-size: calc(12 * var(--p));
+    line-height: 1.33 !important;
   }
 
-  .marginCard {
-    align-items: center;
+  .marginCard,
+  .plain .marginCard,
+  .onDark .marginCard {
+    display: grid;
+    row-gap: calc(14.9 * var(--p));
     width: 100%;
-    max-width: 22rem;
     height: auto;
-    padding: 1.1rem 1.25rem;
-    border-radius: 1.25rem;
+    padding: 0;
+    border-radius: 0;
+    background: none;
   }
 
   .marginSide {
-    row-gap: 0.5rem;
+    row-gap: calc(5 * var(--p));
   }
 
   .marginLabel {
-    font-size: 0.85rem;
+    font-size: calc(10 * var(--p));
     line-height: 1.4 !important;
   }
 
   .marginValue {
-    width: auto;
-    height: auto;
-    padding: 0.5rem 0.8rem;
-    border-radius: 0.5rem;
-    font-size: 1.05rem;
-    line-height: 1.25 !important;
+    width: calc(63 * var(--p));
+    height: calc(23 * var(--p));
+    border-radius: calc(5 * var(--p));
+    font-size: calc(11.09 * var(--p));
+    line-height: 1.2 !important;
   }
 
+  /* One under the other, so there is nothing between them to separate. */
   .marginVs {
-    margin-top: 0;
-    font-size: 0.75rem;
+    display: none;
   }
 
+  /* ---- the buttons ---- */
+
+  /* The design's own row is a pixel wider than its column — 26 to 335 against
+     26 to 334.5 — so the pair is held on one line rather than wrapped. */
   .actions {
-    gap: 0.75rem;
-    padding-top: 1.75rem;
+    grid-column: 1 / -1;
+    grid-row: 20;
+    flex-wrap: nowrap;
+    gap: calc(8 * var(--p));
+    padding-top: calc(28.3 * var(--p));
   }
 
   .primary,
   .secondary {
-    width: auto;
-    height: 3rem;
-    padding-inline: 1.6rem;
-    font-size: 0.85rem;
+    height: calc(35 * var(--p));
+    padding-inline: 0;
+    font-size: calc(12 * var(--p));
+  }
+
+  .primary,
+  .onDark .primary {
+    width: calc(169 * var(--p));
+    background: var(--tbb-ink);
+    color: var(--tbb-on-dark);
+  }
+
+  .secondary,
+  .onDark .secondary {
+    width: calc(132 * var(--p));
+    border-color: transparent;
+    background: var(--tbb-paper);
+    color: var(--tbb-ink);
+  }
+
+  /* Chocolate's panel and Tea's are dark, and there a black pill sinks into
+     them while the white one beside it reads as the primary. */
+  .panelDark .primary {
+    background: var(--tbb-paper);
+    color: var(--tbb-ink);
+  }
+
+  .panelDark .secondary {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: var(--tbb-on-dark);
   }
 }
