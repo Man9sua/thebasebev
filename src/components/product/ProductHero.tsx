@@ -3,6 +3,7 @@ import type { Product } from "@/data/products";
 import { packBox, productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productMargins } from "@/data/product-margins";
+import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
 import { isDark } from "@/lib/contrast";
 import { popupAnchorProps } from "@/lib/legacy-popups";
@@ -102,6 +103,9 @@ export function ProductHero({ product }: { product: Product }) {
       className={`${styles.hero} ${onDark ? styles.onDark : ""} ${banner || wash ? "" : styles.plain}`}
       style={{
         ["--tile" as string]: product.backgroundColor,
+        ...(productShadows[product.slug]
+          ? { ["--shade" as string]: productShadows[product.slug] }
+          : {}),
         ["--pack-left" as string]: pack.left,
         ["--pack-top" as string]: pack.top,
         ["--pack-width" as string]: pack.width,
