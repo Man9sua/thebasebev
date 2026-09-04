@@ -41,63 +41,34 @@ import styles from "./ProductHero.module.css";
 
 const heroes = productHeroes as Record<string, { image: string; band: string; bandFoot: string }>;
 
-/**
- * The two certifications the site claims everywhere — the homepage hero, the
- * About figures, the Bestsellers spec list — set here as the seals the design
- * puts under the pack.
+/*
+ * The certification seals, as the owner's own artwork.
  *
- * Drawn rather than fetched: no certifier's artwork ships with this project,
- * and reproducing a certification body's own mark from a screenshot is not
- * ours to do. These are the site's own badges carrying the site's own claim,
- * which is the same claim the three components above already make in words.
+ * They used to be drawn here: no certifier's mark shipped with the project and
+ * reproducing one from a screenshot is not ours to do. Both now come from the
+ * design's own exports — `XXL_height 1.svg` is the HALAL mark and `Mask group
+ * .svg` the HACCP one, and each carries a raster inside rather than paths, so
+ * the picture is lifted out and kept as a picture.
  *
- * `box` picks which of the design's two boxes the badge stands in — they are
- * different sizes at different heights, so neither the size nor the placement
- * is shared. See `.sealSmall` and `.sealWide` in the stylesheet.
+ * The proportions are the file's: HALAL is 840 x 773, which is 1.087, against
+ * the 108.02 x 99.40 box the design draws it in; HACCP is square in both. So
+ * only the width is set and the height follows the artwork.
  */
-function Seal({
-  box,
-  tint,
-  title,
-  caption,
-  glyph,
-}: {
-  box: "small" | "wide";
-  tint: string;
-  title: string;
-  caption: string;
-  glyph?: string;
-}) {
+const SEALS = {
+  halal: { src: "/images/seal-halal.webp", alt: "Halal certified" },
+  haccp: { src: "/images/seal-haccp.webp", alt: "HACCP certified — food safety" },
+} as const;
+
+function Seal({ box, mark }: { box: "small" | "wide"; mark: keyof typeof SEALS }) {
+  const seal = SEALS[mark];
   return (
-    <svg
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
       className={`${styles.seal} ${box === "wide" ? styles.sealWide : styles.sealSmall}`}
-      viewBox="0 0 100 100"
-      role="img"
-      aria-label={`${title} ${caption}`}
-    >
-      <circle cx="50" cy="50" r="49" fill="var(--tbb-paper)" />
-      <circle cx="50" cy="50" r="47" fill="none" stroke={tint} strokeWidth="3.5" />
-      <circle
-        cx="50"
-        cy="50"
-        r="41"
-        fill="none"
-        stroke={tint}
-        strokeWidth="1.2"
-        strokeDasharray="3 3.4"
-      />
-      {glyph && (
-        <text className={styles.sealGlyph} x="50" y="42" fill={tint}>
-          {glyph}
-        </text>
-      )}
-      <text className={styles.sealTitle} x="50" y={glyph ? 62 : 52} fill={tint}>
-        {title}
-      </text>
-      <text className={styles.sealCaption} x="50" y={glyph ? 74 : 66} fill={tint}>
-        {caption}
-      </text>
-    </svg>
+      src={seal.src}
+      alt={seal.alt}
+      loading="lazy"
+    />
   );
 }
 
@@ -214,8 +185,8 @@ export function ProductHero({ product }: { product: Product }) {
       </div>
 
       <div className={styles.seals}>
-        <Seal box="small" tint="#1c4f8b" title="HACCP" caption="CERTIFIED" />
-        <Seal box="wide" tint="#0f7a3d" title="HALAL" caption="CERTIFIED" glyph="حلال" />
+        <Seal box="small" mark="haccp" />
+        <Seal box="wide" mark="halal" />
       </div>
 
       {/* The design frame, which from here down is the copy's own measure —
