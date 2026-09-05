@@ -144,64 +144,48 @@
 /*
  * The brand mark at display size, flush to the frame's left edge and mostly
  * behind the pack — the device the client's own key visuals use, where at this
- * contrast it is texture rather than type. Figma reports the group as
- * 586.75 x 322.06 at 0, 208.36; the size below is the type size that fills it.
+ * contrast it is texture rather than type.
+ *
+ * The owner's own exports, so nothing here is drawn or approximated: "the" is
+ * 47 x 31 at 70.6, 207.6 and the word 586.75 x 283.8 at 0, 245.8, which is what
+ * the box below spans. Both are white, and the word carries the design's own
+ * fade inside it — solid across the B and the A, running out through the S and
+ * the E. That ramp is in the artwork rather than in this stylesheet.
+ *
+ * `--mark-strength` is the one thing left to set: the file's white at full
+ * weight on a near-black wash is a glare rather than a watermark.
  */
 .mark {
   position: absolute;
   left: var(--x0);
-  top: calc(var(--tbb-header-h) + (208.36 - var(--head)) * var(--k));
+  top: calc(var(--tbb-header-h) + (207.6 - var(--head)) * var(--k));
   z-index: 0;
-  display: grid;
-  justify-items: start;
   width: calc(586.75 * var(--k));
+  height: calc(322 * var(--k));
+  opacity: var(--mark-strength, 1);
   user-select: none;
 }
 
-/*
- * The word itself, painted rather than placed: the artwork is white, so it is
- * used as a mask over a fill this can choose. The height is the artwork's own
- * proportion at the group's measured width — 1174 x 568 at 586.75 across — so
- * nothing is squashed. The letters are cut by the artwork's own edges, which is
- * what puts the B against the side of the page.
- *
- * The fill is a horizontal ramp, as the file's is, but a good deal stronger
- * and it never reaches nothing: the file works out to just under half strength
- * at the B and to nothing by the E, and on the owner's own reference the whole
- * word reads. So it opens at `--mark-top` and closes at about half of that,
- * which keeps the S and the E on the page instead of fading them out of it.
- *
- * The colour is measured against the wash rather than always white — see
- * `markTone` in the component. White is right on Matcha's green and Milkshake's
- * pink and invisible on Iced Tea's, at any opacity.
- */
-.markWord {
-  width: 100%;
-  aspect-ratio: 1174 / 568;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--mark-color) var(--mark-top), transparent),
-    color-mix(in srgb, var(--mark-color) calc(var(--mark-top) * 0.73), transparent) 55%,
-    color-mix(in srgb, var(--mark-color) calc(var(--mark-top) * 0.47), transparent)
-  );
-  -webkit-mask-image: url("/images/mark-base.webp");
-  mask-image: url("/images/mark-base.webp");
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
+.onDark .mark {
+  --mark-strength: 0.42;
 }
 
-/* Type, not artwork: only "BASE" came as a vector. It is small enough and quiet
-   enough that the page's own face carries it. */
 .markThe {
-  font-family: var(--tbb-font-display);
-  font-size: calc(34 * var(--k));
-  font-weight: 700;
-  line-height: calc(38 * var(--k));
-  letter-spacing: -0.02em;
-  padding-left: 0.02em;
-  color: color-mix(in srgb, var(--mark-color) var(--mark-top), transparent);
+  position: absolute;
+  left: calc(71 * var(--k));
+  top: 0;
+  width: calc(47 * var(--k));
+  height: calc(31 * var(--k));
+  background: url("/images/mark-the.svg") left top / 100% 100% no-repeat;
+}
+
+.markWord {
+  position: absolute;
+  left: 0;
+  top: calc(38.2 * var(--k));
+  width: 100%;
+  height: calc(283.8 * var(--k));
+  background: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
 }
 
 /* The pouch as it stands, not the layer it is drawn in — see `--ink-*` above. */
@@ -736,27 +720,38 @@
     padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
   }
 
-  /* 366 x 200.8 at -3, 116 — the same lockup as the desktop's, at 0.624 of it,
-     which is where the 21.2 over a 23.7 line below comes from. */
+  /*
+   * The phone's export is the whole lockup in one artwork — "the" and the word
+   * together, 360 x 201 — where the desktop's comes as two. So the second span
+   * carries it and the first has nothing left to draw.
+   *
+   * 366 x 200.8 at -3, 116 in the file. The export bakes the design's three
+   * tenths into every path; that is taken out of the asset, because three
+   * tenths of white cannot be seen on the pale half of the range, and the
+   * level is set here instead.
+   */
   .mark {
     left: calc(var(--x0) - 3 * var(--p));
     top: calc(var(--tbb-header-h) + 8 * var(--p));
     width: calc(366 * var(--p));
+    height: calc(204.4 * var(--p));
+    --mark-strength: 0.8;
+  }
+
+  .onDark .mark {
+    --mark-strength: 0.34;
   }
 
   .markThe {
-    font-size: calc(21.2 * var(--p));
-    line-height: calc(23.7 * var(--p));
-    color: color-mix(in srgb, var(--m-mark-color) var(--m-mark-alpha), transparent);
+    display: none;
   }
 
-  /* Flat rather than the desktop's ramp, and white on eleven of the sixteen,
-     its own colour on Chocolate, Jam and Topping. The opacity is the file's own
-     carried a third of the way up — see `--m-mark-alpha` in the component,
-     where the file's own values leave the word all but invisible on a phone. */
   .markWord {
-    background: color-mix(in srgb, var(--m-mark-color) var(--m-mark-alpha), transparent);
+    top: 0;
+    height: 100%;
+    background-image: url("/images/mark-phone.svg");
   }
+
 
   .stage {
     z-index: 1;
