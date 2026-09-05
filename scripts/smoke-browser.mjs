@@ -80,9 +80,9 @@ try {
   observe(page, "desktop");
 
   // The homepage is the redesigned surface: a photographic hero, then the
-  // Bestsellers carousel. Navigation, product grid and the region picker moved
-  // out of the old hover mega-menu into the full-screen menu panel, so they are
-  // asserted there rather than on hover.
+  // Bestsellers carousel. Navigation and the product grid moved out of the old
+  // hover mega-menu into the full-screen menu panel, so they are asserted there
+  // rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.locator("#bestsellers").waitFor();
   // Nothing covers the page any more — the loading screen is gone — so this is
@@ -241,19 +241,12 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
-  // Region picker — ported from production, still display-only.
-  const region = page.locator("header button[aria-label^='Region:']");
-  await region.click();
-  await page.waitForTimeout(200);
+  // The region control the bar used to carry is gone — the owner asked for it
+  // off, and the design's header does not have one. Asserted rather than merely
+  // dropped, so it cannot come back unnoticed.
   check(
-    (await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").count()) === 5,
-    "header: region panel did not list five regions",
-  );
-  await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").nth(2).click();
-  await page.waitForTimeout(200);
-  check(
-    ((await region.textContent()) ?? "").includes("KZ"),
-    "header: region selection did not update",
+    (await page.locator("header button[aria-label^='Region:']").count()) === 0,
+    "header: the region picker is back in the bar",
   );
 
   // Everything the old mega-menu linked to now lives in the menu panel.
@@ -471,8 +464,7 @@ try {
     }
   }
   check(mobileMenuOpen, "mobile: burger menu did not open");
-  // Cabinet is no longer public. The region picker still moves from the bar
-  // into the menu on small screens.
+  // Cabinet is no longer public.
   check(
     (await mobilePage.locator("a[href='/cabinet']").count()) === 0,
     "mobile: cabinet link leaked into public navigation",
@@ -482,8 +474,8 @@ try {
     "mobile: contact link missing from the menu",
   );
   check(
-    (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 1,
-    "mobile: region picker missing from the menu",
+    (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 0,
+    "mobile: the region picker is back in the menu",
   );
   await mobile.close();
   console.log("Browser smoke phase passed: mobile interactions");
@@ -569,6 +561,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, menu, bestsellers, reading rail, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

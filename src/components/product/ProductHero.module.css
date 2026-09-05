@@ -165,14 +165,20 @@
  * nothing is squashed. The letters are cut by the artwork's own edges, which is
  * what puts the B against the side of the page.
  *
- * The fill is the file's: a horizontal ramp whose opaque end sits a full width
- * off to the left, so the word reads at just under half strength at the B and
- * has faded out by the E.
+ * The fill is a horizontal ramp, as the file's is, but a good deal stronger:
+ * the file works out to just under half strength at the B, and on the owner's
+ * own reference the word reads far more plainly than that. It holds most of its
+ * weight across the B and the A before it goes.
  */
 .markWord {
   width: 100%;
   aspect-ratio: 1174 / 568;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.42) 58%,
+    rgba(255, 255, 255, 0)
+  );
   -webkit-mask-image: url("/images/mark-base.webp");
   mask-image: url("/images/mark-base.webp");
   -webkit-mask-size: 100% 100%;
@@ -182,7 +188,12 @@
 }
 
 .onDark .markWord {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.44),
+    rgba(255, 255, 255, 0.2) 58%,
+    rgba(255, 255, 255, 0)
+  );
 }
 
 /*
@@ -194,7 +205,8 @@
 .plain .markWord {
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--tbb-ink) 20%, transparent),
+    color-mix(in srgb, var(--tbb-ink) 26%, transparent),
+    color-mix(in srgb, var(--tbb-ink) 12%, transparent) 58%,
     transparent
   );
 }
@@ -208,15 +220,15 @@
   line-height: calc(38 * var(--k));
   letter-spacing: -0.02em;
   padding-left: 0.02em;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .onDark .markThe {
-  color: rgba(255, 255, 255, 0.34);
+  color: rgba(255, 255, 255, 0.44);
 }
 
 .plain .markThe {
-  color: color-mix(in srgb, var(--tbb-ink) 20%, transparent);
+  color: color-mix(in srgb, var(--tbb-ink) 26%, transparent);
 }
 
 /* The pouch as it stands, not the layer it is drawn in — see `--ink-*` above. */

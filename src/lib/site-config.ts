@@ -17,34 +17,6 @@ export const BRAND_VIDEO = {
   poster: "/video/base-hero-poster.jpg",
 } as const;
 
-/**
- * Regions offered by the header picker, copied from the control on production.
- *
- * Display-only for now — see RegionPicker. The shape matches the future
- * locale/currency model in PROJECT_CONTEXT.md so wiring it up later is a data
- * change rather than a rewrite.
- *
- * No `flag` field, deliberately. Emoji flags are regional-indicator pairs and
- * Windows ships no glyphs for them, so every browser there falls back to
- * drawing the two letters — which is the country code the picker already
- * prints beside it. The result was "AE AE" for every Windows visitor. The code
- * on its own renders the same everywhere.
- */
-export type Region = {
-  short: string;
-  label: string;
-  name: string;
-  currency: string;
-};
-
-export const REGIONS: Region[] = [
-  { short: "AE", label: "UAE (EN)", name: "United Arab Emirates", currency: "AED" },
-  { short: "SA", label: "KSA (EN)", name: "Saudi Arabia", currency: "SAR" },
-  { short: "KZ", label: "KZ (RU)", name: "Kazakhstan", currency: "KZT" },
-  { short: "RU", label: "RU (RU)", name: "Russia", currency: "RUB" },
-  { short: "UK", label: "UK (EN)", name: "United Kingdom", currency: "GBP" },
-];
-
 export const SITE_NAV = [
   { label: "Shop", href: "/catalog" },
   { label: "Private Label", href: "/private-labeling" },

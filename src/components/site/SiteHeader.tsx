@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/components/cart/useCart";
 import { BrandLogo } from "@/components/site/BrandLogo";
-import { RegionPicker } from "@/components/site/RegionPicker";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
@@ -154,12 +153,6 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           <SiteLink href="/contacts" className={styles.cta}>
             Get your best deal now
           </SiteLink>
-
-          {/* Ported from production. Display-only there and here — see
-              RegionPicker. Moves into the menu on small screens. */}
-          <span className={styles.desktopOnly}>
-            <RegionPicker />
-          </span>
 
           <SiteLink
             href={cartHref}

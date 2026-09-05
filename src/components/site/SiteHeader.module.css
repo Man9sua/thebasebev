@@ -271,11 +271,6 @@
     height: 19px;
   }
 
-  /* Region moves into the menu on mobile; the bar keeps cart, search and the
-     burger so the tap targets stay comfortable instead of shrinking. */
-  .desktopOnly {
-    display: none;
-  }
 }
 
 /* Surface adaptation — see the observer in SiteHeader.tsx. Over a section that

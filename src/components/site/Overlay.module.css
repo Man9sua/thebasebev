@@ -241,14 +241,3 @@
   border-radius: 999px;
   flex: none;
 }
-
-/* The bar shows the picker from 1024px up, so the menu only needs it below. */
-.metaRegion {
-  display: none;
-}
-
-@media (max-width: 1023px) {
-  .metaRegion {
-    display: flex;
-  }
-}

@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { COMPANY, FOOTER_LINKS, SITE_NAV } from "@/lib/site-config";
-import { RegionPicker } from "./RegionPicker";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
 
@@ -106,11 +105,6 @@ export function SiteMenu({
             >
               Contact us
             </SiteLink>
-          </div>
-
-          <div className={`${styles.metaGroup} ${styles.metaRegion}`}>
-            <span className="tbb-label">Region</span>
-            <RegionPicker compact />
           </div>
 
           <div className={styles.metaGroup}>
