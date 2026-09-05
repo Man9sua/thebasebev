@@ -27,10 +27,24 @@ import type { Box } from "./product-glass";
  * the design shows, so it is what this reproduces.
  */
 
+/**
+ * Where the file puts the light in that wash, as the ellipse its own gradient
+ * matrix describes: a little right of centre and a little above it, behind the
+ * pouch and the drink, with the band's edges left on the outer colour.
+ *
+ * The matrix is read as it stands — it takes the gradient's unit circle to the
+ * shape — rather than inverted. Inverting it puts the same light left of centre
+ * and half again as wide, which floods most of the band with the near-white
+ * inner colour; the file's own rendering has no such glow.
+ */
+export const WASH_SHAPE = "42.6% 41.5% at 64.1% 41.7%";
+
 export type MobileCard = {
   /** The radial wash behind the pouch: its inner colour, then its outer. */
   washIn?: string;
   washOut?: string;
+  /** Where the file draws that radial, when not the common one. */
+  washShape?: string;
   /** The panel the copy stands on, below the wash. */
   panel: string;
   /** The brand mark on this wash — white on most, its own colour on three. */
@@ -49,9 +63,9 @@ export const productMobile: Record<string, MobileCard> = {
   frappe: { washIn: "#f8f1ea", washOut: "#996538", panel: "#d2b398", mark: { color: "#ffffff", opacity: 0.2 }, glass: { left: 166.15, top: 76.72, width: 118.25, height: 193.09 } },
   "iced-tea": { washIn: "#fff4cf", washOut: "#ead693", panel: "#f9e7ac", mark: { color: "#ffffff", opacity: 0.2 }, glass: { left: 163.62, top: 65.96, width: 125.04, height: 204.18 } },
   cordial: { washIn: "#ffffff", washOut: "#8398b2", panel: "#d0ddef", mark: { color: "#ffffff", opacity: 0.2 }, glass: { left: 166.62, top: 62.96, width: 125.04, height: 204.18 } },
-  topping: { washIn: "#f7f5eb", washOut: "#f7f5eb", panel: "#ece9dd", mark: { color: "#e6e3d8", opacity: 1 }, glass: { left: 162.49, top: 75.23, width: 120.24, height: 177.45 } },
+  topping: { washIn: "#f7f5eb", washOut: "#f7f5eb", washShape: "39.0% 44.9% at 64.1% 41.7%", panel: "#ece9dd", mark: { color: "#e6e3d8", opacity: 1 }, glass: { left: 162.49, top: 75.23, width: 120.24, height: 177.45 } },
   matcha: { washIn: "#9edbac", washOut: "#52a866", panel: "#aae2b7", mark: { color: "#ffffff", opacity: 0.1 }, glass: { left: 159.62, top: 69.47, width: 128.4, height: 209.67 } },
-  chocolate: { washIn: "#9f786c", washOut: "#342b28", panel: "#8c706a", mark: { color: "#d1b3b0", opacity: 0.1 }, glass: { left: 160.62, top: 74.47, width: 128.4, height: 209.67 } },
+  chocolate: { washIn: "#9f786c", washOut: "#342b28", washShape: "29.0% 34.1% at 62.7% 50.8%", panel: "#8c706a", mark: { color: "#d1b3b0", opacity: 0.1 }, glass: { left: 160.62, top: 74.47, width: 128.4, height: 209.67 } },
   "sugar-syrup": { washIn: "#fde1c7", washOut: "rgba(246, 165, 161, 0.2)", panel: "#f9d9d1", mark: { color: "#ffffff", opacity: 0.4 }, glass: { left: 157.62, top: 74.47, width: 128.4, height: 209.67 } },
   garnish: { panel: "#dfceb4", mark: { color: "#ffffff", opacity: 0.2 } },
   vending: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#c9b7a2", mark: { color: "#ffffff", opacity: 0.1 }, glass: { left: 163.62, top: 71.77, width: 124.55, height: 203.37 }, shade: "#8c735e" },

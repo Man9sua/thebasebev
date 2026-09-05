@@ -1,10 +1,11 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
-import { packBox, productGlass } from "@/data/product-glass";
+import { productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
+import { productDesktop, WASH_SHAPE } from "@/data/product-desktop";
 import { productMargins } from "@/data/product-margins";
-import { productMobile } from "@/data/product-mobile";
+import { productMobile, WASH_SHAPE as PHONE_WASH_SHAPE } from "@/data/product-mobile";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
 import { isDark } from "@/lib/contrast";
@@ -22,18 +23,13 @@ import styles from "./ProductHero.module.css";
  * never saw the name or a way to order. `site-pages.ts` drops that block; this
  * renders the same copy as ordinary markup.
  *
- * Laid out to the owner's Figma frame, measured layer by layer — the numbers
- * and the frame they are read against are in the stylesheet. The pouch stands
- * on the left over the brand mark with the two certification seals under it,
- * and the words are a column on the right that closes on the margin figures and
- * the two calls to action. Nothing else is in that frame, which is why the page
- * no longer carries a breadcrumb or a price here; `/catalog` still holds both.
- *
- * The panel behind the pouch is the wash of that product's own key visual,
- * sampled at the head and at the foot by `scripts/build-product-heroes.mjs`, so
- * the pack stands on its own artwork's colour rather than on a flat tint. Five
- * products have no key visual yet and fall back to a wash mixed from their
- * registry colour.
+ * Laid out to the owner's two Figma frames, measured layer by layer — the
+ * numbers and the frames they are read against are in the stylesheet, and the
+ * per-product half of them is in `data/product-desktop.ts` and
+ * `data/product-mobile.ts`. The pouch stands on the left over the brand mark
+ * with the two certification seals at its foot, the words are a column on the
+ * right closing on the margin figures and the two calls to action, and a panel
+ * of the product's own colour carries the four things the pack is bought for.
  *
  * The copy is the page's own, lifted out of the export by
  * `scripts/build-product-details.mjs` rather than rewritten — these pages carry
@@ -50,7 +46,7 @@ const heroes = productHeroes as Record<string, { image: string; band: string; ba
  * They used to be drawn here: no certifier's mark shipped with the project and
  * reproducing one from a screenshot is not ours to do. Both now come from the
  * design's own exports — `XXL_height 1.svg` is the HALAL mark and `Mask group
- * .svg` the HACCP one, and each carries a raster inside rather than paths, so
+ * .svg` the HACCP one — and each carries a raster inside rather than paths, so
  * the picture is lifted out and kept as a picture.
  *
  * The proportions are the file's: HALAL is 840 x 773, which is 1.087, against
@@ -75,22 +71,101 @@ function Seal({ box, mark }: { box: "small" | "wide"; mark: keyof typeof SEALS }
   );
 }
 
+/*
+ * The marks on the four discs.
+ *
+ * The design draws one per feature and they are vector layers rather than
+ * exported artwork — a path inside a `.fig` is an encoded blob this project
+ * cannot turn back into an SVG — so these are the same ideas drawn in the
+ * site's own line. Matched on the label because the four are not the same four
+ * on every product: twenty-one distinct headings across the sixteen pages, of
+ * which these cover all but a handful, and the rest take the last one.
+ */
+const MARKS = {
+  pack: (
+    <path
+      d="M4 8.5 12 4.5l8 4v7L12 19.5 4 15.5v-7Zm0 0 8 4m0 0 8-4m-8 4v7"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+  ),
+  chill: (
+    <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <path d="M12 3.5v17M4.6 7.75l14.8 8.5M19.4 7.75l-14.8 8.5" />
+      <path d="M3.5 3.5l17 17" />
+    </g>
+  ),
+  quick: (
+    <path
+      d="M13.2 3.5 5.5 13.6h5.1l-.8 6.9 7.7-10.1h-5.1l.8-6.9Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+  ),
+  shelf: (
+    <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <circle cx="12" cy="12" r="8.2" />
+      <path d="M12 7v5.4l3.6 2.2" />
+    </g>
+  ),
+  quality: (
+    <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M12 3.4 19 6.3v5.2c0 4-2.9 7.5-7 9.1-4.1-1.6-7-5.1-7-9.1V6.3l7-2.9Z" />
+      <path d="m8.9 11.9 2.2 2.3 4-4.4" strokeLinecap="round" />
+    </g>
+  ),
+} as const;
+
+/** The mark for a heading, by what the heading is about. */
+function featureMark(label: string): ReactNode {
+  const text = label.toLowerCase();
+  if (/pack|space|leak|portion|dosage/.test(text)) return MARKS.pack;
+  if (/refriger|freez|ice cream|cold|chill/.test(text)) return MARKS.chill;
+  if (/quick|fast|easy|hassle|ready|convenien|prepare/.test(text)) return MARKS.quick;
+  if (/shelf|month|storage|store/.test(text)) return MARKS.shelf;
+  return MARKS.quality;
+}
+
 export function ProductHero({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   const banner = heroes[product.slug];
   const margin = productMargins[product.slug];
   const glass = productGlass[product.slug];
-  // The five products with no banner stand on the wash their own frame carries.
-  const wash = banner ? undefined : productWashes[product.slug];
+  const card = productDesktop[product.slug];
+  // The three products with no wash in the design file stand on the fill their
+  // own frame carries, or on their key visual's ramp.
+  const wash = productWashes[product.slug];
   // The registry's description is the fallback for the three pages whose own
   // copy does not open by naming the product, which is how the extractor
   // recognises it.
   const paragraphs = detail?.description.length ? detail.description : [product.description];
+  const features = (detail?.features ?? []).slice(0, 4);
 
-  // A banner sets the wash, and where there is none the frame's own fill does.
-  // Ink is measured off whichever it is rather than assumed — Tea's wash is
-  // near-black, Jam's is burgundy, and Vending's outer stop is darker still.
-  const onDark = isDark(banner?.band ?? wash?.to ?? "#ffffff");
+  // The wash the desktop actually paints, in the order of what the product has:
+  // the design file's own radial, then the frame fill, then the key visual.
+  const washFrom = card?.washIn ?? wash?.from ?? banner?.band;
+  const washTo = card?.washOut ?? wash?.to ?? banner?.bandFoot;
+  // Ink is measured off the wash rather than assumed — Tea's is near-black,
+  // Jam's is burgundy, and Vending's outer stop is darker still.
+  const onDark = isDark(washTo ?? "#ffffff");
+  // The three with no radial of their own also have the palest washes, and a
+  // white mark on those is nothing at all — but not Tea, whose fallback ramp is
+  // near-black and already takes the light ink above.
+  const plain = !card?.washIn && !onDark;
+  // The panel under the hero, and the phone's tiles, take the same colour. Six
+  // products have none in the file, and there the wash's own outer colour would
+  // paint a panel that cannot be seen against the wash — so those take a shade
+  // of it instead.
+  const tile =
+    card?.panel ??
+    (washTo ? `color-mix(in srgb, ${washTo} 82%, #000000)` : product.backgroundColor);
+  // Measured on the colour the mix is made from: `isDark` reads a hex.
+  const tileDark = isDark(card?.panel ?? washTo ?? product.backgroundColor);
+
   // The design's h1 is the product's name, and that is what the page now leads
   // with. The sentence it used to lead with is production's own h1 and what
   // these pages rank on, so it is kept directly under as an h2 rather than
@@ -98,7 +173,6 @@ export function ProductHero({ product }: { product: Product }) {
   const title = product.hyphenatedName ?? product.name;
   const headline = detail?.h1 ?? product.headline;
   const showHeadline = headline !== product.name;
-  const pack = packBox(product.slug);
 
   /*
    * The phone's own card — a different wash, a panel under the copy and its own
@@ -112,7 +186,7 @@ export function ProductHero({ product }: { product: Product }) {
   const phone = productMobile[product.slug];
   const phoneWash = phone?.washIn
     ? { from: phone.washIn, to: phone.washOut ?? phone.washIn }
-    : productWashes[product.slug];
+    : wash;
   // Ink on the phone is measured off the panel rather than off the wash: the
   // wash carries no words there, and Chocolate's panel is dark where its own
   // desktop band is darker still.
@@ -120,23 +194,31 @@ export function ProductHero({ product }: { product: Product }) {
 
   const vars: CSSProperties & Record<string, string | number> = {
     "--tile": product.backgroundColor,
-    "--pack-left": pack.left,
-    "--pack-top": pack.top,
-    "--pack-width": pack.width,
-    "--pack-height": pack.height,
+    "--tile-panel": tile,
+    "--panel-ink": tileDark ? "var(--tbb-white)" : "var(--tbb-ink)",
+    "--panel-ink-soft": tileDark ? "rgba(255, 255, 255, 0.76)" : "var(--tbb-ink-soft)",
+    // Named for the desktop rather than set as `--pack-*` directly: an inline
+    // style outranks every rule in the stylesheet, and the phone has a pouch
+    // layer of its own to put there.
+    "--d-pack-left": card?.pouch.left ?? 106.85,
+    "--d-pack-top": card?.pouch.top ?? 137.38,
+    "--d-pack-width": card?.pouch.width ?? 385.73,
+    "--d-pack-height": card?.pouch.height ?? 561.57,
+    "--wash-shape": card?.washShape ?? WASH_SHAPE,
   };
   if (productShadows[product.slug]) vars["--shade"] = productShadows[product.slug];
+  if (washFrom) vars["--wash-from"] = washFrom;
+  if (washTo) vars["--wash-to"] = washTo;
+  if (card?.edge) vars["--edge"] = card.edge;
   if (banner) {
     vars["--band"] = banner.band;
     vars["--band-foot"] = banner.bandFoot;
-  } else if (wash) {
-    vars["--wash-from"] = wash.from;
-    vars["--wash-to"] = wash.to;
   }
   if (phone) {
     vars["--m-panel"] = phone.panel;
     vars["--m-mark-color"] = phone.mark.color;
     vars["--m-mark-alpha"] = `${phone.mark.opacity * 100}%`;
+    vars["--m-wash-shape"] = phone.washShape ?? PHONE_WASH_SHAPE;
     if (phoneWash) {
       vars["--m-wash-from"] = phoneWash.from;
       vars["--m-wash-to"] = phoneWash.to;
@@ -144,7 +226,7 @@ export function ProductHero({ product }: { product: Product }) {
     if (phone.shade) vars["--m-shade"] = phone.shade;
     if (phone.glass) {
       vars["--m-glass-left"] = phone.glass.left;
-      vars["--m-glass-top"] = phone.glass.top;
+      vars["--m-glass-top"] = phone.glass.top + 108;
       vars["--m-glass-width"] = phone.glass.width;
       vars["--m-glass-height"] = phone.glass.height;
     }
@@ -155,7 +237,7 @@ export function ProductHero({ product }: { product: Product }) {
       className={[
         styles.hero,
         onDark ? styles.onDark : "",
-        banner || wash ? "" : styles.plain,
+        plain ? styles.plain : "",
         phoneDark ? styles.panelDark : "",
       ]
         .filter(Boolean)
@@ -171,12 +253,13 @@ export function ProductHero({ product }: { product: Product }) {
         are the same edge and nothing moves.
 
         First of it, the brand mark at display size, standing behind everything
-        the way it does on every one of the client's key visuals. "BASE" is the owner's
-        own vector rather than type — it is a condensed face this project does
-        not carry, and drawing it with the page's own would be a different
+        the way it does on every one of the client's key visuals. "BASE" is the
+        owner's own vector rather than type — it is a condensed face this project
+        does not carry, and drawing it with the page's own would be a different
         word in a different voice. It is painted through a mask rather than
-        placed as a picture so the wash can still be chosen per product: white
-        over a key visual, a grey ghost over the pale fallback.
+        placed as a picture so the fill can still be chosen per product: the
+        file's own white ramp over a key visual, a grey ghost over the pale
+        fallback.
       */}
       <span className={styles.mark} aria-hidden="true">
         <span className={styles.markThe}>the</span>
@@ -206,10 +289,10 @@ export function ProductHero({ product }: { product: Product }) {
 
         {/*
           The drink, in front of the pouch. It is a layer of its own in the
-          design with a box of its own, given here as a share of the pack's
-          group rather than of the frame — that is the one reading that holds
-          on a phone too, where the group shrinks and the frame is gone.
-          Decoration beside the pack shot, hence no alt.
+          design with a box of its own, given here as a share of the standing
+          pouch rather than of the frame — that is the one reading that holds
+          on a phone too, where the frame is gone. Decoration beside the pack
+          shot, hence no alt.
         */}
         {glass?.image && (
           <div
@@ -316,6 +399,30 @@ export function ProductHero({ product }: { product: Product }) {
             </a>
           </Reveal>
         </div>
+
+        {/*
+          The four things the pack is bought for, on a panel of the product's
+          own colour — a strip across the foot of the hero on the desktop, two
+          tiles by two inside the copy's panel on a phone. The same four are
+          also a pane of the specification tabs below; this is the design's
+          summary of them and it closes the hero, which is where the file puts
+          it on both frames.
+        */}
+        {features.length > 0 && (
+          <Reveal className={styles.features} delay={300} distance={16}>
+            {features.map((feature) => (
+              <div key={feature.label} className={styles.feature}>
+                <span className={styles.featureMark} aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="presentation">
+                    {featureMark(feature.label)}
+                  </svg>
+                </span>
+                <p className={styles.featureLabel}>{feature.label}:</p>
+                <p className={styles.featureValue}>{feature.value}</p>
+              </div>
+            ))}
+          </Reveal>
+        )}
       </div>
     </section>
   );
