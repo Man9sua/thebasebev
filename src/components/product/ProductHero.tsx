@@ -8,7 +8,7 @@ import { productMargins } from "@/data/product-margins";
 import { productMobile, WASH_SHAPE as PHONE_WASH_SHAPE } from "@/data/product-mobile";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
-import { isDark } from "@/lib/contrast";
+import { isDark, luminance } from "@/lib/contrast";
 import { popupAnchorProps } from "@/lib/legacy-popups";
 import { productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
@@ -120,6 +120,48 @@ const MARKS = {
   ),
 } as const;
 
+/**
+ * The brand mark's paint on a given wash.
+ *
+ * The design draws the word in white, and on the washes it was drawn against —
+ * Matcha's green, Frappe's brown, Milkshake's pink — white is what reads. On
+ * the pale half of the range it is not: Iced Tea's wash closes on #ead693 and
+ * opens near white, and white letters on that are invisible at any opacity,
+ * which is not something more alpha can fix. So where white cannot register the
+ * mark takes the wash's own colour darkened instead, which is the device the
+ * file itself uses on Topping — #e6e3d8 on a #f7f5eb wash — and on Jam, where
+ * the mark is the product's near-black.
+ *
+ * `top` is the strength the word opens at. A darkened tone carries at about
+ * half what white needs, so it is not the same number.
+ */
+const MARK_CUT = 0.55;
+
+/** A colour as a hex, flattening the three washes the file gives as rgba. */
+function flatten(colour: string | undefined): string | undefined {
+  if (!colour) return undefined;
+  if (/^#[0-9a-f]{6}$/i.test(colour)) return colour;
+  const parts = /^rgba?\(\s*(\d+)\D+(\d+)\D+(\d+)(?:\D+([\d.]+))?\s*\)$/i.exec(colour);
+  if (!parts) return undefined;
+  const alpha = parts[4] ? Number(parts[4]) : 1;
+  // Over the page, which is white wherever one of these is used.
+  const over = (value: string) =>
+    Math.round(Number(value) * alpha + 255 * (1 - alpha))
+      .toString(16)
+      .padStart(2, "0");
+  return `#${over(parts[1])}${over(parts[2])}${over(parts[3])}`;
+}
+
+function markTone(wash: string | undefined, preferred: string): { color: string; top: number } {
+  const solid = flatten(wash);
+  // Three products carry a colour of their own in the file rather than white,
+  // and it was chosen against their wash — leave it alone.
+  if (preferred.toLowerCase() !== "#ffffff" || !solid) return { color: preferred, top: 0.9 };
+  return luminance(solid) < MARK_CUT
+    ? { color: "#ffffff", top: 0.9 }
+    : { color: `color-mix(in srgb, ${solid} 52%, #000000)`, top: 0.46 };
+}
+
 /** The mark for a heading, by what the heading is about. */
 function featureMark(label: string): ReactNode {
   const text = label.toLowerCase();
@@ -197,7 +239,11 @@ export function ProductHero({ product }: { product: Product }) {
   // desktop band is darker still.
   const phoneDark = phone ? isDark(phone.panel) : false;
 
+  const mark = markTone(washTo, "#ffffff");
+
   const vars: CSSProperties & Record<string, string | number> = {
+    "--mark-color": mark.color,
+    "--mark-top": `${mark.top * 100}%`,
     "--tile": product.backgroundColor,
     "--tile-panel": tile,
     "--panel-ink": tileDark ? "var(--tbb-white)" : "var(--tbb-ink)",
@@ -221,13 +267,17 @@ export function ProductHero({ product }: { product: Product }) {
   }
   if (phone) {
     vars["--m-panel"] = phone.panel;
-    vars["--m-mark-color"] = phone.mark.color;
-    // The file's own opacities — a tenth on Matcha, three on Cream Latte —
-    // leave the word a ghost at this size, where the design's own rendering of
-    // the same card has it plainly readable. Carried up by a third and held
-    // under nine tenths, which keeps the three products whose mark is its own
-    // dark colour rather than white from turning into a blot.
-    vars["--m-mark-alpha"] = `${Math.min(0.85, phone.mark.opacity + 0.32) * 100}%`;
+    // The phone's wash is its own, so the tone is measured against that one.
+    // Where the file names a colour rather than white it keeps its own opacity
+    // too; where it says white, the file's values — a tenth on Matcha, three on
+    // Cream Latte — leave the word a ghost at this size and the tone above sets
+    // the strength instead.
+    const phoneMark = markTone(phoneWash?.to, phone.mark.color);
+    vars["--m-mark-color"] = phoneMark.color;
+    vars["--m-mark-alpha"] =
+      phoneMark.color === phone.mark.color && phone.mark.color.toLowerCase() !== "#ffffff"
+        ? `${Math.min(0.85, phone.mark.opacity + 0.32) * 100}%`
+        : `${phoneMark.top * 0.72 * 100}%`;
     vars["--m-wash-shape"] = phone.washShape ?? PHONE_WASH_SHAPE;
     if (phoneWash) {
       vars["--m-wash-from"] = phoneWash.from;
