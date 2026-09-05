@@ -222,7 +222,12 @@ export function ProductHero({ product }: { product: Product }) {
   if (phone) {
     vars["--m-panel"] = phone.panel;
     vars["--m-mark-color"] = phone.mark.color;
-    vars["--m-mark-alpha"] = `${phone.mark.opacity * 100}%`;
+    // The file's own opacities — a tenth on Matcha, three on Cream Latte —
+    // leave the word a ghost at this size, where the design's own rendering of
+    // the same card has it plainly readable. Carried up by a third and held
+    // under nine tenths, which keeps the three products whose mark is its own
+    // dark colour rather than white from turning into a blot.
+    vars["--m-mark-alpha"] = `${Math.min(0.85, phone.mark.opacity + 0.32) * 100}%`;
     vars["--m-wash-shape"] = phone.washShape ?? PHONE_WASH_SHAPE;
     if (phoneWash) {
       vars["--m-wash-from"] = phoneWash.from;

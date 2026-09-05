@@ -165,10 +165,11 @@
  * nothing is squashed. The letters are cut by the artwork's own edges, which is
  * what puts the B against the side of the page.
  *
- * The fill is a horizontal ramp, as the file's is, but a good deal stronger:
- * the file works out to just under half strength at the B, and on the owner's
- * own reference the word reads far more plainly than that. It holds most of its
- * weight across the B and the A before it goes.
+ * The fill is a horizontal ramp, as the file's is, but a good deal stronger
+ * and it never reaches nothing: the file works out to just under half strength
+ * at the B and to nothing by the E, and on the owner's own reference the whole
+ * word reads. So it opens at nine tenths and closes at four, which keeps the S
+ * and the E on the page instead of fading them out of it.
  */
 .markWord {
   width: 100%;
@@ -176,8 +177,8 @@
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.42) 58%,
-    rgba(255, 255, 255, 0)
+    rgba(255, 255, 255, 0.66) 55%,
+    rgba(255, 255, 255, 0.42)
   );
   -webkit-mask-image: url("/images/mark-base.webp");
   mask-image: url("/images/mark-base.webp");
@@ -191,8 +192,8 @@
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.44),
-    rgba(255, 255, 255, 0.2) 58%,
-    rgba(255, 255, 255, 0)
+    rgba(255, 255, 255, 0.32) 55%,
+    rgba(255, 255, 255, 0.2)
   );
 }
 
@@ -206,8 +207,8 @@
   background: linear-gradient(
     90deg,
     color-mix(in srgb, var(--tbb-ink) 26%, transparent),
-    color-mix(in srgb, var(--tbb-ink) 12%, transparent) 58%,
-    transparent
+    color-mix(in srgb, var(--tbb-ink) 19%, transparent) 55%,
+    color-mix(in srgb, var(--tbb-ink) 12%, transparent)
   );
 }
 
@@ -780,8 +781,9 @@
   }
 
   /* Flat rather than the desktop's ramp, and white on eleven of the sixteen,
-     its own colour on Chocolate, Jam and Topping, at an opacity the file sets
-     per product. */
+     its own colour on Chocolate, Jam and Topping. The opacity is the file's own
+     carried a third of the way up — see `--m-mark-alpha` in the component,
+     where the file's own values leave the word all but invisible on a phone. */
   .markWord,
   .onDark .markWord,
   .plain .markWord {
