@@ -42,18 +42,21 @@
   --ink: var(--tbb-ink);
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);
-  /* One design pixel: a 1200-wide frame in a 100vw section, held at the 1440
-     frame once the window is wider than that. */
-  --u: min(0.0833333vw, 1.2px);
+  /*
+   * One design pixel: the 1200-wide frame taken across the whole window.
+   *
+   * It used to stop growing at 1.2px, so past 1440 the card sat in the middle
+   * of the window with a band of empty wash either side and everything on it
+   * measured from an edge 230 or more in from the page's. The design is one
+   * frame that fills its page, and this is that frame at any width — below 1440
+   * nothing has moved, above it the card keeps its proportions instead of
+   * standing still.
+   */
+  --u: 0.0833333vw;
   /* The frame's own pixel and left edge, so the product below can be written
-     once for both frames.
-     The pouch, the mark and the seals used to hang off the section instead, so
-     that on a wide monitor the mark ran off the side of the page. It also left
-     them at the page's edge while the copy and the features panel stayed with
-     the frame in the middle, which past 1440 read as a panel that did not go
-     the whole way. Everything is on the frame now. */
+     once for both frames. */
   --k: var(--u);
-  --x0: max(0px, calc((100% - 90rem) / 2));
+  --x0: 0px;
   /* Where the design's header ends, and so where the file's `top` values stop
      being the page's and start being this section's. The header instance
      measures 1200 x 103.67. */
@@ -127,8 +130,7 @@
 
 .frame {
   position: relative;
-  width: min(100%, 90rem);
-  margin-inline: auto;
+  width: 100%;
   padding-top: var(--tbb-header-h);
   display: grid;
   align-content: start;
@@ -742,7 +744,6 @@
   }
 
   .frame {
-    width: 100%;
     padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
   }
 
