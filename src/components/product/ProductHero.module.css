@@ -46,11 +46,14 @@
      frame once the window is wider than that. */
   --u: min(0.0833333vw, 1.2px);
   /* The frame's own pixel and left edge, so the product below can be written
-     once for both frames. The desktop keeps the section's edge: on a monitor
-     wider than the frame the mark should still run off the side of the page the
-     way the design draws it, rather than starting out in the middle. */
+     once for both frames.
+     The pouch, the mark and the seals used to hang off the section instead, so
+     that on a wide monitor the mark ran off the side of the page. It also left
+     them at the page's edge while the copy and the features panel stayed with
+     the frame in the middle, which past 1440 read as a panel that did not go
+     the whole way. Everything is on the frame now. */
   --k: var(--u);
-  --x0: 0px;
+  --x0: max(0px, calc((100% - 90rem) / 2));
   /* Where the design's header ends, and so where the file's `top` values stop
      being the page's and start being this section's. The header instance
      measures 1200 x 103.67. */
@@ -103,8 +106,15 @@
       var(--wash-to, var(--band-foot, var(--tbb-paper)))
     );
   background-repeat: no-repeat;
-  background-size: 100% calc(821.75 * var(--u));
-  background-position: 0 var(--tbb-header-h);
+  /* The tint takes the whole section rather than the band's own 821.75: the
+     wash's outer colour carries on below that, and a tint that stopped there
+     would draw a line across the card behind the features panel. */
+  background-size:
+    100% 100%,
+    100% calc(821.75 * var(--u));
+  background-position:
+    0 0,
+    0 var(--tbb-header-h);
 }
 
 /* Tea's wash is near-black and Jam's is burgundy, so the ink is measured from
@@ -157,7 +167,7 @@
 .markWord {
   width: 100%;
   aspect-ratio: 1174 / 568;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0));
   -webkit-mask-image: url("/images/mark-base.webp");
   mask-image: url("/images/mark-base.webp");
   -webkit-mask-size: 100% 100%;
@@ -167,7 +177,7 @@
 }
 
 .onDark .markWord {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0));
 }
 
 /*
@@ -179,7 +189,7 @@
 .plain .markWord {
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--tbb-ink) 14%, transparent),
+    color-mix(in srgb, var(--tbb-ink) 20%, transparent),
     transparent
   );
 }
@@ -193,15 +203,15 @@
   line-height: calc(38 * var(--k));
   letter-spacing: -0.02em;
   padding-left: 0.02em;
-  color: rgba(255, 255, 255, 0.48);
+  color: rgba(255, 255, 255, 0.68);
 }
 
 .onDark .markThe {
-  color: rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.34);
 }
 
 .plain .markThe {
-  color: color-mix(in srgb, var(--tbb-ink) 14%, transparent);
+  color: color-mix(in srgb, var(--tbb-ink) 20%, transparent);
 }
 
 /* The pouch as it stands, not the layer it is drawn in — see `--ink-*` above. */
@@ -616,7 +626,7 @@
   column-gap: calc(35 * var(--k));
   width: calc(1112 * var(--k));
   margin: 0 0 calc(48 * var(--k)) calc(44.17 * var(--k));
-  padding: calc(53.8 * var(--k)) calc(41.3 * var(--k)) calc(46 * var(--k));
+  padding: calc(53.8 * var(--k)) calc(41.3 * var(--k)) calc(28 * var(--k));
   border-radius: calc(20 * var(--k));
   background: var(--tile-panel);
 }
