@@ -143,7 +143,12 @@ export function ProductHero({ product }: { product: Product }) {
   // copy does not open by naming the product, which is how the extractor
   // recognises it.
   const paragraphs = detail?.description.length ? detail.description : [product.description];
-  const features = (detail?.features ?? []).slice(0, 4);
+  // Reversed: the export lists these ending on the packaging line and the
+  // design opens on it, and the four run the opposite way on every one of the
+  // sixteen pages — Long Shelf Life is the first here and the last there. Read
+  // in the design's order the row is a story, from what the pack saves in the
+  // store to how long it keeps.
+  const features = (detail?.features ?? []).slice(0, 4).reverse();
 
   // The wash the desktop actually paints, in the order of what the product has:
   // the design file's own radial, then the frame fill, then the key visual.
