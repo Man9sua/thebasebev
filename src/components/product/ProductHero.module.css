@@ -45,14 +45,15 @@
   /*
    * One design pixel, and it stops growing at 1.2px.
    *
-   * Up to 1440 the frame is reproduced at its own size and shrinks with the
-   * window. Past that the card does not zoom — a 1200 frame blown up to 1900 is
-   * a 76px name over a 25px paragraph — it spreads instead: the pouch, the mark
-   * and the seals keep the page's left edge, the copy keeps its own margin from
-   * the right, and the panel runs between them. Everything is the size the
-   * design draws it at; only the space between the two halves grows.
+   * Below 1200 the frame shrinks with the window. At and above it the card does
+   * not zoom — a 1200 frame blown up to 1900 is a 76px name over a 25px
+   * paragraph — it spreads instead: the pouch, the mark and the seals keep the
+   * page's left edge, the copy keeps its own margin from the right, and the
+   * panel runs between them. Everything is then the size the design draws it
+   * at, which is also the size the specification tabs under this section are
+   * set in; only the space between the two halves grows.
    */
-  --u: min(0.0833333vw, 1.2px);
+  --u: min(0.0833333vw, 1px);
   /* The frame's own pixel and left edge, so the product below can be written
      once for both frames. */
   --k: var(--u);
