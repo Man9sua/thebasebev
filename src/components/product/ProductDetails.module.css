@@ -100,38 +100,6 @@
   color: var(--tbb-ink);
 }
 
-/* ---- reasons to buy ---- */
-
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: clamp(1.1rem, 2.2vw, 2rem);
-  margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
-}
-
-.feature {
-  display: grid;
-  align-content: start;
-  row-gap: 0.35rem;
-  padding-top: 0.9rem;
-  border-top: 2px solid var(--tbb-ink);
-}
-
-.featureLabel {
-  font-family: var(--tbb-font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--tbb-ink);
-}
-
-.featureValue {
-  margin: 0;
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  color: var(--tbb-muted);
-}
-
 /* ---- the comparative table ---- */
 
 .tableWrap {
@@ -372,8 +340,60 @@
 }
 
 @media (max-width: 899px) {
+  /*
+   * The phone's own panel, out of `Untitled.site`: the four figures stand on
+   * one white card with twenty off its corners, two to a row, each a heading
+   * over a value in an outlined pill — 26 in from the card's edge, the second
+   * column opening at 193 of the 360 the card is drawn at.
+   *
+   * The hairlines and the tinted cells the desktop uses are what the four
+   * figures need at that width; at this one they turn a short list into a
+   * grid of boxes, which is not what the file draws.
+   */
   .specs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem;
+    padding: 1.75rem 1.625rem;
+    background: var(--tbb-white);
+    border-radius: 1.25rem;
+    /* The file stands this card on the page's own off-white; ours is a shade
+       closer to white than that, so the card is lifted rather than outlined. */
+    box-shadow: 0 10px 30px rgba(26, 19, 17, 0.06);
+  }
+
+  .spec {
+    row-gap: 0.5rem;
+    padding: 0;
+    background: none;
+  }
+
+  /* The file has no icons on this panel — the headings carry it. Written
+     against the cell as well, because `.tbb img` in the global sheet outranks
+     a single class. */
+  .spec .specIcon {
+    display: none;
+  }
+
+  .specLabel {
+    font-family: var(--tbb-font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--tbb-ink);
+  }
+
+  .specValue {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.375rem;
+    padding: 0 0.5rem;
+    border: 1px solid var(--tbb-line);
+    border-radius: 0.3125rem;
+    font-family: var(--tbb-font-sans);
+    font-size: 0.625rem;
+    font-weight: 400;
+    line-height: 1.5;
   }
 
   .flavorLayout {
@@ -385,8 +405,4 @@
   }
 }
 
-@media (max-width: 599px) {
-  .specs {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+

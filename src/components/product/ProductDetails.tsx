@@ -80,7 +80,7 @@ export function ProductDetails({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   if (!detail) return null;
 
-  const { specs, features, calculation, flavors, usage, faq } = detail;
+  const { specs, calculation, flavors, usage, faq } = detail;
 
   /*
    * The flavour shots this product has, keyed by the flavour's own name — see
@@ -106,7 +106,7 @@ export function ProductDetails({ product }: { product: Product }) {
   // than keep a tab that opens nothing.
   const panes: ProductPane[] = [];
 
-  if (specs.length > 0 || features.length > 0) {
+  if (specs.length > 0) {
     panes.push({
       id: SECTION_IDS.specifications,
       label: "Specifications",
@@ -139,24 +139,9 @@ export function ProductDetails({ product }: { product: Product }) {
             </Reveal>
           )}
 
-          {/* The selling points used to sit in the hero, under the buttons,
-              where they competed with the one thing the hero is for. */}
-          {features.length > 0 && (
-            <dl className={styles.features}>
-              {features.map((feature, index) => (
-                <Reveal
-                  key={feature.label}
-                  as="div"
-                  className={styles.feature}
-                  delay={index * 70}
-                  distance={18}
-                >
-                  <dt className={styles.featureLabel}>{feature.label}</dt>
-                  <dd className={styles.featureValue}>{feature.value}</dd>
-                </Reveal>
-              ))}
-            </dl>
-          )}
+          {/* The four selling points are not here any more. They are the row
+              the design closes the hero with, and printing them twice on one
+              page said the second set was something new. */}
         </div>
       ),
     });
