@@ -45,19 +45,20 @@
   /*
    * One design pixel, and it stops growing at 1.2px.
    *
-   * Below 1200 the frame shrinks with the window. At and above it the card does
-   * not zoom — a 1200 frame blown up to 1900 is a 76px name over a 25px
-   * paragraph — it spreads instead: the pouch, the mark and the seals keep the
-   * page's left edge, the copy keeps its own margin from the right, and the
-   * panel runs between them. Everything is then the size the design draws it
-   * at, which is also the size the specification tabs under this section are
-   * set in; only the space between the two halves grows.
+   * Below 1200 the frame shrinks with the window. At and above it the card is
+   * the design at its own size — which is also the size the specification tabs
+   * under this section are set in — and it stands in the middle of the window
+   * with the wash running out to both edges behind it. It is not stretched to
+   * the window and not zoomed to it: a 1200 frame blown up to 1900 is a 76px
+   * name over a 25px paragraph, and one spread to the edges leaves the pouch
+   * and the words at opposite ends of an empty band.
    */
   --u: min(0.0833333vw, 1px);
   /* The frame's own pixel and left edge, so the product below can be written
-     once for both frames. */
+     once for both frames. Everything on the card is placed from `--x0`, so the
+     card moves as one. */
   --k: var(--u);
-  --x0: 0px;
+  --x0: max(0px, calc((100% - 1200 * var(--u)) / 2));
   /* Where the design's header ends, and so where the file's `top` values stop
      being the page's and start being this section's. The header instance
      measures 1200 x 103.67. */
@@ -131,7 +132,8 @@
 
 .frame {
   position: relative;
-  width: 100%;
+  width: calc(1200 * var(--u));
+  margin-inline: auto;
   padding-top: var(--tbb-header-h);
   display: grid;
   align-content: start;
@@ -376,11 +378,7 @@
   z-index: 1;
   display: grid;
   justify-items: start;
-  /* 138.53 is what the design leaves to the right of this column — 1200 less
-     its 642.32 and its 419.15 — and holding that rather than the left offset is
-     what keeps the column against the words' own edge on a wide window. */
-  margin-left: auto;
-  margin-right: calc(138.53 * var(--u));
+  margin-left: calc(642.32 * var(--u));
   padding-top: calc((171.8 - var(--head)) * var(--u));
   width: calc(419.15 * var(--u));
   min-height: calc((790.13 - var(--head)) * var(--u));
@@ -631,9 +629,8 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: calc(35 * var(--k));
-  /* 44.17 either side, which is the design's own inset at 1200 and the panel
-     running the width of the window above it. */
-  margin: 0 calc(44.17 * var(--k)) calc(48 * var(--k));
+  width: calc(1112 * var(--k));
+  margin: 0 0 calc(48 * var(--k)) calc(44.17 * var(--k));
   padding: calc(53.8 * var(--k)) calc(41.3 * var(--k)) calc(28 * var(--k));
   border-radius: calc(20 * var(--k));
   background: var(--tile-panel);
@@ -750,6 +747,7 @@
   }
 
   .frame {
+    width: 100%;
     padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
   }
 
