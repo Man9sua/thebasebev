@@ -396,6 +396,83 @@
     line-height: 1.5;
   }
 
+  /*
+   * The comparative table, on the phone's own panel.
+   *
+   * `Untitled.site` fits every column of it inside the 360 it draws — nine
+   * point for the headings, ten for the body, the columns opening at 24, 104,
+   * 171 and on — so at this width the table is set to the width it has rather
+   * than being made wider than the phone and scrolled inside its card. The
+   * hairline between rows and the tinted column are ours and stay.
+   */
+  .card {
+    padding: 1.5rem 1.5rem 1.75rem;
+    border-radius: 1.25rem;
+    background: var(--tbb-white);
+    box-shadow: 0 10px 30px rgba(26, 19, 17, 0.06);
+  }
+
+  .tableWrap {
+    overflow-x: visible;
+  }
+
+  .table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  /* 80 of the 336 the file leaves inside its own padding, then 67, then the
+     two readings split what is left. */
+  .table th:first-child {
+    width: 44%;
+  }
+
+  .table th:nth-child(2) {
+    width: 23%;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.55rem 0.3rem;
+  }
+
+  .table th:first-child,
+  .table td:first-child {
+    padding-left: 0;
+  }
+
+  .table thead th {
+    font-size: 0.5625rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: normal;
+    color: var(--tbb-ink);
+  }
+
+  .table tbody th,
+  .table tbody td {
+    font-size: 0.625rem;
+    font-weight: 300;
+    line-height: 1.4;
+  }
+
+  .mark {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  /* The pane's heading is set at the file's twelve rather than the display
+     scale a wide window can carry. */
+  .title {
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    /* Sentence case, as the file sets it — the display caps belong to a
+       heading with a window's width to fill. */
+    text-transform: none;
+    margin-bottom: 0.9rem;
+  }
+
   .flavorLayout {
     grid-template-columns: minmax(0, 1fr);
   }
