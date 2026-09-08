@@ -1,10 +1,9 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
 import { productGlass } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { productDesktop, WASH_SHAPE } from "@/data/product-desktop";
-import { productFeatureOrder } from "@/data/product-feature-order";
 import { productMargins } from "@/data/product-margins";
 import { productMobile, WASH_SHAPE as PHONE_WASH_SHAPE } from "@/data/product-mobile";
 import { productShadows } from "@/data/product-shadows";
@@ -73,13 +72,64 @@ function Seal({ box, mark }: { box: "small" | "wide"; mark: keyof typeof SEALS }
 }
 
 /*
- * The marks on the four discs used to be drawn here, matched to a heading by
- * keyword, because the design's were vector layers a `.fig` cannot give back
- * as SVG. They are the owner's own artwork now — a white disc with the mark
- * inside it, tinted per product to the panel it stands on — out of the
- * product-page reference build, so there is one set per slug and the fourth
- * is the fourth whatever that product's fourth heading happens to say.
+ * The marks on the four discs.
+ *
+ * The design draws one per feature and they are vector layers rather than
+ * exported artwork — a path inside a `.fig` is an encoded blob this project
+ * cannot turn back into an SVG — so these are the same ideas drawn in the
+ * site's own line. Matched on the label because the four are not the same four
+ * on every product: twenty-one distinct headings across the sixteen pages, of
+ * which these cover all but a handful, and the rest take the last one.
  */
+const MARKS = {
+  pack: (
+    <path
+      d="M4 8.5 12 4.5l8 4v7L12 19.5 4 15.5v-7Zm0 0 8 4m0 0 8-4m-8 4v7"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+  ),
+  chill: (
+    <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <path d="M12 3.5v17M4.6 7.75l14.8 8.5M19.4 7.75l-14.8 8.5" />
+      <path d="M3.5 3.5l17 17" />
+    </g>
+  ),
+  quick: (
+    <path
+      d="M13.2 3.5 5.5 13.6h5.1l-.8 6.9 7.7-10.1h-5.1l.8-6.9Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+  ),
+  shelf: (
+    <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <circle cx="12" cy="12" r="8.2" />
+      <path d="M12 7v5.4l3.6 2.2" />
+    </g>
+  ),
+  quality: (
+    <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M12 3.4 19 6.3v5.2c0 4-2.9 7.5-7 9.1-4.1-1.6-7-5.1-7-9.1V6.3l7-2.9Z" />
+      <path d="m8.9 11.9 2.2 2.3 4-4.4" strokeLinecap="round" />
+    </g>
+  ),
+} as const;
+
+/** The mark for a heading, by what the heading is about. */
+function featureMark(label: string): ReactNode {
+  const text = label.toLowerCase();
+  if (/pack|space|leak|portion|dosage/.test(text)) return MARKS.pack;
+  if (/refriger|freez|ice cream|cold|chill/.test(text)) return MARKS.chill;
+  if (/quick|fast|easy|hassle|ready|convenien|prepare/.test(text)) return MARKS.quick;
+  if (/shelf|month|storage|store/.test(text)) return MARKS.shelf;
+  return MARKS.quality;
+}
+
 export function ProductHero({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   const banner = heroes[product.slug];
@@ -93,20 +143,12 @@ export function ProductHero({ product }: { product: Product }) {
   // copy does not open by naming the product, which is how the extractor
   // recognises it.
   const paragraphs = detail?.description.length ? detail.description : [product.description];
-  /*
-   * In the design's order, which is not the export's: the export ends on the
-   * packaging line where the design opens on it, and on three of the sixteen
-   * the middle two are not in the same order either. `product-feature-order`
-   * is that sequence written down per product; anything the design does not
-   * name keeps the order it came in, after the ones that are named.
-   */
-  const order = productFeatureOrder[product.slug];
-  const listed = detail?.features ?? [];
-  const features = order
-    ? order
-        .map((label) => listed.find((feature) => feature.label === label))
-        .filter((feature) => feature !== undefined)
-    : [...listed].slice(0, 4).reverse();
+  // Reversed: the export lists these ending on the packaging line and the
+  // design opens on it, and the four run the opposite way on every one of the
+  // sixteen pages — Long Shelf Life is the first here and the last there. Read
+  // in the design's order the row is a story, from what the pack saves in the
+  // store to how long it keeps.
+  const features = (detail?.features ?? []).slice(0, 4).reverse();
 
   // The wash the desktop actually paints, in the order of what the product has:
   // the design file's own radial, then the frame fill, then the key visual.
@@ -371,18 +413,13 @@ export function ProductHero({ product }: { product: Product }) {
         */}
         {features.length > 0 && (
           <Reveal className={styles.features} delay={300} distance={16}>
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <div key={feature.label} className={styles.feature}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  className={styles.featureMark}
-                  src={`/images/benefit-${product.slug}-${index + 1}.png`}
-                  alt=""
-                  width={75}
-                  height={75}
-                  loading="lazy"
-                  decoding="async"
-                />
+                <span className={styles.featureMark} aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="presentation">
+                    {featureMark(feature.label)}
+                  </svg>
+                </span>
                 <p className={styles.featureLabel}>{feature.label}:</p>
                 <p className={styles.featureValue}>{feature.value}</p>
               </div>
