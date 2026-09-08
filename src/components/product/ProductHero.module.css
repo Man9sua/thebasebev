@@ -586,11 +586,10 @@
  * 790.13, radius 20, with four columns on it. Each is a 71.6 white disc with a
  * mark inside and two lines under it.
  *
- * The marks are drawn here. The file's are vector layers rather than exported
- * artwork, and a path in a `.fig` is stored as an encoded blob this project
- * cannot turn back into an SVG — so these are the same four ideas in the site's
- * own line, not the design's paths. `featureMark` in the component says which
- * label gets which.
+ * The marks are the owner's own artwork, one set per product: a white disc
+ * with the mark inside it, tinted to the panel it stands on. They come out of
+ * the product-page reference build, and the order the four run in comes with
+ * them — see `product-feature-order.ts`.
  */
 .features {
   position: relative;
@@ -616,20 +615,12 @@
   margin-top: calc(9.5 * var(--k));
 }
 
+/* The disc is part of the artwork now, so this is only its box: 71.6 in the
+   design and 30 on the phone. */
 .featureMark {
-  display: grid;
-  place-items: center;
+  display: block;
   width: calc(71.6 * var(--k));
   height: calc(71.6 * var(--k));
-  border-radius: 50%;
-  background: var(--tbb-white);
-  color: color-mix(in srgb, var(--tile-panel) 62%, #000000);
-}
-
-.featureMark svg {
-  display: block;
-  width: calc(31 * var(--k));
-  height: calc(31 * var(--k));
 }
 
 /*
@@ -998,11 +989,6 @@
 
   .featureLabel {
     margin-top: calc(8 * var(--p));
-  }
-
-  .featureMark svg {
-    width: calc(15 * var(--p));
-    height: calc(15 * var(--p));
   }
 
   .featureLabel,
