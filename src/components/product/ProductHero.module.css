@@ -602,7 +602,7 @@
   margin: 0 0 calc(48 * var(--k)) calc(44.17 * var(--k));
   padding: calc(53.8 * var(--k)) calc(41.3 * var(--k)) calc(28 * var(--k));
   border-radius: calc(20 * var(--k));
-  background: var(--tile-panel);
+  background: var(--strip);
 }
 
 .feature {
@@ -623,7 +623,7 @@
   height: calc(71.6 * var(--k));
   border-radius: 50%;
   background: var(--tbb-white);
-  color: color-mix(in srgb, var(--tile-panel) 62%, #000000);
+  color: color-mix(in srgb, var(--strip) 62%, #000000);
 }
 
 .featureMark svg {

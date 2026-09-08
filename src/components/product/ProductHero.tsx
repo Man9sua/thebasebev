@@ -130,6 +130,27 @@ function featureMark(label: string): ReactNode {
   return MARKS.quality;
 }
 
+/** A hex as its three channels, or null for anything else. */
+function channels(colour: string | undefined): number[] | null {
+  if (!colour || !/^#[0-9a-f]{6}$/i.test(colour)) return null;
+  return [1, 3, 5].map((at) => Number.parseInt(colour.slice(at, at + 2), 16));
+}
+
+/** Two colours far enough apart to be told from one another on one band. */
+function apart(one: string | undefined, two: string | undefined): boolean {
+  const a = channels(one);
+  const b = channels(two);
+  if (!a || !b) return true;
+  return Math.max(...a.map((value, at) => Math.abs(value - b[at]))) > 12;
+}
+
+/** The same colour with the light taken out of it. */
+function darken(colour: string | undefined, keep = 0.82): string | undefined {
+  const rgb = channels(colour);
+  if (!rgb) return undefined;
+  return `#${rgb.map((value) => Math.round(value * keep).toString(16).padStart(2, "0")).join("")}`;
+}
+
 export function ProductHero({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   const banner = heroes[product.slug];
@@ -161,15 +182,21 @@ export function ProductHero({ product }: { product: Product }) {
   // white mark on those is nothing at all — but not Tea, whose fallback ramp is
   // near-black and already takes the light ink above.
   const plain = !card?.washIn && !onDark;
-  // The panel under the hero, and the phone's tiles, take the same colour. Six
-  // products have none in the file, and there the wash's own outer colour would
-  // paint a panel that cannot be seen against the wash — so those take a shade
-  // of it instead.
-  const tile =
-    card?.panel ??
-    (washTo ? `color-mix(in srgb, ${washTo} 82%, #000000)` : product.backgroundColor);
-  // Measured on the colour the mix is made from: `isDark` reads a hex.
-  const tileDark = isDark(card?.panel ?? washTo ?? product.backgroundColor);
+  /*
+   * The panel the four selling points stand on.
+   *
+   * On the phone they are tiles inside the copy's own panel, so they take the
+   * colour the file gives them and are seen against it. On the desktop the
+   * same colour is a band lying on the wash — and on seven of the sixteen the
+   * file names it the wash's own outer colour, so there is nothing to see.
+   * Those take a shade of the wash instead, which is what the file itself
+   * arrives at on Iced Tea and the five others where it leaves the panel
+   * unnamed.
+   */
+  const shade = darken(washTo) ?? product.backgroundColor;
+  const tile = card?.panel ?? shade;
+  const strip = apart(card?.panel, washTo) ? (card?.panel ?? shade) : shade;
+  const stripDark = isDark(strip);
 
   // The design's h1 is the product's name, and that is what the page now leads
   // with. The sentence it used to lead with is production's own h1 and what
@@ -200,8 +227,9 @@ export function ProductHero({ product }: { product: Product }) {
   const vars: CSSProperties & Record<string, string | number> = {
     "--tile": product.backgroundColor,
     "--tile-panel": tile,
-    "--panel-ink": tileDark ? "var(--tbb-white)" : "var(--tbb-ink)",
-    "--panel-ink-soft": tileDark ? "rgba(255, 255, 255, 0.76)" : "var(--tbb-ink-soft)",
+    "--strip": strip,
+    "--panel-ink": stripDark ? "var(--tbb-white)" : "var(--tbb-ink)",
+    "--panel-ink-soft": stripDark ? "rgba(255, 255, 255, 0.76)" : "var(--tbb-ink-soft)",
     // Named for the desktop rather than set as `--pack-*` directly: an inline
     // style outranks every rule in the stylesheet, and the phone has a pouch
     // layer of its own to put there.
