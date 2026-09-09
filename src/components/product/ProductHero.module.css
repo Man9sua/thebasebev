@@ -170,6 +170,11 @@
   --mark-strength: 0.42;
 }
 
+/* And on the three palest washes, where the file itself all but hides it. */
+.paleWash .mark {
+  --mark-strength: 0.38;
+}
+
 .markThe {
   position: absolute;
   left: calc(71 * var(--k));
@@ -196,6 +201,11 @@
  * different compositions rather than one scaled, so both are in the markup and
  * one is hidden — see the note beside them in the component.
  *
+ * Each layer carries the whole transform the file gives it, rotation and all:
+ * the box is placed at the card's own corner and the matrix throws it from
+ * there. Almost none of these sachets are square to the page, so a corner and
+ * a size would not put a single one of them where the design has it.
+ *
  * Written against the section as well as the layer throughout, because
  * `.tbb img` in the global sheet both caps every picture at the width of its
  * box and forces it to `display: block` — which outranks a single class and
@@ -203,11 +213,19 @@
  */
 .sceneLayer {
   position: absolute;
-  left: calc(var(--x0) + var(--l) * var(--k));
-  top: calc(var(--tbb-header-h) + var(--t) * var(--k));
+  /* The card's own top left; the layer's matrix does the rest. */
+  left: var(--x0);
+  top: calc(var(--tbb-header-h) - var(--head) * var(--k));
   z-index: 0;
   width: calc(var(--w) * var(--k));
   height: calc(var(--h) * var(--k));
+  transform-origin: 0 0;
+  transform: translate(calc(var(--e) * var(--k)), calc(var(--f) * var(--k)))
+    matrix(var(--a), var(--b), var(--c), var(--d), 0, 0);
+  /* `--k` is already a length, so the radius is the file's number times it —
+     multiplying by a further `1px` makes the whole declaration invalid and the
+     two layers that should sit back came out sharp. */
+  filter: blur(calc(var(--blur, 0) * var(--k)));
 }
 
 .hero .sceneLayer {
@@ -769,6 +787,10 @@
   }
 
   .onDark .mark {
+    --mark-strength: 0.34;
+  }
+
+  .paleWash .mark {
     --mark-strength: 0.34;
   }
 

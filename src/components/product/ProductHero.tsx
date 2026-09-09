@@ -9,7 +9,7 @@ import { productMobile, WASH_SHAPE as PHONE_WASH_SHAPE } from "@/data/product-mo
 import { productScene } from "@/data/product-scene";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
-import { isDark } from "@/lib/contrast";
+import { isDark, luminance } from "@/lib/contrast";
 import { popupAnchorProps } from "@/lib/legacy-popups";
 import { productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
@@ -186,6 +186,11 @@ export function ProductHero({ product }: { product: Product }) {
   // white mark on those is nothing at all — but not Tea, whose fallback ramp is
   // near-black and already takes the light ink above.
   const plain = !card?.washIn && !onDark;
+  // Garnish, Sugar Free and Topping stand on a wash a shade off white, and the
+  // file's own rendering of those three has the mark as barely a ghost. At the
+  // weight the rest of the range carries it, white on that is a slab across the
+  // artwork rather than a watermark behind it.
+  const paleWash = luminance(washTo ?? "#ffffff") > 0.72;
   /*
    * The panel the four selling points stand on.
    *
@@ -273,6 +278,7 @@ export function ProductHero({ product }: { product: Product }) {
         styles.hero,
         onDark ? styles.onDark : "",
         plain ? styles.plain : "",
+        paleWash ? styles.paleWash : "",
         phoneDark ? styles.panelDark : "",
       ]
         .filter(Boolean)
@@ -317,7 +323,7 @@ export function ProductHero({ product }: { product: Product }) {
           scene[mode].map((layer) => (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
-              key={`${mode}-${layer.src}-${layer.left}-${layer.top}`}
+              key={`${mode}-${layer.src}-${layer.m.join()}`}
               className={`${styles.sceneLayer} ${
                 mode === "phone" ? styles.scenePhone : styles.sceneWide
               }`}
@@ -329,11 +335,16 @@ export function ProductHero({ product }: { product: Product }) {
               loading="lazy"
               decoding="async"
               style={{
-                ["--l" as string]: layer.left,
-                ["--t" as string]: layer.top,
                 ["--w" as string]: layer.width,
                 ["--h" as string]: layer.height,
+                ["--a" as string]: layer.m[0],
+                ["--b" as string]: layer.m[1],
+                ["--c" as string]: layer.m[2],
+                ["--d" as string]: layer.m[3],
+                ["--e" as string]: layer.m[4],
+                ["--f" as string]: layer.m[5],
                 objectFit: layer.cover ? "cover" : "fill",
+                ...(layer.blur ? { ["--blur" as string]: `${layer.blur}` } : {}),
               }}
             />
           )),
