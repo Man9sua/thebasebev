@@ -188,6 +188,36 @@
   background: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
 }
 
+/*
+ * The three cards that are collages instead: Garnish, Sugar Free and Tea.
+ *
+ * Each layer is placed at the box the file gives it, from the same frame edge
+ * and header foot as everything else on the card. The two breakpoints are
+ * different compositions rather than one scaled, so both are in the markup and
+ * one is hidden — see the note beside them in the component.
+ *
+ * Written against the section as well as the layer throughout, because
+ * `.tbb img` in the global sheet both caps every picture at the width of its
+ * box and forces it to `display: block` — which outranks a single class and
+ * had both compositions showing at once.
+ */
+.sceneLayer {
+  position: absolute;
+  left: calc(var(--x0) + var(--l) * var(--k));
+  top: calc(var(--tbb-header-h) + var(--t) * var(--k));
+  z-index: 0;
+  width: calc(var(--w) * var(--k));
+  height: calc(var(--h) * var(--k));
+}
+
+.hero .sceneLayer {
+  max-width: none;
+}
+
+.hero .scenePhone {
+  display: none;
+}
+
 /* The pouch as it stands, not the layer it is drawn in — see `--ink-*` above. */
 .stage {
   position: absolute;
@@ -755,6 +785,14 @@
 
   .stage {
     z-index: 1;
+  }
+
+  .hero .sceneWide {
+    display: none;
+  }
+
+  .hero .scenePhone {
+    display: block;
   }
 
   /* The drink's own layer, in the card's coordinates. */

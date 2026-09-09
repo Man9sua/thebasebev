@@ -6,6 +6,7 @@ import productHeroes from "@/data/product-heroes.json";
 import { productDesktop, WASH_SHAPE } from "@/data/product-desktop";
 import { productMargins } from "@/data/product-margins";
 import { productMobile, WASH_SHAPE as PHONE_WASH_SHAPE } from "@/data/product-mobile";
+import { productScene } from "@/data/product-scene";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
 import { isDark } from "@/lib/contrast";
@@ -157,6 +158,9 @@ export function ProductHero({ product }: { product: Product }) {
   const margin = productMargins[product.slug];
   const glass = productGlass[product.slug];
   const card = productDesktop[product.slug];
+  // Garnish, Sugar Free and Tea are collages rather than a pouch and a drink,
+  // and stand on their own list of layers — see `data/product-scene.ts`.
+  const scene = productScene[product.slug];
   // The three products with no wash in the design file stand on the fill their
   // own frame carries, or on their key visual's ramp.
   const wash = productWashes[product.slug];
@@ -308,7 +312,34 @@ export function ProductHero({ product }: { product: Product }) {
         The drink the design stands in front of it is not part of this: it is
         a layer of its own there and a layer of its own here — see below.
       */}
-      <div className={styles.stage}>
+      {scene &&
+        (["desktop", "phone"] as const).map((mode) =>
+          scene[mode].map((layer) => (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              key={`${mode}-${layer.src}-${layer.left}-${layer.top}`}
+              className={`${styles.sceneLayer} ${
+                mode === "phone" ? styles.scenePhone : styles.sceneWide
+              }`}
+              src={layer.src}
+              alt=""
+              /* Both compositions are in the markup and one is hidden, so the
+                 set that is not showing is never fetched: a lazy image with no
+                 box on the page has nothing to intersect. */
+              loading="lazy"
+              decoding="async"
+              style={{
+                ["--l" as string]: layer.left,
+                ["--t" as string]: layer.top,
+                ["--w" as string]: layer.width,
+                ["--h" as string]: layer.height,
+                objectFit: layer.cover ? "cover" : "fill",
+              }}
+            />
+          )),
+        )}
+
+      <div className={styles.stage} hidden={Boolean(scene)}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className={styles.pack}
