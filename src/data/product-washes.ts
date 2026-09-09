@@ -13,10 +13,13 @@
  * radial gradients and two flats. So the five now stand on the colour they were
  * drawn on rather than on an approximation of it.
  *
- * The eleven with a banner are deliberately not listed. Their sampled pair and
- * the file's gradient stops are two different readings of one design — the
- * banner is a flattened render measured at two points, the file is the source —
- * and the banner is what the page's own artwork has to sit against, so it wins.
+ * Ten of the eleven with a banner are deliberately not listed. Their sampled
+ * pair and the file's gradient stops are two different readings of one design
+ * — the banner is a flattened render measured at two points, the file is the
+ * source — and the banner is what the page's own artwork has to sit against, so
+ * it wins. Tea is the exception, and for the opposite reason: its card is a
+ * collage rather than a banner, so there is no flattened render for the page to
+ * sit against and the file's own ground is all there is.
  *
  * `from` is the gradient's inner stop and `to` its outer one; a flat fill gives
  * the same colour for both. The centre is not measured: Figma stores the
@@ -32,4 +35,10 @@ export const productWashes: Record<string, ProductWash> = {
   vending: { from: "#c5a880", to: "#4e342e" },
   garnish: { from: "#eee6d8", to: "#eee6d8" },
   "sugar-free": { from: "#e8f2e9", to: "#e8f2e9" },
+  // Tea has a banner, and its sampled pair — near-black onto a mid grey — is
+  // the crop's own foot rather than the card's ground. The card is drawn on
+  // black edge to edge, and the photograph on it only disappears into the page
+  // because of that; on the grey the crop suggests, the same photograph ends in
+  // a visible rectangle halfway across the card.
+  tea: { from: "#000000", to: "#000000" },
 };

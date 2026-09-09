@@ -170,9 +170,14 @@
   --mark-strength: 0.42;
 }
 
-/* And on the three palest washes, where the file itself all but hides it. */
+/*
+ * And on the three palest washes, where the file itself all but hides it. White
+ * on Sugar Free's near-white green has no wash to sink into, so anything above
+ * a sixth reads as a slab laid across the collage rather than as a watermark
+ * behind it.
+ */
 .paleWash .mark {
-  --mark-strength: 0.38;
+  --mark-strength: 0.16;
 }
 
 .markThe {
@@ -230,6 +235,12 @@
 
 .hero .sceneLayer {
   max-width: none;
+}
+
+/* A fill layer is a box rather than a picture, so it needs the display an
+   image gets for free. */
+span.sceneLayer {
+  display: block;
 }
 
 .hero .scenePhone {
@@ -791,7 +802,7 @@
   }
 
   .paleWash .mark {
-    --mark-strength: 0.34;
+    --mark-strength: 0.16;
   }
 
   .markThe {
