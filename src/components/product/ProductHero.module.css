@@ -206,10 +206,11 @@
  * different compositions rather than one scaled, so both are in the markup and
  * one is hidden — see the note beside them in the component.
  *
- * Each layer carries the whole transform the file gives it, rotation and all:
- * the box is placed at the card's own corner and the matrix throws it from
- * there. Almost none of these sachets are square to the page, so a corner and
- * a size would not put a single one of them where the design has it.
+ * Each layer carries the whole transform the design gives it, rotation and
+ * all: the box is one unit square at the card's own corner and the matrix both
+ * sizes it and throws it from there. Almost none of these sachets are square to
+ * the page, so a corner and a size would not put a single one of them where the
+ * design has it.
  *
  * Written against the section as well as the layer throughout, because
  * `.tbb img` in the global sheet both caps every picture at the width of its
@@ -222,25 +223,15 @@
   left: var(--x0);
   top: calc(var(--tbb-header-h) - var(--head) * var(--k));
   z-index: 0;
-  width: calc(var(--w) * var(--k));
-  height: calc(var(--h) * var(--k));
+  width: var(--k);
+  height: var(--k);
   transform-origin: 0 0;
   transform: translate(calc(var(--e) * var(--k)), calc(var(--f) * var(--k)))
     matrix(var(--a), var(--b), var(--c), var(--d), 0, 0);
-  /* `--k` is already a length, so the radius is the file's number times it —
-     multiplying by a further `1px` makes the whole declaration invalid and the
-     two layers that should sit back came out sharp. */
-  filter: blur(calc(var(--blur, 0) * var(--k)));
 }
 
 .hero .sceneLayer {
   max-width: none;
-}
-
-/* A fill layer is a box rather than a picture, so it needs the display an
-   image gets for free. */
-span.sceneLayer {
-  display: block;
 }
 
 .hero .scenePhone {
