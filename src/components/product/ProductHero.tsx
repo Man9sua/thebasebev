@@ -252,7 +252,7 @@ export function ProductHero({ product }: { product: Product }) {
   // A collage's ground is a photograph rather than a wash, so the weight the
   // mark needs there is the design's own rather than one of the two the
   // stylesheet reads off the wash.
-  if (card?.mark !== undefined) vars["--mark-own"] = card.mark;
+  if (card?.mark !== undefined) vars["--mark-desk"] = card.mark;
   if (washFrom) vars["--wash-from"] = washFrom;
   if (washTo) vars["--wash-to"] = washTo;
   if (card?.edge) vars["--edge"] = card.edge;
@@ -262,6 +262,8 @@ export function ProductHero({ product }: { product: Product }) {
   }
   if (phone) {
     vars["--m-panel"] = phone.panel;
+    if (phone.panelTop) vars["--m-panel-top"] = phone.panelTop;
+    if (phone.mark !== undefined) vars["--mark-phone"] = phone.mark;
     vars["--m-wash-shape"] = phone.washShape ?? PHONE_WASH_SHAPE;
     if (phoneWash) {
       vars["--m-wash-from"] = phoneWash.from;

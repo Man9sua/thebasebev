@@ -156,11 +156,13 @@
  * the E. That ramp is in the artwork rather than in this stylesheet.
  *
  * The weight is the one thing left to set: the file's white at full strength
- * on a near-black wash is a glare rather than a watermark. `--mark-own` is a
- * product's own, from the design's export, and `--mark-strength` the weight
- * read off the wash below — the first wins where a product carries one,
- * because a rule on `.mark` itself would otherwise outrank anything the
- * section sets.
+ * on a near-black wash is a glare rather than a watermark. `--mark-desk` and
+ * `--mark-phone` are a product's own, from the design's two exports, and
+ * `--mark-strength` the weight read off the wash below — the first wins where a
+ * product carries one, because a rule on `.mark` itself would otherwise outrank
+ * anything the section sets. The two breakpoints need their own number: the
+ * phone draws the word from a different export, whose white is solid where the
+ * desktop's runs out through the S and the E.
  */
 .mark {
   position: absolute;
@@ -172,7 +174,7 @@
   z-index: 1;
   width: calc(586.75 * var(--k));
   height: calc(322 * var(--k));
-  opacity: var(--mark-own, var(--mark-strength, 1));
+  opacity: var(--mark-desk, var(--mark-strength, 1));
   user-select: none;
 }
 
@@ -795,7 +797,10 @@ span.sceneLayer {
 
   .frame {
     width: 100%;
-    padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
+    /* Where the band closes and the copy's panel opens. One line for fifteen of
+       the sixteen; Garnish carries more of its own beige — see `panelTop` in
+       `data/product-mobile.ts`. */
+    padding-top: calc(var(--tbb-header-h) + var(--m-panel-top, 268.7) * var(--p));
   }
 
   /*
@@ -814,6 +819,7 @@ span.sceneLayer {
     width: calc(366 * var(--p));
     height: calc(204.4 * var(--p));
     --mark-strength: 0.8;
+    opacity: var(--mark-phone, var(--mark-strength, 1));
   }
 
   .onDark .mark {

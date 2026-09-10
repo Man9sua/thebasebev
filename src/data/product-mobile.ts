@@ -55,6 +55,25 @@ export type MobileCard = {
   glass?: Box;
   /** Only where the phone's ground shadow is not the colour the desktop uses. */
   shade?: string;
+  /**
+   * How strongly the brand mark reads behind the artwork here.
+   *
+   * A separate number from the desktop's and not a whim: the phone draws the
+   * word from its own export, whose white is solid where the desktop's runs
+   * out through the S and the E, and the design gives the three collages a
+   * lighter hand on the phone than on the desktop. Measured off the design's
+   * own phone export, as the desktop's is off its own.
+   */
+  mark?: number;
+  /**
+   * Where the copy's panel opens, below the header, when not the common 268.7.
+   *
+   * Fifteen of the sixteen phone cards close their band on the same line. The
+   * design's current export gives Garnish a third of an inch more, and the
+   * collage on it ends well above either line, so the band simply carries more
+   * of its own beige. Measured on that export at 301.5.
+   */
+  panelTop?: number;
 };
 
 export const productMobile: Record<string, MobileCard> = {
@@ -69,14 +88,18 @@ export const productMobile: Record<string, MobileCard> = {
   matcha: { washIn: "#9edbac", washOut: "#52a866", panel: "#aae2b7", glass: { left: 159.62, top: 69.47, width: 128.4, height: 209.67 } },
   chocolate: { washIn: "#9f786c", washOut: "#342b28", washShape: "29.0% 34.1% at 62.7% 50.8%", panel: "#8c706a", glass: { left: 160.62, top: 74.47, width: 128.4, height: 209.67 } },
   "sugar-syrup": { washIn: "#fde1c7", washOut: "rgba(246, 165, 161, 0.2)", panel: "#f9d9d1", glass: { left: 157.62, top: 74.47, width: 128.4, height: 209.67 } },
-  garnish: { panel: "#dfceb4" },
+  // The one phone card whose ground runs top to bottom rather than out from a
+  // point: the design ramps it from the panel's own beige at the header's foot
+  // to the frame's at the band's, level all the way across. The ellipse below
+  // is wide enough and set low enough to be that ramp.
+  garnish: { washIn: "#ede6d8", washOut: "#dfceb4", washShape: "200% 105% at 50% 100%", panel: "#dfceb4", panelTop: 301.5, mark: 0.21 },
   vending: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#c9b7a2", glass: { left: 163.62, top: 71.77, width: 124.55, height: 203.37 }, shade: "#8c735e" },
   jam: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#fccace", glass: { left: 163.62, top: 80.77, width: 124.55, height: 203.37 } },
-  "sugar-free": { panel: "#e0e9e2" },
+  "sugar-free": { panel: "#e0e9e2", mark: 0.7 },
   // No wash of its own, so it falls back to the black its own frame carries.
   // The site file draws a mauve radial here, and it is the phone card's ground
   // rather than the collage's: between the phone frame's cap and the desktop
   // breakpoint the card stands in the middle of the window, and that mauve was
   // showing either side of a photograph that fades to black.
-  tea: { panel: "#5e5a57" },
+  tea: { panel: "#5e5a57", mark: 0.065 },
 };
