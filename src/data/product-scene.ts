@@ -24,8 +24,9 @@
  *
  * `blur` is the file's own radius over the scale its matrix carries, because
  * a filter is taken in the box's own space and magnified with it. Sugar Free's
- * two blurred sachets are not here at all: they are at full strength in the
- * file and all but gone from the design's own export.
+ * two blurred sachets are on the phone and not on the desktop: the file has
+ * them at full strength on both, and the design's own exports show them plainly
+ * on the one and all but gone on the other.
  *
  * A gradient's stops are projected onto the line CSS paints along, which is not
  * the file's own axis: CSS runs its line through the box's centre and measures
@@ -90,12 +91,14 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 93.8748, 622.0819], round: true },
     ],
     phone: [
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [-13.0829, 122.9645, -83.3422, -8.8673, 71.3408, 325.8765], blur: 0.0386 },
       { src: "/images/scene-5f33d9e4f813.webp", m: [138.3948, -110.6804, 89.9548, 112.4795, 122.5156, 99.6065] },
       { src: "/images/scene-cdd1d94df813.webp", m: [150.3929, 46.9692, -38.174, 122.231, -14.4932, 181.9322] },
       { src: "/images/scene-3c519f85f813.webp", m: [183.3918, -59.5816, 48.4246, 149.0505, 214.5391, 255.2784] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-70.0155, 61.2171, 69.0011, 78.9183, 230.1699, 209.3077] },
       { src: "/images/scene-f16e70efc5898x432.webp", m: [71.6846, 0, 0, 48.5859, 66.1064, 191.1695] },
       { paint: "linear-gradient(107.1034deg, #a4c4b0 -31.8053%, rgba(164, 196, 176, 0) 75.4373%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], round: true },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [19.4543, 90.1261, 61.0851, -13.1856, 308.3545, 210.6866], blur: 0.0517 },
       { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, 224.6299, 209.3077] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, 220.6777, 184.5928] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-24.033, 89.8446, 101.2687, 27.0888, -37.6865, 98.5279] },
