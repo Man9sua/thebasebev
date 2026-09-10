@@ -19,7 +19,10 @@
  * the whole matrix carries it where it is not — and almost none of these
  * sachets is square, anything from seventeen degrees to a hundred and
  * thirty-nine. `clip` is a share of the picture rather than of the box: several
- * of Sugar Free's sachets are cut from one sheet.
+ * of Sugar Free's sachets are cut from one sheet, and `back` marks the one
+ * layer that is a backdrop rather than a cut-out — Tea's. The design draws the
+ * brand mark over that and under everything else, which is why it reads across
+ * Tea's photograph and stops at the edge of Garnish's pouch.
  *
  * Coordinates are the card's own: the 1200 frame on the desktop and the 360 one
  * on the phone, both from its top left. The two are different compositions
@@ -33,6 +36,8 @@ export type SceneLayer = {
   m: [number, number, number, number, number, number];
   /** left, top, right, bottom, as shares of the picture. */
   clip?: [number, number, number, number];
+  /** A backdrop rather than a cut-out: the brand mark is drawn over it. */
+  back?: true;
 };
 
 export type ProductScene = { desktop: SceneLayer[]; phone: SceneLayer[] };
@@ -77,13 +82,13 @@ export const productScene: Record<string, ProductScene> = {
   },
   "tea": {
     desktop: [
-      { src: "/images/scene-db21841f.webp", m: [646.8159, 0, 0, 646.8159, 104.784, 123.6699] },
+      { src: "/images/scene-db21841f.webp", m: [646.8159, 0, 0, 646.8159, 104.784, 123.6699], back: true },
       { src: "/images/scene-80d6d14b.webp", m: [264.9355, 0, 0, 230.943, 64.6777, 132.6611] },
       { src: "/images/scene-61f939c0.webp", m: [435.5508, 0, 0, 388.7799, -156.7051, 183.454] },
       { src: "/images/scene-9d8d4010.webp", m: [390.602, 151.6581, -123.2592, 317.4594, 63.1213, 339.3187] },
     ],
     phone: [
-      { src: "/images/scene-e1612073.webp", m: [360, 0, 0, 269, 0, 108] },
+      { src: "/images/scene-e1612073.webp", m: [360, 0, 0, 269, 0, 108], back: true },
       { src: "/images/scene-db21841f.webp", m: [297.4512, 0, 0, 297.4512, 81.4453, 99.7031] },
       { src: "/images/scene-2c954d4d.webp", m: [168.1367, 0, 0, 147.0156, 10.6914, 61.9521] },
       { src: "/images/scene-a97551bf.webp", m: [223.8164, 0, 0, 200.0518, -67.7207, 129.0068] },

@@ -38,6 +38,17 @@ export type DesktopCard = {
   edge?: string;
   /** The panel the four features stand on, under the hero. */
   panel?: string;
+  /**
+   * How strongly the brand mark reads behind the artwork.
+   *
+   * Only the three collages carry it. The other thirteen stand on a wash, and
+   * one weight for the dark ones and another for the pale ones covers them; a
+   * collage's ground is a photograph, and the design answers each of those
+   * separately. Measured off its own export: the solid part of the word lifts
+   * Garnish's beige a little under half the way to white and Tea's black
+   * barely a sixth.
+   */
+  mark?: number;
 };
 
 /** Where the file puts the light on all but three of the sixteen. */
@@ -55,9 +66,9 @@ export const productDesktop: Record<string, DesktopCard> = {
   matcha: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, washIn: "#ffffff", washOut: "#52a866", edge: "#52a866", panel: "#52a866" },
   chocolate: { pouch: { left: 106.38, top: 136.38, width: 387.42, height: 564.03 }, washIn: "#9f786c", washOut: "#4a322d", washShape: "47.8% 36.2% at 76.6% 35.8%", edge: "#4a322d", panel: "#4a322d" },
   "sugar-syrup": { pouch: { left: 106.63, top: 136.43, width: 387.42, height: 564.03 }, washIn: "#f1d1b4", washOut: "#e6b3a8", washShape: "47.8% 36.2% at 76.6% 35.8%", edge: "#f1d1b4" },
-  garnish: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#ceb999" },
+  garnish: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#ceb999", mark: 0.73 },
   vending: { pouch: { left: 106.15, top: 132.35, width: 390.87, height: 569.06 }, washIn: "#c5a880", washOut: "#4e342e", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#4e342e" },
   jam: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, washIn: "#973139", washOut: "#3d060a", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#3d060a" },
-  "sugar-free": { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#acc4b2" },
-  tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 } },
+  "sugar-free": { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#acc4b2", mark: 1 },
+  tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, mark: 0.16 },
 };

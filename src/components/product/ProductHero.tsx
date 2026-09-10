@@ -249,6 +249,10 @@ export function ProductHero({ product }: { product: Product }) {
     "--wash-shape": card?.washShape ?? WASH_SHAPE,
   };
   if (productShadows[product.slug]) vars["--shade"] = productShadows[product.slug];
+  // A collage's ground is a photograph rather than a wash, so the weight the
+  // mark needs there is the design's own rather than one of the two the
+  // stylesheet reads off the wash.
+  if (card?.mark !== undefined) vars["--mark-own"] = card.mark;
   if (washFrom) vars["--wash-from"] = washFrom;
   if (washTo) vars["--wash-to"] = washTo;
   if (card?.edge) vars["--edge"] = card.edge;
@@ -326,7 +330,7 @@ export function ProductHero({ product }: { product: Product }) {
               key={`${mode}-${index}`}
               className={`${styles.sceneLayer} ${
                 mode === "phone" ? styles.scenePhone : styles.sceneWide
-              }`}
+              }${layer.back ? ` ${styles.sceneBack}` : ""}`}
               src={layer.src}
               alt=""
               /* Both compositions are in the markup and one is hidden, so the

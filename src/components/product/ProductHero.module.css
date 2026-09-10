@@ -152,17 +152,24 @@
  * fade inside it — solid across the B and the A, running out through the S and
  * the E. That ramp is in the artwork rather than in this stylesheet.
  *
- * `--mark-strength` is the one thing left to set: the file's white at full
- * weight on a near-black wash is a glare rather than a watermark.
+ * The weight is the one thing left to set: the file's white at full strength
+ * on a near-black wash is a glare rather than a watermark. `--mark-own` is a
+ * product's own, from the design's export, and `--mark-strength` the weight
+ * read off the wash below — the first wins where a product carries one,
+ * because a rule on `.mark` itself would otherwise outrank anything the
+ * section sets.
  */
 .mark {
   position: absolute;
   left: var(--x0);
   top: calc(var(--tbb-header-h) + (207.6 - var(--head)) * var(--k));
-  z-index: 0;
+  /* Over a collage's backdrop and under everything else, which is where the
+     design has it: the mark reads across Tea's photograph and stops at the edge
+     of Garnish's pouch. */
+  z-index: 1;
   width: calc(586.75 * var(--k));
   height: calc(322 * var(--k));
-  opacity: var(--mark-strength, 1);
+  opacity: var(--mark-own, var(--mark-strength, 1));
   user-select: none;
 }
 
@@ -170,12 +177,10 @@
   --mark-strength: 0.42;
 }
 
-/*
- * And on the three palest washes, where the file itself all but hides it. White
- * on Sugar Free's near-white green has no wash to sink into, so anything above
- * a sixth reads as a slab laid across the collage rather than as a watermark
- * behind it.
- */
+/* And on a wash a shade off white, where the file itself all but hides it.
+   Only Topping is left under this rule: the two collages that also stand on a
+   pale ground carry the design's own weight instead — see `mark` in
+   `data/product-desktop.ts`. */
 .paleWash .mark {
   --mark-strength: 0.16;
 }
@@ -222,7 +227,7 @@
   /* The card's own top left; the layer's matrix does the rest. */
   left: var(--x0);
   top: calc(var(--tbb-header-h) - var(--head) * var(--k));
-  z-index: 0;
+  z-index: 2;
   width: var(--k);
   height: var(--k);
   transform-origin: 0 0;
@@ -234,16 +239,24 @@
   max-width: none;
 }
 
+/* Tea's is the one layer that is a ground rather than a cut-out, and the brand
+   mark belongs over it. */
+.hero .sceneBack {
+  z-index: 0;
+}
+
 .hero .scenePhone {
   display: none;
 }
 
-/* The pouch as it stands, not the layer it is drawn in — see `--ink-*` above. */
+/* The pouch as it stands, not the layer it is drawn in — see `--ink-*` above.
+   On the same tier as a collage's cut-outs, because it is one: the mark passes
+   behind both. */
 .stage {
   position: absolute;
   left: calc(var(--x0) + var(--ink-x) * var(--k));
   top: calc(var(--tbb-header-h) + (var(--ink-y) - var(--head)) * var(--k));
-  z-index: 0;
+  z-index: 2;
   width: calc(var(--ink-w) * var(--k));
   height: calc(var(--ink-h) * var(--k));
 }
