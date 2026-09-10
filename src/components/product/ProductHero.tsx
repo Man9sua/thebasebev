@@ -355,7 +355,7 @@ export function ProductHero({ product }: { product: Product }) {
                    box on the page has nothing to intersect. */
                 loading="lazy"
                 decoding="async"
-                style={{ ...style, objectFit: layer.cover ? "cover" : "fill" }}
+                style={style}
               />
             ) : (
               <span
