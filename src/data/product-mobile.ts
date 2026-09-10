@@ -73,5 +73,10 @@ export const productMobile: Record<string, MobileCard> = {
   vending: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#c9b7a2", glass: { left: 163.62, top: 71.77, width: 124.55, height: 203.37 }, shade: "#8c735e" },
   jam: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#fccace", glass: { left: 163.62, top: 80.77, width: 124.55, height: 203.37 } },
   "sugar-free": { panel: "#e0e9e2" },
-  tea: { washIn: "#3f3239", washOut: "#17070a", panel: "#5e5a57" },
+  // No wash of its own, so it falls back to the black its own frame carries.
+  // The site file draws a mauve radial here, and it is the phone card's ground
+  // rather than the collage's: between the phone frame's cap and the desktop
+  // breakpoint the card stands in the middle of the window, and that mauve was
+  // showing either side of a photograph that fades to black.
+  tea: { panel: "#5e5a57" },
 };

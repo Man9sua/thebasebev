@@ -324,39 +324,48 @@ export function ProductHero({ product }: { product: Product }) {
       */}
       {scene &&
         (["desktop", "phone"] as const).map((mode) =>
-          scene[mode].map((layer, index) => (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              key={`${mode}-${index}`}
-              className={`${styles.sceneLayer} ${
-                mode === "phone" ? styles.scenePhone : styles.sceneWide
-              }${layer.back ? ` ${styles.sceneBack}` : ""}`}
-              src={layer.src}
-              alt=""
-              /* Both compositions are in the markup and one is hidden, so the
-                 set that is not showing is never fetched: a lazy image with no
-                 box on the page has nothing to intersect. */
-              loading="lazy"
-              decoding="async"
-              style={{
-                ["--a" as string]: layer.m[0],
-                ["--b" as string]: layer.m[1],
-                ["--c" as string]: layer.m[2],
-                ["--d" as string]: layer.m[3],
-                ["--e" as string]: layer.m[4],
-                ["--f" as string]: layer.m[5],
-                /* A share of the picture, not of the box: several of Sugar
-                   Free's sachets are cut from one sheet. */
-                ...(layer.clip
-                  ? {
-                      clipPath: `inset(${layer.clip[1] * 100}% ${(1 - layer.clip[2]) * 100}% ${
-                        (1 - layer.clip[3]) * 100
-                      }% ${layer.clip[0] * 100}%)`,
-                    }
-                  : {}),
-              }}
-            />
-          )),
+          scene[mode].map((layer, index) => {
+            const style = {
+              ["--a" as string]: layer.m[0],
+              ["--b" as string]: layer.m[1],
+              ["--c" as string]: layer.m[2],
+              ["--d" as string]: layer.m[3],
+              ["--e" as string]: layer.m[4],
+              ["--f" as string]: layer.m[5],
+              ...(layer.blur ? { ["--blur" as string]: `${layer.blur}` } : {}),
+              ...(layer.opacity ? { opacity: layer.opacity } : {}),
+              ...(layer.round ? { borderRadius: "50%" } : {}),
+            } as CSSProperties;
+            const className = `${styles.sceneLayer} ${
+              mode === "phone" ? styles.scenePhone : styles.sceneWide
+            }${layer.back ? ` ${styles.sceneBack}` : ""}`;
+            const key = `${mode}-${index}`;
+            /* A fill rather than a picture: the ramps the file lays over a
+               photograph's edges, without which it sits on the card as a
+               rectangle instead of sinking into it. */
+            return layer.src ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                key={key}
+                className={className}
+                src={layer.src}
+                alt=""
+                /* Both compositions are in the markup and one is hidden, so the
+                   set that is not showing is never fetched: a lazy image with no
+                   box on the page has nothing to intersect. */
+                loading="lazy"
+                decoding="async"
+                style={{ ...style, objectFit: layer.cover ? "cover" : "fill" }}
+              />
+            ) : (
+              <span
+                key={key}
+                className={className}
+                aria-hidden="true"
+                style={{ ...style, background: layer.paint }}
+              />
+            );
+          }),
         )}
 
       <div className={styles.stage} hidden={Boolean(scene)}>

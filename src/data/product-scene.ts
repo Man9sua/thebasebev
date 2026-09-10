@@ -1,98 +1,162 @@
 /**
  * The three product cards that are not a pouch and a drink.
  *
- * Garnish, Sugar Free and Tea are collages in the design — sachets, leaves and
- * a glass thrown across the wash — and neither the pack shot the other thirteen
- * stand on nor the drink beside it appears on them. Those three carry their own
- * list of layers here and the hero draws that.
+ * Garnish, Sugar Free and Tea are collages in the design file — sachets, leaves
+ * and a glass thrown across the wash — and neither the pack shot the other
+ * thirteen stand on nor the drink beside it appears on them. Those three carry
+ * their own list of layers here and the hero draws that.
  *
- * These are the design's own flattened export, taken from the reference product
- * page the owner supplied rather than re-derived from `frme2.fig`. That matters
- * on exactly the parts the file cannot settle: the veil the design lays over
- * Tea's photograph, the ghosted sachets on Sugar Free, the blur on the ones
- * behind. All of it is already in the pictures, so there is nothing left to
- * infer and nothing left to get wrong.
+ * A layer is either a picture or a fill, and both matter. The file lays black
+ * gradients over the edges of Tea's photograph and beige ones over Garnish's;
+ * without them a photograph sits on the card as a rectangle with four visible
+ * sides instead of sinking into it. Fills as wide as the card are left out —
+ * those are the file's own ground and its page-level veil, and the section
+ * already paints the wash.
  *
- * `m` is the layer's whole transform in the card's own space, in the order CSS
- * takes it: a, b, c, d and then the two offsets. The box it acts on is one unit
- * square, so a and d carry the layer's size where it is square to the page and
- * the whole matrix carries it where it is not — and almost none of these
- * sachets is square, anything from seventeen degrees to a hundred and
- * thirty-nine. `clip` is a share of the picture rather than of the box: several
- * of Sugar Free's sachets are cut from one sheet, and `back` marks the one
- * layer that is a backdrop rather than a cut-out — Tea's. The design draws the
- * brand mark over that and under everything else, which is why it reads across
- * Tea's photograph and stops at the edge of Garnish's pouch.
+ * `m` is the layer's whole transform in the card's own space, composed with
+ * every parent's, in the order CSS takes it: a, b, c, d and then the two
+ * offsets. The box it acts on is one unit square, so the matrix carries the
+ * size as well as the turn — and almost none of these sachets is square to the
+ * page, anything from seventeen degrees to a hundred and thirty-nine, so a
+ * corner and a size would not place a single one of them. `back` marks the one
+ * layer that is a ground rather than a cut-out — Tea's photograph, which the
+ * design draws the brand mark over and everything else under.
  *
- * Coordinates are the card's own: the 1200 frame on the desktop and the 360 one
- * on the phone, both from its top left. The two are different compositions
- * rather than one scaled. The seals are not among them — the page draws those
- * itself, on all sixteen products.
+ * `blur` is the file's own blur radius, which CSS reads the same way — except
+ * on Sugar Free, whose two blurred sachets are at full strength here and all
+ * but gone from the design's own export, so there they are left out.
+ *
+ * A gradient's stops are projected onto the line CSS paints along, which is not
+ * the file's own axis: CSS runs its line through the box's centre and measures
+ * from the box's edge, so a stop can land outside 0-100% and still be right.
+ * A ramp whose every stop lands outside its own box is a different matter — it
+ * is one flat colour there, and the file uses that to lay a black veil across
+ * Tea's photograph and a ground-coloured one across Sugar Free's sachets.
+ * Painted as the data has them they cover the artwork the design shows through
+ * them, so they are left out; what the design does with them is not in the file.
+ *
+ * The list is in the order the file stores them, which is the order it paints
+ * them in — back to front. Boxes are the frame's: the 1200 card on the desktop
+ * and the 360 one on the phone, both from the card's top left. The two are
+ * different compositions rather than one scaled. Everything the page draws for
+ * itself is left out — the seals, the margin card, the buttons, the panel under
+ * the four points — and so is anything the file has turned off.
  */
 
 export type SceneLayer = {
-  src: string;
+  /** A picture, or a fill; never both. */
+  src?: string;
+  paint?: string;
   /** a, b, c, d, e, f — the CSS matrix, over a one-unit box, in frame units. */
   m: [number, number, number, number, number, number];
-  /** left, top, right, bottom, as shares of the picture. */
-  clip?: [number, number, number, number];
-  /** A backdrop rather than a cut-out: the brand mark is drawn over it. */
+  /** A ground rather than a cut-out: the brand mark is drawn over it. */
   back?: true;
+  cover?: boolean;
+  blur?: number;
+  opacity?: number;
+  round?: boolean;
 };
 
-export type ProductScene = { desktop: SceneLayer[]; phone: SceneLayer[] };
-
-export const productScene: Record<string, ProductScene> = {
+export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneLayer[] }> = {
   "garnish": {
     desktop: [
-      { src: "/images/scene-31580e8f.webp", m: [1429.9583, 0, 0, 1072.4685, -427.2453, -155.1193] },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [-22.1914, 208.5744, -141.3663, -15.0408, 1577.9235, 577.0702], blur: 4 },
+      { src: "/images/scene-cdd1d94d.webp", m: [255.099, 79.67, -64.7513, 207.3301, 1432.3305, 332.9095], cover: true },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [121.5925, 0, 0, 82.4123, 1569.0449, 348.5779] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-40.7651, 152.3959, 171.7736, 45.9486, 1392.9896, 191.4377] },
+      { src: "/images/scene-0a906e54c0x3180.webp", m: [363.3712, 0, 0, 395.0787, 1533.4108, 330.5174] },
+      { paint: "linear-gradient(180deg, #eee6d8 -11433.3387%, rgba(238, 230, 216, 0) 3176.6543%)", m: [471.6326, 0, 0, 532.7571, 249.5811, 104.4805] },
+      { paint: "linear-gradient(179.9999deg, #eee6d8 -11433.2765%, rgba(238, 230, 216, 0) 3176.6365%)", m: [766.877, 0, 0, 244.5977, -49.8948, 545.8867] },
+      { paint: "linear-gradient(180deg, #eee6d8 -11433.3387%, rgba(238, 230, 216, 0) 3176.6543%)", m: [0, -693.7725, 680.3472, 0, 536.6072, 795.0469] },
+      { paint: "linear-gradient(98.7347deg, #d8cab6 -78.5322%, rgba(216, 202, 182, 0) 102.1798%)", m: [534.8181, -63.2239, 12.6073, 106.6468, 123.3432, 618.4176], round: true },
+      { src: "/images/scene-a8524cbfc3419x1973.webp", m: [450.0353, 0, 0, 655.1899, 61.5906, 56.8594] },
+      { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 93.8748, 622.0838], round: true },
     ],
     phone: [
-      { src: "/images/scene-1b9ddc6b.webp", m: [231.6745, 0, 0, 261.7003, 148.338, 105.0342] },
-      { src: "/images/scene-31580e8f.webp", m: [639.0104, 0, 0, 479.3304, -193.9963, -28.5945] },
+      { paint: "linear-gradient(99.1009deg, #3d060b -79.2008%, rgba(61, 6, 11, 0) 101.4067%)", m: [179.9254, -21.27, 4.4222, 37.408, -398.9434, 311.5098], round: true },
+      { src: "/images/scene-5e54ba7cc3419x1973.webp", m: [151.4025, 0, 0, 220.4213, -419.7188, 122.5879] },
+      { paint: "linear-gradient(107.1034deg, #3d060b -31.8053%, rgba(61, 6, 11, 0) 75.4373%)", m: [87.6662, -11.1792, 4.4646, 35.0107, -304.1023, 329.0505], round: true },
+      { src: "/images/scene-61da802e.webp", m: [124.5488, 0, 0, 203.3715, -339.3789, 188.7681], cover: true },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, -215.2041, 176.9633], round: true },
+      { src: "/images/scene-48330e21.webp", m: [231.6396, 0, 0, 261.7003, 148.3555, 105.0342], cover: true },
+      { paint: "linear-gradient(98.736deg, #d8cab6 -78.532%, rgba(216, 202, 182, 0) 102.1797%)", m: [238.9966, -28.2531, 5.6347, 47.6647, 52.0469, 316.9838], round: true },
+      { src: "/images/scene-a8524cbfc3419x1973.webp", m: [201.1089, 0, 0, 292.8314, 24.4512, 66] },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8263, 287.7959, 176.9262], round: true },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [-13.0829, 122.9645, -83.3422, -8.8673, 527.3408, 325.8765], blur: 4 },
+      { src: "/images/scene-5f33d9e4.webp", m: [138.3948, -110.6804, 89.9548, 112.4795, 578.5156, 99.6065], cover: true },
+      { src: "/images/scene-cdd1d94d.webp", m: [150.3929, 46.9692, -38.174, 122.231, 441.5068, 181.9322], cover: true },
+      { src: "/images/scene-3c519f85.webp", m: [183.3918, -59.5816, 48.4246, 149.0505, 670.5391, 255.2784], cover: true },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-70.0155, 61.2171, 69.0011, 78.9183, 686.1699, 209.3077] },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [71.6846, 0, 0, 48.5859, 522.1064, 191.1695] },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [19.4543, 90.1261, 61.0851, -13.1856, 764.3545, 210.6866], blur: 4 },
+      { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, 680.6299, 209.3077] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, 676.6777, 184.5928] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-24.033, 89.8446, 101.2687, 27.0888, 418.3135, 98.5279] },
+      { src: "/images/scene-0a906e54c0x3180.webp", m: [169.6461, 0, 0, 184.4492, 525.1582, 172.525] },
     ],
   },
   "sugar-free": {
     desktop: [
-      { src: "/images/scene-93165365.webp", m: [172.3633, 0, 0, 232.4168, -0.0391, 557.2954] },
-      { src: "/images/scene-921891f1.webp", m: [234.7418, -187.7244, 152.5718, 190.785, 254.7265, 192.9379] },
-      { src: "/images/scene-2d37663f.webp", m: [255.1076, 79.6719, -64.7528, 207.3371, 22.33, 332.5797] },
-      { src: "/images/scene-81418c5d.webp", m: [311.06, -101.0623, 82.1378, 252.8121, 410.8184, 456.9914] },
-      { src: "/images/scene-1245c816.webp", m: [-333.9735, 292.0146, 292.0146, 333.9735, 437.3319, 379.0152], clip: [0, 0.5992, 0.3556, 1] },
-      { src: "/images/scene-1245c816.webp", m: [443.6334, 0, 0, 443.6334, -102.5965, 329.0711], clip: [0.5898, 0.771, 0.8639, 0.9568] },
-      { src: "/images/scene-353c4421.webp", m: [146.1172, 0, 0, 184.7434, 565.1953, 354.2362] },
-      { src: "/images/scene-1245c816.webp", m: [443.6335, 0, 0, 443.6335, 111.7366, 93.371], clip: [0.7128, 0, 0.8988, 0.3561] },
-      { src: "/images/scene-1245c816.webp", m: [-284.9445, 340.0255, -340.0255, -284.9445, 421.2304, 337.0934], clip: [0, 0.5992, 0.3556, 1] },
-      { src: "/images/scene-1245c816.webp", m: [-114.6225, 428.5703, 428.5703, 114.6225, -17.0118, 191.1073], clip: [0, 0.5992, 0.3556, 1] },
-      { src: "/images/scene-28879e0f.webp", m: [501.4182, 0, 0, 748.3854, 123.4102, 92.2293] },
+      { src: "/images/scene-5f33d9e4.webp", m: [234.7475, -187.7379, 152.5828, 190.7896, 254.7271, 193.2681], cover: true },
+      { src: "/images/scene-cdd1d94d.webp", m: [255.099, 79.67, -64.7513, 207.3301, 22.3305, 332.9095], cover: true },
+      { src: "/images/scene-3c519f85.webp", m: [311.0721, -101.0633, 82.1385, 252.8219, 410.8188, 457.3213], cover: true },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-118.7615, 103.8374, 117.0408, 133.8625, 437.3321, 379.345] },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [121.5925, 0, 0, 82.4123, 159.0449, 348.5779] },
+      { paint: "#a4c4b0", m: [239.6411, -30.5591, 12.2042, 95.7039, 263.8083, 627.4891], round: true },
+      { src: "/images/scene-f16e70efc7127x6439.webp", m: [82.5183, 0, 0, 157.9891, 427.935, 379.345] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-101.3291, 120.9228, -136.2986, -114.2135, 421.2313, 337.4233] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-40.7651, 152.3959, 171.7736, 45.9486, -17.0104, 191.4377] },
+      { src: "/images/scene-0a906e54c0x3180.webp", m: [363.3712, 0, 0, 395.0787, 123.4108, 330.5174] },
+      { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 138.3372, 634.8514], round: true },
+      { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 93.8748, 622.0819], round: true },
     ],
     phone: [
-      { src: "/images/scene-2d6e4e56.webp", m: [105.2285, 0, 0, 140.6328, -29.4863, 312.6064] },
-      { src: "/images/scene-921891f1.webp", m: [138.3914, -110.6724, 89.9483, 112.4768, 122.5156, 99.6064] },
-      { src: "/images/scene-2d37663f.webp", m: [150.398, 46.9703, -38.1749, 122.2351, -14.4922, 181.9317] },
-      { src: "/images/scene-81418c5d.webp", m: [183.3846, -59.581, 48.4241, 149.0447, 214.5391, 255.2784] },
-      { src: "/images/scene-1245c816.webp", m: [-196.8932, 172.1565, 172.1565, 196.8932, 230.1699, 209.3075], clip: [0, 0.5992, 0.3556, 1] },
-      { src: "/images/scene-1245c816.webp", m: [261.5429, 0, 0, 261.5429, -88.1445, 179.8633], clip: [0.5898, 0.771, 0.8639, 0.9568] },
-      { src: "/images/scene-5db1a7bd.webp", m: [90.0449, 0, 0, 112.8174, 303.6016, 192.748] },
-      { src: "/images/scene-1245c816.webp", m: [261.5429, 0, 0, 261.543, 38.2158, 40.9067], clip: [0.7128, 0, 0.8988, 0.3561] },
-      { src: "/images/scene-1245c816.webp", m: [-167.9883, 200.4612, -200.4612, -167.9883, 220.6777, 184.5929], clip: [0, 0.5992, 0.3556, 1] },
-      { src: "/images/scene-1245c816.webp", m: [-67.5754, 252.6625, 252.6625, 67.5754, -37.6875, 98.5276], clip: [0, 0.5992, 0.3556, 1] },
-      { src: "/images/scene-28879e0f.webp", m: [234.0956, 0, 0, 349.3965, 69.1582, 61.4296] },
+      { src: "/images/scene-48330e21.webp", m: [231.6396, 0, 0, 261.7003, -307.6445, 105.0342], cover: true },
+      { paint: "linear-gradient(98.736deg, #d8cab6 -78.532%, rgba(216, 202, 182, 0) 102.1797%)", m: [238.9966, -28.2531, 5.6347, 47.6647, -403.9531, 316.9838], round: true },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8263, -168.2041, 176.9262], round: true },
+      { src: "/images/scene-e84aac77.webp", m: [285.4668, 0, 0, 297.4512, 519.4375, 99.7031], cover: true },
+      { src: "/images/scene-37eb1716.webp", m: [201.389, 78.1835, -63.5432, 163.6777, 468.3184, 213.0391], cover: true },
+      { src: "/images/scene-5f33d9e4.webp", m: [138.3948, -110.6804, 89.9548, 112.4795, 122.5156, 99.6065], cover: true },
+      { src: "/images/scene-cdd1d94d.webp", m: [150.3929, 46.9692, -38.174, 122.231, -14.4932, 181.9322], cover: true },
+      { src: "/images/scene-3c519f85.webp", m: [183.3918, -59.5816, 48.4246, 149.0505, 214.5391, 255.2784], cover: true },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-70.0155, 61.2171, 69.0011, 78.9183, 230.1699, 209.3077] },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [71.6846, 0, 0, 48.5859, 66.1064, 191.1695] },
+      { paint: "linear-gradient(107.1034deg, #a4c4b0 -31.8053%, rgba(164, 196, 176, 0) 75.4373%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], round: true },
+      { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, 224.6299, 209.3077] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, 220.6777, 184.5928] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-24.033, 89.8446, 101.2687, 27.0888, -37.6865, 98.5279] },
+      { src: "/images/scene-0a906e54c0x3180.webp", m: [169.6461, 0, 0, 184.4492, 69.1582, 172.525] },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, 288.3193, 176.562], round: true },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, 287.7959, 176.9604], round: true },
     ],
   },
   "tea": {
     desktop: [
-      { src: "/images/scene-db21841f.webp", m: [646.8159, 0, 0, 646.8159, 104.784, 123.6699], back: true },
-      { src: "/images/scene-80d6d14b.webp", m: [264.9355, 0, 0, 230.943, 64.6777, 132.6611] },
-      { src: "/images/scene-61f939c0.webp", m: [435.5508, 0, 0, 388.7799, -156.7051, 183.454] },
-      { src: "/images/scene-9d8d4010.webp", m: [390.602, 151.6581, -123.2592, 317.4594, 63.1213, 339.3187] },
+      { paint: "#000000", m: [861.4952, 0, 0, 785.7686, -263.1204, 8.6719], back: true },
+      { src: "/images/scene-e84aac77.webp", m: [534.3839, 0, 0, 646.816, 161, 124], back: true, cover: true },
+      { src: "/images/scene-720e38e5.webp", m: [222.3992, 40.8617, -33.2101, 180.7535, 102.5508, 137.6484], cover: true, blur: 4 },
+      { src: "/images/scene-1eec80f6.webp", m: [335.3611, -121.6933, 95.0563, 261.9552, -154.1423, 308.0391], cover: true, blur: 2 },
+      { src: "/images/scene-37eb1716.webp", m: [390.6021, 151.6401, -123.2445, 317.4594, 63.1201, 339.6484], cover: true },
+      { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 93.8748, 622.0819], round: true },
     ],
     phone: [
-      { src: "/images/scene-e1612073.webp", m: [360, 0, 0, 269, 0, 108], back: true },
-      { src: "/images/scene-db21841f.webp", m: [297.4512, 0, 0, 297.4512, 81.4453, 99.7031] },
-      { src: "/images/scene-2c954d4d.webp", m: [168.1367, 0, 0, 147.0156, 10.6914, 61.9521] },
-      { src: "/images/scene-a97551bf.webp", m: [223.8164, 0, 0, 200.0518, -67.7207, 129.0068] },
-      { src: "/images/scene-9d8d4010.webp", m: [201.389, 78.1928, -63.5507, 163.6777, 36.3185, 213.0389] },
+      { src: "/images/scene-e84aac77.webp", m: [285.4668, 0, 0, 297.4512, 87.4375, 99.7031], back: true, cover: true },
+      { src: "/images/scene-720e38e5.webp", m: [138.1803, 25.3881, -20.634, 112.3052, 35.9863, 66.6094], cover: true, blur: 4 },
+      { src: "/images/scene-1eec80f6.webp", m: [170.3906, -61.83, 48.2963, 133.0944, -65.1582, 193.3984], cover: true, blur: 2 },
+      { src: "/images/scene-37eb1716.webp", m: [201.389, 78.1835, -63.5432, 163.6777, 36.3184, 213.0391], cover: true },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, 287.7959, 176.9604], round: true },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [-13.0829, 122.9645, -83.3422, -8.8673, -360.6592, 325.8765], blur: 4 },
+      { src: "/images/scene-5f33d9e4.webp", m: [138.3948, -110.6804, 89.9548, 112.4795, -309.4844, 99.6065], cover: true },
+      { src: "/images/scene-3c519f85.webp", m: [183.3918, -59.5816, 48.4246, 149.0505, -217.4609, 255.2784], cover: true },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-70.0155, 61.2171, 69.0011, 78.9183, -201.8301, 209.3077] },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [71.6846, 0, 0, 48.5859, -365.8936, 191.1695] },
+      { paint: "linear-gradient(107.1034deg, #a4c4b0 -31.8053%, rgba(164, 196, 176, 0) 75.4373%)", m: [111.8805, -14.267, 5.6977, 44.6811, -297.2949, 311.1715], round: true },
+      { src: "/images/scene-f16e70efc5898x432.webp", m: [19.4543, 90.1261, 61.0851, -13.1856, -123.6455, 210.6866], blur: 4 },
+      { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, -207.3701, 209.3077] },
+      { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, -211.3223, 184.5928] },
+      { src: "/images/scene-0a906e54c0x3180.webp", m: [169.6461, 0, 0, 184.4492, -362.8418, 172.525] },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, -143.6807, 176.562], round: true },
+      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, -144.2041, 176.9604], round: true },
     ],
   },
 };
