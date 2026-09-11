@@ -253,6 +253,7 @@ export function ProductHero({ product }: { product: Product }) {
   // mark needs there is the design's own rather than one of the two the
   // stylesheet reads off the wash.
   if (card?.mark !== undefined) vars["--mark-desk"] = card.mark;
+  if (card?.markClip) vars["--mark-clip"] = card.markClip;
   if (washFrom) vars["--wash-from"] = washFrom;
   if (washTo) vars["--wash-to"] = washTo;
   if (card?.edge) vars["--edge"] = card.edge;
@@ -342,10 +343,21 @@ export function ProductHero({ product }: { product: Product }) {
               mode === "phone" ? styles.scenePhone : styles.sceneWide
             }${layer.back ? ` ${styles.sceneBack}` : ""}`;
             const key = `${mode}-${index}`;
+            /* The rectangle the design masks this layer through. Sugar Free's
+               collage is masked, and it is the mask that stops its sachets at
+               the copy's edge rather than across the margin card. The box is
+               the card's own, so the layer inside it is pulled back to the
+               card's corner and placed from there as usual. */
+            const clip = layer.mask && {
+              ["--mx" as string]: layer.mask[0],
+              ["--my" as string]: layer.mask[1],
+              ["--mw" as string]: layer.mask[2],
+              ["--mh" as string]: layer.mask[3],
+            } as CSSProperties;
             /* A fill rather than a picture: the ramps the file lays over a
                photograph's edges, without which it sits on the card as a
                rectangle instead of sinking into it. */
-            return layer.src ? (
+            const drawn = layer.src ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 key={key}
@@ -366,6 +378,22 @@ export function ProductHero({ product }: { product: Product }) {
                 aria-hidden="true"
                 style={{ ...style, background: layer.paint }}
               />
+            );
+            return clip ? (
+              <span
+                key={key}
+                /* The breakpoint class rides the clip as well: a box six hundred
+                   wide, hidden or not, has no business on a 360 page. */
+                className={`${styles.sceneClip} ${
+                  mode === "phone" ? styles.scenePhone : styles.sceneWide
+                }`}
+                aria-hidden="true"
+                style={clip}
+              >
+                {drawn}
+              </span>
+            ) : (
+              drawn
             );
           }),
         )}

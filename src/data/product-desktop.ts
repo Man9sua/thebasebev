@@ -49,6 +49,15 @@ export type DesktopCard = {
    * barely a sixth.
    */
   mark?: number;
+  /**
+   * How far in from the frame's left edge the mark starts, where the design
+   * masks it.
+   *
+   * Sugar Free's collage is drawn inside a mask, and the mark is inside it
+   * too — so the B's stem, which falls outside, is not drawn at all there.
+   * Without this it stands as a white bar down the band's left edge.
+   */
+  markClip?: number;
 };
 
 /** Where the file puts the light on all but three of the sixteen. */
@@ -69,6 +78,6 @@ export const productDesktop: Record<string, DesktopCard> = {
   garnish: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#ceb999", mark: 0.73 },
   vending: { pouch: { left: 106.15, top: 132.35, width: 390.87, height: 569.06 }, washIn: "#c5a880", washOut: "#4e342e", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#4e342e" },
   jam: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, washIn: "#973139", washOut: "#3d060a", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#3d060a" },
-  "sugar-free": { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#acc4b2", mark: 1 },
+  "sugar-free": { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#acc4b2", mark: 0.7, markClip: 46.91 },
   tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, mark: 0.16 },
 };

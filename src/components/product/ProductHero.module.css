@@ -175,6 +175,8 @@
   width: calc(586.75 * var(--k));
   height: calc(322 * var(--k));
   opacity: var(--mark-desk, var(--mark-strength, 1));
+  /* Where the design masks the mark with the collage — see `markClip`. */
+  clip-path: inset(0 0 0 calc(var(--mark-clip, 0) * var(--k)));
   user-select: none;
 }
 
@@ -246,6 +248,26 @@
 
 .hero .sceneLayer {
   max-width: none;
+}
+
+/* The rectangle a collage is masked through — Sugar Free's, which is what
+   stops its sachets at the copy's edge. The box is the card's own; the layer
+   inside is pulled back to the card's corner so its own matrix still places it
+   from there. */
+.sceneClip {
+  position: absolute;
+  left: calc(var(--x0) + var(--mx) * var(--k));
+  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k));
+  z-index: 2;
+  display: block;
+  overflow: hidden;
+  width: calc(var(--mw) * var(--k));
+  height: calc(var(--mh) * var(--k));
+}
+
+.sceneClip .sceneLayer {
+  left: calc(-1 * var(--mx) * var(--k));
+  top: calc(-1 * var(--my) * var(--k));
 }
 
 /* Tea's is the one layer that is a ground rather than a cut-out, and the brand
