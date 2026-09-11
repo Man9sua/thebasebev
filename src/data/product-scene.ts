@@ -133,7 +133,6 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { src: "/images/scene-1eec80f6f781b400.webp", m: [170.3906, -61.83, 48.2963, 133.0944, -65.1582, 193.3984] },
       { src: "/images/scene-37eb1716f813.webp", m: [201.389, 78.1835, -63.5432, 163.6777, 36.3184, 213.0391] },
       { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, 287.7959, 176.9604], round: true },
-      { src: "/images/scene-3c519f85f813.webp", m: [183.3918, -59.5816, 48.4246, 149.0505, -217.4609, 255.2784] },
     ],
   },
 };

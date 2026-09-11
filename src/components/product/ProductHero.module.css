@@ -848,6 +848,12 @@ span.sceneLayer {
     --mark-strength: 0.16;
   }
 
+  /* The collage's mask starts at the frame's edge here, so the mark keeps its
+     whole width — `--mark-clip` is the desktop's alone. */
+  .mark {
+    clip-path: none;
+  }
+
   .markThe {
     display: none;
   }

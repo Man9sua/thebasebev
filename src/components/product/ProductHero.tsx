@@ -381,11 +381,15 @@ export function ProductHero({ product }: { product: Product }) {
             return clip ? (
               <span
                 key={key}
-                /* The breakpoint class rides the clip as well: a box six hundred
-                   wide, hidden or not, has no business on a 360 page. */
+                /* The breakpoint class rides the clip as well — a box six hundred
+                   wide, hidden or not, has no business on a 360 page — and so
+                   does the tier, because a wrapper's own z-index carries the
+                   layer inside it. Without that a masked ground is drawn over
+                   the brand mark rather than under it, which on Garnish's phone
+                   covered the word outright. */
                 className={`${styles.sceneClip} ${
                   mode === "phone" ? styles.scenePhone : styles.sceneWide
-                }`}
+                }${layer.back ? ` ${styles.sceneBack}` : ""}`}
                 aria-hidden="true"
                 style={clip}
               >
