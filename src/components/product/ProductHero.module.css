@@ -240,10 +240,6 @@
   transform-origin: 0 0;
   transform: translate(calc(var(--e) * var(--k)), calc(var(--f) * var(--k)))
     matrix(var(--a), var(--b), var(--c), var(--d), 0, 0);
-  /* `--k` is already a length, so the radius is the file's number times it —
-     multiplying by a further `1px` makes the whole declaration invalid and the
-     layers that should sit back come out sharp. */
-  filter: blur(calc(var(--blur, 0) * var(--k)));
 }
 
 .hero .sceneLayer {

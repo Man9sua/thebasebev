@@ -335,7 +335,6 @@ export function ProductHero({ product }: { product: Product }) {
               ["--d" as string]: layer.m[3],
               ["--e" as string]: layer.m[4],
               ["--f" as string]: layer.m[5],
-              ...(layer.blur ? { ["--blur" as string]: `${layer.blur}` } : {}),
               ...(layer.opacity ? { opacity: layer.opacity } : {}),
               ...(layer.round ? { borderRadius: "50%" } : {}),
             } as CSSProperties;
