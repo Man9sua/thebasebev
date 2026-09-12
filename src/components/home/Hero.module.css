@@ -132,13 +132,25 @@
   }
 }
 
+/*
+ * The pill and the text link beside it, centred on one line. The design puts
+ * the pill at (52, 577) at 223 x 66 and the link at (300, 586) at 210 x 50 —
+ * a 25 gap, and both centred on y 610.
+ */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5625rem;
+  margin-top: auto;
+}
+
 /* 223 x 66, radius 100, Exo Bold 18 on the design's warmest white. */
 .cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 13.9375rem;
-  margin-top: auto;
   padding: 1.0625rem 2.5rem;
   border-radius: 100px;
   background: var(--tbb-hero-pill);
@@ -157,9 +169,25 @@
   background: var(--tbb-paper);
 }
 
-.cta:focus-visible {
+.cta:focus-visible,
+.aside:focus-visible {
   outline: 2px solid var(--tbb-ink);
   outline-offset: 3px;
+}
+
+/* Exo Bold 18 in ink, no box of its own — the design draws it as plain text. */
+.aside {
+  color: var(--tbb-ink);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.aside:hover {
+  border-bottom-color: currentColor;
 }
 
 /*
@@ -167,28 +195,53 @@
  * and drops the copy onto the peach below them, so the crop moves and the copy
  * goes to the foot of the band rather than its head.
  */
+/*
+ * The phone frame, measured rather than adapted: the photograph is 374 x 670
+ * hung at y 108 in a 360-wide frame, the headline is Exo Light 40/44 at x 44
+ * and y 513, and the pill is 166 x 50 at x 44 and y 677 — so it is 51 clear of
+ * the band's foot, not full width. Every figure here is that geometry as a
+ * share of 360, capped so it stops growing before the layout switches over.
+ */
 @media (max-width: 767px) {
-  /* 360 x 620 on the design's phone frame — 172% of the width. */
+  /* 670 / 360 */
   .band {
-    height: clamp(28rem, 172vw, 44rem);
+    height: clamp(28rem, 186.1vw, 44rem);
   }
 
   .photo {
     object-position: center top;
   }
 
+  /* 44 / 360 */
   .inner {
     justify-content: flex-end;
-    padding-top: 55%;
+    padding-top: 0;
+    padding-inline: 12.22%;
+    /* 51 / 360, under the pill */
+    padding-bottom: 14.2vw;
   }
 
   .title {
     max-width: 100%;
+    /* 40 / 360 */
+    font-size: clamp(1.75rem, 11.11vw, 2.75rem);
   }
 
+  .actions {
+    /* 677 - 645, the gap under the headline's last line */
+    margin-top: 8.9vw;
+  }
+
+  /* 166 / 360 — sized to itself, not to the band. */
   .cta {
-    margin-top: clamp(1.5rem, 6vw, 2.5rem);
-    width: 100%;
+    min-width: clamp(10.375rem, 46.1vw, 13.9375rem);
+    padding-inline: 1.75rem;
+    font-size: 0.875rem;
+  }
+
+  /* The design's phone frame carries no second link. */
+  .aside {
+    display: none;
   }
 
   .veil {

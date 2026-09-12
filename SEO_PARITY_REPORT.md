@@ -1,6 +1,6 @@
 # SEO parity report
 
-Generated: 2026-09-12T13:04:42.941Z
+Generated: 2026-09-12T13:42:06.411Z
 
 - Production: `https://thebasebev.com`
 - Target: `http://localhost:3000`
@@ -14,7 +14,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 
 | Route | Production | Target | Critical parity | Internal links P/T | Target images/missing/empty alt | Notes |
 | --- | ---: | ---: | --- | ---: | ---: | --- |
-| `/` | 200 | 200 | PASS | 28/31 | 32/0/31 | Critical fields match |
+| `/` | 200 | 200 | PASS | 28/31 | 28/0/27 | Critical fields match |
 | `/wholesale-strategy` | 200 | 200 | PASS | 28/31 | 20/0/12 | Critical fields match |
 | `/contacts` | 200 | 200 | PASS | 28/31 | 0/0/0 | Critical fields match |
 | `/about-us` | 200 | 200 | PASS | 28/31 | 21/0/5 | Critical fields match |
@@ -179,7 +179,7 @@ h1, so a change on production ends the exemption rather than hiding behind it.
 ## Non-blocking observations
 
 - /: internal links differ (-0/+3)
-- /: image alt stats differ ({"total":39,"missing":0,"empty":10} vs {"total":32,"missing":0,"empty":31})
+- /: image alt stats differ ({"total":39,"missing":0,"empty":10} vs {"total":28,"missing":0,"empty":27})
 - /wholesale-strategy: internal links differ (-0/+3)
 - /wholesale-strategy: image alt stats differ ({"total":26,"missing":0,"empty":17} vs {"total":20,"missing":0,"empty":12})
 - /contacts: internal links differ (-0/+3)

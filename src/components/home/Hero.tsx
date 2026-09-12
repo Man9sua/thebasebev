@@ -4,8 +4,14 @@ import styles from "./Hero.module.css";
 /**
  * The hero band.
  *
- * One photograph under the header, the headline over its left, and a single
- * link to the shop — the composition the homepage design file draws.
+ * One photograph under the header, the headline over its left, and two links —
+ * the composition the homepage design file draws.
+ *
+ * The second link, "Wholesale & Distribution", sits beside the pill as plain
+ * bold text. It is a loose node on the design's canvas rather than a child of
+ * the frame, which is why it was missed first time round; the owner asked for
+ * it. The design's phone frame has no such link and neither does this at that
+ * width — the header's menu carries the same route there, so nothing is lost.
  *
  * The h1 is "Premium Powder Bases for Your Business", which the design sets on
  * the desktop frame. This is SEO surface rather than a design choice, so it is
@@ -56,9 +62,14 @@ export function Hero() {
             Premium Powder Bases for Your Business
           </h1>
 
-          <SiteLink href="/catalog" className={styles.cta}>
-            Shop Now
-          </SiteLink>
+          <div className={styles.actions}>
+            <SiteLink href="/catalog" className={styles.cta}>
+              Shop Now
+            </SiteLink>
+            <SiteLink href="/distributors" className={styles.aside}>
+              Wholesale &amp; Distribution
+            </SiteLink>
+          </div>
         </div>
       </div>
     </section>

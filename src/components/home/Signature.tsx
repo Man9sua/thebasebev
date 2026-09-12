@@ -29,8 +29,6 @@ export function Signature() {
           <span className={styles.scrim} aria-hidden />
 
           <h2 className={styles.title}>Want a Unique Flavor for Your Brand?</h2>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className={styles.rule} src="/images/icons/section-rule.svg" alt="" />
           <p className={styles.copy}>
             We create custom beverage blends tailored to your brand and seasonal
             trends, helping you stand out.
@@ -44,7 +42,7 @@ export function Signature() {
           </SiteLink>
         </article>
 
-        <article className={styles.card}>
+        <article className={`${styles.card} ${styles.cardSample}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className={styles.photo}
@@ -52,7 +50,6 @@ export function Signature() {
             alt=""
             loading="lazy"
           />
-          <span className={styles.scrim} aria-hidden />
 
           <h2 className={styles.title}>Try Before You Buy</h2>
           <p className={styles.copy}>

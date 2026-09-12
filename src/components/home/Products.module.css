@@ -1,8 +1,12 @@
 /**
  * "OUR PRODUCTS", from the homepage design file.
  *
- * A hairline mark, the heading with two buttons on its line, and the sixteen
- * products as a four-by-four grid of 270x413 cards on an 11.5 by 12 gap.
+ * The heading with two buttons on its line, and the sixteen products as a
+ * four-by-four grid of 270x413 cards on an 11.5 by 12 gap.
+ *
+ * The design also puts a small wavy mark above the heading, drawn in a grey a
+ * shade off the paper. It is dropped at the owner's instruction: at its size
+ * and contrast it reads as a stray tilde rather than as a rule.
  *
  * The heading is indented from the grid — 98 against the grid's 40 — which is
  * the design's own reading: it lands on the card's printed name rather than on
@@ -23,14 +27,6 @@
   padding-left: var(--tbb-home-indent);
   /* 1273.59 - 1249 */
   padding-bottom: clamp(1rem, 2vw, 1.5rem);
-}
-
-/* 65.74 x 11, in a grey so close to paper it reads as a watermark. */
-.rule {
-  display: block;
-  width: 4.125rem;
-  height: auto;
-  margin-bottom: clamp(0.5rem, 1.5vw, 1.125rem);
 }
 
 .headRow {

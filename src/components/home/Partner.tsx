@@ -85,8 +85,6 @@ export function Partner() {
       <div className={styles.band}>
         <div className={styles.card}>
           <div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className={styles.rule} src="/images/icons/section-rule.svg" alt="" />
             <h2 className={styles.title} id="partner-with-us">
               Partner with Us
             </h2>

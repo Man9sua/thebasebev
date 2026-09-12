@@ -55,6 +55,27 @@
   z-index: -2;
 }
 
+/**
+ * The sample card, where the design has the copy running straight over a white
+ * pouch — "can elevate your menu" is barely readable in the file itself, and no
+ * scrim fixes white-on-white without turning the card into a black box.
+ *
+ * So the card carries the artwork's own gradient as a background and the
+ * photograph fades into it from the top: the pouch keeps the lower two thirds,
+ * where it is the picture, and the copy gets clean gradient above it. The two
+ * gradient stops are the design's (`Rectangle 795`), and the angle is measured
+ * off the exported card — 43 red per unit across, 72 down, which is 31 degrees
+ * off vertical.
+ */
+.cardSample {
+  background: linear-gradient(148.8deg, #5f5040 0%, #c5b5a5 100%);
+}
+
+.cardSample .photo {
+  mask-image: linear-gradient(to bottom, transparent 28%, #000 58%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 28%, #000 58%);
+}
+
 /* Only as dark as the type needs, and only on the type's side. */
 .scrim {
   position: absolute;
@@ -80,14 +101,6 @@
   line-height: 1.15 !important;
   letter-spacing: 0 !important;
   text-transform: none;
-}
-
-.rule {
-  width: 4.125rem;
-  height: auto;
-  margin-top: clamp(0.75rem, 1.6vw, 1.25rem);
-  /* The mark is drawn in near-white and would vanish on the card's grey. */
-  opacity: 0.5;
 }
 
 /* Exo Light 18 on a 24 line. */

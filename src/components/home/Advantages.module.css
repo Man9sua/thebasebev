@@ -38,10 +38,20 @@
   min-width: 0;
 }
 
-/* 77.86 across, in the design's stone. */
+/*
+ * 77.86 across, in the design's stone.
+ *
+ * What the design actually does with the two lines: the **figure** is centred
+ * in the disc — its centre is within 5 of the disc's on all four — and "Up to"
+ * is ranged left against the figure, not centred under it. Centring both was
+ * what read as crooked, because "Up to" is half the width of the figure and
+ * ends up on its own axis.
+ *
+ * So the pair is one column, as wide as the figure, centred in the disc, with
+ * its contents ranged left. No offsets to get wrong.
+ */
 .disc {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 4.875rem;
@@ -49,7 +59,13 @@
   border-radius: 50%;
   background: var(--tbb-stone);
   color: var(--tbb-on-dark);
-  text-align: center;
+}
+
+.discText {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
 
 /* Exo SemiBold 10.87 on a 19 line. */
@@ -59,11 +75,13 @@
   line-height: 1.2;
 }
 
-/* Exo SemiBold 26 on a 28 line. */
+/* Exo SemiBold 26 on a 28 line, set directly under the qualifier. */
 .figure {
   font-size: 1.625rem;
   font-weight: 600;
-  line-height: 1.08;
+  line-height: 1;
+  /* The design's own boxes overlap by 4, which is what keeps the pair tight. */
+  margin-top: -0.125rem;
 }
 
 /* Exo SemiBold 26 on a 28 line, in ink. */

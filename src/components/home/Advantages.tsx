@@ -58,12 +58,14 @@ export function Advantages() {
           {ADVANTAGES.map((advantage) => (
             <li className={styles.item} key={advantage.name}>
               <span className={styles.disc}>
-                {advantage.qualifier && (
-                  <span className={styles.qualifier}>
-                    {advantage.qualifier}
-                  </span>
-                )}
-                <span className={styles.figure}>{advantage.figure}</span>
+                <span className={styles.discText}>
+                  {advantage.qualifier && (
+                    <span className={styles.qualifier}>
+                      {advantage.qualifier}
+                    </span>
+                  )}
+                  <span className={styles.figure}>{advantage.figure}</span>
+                </span>
               </span>
               <h2 className={styles.name}>{advantage.name}</h2>
               <p className={styles.copy}>{advantage.copy}</p>

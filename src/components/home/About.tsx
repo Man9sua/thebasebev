@@ -18,8 +18,6 @@ export function About() {
     <section className={styles.section} aria-labelledby="who-we-are">
       <div className={styles.inner}>
         <div className={styles.head}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className={styles.rule} src="/images/icons/section-rule.svg" alt="" />
           <h2 className={styles.title} id="who-we-are">
             WHO WE ARE?
           </h2>

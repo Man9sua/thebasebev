@@ -44,9 +44,6 @@ export function Products() {
     <section className={styles.section} aria-labelledby="our-product">
       <div className={styles.inner}>
         <div className={styles.head}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className={styles.rule} src="/images/icons/section-rule.svg" alt="" />
-
           <div className={styles.headRow}>
             {/*
              * The design's heading is singular over a grid of sixteen. Made

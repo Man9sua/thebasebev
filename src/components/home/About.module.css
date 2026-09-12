@@ -1,8 +1,11 @@
 /**
  * "WHO WE ARE?", from the homepage design file.
  *
- * A hairline mark, the heading, and one photograph on a 20 radius with the
- * company in a sentence across its foot. The design darkens the bottom 201 of
+ * The heading, and one photograph on a 20 radius with the company in a
+ * sentence across its foot. The design's small wavy mark above the heading is
+ * dropped throughout the page — see `Products.module.css`.
+ *
+ * The design darkens the bottom 201 of
  * the 647-tall frame to 80% black and sets the sentence in white over it, which
  * is what carries the type at that size over a lit room.
  */
@@ -21,14 +24,6 @@
   padding-left: var(--tbb-home-indent);
   /* 3933 - 3985 */
   padding-bottom: clamp(1rem, 2.2vw, 1.75rem);
-}
-
-/* 65.74 x 12.64 */
-.rule {
-  display: block;
-  width: 4.125rem;
-  height: auto;
-  margin-bottom: clamp(0.5rem, 1.4vw, 1rem);
 }
 
 /* Exo Regular 60 on a 70 line. */

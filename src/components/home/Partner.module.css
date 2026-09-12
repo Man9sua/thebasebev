@@ -43,13 +43,6 @@
   background: var(--tbb-paper);
 }
 
-.rule {
-  display: block;
-  width: 4.125rem;
-  height: auto;
-  margin-bottom: clamp(0.5rem, 1.4vw, 1rem);
-}
-
 /* Exo Bold 48 on a 60 line. */
 .title {
   margin: 0 !important;
