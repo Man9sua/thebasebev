@@ -62,55 +62,34 @@ const OPAQUE = 8;
 /**
  * The shadow the drink casts, as multiples of that drink's own width.
  *
- * Measured off the design's own tile rather than reasoned about. Reading the
- * rows of a rendered card downwards from the base, the shadow contributes
- * **nothing below the base at all**: the whole shape sits above it, behind the
- * glass, and the only part that shows is the wedge that escapes to the right.
- * That is why it reads as a shadow cast on the same plane rather than as a
- * puddle the glass is standing in.
+ * Taken off the design by subtracting its card's wash from its card, which is
+ * the only measurement of this that turned out to be trustworthy. Two earlier
+ * attempts were tuned against the darkening measured *within a row*, relative
+ * to that row's lightest pixel — and the design's shadow is wide enough that
+ * the lightest pixel in the row is itself in shadow, so the reference moved
+ * with the thing being measured and the readings were meaningless.
  *
- * So: a flat ellipse, bottom edge tangent to the base, dense end hidden behind
- * the drink and fading out to the right — the design's own left-to-right ramp,
- * which is the one part of it worth keeping literally.
+ * What the subtracted field actually shows: the shadow is **densest exactly on
+ * the contact line** and radiates out from there, wrapping under and to the
+ * right of the foot. Centring the shape below the base — which both earlier
+ * versions did, one above it and one under it — leaves a gap between the foot
+ * and the shadow, and that gap is what made the glass look like it was
+ * floating above its own shadow rather than standing on the card.
  *
- * The dense end starts at the drink's **centre**, not its left edge. Anchoring
- * it to the left edge is what put a grey lobe beside the narrow-footed glasses:
- * a tapered glass is far wider at the lip than at the base, so an ellipse sized
- * to its full width stuck out past the foot it was supposed to hide behind.
- * From the centre, the dense half is always under the drink.
+ * So: a soft ellipse centred on the base line, a touch right of the drink,
+ * fading out in every direction. The half above the line is hidden by the
+ * drink; the half below is the shadow.
  */
-const GROUND_WIDTH_RATIO = 1.12;
-/** Flatness, as the design has it: 88.7 tall on 241 wide. */
-const GROUND_FLATNESS = 0.3;
-/** Only enough to kill the aliasing on the arc; any more and it is a halo. */
-const GROUND_BLUR_RATIO = 0.01;
+const GROUND_WIDTH_RATIO = 1.0;
+/** Height against width, which is what gives it the ground's perspective. */
+const GROUND_FLATNESS = 0.44;
+/** Offset right of the drink's centre — the design's light comes from the left. */
+const GROUND_OFFSET_X = 0.17;
+const GROUND_BLUR_RATIO = 0.05;
+const GROUND_OPACITY = 0.52;
 /** Figma rotates counter-clockwise, so the SVG angle is negated. */
 const GROUND_ROTATION = -5.63;
 const GROUND_COLOUR = "#ccc4a7";
-
-/**
- * The ramp along the ellipse, in its own width.
- *
- * A plain ramp from the dense end gives an even wash across the visible tail,
- * where the design is distinctly darker at the contact and falls off fast —
- * profiled at the base it reads -8, -11, -12 and then nothing, against an even
- * -13 for a plain ramp. So the ramp holds full strength until the drink's right
- * edge, which is 0.45 along at this width, and is gone by 0.7.
- *
- * Holding the shape 6 above the base is what makes it stop where the design's
- * stops instead of leaking under the foot of the glass.
- *
- * The strength is judged at the size the card is actually shown rather than
- * against the 1:1 profile. 0.25 matches the file's -12 peak exactly at 270,
- * which is about what the desktop grid gives a card — but the shelf and the
- * phone run the same card at 169, and there the shadow covers 19px instead of
- * 30 and all but disappears. 0.35 is the compromise: a shade stronger than the
- * file at full size, still present at two thirds of it.
- */
-const GROUND_HOLD_STOP = 0.45;
-const GROUND_FADE_STOP = 0.7;
-const GROUND_OPACITY = 0.35;
-const GROUND_LIFT = 6 * 2;
 
 /**
  * Scene photography: width to serve at, and whether it keeps its alpha channel.
@@ -177,22 +156,21 @@ async function drinkBounds(file) {
  * glass that casts it at any card size, on the homepage or the shelf.
  */
 async function ground(glassCentre, glassWidth) {
-  const w = glassWidth * GROUND_WIDTH_RATIO;
-  const rx = w / 2;
-  const ry = (w * GROUND_FLATNESS) / 2;
-  // Dense end under the drink's centre; bottom edge tangent to the base.
-  const cx = glassCentre + rx;
-  const cy = GLASS_BASE - GROUND_LIFT - ry;
-  const blur = Math.max(0.3, glassWidth * GROUND_BLUR_RATIO);
+  const rx = (glassWidth * GROUND_WIDTH_RATIO) / 2;
+  const ry = rx * GROUND_FLATNESS;
+  // Centred on the contact line, so the shadow starts where the drink stands.
+  const cx = glassCentre + glassWidth * GROUND_OFFSET_X;
+  const cy = GLASS_BASE;
+  const blur = Math.max(0.5, glassWidth * GROUND_BLUR_RATIO);
 
   const svg = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${SHOT_WIDTH}" height="${SHOT_HEIGHT}">
   <defs>
-    <linearGradient id="g" x1="0" y1="0.5" x2="1" y2="0.5">
+    <radialGradient id="g" cx="0.5" cy="0.5" r="0.5">
       <stop offset="0" stop-color="${GROUND_COLOUR}" stop-opacity="${GROUND_OPACITY}"/>
-      <stop offset="${GROUND_HOLD_STOP}" stop-color="${GROUND_COLOUR}" stop-opacity="${GROUND_OPACITY}"/>
-      <stop offset="${GROUND_FADE_STOP}" stop-color="${GROUND_COLOUR}" stop-opacity="0"/>
-    </linearGradient>
+      <stop offset="0.45" stop-color="${GROUND_COLOUR}" stop-opacity="${GROUND_OPACITY * 0.7}"/>
+      <stop offset="1" stop-color="${GROUND_COLOUR}" stop-opacity="0"/>
+    </radialGradient>
   </defs>
   <g transform="rotate(${GROUND_ROTATION} ${cx} ${cy})">
     <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#g)"/>
