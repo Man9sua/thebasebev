@@ -44,20 +44,37 @@ const SHOT_HEIGHT = 826;
 /**
  * Where the glass goes, in the design's own card units, doubled.
  *
- * These are measured from the file rather than picked. Each placement box there
- * holds the whole 1000x1500 source, transparent margins and all, so the box is
- * not the glass: scaling each source's own alpha bounds into its box puts the
- * sixteen visible glasses at 220 to 304 tall, median 250, standing on a base at
- * y 292 to 330, median 310. The name is printed at y 333, so the median base is
- * also what keeps the two from colliding — which is the one thing the spread
- * cannot be allowed to decide.
+ * Measured off the design's own render rather than off its placement boxes.
+ * Those boxes each hold a whole 1000x1500 source, margins included, so they say
+ * nothing directly about how big the drink comes out; rendering the grid at 1:1
+ * and measuring the sixteen drinks gives 217 to 321 tall, median 275, all
+ * standing on a base at 306 to 339, median 321. The base is the consistent one,
+ * which is the design's intent: the row reads as a row because the drinks stand
+ * on a line. The name is printed at y 333, just under it.
  */
-const GLASS_HEIGHT = 250 * 2;
-const GLASS_BASE = 310 * 2;
-/** The widest a glass may run, which is the width of the ground under it. */
-const GLASS_MAX_WIDTH = 248 * 2;
+const GLASS_HEIGHT = 275 * 2;
+const GLASS_BASE = 321 * 2;
+/** The widest a glass may run before it is pulled back. The design reaches 185. */
+const GLASS_MAX_WIDTH = 205 * 2;
 /** Below this the pixel is the photograph's own soft shadow, not the glass. */
 const OPAQUE = 8;
+
+/**
+ * The ground the drink stands on, as multiples of that drink's own width.
+ *
+ * The design draws one ellipse per card, 241 x 88.7 under a drink 135 wide, its
+ * bottom edge meeting the base and its body trailing off to the right from the
+ * drink's left edge. Written as ratios, it scales with each drink instead of
+ * being one fixed ellipse that a narrow glass floats above and a wide one
+ * outgrows — which is what made it read as a smear beside the drink rather than
+ * as the drink's own shadow.
+ */
+const GROUND_WIDTH_RATIO = 241 / 135;
+const GROUND_HEIGHT_RATIO = 88.7 / 135;
+/** Figma rotates counter-clockwise, so the SVG angle is negated. */
+const GROUND_ROTATION = -5.63;
+const GROUND_FROM = "#ccc4a7";
+const GROUND_TO = "#e1ded4";
 
 /**
  * Scene photography: width to serve at, and whether it keeps its alpha channel.
@@ -117,6 +134,33 @@ async function drinkBounds(file) {
   return { left, top, width: right - left + 1, height: bottom - top + 1 };
 }
 
+/**
+ * The ground, as an SVG the size of the whole card so it can be composited at
+ * the origin. Drawn under the glass, tied to the glass's own box, so the two
+ * cannot drift apart on either the homepage or the shelf.
+ */
+function ground(glassLeft, glassWidth) {
+  const w = glassWidth * GROUND_WIDTH_RATIO;
+  const h = glassWidth * GROUND_HEIGHT_RATIO;
+  // Bottom edge on the base, left edge on the drink's left edge.
+  const cx = glassLeft + w / 2;
+  const cy = GLASS_BASE - h / 2;
+
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${SHOT_WIDTH}" height="${SHOT_HEIGHT}">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0" stop-color="${GROUND_FROM}" stop-opacity="1"/>
+      <stop offset="0.75" stop-color="${GROUND_TO}" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(${GROUND_ROTATION} ${cx} ${cy})">
+    <ellipse cx="${cx}" cy="${cy}" rx="${w / 2}" ry="${h / 2}" fill="url(#g)"/>
+  </g>
+</svg>`,
+  );
+}
+
 let shots = 0;
 
 for (const slug of SLUGS) {
@@ -134,6 +178,7 @@ for (const slug of SLUGS) {
   const height = Math.max(1, Math.round(bounds.height * scale));
 
   const drink = await sharp(from).extract(bounds).resize(width, height).png().toBuffer();
+  const left = Math.round((SHOT_WIDTH - width) / 2);
 
   await sharp({
     create: {
@@ -143,18 +188,16 @@ for (const slug of SLUGS) {
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     },
   })
+    // Ground first: it belongs behind the glass it is cast by.
     .composite([
-      {
-        input: drink,
-        left: Math.round((SHOT_WIDTH - width) / 2),
-        top: GLASS_BASE - height,
-      },
+      { input: ground(left, width), top: 0, left: 0 },
+      { input: drink, left, top: GLASS_BASE - height },
     ])
     .webp({ quality: 84, effort: 6, alphaQuality: 100 })
     .toFile(path.join(IMAGES, `shot-${slug}.webp`));
 
   shots += 1;
-  console.log(`shot-${slug}.webp  glass ${width}x${height} on ${SHOT_WIDTH}x${SHOT_HEIGHT}`);
+  console.log(`shot-${slug}.webp  glass ${width}x${height} standing at ${GLASS_BASE}`);
 }
 
 let scenes = 0;

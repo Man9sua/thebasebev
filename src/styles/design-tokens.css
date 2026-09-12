@@ -43,10 +43,9 @@
    */
   --tbb-card-wash-from: #fbf8f0;
   --tbb-card-wash-to: #e7e0cf;
-  --tbb-card-ground-from: #ccc4a7;
-  /* The ground fades out rather than fading to a colour: the design's far stop
-     is #e1ded4 at zero alpha, and keeping its hue avoids a grey fringe. */
-  --tbb-card-ground-clear: rgb(225 222 212 / 0);
+  /* The ground the drink stands on is drawn into the shot itself, from the
+     drink's own width — see `build-design-shots.mjs`. It has no token here
+     because no stylesheet paints it. */
   --tbb-card-label: #8f8b7a;
   /* Small print, the advantage discs and every line-drawn icon. */
   --tbb-stone: #7e7a72;

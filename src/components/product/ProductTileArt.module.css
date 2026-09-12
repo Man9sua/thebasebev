@@ -34,36 +34,16 @@
 }
 
 /**
- * The ground the drink stands on: an ellipse rotated 5.63 degrees, running off
- * the right edge of the card. Figma rotates counter-clockwise and CSS
- * clockwise, hence the negative angle.
+ * The drink, and the ground it stands on.
  *
- * It is offset to the right of the drink rather than centred under it. That is
- * how the file draws it on all sixteen cards, and it is what gives the card its
- * diagonal — so it is intent, not a stray.
- */
-.ground {
-  position: absolute;
-  /* 76.77 / 270, 232.92 / 413, 241.03 / 270, 88.71 / 413 */
-  left: 28.43%;
-  top: 56.4%;
-  width: 89.27%;
-  height: 21.48%;
-  border-radius: 50%;
-  transform: rotate(-5.63deg);
-  transform-origin: 0 0;
-  background: linear-gradient(
-    90deg,
-    var(--tbb-card-ground-from) 0%,
-    var(--tbb-card-ground-clear) 75%
-  );
-  pointer-events: none;
-}
-
-/**
- * The drink. `build-design-shots.mjs` writes it into a canvas that is the whole
- * card, already trimmed, fitted to one height and stood on one baseline, so
- * there is nothing to place here: the layer is the frame.
+ * Both are in the one image. `build-design-shots.mjs` trims the drink, fits it
+ * to one height, stands it on one baseline and draws its ground from its own
+ * width — so the shadow is tied to the glass that casts it and cannot drift
+ * from it at any card size. The layer is the frame; there is nothing to place.
+ *
+ * The ground used to be a CSS element carrying the design's own single ellipse.
+ * One fixed ellipse under sixteen drinks of different widths read as a smear
+ * beside the drink rather than as its shadow, which is what it looked like.
  */
 .shot {
   position: absolute;

@@ -29,7 +29,6 @@ export function ProductTileArt({
 }) {
   return (
     <div className={className ? `${styles.art} ${className}` : styles.art}>
-      <span className={styles.ground} aria-hidden />
       <Image
         className={styles.shot}
         src={`/images/shot-${slug}.webp`}
