@@ -60,21 +60,34 @@ const GLASS_MAX_WIDTH = 205 * 2;
 const OPAQUE = 8;
 
 /**
- * The ground the drink stands on, as multiples of that drink's own width.
+ * The shadow the drink casts, as multiples of that drink's own width.
  *
- * The design draws one ellipse per card, 241 x 88.7 under a drink 135 wide, its
- * bottom edge meeting the base and its body trailing off to the right from the
- * drink's left edge. Written as ratios, it scales with each drink instead of
- * being one fixed ellipse that a narrow glass floats above and a wide one
- * outgrows — which is what made it read as a smear beside the drink rather than
- * as the drink's own shadow.
+ * The design draws it as one ellipse per card filled with a left-to-right ramp.
+ * Reproducing that literally gives a crisp elliptical arc — the ramp only fades
+ * one edge, so the other three stay hard — and at card size that reads as a
+ * grey disc beside the glass rather than as its shadow. What the design's own
+ * render actually shows is a soft, pale smear leaving the base towards the
+ * lower right with no edge anywhere.
+ *
+ * So the shape is the design's, and the falloff is not: the fill fades outward
+ * in every direction and the whole thing is blurred, which is what a shadow on
+ * a lit surface looks like. Density is well below the file's flat #ccc4a7,
+ * because most of these photographs already carry a soft shadow of their own
+ * and two stacked shadows read as a stain.
  */
-const GROUND_WIDTH_RATIO = 241 / 135;
-const GROUND_HEIGHT_RATIO = 88.7 / 135;
+const GROUND_WIDTH_RATIO = 1.45;
+const GROUND_HEIGHT_RATIO = 0.42;
+/** Offset from the glass's centre and base, giving the design's light direction. */
+const GROUND_OFFSET_X_RATIO = 0.2;
+const GROUND_OFFSET_Y_RATIO = 0.03;
+/** How soft. A shadow with a measurable edge is not a shadow. */
+const GROUND_BLUR_RATIO = 0.07;
+const GROUND_OPACITY = 0.5;
 /** Figma rotates counter-clockwise, so the SVG angle is negated. */
 const GROUND_ROTATION = -5.63;
-const GROUND_FROM = "#ccc4a7";
-const GROUND_TO = "#e1ded4";
+const GROUND_COLOUR = "#ccc4a7";
+/** Keeps the blurred shape clear of the canvas edge, which would crop it hard. */
+const GROUND_MARGIN = 16;
 
 /**
  * Scene photography: width to serve at, and whether it keeps its alpha channel.
@@ -135,30 +148,40 @@ async function drinkBounds(file) {
 }
 
 /**
- * The ground, as an SVG the size of the whole card so it can be composited at
- * the origin. Drawn under the glass, tied to the glass's own box, so the two
- * cannot drift apart on either the homepage or the shelf.
+ * The shadow, rendered at card size and blurred so it has no edge.
+ *
+ * Tied to the glass's own centre, base and width, so it cannot drift from the
+ * glass that casts it at any card size, on the homepage or the shelf.
  */
-function ground(glassLeft, glassWidth) {
-  const w = glassWidth * GROUND_WIDTH_RATIO;
-  const h = glassWidth * GROUND_HEIGHT_RATIO;
-  // Bottom edge on the base, left edge on the drink's left edge.
-  const cx = glassLeft + w / 2;
-  const cy = GLASS_BASE - h / 2;
+async function ground(glassCentre, glassWidth) {
+  const blur = glassWidth * GROUND_BLUR_RATIO;
+  const cx = glassCentre + glassWidth * GROUND_OFFSET_X_RATIO;
+  const cy = GLASS_BASE + glassWidth * GROUND_OFFSET_Y_RATIO;
+  // The blur spreads roughly three sigma, so the shape has to stay that far
+  // inside the canvas or the crop puts back the hard edge it removes.
+  const room = Math.min(
+    cx - GROUND_MARGIN - 3 * blur,
+    SHOT_WIDTH - cx - GROUND_MARGIN - 3 * blur,
+  );
+  const rx = Math.max(1, Math.min((glassWidth * GROUND_WIDTH_RATIO) / 2, room));
+  const ry = Math.max(1, (glassWidth * GROUND_HEIGHT_RATIO) / 2);
 
-  return Buffer.from(
+  const svg = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${SHOT_WIDTH}" height="${SHOT_HEIGHT}">
   <defs>
-    <linearGradient id="g" x1="0" y1="0.5" x2="1" y2="0.5">
-      <stop offset="0" stop-color="${GROUND_FROM}" stop-opacity="1"/>
-      <stop offset="0.75" stop-color="${GROUND_TO}" stop-opacity="0"/>
-    </linearGradient>
+    <radialGradient id="g" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="${GROUND_COLOUR}" stop-opacity="${GROUND_OPACITY}"/>
+      <stop offset="0.55" stop-color="${GROUND_COLOUR}" stop-opacity="${GROUND_OPACITY * 0.55}"/>
+      <stop offset="1" stop-color="${GROUND_COLOUR}" stop-opacity="0"/>
+    </radialGradient>
   </defs>
   <g transform="rotate(${GROUND_ROTATION} ${cx} ${cy})">
-    <ellipse cx="${cx}" cy="${cy}" rx="${w / 2}" ry="${h / 2}" fill="url(#g)"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#g)"/>
   </g>
 </svg>`,
   );
+
+  return sharp(svg).blur(blur).png().toBuffer();
 }
 
 let shots = 0;
@@ -190,7 +213,7 @@ for (const slug of SLUGS) {
   })
     // Ground first: it belongs behind the glass it is cast by.
     .composite([
-      { input: ground(left, width), top: 0, left: 0 },
+      { input: await ground(left + width / 2, width), top: 0, left: 0 },
       { input: drink, left, top: GLASS_BASE - height },
     ])
     .webp({ quality: 84, effort: 6, alphaQuality: 100 })
