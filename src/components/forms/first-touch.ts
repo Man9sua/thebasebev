@@ -19,6 +19,12 @@
  * back, and a mismatch would silently drop the stored value.
  */
 
+import {
+  createFirstTouchAttribution,
+  parseFirstTouchAttribution,
+  type FirstTouchAttribution,
+} from "@/lib/leads";
+
 export const FIRST_TOUCH_STORAGE_KEY = "thebase:first-touch-attribution:v1";
 
 /**
@@ -41,3 +47,40 @@ utm_content:g("utm_content"),
 utm_term:g("utm_term")
 }));
 }catch(e){}})();`;
+
+/**
+ * The first touch for a submission happening now.
+ *
+ * Prefers what `FIRST_TOUCH_SCRIPT` stored while the landing page was still
+ * parsing, and falls back to computing it from the current page — so a blocked
+ * script costs attribution accuracy rather than the lead. Seeds storage on the
+ * way through, which is what keeps `utm_source=chatgpt.com` attached to a
+ * referral that converts several pages later.
+ *
+ * Browser-only: it reads `window`. Every caller is a client component.
+ */
+export function getFirstTouchAttribution(): FirstTouchAttribution {
+  const current = createFirstTouchAttribution(
+    window.location.href,
+    document.referrer,
+    new URL(window.location.href).searchParams,
+  );
+
+  try {
+    const stored = window.sessionStorage.getItem(FIRST_TOUCH_STORAGE_KEY);
+    if (stored) {
+      const parsed = parseFirstTouchAttribution(JSON.parse(stored));
+      if (parsed) return parsed;
+    }
+
+    window.sessionStorage.setItem(
+      FIRST_TOUCH_STORAGE_KEY,
+      JSON.stringify(current),
+    );
+  } catch {
+    // Privacy modes can make sessionStorage unavailable. Submission still works
+    // with an in-memory first touch for the current page.
+  }
+
+  return current;
+}

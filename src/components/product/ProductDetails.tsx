@@ -1,5 +1,7 @@
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
+import { popupAnchorProps } from "@/lib/legacy-popups";
+import flavorShots from "@/data/flavor-shots.json";
 import { productDetails } from "@/lib/site-pages";
 import { ProductFaq } from "./ProductFaq";
 import { ProductTabs, type ProductPane } from "./ProductTabs";
@@ -78,7 +80,17 @@ export function ProductDetails({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   if (!detail) return null;
 
-  const { specs, features, calculation, flavors, usage, faq } = detail;
+  const { specs, calculation, flavors, usage, faq } = detail;
+
+  /*
+   * The flavour shots this product has, keyed by the flavour's own name — see
+   * `scripts/build-flavor-shots.mjs`. Neither the design file nor the Tilda
+   * export ever carried a picture per flavour, on any of the sixteen, so the
+   * photographs arrive here product by product and the section shows whatever
+   * has arrived: the ones with a shot as a grid, the rest as the names they
+   * already were.
+   */
+  const shots = (flavorShots as Record<string, Record<string, string>>)[product.slug] ?? {};
 
   // The page's own column, not the one it is compared against. Every product
   // happens to put it last, but the label is what actually says so.
@@ -94,7 +106,7 @@ export function ProductDetails({ product }: { product: Product }) {
   // than keep a tab that opens nothing.
   const panes: ProductPane[] = [];
 
-  if (specs.length > 0 || features.length > 0) {
+  if (specs.length > 0) {
     panes.push({
       id: SECTION_IDS.specifications,
       label: "Specifications",
@@ -111,7 +123,14 @@ export function ProductDetails({ product }: { product: Product }) {
                 <div key={spec.label} className={styles.spec}>
                   {spec.icon && (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img className={styles.specIcon} src={spec.icon} alt="" width={44} height={44} />
+                    <img
+                      className={styles.specIcon}
+                      src={spec.icon}
+                      alt=""
+                      width={44}
+                      height={44}
+                      decoding="async"
+                    />
                   )}
                   <dt className={`tbb-label ${styles.specLabel}`}>{spec.label}</dt>
                   <dd className={styles.specValue}>{spec.value}</dd>
@@ -120,24 +139,9 @@ export function ProductDetails({ product }: { product: Product }) {
             </Reveal>
           )}
 
-          {/* The selling points used to sit in the hero, under the buttons,
-              where they competed with the one thing the hero is for. */}
-          {features.length > 0 && (
-            <dl className={styles.features}>
-              {features.map((feature, index) => (
-                <Reveal
-                  key={feature.label}
-                  as="div"
-                  className={styles.feature}
-                  delay={index * 70}
-                  distance={18}
-                >
-                  <dt className={styles.featureLabel}>{feature.label}</dt>
-                  <dd className={styles.featureValue}>{feature.value}</dd>
-                </Reveal>
-              ))}
-            </dl>
-          )}
+          {/* The four selling points are not here any more. They are the row
+              the design closes the hero with, and printing them twice on one
+              page said the second set was something new. */}
         </div>
       ),
     });
@@ -191,6 +195,11 @@ export function ProductDetails({ product }: { product: Product }) {
   }
 
   if (flavors) {
+    // Photographed first, then the rest by name. Split rather than interleaved:
+    // a grid with gaps in it reads as a grid that failed to load.
+    const shot = flavors.items.filter((flavour) => shots[flavour]);
+    const named = flavors.items.filter((flavour) => !shots[flavour]);
+
     panes.push({
       id: SECTION_IDS.flavors,
       label: "Flavors",
@@ -201,29 +210,60 @@ export function ProductDetails({ product }: { product: Product }) {
           </Reveal>
 
           <div className={styles.flavorLayout}>
-            {/* Named things of the same kind, so they are set as one field of
-                chips that wraps to whatever width there is. The lists run from
-                two names to twenty-one and a column count fixed for either end
-                reads as a mistake at the other. */}
-            <ul className={styles.flavors}>
-              {flavors.items.map((flavour, index) => (
-                <Reveal
-                  key={flavour}
-                  as="li"
-                  className={styles.flavor}
-                  delay={Math.min(index, 12) * 45}
-                  distance={16}
-                >
-                  {flavour}
-                </Reveal>
-              ))}
-            </ul>
+            <div>
+              {shot.length > 0 && (
+                <ul className={styles.shots}>
+                  {shot.map((flavour, index) => (
+                    <Reveal
+                      key={flavour}
+                      as="li"
+                      className={styles.shot}
+                      delay={Math.min(index, 12) * 45}
+                      distance={16}
+                    >
+                      <span className={styles.shotFrame}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={shots[flavour]} alt={`${flavour} ${product.name}`} loading="lazy" />
+                      </span>
+                      <span className={styles.shotName}>{flavour}</span>
+                    </Reveal>
+                  ))}
+                </ul>
+              )}
+
+              {/* Named things of the same kind, so they are set as one field of
+                  chips that wraps to whatever width there is. The lists run from
+                  two names to twenty-one and a column count fixed for either end
+                  reads as a mistake at the other. */}
+              {named.length > 0 && (
+                <ul className={`${styles.flavors} ${shot.length > 0 ? styles.flavorsAfterShots : ""}`}>
+                  {named.map((flavour, index) => (
+                    <Reveal
+                      key={flavour}
+                      as="li"
+                      className={styles.flavor}
+                      delay={Math.min(index, 12) * 45}
+                      distance={16}
+                    >
+                      {flavour}
+                    </Reveal>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             <Reveal className={styles.custom} delay={120} distance={20}>
               <h3 className={styles.customTitle}>Custom Flavors</h3>
               {flavors.note && <p className={styles.customNote}>{flavors.note}</p>}
+              {/* `#flavor` is one of the export's popups, so the link carries
+                  the dialog attributes Tilda's runtime would write onto it
+                  anyway — see `popupAnchorProps`. */}
               {flavors.cta && (
-                <a className={styles.customCta} href={flavors.cta.href}>
+                <a
+                  className={styles.customCta}
+                  href={flavors.cta.href}
+                  {...popupAnchorProps(flavors.cta.href)}
+                >
                   {flavors.cta.label}
                 </a>
               )}

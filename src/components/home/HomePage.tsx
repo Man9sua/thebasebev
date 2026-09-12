@@ -1,18 +1,30 @@
 import { About } from "@/components/home/About";
-import { BlogCarousel } from "@/components/home/BlogCarousel";
-import { Bestsellers } from "@/components/home/Bestsellers";
-import { Collage } from "@/components/home/Collage";
+import { Advantages } from "@/components/home/Advantages";
+import { Credentials } from "@/components/home/Credentials";
+import { Features } from "@/components/home/Features";
 import { Hero } from "@/components/home/Hero";
+import { Partner } from "@/components/home/Partner";
+import { Products } from "@/components/home/Products";
+import { Signature } from "@/components/home/Signature";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 
 /**
- * The redesigned homepage.
+ * The homepage.
+ *
+ * Eight sections in the order the design file stacks them: the hero, the four
+ * savings, the range, the four reasons, the two offers, the team, the four
+ * assurances, and the distributor form. Header and footer are untouched — the
+ * design carries both as instances of the symbols already built.
  *
  * Only `/` renders this. Every other route renders the Tilda parity document
- * inside the shared shell, so the migration's SEO surface is untouched while the
- * new design is built out section by section.
+ * inside the shared shell, so the migration's SEO surface is untouched while
+ * the new design is built out section by section.
+ *
+ * The blog carousel and the brand film are no longer here: the design replaces
+ * that part of the page with the team photograph and the assurances. Neither
+ * the posts nor the video were deleted.
  */
 export function HomePage() {
   // The old homepage's JSON-LD travels with the redesign unchanged: FAQPage,
@@ -32,10 +44,13 @@ export function HomePage() {
       <SiteHeader overHero />
       <main>
         <Hero />
-        <Bestsellers />
-        <Collage />
-        <BlogCarousel />
+        <Advantages />
+        <Products />
+        <Features />
+        <Signature />
         <About />
+        <Credentials />
+        <Partner />
       </main>
       <SiteFooter />
     </div>

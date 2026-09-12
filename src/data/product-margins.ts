@@ -13,9 +13,11 @@
  * no entry simply renders no margin block, which is why the type has no
  * fallback and `ProductHero` checks for `undefined` rather than filling in.
  *
- * Read off the frames themselves, so the digits are the design's. The one thing
- * normalised is the space before the per-cent sign, which the frames are not
- * consistent about — `50.50%` on Chai Latte against `61.52 %` on Raf Coffee.
+ * Read off the frames themselves, so the digits are the design's. Two things
+ * are not verbatim, and both are marked where they sit: the space before the
+ * per-cent sign, which the frames are not consistent about — `50.50%` on Chai
+ * Latte against `61.52 %` on Raf Coffee — and Jam's pair, which the owner
+ * confirmed had been entered the wrong way round in the design.
  */
 
 export type ProductMargin = {
@@ -45,6 +47,16 @@ export const productMargins: Record<string, ProductMargin> = {
   "sugar-syrup": { legacyLabel: "with Syrup", legacy: "68.70 %", base: "85.30 %" },
   vending: { legacyLabel: "with Syrup", legacy: "56.10 %", base: "78.80 %" },
   "sugar-free": { legacyLabel: "with Syrup", legacy: "21 %", base: "78.6 %" },
+  garnish: { legacyLabel: "with Syrup", legacy: "85.00 %", base: "98.25 %" },
+  tea: { legacyLabel: "with Syrup", legacy: "60 %", base: "98.60 %" },
 
-  // Jam, Garnish and Tea have no frame yet, so they carry no figures.
+  /*
+   * Jam's two figures are the frame's, swapped. It draws 88.40 % against
+   * 86.87 %, which puts the base behind the syrup, and its detailed breakdown
+   * further down the card repeats it -- so the frame is consistently wrong
+   * rather than mistyped in one place. The owner confirmed the two had been
+   * entered the wrong way round, which is why this is the one entry here not
+   * read straight off the design.
+   */
+  jam: { legacyLabel: "with Syrup", legacy: "86.87 %", base: "88.40 %" },
 };

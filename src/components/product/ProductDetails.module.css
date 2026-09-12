@@ -100,38 +100,6 @@
   color: var(--tbb-ink);
 }
 
-/* ---- reasons to buy ---- */
-
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: clamp(1.1rem, 2.2vw, 2rem);
-  margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
-}
-
-.feature {
-  display: grid;
-  align-content: start;
-  row-gap: 0.35rem;
-  padding-top: 0.9rem;
-  border-top: 2px solid var(--tbb-ink);
-}
-
-.featureLabel {
-  font-family: var(--tbb-font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--tbb-ink);
-}
-
-.featureValue {
-  margin: 0;
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  color: var(--tbb-muted);
-}
-
 /* ---- the comparative table ---- */
 
 .tableWrap {
@@ -214,6 +182,58 @@
   grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
   gap: clamp(1.5rem, 3.5vw, 3rem);
   align-items: start;
+}
+
+/*
+ * The flavours that have been photographed.
+ *
+ * A grid that fills to whatever width it is given rather than a fixed column
+ * count: the lists run from two flavours to twenty-one, and both ends have to
+ * look deliberate. The square is the shape the shots are built at — see
+ * `scripts/build-flavor-shots.mjs`, which puts a cut-out on the product's own
+ * wash and crops a photograph to its subject, so every one of them arrives the
+ * same shape whichever way it was taken.
+ */
+.shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shot {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+  --reveal-dur: var(--tbb-dur);
+}
+
+.shotFrame {
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: clamp(0.6rem, 1vw, 0.9rem);
+  background: color-mix(in srgb, var(--tile, var(--tbb-sand)) 14%, var(--tbb-paper));
+}
+
+.shotFrame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shotName {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  color: var(--tbb-ink);
+}
+
+/* The ones still waiting for a photograph, under the ones that have one. */
+.flavorsAfterShots {
+  margin-top: clamp(1.25rem, 2.5vw, 2rem) !important;
 }
 
 /*
@@ -320,8 +340,137 @@
 }
 
 @media (max-width: 899px) {
+  /*
+   * The phone's own panel, out of `Untitled.site`: the four figures stand on
+   * one white card with twenty off its corners, two to a row, each a heading
+   * over a value in an outlined pill — 26 in from the card's edge, the second
+   * column opening at 193 of the 360 the card is drawn at.
+   *
+   * The hairlines and the tinted cells the desktop uses are what the four
+   * figures need at that width; at this one they turn a short list into a
+   * grid of boxes, which is not what the file draws.
+   */
   .specs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem;
+    padding: 1.75rem 1.625rem;
+    background: var(--tbb-white);
+    border-radius: 1.25rem;
+    /* The file stands this card on the page's own off-white; ours is a shade
+       closer to white than that, so the card is lifted rather than outlined. */
+    box-shadow: 0 10px 30px rgba(26, 19, 17, 0.06);
+  }
+
+  .spec {
+    row-gap: 0.5rem;
+    padding: 0;
+    background: none;
+  }
+
+  /* The file has no icons on this panel — the headings carry it. Written
+     against the cell as well, because `.tbb img` in the global sheet outranks
+     a single class. */
+  .spec .specIcon {
+    display: none;
+  }
+
+  .specLabel {
+    font-family: var(--tbb-font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--tbb-ink);
+  }
+
+  .specValue {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.375rem;
+    padding: 0 0.5rem;
+    border: 1px solid var(--tbb-line);
+    border-radius: 0.3125rem;
+    font-family: var(--tbb-font-sans);
+    font-size: 0.625rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /*
+   * The comparative table, on the phone's own panel.
+   *
+   * `Untitled.site` fits every column of it inside the 360 it draws — nine
+   * point for the headings, ten for the body, the columns opening at 24, 104,
+   * 171 and on — so at this width the table is set to the width it has rather
+   * than being made wider than the phone and scrolled inside its card. The
+   * hairline between rows and the tinted column are ours and stay.
+   */
+  .card {
+    padding: 1.5rem 1.5rem 1.75rem;
+    border-radius: 1.25rem;
+    background: var(--tbb-white);
+    box-shadow: 0 10px 30px rgba(26, 19, 17, 0.06);
+  }
+
+  .tableWrap {
+    overflow-x: visible;
+  }
+
+  .table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  /* 80 of the 336 the file leaves inside its own padding, then 67, then the
+     two readings split what is left. */
+  .table th:first-child {
+    width: 44%;
+  }
+
+  .table th:nth-child(2) {
+    width: 23%;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.55rem 0.3rem;
+  }
+
+  .table th:first-child,
+  .table td:first-child {
+    padding-left: 0;
+  }
+
+  .table thead th {
+    font-size: 0.5625rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: normal;
+    color: var(--tbb-ink);
+  }
+
+  .table tbody th,
+  .table tbody td {
+    font-size: 0.625rem;
+    font-weight: 300;
+    line-height: 1.4;
+  }
+
+  .mark {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  /* The pane's heading is set at the file's twelve rather than the display
+     scale a wide window can carry. */
+  .title {
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    /* Sentence case, as the file sets it — the display caps belong to a
+       heading with a window's width to fill. */
+    text-transform: none;
+    margin-bottom: 0.9rem;
   }
 
   .flavorLayout {
@@ -333,8 +482,4 @@
   }
 }
 
-@media (max-width: 599px) {
-  .specs {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+

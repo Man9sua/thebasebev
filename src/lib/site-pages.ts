@@ -108,6 +108,20 @@ export type ProductDetail = {
 
 export const productDetails = productDetailsJson as Record<string, ProductDetail>;
 
+/**
+ * Pack sizes for the shop, by slug.
+ *
+ * The shop is a client component and `product-details.json` is sixty-four
+ * kilobytes of page copy, so it is read here — on the server — and the dozen
+ * short strings it actually needs are handed down as a prop. Tea and Sugar Free
+ * are sold in no single size and carry null.
+ */
+export function catalogWeights(): Record<string, string | null> {
+  return Object.fromEntries(
+    Object.entries(productDetails).map(([slug, detail]) => [slug, detail.weight ?? null]),
+  );
+}
+
 /** Catalogue tile per product — see `scripts/build-catalog-tiles.mjs`. */
 const catalogTiles = catalogTilesJson as Record<string, { image: string }>;
 
@@ -287,6 +301,47 @@ function promoteCriticalImages(source: string, limit = 4) {
     if (promoted <= 2) result = setHtmlAttribute(result, "fetchpriority", "high");
     return result;
   });
+}
+
+/**
+ * Keep the export's own image pass inside the exported document.
+ *
+ * The body of 36 of the 39 exported pages carries a hand-written block — the one
+ * that guards on `window.__tbAnchorsBooted` — with two passes that walk the
+ * whole document:
+ *
+ * - `tuneImages()` takes `document.querySelectorAll("img")` and writes
+ *   `decoding`, and then either `loading="lazy"` or `fetchpriority="high"`
+ *   depending on where the image sits, onto every one it finds;
+ * - `nameLinkedImages()` takes `document.querySelectorAll('a img[alt=""]')` and
+ *   labels the link around each.
+ *
+ * On Tilda that document is the whole page and both are right. Here the export
+ * is one element among React's own, and both passes run at `DOMContentLoaded` —
+ * a different task from React's hydration, and one that can land before it. When
+ * it does, React finds attributes on nodes it owns that its markup never wrote
+ * and reports the tree as mismatched, which is what every product page was
+ * logging: the hero's pack shot and glass and the four spec icons all came back
+ * with a `decoding` and a `fetchpriority` the server never sent.
+ *
+ * Scoping the two queries to the exported document leaves every legacy image
+ * tuned exactly as before and stops the passes reaching React's nodes — which
+ * declare these attributes themselves where they want them. The `|| document`
+ * fallback keeps the old behaviour if the wrapper class is ever renamed, rather
+ * than silently tuning nothing.
+ *
+ * The other half of the same mismatch is Tilda's own `tilda-popup`, which is not
+ * scoped and must not be — see `lib/legacy-popups.ts`.
+ */
+const legacyImageRoot = '(document.querySelector(".legacy-document") || document)';
+
+function scopeLegacyImagePasses(source: string) {
+  return source
+    .replace(/document\.querySelectorAll\("img"\)/g, `${legacyImageRoot}.querySelectorAll("img")`)
+    .replace(
+      /document\.querySelectorAll\('a img\[alt=""\]'\)/g,
+      `${legacyImageRoot}.querySelectorAll('a img[alt=""]')`,
+    );
 }
 
 const catalogPriceFallback = {
@@ -769,6 +824,7 @@ export function getSitePage(route: string): SitePage | undefined {
     useResizedLegacyImages,
     (value) => replateCatalogCards(value, definition.file),
     promoteCriticalImages,
+    scopeLegacyImagePasses,
   ]);
 
   const headAssetsHtml = applyAll(assetsMatch?.[1] ?? "", [

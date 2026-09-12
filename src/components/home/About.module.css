@@ -1,241 +1,94 @@
+/**
+ * "WHO WE ARE?", from the homepage design file.
+ *
+ * The heading, and one photograph on a 20 radius with the company in a
+ * sentence across its foot. The design's small wavy mark above the heading is
+ * dropped throughout the page — see `Products.module.css`.
+ *
+ * The design darkens the bottom 201 of
+ * the 647-tall frame to 80% black and sets the sentence in white over it, which
+ * is what carries the type at that size over a lit room.
+ */
+
 .section {
-  background: var(--tbb-paper-warm);
-  /* No padding above: the film opens the section flush with the one before it.
-     The bottom keeps the usual rhythm. */
-  padding: 0 0 var(--tbb-section);
-  overflow: clip;
+  padding: clamp(3rem, 6vw, 5rem) var(--tbb-gutter) clamp(2.5rem, 5vw, 4rem);
 }
-/* ---- film ---- */
-
-/* `--fade` is how much of the frame is given over to the dissolve. It is read
-   by the gradient and by the figure that sits inside it, so the two cannot
-   drift apart. */
-.stage {
-  --fade: clamp(9rem, 22vh, 16rem);
-
-  position: relative;
-  width: 100%;
-  height: clamp(30rem, 84vh, 58rem);
-  background: var(--tbb-ink);
-}
-
-.film {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* The footage is painted out into the page rather than stopping on an edge.
-   Opaque at the bottom so the last band is exactly the section colour, which is
-   what lets the proof points below read as the same surface. */
-.dissolve {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: var(--fade);
-  background: linear-gradient(
-    to bottom,
-    rgba(242, 242, 242, 0) 0%,
-    rgba(242, 242, 242, 0.55) 45%,
-    var(--tbb-paper-warm) 100%
-  );
-  pointer-events: none;
-}
-
-/* The film runs from near-black to near-white frame to frame, so the label
-   cannot rely on the footage staying dark. A short scrim under it costs
-   nothing on the dark frames and saves it on the bright ones. */
-.stage::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: clamp(6rem, 14vh, 10rem);
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
-  pointer-events: none;
-}
-
-.eyebrow {
-  position: absolute;
-  top: clamp(1.5rem, 4vw, 3rem);
-  left: var(--tbb-gutter);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  /* Over footage, not paper. */
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.mark {
-  /* Inherits the eyebrow rather than printing the mark colour: on a page
-     that carries the red only in the logo, one red glyph over the footage
-     read as a rendering fault rather than as an accent. */
-  color: inherit;
-  font-size: 0.9rem;
-  line-height: 1;
-}
-
-/* Sits inside the dissolve, so the number appears to surface out of the fade
-   instead of being stamped on the film. */
-.headlineFigure {
-  position: absolute;
-  right: var(--tbb-gutter);
-  bottom: 0;
-  height: var(--fade);
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 0.15rem;
-  text-align: right;
-}
-
-.figureValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(2.8rem, 6.5vw, 5.5rem);
-  line-height: 0.9;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-  color: var(--tbb-ink);
-}
-
-/* ---- everything on paper ---- */
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
 }
 
-.facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1.5rem, 5vw, 4rem);
-  padding-bottom: clamp(2rem, 5vw, 3.5rem);
-  border-bottom: 1px solid var(--tbb-line);
+.head {
+  padding-left: var(--tbb-home-indent);
+  /* 3933 - 3985 */
+  padding-bottom: clamp(1rem, 2.2vw, 1.75rem);
 }
 
-.fact {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-}
-
-.factValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
-  font-weight: 600;
-  color: var(--tbb-ink);
-}
-
-.body {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: clamp(2rem, 6vw, 6rem);
-  padding-top: clamp(2.5rem, 5vw, 4rem);
-}
-
-/* The gap lives on `.headline` below, not here: `.tbb h2 { margin: 0 }` in the
-   tokens outranks this class and quietly dropped the bottom margin. */
+/* Exo Regular 60 on a 70 line. */
 .title {
-  font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-display);
-  line-height: 0.98;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-}
-
-.headline {
-  display: grid;
-  row-gap: clamp(1.5rem, 3.5vw, 2.75rem);
-}
-
-.columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: clamp(1.25rem, 3vw, 2.5rem);
-}
-
-.para {
-  color: var(--tbb-ink-soft);
-  line-height: 1.55;
-}
-
-.aside {
-  text-align: right;
-  display: grid;
-  justify-items: end;
-  align-content: start;
-  gap: 0.35rem;
-}
-
-.asideName {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
-  font-weight: 700;
-  letter-spacing: var(--tbb-tracking-display);
+  margin: 0 !important;
   color: var(--tbb-ink);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  font-weight: 400 !important;
+  line-height: 1.17 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
 }
 
-.asideRole {
-  font-size: 0.875rem;
-  color: var(--tbb-muted);
+.frame {
+  position: relative;
+  /* 1112 x 647 */
+  aspect-ratio: 1112 / 647;
+  min-height: 18rem;
+  overflow: hidden;
+  border-radius: var(--tbb-card-radius);
 }
 
-/* Padding, not margin — the tokens reset every `p` margin to zero. */
-.asidePrompt {
-  padding-top: clamp(1.25rem, 3vw, 2.25rem);
-  max-width: 24ch;
-  font-weight: 500;
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
 }
 
-.cta {
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
-  display: inline-flex;
+/*
+ * The dark foot the sentence sits on: 201 of 647, at 80% black. It is a band
+ * rather than a fade because the design draws it as one, and a fade over a
+ * ceiling full of strip lights loses the type at the top of the band.
+ */
+.foot {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.75rem;
-  border-radius: 999px;
-  background: var(--tbb-ink);
+  /* 201 / 647 */
+  min-height: 31.07%;
+  padding: clamp(1rem, 2.2vw, 1.75rem) clamp(1.25rem, 3vw, 2.5rem)
+    clamp(1rem, 2.2vw, 1.75rem) clamp(1.25rem, 4vw, 6.375rem);
+  background: rgb(0 0 0 / 0.8);
+}
+
+/* Exo Light 30 set solid. */
+.copy {
+  max-width: 68ch;
+  margin: 0 !important;
   color: var(--tbb-on-dark);
-  text-decoration: none;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  font-weight: 500;
-  transition:
-    gap var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+  font-size: clamp(0.9375rem, 2.5vw, 1.875rem);
+  font-weight: 300;
+  line-height: 1.12 !important;
 }
 
-.cta svg {
-  width: 14px;
-  height: 14px;
-  flex: none;
-}
-
-.cta:hover {
-  gap: 1.25rem;
-  transform: translate3d(0, -2px, 0);
-}
-
-.cta:focus-visible {
-  outline: 2px solid var(--tbb-ink);
-  outline-offset: 3px;
-}
-
-@media (max-width: 899px) {
-  .stage {
-    height: clamp(24rem, 62vh, 34rem);
+@media (max-width: 767px) {
+  .frame {
+    aspect-ratio: 4 / 5;
   }
 
-  .body {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .aside {
-    text-align: left;
-    justify-items: start;
+  .foot {
+    min-height: 0;
   }
 }

@@ -1,218 +1,252 @@
+/**
+ * The hero band, from the homepage design file.
+ *
+ * A photograph 653 tall running the full width under the header, the headline
+ * on its left in the design's purple gradient, and a pill to the shop with a
+ * text link beside it. The
+ * photograph is the same key visual on both widths but framed differently: on a
+ * desktop the drink and the pouch sit to the right of the copy, on a phone they
+ * sit above it, so each width gets the crop the design supplies for it.
+ *
+ * The design puts the headline at x 94 and the pill at x 52. Both start on the
+ * page's shared content column here instead: a 42px step between a headline and
+ * its own button is hand-placement, and every other section on the page begins
+ * at 40.
+ */
+
 .hero {
   position: relative;
-  min-height: 100svh;
-  display: grid;
-  align-items: center;
-  overflow: clip;
+  /* The photograph starts at 103 in the design, which is the header's height. */
+  padding-top: var(--tbb-header-h);
   background: var(--tbb-paper);
+  isolation: isolate;
 }
 
-/* ---- photograph ---- */
-
-/* The photograph is a tall frame, not a wide one — it is a crop of a key visual
-   rather than a landscape plate — so a full-bleed box would have to overscan it
-   by half again to fill the viewport, and all that survived was one glass at
-   1.4x.
+/*
+ * 1200 x 653 in the design, so the height is 54.42% of the width — written as
+ * a height rather than an `aspect-ratio`, because a ratio with a `min-height`
+ * resolves the other way round and inflates the band's own width to match the
+ * height it was floored at: 1200px wide whatever the viewport, which overflowed
+ * the document at 1024 and below.
  *
-   Anchored to the right instead, in a box cut to roughly the crop's own 0.88,
-   so on a laptop the shot plays back whole: both glasses, the lockup, no
-   overscan. The veil then carries it into the paper the copy sits on, so there
-   is no vertical edge where the box begins. */
-.media {
-  position: absolute;
-  inset: 0 0 0 47%;
-  /* The box has a left edge and the veil is angled, so at the foot of the frame
-     the gradient runs out before the edge does and leaves a vertical line. The
-     mask dissolves the edge itself, at every height. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
-  mask-image: linear-gradient(to right, transparent 0%, #000 24%);
-  opacity: 1;
-  transform: none;
-  will-change: transform, opacity;
+ * The floor keeps the copy in the band on a narrow window, and the ceiling
+ * stops it becoming a 1400px-tall photograph on a wide one.
+ */
+.band {
+  position: relative;
+  height: clamp(30rem, 54.42vw, 45rem);
+  overflow: hidden;
 }
 
 .photo {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* On a frame wider than the crop there is height to give up, and the lockup
-     sits in the top eighth of it — so what goes is the foot of the picture. */
-  object-position: 50% 22%;
+  /* The design overscans the frame by 69 on the left and hangs the subject off
+     the right, which is what `right center` reproduces once it is cropped. */
+  object-position: right center;
+  z-index: -2;
 }
 
-/* Fades the photograph out from the left so the copy sits on paper rather than
-   on glassware. Angled rather than straight so the boundary is never a vertical
-   line the eye can find. */
+/*
+ * The two veils the design lays over the photograph's edges, so neither side
+ * ever shows where the peach field stops. Warm on the left, sand on the right —
+ * the file uses two tones, each sampled from the edge it sits on.
+ */
 .veil {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 1) 40%,
-    rgba(255, 255, 255, 0.84) 50%,
-    rgba(255, 255, 255, 0.26) 65%,
-    rgba(255, 255, 255, 0) 78%
-  );
+  inset-block: 0;
+  /* 179.53 / 1200 */
+  width: 14.96%;
+  z-index: -1;
   pointer-events: none;
 }
 
-/* ---- copy ---- */
+.veilLeft {
+  left: 0;
+  background: linear-gradient(
+    270deg,
+    transparent 0%,
+    var(--tbb-hero-veil-warm) 63%
+  );
+}
+
+.veilRight {
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--tbb-hero-veil-sand) 63%
+  );
+}
 
 .inner {
   position: relative;
-  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
   width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto;
-  padding: calc(var(--tbb-header-h) + clamp(2rem, 6vh, 5rem)) var(--tbb-gutter)
-    clamp(3rem, 8vh, 6rem);
-  will-change: transform, opacity;
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
+  padding-inline: var(--tbb-gutter);
+  /* 74 / 653 — the headline's top inside the band. */
+  padding-top: 11.33%;
+  padding-bottom: clamp(2rem, 4vw, 3rem);
 }
 
-/* Grid with a row gap, not margins on the children.
-
-   `design-tokens.css` carries `.tbb h1, .tbb p { margin: 0 }`, and at (0,1,1)
-   that outranks any single class here — every `margin-top` set on the headline,
-   the description or the badges was being dropped on the floor, which is what
-   closed the gaps up. A gap belongs to the container, so nothing can reset it. */
-.copy {
-  /* Ends before the photograph's box begins, so the copy sits on paper the
-     whole way across rather than running under the masked edge. */
-  max-width: min(46ch, 45%);
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(1.4rem, 3.4vh, 2.25rem);
-}
-
-.tagline {
-  display: inline-block;
-  padding: 0.55rem 1.1rem;
-  border: 1px solid var(--tbb-line);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.6);
-}
-
-/* ---- headline ----
- *
- * One word to a row, each in its own mask so it can rise on its own beat. A
- * grid rather than the reordered flex row this used to be: with the product
- * name gone from the middle, the three parts already read top to bottom in DOM
- * order — "Premium Cream Latte Bases", the production H1 and the one
- * the smoke test reads — so nothing needs moving. */
+/*
+ * Exo Light 62 on a 66 line, in the only gradient the design puts on type.
+ * The clip is progressive: without it the text keeps the solid `color`, which
+ * is the darker of the two stops and reads correctly on its own.
+ */
 .title {
+  /*
+   * 485 wide, which is the box the design gives it — and the reason it is a
+   * width rather than a character count: the headline has to stop before the
+   * drink, and where the drink starts is a share of the frame, not of the type.
+   */
+  max-width: min(100%, 30.3125rem);
+  margin: 0 !important;
+  color: var(--tbb-display-to);
   font-family: var(--tbb-font-display);
-  text-transform: uppercase;
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.2rem, 0.8vw, 0.6rem);
+  font-size: clamp(2.125rem, 5.17vw, 3.875rem);
+  font-weight: 300 !important;
+  line-height: 1.065 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
 }
 
-/* The mask each part rises out of. The padding/margin pair gives descenders
-   room inside it; without it the clip shaves the type at rest, not only
-   mid-reveal. */
-.line {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .title {
+    background: linear-gradient(
+      180deg,
+      var(--tbb-display-from) 0%,
+      var(--tbb-display-to) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
-.lineInner {
-  display: block;
-  transform: none;
+/*
+ * The pill and the text link beside it, centred on one line. The design puts
+ * the pill at (52, 577) at 223 x 66 and the link at (300, 586) at 210 x 50 —
+ * a 25 gap, and both centred on y 610.
+ */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5625rem;
+  margin-top: auto;
 }
 
-.titleAffix {
-  font-size: clamp(0.75rem, 1.05vw, 1rem);
-  font-weight: 400;
-  letter-spacing: 0.4em;
-  line-height: 1.4;
-  color: var(--tbb-muted);
-}
-
-/* Two large rows now instead of one, so Cream Latte and Bases stay inside the
-   fold on a laptop. */
-.titleLead {
-  font-size: clamp(2.9rem, min(8vw, 12vh), 7.5rem);
-  font-weight: 700;
-  line-height: 0.88;
-  letter-spacing: -0.03em;
-  color: var(--tbb-ink);
-}
-
-.description {
-  color: var(--tbb-ink-soft);
-  font-size: clamp(1rem, 1.25vw, 1.1875rem);
-  max-width: 42ch;
-}
-
+/* 223 x 66, radius 100, Exo Bold 18 on the design's warmest white. */
 .cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.05rem 1.9rem;
-  border-radius: 999px;
-  background: var(--tbb-ink);
-  color: var(--tbb-on-dark);
+  justify-content: center;
+  min-width: 13.9375rem;
+  padding: 1.0625rem 2.5rem;
+  border-radius: 100px;
+  background: var(--tbb-hero-pill);
+  color: var(--tbb-ink);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1;
   text-decoration: none;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  font-weight: 500;
   transition:
-    gap var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.cta svg {
-  width: 14px;
-  height: 14px;
-  flex: none;
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .cta:hover {
-  gap: 1.25rem;
-  transform: translate3d(0, -2px, 0);
+  transform: translateY(-2px);
+  background: var(--tbb-paper);
 }
 
-.cta:focus-visible {
+.cta:focus-visible,
+.aside:focus-visible {
   outline: 2px solid var(--tbb-ink);
   outline-offset: 3px;
 }
 
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  /* Split, so a wrapped row does not sit tight against the one above it. */
-  column-gap: clamp(0.9rem, 2vw, 1.75rem);
-  row-gap: 0.6rem;
-  color: var(--tbb-muted);
+/* Exo Bold 18 in ink, no box of its own — the design draws it as plain text. */
+.aside {
+  color: var(--tbb-ink);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-@media (max-width: 899px) {
-  /* No room for a side-by-side split: the photograph takes the whole frame, the
-     veil covers all of it lightly, and the copy runs the full width over it. */
-  .media {
-    inset: 0;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
+.aside:hover {
+  border-bottom-color: currentColor;
+}
 
-  .veil {
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.94) 0%,
-      rgba(255, 255, 255, 0.86) 45%,
-      rgba(255, 255, 255, 0.74) 100%
-    );
+/*
+ * The phone frame, measured rather than adapted: the photograph is 374 x 670
+ * hung at y 108 in a 360-wide frame, the headline is Exo Light 40/44 at x 44
+ * and y 513, and the pill is 166 x 50 at x 44 and y 677 — so it is 51 clear of
+ * the band's foot, not full width. Every figure here is that geometry as a
+ * share of 360, capped so it stops growing before the layout switches over.
+ */
+@media (max-width: 767px) {
+  /* 670 / 360 */
+  .band {
+    height: clamp(28rem, 186.1vw, 44rem);
   }
 
   .photo {
-    object-position: center;
+    object-position: center top;
   }
 
-  .copy {
-    max-width: none;
+  /* 44 / 360 */
+  .inner {
+    justify-content: flex-end;
+    padding-top: 0;
+    padding-inline: 12.22%;
+    /* 51 / 360, under the pill */
+    padding-bottom: 14.2vw;
+  }
+
+  .title {
+    max-width: 100%;
+    /* 40 / 360 */
+    font-size: clamp(1.75rem, 11.11vw, 2.75rem);
+  }
+
+  .actions {
+    /* 677 - 645, the gap under the headline's last line */
+    margin-top: 8.9vw;
+  }
+
+  /* 166 / 360 — sized to itself, not to the band. */
+  .cta {
+    min-width: clamp(10.375rem, 46.1vw, 13.9375rem);
+    padding-inline: 1.75rem;
+    font-size: 0.875rem;
+  }
+
+  /* The design's phone frame carries no second link. */
+  .aside {
+    display: none;
+  }
+
+  .veil {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
   }
 }

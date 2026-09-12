@@ -185,15 +185,30 @@ async function worker() {
 await Promise.all(Array.from({ length: 1 }, () => worker()));
 
 /*
- * The one page whose production h1 is not worth preserving. Live Tilda serves
- * /rnd under a Russian line left behind by a calculator widget -- "find out
- * your daily norm in 30 seconds" -- which describes neither the page nor the
- * business. It is named here with the exact string so that if production is
- * ever corrected, this stops matching and the page comes back under the
- * ordinary rule instead of staying quietly exempt.
+ * The pages whose production h1 is deliberately not carried over, each named
+ * with production's exact string and the reason. The string is the guard: if
+ * production is ever corrected or redesigned, the entry stops matching and the
+ * route comes back under the ordinary rule instead of staying quietly exempt.
  */
 const H1_NOT_PRESERVED = new Map([
-  ["/rnd", "Узнай свою дневную норму за 30 секунд"],
+  [
+    "/rnd",
+    {
+      h1: "Узнай свою дневную норму за 30 секунд",
+      reason:
+        "production h1 is a stray widget line, deliberately not carried over",
+    },
+  ],
+  [
+    "/",
+    {
+      h1: "Premium Cream Latte Bases",
+      reason:
+        'h1 is the redesign\'s "Premium Powder Bases for Your Business"; ' +
+        "production names one of sixteen products in the homepage headline, " +
+        "and the ranking phrase Premium ... Bases is kept",
+    },
+  ],
 ]);
 
 const criticalFailures = [];
@@ -217,8 +232,9 @@ for (const { route, production, target } of results) {
    * altogether and this is a critical failure again.
    */
   if (production.h1 !== target.h1) {
-    if (H1_NOT_PRESERVED.get(route) === production.h1) {
-      declared.push(`${route}: production h1 is a stray widget line, deliberately not carried over`);
+    const exempt = H1_NOT_PRESERVED.get(route);
+    if (exempt && exempt.h1 === production.h1) {
+      declared.push(`${route}: ${exempt.reason}`);
     } else if (production.h1 && target.h2.includes(production.h1)) {
       declared.push(`${route}: h1 is now "${target.h1}"; production wording kept as h2`);
     } else {
@@ -297,9 +313,10 @@ ${criticalFailures.length ? criticalFailures.map((item) => `- ${item}`).join("\n
 ## Declared h1 changes
 
 Product pages lead with the product's name and carry production's wording as
-the h2 under it; the check still fails if that wording leaves the page. One
-route is exempt outright because production's own h1 is wrong -- see
-\`H1_NOT_PRESERVED\` in this script.
+the h2 under it; the check still fails if that wording leaves the page. Two
+routes are exempt outright and are listed with their reason -- see
+\`H1_NOT_PRESERVED\` in this script. Each exemption names production's exact
+h1, so a change on production ends the exemption rather than hiding behind it.
 
 ${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 

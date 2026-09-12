@@ -33,6 +33,37 @@
   --tbb-on-dark: var(--tbb-white);
   --tbb-on-light: var(--tbb-black);
 
+  /* ---- colour: the homepage design file ----
+   * The Guidebook palette above is black, white, grey and the mark red, and it
+   * stays the palette for type and controls. The homepage design adds a warm
+   * set that the Guidebook has no entry for: the product card's paper, the
+   * stone the small print and the iconography are drawn in, and the two veils
+   * that fade the hero photograph out at its edges. They are read out of the
+   * design file rather than sampled from a screenshot, so they are exact.
+   */
+  --tbb-card-wash-from: #fbf8f0;
+  --tbb-card-wash-to: #e7e0cf;
+  /* The ground the drink stands on is drawn into the shot itself, from the
+     drink's own width — see `build-design-shots.mjs`. It has no token here
+     because no stylesheet paints it. */
+  --tbb-card-label: #8f8b7a;
+  /* Small print, the advantage discs and every line-drawn icon. */
+  --tbb-stone: #7e7a72;
+  /* Hairline marks above a section heading. Nearly paper on paper, by design. */
+  --tbb-rule: #ededed;
+  --tbb-hero-veil-warm: #f6ddbf;
+  --tbb-hero-veil-sand: #e1b995;
+  --tbb-hero-pill: #fefaf5;
+  /* The h1's gradient — the one place in the design type carries colour. */
+  --tbb-display-from: #a14fb3;
+  --tbb-display-to: #340962;
+  /* The band the distributor form sits on, and its field placeholders. */
+  --tbb-band: #707070;
+  --tbb-placeholder: #d9d9d9;
+
+  /* The product card, from the design's own 270x413 frame. */
+  --tbb-card-radius: 20px;
+
   /* ---- type ----
    * The Guidebook supersedes the earlier Alexandra request: p.16 names Exo 2
    * as the brand face, so display and body share it and differ only by weight.
@@ -71,6 +102,20 @@
    */
   --tbb-measure-wide: 86rem;
   --tbb-measure: 76rem;
+  /*
+   * The homepage design's own content column: 1113.5px inside a 1200 frame,
+   * measured from the product grid, which runs 40 to 1153.5. Every section on
+   * that page shares it, so the discs, the grid and the form all start on one
+   * line however wide the window gets.
+   */
+  --tbb-measure-home: 69.594rem;
+  /*
+   * Type on the homepage is indented from that column while cards and
+   * photographs sit flush in it — the headings land at 96 to 116 where the grid
+   * and the offer cards start at 40, and the product card's own name is printed
+   * at 44 inside its frame. One indent stands in for that spread.
+   */
+  --tbb-home-indent: 3.5rem;
 
   /* ---- motion ----
    * Long durations and a soft ease are the whole character of this design.
@@ -83,7 +128,13 @@
   --tbb-dur: 720ms;
   --tbb-dur-slow: 1200ms;
 
-  --tbb-header-h: clamp(3.75rem, 5.5vw, 5.25rem);
+  /*
+   * 103px, the height of the header symbol in `forme.fig` — 1200 x 103.66,
+   * with its white plate drawn at 1200 x 103. Held from the design's own frame
+   * width up; below it the bar scales down to the 60px it needs on a phone,
+   * which the file has no frame for.
+   */
+  --tbb-header-h: clamp(3.75rem, 8.5833vw, 6.4375rem);
 }
 
 /* Shared surface reset for redesigned sections. */
@@ -134,12 +185,128 @@
   font-weight: 500;
 }
 
+/**
+ * The homepage's button, in the three finishes the design uses: filled in ink,
+ * outlined, and filled in the mark red. 50 tall on a 100 radius, Exo Bold 14 —
+ * one rule rather than the same pill written out in five modules.
+ *
+ * Global like `.tbb-label` above, because it is shared between sections rather
+ * than owned by one.
+ */
+.tbb-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.125rem;
+  padding: 0.75rem 2.25rem;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  background: transparent;
+  color: var(--tbb-ink);
+  font-family: var(--tbb-font-sans);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.tbb-pill:hover {
+  transform: translateY(-2px);
+}
+
+.tbb-pill:focus-visible {
+  outline: 2px solid var(--tbb-accent);
+  outline-offset: 3px;
+}
+
+.tbb-pill-ink {
+  background: var(--tbb-ink);
+  border-color: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+}
+
+.tbb-pill-outline {
+  border-color: currentColor;
+}
+
+.tbb-pill-outline:hover {
+  background: var(--tbb-ink);
+  border-color: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+}
+
+/* On a dark card the outline is white and inverts to white-on-ink. */
+.tbb-pill-outline-light {
+  border-color: currentColor;
+  color: var(--tbb-on-dark);
+}
+
+.tbb-pill-outline-light:hover {
+  background: var(--tbb-on-dark);
+  color: var(--tbb-ink);
+}
+
+.tbb-pill-accent {
+  background: var(--tbb-accent);
+  border-color: var(--tbb-accent);
+  color: var(--tbb-on-dark);
+}
+
+.tbb-pill-accent:hover {
+  background: var(--tbb-ink);
+  border-color: var(--tbb-ink);
+}
+
+/*
+ * The homepage's type indent is a desktop measure. The design's phone frame
+ * sets its copy 36 to 42 in from a 360 edge, not 76 — so on a phone the indent
+ * drops to the gutter's own width and the two together land on the file's.
+ */
+@media (max-width: 767px) {
+  :root {
+    --tbb-home-indent: 1.25rem;
+  }
+}
+
+/*
+ * Two labels for one thing, where the design words it differently by width.
+ * Both are in the markup and one is in the flow at a time — legitimate for a
+ * link's label or a card's line, never for the page's h1.
+ */
+.tbb-wide-only {
+  display: inline;
+}
+
+.tbb-narrow-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .tbb-wide-only {
+    display: none;
+  }
+
+  .tbb-narrow-only {
+    display: inline;
+  }
+}
+
 /* Honour the OS setting: no smooth scrolling, no parallax, no long fades. */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --tbb-dur-fast: 1ms;
     --tbb-dur: 1ms;
     --tbb-dur-slow: 1ms;
+  }
+
+  .tbb-pill:hover {
+    transform: none;
   }
 }
 

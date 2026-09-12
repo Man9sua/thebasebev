@@ -1,82 +1,187 @@
+/**
+ * The shop.
+ *
+ * Laid out as four ranges under their own headings rather than one run of
+ * sixteen tiles: the range is the thing being sold, and a flat grid says
+ * nowhere that it is four of them. Sorting or filtering collapses the sections,
+ * because both are questions about the whole shelf.
+ *
+ * The rest is built around getting to a product and then ordering more than one
+ * of it: the filter row sticks under the site header, the card turns into a
+ * quantity once it is in the cart, and a running total follows the page down
+ * as soon as there is one.
+ *
+ * The `!important` here answers the exported Tilda sheet, which is global on
+ * this route: `html body p { line-height: 1.7 }` and `html body h1, html body
+ * [class*="title"] { font-weight: 300 }` both carry it, and the second outranks
+ * a single class — which is why the rules that have to beat it are written
+ * against `.intro` as well as their own class.
+ */
+
+/*
+ * The band under the shop front is a background on the page rather than a
+ * pseudo-element: an absolutely positioned one paints over static content and
+ * was covering the first range's heading.
+ *
+ * The two tones are this page's own warm paper and a deeper reading of it. The
+ * brand's neutrals are pure greys, and a grey band over white reads as a
+ * rendering fault rather than as a storefront.
+ */
 .page {
   min-height: 100vh;
-  padding: calc(var(--tbb-header-h) + clamp(3.5rem, 6vw, 6rem)) var(--tbb-gutter)
-    var(--tbb-section);
-  background: #fbf8f3;
+  background:
+    linear-gradient(180deg, #f3ece0, #fbf8f3) no-repeat top / 100% clamp(20rem, 34vw, 30rem),
+    #fbf8f3;
 }
 
 .intro,
-.grid {
+.barInner,
+.range,
+.close {
   width: 100%;
   max-width: var(--tbb-max);
   margin-inline: auto;
 }
 
-.eyebrow,
-.category {
+/* ---- the shop front ---- */
+
+/*
+ * A band rather than a stack of headings on flat paper. The wash is the
+ * brand's own sand run to nothing, which gives the top of the page somewhere
+ * to start and the sticky bar something to separate itself from.
+ */
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+  gap: clamp(1.5rem, 4vw, 5rem);
+  align-items: end;
+  padding: calc(var(--tbb-header-h) + clamp(3rem, 5vw, 5rem)) var(--tbb-gutter)
+    clamp(2rem, 3.5vw, 3rem);
+}
+
+.intro .title {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  font-weight: 700 !important;
+  line-height: 0.92;
+  letter-spacing: -0.04em !important;
+  text-transform: none;
+  color: var(--tbb-ink);
+}
+
+/*
+ * Production's h1 for this route, carried as the line under the name. Set at
+ * the smallest type on the page and in muted ink: it is wording the page has
+ * to keep, not a line the shop needs shouted.
+ */
+.intro .headline {
+  max-width: 34ch;
+  margin-top: clamp(0.6rem, 1vw, 0.9rem) !important;
   color: var(--tbb-muted);
-  font-size: var(--tbb-text-label);
-  font-weight: 500;
+  font-family: var(--tbb-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+.introSide {
+  display: grid;
+  gap: clamp(1.1rem, 2vw, 1.6rem);
+}
+
+.intro .lede {
+  max-width: 42ch;
+  color: var(--tbb-ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.5 !important;
+}
+
+/* Three facts, not a paragraph: what a buyer checks before scrolling. */
+.facts {
+  display: flex;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin: 0;
+}
+
+.facts dt {
+  color: var(--tbb-muted);
+  font-size: 0.625rem;
+  font-weight: 600;
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
 }
 
-.title {
-  max-width: 28ch;
-  margin-top: clamp(1rem, 2vw, 1.5rem) !important;
+.facts dd {
+  margin: 0.25rem 0 0;
+  color: var(--tbb-ink);
   font-family: var(--tbb-font-display);
-  font-size: clamp(2rem, 4vw, 4rem);
+  font-size: clamp(1.1rem, 1.6vw, 1.45rem);
   font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
-  text-transform: uppercase;
+  line-height: 1 !important;
 }
 
-.lede {
-  max-width: 52ch;
-  margin-top: clamp(1.25rem, 2.5vw, 2rem) !important;
-  color: var(--tbb-ink-soft);
-  line-height: 1.5 !important;
+/* ---- the filter bar ---- */
+
+.bar {
+  position: sticky;
+  top: var(--tbb-header-h);
+  z-index: 5;
+  border-block: 1px solid var(--tbb-line);
+  /* Opaque, not translucent: sixteen tiles scroll under this, and a blurred
+     panel over moving photographs reads as a smear. */
+  background: #fbf8f3;
+}
+
+.barInner {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--tbb-gutter);
 }
 
 .filters {
+  position: relative;
   display: flex;
-  gap: 0.35rem;
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  padding: 0.35rem;
+  gap: clamp(0.5rem, 1.4vw, 1.75rem);
+  min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
-  border: 1px solid var(--tbb-line);
-  border-radius: 999px;
-  background: rgba(242, 242, 242, 0.86);
 }
 
 .filters::-webkit-scrollbar {
   display: none;
 }
 
+/*
+ * Underlined rather than pilled. A wide rounded container holding five pills
+ * carries more empty space than labels; a rule under the live one says the
+ * same thing and leaves the width to the words.
+ */
 .filter,
 .filterActive {
-  flex: 1 0 auto;
-  min-height: 2.65rem;
-  padding: 0.7rem 1.3rem;
+  flex: 0 0 auto;
+  padding: 1.15rem 0;
   border: 0;
-  border-radius: 999px;
+  border-radius: 0;
   background: transparent;
   color: var(--tbb-muted);
   font: 500 var(--tbb-text-label) / 1 var(--tbb-font-sans);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     color var(--tbb-dur-fast) var(--tbb-ease),
-    background-color var(--tbb-dur-fast) var(--tbb-ease);
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .filter span,
 .filterActive span {
-  margin-left: 0.25rem;
-  opacity: 0.62;
+  margin-left: 0.3rem;
+  opacity: 0.55;
 }
 
 .filter:hover,
@@ -85,186 +190,431 @@
 }
 
 .filterActive {
+  color: var(--tbb-ink);
+}
+
+/*
+ * The mark under the live filter, and one element rather than a border on each
+ * button, so picking a range moves it there instead of switching it off in one
+ * place and on in another. Its position and width come in from the component,
+ * which measures the button it belongs under — see `measureRule`.
+ */
+.rule {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--rule-w, 0);
+  height: 2px;
   background: var(--tbb-ink);
-  color: var(--tbb-on-dark);
+  transform: translateX(var(--rule-x, 0));
+  transition:
+    transform var(--tbb-dur) var(--tbb-ease),
+    width var(--tbb-dur) var(--tbb-ease);
+  pointer-events: none;
 }
 
 .filter:focus-visible,
 .filterActive:focus-visible {
   outline: 2px solid var(--tbb-accent);
-  outline-offset: 2px;
+  outline-offset: -2px;
+}
+
+/* ---- the ranges ---- */
+
+/* The shelf as one thing, so re-sorting has somewhere to scroll back to. The
+   margin clears the site header and the sticky filter bar, which would
+   otherwise sit over the first row it just brought into view. */
+.shelf {
+  scroll-margin-top: calc(var(--tbb-header-h) + 4rem);
+}
+
+.range {
+  padding-inline: var(--tbb-gutter);
+}
+
+.rangeHead {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: clamp(2.5rem, 4vw, 3.75rem) 0 clamp(1.1rem, 1.8vw, 1.6rem);
+}
+
+.range:first-of-type .rangeHead {
+  padding-top: clamp(2rem, 3vw, 3rem);
+}
+
+.rangeName {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.15rem, 1.9vw, 1.6rem);
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1 !important;
+  text-transform: none;
+  color: var(--tbb-ink);
+}
+
+.rangeCount {
+  color: var(--tbb-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
 }
 
 .grid {
   display: grid;
   /*
-   * Four, and the tile is four by five — see `scripts/build-catalog-tiles.mjs`.
-   * The tiles are built so the pouch shows whole, which a square could not do:
-   * the key visuals run it off the right of their own frame, so cropping one to
-   * a square cut it on eleven products and left it standing complete on the
-   * other five — two treatments in one grid.
+   * Four, and the card is 270 x 413 — the frame the homepage design draws, and
+   * the aspect `ProductTileArt` holds. It is taller than the 4:5 tile this
+   * shelf used to carry because the name now prints inside the frame rather
+   * than under it.
    */
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(3.25rem, 5vw, 5.5rem) clamp(1rem, 1.8vw, 1.75rem);
-  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  gap: clamp(2.5rem, 4vw, 3.5rem) clamp(1rem, 1.8vw, 1.75rem);
 }
 
+/* ---- the card ---- */
+
 .card {
+  position: relative;
   display: grid;
-  grid-template-rows: auto auto 1fr auto auto;
+  grid-template-rows: auto auto auto 1fr auto;
   min-width: 0;
 }
 
-.imageLink {
-  position: relative;
+/*
+ * The card's artwork and its name, drawn by `ProductTileArt` so the shelf and
+ * the homepage grid cannot drift apart. The link is the frame: it has no box of
+ * its own beyond the tile, and the lift on hover is the whole affordance.
+ */
+.tileLink {
   display: block;
-  aspect-ratio: 4 / 5;
-  margin-bottom: clamp(0.9rem, 1.4vw, 1.2rem);
-  overflow: hidden;
-  background: var(--tbb-paper-warm);
-}
-
-.image {
-  object-fit: cover;
-  object-position: center;
-  transition: transform var(--tbb-dur) var(--tbb-ease) !important;
-}
-
-.card:hover .image {
-  transform: scale(1.025);
-}
-
-.imageLink:focus-visible,
-.name:focus-visible,
-.action:focus-visible {
-  outline: 2px solid var(--tbb-accent);
-  outline-offset: 3px;
-}
-
-.titleRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1rem;
-  align-items: baseline;
-}
-
-.name,
-.price {
-  color: var(--tbb-ink);
-  font-size: clamp(0.9rem, 1.05vw, 1.05rem);
-  font-weight: 600;
-  line-height: 1.25;
+  margin-bottom: clamp(0.9rem, 1.4vw, 1.15rem);
   text-decoration: none;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.card:hover .tileLink {
+  transform: translateY(-4px);
+}
+
+.tileLink:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 4px;
+  border-radius: var(--tbb-card-radius);
+}
+
+.inCart {
+  position: absolute;
+  left: 0.7rem;
+  top: 0.7rem;
+  z-index: 1;
+  padding: 0.38rem 0.62rem;
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  line-height: 1;
   text-transform: uppercase;
 }
 
+.heading {
+  margin: 0 !important;
+  font: inherit;
+}
+
+/* The name is printed inside the tile now, so the row under it is the price
+   alone. It sits at the card's edge: the name's indent belongs to the artwork,
+   and carrying it into the text block would cost the description its measure. */
+.priceRow {
+  margin: 0 !important;
+}
+
 .price {
+  color: var(--tbb-ink);
+  font-size: clamp(0.9rem, 1.05vw, 1.05rem);
+  font-weight: 600 !important;
+  line-height: 1.25;
   white-space: nowrap;
-  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The pack size, which on a wholesale shelf is half the price's meaning. Tea
+   and Sugar Free are sold in no single one, and hold the line empty rather than
+   letting their description ride up past the cards beside them. */
+.meta {
+  min-height: 0.7rem;
+  margin-top: 0.3rem !important;
+  color: var(--tbb-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  line-height: 1 !important;
+  text-transform: uppercase;
 }
 
 .description {
-  margin-top: 0.55rem !important;
+  /* Three lines and no more, so the tiles in a row stay level with each other
+     rather than stepping wherever the copy happens to end. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin-top: 0.5rem !important;
   color: var(--tbb-muted);
   font-size: 0.875rem;
   line-height: 1.45 !important;
 }
 
-.category {
-  margin-top: 1.9rem !important;
-}
-
+/*
+ * A control rather than an underlined word: this is the one thing on the card
+ * anyone is meant to do, and on a shelf of sixteen it has to be findable
+ * without reading. Quiet until the card is under the cursor.
+ */
 .action {
   appearance: none;
-  justify-self: start;
-  margin-top: 1rem;
-  padding: 0 0 0.3rem;
-  border: 0;
-  border-bottom: 1px solid var(--tbb-line);
-  border-radius: 0;
+  display: block;
+  width: 100%;
+  margin-top: clamp(0.9rem, 1.4vw, 1.15rem);
+  padding: 0.72rem 1rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
   background: transparent;
   color: var(--tbb-ink);
   font: 500 0.6875rem / 1 var(--tbb-font-sans);
   letter-spacing: var(--tbb-tracking-label);
+  text-align: center;
   text-decoration: none;
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.action:hover {
-  border-bottom-color: var(--tbb-ink);
+.card:hover .action,
+.action:hover,
+.action:focus-visible {
+  border-color: var(--tbb-ink);
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
 }
 
-@media (max-width: 1179px) {
+/*
+ * Once it is in the cart the button becomes the quantity. Wholesale buyers
+ * order in multiples, and a button that has already been pressed is a control
+ * with nothing left to say.
+ */
+.stepper {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+  align-items: center;
+  margin-top: clamp(0.9rem, 1.4vw, 1.15rem);
+  overflow: hidden;
+  border: 1px solid var(--tbb-ink);
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+}
+
+.step {
+  appearance: none;
+  height: 2.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.step:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.step:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--tbb-accent);
+  outline-offset: -2px;
+}
+
+.quantity {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--tbb-accent);
+  outline-offset: 3px;
+}
+
+/* ---- the close ---- */
+
+.close {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: clamp(3.5rem, 6vw, 6rem);
+  padding: clamp(2rem, 3.5vw, 3rem) var(--tbb-gutter);
+  border-top: 1px solid var(--tbb-line);
+}
+
+.closeText {
+  max-width: 46ch;
+  color: var(--tbb-ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.5 !important;
+}
+
+.closeLink {
+  flex: 0 0 auto;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* ---- the running total ---- */
+
+.tray {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 20;
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  padding: 0.6rem 0.6rem 0.6rem 1.25rem;
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  box-shadow: 0 18px 40px rgba(26, 19, 17, 0.28);
+  color: var(--tbb-on-dark);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.trayLink {
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+  text-decoration: none;
+}
+
+@media (max-width: 1099px) {
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 859px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .intro {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 1.75rem);
+    align-items: start;
   }
 }
 
 @media (max-width: 639px) {
-  .page {
+  .intro,
+  .barInner,
+  .range,
+  .close {
     padding-inline: 1rem;
   }
 
-  .title {
-    font-size: clamp(2rem, 11vw, 3.1rem);
-  }
-
   .filters {
-    margin-inline: -0.25rem;
-    border-radius: 1.5rem;
+    /* Bleeds to the edges so the fifth label is visibly cut off rather than
+       looking like the row simply ends at four. */
+    margin-inline: -1rem;
+    padding-inline: 1rem;
   }
 
   /*
    * Two across on a phone as well. One made a column of half-page tiles that
    * took four screens to scroll and showed a visitor one product at a time,
-   * which is the opposite of what a catalogue is for. The card pays for the
-   * width by giving up the side-by-side title row and a little of everything
-   * else — at this size the price no longer fits beside the name.
+   * which is the opposite of what a shop is for. The card pays for the width by
+   * giving up the side-by-side title row — at this size the price no longer
+   * fits beside the name.
    */
   .grid {
-    gap: clamp(2rem, 7vw, 2.75rem) 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.75rem, 6vw, 2.5rem) 0.75rem;
   }
 
-  .titleRow {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.15rem;
-  }
-
-  .name,
   .price {
     font-size: 0.8125rem;
   }
 
   .description {
-    margin-top: 0.4rem !important;
+    -webkit-line-clamp: 2;
+    margin-top: 0.35rem !important;
     font-size: 0.8rem;
-    /* Three lines and no more, so the tiles in a row stay level with each
-       other rather than stepping wherever the copy happens to end. */
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
   }
 
-  .category {
-    margin-top: 0.9rem !important;
+  .inCart {
+    left: 0.45rem;
+    top: 0.45rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.5625rem;
+  }
+
+  .action,
+  .step {
+    padding-inline: 0.5rem;
   }
 
   .action {
     margin-top: 0.7rem;
   }
+
+  .stepper {
+    grid-template-columns: 2rem minmax(0, 1fr) 2rem;
+    margin-top: 0.7rem;
+  }
+
+  .quantity {
+    font-size: 0.625rem;
+  }
+
+  .close {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tray {
+    left: 1rem;
+    right: 1rem;
+    justify-content: space-between;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .image {
+  .tileLink,
+  .rule {
     transition: none !important;
   }
 }

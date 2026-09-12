@@ -1,0 +1,149 @@
+/**
+ * "Partner with Us", from the homepage design file.
+ *
+ * A grey band with a white card on it: the ask on the left, the fields on the
+ * right. The band is 1200x565 and the card 1112x419 on a 20 radius, which is
+ * 73 of band above and below it.
+ *
+ * Two departures from the file:
+ *
+ *   - It draws two fields, Name and Phone, under a paragraph that asks for
+ *     "full name, contact number, and email". `/api/leads` requires an email
+ *     as well, so there are three — the copy already promised it.
+ *   - Its placeholders are #d9d9d9 on white, about 1.4:1. The border keeps that
+ *     grey; the placeholder text moves to the brand's muted grey so it can be
+ *     read.
+ */
+
+.section {
+  padding-inline: var(--tbb-gutter);
+  background: var(--tbb-paper);
+}
+
+/* 1200 x 565 in the design's own mid grey. */
+.band {
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 6.08vw, 4.5625rem) clamp(1rem, 3.67vw, 2.75rem);
+  background: var(--tbb-band);
+}
+
+/* 1112 x 419 */
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 430fr) minmax(0, 336fr);
+  gap: clamp(1.5rem, 4vw, 5.5rem);
+  align-items: start;
+  width: 100%;
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4.6vw, 3.5rem) clamp(1.25rem, 4vw, 4rem);
+  border-radius: var(--tbb-card-radius);
+  background: var(--tbb-paper);
+}
+
+/* Exo Bold 48 on a 60 line. */
+.title {
+  margin: 0 !important;
+  color: var(--tbb-ink);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+/* Exo Light 18 on a 22 line, in the brand's grey. */
+.copy {
+  max-width: 44ch;
+  margin: clamp(1.25rem, 3.2vw, 2.8125rem) 0 0 !important;
+  color: var(--tbb-muted);
+  font-size: clamp(0.9375rem, 1.5vw, 1.125rem);
+  font-weight: 300;
+  line-height: 1.23 !important;
+}
+
+.form {
+  display: grid;
+  /* 76 pitch on a 61 field. */
+  gap: 0.9375rem;
+}
+
+/* 336 x 61 on a 10 radius, outlined in the design's placeholder grey. */
+.field {
+  width: 100%;
+  min-height: 3.8125rem;
+  padding: 0 1.9375rem;
+  border: 1px solid var(--tbb-placeholder);
+  border-radius: 10px;
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(0.9375rem, 1.5vw, 1.125rem);
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+.field::placeholder {
+  color: var(--tbb-muted);
+  opacity: 1;
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 1px;
+}
+
+.field:disabled {
+  opacity: 0.6;
+}
+
+/* 336 x 50 — the button is the field's width, not its content's. */
+.submit {
+  width: 100%;
+  margin-top: 0.3125rem;
+}
+
+.submit:disabled {
+  cursor: progress;
+  transform: none;
+}
+
+/*
+ * The outcome. It is polite rather than assertive because the submit button is
+ * still focused when it appears, and it holds its line so the card does not
+ * jump when the message arrives.
+ */
+.status {
+  min-height: 1.25rem;
+  margin: 0 !important;
+  font-size: 0.875rem;
+  line-height: 1.4 !important;
+}
+
+.statusSent {
+  color: var(--tbb-ink);
+  font-weight: 600;
+}
+
+.statusError {
+  color: var(--tbb-accent);
+  font-weight: 600;
+}
+
+/* The decoy. Off-screen rather than `display: none`, which some bots skip. */
+.decoy {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

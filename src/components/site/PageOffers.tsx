@@ -31,6 +31,7 @@ export function PageOffers({ offers }: { offers: PageOffer[] }) {
                 src={resizedImage(offer.image) ?? offer.image}
                 alt=""
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <h2 className={styles.title}>{offer.title}</h2>

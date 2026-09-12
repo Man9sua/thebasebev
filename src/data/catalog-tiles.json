@@ -1,66 +1,66 @@
 {
   "chai-latte": {
     "image": "/images/tile-chai-latte.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "chocolate": {
     "image": "/images/tile-chocolate.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "cordial": {
     "image": "/images/tile-cordial.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "cream-latte": {
     "image": "/images/tile-cream-latte.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "frappe": {
     "image": "/images/tile-frappe.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "garnish": {
     "image": "/images/tile-garnish.webp",
-    "source": "pack"
+    "source": "frame-wash"
   },
   "iced-tea": {
     "image": "/images/tile-iced-tea.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "jam": {
     "image": "/images/tile-jam.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "matcha": {
     "image": "/images/tile-matcha.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "milkshake": {
     "image": "/images/tile-milkshake.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "raf-coffee": {
     "image": "/images/tile-raf-coffee.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "sugar-free": {
     "image": "/images/tile-sugar-free.webp",
-    "source": "pack"
+    "source": "frame-wash"
   },
   "sugar-syrup": {
     "image": "/images/tile-sugar-syrup.webp",
-    "source": "pack"
+    "source": "frame-wash"
   },
   "tea": {
     "image": "/images/tile-tea.webp",
-    "source": "banner"
+    "source": "banner-wash"
   },
   "topping": {
     "image": "/images/tile-topping.webp",
-    "source": "pack"
+    "source": "frame-wash"
   },
   "vending": {
     "image": "/images/tile-vending.webp",
-    "source": "pack"
+    "source": "frame-wash"
   }
 }
