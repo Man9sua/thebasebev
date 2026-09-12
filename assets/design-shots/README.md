@@ -50,5 +50,5 @@ one exported picture is both smaller and truer than five rotated CSS layers.
 Two images sit on the hero in the design file and are not built: a rasterised
 "Получить прайс" button and a phone number reading `8 961 164 64 11`. Both are
 screenshots of another site pasted onto the canvas — Russian copy on an English
-page, and a Russian mobile number where THE BASE's own is +971 58 932 7887.
+page, and a Russian mobile number where THE BASE's own is +971 50 989 0429.
 They are reference material, not content.
