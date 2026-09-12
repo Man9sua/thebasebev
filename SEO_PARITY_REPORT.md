@@ -1,14 +1,14 @@
 # SEO parity report
 
-Generated: 2026-09-12T12:03:39.735Z
+Generated: 2026-09-12T12:21:56.417Z
 
 - Production: `https://thebasebev.com`
-- Target: `http://localhost:3000`
+- Target: `https://the-base-staging.mansua.workers.dev`
 - Canonical public routes: 130
 - Critical failures: 0
 - Declared h1 changes: 18
 - Non-blocking link/alt observations: 260
-- Preview transport noindex expected: no
+- Preview transport noindex expected: yes
 
 The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.dev` preview. Page-level metadata and canonical URLs must still match production and remain oriented to `https://thebasebev.com`.
 
