@@ -48,8 +48,14 @@ export function Products() {
           <img className={styles.rule} src="/images/icons/section-rule.svg" alt="" />
 
           <div className={styles.headRow}>
+            {/*
+             * The design's heading is singular over a grid of sixteen. Made
+             * plural at the owner's instruction, the same correction as the
+             * assurances' "14 day". The id stays as it is: it anchors the
+             * section for the browser smoke and is not read by anyone.
+             */}
             <h2 className={styles.title} id="our-product">
-              OUR PRODUCT
+              OUR PRODUCTS
             </h2>
 
             {/* Held together so the pair stays a pair once the heading takes

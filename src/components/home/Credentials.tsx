@@ -3,9 +3,8 @@ import styles from "./Credentials.module.css";
 /**
  * Four assurances about how THE BASE manufactures.
  *
- * Copy is the design file's, verbatim — including "14 day", which wants to be
- * "14 days". It is a claim about a lead time rather than a label, so the
- * wording is the owner's to correct, not mine.
+ * Copy is the design file's. One correction, at the owner's instruction: the
+ * file reads "14 day", which is a lead time in the singular.
  */
 const CREDENTIALS: readonly { icon: string; copy: string }[] = [
   {
@@ -18,7 +17,7 @@ const CREDENTIALS: readonly { icon: string; copy: string }[] = [
   },
   {
     icon: "/images/icons/proof-lead-time.svg",
-    copy: "From request to implementation 14 day",
+    copy: "From request to implementation 14 days",
   },
   {
     icon: "/images/icons/proof-certified.svg",

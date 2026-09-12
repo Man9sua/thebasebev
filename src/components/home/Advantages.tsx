@@ -3,15 +3,14 @@ import styles from "./Advantages.module.css";
 /**
  * What a buyer saves by pouring a powder, as four figures.
  *
- * The copy is the design file's, verbatim. Two things in it are the owner's to
- * settle rather than mine, so they are carried as written:
+ * The copy is the design file's, with two departures:
  *
  *   - The design's phone frame reads 20 / 50 / 40 / 100 where its desktop frame
  *     reads 40 / 50 / 60 / 100. The desktop figures are used, since these are
  *     claims and they cannot differ by device.
- *   - "syrups - significantly" uses a hyphen where the sentence wants a dash.
- *     Left alone: it is approved copy, and silently rewriting a claim is not
- *     mine to do.
+ *   - "syrups - significantly" used a hyphen where the sentence wants a dash.
+ *     Corrected at the owner's instruction to the spaced em dash the rest of
+ *     the site's prose uses.
  *
  * "Up to" sits on the first three and not on the fourth, which is the design's
  * own reading — 100% safety is not a ceiling, it is the claim.
@@ -34,7 +33,7 @@ const ADVANTAGES: readonly {
     qualifier: "Up to",
     name: "Savings on Logistics",
     copy:
-      "No refrigeration, no breakage, and lighter than bottled syrups - significantly reducing shipping and storage expenses",
+      "No refrigeration, no breakage, and lighter than bottled syrups — significantly reducing shipping and storage expenses",
   },
   {
     figure: "60%",
