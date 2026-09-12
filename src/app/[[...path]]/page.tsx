@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AboutPage } from "@/components/about/AboutPage";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import {
   DISTRIBUTORS_HERO_RECORD,
@@ -164,6 +165,24 @@ export default async function SiteRoute({ params }: RouteProps) {
   // `generateMetadata` above is shared, so every route keeps its existing
   // title, description and canonical whichever branch renders it.
   if (route === "/") return <HomePage />;
+
+  if (route === "/about-us") {
+    const structuredData = getLegacyStructuredData(page.file);
+    return (
+      <div className="tbb">
+        {structuredData.map((block, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: block }}
+          />
+        ))}
+        <SiteHeader />
+        <AboutPage />
+        <SiteFooter />
+      </div>
+    );
+  }
 
   // The two standalone aliases are the exported header and footer records
   // themselves. Framing them in the shared shell would wrap a copy of the site
