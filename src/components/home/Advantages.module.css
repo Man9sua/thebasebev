@@ -1,0 +1,105 @@
+/**
+ * The four savings, from the homepage design file.
+ *
+ * A disc carrying the figure, then the name of the saving and a sentence on it.
+ * Four columns 230 wide on a 266 pitch, which is what the grid below them uses
+ * too once the card gaps are taken out.
+ *
+ * The design sets the first and third figures at 16 and the second and fourth
+ * at 26 inside identical 78px discs. All four are set at 26 here: a row of
+ * percentages that changes size from column to column is a typo, not emphasis.
+ */
+
+.section {
+  padding: clamp(2.5rem, 5vw, 4rem) var(--tbb-gutter) clamp(3rem, 6vw, 5rem);
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
+  padding-inline: var(--tbb-home-indent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* 266 pitch on a 230 column. */
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  margin: 0;
+}
+
+.item {
+  display: grid;
+  /* The discs hold one row so the four names start on one line, whatever the
+     figure above them is. */
+  grid-template-rows: auto auto 1fr;
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+  min-width: 0;
+}
+
+/* 77.86 across, in the design's stone. */
+.disc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 4.875rem;
+  height: 4.875rem;
+  border-radius: 50%;
+  background: var(--tbb-stone);
+  color: var(--tbb-on-dark);
+  text-align: center;
+}
+
+/* Exo SemiBold 10.87 on a 19 line. */
+.qualifier {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Exo SemiBold 26 on a 28 line. */
+.figure {
+  font-size: 1.625rem;
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+/* Exo SemiBold 26 on a 28 line, in ink. */
+.name {
+  margin: 0 !important;
+  color: var(--tbb-ink);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.125rem, 2.17vw, 1.625rem);
+  font-weight: 600 !important;
+  line-height: 1.08 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+/* Exo Light 14 on a 20 line, in stone. */
+.copy {
+  margin: 0 !important;
+  color: var(--tbb-stone);
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.43 !important;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.75rem, 5vw, 2.5rem);
+  }
+}
+
+@media (max-width: 479px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .item {
+    grid-template-rows: none;
+  }
+}

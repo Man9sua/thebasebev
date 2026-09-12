@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   CATALOG_GROUPS,
@@ -9,17 +8,15 @@ import {
   type CatalogGroupId,
   type CatalogProduct,
 } from "@/data/catalog";
+import { ProductTileArt } from "@/components/product/ProductTileArt";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SortMenu } from "./SortMenu";
 import { useCart } from "@/components/cart/useCart";
-import catalogTiles from "@/data/catalog-tiles.json";
 import { addCartItem, setCartItemQuantity } from "@/lib/cart-store";
 import styles from "./CatalogPage.module.css";
 
 type Filter = "all" | CatalogGroupId;
 type Sort = "featured" | "price-asc" | "price-desc" | "name";
-
-const tiles = catalogTiles as Record<string, { image: string }>;
 
 /*
  * Four products are listed under a longer name than the shelf needs. The name
@@ -89,43 +86,34 @@ function ProductCard({
       data-product-slug={product.slug}
       data-in-cart={quantity > 0 ? "true" : undefined}
     >
-      <div className={styles.frame}>
+      {/*
+       * The whole tile is the link and the name is printed inside it, which is
+       * how the design draws the card. One anchor per card rather than the
+       * hidden-image-plus-name pair this used to carry: the name is the only
+       * text in the frame, so the anchor announces itself correctly without a
+       * second route to the same page.
+       */}
+      <h3 className={styles.heading}>
         <SiteLink
-          className={styles.imageLink}
+          className={styles.tileLink}
+          data-catalog-name
           href={product.route}
-          tabIndex={-1}
-          aria-hidden
         >
-          <Image
-            className={styles.image}
-            src={
-              tiles[product.slug]?.image ??
-              product.image ??
-              `/images/pack-${product.slug}.webp`
-            }
-            alt=""
-            fill
+          <ProductTileArt
+            slug={product.slug}
+            name={name}
             sizes="(max-width: 639px) 46vw, (max-width: 1099px) 31vw, 23vw"
-            loading={eager ? "eager" : "lazy"}
+            priority={eager}
           />
         </SiteLink>
-        {quantity > 0 && <span className={styles.inCart}>In cart</span>}
-      </div>
+      </h3>
+      {quantity > 0 && <span className={styles.inCart}>In cart</span>}
 
-      <div className={styles.titleRow}>
-        <h3 className={styles.heading}>
-          <SiteLink
-            className={styles.name}
-            data-catalog-name
-            href={product.route}
-          >
-            {name}
-          </SiteLink>
-        </h3>
+      <p className={styles.priceRow}>
         <span className={styles.price} data-catalog-price>
           {product.price ?? "Price on request"}
         </span>
-      </div>
+      </p>
 
       <p className={styles.meta}>{weight ? `${weight} pouch` : ""}</p>
       <p className={styles.description}>{product.description}</p>

@@ -8,6 +8,8 @@ const chromePath =
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const artifactRoot = path.resolve(".visual-artifacts");
 const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
+/** The redesigned homepage's range section — the page's tallest landmark. */
+const PRODUCTS = 'section[aria-labelledby="our-product"]';
 const failures = [];
 const pageErrors = [];
 const hydrationErrors = [];
@@ -79,12 +81,12 @@ try {
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage is the redesigned surface: a photographic hero, then the
-  // Bestsellers carousel. Navigation and the product grid moved out of the old
-  // hover mega-menu into the full-screen menu panel, so they are asserted there
+  // The homepage is the redesigned surface: a photographic hero, the four
+  // savings, then the whole range as a grid. Navigation moved out of the old
+  // hover mega-menu into the full-screen menu panel, so it is asserted there
   // rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await page.locator("#bestsellers").waitFor();
+  await page.locator(PRODUCTS).waitFor();
   // Nothing covers the page any more — the loading screen is gone — so this is
   // just a frame for the hero and the scene controller to settle in before the
   // first desktop wheel event.
@@ -127,85 +129,69 @@ try {
   );
 
   check(
-    (await page.locator("#bestsellers [aria-roledescription='slide']").count()) === 5,
-    "home: expected five bestseller slides",
-  );
-  check(
-    (await page.locator("#bestsellers [aria-current]").count()) === 5,
-    "home: expected five bestseller dots",
-  );
-  check(
     (await page.locator("h1").count()) === 1,
     "home: expected exactly one h1",
   );
   check(
-    /^Premium\s+.+\s+Bases$/.test(((await page.locator("h1").textContent()) ?? "").trim()),
+    /^Premium\s+.+\s+Bases\b/.test(((await page.locator("h1").textContent()) ?? "").trim()),
     "home: h1 must keep the production wording (Premium … Bases)",
   );
 
-  // The homepage uses the browser's natural document scroll. Verify that a
-  // desktop wheel actually moves it before bringing the carousel into view.
+  // The homepage uses the browser's natural document scroll. Verify a desktop
+  // wheel actually moves it before walking down the sections below the hero.
   const initialScrollY = await page.evaluate(() => window.scrollY);
   await page.mouse.wheel(0, 600);
   await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
-  await page.locator("#bestsellers").scrollIntoViewIfNeeded();
-  await page.waitForTimeout(300);
-  await page.locator("#bestsellers [aria-label='Next product']").click();
-  await page.waitForTimeout(900);
+
+  // The range: sixteen cards, each a link to its own product page, each drawn
+  // from the shot the design supplies rather than the old catalogue tile.
+  const cards = page.locator(`${PRODUCTS} li a[href]`);
+  const cardCount = await cards.count();
+  check(cardCount === 16, `home: expected sixteen product cards, got ${cardCount}`);
   check(
-    (await page.locator("#bestsellers .is-active, #bestsellers [aria-hidden='false'][aria-roledescription='slide']")
-      .first()
-      .getAttribute("aria-label"))?.startsWith("2 of 5"),
-    "home: next arrow did not activate slide two",
+    (await page.locator(`${PRODUCTS} a[href='/milkshake']`).count()) === 1,
+    "home: product cards do not link to their product pages",
+  );
+  check(
+    (await cards.first().locator("img[src*='/images/shot-']").count()) === 1,
+    "home: product card is missing its drink",
   );
 
-  // Horizontal reading rail: a native overflow scroller, so the arrows move it
-  // and vertical wheel over it must still scroll the page.
-  const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
-  await rail.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(600);
+  // The three rows of four the design stacks around the range.
+  const rowsOfFour = [
+    ["savings", "section[aria-label='What THE BASE saves you'] li"],
+    ["reasons", "section[aria-label='Why THE BASE'] li"],
+    ["assurances", "section[aria-label='How THE BASE manufactures'] li"],
+  ];
+  for (const [label, selector] of rowsOfFour) {
+    const found = await page.locator(selector).count();
+    check(found === 4, `home: expected four ${label}, got ${found}`);
+  }
+
+  // Both offer cards, and both of their calls to action.
+  const offers = page.locator("section[aria-label='Work with THE BASE'] article");
+  check((await offers.count()) === 2, "home: expected two offer cards");
   check(
-    (await rail.locator("[data-card]").count()) === 6,
-    "reading: expected six cards after the Blog card removal",
-  );
-  check(
-    (await rail.locator("a[href='/resources/blog']").count()) === 0,
-    "reading: removed Blog card returned to the rail",
-  );
-  check(
-    await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
-    "reading: rail is not horizontally scrollable",
+    (await offers.locator("a[href='/private-labeling']").count()) === 1 &&
+      (await offers.locator("a[href='/contacts']").count()) === 1,
+    "home: offer cards lost their destinations",
   );
 
-  const railNext = page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll right']");
+  // The team frame and the sentence across its foot.
   check(
-    await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled(),
-    "reading: left arrow should start disabled",
-  );
-  await railNext.click();
-  await page.waitForTimeout(1_200);
-  check(
-    (await rail.evaluate((el) => el.scrollLeft)) > 100,
-    "reading: right arrow did not advance the rail",
-  );
-  check(
-    !(await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled()),
-    "reading: left arrow should enable once scrolled",
+    (await page.locator("figure img[src='/images/home-team.webp']").count()) === 1,
+    "home: the team photograph is missing",
   );
 
-  // The progress thumb tracks the rail rather than sitting still.
-  const thumbShift = await page.locator("section[aria-labelledby='reading-title'] [class*='thumb']")
-    .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
-  check(thumbShift > 5, "reading: progress indicator did not follow the rail");
-
-  // A vertical wheel over the rail must scroll the page, not be swallowed.
-  const beforeY = await page.evaluate(() => window.scrollY);
-  await rail.hover();
-  await page.mouse.wheel(0, 400);
-  await page.waitForTimeout(700);
+  // The distributor form. It must ask for an email as well as a name, because
+  // `/api/leads` rejects a lead without one.
+  const partner = page.locator("section[aria-labelledby='partner-with-us'] form");
+  await partner.scrollIntoViewIfNeeded();
   check(
-    (await page.evaluate(() => window.scrollY)) > beforeY + 50,
-    "reading: rail swallowed vertical scrolling",
+    (await partner.locator('input[name="name"]').count()) === 1 &&
+      (await partner.locator('input[name="email"]').count()) === 1 &&
+      (await partner.locator('input[name="Phone"]').count()) === 1,
+    "home: the distributor form is missing one of its three fields",
   );
 
   // The footer wordmark must fit. It was sized in `vw`, which includes the
@@ -235,9 +221,9 @@ try {
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
     "home: horizontal overflow on the page",
   );
-  // Clicking a carousel control scrolls the page; come back to the top so the
-  // header is over the hero and in the state the checks below expect. The bar
-  // itself no longer moves — it is fixed once it has turned to paper.
+  // Walking the sections scrolled the page; come back to the top so the header
+  // is over the hero and in the state the checks below expect. The bar itself
+  // no longer moves — it is fixed once it has turned to paper.
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
@@ -392,7 +378,27 @@ try {
   await page.goto(`${baseUrl}/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
     waitUntil: "domcontentloaded",
   });
-  await page.locator("#bestsellers").waitFor();
+  await page.locator(PRODUCTS).waitFor();
+
+  // The homepage form runs through the same mocked 503. It must say so rather
+  // than thanking anyone for a lead that was never delivered.
+  const partnerForm = page.locator("section[aria-labelledby='partner-with-us'] form");
+  await partnerForm.scrollIntoViewIfNeeded();
+  await partnerForm.locator('input[name="name"]').fill("Browser Smoke");
+  await partnerForm.locator('input[name="Phone"]').fill("500000000");
+  await partnerForm.locator('input[name="email"]').fill("smoke@example.com");
+  await partnerForm.locator('button[type="submit"]').click();
+  await page.waitForTimeout(700);
+  const partnerStatus = (await partnerForm.locator('[role="status"]').textContent()) ?? "";
+  check(
+    /did not send/i.test(partnerStatus),
+    `home: unconfigured lead backend did not show an honest error (said "${partnerStatus.trim()}")`,
+  );
+  check(
+    !/thank you/i.test(partnerStatus),
+    "home: distributor form thanked the visitor for an undelivered lead",
+  );
+
   await page.goto(`${baseUrl}/contacts`, {
     waitUntil: "domcontentloaded",
   });
@@ -500,7 +506,7 @@ try {
   for (const { width, height } of viewports) {
     await visualPage.setViewportSize({ width, height });
     await visualPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-    await visualPage.locator("#bestsellers").waitFor();
+    await visualPage.locator(PRODUCTS).waitFor();
     await visualPage.waitForTimeout(3_500);
     check(
       await visualPage.evaluate(
@@ -561,6 +567,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, menu, bestsellers, reading rail, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, menu, the range grid, the three rows of four, both offer cards, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

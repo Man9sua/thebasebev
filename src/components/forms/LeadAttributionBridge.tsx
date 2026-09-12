@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { FIRST_TOUCH_STORAGE_KEY } from "@/components/forms/first-touch";
+import { getFirstTouchAttribution } from "@/components/forms/first-touch";
 import {
   LEGACY_FORM_NAMES,
   resolveLeadFormType,
 } from "@/lib/lead-forms";
 import {
-  createFirstTouchAttribution,
   LEAD_HONEYPOT_FIELD,
-  parseFirstTouchAttribution,
   validateLeadPayload,
   type FirstTouchAttribution,
   type LeadPayload,
@@ -48,34 +46,6 @@ const COUNTRY_DIAL_CODES: Record<string, string> = {
 type DataLayerWindow = Window & {
   dataLayer?: Array<Record<string, unknown>>;
 };
-
-function getFirstTouchAttribution(): FirstTouchAttribution {
-  const current = createFirstTouchAttribution(
-    window.location.href,
-    document.referrer,
-    new URL(window.location.href).searchParams,
-  );
-
-  try {
-    const stored = window.sessionStorage.getItem(FIRST_TOUCH_STORAGE_KEY);
-    if (stored) {
-      const parsed = parseFirstTouchAttribution(JSON.parse(stored));
-      if (parsed) {
-        return parsed;
-      }
-    }
-
-    window.sessionStorage.setItem(
-      FIRST_TOUCH_STORAGE_KEY,
-      JSON.stringify(current),
-    );
-  } catch {
-    // Privacy modes can make sessionStorage unavailable. Submission still works
-    // with an in-memory first touch for the current page.
-  }
-
-  return current;
-}
 
 function getFormValue(formData: FormData, names: string[]): string | undefined {
   for (const name of names) {

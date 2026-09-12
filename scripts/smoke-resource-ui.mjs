@@ -118,10 +118,12 @@ async function auditViewport(browser, viewport) {
     const homePage = await browser.newPage({ viewport });
     await open(homePage, "/");
     const homePresent = (await homePage.locator("[data-hero]").count()) === 1;
-    check(homePresent, `${label}: homepage missing during BlogCarousel audit`);
+    check(homePresent, `${label}: homepage missing during the blog-link audit`);
+    // The reading rail went with the redesign; the assertion stays so a link to
+    // the removed Blog index cannot reappear on the homepage by another route.
     check(
-      (await homePage.locator('section[aria-labelledby="reading-title"] a[href="/resources/blog"]').count()) === 0,
-      `${label}: Blog card remains in BlogCarousel`,
+      (await homePage.locator('a[href="/resources/blog"]').count()) === 0,
+      `${label}: a link to the removed Blog index is back on the homepage`,
     );
     await homePage.close();
   }

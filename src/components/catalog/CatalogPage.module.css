@@ -264,11 +264,10 @@
 .grid {
   display: grid;
   /*
-   * Four, and the tile is four by five — see `scripts/build-catalog-tiles.mjs`.
-   * The tiles are built so the pouch shows whole, which a square could not do:
-   * the key visuals run it off the right of their own frame, so cropping one to
-   * a square cut it on eleven products and left it standing complete on the
-   * other five — two treatments in one grid.
+   * Four, and the card is 270 x 413 — the frame the homepage design draws, and
+   * the aspect `ProductTileArt` holds. It is taller than the 4:5 tile this
+   * shelf used to carry because the name now prints inside the frame rather
+   * than under it.
    */
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(2.5rem, 4vw, 3.5rem) clamp(1rem, 1.8vw, 1.75rem);
@@ -277,36 +276,32 @@
 /* ---- the card ---- */
 
 .card {
+  position: relative;
   display: grid;
   grid-template-rows: auto auto auto 1fr auto;
   min-width: 0;
 }
 
-.frame {
-  position: relative;
-  margin-bottom: clamp(0.9rem, 1.4vw, 1.15rem);
-  overflow: hidden;
-  border-radius: clamp(0.75rem, 1.2vw, 1.1rem);
-  background: var(--tbb-paper-warm);
-}
-
-/* The tile is a second route to the same product page and carries no words of
-   its own, so it is kept out of the reading order — the name under it is the
-   link that gets announced. */
-.imageLink {
-  position: relative;
+/*
+ * The card's artwork and its name, drawn by `ProductTileArt` so the shelf and
+ * the homepage grid cannot drift apart. The link is the frame: it has no box of
+ * its own beyond the tile, and the lift on hover is the whole affordance.
+ */
+.tileLink {
   display: block;
-  aspect-ratio: 4 / 5;
+  margin-bottom: clamp(0.9rem, 1.4vw, 1.15rem);
+  text-decoration: none;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.image {
-  object-fit: cover;
-  object-position: center;
-  transition: transform var(--tbb-dur) var(--tbb-ease) !important;
+.card:hover .tileLink {
+  transform: translateY(-4px);
 }
 
-.card:hover .image {
-  transform: scale(1.03);
+.tileLink:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 4px;
+  border-radius: var(--tbb-card-radius);
 }
 
 .inCart {
@@ -325,32 +320,23 @@
   text-transform: uppercase;
 }
 
-.titleRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.75rem;
-  align-items: baseline;
-}
-
 .heading {
   margin: 0 !important;
   font: inherit;
 }
 
-.name,
+/* The name is printed inside the tile now, so the row under it is the price
+   alone. It sits at the card's edge: the name's indent belongs to the artwork,
+   and carrying it into the text block would cost the description its measure. */
+.priceRow {
+  margin: 0 !important;
+}
+
 .price {
   color: var(--tbb-ink);
   font-size: clamp(0.9rem, 1.05vw, 1.05rem);
   font-weight: 600 !important;
   line-height: 1.25;
-  text-decoration: none;
-}
-
-.name {
-  text-transform: uppercase;
-}
-
-.price {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
@@ -468,7 +454,6 @@
   text-transform: uppercase;
 }
 
-.name:focus-visible,
 .action:focus-visible {
   outline: 2px solid var(--tbb-accent);
   outline-offset: 3px;
@@ -579,12 +564,6 @@
     gap: clamp(1.75rem, 6vw, 2.5rem) 0.75rem;
   }
 
-  .titleRow {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.1rem;
-  }
-
-  .name,
   .price {
     font-size: 0.8125rem;
   }
@@ -634,7 +613,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .image,
+  .tileLink,
   .rule {
     transition: none !important;
   }

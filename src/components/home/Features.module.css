@@ -1,0 +1,84 @@
+/**
+ * The four reasons, from the homepage design file.
+ *
+ * A line-drawn icon over two lines of Exo Light 22 on a 35 line. The design
+ * sets the whole block in one weight, so the first line is separated from the
+ * second by nothing but the break — kept that way here, with the break carried
+ * by markup rather than by a newline inside one string.
+ *
+ * The icons are drawn at 32x29, 32x52, 73x89 and 37x34 in the file. They are
+ * given one 40px box here: the third is twice the size of its neighbours, which
+ * in a row of four peers is a slip rather than a hierarchy.
+ */
+
+.section {
+  padding: clamp(2.5rem, 5vw, 4rem) var(--tbb-gutter) clamp(2.5rem, 5vw, 4rem);
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
+  padding-inline: var(--tbb-home-indent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3.5vw, 3.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+  min-width: 0;
+}
+
+.icon {
+  width: auto;
+  height: 2.5rem;
+  /* The glyphs are stone in the file and have their own fill, so nothing is
+     recoloured here — the box is all this owns. */
+  object-fit: contain;
+  object-position: left bottom;
+}
+
+/* Exo Light 22 on a 35 line — the same setting as the body under it. */
+.name {
+  margin: 0 !important;
+  color: var(--tbb-ink);
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(1rem, 1.83vw, 1.375rem);
+  font-weight: 300 !important;
+  line-height: 1.59 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+.copy {
+  margin: 0 !important;
+  color: var(--tbb-ink);
+  font-size: clamp(1rem, 1.83vw, 1.375rem);
+  font-weight: 300;
+  line-height: 1.59 !important;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 479px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .item {
+    grid-template-rows: none;
+  }
+}

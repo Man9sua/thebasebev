@@ -1,0 +1,93 @@
+/**
+ * The product card's artwork, from the homepage design file.
+ *
+ * Four layers in a 270x413 frame: a warm radial paper, a tilted ground gradient
+ * the drink stands on, the drink itself, and the name over the lower left. The
+ * frame clips, which the design relies on — the paper bleeds past every edge
+ * and both the drink and the ground run off the top and the right.
+ *
+ * Every number here is a share of the frame rather than a pixel, so the same
+ * card serves the homepage grid at 270 and the catalogue shelf at whatever the
+ * viewport gives it. The one exception is the corner radius, which the design
+ * draws at a flat 20px and which should not grow with the card.
+ */
+
+.art {
+  position: relative;
+  /* 270 x 413 */
+  aspect-ratio: 270 / 413;
+  overflow: hidden;
+  /* So the name can be sized against the card rather than the viewport. */
+  container-type: inline-size;
+  border-radius: var(--tbb-card-radius);
+  /*
+   * The design draws this as a 283.83x424.06 rectangle sitting at (-7, -6) —
+   * a touch larger than the frame on every side, so no corner of the card ever
+   * shows the gradient's own edge. Sized here as 105% x 103% of the frame,
+   * which is the same overspill without a second element to position.
+   */
+  background: radial-gradient(
+    ellipse 105% 103% at 50% 49%,
+    var(--tbb-card-wash-from) 0%,
+    var(--tbb-card-wash-to) 100%
+  );
+}
+
+/**
+ * The ground the drink stands on: an ellipse rotated 5.63 degrees, running off
+ * the right edge of the card. Figma rotates counter-clockwise and CSS
+ * clockwise, hence the negative angle.
+ *
+ * It is offset to the right of the drink rather than centred under it. That is
+ * how the file draws it on all sixteen cards, and it is what gives the card its
+ * diagonal — so it is intent, not a stray.
+ */
+.ground {
+  position: absolute;
+  /* 76.77 / 270, 232.92 / 413, 241.03 / 270, 88.71 / 413 */
+  left: 28.43%;
+  top: 56.4%;
+  width: 89.27%;
+  height: 21.48%;
+  border-radius: 50%;
+  transform: rotate(-5.63deg);
+  transform-origin: 0 0;
+  background: linear-gradient(
+    90deg,
+    var(--tbb-card-ground-from) 0%,
+    var(--tbb-card-ground-clear) 75%
+  );
+  pointer-events: none;
+}
+
+/**
+ * The drink. `build-design-shots.mjs` writes it into a canvas that is the whole
+ * card, already trimmed, fitted to one height and stood on one baseline, so
+ * there is nothing to place here: the layer is the frame.
+ */
+.shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/**
+ * The name, over the foot of the drink. The design sets Exo Bold 30 on a 54
+ * line in stone; it clamps down here because the catalogue shelf runs the card
+ * narrower than the homepage grid does.
+ */
+.label {
+  position: absolute;
+  /* 44 / 270, 333 / 413 */
+  left: 16.3%;
+  top: 80.63%;
+  right: 6%;
+  margin: 0;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.125rem, 11.1cqw, 1.875rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--tbb-card-label);
+}

@@ -13,7 +13,6 @@
     "verify:stripe-auth": "node scripts/verify-stripe-test-auth.mjs",
     "smoke:http": "node scripts/smoke-http.mjs",
     "smoke:browser": "node scripts/smoke-browser.mjs",
-    "smoke:home-scenes": "node scripts/smoke-home-scenes.mjs",
     "smoke:resources": "node scripts/smoke-resource-ui.mjs",
     "smoke:native-ui": "node scripts/smoke-native-commerce-ui.mjs",
     "audit:commerce": "node scripts/audit-commerce.mjs",

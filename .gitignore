@@ -30,3 +30,11 @@ Desktop.ini
 
 # Local Claude Code dev-server launcher — machine-specific paths.
 .claude/launch.json
+
+# Design-file inputs. `build-design-shots.mjs` turns these into the served
+# files in public/images; the sources themselves are 40 MB of full-size
+# photography and are not worth carrying in the repository. The README beside
+# them says where they come from and how to get them back.
+assets/design-shots/*
+!assets/design-shots/README.md
+assets/design-scenes/*

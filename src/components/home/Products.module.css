@@ -1,0 +1,112 @@
+/**
+ * "OUR PRODUCT", from the homepage design file.
+ *
+ * A hairline mark, the heading with two buttons on its line, and the sixteen
+ * products as a four-by-four grid of 270x413 cards on an 11.5 by 12 gap.
+ *
+ * The heading is indented from the grid — 98 against the grid's 40 — which is
+ * the design's own reading: it lands on the card's printed name rather than on
+ * the card's edge. `--tbb-home-indent` carries that for the whole page.
+ */
+
+.section {
+  padding: clamp(2.5rem, 5vw, 4rem) var(--tbb-gutter) clamp(3rem, 6vw, 5rem);
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
+}
+
+.head {
+  padding-left: var(--tbb-home-indent);
+  /* 1273.59 - 1249 */
+  padding-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* 65.74 x 11, in a grey so close to paper it reads as a watermark. */
+.rule {
+  display: block;
+  width: 4.125rem;
+  height: auto;
+  margin-bottom: clamp(0.5rem, 1.5vw, 1.125rem);
+}
+
+.headRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.75rem, 1.8vw, 1.375rem);
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 1.2vw, 1.0625rem);
+}
+
+/* Exo Regular 50 on a 54 line. */
+.title {
+  flex: 0 1 auto;
+  margin: 0 !important;
+  color: var(--tbb-ink);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.875rem, 4.17vw, 3.125rem);
+  font-weight: 400 !important;
+  line-height: 1.08 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* 12 down, 11.52 across */
+  gap: 0.75rem 0.72rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cardLink {
+  display: block;
+  text-decoration: none;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cardLink:hover {
+  transform: translateY(-4px);
+}
+
+.cardLink:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 4px;
+  border-radius: var(--tbb-card-radius);
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .head {
+    padding-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardLink {
+    transition: none;
+  }
+
+  .cardLink:hover {
+    transform: none;
+  }
+}
