@@ -133,6 +133,20 @@
     min-height: 26rem;
   }
 
+  /*
+   * Stacked, the pouch sits mid-card and the button — pushed to the foot by
+   * `margin-top: auto` — landed on top of it. On this card the button follows
+   * the copy instead and the pouch keeps the space below it.
+   */
+  .cardBrand {
+    min-height: 31rem;
+  }
+
+  .cardBrand .action {
+    margin-top: 0;
+    padding-top: clamp(1.25rem, 5vw, 2rem);
+  }
+
   .scrim {
     background: linear-gradient(
       180deg,

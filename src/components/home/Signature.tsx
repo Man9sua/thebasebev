@@ -13,7 +13,7 @@ export function Signature() {
   return (
     <section className={styles.section} aria-label="Work with THE BASE">
       <div className={styles.inner}>
-        <article className={styles.card}>
+        <article className={`${styles.card} ${styles.cardBrand}`}>
           <picture>
             <source
               media="(max-width: 859px)"
