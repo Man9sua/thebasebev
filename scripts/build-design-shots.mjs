@@ -97,14 +97,19 @@ const GROUND_COLOUR = "#ccc4a7";
  * -13 for a plain ramp. So the ramp holds full strength until the drink's right
  * edge, which is 0.45 along at this width, and is gone by 0.7.
  *
- * The strength and the lift are both tuned against that profile rather than
- * derived: 0.25 puts the peak at the design's -12, and holding the shape 6
- * above the base is what makes it stop where the design's stops instead of
- * leaking under the foot of the glass.
+ * Holding the shape 6 above the base is what makes it stop where the design's
+ * stops instead of leaking under the foot of the glass.
+ *
+ * The strength is judged at the size the card is actually shown rather than
+ * against the 1:1 profile. 0.25 matches the file's -12 peak exactly at 270,
+ * which is about what the desktop grid gives a card — but the shelf and the
+ * phone run the same card at 169, and there the shadow covers 19px instead of
+ * 30 and all but disappears. 0.35 is the compromise: a shade stronger than the
+ * file at full size, still present at two thirds of it.
  */
 const GROUND_HOLD_STOP = 0.45;
 const GROUND_FADE_STOP = 0.7;
-const GROUND_OPACITY = 0.25;
+const GROUND_OPACITY = 0.35;
 const GROUND_LIFT = 6 * 2;
 
 /**
