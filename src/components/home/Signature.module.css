@@ -103,10 +103,16 @@
   text-transform: none;
 }
 
-/* Exo Light 18 on a 24 line. */
+/*
+ * Exo Light 18 on a 24 line.
+ *
+ * The gap to the button lives here as a bottom margin. It used to be a
+ * `padding-top` on the button, which is the pill itself — so the pill grew to
+ * 60 tall against the design's 50 and its label sat 17 low inside it.
+ */
 .copy {
   max-width: 30ch;
-  margin: clamp(1rem, 2.2vw, 1.75rem) 0 0 !important;
+  margin: clamp(1rem, 2.2vw, 1.75rem) 0 clamp(1.25rem, 2.4vw, 1.875rem) !important;
   color: inherit;
   font-size: clamp(0.9375rem, 1.5vw, 1.125rem);
   font-weight: 300;
@@ -115,8 +121,6 @@
 
 .action {
   margin-top: auto;
-  /* Clears the copy when the card is short enough for `auto` to collapse. */
-  padding-top: clamp(1.25rem, 2.4vw, 1.875rem);
 }
 
 /*
@@ -144,7 +148,6 @@
 
   .cardBrand .action {
     margin-top: 0;
-    padding-top: clamp(1.25rem, 5vw, 2rem);
   }
 
   .scrim {

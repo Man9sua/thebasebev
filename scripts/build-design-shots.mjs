@@ -83,13 +83,29 @@ const GROUND_WIDTH_RATIO = 1.12;
 /** Flatness, as the design has it: 88.7 tall on 241 wide. */
 const GROUND_FLATNESS = 0.3;
 /** Only enough to kill the aliasing on the arc; any more and it is a halo. */
-const GROUND_BLUR_RATIO = 0.015;
+const GROUND_BLUR_RATIO = 0.01;
 /** Figma rotates counter-clockwise, so the SVG angle is negated. */
 const GROUND_ROTATION = -5.63;
-const GROUND_FROM = "#ccc4a7";
-const GROUND_TO = "#e1ded4";
-/** Where the ramp reaches nothing, in the design's own gradient. */
-const GROUND_FADE_STOP = 0.75;
+const GROUND_COLOUR = "#ccc4a7";
+
+/**
+ * The ramp along the ellipse, in its own width.
+ *
+ * A plain ramp from the dense end gives an even wash across the visible tail,
+ * where the design is distinctly darker at the contact and falls off fast —
+ * profiled at the base it reads -8, -11, -12 and then nothing, against an even
+ * -13 for a plain ramp. So the ramp holds full strength until the drink's right
+ * edge, which is 0.45 along at this width, and is gone by 0.7.
+ *
+ * The strength and the lift are both tuned against that profile rather than
+ * derived: 0.25 puts the peak at the design's -12, and holding the shape 6
+ * above the base is what makes it stop where the design's stops instead of
+ * leaking under the foot of the glass.
+ */
+const GROUND_HOLD_STOP = 0.45;
+const GROUND_FADE_STOP = 0.7;
+const GROUND_OPACITY = 0.25;
+const GROUND_LIFT = 6 * 2;
 
 /**
  * Scene photography: width to serve at, and whether it keeps its alpha channel.
@@ -161,15 +177,16 @@ async function ground(glassCentre, glassWidth) {
   const ry = (w * GROUND_FLATNESS) / 2;
   // Dense end under the drink's centre; bottom edge tangent to the base.
   const cx = glassCentre + rx;
-  const cy = GLASS_BASE - ry;
+  const cy = GLASS_BASE - GROUND_LIFT - ry;
   const blur = Math.max(0.3, glassWidth * GROUND_BLUR_RATIO);
 
   const svg = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${SHOT_WIDTH}" height="${SHOT_HEIGHT}">
   <defs>
     <linearGradient id="g" x1="0" y1="0.5" x2="1" y2="0.5">
-      <stop offset="0" stop-color="${GROUND_FROM}" stop-opacity="1"/>
-      <stop offset="${GROUND_FADE_STOP}" stop-color="${GROUND_TO}" stop-opacity="0"/>
+      <stop offset="0" stop-color="${GROUND_COLOUR}" stop-opacity="${GROUND_OPACITY}"/>
+      <stop offset="${GROUND_HOLD_STOP}" stop-color="${GROUND_COLOUR}" stop-opacity="${GROUND_OPACITY}"/>
+      <stop offset="${GROUND_FADE_STOP}" stop-color="${GROUND_COLOUR}" stop-opacity="0"/>
     </linearGradient>
   </defs>
   <g transform="rotate(${GROUND_ROTATION} ${cx} ${cy})">

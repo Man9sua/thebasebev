@@ -63,8 +63,15 @@ export function Hero() {
           </h1>
 
           <div className={styles.actions}>
+            {/*
+             * The design labels this pill "Shop Now" on the desktop frame and
+             * "Just try yourself" on the phone. A link's label may differ by
+             * width where a heading may not, so both are served and CSS picks
+             * one — the route is the same either way.
+             */}
             <SiteLink href="/catalog" className={styles.cta}>
-              Shop Now
+              <span className={styles.ctaWide}>Shop Now</span>
+              <span className={styles.ctaNarrow}>Just try yourself</span>
             </SiteLink>
             <SiteLink href="/distributors" className={styles.aside}>
               Wholesale &amp; Distribution

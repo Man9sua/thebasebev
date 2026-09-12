@@ -175,6 +175,11 @@
   outline-offset: 3px;
 }
 
+/* The pill's two labels. One is in the flow at a time, never both. */
+.ctaNarrow {
+  display: none;
+}
+
 /* Exo Bold 18 in ink, no box of its own — the design draws it as plain text. */
 .aside {
   color: var(--tbb-ink);
@@ -237,6 +242,14 @@
     min-width: clamp(10.375rem, 46.1vw, 13.9375rem);
     padding-inline: 1.75rem;
     font-size: 0.875rem;
+  }
+
+  .ctaWide {
+    display: none;
+  }
+
+  .ctaNarrow {
+    display: inline;
   }
 
   /* The design's phone frame carries no second link. */
