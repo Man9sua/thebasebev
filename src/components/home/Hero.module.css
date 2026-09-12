@@ -2,7 +2,8 @@
  * The hero band, from the homepage design file.
  *
  * A photograph 653 tall running the full width under the header, the headline
- * on its left in the design's purple gradient, and one pill to the shop. The
+ * on its left in the design's purple gradient, and a pill to the shop with a
+ * text link beside it. The
  * photograph is the same key visual on both widths but framed differently: on a
  * desktop the drink and the pouch sit to the right of the copy, on a phone they
  * sit above it, so each width gets the crop the design supplies for it.
@@ -175,11 +176,6 @@
   outline-offset: 3px;
 }
 
-/* The pill's two labels. One is in the flow at a time, never both. */
-.ctaNarrow {
-  display: none;
-}
-
 /* Exo Bold 18 in ink, no box of its own — the design draws it as plain text. */
 .aside {
   color: var(--tbb-ink);
@@ -195,11 +191,6 @@
   border-bottom-color: currentColor;
 }
 
-/*
- * On a phone the design stands the drink and the pouch at the top of the band
- * and drops the copy onto the peach below them, so the crop moves and the copy
- * goes to the foot of the band rather than its head.
- */
 /*
  * The phone frame, measured rather than adapted: the photograph is 374 x 670
  * hung at y 108 in a 360-wide frame, the headline is Exo Light 40/44 at x 44
@@ -242,14 +233,6 @@
     min-width: clamp(10.375rem, 46.1vw, 13.9375rem);
     padding-inline: 1.75rem;
     font-size: 0.875rem;
-  }
-
-  .ctaWide {
-    display: none;
-  }
-
-  .ctaNarrow {
-    display: inline;
   }
 
   /* The design's phone frame carries no second link. */

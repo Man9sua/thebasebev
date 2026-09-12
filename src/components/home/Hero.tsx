@@ -70,8 +70,8 @@ export function Hero() {
              * one — the route is the same either way.
              */}
             <SiteLink href="/catalog" className={styles.cta}>
-              <span className={styles.ctaWide}>Shop Now</span>
-              <span className={styles.ctaNarrow}>Just try yourself</span>
+              <span className="tbb-wide-only">Shop Now</span>
+              <span className="tbb-narrow-only">Just try yourself</span>
             </SiteLink>
             <SiteLink href="/distributors" className={styles.aside}>
               Wholesale &amp; Distribution

@@ -26,7 +26,11 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   /* 266 pitch on a 230 column. */
   gap: clamp(1.25rem, 3vw, 2.25rem);
+  /* A list's own 40px start padding is what put this row 40 to the right of
+     every other section — the empty stripe down the left of the block. */
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .item {

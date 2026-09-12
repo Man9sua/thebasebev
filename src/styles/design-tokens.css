@@ -263,6 +263,40 @@
   border-color: var(--tbb-ink);
 }
 
+/*
+ * The homepage's type indent is a desktop measure. The design's phone frame
+ * sets its copy 36 to 42 in from a 360 edge, not 76 — so on a phone the indent
+ * drops to the gutter's own width and the two together land on the file's.
+ */
+@media (max-width: 767px) {
+  :root {
+    --tbb-home-indent: 1.25rem;
+  }
+}
+
+/*
+ * Two labels for one thing, where the design words it differently by width.
+ * Both are in the markup and one is in the flow at a time — legitimate for a
+ * link's label or a card's line, never for the page's h1.
+ */
+.tbb-wide-only {
+  display: inline;
+}
+
+.tbb-narrow-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .tbb-wide-only {
+    display: none;
+  }
+
+  .tbb-narrow-only {
+    display: inline;
+  }
+}
+
 /* Honour the OS setting: no smooth scrolling, no parallax, no long fades. */
 @media (prefers-reduced-motion: reduce) {
   :root {

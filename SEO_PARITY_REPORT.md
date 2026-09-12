@@ -1,6 +1,6 @@
 # SEO parity report
 
-Generated: 2026-09-12T13:42:06.411Z
+Generated: 2026-09-12T15:23:22.195Z
 
 - Production: `https://thebasebev.com`
 - Target: `http://localhost:3000`
