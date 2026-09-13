@@ -1,6 +1,6 @@
 # SEO parity report
 
-Generated: 2026-09-13T10:15:53.200Z
+Generated: 2026-09-13T15:22:20.514Z
 
 - Production: `https://thebasebev.com`
 - Target: `https://the-base-staging.mansua.workers.dev`
@@ -39,7 +39,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/sugar-syrup` | 200 | 200 | PASS | 28/31 | 21/0/10 | Critical fields match |
 | `/vending` | 200 | 200 | PASS | 28/31 | 21/0/10 | Critical fields match |
 | `/jam` | 200 | 200 | PASS | 28/31 | 21/0/10 | Critical fields match |
-| `/garnish` | 200 | 200 | PASS | 28/31 | 23/0/12 | Critical fields match |
+| `/garnish` | 200 | 200 | PASS | 28/31 | 21/0/10 | Critical fields match |
 | `/sugar-free` | 200 | 200 | PASS | 28/31 | 42/0/31 | Critical fields match |
 | `/tea` | 200 | 200 | PASS | 28/31 | 28/0/17 | Critical fields match |
 | `/catalog` | 200 | 200 | PASS | 29/31 | 16/0/16 | Critical fields match |
@@ -229,7 +229,7 @@ h1, so a change on production ends the exemption rather than hiding behind it.
 - /jam: internal links differ (-0/+3)
 - /jam: image alt stats differ ({"total":44,"missing":0,"empty":34} vs {"total":21,"missing":0,"empty":10})
 - /garnish: internal links differ (-0/+3)
-- /garnish: image alt stats differ ({"total":36,"missing":0,"empty":28} vs {"total":23,"missing":0,"empty":12})
+- /garnish: image alt stats differ ({"total":36,"missing":0,"empty":28} vs {"total":21,"missing":0,"empty":10})
 - /sugar-free: internal links differ (-0/+3)
 - /sugar-free: image alt stats differ ({"total":38,"missing":0,"empty":30} vs {"total":42,"missing":0,"empty":31})
 - /tea: internal links differ (-0/+3)

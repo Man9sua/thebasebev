@@ -17,13 +17,21 @@ export const BRAND_VIDEO = {
   poster: "/video/base-hero-poster.jpg",
 } as const;
 
+/**
+ * The menu, and — through `SiteSearch` — the pages the search box offers.
+ *
+ * Every href is a route of its own. "About Us" used to be `/#about`, an anchor
+ * on the homepage that no section carries an id for, so the menu's About just
+ * reloaded the homepage while `/about-us` — a real page, indexable, and one the
+ * footer already links to — went unlinked from the menu entirely.
+ */
 export const SITE_NAV = [
   { label: "Shop", href: "/catalog" },
   { label: "Private Label", href: "/private-labeling" },
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
   { label: "Resources", href: "/resources" },
-  { label: "About", href: "/#about" },
+  { label: "About Us", href: "/about-us" },
   { label: "Contacts", href: "/contacts" },
 ] as const;
 
