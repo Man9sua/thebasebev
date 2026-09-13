@@ -898,20 +898,24 @@ span.sceneLayer {
    * The file left-aligns the two, which reads as a slip when one is a third
    * wider than the other; the owner asked for them centred on one another, so
    * the lower one is carried 9.05 right of where the file puts it.
+   *
+   * That corner is empty beige on fifteen of the sixteen cards. Where it is
+   * not, the card says so and both boxes move together — see `seals` in
+   * `data/product-mobile.ts`.
    */
   .seal {
     filter: drop-shadow(0 calc(6 * var(--p)) calc(14 * var(--p)) rgba(26, 19, 17, 0.16));
   }
 
   .sealWide {
-    --seal-x: 271.8;
-    --seal-y: 130.9;
+    --seal-x: var(--m-seal-wide-x, 271.8);
+    --seal-y: var(--m-seal-wide-y, 130.9);
     --seal-w: 65.5;
   }
 
   .sealSmall {
-    --seal-x: 280.55;
-    --seal-y: 193.4;
+    --seal-x: var(--m-seal-small-x, 280.55);
+    --seal-y: var(--m-seal-small-y, 193.4);
     --seal-w: 48;
   }
 

@@ -72,7 +72,13 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { paint: "linear-gradient(0.0001deg, #eee6d8 67.0382%, rgba(238, 230, 216, 0) 77.814%)", m: [371.0146, 0, 0, 62.5881, -8.042, 346.2606], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
       { paint: "linear-gradient(52.3821deg, #d8cab6 35.0014%, rgba(216, 202, 182, 0) 61.8006%)", m: [238.9966, -28.2531, 5.6347, 47.6647, 52.0469, 316.9838], round: true },
       { src: "/images/scene-a8524cbfc3419x1973.webp", m: [201.1089, 0, 0, 292.8314, 24.4512, 66] },
-      { paint: "#ffffff", m: [33.2112, 0, 0, 20.8263, 287.7959, 176.9262], round: true },
+      /* The file closes this list with a white lozenge at 287.8, 176.9 — the
+         plate the two certification seals stand on, which is why it is the
+         exact centre of the stacked pair and is covered by them. The pair is
+         not stacked here any more (see `seals` in `data/product-mobile.ts`),
+         so the plate would be left on the drink as a white blob. It is the
+         seals' own furniture rather than part of the collage, so it goes with
+         them. */
     ],
   },
   "sugar-free": {
