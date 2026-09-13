@@ -41,6 +41,42 @@
  * the four points — and so is anything the file has turned off.
  */
 
+/**
+ * The ground a pouch stands on, where the file's own is not one.
+ *
+ * Garnish is drawn over a long ramp inside a tilted ellipse — dense at the
+ * bottom left, gone by the top right — which is a fill rather than a shadow:
+ * on both frames its densest part sits above the pouch's foot and reaches a
+ * third of the card past its right edge, so the pack reads as floating over a
+ * smear. This is the shadow the rest of the range stands on, built the same way
+ * the home page's tiles are:
+ *
+ *   - centred **on** the contact line. Not above it and not below it: either
+ *     way a gap opens between the pack and its shadow and the pack floats,
+ *     which is what four passes on the home page's tiles came down to.
+ *   - half again as wide as the pack's own footprint. At the footprint's own
+ *     width the pack stands on the whole dense middle and only the faint rim
+ *     shows, so it floats a second way — tried, and the shadow all but
+ *     disappeared.
+ *   - 0.44 as tall as it is wide, carried 0.17 of that width to the right for
+ *     the light these photographs are lit with, and turned 5.63 degrees with
+ *     them. The same three numbers as the tiles.
+ *
+ * **Where the footprint comes from is the whole difficulty.** This layer is not
+ * a cut-out pack: it is a photograph of one on its own beige plate, and the
+ * plate is what the file's alpha bounds, a good deal below the pack's foot. Nor
+ * does the plate end in the same place on the two frames — it fades into the
+ * phone's wash a fifth of the way up from its own bottom edge and stays visible
+ * almost to that edge on the desktop, because each frame lays its own veils
+ * over it. So the alpha is no use and neither frame's reading transfers to the
+ * other. Both are measured the one way that cannot be argued with: render the
+ * layer with every other layer hidden, render it again hidden, and take the
+ * rows where the two differ. Phone: foot at 327.4, standing on 50.6 to 180.4.
+ * Desktop: foot at 677.2. Re-measure that way if this artwork is ever replaced.
+ */
+const GROUND =
+  "radial-gradient(closest-side, rgba(204, 196, 167, 0.52) 0%, rgba(204, 196, 167, 0.364) 45%, rgba(204, 196, 167, 0) 100%)";
+
 export type SceneLayer = {
   /** A picture, or a fill; never both. */
   src?: string;
@@ -62,23 +98,24 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { paint: "linear-gradient(0deg, #eee6d8 67.038%, rgba(238, 230, 216, 0) 77.8139%)", m: [471.6326, 0, 0, 532.7571, 249.5811, 104.4805], back: true },
       { paint: "linear-gradient(0.0001deg, #eee6d8 67.038%, rgba(238, 230, 216, 0) 77.8139%)", m: [766.877, 0, 0, 244.5977, -49.8948, 545.8867], back: true },
       { paint: "linear-gradient(0deg, #eee6d8 67.038%, rgba(238, 230, 216, 0) 77.8139%)", m: [0, -693.7725, 680.3472, 0, 536.6072, 795.0469], back: true },
-      { paint: "linear-gradient(52.3862deg, #d8cab6 35.0029%, rgba(216, 202, 182, 0) 61.8003%)", m: [534.8181, -63.2239, 12.6073, 106.6468, 123.3432, 618.4176], round: true },
+      { paint: GROUND, m: [452.187, -44.578, 19.613, 198.966, 77.05, 600.01], round: true },
       { src: "/images/scene-a8524cbfc3419x1973.webp", m: [450.0353, 0, 0, 655.1899, 61.5906, 56.8594] },
-      { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 93.8748, 622.0838], round: true },
     ],
     phone: [
       { paint: "linear-gradient(1.8238deg, #ebe1d1 10.511%, #dfceb4 67.3903%)", m: [462.4223, 0, 0, 404.2272, -73.2715, 4.8769], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
       { src: "/images/scene-48330e21f1130.webp", m: [231.6396, 0, 0, 261.7003, 148.3555, 105.0342], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
       { paint: "linear-gradient(0.0001deg, #eee6d8 67.0382%, rgba(238, 230, 216, 0) 77.814%)", m: [371.0146, 0, 0, 62.5881, -8.042, 346.2606], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
-      { paint: "linear-gradient(52.3821deg, #d8cab6 35.0014%, rgba(216, 202, 182, 0) 61.8006%)", m: [238.9966, -28.2531, 5.6347, 47.6647, 52.0469, 316.9838], round: true },
+      { paint: GROUND, m: [202.021, -19.916, 8.771, 88.969, 32.15, 292.87], round: true },
       { src: "/images/scene-a8524cbfc3419x1973.webp", m: [201.1089, 0, 0, 292.8314, 24.4512, 66] },
-      /* The file closes this list with a white lozenge at 287.8, 176.9 — the
-         plate the two certification seals stand on, which is why it is the
-         exact centre of the stacked pair and is covered by them. The pair is
-         not stacked here any more (see `seals` in `data/product-mobile.ts`),
-         so the plate would be left on the drink as a white blob. It is the
-         seals' own furniture rather than part of the collage, so it goes with
-         them. */
+      /* Both frames close this list with a white lozenge — 287.8, 176.9 here
+         and 93.9, 622.1 on the desktop — and it is the plate the two
+         certification seals stand on rather than part of the collage: each
+         sits at its frame's own pair of seals and is all but covered by them.
+         Our seals are round artwork with a white field of their own, so the
+         plate only ever showed as a blob poking out from behind one of them,
+         and on the phone, where the pair is no longer stacked (see `seals` in
+         `data/product-mobile.ts`), it was left on the drink outright. It goes
+         with the seals on both. */
     ],
   },
   "sugar-free": {
