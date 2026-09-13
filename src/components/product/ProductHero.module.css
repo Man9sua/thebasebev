@@ -294,6 +294,21 @@ span.sceneLayer {
   height: calc(var(--ink-h) * var(--k));
 }
 
+/* For the card that is a collage on one frame and a pack shot on the other —
+   the stage cannot be conditioned on a media query from the markup. The
+   breakpoint is the phone card's own, below. */
+@media (min-width: 900px) {
+  .stageNarrowOnly {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .stageWideOnly {
+    display: none;
+  }
+}
+
 /*
  * The pack shot inside it, sized past the stage rather than into it.
  *
@@ -815,10 +830,9 @@ span.sceneLayer {
 
   .frame {
     width: 100%;
-    /* Where the band closes and the copy's panel opens. One line for fifteen of
-       the sixteen; Garnish carries more of its own beige — see `panelTop` in
-       `data/product-mobile.ts`. */
-    padding-top: calc(var(--tbb-header-h) + var(--m-panel-top, 268.7) * var(--p));
+    /* Where the band closes and the copy's panel opens — one line for all
+       sixteen. Garnish held 33 more while its card was a collage. */
+    padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
   }
 
   /*

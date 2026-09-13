@@ -22,13 +22,11 @@
  * that is a ground rather than a cut-out: the brand mark reads across it, and
  * everything not marked is drawn over the mark in turn.
  *
- * Which side of the mark a layer falls on is a judgement, not a flag the file
- * carries, and Garnish's phone card is where that showed. Its enlarged drink
- * was a ground, so the mark read straight across the glass as a pale band —
- * the owner called it out twice. It and the veil that softens its foot are
- * cut-outs now, which stops the mark at the photograph's own left edge and
- * leaves the drink clean. The card's base ramp stays a ground, so the mark
- * still carries the empty half of the card where the design wants it.
+ * Which side of the mark a layer falls on is a judgement rather than a flag the
+ * file carries, and it is worth getting right before adding a layer: a ground
+ * that covers a subject puts the mark across that subject, and a cut-out that
+ * covers the mark takes letters off the word. Garnish's phone card went both
+ * ways on that and ended up with no collage at all — see its `phone` below.
  *
  * A linear's matrix takes the shape to the gradient, so its two ends are found
  * by taking that matrix back. Read the other way it puts the axis thousands of
@@ -54,9 +52,8 @@
  *
  * Garnish is drawn over a long ramp inside a tilted ellipse — dense at the
  * bottom left, gone by the top right — which is a fill rather than a shadow:
- * on both frames its densest part sits above the pouch's foot and reaches a
- * third of the card past its right edge, so the pack reads as floating over a
- * smear. This is the shadow the rest of the range stands on, built the same way
+ * its densest part sits above the pouch's foot and reaches a third of the card
+ * past its right edge, so the pack reads as floating over a smear. This is the shadow the rest of the range stands on, built the same way
  * the home page's tiles are:
  *
  *   - centred **on** the contact line. Not above it and not below it: either
@@ -79,8 +76,8 @@
  * over it. So the alpha is no use and neither frame's reading transfers to the
  * other. Both are measured the one way that cannot be argued with: render the
  * layer with every other layer hidden, render it again hidden, and take the
- * rows where the two differ. Phone: foot at 327.4, standing on 50.6 to 180.4.
- * Desktop: foot at 677.2. Re-measure that way if this artwork is ever replaced.
+ * rows where the two differ. The pack's foot is at 677.2 on the desktop frame,
+ * standing on 123.5 to 437. Re-measure that way if the artwork is replaced.
  */
 const GROUND =
   "radial-gradient(closest-side, rgba(204, 196, 167, 0.52) 0%, rgba(204, 196, 167, 0.364) 45%, rgba(204, 196, 167, 0) 100%)";
@@ -109,20 +106,27 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { paint: GROUND, m: [452.187, -44.578, 19.613, 198.966, 77.05, 600.01], round: true },
       { src: "/images/scene-a8524cbfc3419x1973.webp", m: [450.0353, 0, 0, 655.1899, 61.5906, 56.8594] },
     ],
-    phone: [
-      { paint: "linear-gradient(1.8238deg, #ebe1d1 10.511%, #dfceb4 67.3903%)", m: [462.4223, 0, 0, 404.2272, -73.2715, 4.8769], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
-      { src: "/images/scene-48330e21f1130.webp", m: [231.6396, 0, 0, 261.7003, 148.3555, 105.0342], mask: [-360, 107.4843, 1080, 316.6827] },
-      { paint: "linear-gradient(0.0001deg, #eee6d8 67.0382%, rgba(238, 230, 216, 0) 77.814%)", m: [371.0146, 0, 0, 62.5881, -8.042, 346.2606], mask: [-360, 107.4843, 1080, 316.6827] },
-      { paint: GROUND, m: [202.021, -19.916, 8.771, 88.969, 32.15, 292.87], round: true },
-      { src: "/images/scene-a8524cbfc3419x1973.webp", m: [201.1089, 0, 0, 292.8314, 24.4512, 66] },
-      /* Both frames close this list with a white lozenge — 287.8, 176.9 here
-         and 93.9, 622.1 on the desktop — and it is the plate the two
-         certification seals stand on rather than part of the collage: each
-         sits at its frame's own pair of seals and is all but covered by them.
-         Ours are round artwork with a white field of their own, so the plate
-         only ever showed as a sliver between the stacked pair on the phone and
-         a blob above the lower seal on the desktop. Dropped on both. */
-    ],
+    /*
+     * Nothing: the phone card is not a collage. An empty list hands the card
+     * back to the pack shot every other product stands on — see `scenePhone`
+     * in `ProductHero`.
+     *
+     * The file draws three things here and each one cost the owner a round of
+     * review. The enlarged drink is the same photograph already printed on the
+     * pack, at a size that runs off the frame's right edge mid-hand, and it is
+     * what the brand mark could not get past: over it the mark read across the
+     * glass, under it the word lost its last two letters. Its two veils exist
+     * only to sink it into the card, and the pouch it stood beside is a
+     * photograph on a beige plate whose edges the drink was hiding. Take the
+     * drink out and the plate's own edge shows instead.
+     *
+     * So the phone card is now a cut-out pack on the wash, which is the one
+     * reading with nothing left to hide: the mark carries the empty half whole,
+     * the pack has the ground shadow the range shares, and the seals stand in
+     * the file's own corner on empty beige. The desktop keeps its collage,
+     * where the pack is the only layer and none of this arises.
+     */
+    phone: [],
   },
   "sugar-free": {
     desktop: [

@@ -158,9 +158,17 @@ export function ProductHero({ product }: { product: Product }) {
   const margin = productMargins[product.slug];
   const glass = productGlass[product.slug];
   const card = productDesktop[product.slug];
-  // Garnish, Sugar Free and Tea are collages rather than a pouch and a drink,
-  // and stand on their own list of layers — see `data/product-scene.ts`.
+  /*
+   * Garnish, Sugar Free and Tea are collages rather than a pouch and a drink,
+   * and stand on their own list of layers — see `data/product-scene.ts`.
+   *
+   * Per frame, because a card can be a collage on one and not the other:
+   * Garnish's phone card is the pack shot the other thirteen stand on, so its
+   * phone list is empty and the stage below takes that width back.
+   */
   const scene = productScene[product.slug];
+  const sceneWide = scene?.desktop.length ? scene.desktop : undefined;
+  const sceneNarrow = scene?.phone.length ? scene.phone : undefined;
   // The three products with no wash in the design file stand on the fill their
   // own frame carries, or on their key visual's ramp.
   const wash = productWashes[product.slug];
@@ -263,7 +271,6 @@ export function ProductHero({ product }: { product: Product }) {
   }
   if (phone) {
     vars["--m-panel"] = phone.panel;
-    if (phone.panelTop) vars["--m-panel-top"] = phone.panelTop;
     if (phone.mark !== undefined) vars["--mark-phone"] = phone.mark;
     vars["--m-wash-shape"] = phone.washShape ?? PHONE_WASH_SHAPE;
     if (phoneWash) {
@@ -315,93 +322,118 @@ export function ProductHero({ product }: { product: Product }) {
       </span>
 
       {/*
-        The cut-out pack shot, not the key visual, and the reason is in the
-        artwork: every one of the eleven banners runs the pouch off the right
-        of its own frame. Measured, not assumed — the last column of every
-        source is pack, at every height below the pouch's shoulder. The design
-        stands the product on the left, where that cut would land in the
-        middle of the page and read as a sliced pack.
-
-        The drink the design stands in front of it is not part of this: it is
-        a layer of its own there and a layer of its own here — see below.
+        A collage's own layers, for the cards the design does not build from a
+        pouch and a drink — back to front, and per frame, since one frame can be
+        a collage where the other is a pack shot. The list and the reasoning
+        behind every number are in `data/product-scene.ts`.
       */}
-      {scene &&
-        (["desktop", "phone"] as const).map((mode) =>
-          scene[mode].map((layer, index) => {
-            const style = {
-              ["--a" as string]: layer.m[0],
-              ["--b" as string]: layer.m[1],
-              ["--c" as string]: layer.m[2],
-              ["--d" as string]: layer.m[3],
-              ["--e" as string]: layer.m[4],
-              ["--f" as string]: layer.m[5],
-              ...(layer.opacity ? { opacity: layer.opacity } : {}),
-              ...(layer.round ? { borderRadius: "50%" } : {}),
-            } as CSSProperties;
-            const className = `${styles.sceneLayer} ${
-              mode === "phone" ? styles.scenePhone : styles.sceneWide
-            }${layer.back ? ` ${styles.sceneBack}` : ""}`;
-            const key = `${mode}-${index}`;
-            /* The rectangle the design masks this layer through. Sugar Free's
-               collage is masked, and it is the mask that stops its sachets at
-               the copy's edge rather than across the margin card. The box is
-               the card's own, so the layer inside it is pulled back to the
-               card's corner and placed from there as usual. */
-            const clip = layer.mask && {
-              ["--mx" as string]: layer.mask[0],
-              ["--my" as string]: layer.mask[1],
-              ["--mw" as string]: layer.mask[2],
-              ["--mh" as string]: layer.mask[3],
-            } as CSSProperties;
-            /* A fill rather than a picture: the ramps the file lays over a
-               photograph's edges, without which it sits on the card as a
-               rectangle instead of sinking into it. */
-            const drawn = layer.src ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                key={key}
-                className={className}
-                src={layer.src}
-                alt=""
-                /* Both compositions are in the markup and one is hidden, so the
-                   set that is not showing is never fetched: a lazy image with no
-                   box on the page has nothing to intersect. */
-                loading="lazy"
-                decoding="async"
-                style={style}
-              />
-            ) : (
-              <span
-                key={key}
-                className={className}
-                aria-hidden="true"
-                style={{ ...style, background: layer.paint }}
-              />
-            );
-            return clip ? (
-              <span
-                key={key}
-                /* The breakpoint class rides the clip as well — a box six hundred
-                   wide, hidden or not, has no business on a 360 page — and so
-                   does the tier, because a wrapper's own z-index carries the
-                   layer inside it. Without that a masked ground is drawn over
-                   the brand mark rather than under it, which on Garnish's phone
-                   covered the word outright. */
-                className={`${styles.sceneClip} ${
-                  mode === "phone" ? styles.scenePhone : styles.sceneWide
-                }${layer.back ? ` ${styles.sceneBack}` : ""}`}
-                aria-hidden="true"
-                style={clip}
-              >
-                {drawn}
-              </span>
-            ) : (
-              drawn
-            );
-          }),
-        )}
+      {(
+        [
+          ["desktop", sceneWide],
+          ["phone", sceneNarrow],
+        ] as const
+      ).map(([mode, layers]) =>
+        layers?.map((layer, index) => {
+          const style = {
+            ["--a" as string]: layer.m[0],
+            ["--b" as string]: layer.m[1],
+            ["--c" as string]: layer.m[2],
+            ["--d" as string]: layer.m[3],
+            ["--e" as string]: layer.m[4],
+            ["--f" as string]: layer.m[5],
+            ...(layer.opacity ? { opacity: layer.opacity } : {}),
+            ...(layer.round ? { borderRadius: "50%" } : {}),
+          } as CSSProperties;
+          const className = `${styles.sceneLayer} ${
+            mode === "phone" ? styles.scenePhone : styles.sceneWide
+          }${layer.back ? ` ${styles.sceneBack}` : ""}`;
+          const key = `${mode}-${index}`;
+          /* The rectangle the design masks this layer through. Sugar Free's
+             collage is masked, and it is the mask that stops its sachets at
+             the copy's edge rather than across the margin card. The box is
+             the card's own, so the layer inside it is pulled back to the
+             card's corner and placed from there as usual. */
+          const clip = layer.mask && {
+            ["--mx" as string]: layer.mask[0],
+            ["--my" as string]: layer.mask[1],
+            ["--mw" as string]: layer.mask[2],
+            ["--mh" as string]: layer.mask[3],
+          } as CSSProperties;
+          /* A fill rather than a picture: the ramps the file lays over a
+             photograph's edges, without which it sits on the card as a
+             rectangle instead of sinking into it. */
+          const drawn = layer.src ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              key={key}
+              className={className}
+              src={layer.src}
+              alt=""
+              /* Both compositions are in the markup and one is hidden, so the
+                 set that is not showing is never fetched: a lazy image with no
+                 box on the page has nothing to intersect. */
+              loading="lazy"
+              decoding="async"
+              style={style}
+            />
+          ) : (
+            <span
+              key={key}
+              className={className}
+              aria-hidden="true"
+              style={{ ...style, background: layer.paint }}
+            />
+          );
+          return clip ? (
+            <span
+              key={key}
+              /* The breakpoint class rides the clip as well — a box six hundred
+                 wide, hidden or not, has no business on a 360 page — and so
+                 does the tier, because a wrapper's own z-index carries the
+                 layer inside it. Without that a masked ground is drawn over
+                 the brand mark rather than under it, which on Garnish's phone
+                 covered the word outright. */
+              className={`${styles.sceneClip} ${
+                mode === "phone" ? styles.scenePhone : styles.sceneWide
+              }${layer.back ? ` ${styles.sceneBack}` : ""}`}
+              aria-hidden="true"
+              style={clip}
+            >
+              {drawn}
+            </span>
+          ) : (
+            drawn
+          );
+        }),
+      )}
 
-      <div className={styles.stage} hidden={Boolean(scene)}>
+      {/*
+        The cut-out pack shot, not the key visual, and the reason is in the
+        artwork: every one of the eleven banners runs the pouch off the right of
+        its own frame. Measured, not assumed — the last column of every source
+        is pack, at every height below the pouch's shoulder. The design stands
+        the product on the left, where that cut would land in the middle of the
+        page and read as a sliced pack.
+
+        The drink the design stands in front of it is a layer of its own there
+        and a layer of its own here — inside this stage, below.
+
+        Where one frame is a collage and the other is not, the stage stays in
+        the markup and the stylesheet drops it at the width that has its own
+        layers: a picture cannot be conditioned on a media query any other way,
+        and the one card in that position needs the pack shot on the phone,
+        where it is the hero image rather than the spare.
+      */}
+      <div
+        className={[
+          styles.stage,
+          sceneWide && !sceneNarrow ? styles.stageNarrowOnly : "",
+          sceneNarrow && !sceneWide ? styles.stageWideOnly : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        hidden={Boolean(sceneWide && sceneNarrow)}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className={styles.pack}
