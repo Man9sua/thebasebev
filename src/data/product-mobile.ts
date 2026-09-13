@@ -74,24 +74,6 @@ export type MobileCard = {
    * of its own beige. Measured on that export at 301.5.
    */
   panelTop?: number;
-  /**
-   * Where the two certification seals stand, when the shared pair of positions
-   * lands on the artwork.
-   *
-   * Fifteen cards stack them at the top right of the wash, which on those is
-   * empty beige. Garnish is the one collage that reaches into that corner: its
-   * enlarged drink runs from 148 to the frame's own edge, so the stacked pair
-   * sits on the sieve and across the top of the glass. This puts them back
-   * where the product's own desktop card keeps them — side by side at the
-   * pouch's foot, over its ground shadow — which is also the one part of this
-   * card the design leaves empty.
-   *
-   * Counted like every other seal in this project: from the card's left edge,
-   * and from the top of the frame including its 108-tall header.
-   * The two are different sizes, so they are levelled on their middles rather
-   * than on their tops: 334 + 30.15 and 340.15 + 24 are the same line.
-   */
-  seals?: { wide: { x: number; y: number }; small: { x: number; y: number } };
 };
 
 export const productMobile: Record<string, MobileCard> = {
@@ -110,7 +92,7 @@ export const productMobile: Record<string, MobileCard> = {
   // point: the design ramps it from the panel's own beige at the header's foot
   // to the frame's at the band's, level all the way across. The ellipse below
   // is wide enough and set low enough to be that ramp.
-  garnish: { washIn: "#ede6d8", washOut: "#dfceb4", washShape: "200% 105% at 50% 100%", panel: "#dfceb4", panelTop: 301.5, mark: 0.21, seals: { wide: { x: 82, y: 334 }, small: { x: 26, y: 340.15 } } },
+  garnish: { washIn: "#ede6d8", washOut: "#dfceb4", washShape: "200% 105% at 50% 100%", panel: "#dfceb4", panelTop: 301.5, mark: 0.21 },
   vending: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#c9b7a2", glass: { left: 163.62, top: 71.77, width: 124.55, height: 203.37 }, shade: "#8c735e" },
   jam: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#fccace", glass: { left: 163.62, top: 80.77, width: 124.55, height: 203.37 } },
   "sugar-free": { panel: "#e0e9e2", mark: 0.7 },

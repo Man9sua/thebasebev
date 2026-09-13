@@ -18,9 +18,17 @@
  * offsets. The box it acts on is one unit square, so the matrix carries the
  * size as well as the turn — and almost none of these sachets is square to the
  * page, anything from seventeen degrees to a hundred and thirty-nine, so a
- * corner and a size would not place a single one of them. `back` marks the one
- * layer that is a ground rather than a cut-out — Tea's photograph, which the
- * design draws the brand mark over and everything else under.
+ * corner and a size would not place a single one of them. `back` marks a layer
+ * that is a ground rather than a cut-out: the brand mark reads across it, and
+ * everything not marked is drawn over the mark in turn.
+ *
+ * Which side of the mark a layer falls on is a judgement, not a flag the file
+ * carries, and Garnish's phone card is where that showed. Its enlarged drink
+ * was a ground, so the mark read straight across the glass as a pale band —
+ * the owner called it out twice. It and the veil that softens its foot are
+ * cut-outs now, which stops the mark at the photograph's own left edge and
+ * leaves the drink clean. The card's base ramp stays a ground, so the mark
+ * still carries the empty half of the card where the design wants it.
  *
  * A linear's matrix takes the shape to the gradient, so its two ends are found
  * by taking that matrix back. Read the other way it puts the axis thousands of
@@ -103,19 +111,17 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
     ],
     phone: [
       { paint: "linear-gradient(1.8238deg, #ebe1d1 10.511%, #dfceb4 67.3903%)", m: [462.4223, 0, 0, 404.2272, -73.2715, 4.8769], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
-      { src: "/images/scene-48330e21f1130.webp", m: [231.6396, 0, 0, 261.7003, 148.3555, 105.0342], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
-      { paint: "linear-gradient(0.0001deg, #eee6d8 67.0382%, rgba(238, 230, 216, 0) 77.814%)", m: [371.0146, 0, 0, 62.5881, -8.042, 346.2606], back: true, mask: [-360, 107.4843, 1080, 316.6827] },
+      { src: "/images/scene-48330e21f1130.webp", m: [231.6396, 0, 0, 261.7003, 148.3555, 105.0342], mask: [-360, 107.4843, 1080, 316.6827] },
+      { paint: "linear-gradient(0.0001deg, #eee6d8 67.0382%, rgba(238, 230, 216, 0) 77.814%)", m: [371.0146, 0, 0, 62.5881, -8.042, 346.2606], mask: [-360, 107.4843, 1080, 316.6827] },
       { paint: GROUND, m: [202.021, -19.916, 8.771, 88.969, 32.15, 292.87], round: true },
       { src: "/images/scene-a8524cbfc3419x1973.webp", m: [201.1089, 0, 0, 292.8314, 24.4512, 66] },
       /* Both frames close this list with a white lozenge — 287.8, 176.9 here
          and 93.9, 622.1 on the desktop — and it is the plate the two
          certification seals stand on rather than part of the collage: each
          sits at its frame's own pair of seals and is all but covered by them.
-         Our seals are round artwork with a white field of their own, so the
-         plate only ever showed as a blob poking out from behind one of them,
-         and on the phone, where the pair is no longer stacked (see `seals` in
-         `data/product-mobile.ts`), it was left on the drink outright. It goes
-         with the seals on both. */
+         Ours are round artwork with a white field of their own, so the plate
+         only ever showed as a sliver between the stacked pair on the phone and
+         a blob above the lower seal on the desktop. Dropped on both. */
     ],
   },
   "sugar-free": {

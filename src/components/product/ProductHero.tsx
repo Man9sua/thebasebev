@@ -271,14 +271,6 @@ export function ProductHero({ product }: { product: Product }) {
       vars["--m-wash-to"] = phoneWash.to;
     }
     if (phone.shade) vars["--m-shade"] = phone.shade;
-    // Only Garnish carries these: its collage reaches the corner the shared
-    // pair stands in — see `seals` in `data/product-mobile.ts`.
-    if (phone.seals) {
-      vars["--m-seal-wide-x"] = phone.seals.wide.x;
-      vars["--m-seal-wide-y"] = phone.seals.wide.y;
-      vars["--m-seal-small-x"] = phone.seals.small.x;
-      vars["--m-seal-small-y"] = phone.seals.small.y;
-    }
     if (phone.glass) {
       vars["--m-glass-left"] = phone.glass.left;
       vars["--m-glass-top"] = phone.glass.top + 108;
