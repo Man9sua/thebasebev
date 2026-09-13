@@ -18,8 +18,11 @@ export function About() {
     <section className={styles.section} aria-labelledby="who-we-are">
       <div className={styles.inner}>
         <div className={styles.head}>
+          {/* The design file sets this "WHO WE ARE?"; the owner asked for the
+              question the right way round. The id stays as it is — it is what
+              the section is labelled by, not something a reader sees. */}
           <h2 className={styles.title} id="who-we-are">
-            WHO WE ARE?
+            WHO ARE WE?
           </h2>
         </div>
 
