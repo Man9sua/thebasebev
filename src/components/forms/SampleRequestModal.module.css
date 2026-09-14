@@ -98,12 +98,25 @@
   text-transform: uppercase;
 }
 
+.businessTitle {
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(1.7rem, 7vw, 2.125rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
 .description {
   max-width: 24rem;
   margin: 16px 0 0;
   color: #6e6962;
   font-size: 0.875rem;
   line-height: 1.55;
+}
+
+.businessDescription {
+  font-size: 0.9375rem;
+  line-height: 1.6;
 }
 
 .form {
@@ -311,6 +324,10 @@
     font-size: clamp(1.35rem, 6.4vw, 1.65rem);
   }
 
+  .businessTitle {
+    font-size: clamp(1.55rem, 7.4vw, 1.85rem);
+  }
+
   .description {
     margin-top: 14px;
     font-size: 0.8125rem;
@@ -347,6 +364,10 @@
 
   .title {
     font-size: 1.25rem;
+  }
+
+  .businessTitle {
+    font-size: 1.5rem;
   }
 
   .description {

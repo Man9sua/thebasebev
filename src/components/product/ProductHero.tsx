@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { PartnerRequestModal } from "@/components/forms/PartnerRequestModal";
 import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
@@ -11,7 +12,6 @@ import { productScene } from "@/data/product-scene";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
 import { isDark, luminance } from "@/lib/contrast";
-import { popupAnchorProps } from "@/lib/legacy-popups";
 import { productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
 
@@ -534,24 +534,12 @@ export function ProductHero({ product }: { product: Product }) {
             </Reveal>
           )}
 
-          {/*
-            Both hrefs are popup hooks the export still owns — `#sample` is the
-            free-sample form, `#form` the partner enquiry — and they are the two
-            the original buttons pointed at. The first was `#order` here, which
-            no page has a hook for, so the page's primary call to action did
-            nothing at all. Both labels are the design's, including on the
-            eleven products that do have a price: the frame shows no price, so
-            the second button asks for one rather than offering to take an order
-            against a figure the page never gave.
-
-            The dialog attributes are Tilda's own, written here rather than
-            waited for — see `popupAnchorProps`.
-          */}
+          {/* Both product actions use native fixed dialogs and the shared
+              server-side lead pipeline. Legacy Tilda popups stay untouched for
+              routes that still reference them. */}
           <Reveal className={styles.actions} delay={250} distance={16}>
             <SampleRequestModal className={styles.primary} />
-            <a href="#form" className={styles.secondary} {...popupAnchorProps("#form")}>
-              Request pricing
-            </a>
+            <PartnerRequestModal className={styles.secondary} />
           </Reveal>
         </div>
 
