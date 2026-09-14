@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Product } from "@/data/products";
 import { productGlass } from "@/data/product-glass";
@@ -547,9 +548,7 @@ export function ProductHero({ product }: { product: Product }) {
             waited for — see `popupAnchorProps`.
           */}
           <Reveal className={styles.actions} delay={250} distance={16}>
-            <a href="#sample" className={styles.primary} {...popupAnchorProps("#sample")}>
-              Request a sample
-            </a>
+            <SampleRequestModal className={styles.primary} />
             <a href="#form" className={styles.secondary} {...popupAnchorProps("#form")}>
               Request pricing
             </a>
