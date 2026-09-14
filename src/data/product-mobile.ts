@@ -65,15 +65,6 @@ export type MobileCard = {
    * own phone export, as the desktop's is off its own.
    */
   mark?: number;
-  /**
-   * Where the copy's panel opens, below the header, when not the common 268.7.
-   *
-   * Fifteen of the sixteen phone cards close their band on the same line. The
-   * design's current export gives Garnish a third of an inch more, and the
-   * collage on it ends well above either line, so the band simply carries more
-   * of its own beige. Measured on that export at 301.5.
-   */
-  panelTop?: number;
 };
 
 export const productMobile: Record<string, MobileCard> = {
@@ -92,7 +83,7 @@ export const productMobile: Record<string, MobileCard> = {
   // point: the design ramps it from the panel's own beige at the header's foot
   // to the frame's at the band's, level all the way across. The ellipse below
   // is wide enough and set low enough to be that ramp.
-  garnish: { washIn: "#ede6d8", washOut: "#dfceb4", washShape: "200% 105% at 50% 100%", panel: "#dfceb4", panelTop: 301.5, mark: 0.21 },
+  garnish: { washIn: "#ede6d8", washOut: "#dfceb4", washShape: "200% 105% at 50% 100%", panel: "#dfceb4", mark: 0.21 },
   vending: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#c9b7a2", glass: { left: 163.62, top: 71.77, width: 124.55, height: 203.37 }, shade: "#8c735e" },
   jam: { washIn: "#c5a880", washOut: "rgba(197, 168, 128, 0.2)", panel: "#fccace", glass: { left: 163.62, top: 80.77, width: 124.55, height: 203.37 } },
   "sugar-free": { panel: "#e0e9e2", mark: 0.7 },

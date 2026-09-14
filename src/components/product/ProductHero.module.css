@@ -294,6 +294,21 @@ span.sceneLayer {
   height: calc(var(--ink-h) * var(--k));
 }
 
+/* For the card that is a collage on one frame and a pack shot on the other —
+   the stage cannot be conditioned on a media query from the markup. The
+   breakpoint is the phone card's own, below. */
+@media (min-width: 900px) {
+  .stageNarrowOnly {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .stageWideOnly {
+    display: none;
+  }
+}
+
 /*
  * The pack shot inside it, sized past the stage rather than into it.
  *
@@ -815,10 +830,9 @@ span.sceneLayer {
 
   .frame {
     width: 100%;
-    /* Where the band closes and the copy's panel opens. One line for fifteen of
-       the sixteen; Garnish carries more of its own beige — see `panelTop` in
-       `data/product-mobile.ts`. */
-    padding-top: calc(var(--tbb-header-h) + var(--m-panel-top, 268.7) * var(--p));
+    /* Where the band closes and the copy's panel opens — one line for all
+       sixteen. Garnish held 33 more while its card was a collage. */
+    padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
   }
 
   /*
@@ -898,6 +912,12 @@ span.sceneLayer {
    * The file left-aligns the two, which reads as a slip when one is a third
    * wider than the other; the owner asked for them centred on one another, so
    * the lower one is carried 9.05 right of where the file puts it.
+   *
+   * On Garnish they land on the design's own enlarged drink, which is the one
+   * collage that reaches this corner. They were moved to the pouch's foot for
+   * it and the owner asked for the file's corner back, so all sixteen share
+   * this pair again — what was actually wrong there is the brand mark, which
+   * had been reading across the glass. See `back` in `data/product-scene.ts`.
    */
   .seal {
     filter: drop-shadow(0 calc(6 * var(--p)) calc(14 * var(--p)) rgba(26, 19, 17, 0.16));
