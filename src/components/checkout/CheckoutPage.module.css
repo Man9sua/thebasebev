@@ -251,6 +251,15 @@
   font-size: 0.75rem;
 }
 
+/* The flavour reads as part of what was ordered rather than as small print:
+   it is the half of the line the factory works from. */
+.lineFlavor {
+  color: var(--tbb-ink) !important;
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+}
+
 .line > strong {
   font-size: 0.9rem;
   font-weight: 500;

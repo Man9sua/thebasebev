@@ -8,7 +8,7 @@ import { BrandLogo } from "@/components/site/BrandLogo";
 import { SiteLink } from "@/components/site/SiteLink";
 import { CATALOG_PRODUCTS, getCheckoutProductId } from "@/data/catalog";
 import catalogTiles from "@/data/catalog-tiles.json";
-import { removeCartItem, setCartItemQuantity } from "@/lib/cart-store";
+import { cartLineKey, removeCartItem, setCartItemQuantity } from "@/lib/cart-store";
 import styles from "./CheckoutPage.module.css";
 
 const tiles = catalogTiles as Record<string, { image: string }>;
@@ -61,6 +61,7 @@ export function CheckoutPage() {
           email,
           items: lines.map((line) => ({
             productId: line.productId,
+            flavor: line.flavor,
             quantity: line.quantity,
           })),
         }),
@@ -164,7 +165,7 @@ export function CheckoutPage() {
 
             <div className={styles.lines}>
               {lines.map((line) => (
-                <article key={line.slug} className={styles.line}>
+                <article key={cartLineKey(line.slug, line.flavor)} className={styles.line}>
                   <div className={styles.thumb}>
                     <Image
                       src={tiles[line.slug]?.image ?? line.product.image ?? ""}
@@ -175,20 +176,26 @@ export function CheckoutPage() {
                   </div>
                   <div className={styles.lineCopy}>
                     <h3>{line.product.name}</h3>
-                    <p>{line.product.categoryLabel}</p>
-                    <div className={styles.quantity} aria-label={`${line.product.name} quantity`}>
+                    {/* The flavour, not the range: it is what the buyer chose
+                        and what the factory fills. */}
+                    <p className={styles.lineFlavor}>{line.flavor}</p>
+                    <div className={styles.quantity} aria-label={`${line.product.name} ${line.flavor} quantity`}>
                       <button
                         type="button"
-                        aria-label={`Decrease ${line.product.name} quantity`}
-                        onClick={() => setCartItemQuantity(line.slug, line.quantity - 1)}
+                        aria-label={`Decrease ${line.product.name} ${line.flavor} quantity`}
+                        onClick={() =>
+                          setCartItemQuantity(line.slug, line.flavor, line.quantity - 1)
+                        }
                       >
                         −
                       </button>
                       <span>{line.quantity}</span>
                       <button
                         type="button"
-                        aria-label={`Increase ${line.product.name} quantity`}
-                        onClick={() => setCartItemQuantity(line.slug, line.quantity + 1)}
+                        aria-label={`Increase ${line.product.name} ${line.flavor} quantity`}
+                        onClick={() =>
+                          setCartItemQuantity(line.slug, line.flavor, line.quantity + 1)
+                        }
                       >
                         +
                       </button>
@@ -196,7 +203,7 @@ export function CheckoutPage() {
                     <button
                       type="button"
                       className={styles.remove}
-                      onClick={() => removeCartItem(line.slug)}
+                      onClick={() => removeCartItem(line.slug, line.flavor)}
                     >
                       Remove
                     </button>

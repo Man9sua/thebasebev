@@ -73,15 +73,26 @@ try {
     }
 
     if (route === "/catalog") {
+      // Adding is two steps: the card's button opens the flavour picker and the
+      // picker is what puts the line in the cart. A line with no flavour is an
+      // order nobody can fill, so this walks the path a buyer walks instead of
+      // reaching past the dialog into the store.
       const addButton = page.locator("[data-cart-add]").first();
       await addButton.click();
-      await page.waitForTimeout(150);
+      const picker = page.locator('[data-flavor-picker] [role="radiogroup"]');
+      await picker.waitFor({ state: "visible" });
+      const firstFlavor = picker.locator("label").first();
+      const flavorName = (await firstFlavor.textContent())?.trim() ?? "";
+      await firstFlavor.click();
+      await page.locator("[data-flavor-submit]").click();
+      await page.waitForTimeout(400);
       const afterAdd = await page.evaluate(() => ({
         url: location.pathname,
         buttonText: document.querySelector("[data-cart-add]")?.textContent?.trim() ?? null,
+        dialogs: document.querySelectorAll('[data-flavor-picker]').length,
         products: (() => {
           try {
-            return JSON.parse(localStorage.getItem("thebase:cart:v1") ?? "[]");
+            return JSON.parse(localStorage.getItem("thebase:cart:v2") ?? "[]");
           } catch {
             return [];
           }
@@ -107,10 +118,19 @@ try {
       if (afterAdd.products[0]?.slug !== "milkshake" || afterAdd.products[0]?.quantity !== 1) {
         failures.push(`/catalog: Milkshake cart identity/quantity changed`);
       }
+      if (!flavorName || afterAdd.products[0]?.flavor !== flavorName) {
+        failures.push(
+          `/catalog: the chosen flavour did not reach the cart (picked "${flavorName}", stored "${afterAdd.products[0]?.flavor}")`,
+        );
+      }
+      if (afterAdd.dialogs !== 0) {
+        failures.push("/catalog: the flavour picker stayed open after adding");
+      }
       if (
         checkoutPage.path !== "/checkout" ||
         !checkoutPage.visible ||
         !/Milkshake/.test(checkoutPage.text) ||
+        !checkoutPage.text.toLowerCase().includes(flavorName.toLowerCase()) ||
         !/45\.38/.test(checkoutPage.text)
       ) {
         failures.push(`/catalog: populated checkout page did not open`);
