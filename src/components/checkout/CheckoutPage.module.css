@@ -284,7 +284,17 @@
   cursor: pointer;
 }
 
+/*
+ * Its own row, under the stepper.
+ *
+ * The stepper is an inline grid and this is a button, so the two shared a line
+ * wherever the column was wide enough to take them — which on a phone is always,
+ * and there it put "Remove" eight pixels from "+". A thumb aiming at plus and
+ * landing on remove is the one mis-tap on this page that costs the buyer a line
+ * of their order.
+ */
 .remove {
+  display: block;
   margin-top: 0.55rem;
   padding: 0;
   border: 0;
