@@ -10,6 +10,13 @@
  * Everything moves on opacity and transform only, so the whole thing stays on
  * the compositor, and every animation is off under `prefers-reduced-motion` at
  * the foot of this file.
+ *
+ * The `!important` on the paragraph margins is not decoration. `design-tokens`
+ * zeroes them for every redesigned surface with `.tbb p`, which is two
+ * selectors deep and beats a single class — so a margin set here without it is
+ * simply dropped, and the label ends up sitting on the row of chips it is meant
+ * to be heading. The catalogue card's copy carries the same flag for the same
+ * reason.
  */
 
 .root {
@@ -74,7 +81,7 @@
 }
 
 .eyebrow {
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.3rem !important;
   color: var(--tbb-muted);
   font-size: 0.625rem;
   font-weight: 600;
@@ -97,7 +104,7 @@
 }
 
 .meta {
-  margin: 0.35rem 0 0;
+  margin: 0.35rem 0 0 !important;
   color: var(--tbb-ink-soft);
   font-size: 0.8125rem;
   line-height: 1.2;
@@ -148,8 +155,11 @@
   padding: clamp(1.15rem, 4vw, 1.75rem);
 }
 
+/* The gap under this has to read as a heading's, which means clearly more than
+   the one between the rows of chips under it — at 16 against their 10 the label
+   sat on the first row rather than over the whole cloud. */
 .count {
-  margin: 0 0 1rem;
+  margin: 0 0 1.5rem !important;
   color: var(--tbb-muted);
   font-size: 0.625rem;
   font-weight: 600;
