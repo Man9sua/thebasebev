@@ -81,7 +81,7 @@
 }
 
 .eyebrow {
-  margin: 0 0 0.3rem !important;
+  margin: 0 0 0.45rem !important;
   color: var(--tbb-muted);
   font-size: 0.625rem;
   font-weight: 600;
@@ -104,7 +104,7 @@
 }
 
 .meta {
-  margin: 0.35rem 0 0 !important;
+  margin: 0.5rem 0 0 !important;
   color: var(--tbb-ink-soft);
   font-size: 0.8125rem;
   line-height: 1.2;
