@@ -1,12 +1,12 @@
 # SEO parity report
 
-Generated: 2026-09-15T15:22:14.333Z
+Generated: 2026-09-16T11:51:33.902Z
 
 - Production: `https://thebasebev.com`
 - Target: `https://the-base-staging.mansua.workers.dev`
 - Canonical public routes: 130
 - Critical failures: 0
-- Declared h1 changes: 18
+- Declared h1 changes: 19
 - Non-blocking link/alt observations: 260
 - Preview transport noindex expected: yes
 
@@ -17,7 +17,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/` | 200 | 200 | PASS | 28/31 | 28/0/27 | Critical fields match |
 | `/wholesale-strategy` | 200 | 200 | PASS | 28/31 | 20/0/12 | Critical fields match |
 | `/contacts` | 200 | 200 | PASS | 28/31 | 0/0/0 | Critical fields match |
-| `/about-us` | 200 | 200 | PASS | 28/31 | 21/0/5 | Critical fields match |
+| `/about-us` | 200 | 200 | PASS | 28/31 | 25/0/8 | Critical fields match |
 | `/resources` | 200 | 200 | PASS | 28/31 | 12/0/5 | Critical fields match |
 | `/distributors` | 200 | 200 | PASS | 28/31 | 9/0/0 | Critical fields match |
 | `/resources/blog` | 200 | 200 | PASS | 28/31 | 12/0/5 | Critical fields match |
@@ -158,6 +158,7 @@ routes are exempt outright and are listed with their reason -- see
 h1, so a change on production ends the exemption rather than hiding behind it.
 
 - /: h1 is the redesign's "Premium Powder Bases for Your Business"; production names one of sixteen products in the homepage headline, and the ranking phrase Premium ... Bases is kept
+- /about-us: h1 is the About redesign's "We Manufacture High-Quality Customizable Premix Powders"; production's "Who we are" names nothing the page is found for, and the new line carries the manufacturing wording instead. Declared rather than kept as an h2: the redesign has no such heading, and a hidden one would be an exemption dressed up as markup
 - /rnd: production h1 is a stray widget line, deliberately not carried over
 - /cream-latte: h1 is now "Cream Latte"; production wording kept as h2
 - /chai-latte: h1 is now "Chai Latte"; production wording kept as h2
@@ -185,7 +186,7 @@ h1, so a change on production ends the exemption rather than hiding behind it.
 - /contacts: internal links differ (-0/+3)
 - /contacts: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":0,"missing":0,"empty":0})
 - /about-us: internal links differ (-0/+3)
-- /about-us: image alt stats differ ({"total":27,"missing":0,"empty":10} vs {"total":21,"missing":0,"empty":5})
+- /about-us: image alt stats differ ({"total":27,"missing":0,"empty":10} vs {"total":25,"missing":0,"empty":8})
 - /resources: internal links differ (-0/+3)
 - /resources: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":12,"missing":0,"empty":5})
 - /distributors: internal links differ (-0/+3)

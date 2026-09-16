@@ -376,11 +376,29 @@ try {
     /Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""),
     "matcha: product content failed after a hard refresh",
   );
-  await page.locator('a[href="#sample"]').first().click();
-  await page.waitForTimeout(500);
+  // The hero's two calls to action are React modals now rather than the
+  // export's popup anchors, so this no longer waits for `a[href="#sample"]`.
+  // What has to hold is not that a dialog opens but that the form inside it is
+  // one the lead bridge owns: `tildaspec-formname` is how
+  // `LeadAttributionBridge` decides to post a submission to `/api/leads`
+  // instead of leaving it to a Tilda runtime that is not on this page.
+  await page.getByRole("button", { name: "Request a sample" }).first().click();
+  await page.locator("#sample-request-modal-form").waitFor({ state: "visible" });
   check(
-    await page.locator("#form1855223381").isVisible(),
-    "matcha: Place order did not open the shared Free Sample form",
+    (await page
+      .locator('#sample-request-modal-form input[name="tildaspec-formname"]')
+      .inputValue()) === "Free Sample",
+    "matcha: the sample modal carries a form name the lead bridge does not own",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
+  check(
+    (await page.locator("#sample-request-modal-form").count()) === 0,
+    "matcha: the sample modal did not close on Escape",
+  );
+  check(
+    (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
+    "matcha: the sample modal left the page scroll locked",
   );
 
   // Browser smoke must be safe against a credentialed staging environment.
