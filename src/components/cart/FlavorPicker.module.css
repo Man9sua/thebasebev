@@ -139,14 +139,17 @@
 
 /* ---- flavours ---- */
 
+/* One inset all round rather than a narrower one top and bottom: the chips fill
+   this box edge to edge, so an inset that differs by side is the thing the eye
+   reads as the chips being crowded. */
 .body {
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: clamp(1rem, 3.5vw, 1.5rem) clamp(1rem, 4vw, 1.75rem);
+  padding: clamp(1.15rem, 4vw, 1.75rem);
 }
 
 .count {
-  margin: 0 0 0.85rem;
+  margin: 0 0 1rem;
   color: var(--tbb-muted);
   font-size: 0.625rem;
   font-weight: 600;
@@ -155,10 +158,12 @@
   text-transform: uppercase;
 }
 
+/* A little more between the rows than between the chips: a wrapped row of pills
+   reads as a list when it is, and as a block of text when it is not. */
 .flavors {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.65rem 0.5rem;
 }
 
 /*

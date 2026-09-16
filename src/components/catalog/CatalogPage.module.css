@@ -224,7 +224,16 @@
 /* The shelf as one thing, so re-sorting has somewhere to scroll back to. The
    margin clears the site header and the sticky filter bar, which would
    otherwise sit over the first row it just brought into view. */
+/*
+ * The gap under the sticky bar belongs to the shelf, not to a range heading.
+ *
+ * It used to come out of `.rangeHead`'s padding, which is there only while the
+ * shelf is grouped — and it is not grouped once a range is filtered or a sort
+ * is picked. So exactly when the headings went away the first row of tiles came
+ * up against the bar with nothing between them.
+ */
 .shelf {
+  padding-top: clamp(2rem, 3vw, 3rem);
   scroll-margin-top: calc(var(--tbb-header-h) + 4rem);
 }
 
@@ -239,8 +248,9 @@
   padding: clamp(2.5rem, 4vw, 3.75rem) 0 clamp(1.1rem, 1.8vw, 1.6rem);
 }
 
+/* The shelf's own top gap above, so the first heading adds nothing to it. */
 .range:first-of-type .rangeHead {
-  padding-top: clamp(2rem, 3vw, 3rem);
+  padding-top: 0;
 }
 
 .rangeName {
