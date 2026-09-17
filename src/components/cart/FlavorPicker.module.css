@@ -49,6 +49,10 @@
   max-height: min(86vh, 42rem);
   /* A sheet keeps its square corners on the edge it rises from. */
   border-radius: var(--tbb-card-radius) var(--tbb-card-radius) 0 0;
+  /* The foot carries a background of its own, so without this it paints its
+     square corners straight over the panel's rounded ones — which is only
+     visible from 720 up, where the panel is a card and rounded all round. */
+  overflow: hidden;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
   box-shadow: 0 -2px 40px rgba(26, 19, 17, 0.22);
