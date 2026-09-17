@@ -111,6 +111,7 @@ function buildLeadPayload(
     phone,
     country: phoneCountry?.toUpperCase(),
     company: getFormValue(formData, ["company", "Company"]),
+    product: getFormValue(formData, ["product", "product_name"]),
     message: getFormValue(formData, [
       "text",
       "message",

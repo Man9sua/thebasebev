@@ -170,6 +170,7 @@ export type LegacyMappableLead = LeadAttributionFields & {
   phone?: string;
   country?: string;
   company?: string;
+  product?: string;
   message?: string;
   consent: boolean | null;
   submissionPage: string;
@@ -201,6 +202,7 @@ export function toTildaLeadPayload(
   put(fields.phone, lead.phone);
   put("company", lead.company);
   put("country", lead.country);
+  put("product", lead.product);
 
   // Tilda always sends the form's display name; Odoo routes on it.
   put("tildaspec-formname", lead.formName);
@@ -225,31 +227,9 @@ export function toTildaLeadPayload(
   put("request_id", context?.requestId);
   put("server_timestamp", context?.receivedAt);
 
-  // The current Odoo automation has no first-class fields for the complete
-  // attribution contract. Keep the flat Tilda keys for compatible adapters and
-  // also append a deterministic block to the existing message/description
-  // channel so Odoo cannot silently discard first touch or the request id.
-  const attributionLines = [
-    "--- THE BASE ATTRIBUTION ---",
-    `request_id: ${context?.requestId ?? "not-provided"}`,
-    `server_timestamp: ${context?.receivedAt ?? "not-provided"}`,
-    `client_timestamp: ${lead.clientTimestamp}`,
-    `form_name: ${lead.formName}`,
-    `form_type: ${lead.formType}`,
-    `landing_page: ${lead.landingPage}`,
-    `submission_page: ${lead.submissionPage}`,
-    `referrer: ${lead.referrer || "direct"}`,
-    `country: ${lead.country || "not-provided"}`,
-    `utm_source: ${lead.utm_source || "not-provided"}`,
-    `utm_medium: ${lead.utm_medium || "not-provided"}`,
-    `utm_campaign: ${lead.utm_campaign || "not-provided"}`,
-    `utm_content: ${lead.utm_content || "not-provided"}`,
-    `utm_term: ${lead.utm_term || "not-provided"}`,
-  ];
-  put(
-    fields.message,
-    [lead.message?.trim(), attributionLines.join("\n")].filter(Boolean).join("\n\n"),
-  );
+  // Attribution remains in its own flat fields. It must not be copied into the
+  // customer request field that Odoo renders as a business-facing note.
+  put(fields.message, lead.message);
 
   if (lead.order !== undefined && lead.order !== null) {
     payload.order_json = JSON.stringify(lead.order);

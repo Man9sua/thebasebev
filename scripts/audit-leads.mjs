@@ -162,6 +162,7 @@ function validLead(overrides = {}) {
     name: "TEST NEXT MIGRATION",
     email: "audit@thebasebev.com",
     phone: "+971500000000",
+    product: "Matcha",
     message: "AUTOMATED AUDIT — DO NOT CONTACT",
     formType: "contact",
     formName: "Contact Us",
@@ -303,12 +304,11 @@ check(
 check("mapping: name sent as legacy `name`", delivered.name === "TEST NEXT MIGRATION");
 check("mapping: email sent as legacy `email`", delivered.email === "audit@thebasebev.com");
 check("mapping: phone sent as legacy `Phone`", delivered.Phone === "+971500000000");
+check("mapping: product sent", delivered.product === "Matcha");
 check("mapping: message sent as legacy `text`", typeof delivered.text === "string");
 check(
-  "mapping: structured attribution survives in the description channel",
-  delivered.text.includes("--- THE BASE ATTRIBUTION ---") &&
-    delivered.text.includes(`request_id: ${okBody.requestId}`) &&
-    delivered.text.includes("utm_source: chatgpt.com"),
+  "mapping: technical attribution does not pollute the customer request",
+  delivered.text === "AUTOMATED AUDIT — DO NOT CONTACT",
 );
 check(
   "mapping: tildaspec-formname sent",
@@ -329,7 +329,7 @@ const orderDelivered = upstream.received.at(-1) ?? {};
 check(
   "mapping: order form uses capitalised cart vocabulary",
   orderDelivered.Name === "TEST NEXT MIGRATION" &&
-    orderDelivered.Comments.startsWith("audit order\n\n--- THE BASE ATTRIBUTION ---"),
+    orderDelivered.Comments === "audit order",
   JSON.stringify(Object.keys(orderDelivered)),
 );
 

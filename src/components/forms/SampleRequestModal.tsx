@@ -6,7 +6,13 @@ import Link from "next/link";
 import { useOverlay } from "@/components/site/useOverlay";
 import styles from "./SampleRequestModal.module.css";
 
-export function SampleRequestModal({ className }: { className?: string }) {
+export function SampleRequestModal({
+  className,
+  productName,
+}: {
+  className?: string;
+  productName?: string;
+}) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -71,6 +77,9 @@ export function SampleRequestModal({ className }: { className?: string }) {
               >
                 <input type="hidden" name="tildaspec-formname" defaultValue="Free Sample" />
                 <input type="hidden" name="country" defaultValue="KZ" />
+                {productName && (
+                  <input type="hidden" name="product" value={productName} />
+                )}
 
                 <div className={`t-form__inputsbox ${styles.fields}`}>
                   <label className={styles.field}>

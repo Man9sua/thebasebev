@@ -6,7 +6,13 @@ import Link from "next/link";
 import { useOverlay } from "@/components/site/useOverlay";
 import styles from "./SampleRequestModal.module.css";
 
-export function PartnerRequestModal({ className }: { className?: string }) {
+export function PartnerRequestModal({
+  className,
+  productName,
+}: {
+  className?: string;
+  productName?: string;
+}) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -81,6 +87,9 @@ export function PartnerRequestModal({ className }: { className?: string }) {
                   defaultValue="Partner with Us"
                 />
                 <input type="hidden" name="country" defaultValue="KZ" />
+                {productName && (
+                  <input type="hidden" name="product" value={productName} />
+                )}
 
                 <div className={`t-form__inputsbox ${styles.fields}`}>
                   <label className={styles.field}>

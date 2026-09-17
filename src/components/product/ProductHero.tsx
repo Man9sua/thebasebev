@@ -538,8 +538,8 @@ export function ProductHero({ product }: { product: Product }) {
               server-side lead pipeline. Legacy Tilda popups stay untouched for
               routes that still reference them. */}
           <Reveal className={styles.actions} delay={250} distance={16}>
-            <SampleRequestModal className={styles.primary} />
-            <PartnerRequestModal className={styles.secondary} />
+            <SampleRequestModal className={styles.primary} productName={product.name} />
+            <PartnerRequestModal className={styles.secondary} productName={product.name} />
           </Reveal>
         </div>
 
