@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
+import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
+import { FIRST_TOUCH_SCRIPT } from "@/components/forms/first-touch";
 import "./globals.css";
 
 /**
@@ -52,11 +54,35 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={exo2.variable} suppressHydrationWarning>
       <head>
+        {/*
+          The exported pages reference their assets relatively — `images/…`,
+          `css/…` — and four routes are nested (`/resources/blog`,
+          `/resources/glossary`, `/resources/tools`, `/catalog/tproduct/…`),
+          where a relative path would resolve one directory too deep. This is
+          what keeps them resolving from the root.
+
+          The cost is that a bare `#fragment` anchor resolves against the root
+          too, so an in-page link must carry its own route: `/rnd#rnd-form`,
+          not `#rnd-form`.
+        */}
         <base href="/" />
+        {/* Also blocking, and for the same reason: the first touch must be
+            recorded before a click can navigate away from the landing page. */}
+        <script dangerouslySetInnerHTML={{ __html: FIRST_TOUCH_SCRIPT }} />
+        {/* React streams the resolved static route into an S:* container and
+            swaps it over the route fallback with an inline script. If scripts
+            are disabled, reveal that already-rendered document directly. */}
+        <noscript>
+          <style>{`
+            [data-route-loading-fallback] { display: none !important; }
+            body > div[id^="S:"][hidden] { display: block !important; }
+          `}</style>
+        </noscript>
         <link rel="alternate" type="application/rss+xml" title="THE BASE" href="/rss.xml" />
       </head>
       <body className="t-body" suppressHydrationWarning>
         {children}
+        <LeadAttributionBridge />
         <Analytics />
       </body>
     </html>

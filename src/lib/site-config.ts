@@ -18,41 +18,26 @@ export const BRAND_VIDEO = {
 } as const;
 
 /**
- * Regions offered by the header picker, copied from the control on production.
+ * The menu, and — through `SiteSearch` — the pages the search box offers.
  *
- * Display-only for now — see RegionPicker. The shape matches the future
- * locale/currency model in PROJECT_CONTEXT.md so wiring it up later is a data
- * change rather than a rewrite.
+ * Every href is a route of its own. "About Us" used to be `/#about`, an anchor
+ * on the homepage that no section carries an id for, so the menu's About just
+ * reloaded the homepage while `/about-us` — a real page, indexable, and one the
+ * footer already links to — went unlinked from the menu entirely.
  */
-export type Region = {
-  short: string;
-  label: string;
-  name: string;
-  flag: string;
-  currency: string;
-};
-
-export const REGIONS: Region[] = [
-  { short: "AE", label: "UAE (EN)", name: "United Arab Emirates", flag: "🇦🇪", currency: "AED" },
-  { short: "SA", label: "KSA (EN)", name: "Saudi Arabia", flag: "🇸🇦", currency: "SAR" },
-  { short: "KZ", label: "KZ (RU)", name: "Kazakhstan", flag: "🇰🇿", currency: "KZT" },
-  { short: "RU", label: "RU (RU)", name: "Russia", flag: "🇷🇺", currency: "RUB" },
-  { short: "UK", label: "UK (EN)", name: "United Kingdom", flag: "🇬🇧", currency: "GBP" },
-];
-
 export const SITE_NAV = [
-  { label: "Catalog", href: "/catalog" },
+  { label: "Shop", href: "/catalog" },
   { label: "Private Label", href: "/private-labeling" },
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
   { label: "Resources", href: "/resources" },
-  { label: "About", href: "/about-us" },
+  { label: "About Us", href: "/about-us" },
   { label: "Contacts", href: "/contacts" },
 ] as const;
 
 export const FOOTER_LINKS = {
   products: [
-    { label: "Catalog", href: "/catalog" },
+    { label: "Shop", href: "/catalog" },
     { label: "Private Labeling", href: "/private-labeling" },
     { label: "Sugar Free", href: "/sugar-free" },
     { label: "Vending", href: "/vending" },
@@ -76,14 +61,21 @@ export const FOOTER_LINKS = {
 } as const;
 
 /** Taken from the existing site — every value appears in the Tilda export. */
+/**
+ * `phoneAlt` used to carry +971 58 932 7887. It is retired: the export still
+ * contains it in 37 files, and the site ships a `fixPhone` script that rewrites
+ * every occurrence — links, text nodes and WhatsApp numbers — to the number
+ * below on page load. Publishing it from the shared footer meant the React shell
+ * was the one place still advertising a number the business rewrites away, and
+ * `fixPhone` duly corrected it after hydration, which is what broke hydration on
+ * every parity page. One number, and it is this one.
+ */
 export const COMPANY = {
   legalName: "The Base Beverage LLC",
   city: "Dubai",
   country: "United Arab Emirates",
   phone: "+971 50 989 0429",
   phoneHref: "tel:+971509890429",
-  phoneAlt: "+971 58 932 7887",
-  phoneAltHref: "tel:+971589327887",
   email: "info@thebasebev.com",
   emailHref: "mailto:info@thebasebev.com",
 } as const;

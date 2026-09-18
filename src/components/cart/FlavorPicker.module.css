@@ -1,0 +1,430 @@
+/**
+ * The flavour picker.
+ *
+ * A sheet from the foot of the screen on a phone and a card in the middle of it
+ * from 720 up — the same panel, anchored where the thumb is on one and where
+ * the eye is on the other. Nothing here invents a colour: the paper, the ink,
+ * the hairline and the warm card wash are the site's own tokens, and the pill
+ * and the label sizes are the catalogue card's.
+ *
+ * Everything moves on opacity and transform only, so the whole thing stays on
+ * the compositor, and every animation is off under `prefers-reduced-motion` at
+ * the foot of this file.
+ *
+ * The `!important` on the paragraph margins is not decoration. `design-tokens`
+ * zeroes them for every redesigned surface with `.tbb p`, which is two
+ * selectors deep and beats a single class — so a margin set here without it is
+ * simply dropped, and the label ends up sitting on the row of chips it is meant
+ * to be heading. The catalogue card's copy carries the same flag for the same
+ * reason.
+ */
+
+.root {
+  position: fixed;
+  inset: 0;
+  /* Over the header, which is 40, and over the menu's 80. */
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.scrim {
+  appearance: none;
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(26, 19, 17, 0.44);
+  backdrop-filter: blur(3px);
+  cursor: pointer;
+  animation: scrimIn var(--tbb-dur-fast) var(--tbb-ease) both;
+}
+
+.panel {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(100%, 34rem);
+  max-height: min(86vh, 42rem);
+  /* A sheet keeps its square corners on the edge it rises from. */
+  border-radius: var(--tbb-card-radius) var(--tbb-card-radius) 0 0;
+  /* The foot carries a background of its own, so without this it paints its
+     square corners straight over the panel's rounded ones — which is only
+     visible from 720 up, where the panel is a card and rounded all round. */
+  overflow: hidden;
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+  box-shadow: 0 -2px 40px rgba(26, 19, 17, 0.22);
+  animation: sheetIn var(--tbb-dur) var(--tbb-ease) both;
+}
+
+.panel:focus-visible {
+  outline: none;
+}
+
+/* ---- head ---- */
+
+.head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.85rem, 3vw, 1.15rem);
+  padding: clamp(1rem, 3.5vw, 1.5rem) clamp(1rem, 4vw, 1.75rem);
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+/* The catalogue's own artwork, at the size of a thumbnail. The tile carries its
+   own 270:413, so only the width is set. */
+.art {
+  width: clamp(3.75rem, 16vw, 4.75rem);
+}
+
+.headCopy {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.45rem !important;
+  color: var(--tbb-muted);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.25rem, 5vw, 1.625rem);
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0;
+}
+
+.title:focus-visible {
+  outline: none;
+}
+
+.meta {
+  margin: 0.5rem 0 0 !important;
+  color: var(--tbb-ink-soft);
+  font-size: 0.8125rem;
+  line-height: 1.2;
+}
+
+.metaDot {
+  margin: 0 0.4rem;
+  color: var(--tbb-muted);
+}
+
+.dismiss {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tbb-ink);
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.dismiss svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.dismiss:hover,
+.dismiss:focus-visible {
+  border-color: var(--tbb-ink);
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+}
+
+/* ---- flavours ---- */
+
+/* One inset all round rather than a narrower one top and bottom: the chips fill
+   this box edge to edge, so an inset that differs by side is the thing the eye
+   reads as the chips being crowded. */
+.body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(1.15rem, 4vw, 1.75rem);
+}
+
+/* The gap under this has to read as a heading's, which means clearly more than
+   the one between the rows of chips under it — at 16 against their 10 the label
+   sat on the first row rather than over the whole cloud. */
+.count {
+  margin: 0 0 1.5rem !important;
+  color: var(--tbb-muted);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* A little more between the rows than between the chips: a wrapped row of pills
+   reads as a list when it is, and as a block of text when it is not. */
+.flavors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 0.5rem;
+}
+
+/*
+ * The chip is the label and the radio inside it is the control, so the whole
+ * chip is the hit area and the keyboard still gets a radio group. The input is
+ * taken out of the paint rather than out of the tree — `display: none` would
+ * take it off the arrow keys with it.
+ */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  background: var(--tbb-paper);
+  font-size: 0.8125rem;
+  line-height: 1.1;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+  animation: chipIn var(--tbb-dur-fast) var(--tbb-ease) both;
+  animation-delay: min(calc(150ms + var(--i, 0) * 14ms), 420ms);
+}
+
+.chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip:hover {
+  border-color: var(--tbb-ink);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--tbb-accent);
+  outline-offset: 2px;
+}
+
+.chipOn {
+  border-color: var(--tbb-ink);
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+}
+
+.chipName {
+  white-space: nowrap;
+}
+
+/* How many of this flavour are in the cart already — the one thing the shelf
+   cannot show, since the card has no room for nineteen counts. */
+.chipCount {
+  display: grid;
+  place-items: center;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.2rem;
+  border-radius: 999px;
+  background: var(--tbb-card-wash-to);
+  color: var(--tbb-ink);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.chipOn .chipCount {
+  background: var(--tbb-on-dark);
+}
+
+/* ---- foot ---- */
+
+.foot {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  padding: clamp(0.85rem, 3vw, 1.25rem) clamp(1rem, 4vw, 1.75rem)
+    calc(clamp(0.85rem, 3vw, 1.25rem) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--tbb-line);
+  background: var(--tbb-paper);
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 2.25rem 2.5rem 2.25rem;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+}
+
+.step {
+  appearance: none;
+  height: 2.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--tbb-ink);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.step:hover:not(:disabled) {
+  background: var(--tbb-paper-warm);
+}
+
+.step:disabled {
+  color: var(--tbb-muted);
+  cursor: default;
+}
+
+.quantity {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.submit {
+  appearance: none;
+  min-height: 2.75rem;
+  padding: 0.72rem 1.1rem;
+  border: 1px solid var(--tbb-ink);
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
+  font: 600 0.6875rem / 1 var(--tbb-font-sans);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* Inert until a flavour is chosen, and it says which state it is in rather
+   than looking pressable and doing nothing. */
+.submit:disabled {
+  border-color: var(--tbb-line);
+  background: transparent;
+  color: var(--tbb-muted);
+  cursor: default;
+}
+
+/* ---- the card, from 720 up ---- */
+
+@media (min-width: 720px) {
+  .root {
+    align-items: center;
+    padding: var(--tbb-gutter);
+  }
+
+  .panel {
+    border-radius: var(--tbb-card-radius);
+    box-shadow: 0 24px 70px rgba(26, 19, 17, 0.28);
+    animation-name: cardIn;
+  }
+}
+
+/* ---- motion ---- */
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Up from the edge it is anchored to. */
+@keyframes sheetIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+}
+
+/* In place, from just under its final size — a card is not coming from an
+   edge, so it should not travel like one. */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translate3d(0, 10px, 0);
+  }
+}
+
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
+/*
+ * Leaving. The component keeps itself mounted for the length of this and then
+ * drops out — `EXIT_MS` in the component is the one number that has to agree
+ * with these.
+ */
+.leaving .scrim,
+.leaving .panel {
+  animation: none;
+  transition:
+    opacity 240ms var(--tbb-ease),
+    transform 240ms var(--tbb-ease);
+  opacity: 0;
+}
+
+.leaving .panel {
+  transform: translate3d(0, 16px, 0);
+}
+
+@media (min-width: 720px) {
+  .leaving .panel {
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrim,
+  .panel,
+  .chip {
+    animation: none;
+  }
+
+  .submit:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .leaving .scrim,
+  .leaving .panel {
+    transition: none;
+  }
+}

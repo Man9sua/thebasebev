@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
+import { resizedImage } from "@/lib/images";
 import { SITE_NAV } from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
@@ -31,11 +32,17 @@ const PAGE_HITS: Hit[] = SITE_NAV.map((item) => ({
   image: null,
 }));
 
+/**
+ * The swatch is 44px square and it was painting the product's full pack plate
+ * into it — six of them at around 1.1 MB each, fetched on every page of the
+ * site because this overlay is mounted everywhere. That was 6.8 MB of the
+ * 14.7 MB a product page weighed, and none of it was even on screen.
+ */
 const PRODUCT_HITS: Hit[] = PRODUCTS.map((product) => ({
   href: product.route,
   name: product.name,
   kind: "Product",
-  image: product.image,
+  image: resizedImage(product.image),
   color: product.backgroundColor,
 }));
 
@@ -100,7 +107,7 @@ export function SiteSearch({
       aria-label="Search"
       aria-hidden={!open}
       tabIndex={-1}
-      {...(open ? {} : { inert: "" as unknown as boolean })}
+      inert={!open}
     >
       <div className={styles.body}>
         <div
@@ -136,7 +143,11 @@ export function SiteSearch({
                 className={styles.item}
                 style={{ transitionDelay: open ? `${200 + index * 35}ms` : "0ms" }}
               >
-                <Link href={hit.href} className={styles.result} onClick={close}>
+                <SiteLink
+                  href={hit.href}
+                  className={styles.result}
+                  onClick={close}
+                >
                   <span
                     className={styles.swatch}
                     style={{
@@ -148,16 +159,16 @@ export function SiteSearch({
                     <span className={styles.resultName}>{hit.name}</span>
                     <span className={styles.resultKind}>{hit.kind}</span>
                   </span>
-                </Link>
+                </SiteLink>
               </span>
             ))}
           </div>
         ) : (
           <p className={styles.empty}>
             Nothing matches “{query.trim()}”. Try a product name, or{" "}
-            <Link href="/contacts" onClick={close}>
+            <SiteLink href="/contacts" onClick={close}>
               contact us
-            </Link>
+            </SiteLink>
             .
           </p>
         )}

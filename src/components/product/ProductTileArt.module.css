@@ -1,0 +1,73 @@
+/**
+ * The product card's artwork, from the homepage design file.
+ *
+ * Four layers in a 270x413 frame: a warm radial paper, a tilted ground gradient
+ * the drink stands on, the drink itself, and the name over the lower left. The
+ * frame clips, which the design relies on — the paper bleeds past every edge
+ * and both the drink and the ground run off the top and the right.
+ *
+ * Every number here is a share of the frame rather than a pixel, so the same
+ * card serves the homepage grid at 270 and the catalogue shelf at whatever the
+ * viewport gives it. The one exception is the corner radius, which the design
+ * draws at a flat 20px and which should not grow with the card.
+ */
+
+.art {
+  position: relative;
+  /* 270 x 413 */
+  aspect-ratio: 270 / 413;
+  overflow: hidden;
+  /* So the name can be sized against the card rather than the viewport. */
+  container-type: inline-size;
+  border-radius: var(--tbb-card-radius);
+  /*
+   * The design draws this as a 283.83x424.06 rectangle sitting at (-7, -6) —
+   * a touch larger than the frame on every side, so no corner of the card ever
+   * shows the gradient's own edge. Sized here as 105% x 103% of the frame,
+   * which is the same overspill without a second element to position.
+   */
+  background: radial-gradient(
+    ellipse 105% 103% at 50% 49%,
+    var(--tbb-card-wash-from) 0%,
+    var(--tbb-card-wash-to) 100%
+  );
+}
+
+/**
+ * The drink, and the ground it stands on.
+ *
+ * Both are in the one image. `build-design-shots.mjs` trims the drink, fits it
+ * to one height, stands it on one baseline and draws its ground from its own
+ * width — so the shadow is tied to the glass that casts it and cannot drift
+ * from it at any card size. The layer is the frame; there is nothing to place.
+ *
+ * The ground used to be a CSS element carrying the design's own single ellipse.
+ * One fixed ellipse under sixteen drinks of different widths read as a smear
+ * beside the drink rather than as its shadow, which is what it looked like.
+ */
+.shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/**
+ * The name, over the foot of the drink. The design sets Exo Bold 30 on a 54
+ * line in stone; it clamps down here because the catalogue shelf runs the card
+ * narrower than the homepage grid does.
+ */
+.label {
+  position: absolute;
+  /* 44 / 270, 333 / 413 */
+  left: 16.3%;
+  top: 80.63%;
+  right: 6%;
+  margin: 0;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.125rem, 11.1cqw, 1.875rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--tbb-card-label);
+}

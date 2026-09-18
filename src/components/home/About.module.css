@@ -1,135 +1,95 @@
+/**
+ * "WHO ARE WE?", from the homepage design file — which words it the other way
+ * round, and the owner asked for it corrected.
+ *
+ * The heading, and one photograph on a 20 radius with the company in a
+ * sentence across its foot. The design's small wavy mark above the heading is
+ * dropped throughout the page — see `Products.module.css`.
+ *
+ * The design darkens the bottom 201 of
+ * the 647-tall frame to 80% black and sets the sentence in white over it, which
+ * is what carries the type at that size over a lit room.
+ */
+
 .section {
-  background: var(--tbb-paper-warm);
-  padding: var(--tbb-section) 0;
-  overflow: clip;
+  padding: clamp(3rem, 6vw, 5rem) var(--tbb-gutter) clamp(2.5rem, 5vw, 4rem);
 }
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: clamp(2rem, 6vw, 6rem);
-  align-items: center;
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
 }
 
-.copy {
-  max-width: 40ch;
+.head {
+  padding-left: var(--tbb-home-indent);
+  /* 3933 - 3985 */
+  padding-bottom: clamp(1rem, 2.2vw, 1.75rem);
 }
 
+/* Exo Regular 60 on a 70 line. */
 .title {
-  font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  line-height: 1.04;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
-}
-
-.body {
-  margin-top: clamp(1rem, 2.4vw, 1.75rem);
-  color: var(--tbb-ink-soft);
-}
-
-.body + .body {
-  margin-top: 0.9rem;
-}
-
-.stats {
-  margin-top: clamp(1.75rem, 4vw, 2.75rem);
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1.5rem, 4vw, 3rem);
-  border-top: 1px solid var(--tbb-line);
-  padding-top: clamp(1rem, 2vw, 1.5rem);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.statValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.5rem, 2.6vw, 2.5rem);
-  font-weight: 600;
-  line-height: 1;
-}
-
-.cta {
-  margin-top: clamp(1.75rem, 4vw, 2.5rem);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
+  margin: 0 !important;
   color: var(--tbb-ink);
-  text-decoration: none;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid currentColor;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  font-weight: 400 !important;
+  line-height: 1.17 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
 }
 
-.cta:hover {
-  opacity: 0.55;
-}
-
-/* Two plates, offset and overlapping — the composition is the point, so they
-   are placed rather than laid out in a row. */
-.plates {
+.frame {
   position: relative;
-  aspect-ratio: 1 / 0.98;
-}
-
-.plate {
-  position: absolute;
+  /* 1112 x 647 */
+  aspect-ratio: 1112 / 647;
+  min-height: 18rem;
   overflow: hidden;
-  border-radius: 2px;
-  background: var(--tbb-sand);
+  border-radius: var(--tbb-card-radius);
 }
 
-.plateA {
-  left: 0;
-  top: 0;
-  width: 62%;
-  height: 72%;
-}
-
-.plateB {
-  right: 0;
-  bottom: 0;
-  width: 52%;
-  height: 62%;
-  box-shadow: -18px -18px 48px rgba(26, 19, 17, 0.14);
-}
-
-.media {
+.photo {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.05);
+  object-position: center 30%;
 }
 
-/* The parallax wrapper is sized by `inset` alone. Adding height:100% here
-   overrode the bottom edge, leaving a 6% strip of bare plate below the image. */
-.layer {
+/*
+ * The dark foot the sentence sits on: 201 of 647, at 80% black. It is a band
+ * rather than a fade because the design draws it as one, and a fade over a
+ * ceiling full of strip lights loses the type at the top of the band.
+ */
+.foot {
   position: absolute;
-  inset: -6% 0;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  /* 201 / 647 */
+  min-height: 31.07%;
+  padding: clamp(1rem, 2.2vw, 1.75rem) clamp(1.25rem, 3vw, 2.5rem)
+    clamp(1rem, 2.2vw, 1.75rem) clamp(1.25rem, 4vw, 6.375rem);
+  background: rgb(0 0 0 / 0.8);
 }
 
-@media (max-width: 1023px) {
-  .inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2rem, 8vw, 3rem);
+/* Exo Light 30 set solid. */
+.copy {
+  max-width: 68ch;
+  margin: 0 !important;
+  color: var(--tbb-on-dark);
+  font-size: clamp(0.9375rem, 2.5vw, 1.875rem);
+  font-weight: 300;
+  line-height: 1.12 !important;
+}
+
+@media (max-width: 767px) {
+  .frame {
+    aspect-ratio: 4 / 5;
   }
 
-  .plates {
-    order: -1;
-    aspect-ratio: 1 / 0.72;
-    max-width: 34rem;
+  .foot {
+    min-height: 0;
   }
 }

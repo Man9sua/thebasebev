@@ -1,21 +1,38 @@
 import fs from "node:fs";
 
 const productionOrigin = "https://thebasebev.com";
-const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
+const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
 const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
+const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
+const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const expectedSitemapRoutes =
+  29 + glossaryContent.entries.length + blogContent.posts.length;
 
+/*
+ * Numeric character references are decoded generically rather than one by one.
+ * The hand-written list missed `&#x27;` and `&#039;` — the two spellings of an
+ * apostrophe that Next.js and Tilda respectively emit — so every Blog title
+ * with one in it was reported as a mismatch against a string it matched
+ * character for character once decoded.
+ */
 function decodeHtml(value = "") {
   return value
     .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&#x([\da-f]+);/gi, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, decimal) => String.fromCodePoint(Number(decimal)))
+    .replace(/&nbsp;/gi, " ")
     .replace(/&amp;/gi, "&")
-    .replace(/&quot;|&#34;/gi, '"')
-    .replace(/&#39;|&apos;/gi, "'")
-    .replace(/&ndash;|&#8211;/gi, "–")
-    .replace(/&mdash;|&#8212;/gi, "—")
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&ndash;/gi, "–")
+    .replace(/&mdash;/gi, "—")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function all(html, expression) {
+  return [...html.matchAll(expression)].map((match) => decodeHtml(match[1])).filter(Boolean);
 }
 
 function first(html, expression) {
@@ -100,8 +117,21 @@ function normalizeRobots(value) {
   return [...normalized].sort().join(",");
 }
 
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function fetchWithRetry(url, options = {}) {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    const response = await fetch(url, options);
+    const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
+    if (!retryable || attempt === 5) return response;
+    await response.arrayBuffer();
+    await delay(attempt * 1_000);
+  }
+  throw new Error(`Unreachable retry state for ${url}`);
+}
+
 async function fetchSnapshot(origin, route) {
-  const response = await fetch(`${origin}${route === "/" ? "/" : route}`, {
+  const response = await fetchWithRetry(`${origin}${route === "/" ? "/" : route}`, {
     redirect: "manual",
     headers: {
       "User-Agent": "THE-BASE-SEO-Parity-Audit/1.0",
@@ -115,6 +145,7 @@ async function fetchSnapshot(origin, route) {
     title: first(html, /<title[^>]*>([\s\S]*?)<\/title>/i),
     description: meta(html, "description"),
     h1: first(html, /<h1\b[^>]*>([\s\S]*?)<\/h1>/i),
+    h2: all(html, /<h2\b[^>]*>([\s\S]*?)<\/h2>/gi),
     canonical: canonical(html),
     robots: meta(html, "robots"),
     jsonLdTypes: structuredDataTypes(html),
@@ -130,7 +161,7 @@ async function fetchSnapshot(origin, route) {
   };
 }
 
-const sitemapResponse = await fetch(`${targetOrigin}/sitemap.xml`, {
+const sitemapResponse = await fetchWithRetry(`${targetOrigin}/sitemap.xml`, {
   headers: { "User-Agent": "THE-BASE-SEO-Parity-Audit/1.0" },
 });
 const sitemapXml = await sitemapResponse.text();
@@ -139,8 +170,14 @@ const routes = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => 
   return url.pathname !== "/" ? url.pathname.replace(/\/$/, "") : "/";
 });
 
-if (sitemapResponse.status !== 200 || routes.length !== 29 || new Set(routes).size !== 29) {
-  throw new Error(`Expected 29 unique target sitemap URLs, received ${routes.length}.`);
+if (
+  sitemapResponse.status !== 200 ||
+  routes.length !== expectedSitemapRoutes ||
+  new Set(routes).size !== expectedSitemapRoutes
+) {
+  throw new Error(
+    `Expected ${expectedSitemapRoutes} unique target sitemap URLs, received ${routes.length}.`,
+  );
 }
 
 const results = new Array(routes.length);
@@ -149,25 +186,83 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const [production, target] = await Promise.all([
-      fetchSnapshot(productionOrigin, route),
-      fetchSnapshot(targetOrigin, route),
-    ]);
+    const production = await fetchSnapshot(productionOrigin, route);
+    await delay(500);
+    const target = await fetchSnapshot(targetOrigin, route);
     results[index] = { route, production, target };
+    await delay(500);
   }
 }
-await Promise.all(Array.from({ length: 4 }, () => worker()));
+await Promise.all(Array.from({ length: 1 }, () => worker()));
+
+/*
+ * The pages whose production h1 is deliberately not carried over, each named
+ * with production's exact string and the reason. The string is the guard: if
+ * production is ever corrected or redesigned, the entry stops matching and the
+ * route comes back under the ordinary rule instead of staying quietly exempt.
+ */
+const H1_NOT_PRESERVED = new Map([
+  [
+    "/rnd",
+    {
+      h1: "Узнай свою дневную норму за 30 секунд",
+      reason:
+        "production h1 is a stray widget line, deliberately not carried over",
+    },
+  ],
+  [
+    "/",
+    {
+      h1: "Premium Cream Latte Bases",
+      reason:
+        'h1 is the redesign\'s "Premium Powder Bases for Your Business"; ' +
+        "production names one of sixteen products in the homepage headline, " +
+        "and the ranking phrase Premium ... Bases is kept",
+    },
+  ],
+  [
+    "/about-us",
+    {
+      h1: "Who we are",
+      reason:
+        'h1 is the About redesign\'s "We Manufacture High-Quality Customizable ' +
+        'Premix Powders"; production\'s "Who we are" names nothing the page is ' +
+        "found for, and the new line carries the manufacturing wording instead. " +
+        "Declared rather than kept as an h2: the redesign has no such heading, " +
+        "and a hidden one would be an exemption dressed up as markup",
+    },
+  ],
+]);
 
 const criticalFailures = [];
 const warnings = [];
+const declared = [];
 const rows = [];
 
 for (const { route, production, target } of results) {
   const issues = [];
   if (production.status !== 200) issues.push(`production status ${production.status}`);
   if (target.status !== 200) issues.push(`target status ${target.status}`);
-  for (const field of ["title", "description", "h1", "canonical"]) {
+  for (const field of ["title", "description", "canonical"]) {
     if (production[field] !== target[field]) issues.push(`${field} mismatch`);
+  }
+
+  /*
+   * The product pages deliberately lead with the product's name and carry
+   * production's own h1 as the h2 under it — the owner's call, taken knowing
+   * this file is what guards it. So a differing h1 is allowed only while
+   * production's wording is still on the page as a heading. Drop the phrase
+   * altogether and this is a critical failure again.
+   */
+  if (production.h1 !== target.h1) {
+    const exempt = H1_NOT_PRESERVED.get(route);
+    if (exempt && exempt.h1 === production.h1) {
+      declared.push(`${route}: ${exempt.reason}`);
+    } else if (production.h1 && target.h2.includes(production.h1)) {
+      declared.push(`${route}: h1 is now "${target.h1}"; production wording kept as h2`);
+    } else {
+      issues.push("h1 mismatch");
+    }
   }
   if (normalizeRobots(production.robots) !== normalizeRobots(target.robots)) {
     issues.push("robots/indexability mismatch");
@@ -224,6 +319,7 @@ Generated: ${new Date().toISOString()}
 - Target: \`${targetOrigin}\`
 - Canonical public routes: ${routes.length}
 - Critical failures: ${criticalFailures.length}
+- Declared h1 changes: ${declared.length}
 - Non-blocking link/alt observations: ${warnings.length}
 - Preview transport noindex expected: ${previewTarget ? "yes" : "no"}
 
@@ -236,6 +332,16 @@ ${rows.join("\n")}
 ## Critical failures
 
 ${criticalFailures.length ? criticalFailures.map((item) => `- ${item}`).join("\n") : "- None."}
+
+## Declared h1 changes
+
+Product pages lead with the product's name and carry production's wording as
+the h2 under it; the check still fails if that wording leaves the page. Two
+routes are exempt outright and are listed with their reason -- see
+\`H1_NOT_PRESERVED\` in this script. Each exemption names production's exact
+h1, so a change on production ends the exemption rather than hiding behind it.
+
+${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 
 ## Non-blocking observations
 
@@ -250,5 +356,6 @@ if (criticalFailures.length) {
   process.exitCode = 1;
 } else {
   console.log(`SEO parity audit passed for ${routes.length} canonical routes; report written to ${reportPath}.`);
+  if (declared.length) console.log(`${declared.length} declared h1 changes; each is listed with its reason in the report.`);
   if (warnings.length) console.log(`${warnings.length} non-blocking link/alt observations are documented.`);
 }

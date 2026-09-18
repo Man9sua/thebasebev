@@ -1,0 +1,74 @@
+name: Deploy Cloudflare preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: workers.dev environment to deploy
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      EXPECTED_CLOUDFLARE_ACCOUNT_ID: 678720af4dded7d23aad4a859b6e5f3a
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Enforce isolated THE BASE account
+        shell: bash
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "CLOUDFLARE_API_TOKEN is not configured for this GitHub environment."
+            exit 1
+          fi
+          if [ "$CLOUDFLARE_ACCOUNT_ID" != "$EXPECTED_CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Refusing deploy: CLOUDFLARE_ACCOUNT_ID is not the THE BASE mansua account."
+            exit 1
+          fi
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run check:assets
+
+      - name: Deploy staging Worker
+        if: inputs.environment == 'staging'
+        run: npm run deploy:staging
+
+      - name: Deploy production-preview Worker
+        if: inputs.environment == 'production'
+        run: npm run deploy:production-preview
+
+      - name: Verify workers.dev deployment
+        shell: bash
+        env:
+          TARGET_URL: ${{ inputs.environment == 'staging' && 'https://the-base-staging.mansua.workers.dev' || 'https://the-base-production.mansua.workers.dev' }}
+        run: |
+          npm run smoke:http -- "$TARGET_URL"
+          npm run audit:crawlers -- "$TARGET_URL"
+
+# This workflow is manual and can deploy only workers.dev previews in account
+# mansua. wrangler.jsonc contains no route/custom-domain configuration. A real
+# production-domain cutover remains a separate human-approved operation.

@@ -1,370 +1,252 @@
+/**
+ * The hero band, from the homepage design file.
+ *
+ * A photograph 653 tall running the full width under the header, the headline
+ * on its left in the design's purple gradient, and a pill to the shop with a
+ * text link beside it. The
+ * photograph is the same key visual on both widths but framed differently: on a
+ * desktop the drink and the pouch sit to the right of the copy, on a phone they
+ * sit above it, so each width gets the crop the design supplies for it.
+ *
+ * The design puts the headline at x 94 and the pill at x 52. Both start on the
+ * page's shared content column here instead: a 42px step between a headline and
+ * its own button is hand-placement, and every other section on the page begins
+ * at 40.
+ */
+
 .hero {
   position: relative;
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 4vw, 3rem)) 0
-    clamp(2rem, 5vw, 4rem);
-  overflow: clip;
-  /* Paper, not the product colour: the field below is a soft wash so the pack
-     shot stays the brightest, most saturated thing in the frame. */
+  /* The photograph starts at 103 in the design, which is the header's height. */
+  padding-top: var(--tbb-header-h);
   background: var(--tbb-paper);
   isolation: isolate;
 }
 
-/* A soft paper vignette, not a colour halo: the pack shots are pre-composed
-   cards that carry their own background, so tinting the space around them only
-   muddies the edge. This just lifts the centre of the frame. */
-.wash {
+/*
+ * 1200 x 653 in the design, so the height is 54.42% of the width — written as
+ * a height rather than an `aspect-ratio`, because a ratio with a `min-height`
+ * resolves the other way round and inflates the band's own width to match the
+ * height it was floored at: 1200px wide whatever the viewport, which overflowed
+ * the document at 1024 and below.
+ *
+ * The floor keeps the copy in the band on a narrow window, and the ceiling
+ * stops it becoming a 1400px-tall photograph on a wide one.
+ */
+.band {
+  position: relative;
+  height: clamp(30rem, 54.42vw, 45rem);
+  overflow: hidden;
+}
+
+.photo {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The design overscans the frame by 69 on the left and hangs the subject off
+     the right, which is what `right center` reproduces once it is cropped. */
+  object-position: right center;
+  z-index: -2;
+}
+
+/*
+ * The two veils the design lays over the photograph's edges, so neither side
+ * ever shows where the peach field stops. Warm on the left, sand on the right —
+ * the file uses two tones, each sampled from the edge it sits on.
+ */
+.veil {
+  position: absolute;
+  inset-block: 0;
+  /* 179.53 / 1200 */
+  width: 14.96%;
   z-index: -1;
-  left: 50%;
-  top: 50%;
-  width: min(96vw, 78rem);
-  aspect-ratio: 1 / 0.7;
-  transform: translate3d(-50%, -50%, 0);
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    var(--tbb-paper-warm) 0%,
-    rgba(247, 241, 232, 0) 100%
+  pointer-events: none;
+}
+
+.veilLeft {
+  left: 0;
+  background: linear-gradient(
+    270deg,
+    transparent 0%,
+    var(--tbb-hero-veil-warm) 63%
   );
-  opacity: 0.9;
+}
+
+.veilRight {
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--tbb-hero-veil-sand) 63%
+  );
 }
 
 .inner {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
   width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
-  display: grid;
-  /* Equal outer columns so the product sits on the true centre of the frame. */
-  grid-template-columns: 1fr minmax(0, clamp(19rem, 44vw, 46rem)) 1fr;
-  align-items: center;
-  gap: clamp(1rem, 2.5vw, 3rem);
+  max-width: var(--tbb-measure-home);
+  margin-inline: auto;
+  padding-inline: var(--tbb-gutter);
+  /* 74 / 653 — the headline's top inside the band. */
+  padding-top: 11.33%;
+  padding-bottom: clamp(2rem, 4vw, 3rem);
 }
 
-/* ---- left: editorial copy ---- */
-
-.copy {
-  max-width: 26ch;
-}
-
-.category {
-  display: block;
-  margin-bottom: clamp(0.9rem, 2vw, 1.4rem);
-}
-
+/*
+ * Exo Light 62 on a 66 line, in the only gradient the design puts on type.
+ * The clip is progressive: without it the text keeps the solid `color`, which
+ * is the darker of the two stops and reads correctly on its own.
+ */
 .title {
+  /*
+   * 485 wide, which is the box the design gives it — and the reason it is a
+   * width rather than a character count: the headline has to stop before the
+   * drink, and where the drink starts is a share of the frame, not of the type.
+   */
+  max-width: min(100%, 30.3125rem);
+  margin: 0 !important;
+  color: var(--tbb-display-to);
   font-family: var(--tbb-font-display);
-  font-size: clamp(2.5rem, 5vw, 5rem);
-  line-height: 0.94;
-  letter-spacing: -0.025em;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin: 0;
+  font-size: clamp(2.125rem, 5.17vw, 3.875rem);
+  font-weight: 300 !important;
+  line-height: 1.065 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
 }
 
-.titleProduct {
-  display: block;
-  color: var(--product-accent, var(--tbb-accent));
-  transition: color var(--tbb-dur-slow) var(--tbb-ease-inout);
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .title {
+    background: linear-gradient(
+      180deg,
+      var(--tbb-display-from) 0%,
+      var(--tbb-display-to) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
-.description {
-  margin-top: clamp(1rem, 2vw, 1.5rem);
-  color: var(--tbb-ink-soft);
-  max-width: 30ch;
+/*
+ * The pill and the text link beside it, centred on one line. The design puts
+ * the pill at (52, 577) at 223 x 66 and the link at (300, 586) at 210 x 50 —
+ * a 25 gap, and both centred on y 610.
+ */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5625rem;
+  margin-top: auto;
 }
 
+/* 223 x 66, radius 100, Exo Bold 18 on the design's warmest white. */
 .cta {
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.75rem;
-  background: var(--tbb-ink);
-  color: var(--tbb-paper);
+  justify-content: center;
+  min-width: 13.9375rem;
+  padding: 1.0625rem 2.5rem;
+  border-radius: 100px;
+  background: var(--tbb-hero-pill);
+  color: var(--tbb-ink);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1;
   text-decoration: none;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  border-radius: 999px;
   transition:
     transform var(--tbb-dur-fast) var(--tbb-ease),
-    background var(--tbb-dur-fast) var(--tbb-ease);
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .cta:hover {
-  transform: translate3d(0, -2px, 0);
-  background: var(--tbb-ink-soft);
+  transform: translateY(-2px);
+  background: var(--tbb-paper);
 }
 
-.cta svg {
-  width: 14px;
-  height: 14px;
-  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.cta:hover svg {
-  transform: translate3d(4px, 0, 0);
-}
-
-/* ---- centre: the product ---- */
-
-.stage {
-  grid-column: 2;
-  position: relative;
-  aspect-ratio: 1 / 0.95;
-  display: grid;
-  place-items: center;
-}
-
-.slide {
-  grid-area: 1 / 1;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  opacity: 0;
-  transform: scale(0.96);
-  transition:
-    opacity var(--tbb-dur-slow) var(--tbb-ease),
-    transform var(--tbb-dur-slow) var(--tbb-ease);
-  pointer-events: none;
-}
-
-.slideActive {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-}
-
-.shot {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 4px;
-  /* Two shadows: a long cast one for weight, a tight one so the card's edge
-     reads as deliberate against paper rather than as a crop. */
-  filter:
-    drop-shadow(0 52px 72px rgba(26, 19, 17, 0.24))
-    drop-shadow(0 4px 14px rgba(26, 19, 17, 0.13));
-}
-
-/* ---- right: metadata ---- */
-
-.meta {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: clamp(1.25rem, 3vw, 2.25rem);
-  text-align: right;
-}
-
-.price {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.25rem, 1.9vw, 1.75rem);
-  font-weight: 600;
-  line-height: 1;
-}
-
-.metaBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.badges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-/* Product switcher — numbered, quiet, no dots-and-arrows carousel furniture. */
-.switcher {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  align-items: flex-end;
-}
-
-.step {
-  appearance: none;
-  border: 0;
-  background: none;
-  padding: 0.2rem 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  color: var(--tbb-muted);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  font-variant-numeric: tabular-nums;
-  transition: color var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.stepLine {
-  display: block;
-  width: 1.5rem;
-  height: 1px;
-  background: currentColor;
-  transform-origin: left center;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.step:hover {
-  color: var(--tbb-ink);
-}
-
-.stepActive {
-  color: var(--tbb-ink);
-}
-
-.stepActive .stepLine {
-  transform: scaleX(2);
-  background: var(--product-accent, var(--tbb-accent));
-}
-
-.step:focus-visible {
+.cta:focus-visible,
+.aside:focus-visible {
   outline: 2px solid var(--tbb-ink);
   outline-offset: 3px;
 }
 
-/* ---- entrance ----
-   Staged: wash, then product, then copy, then CTA. Every step is
-   opacity+transform only, and each element is laid out in its final position,
-   so nothing reflows and there is no CLS. */
-
-.enter {
-  opacity: 0;
-  transform: translate3d(0, 30px, 0);
+/* Exo Bold 18 in ink, no box of its own — the design draws it as plain text. */
+.aside {
+  color: var(--tbb-ink);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.ready .enter {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 1100ms var(--tbb-ease) var(--enter-delay, 0ms),
-    transform 1100ms var(--tbb-ease) var(--enter-delay, 0ms);
+.aside:hover {
+  border-bottom-color: currentColor;
 }
 
-.enterProduct {
-  opacity: 0;
-  transform: scale(0.94) translate3d(0, 30px, 0);
-}
-
-.ready .enterProduct {
-  opacity: 1;
-  transform: scale(1) translate3d(0, 0, 0);
-  transition:
-    opacity 1400ms var(--tbb-ease) 120ms,
-    transform 1400ms var(--tbb-ease) 120ms;
-}
-
-.wash {
-  opacity: 0;
-}
-
-.ready .wash {
-  opacity: 0.9;
-  transition: opacity 1200ms var(--tbb-ease);
-}
-
-@media (max-width: 1023px) {
-  /* Rebuilt, not squeezed: product first and still dominant, copy under it,
-     metadata folded into a single row. */
-  .hero {
-    align-items: flex-start;
+/*
+ * The phone frame, measured rather than adapted: the photograph is 374 x 670
+ * hung at y 108 in a 360-wide frame, the headline is Exo Light 40/44 at x 44
+ * and y 513, and the pill is 166 x 50 at x 44 and y 677 — so it is 51 clear of
+ * the band's foot, not full width. Every figure here is that geometry as a
+ * share of 360, capped so it stops growing before the layout switches over.
+ */
+@media (max-width: 767px) {
+  /* 670 / 360 */
+  .band {
+    height: clamp(28rem, 186.1vw, 44rem);
   }
 
+  .photo {
+    object-position: center top;
+  }
+
+  /* 44 / 360 */
   .inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.25rem, 4vw, 2rem);
-    justify-items: center;
-    text-align: center;
+    justify-content: flex-end;
+    padding-top: 0;
+    padding-inline: 12.22%;
+    /* 51 / 360, under the pill */
+    padding-bottom: 14.2vw;
   }
 
-  .stage {
-    grid-column: 1;
-    grid-row: 1;
-    width: min(100%, 26rem);
-    /* Keeps the pack shot the largest thing on a small screen. */
-    aspect-ratio: 1 / 0.9;
+  .title {
+    max-width: 100%;
+    /* 40 / 360 */
+    font-size: clamp(1.75rem, 11.11vw, 2.75rem);
   }
 
-  .copy {
-    grid-column: 1;
-    grid-row: 2;
-    max-width: 34ch;
+  .actions {
+    /* 677 - 645, the gap under the headline's last line */
+    margin-top: 8.9vw;
   }
 
-  .description {
-    max-width: none;
+  /* 166 / 360 — sized to itself, not to the band. */
+  .cta {
+    min-width: clamp(10.375rem, 46.1vw, 13.9375rem);
+    padding-inline: 1.75rem;
+    font-size: 0.875rem;
   }
 
-  .meta {
-    grid-column: 1;
-    grid-row: 3;
-    justify-self: center;
-    align-items: center;
-    text-align: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: clamp(1rem, 4vw, 2rem);
+  /* The design's phone frame carries no second link. */
+  .aside {
+    display: none;
   }
 
-  .switcher {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .badges {
-    flex-direction: row;
-    gap: 1rem;
-  }
-
-  .wash {
-    width: 118vw;
-    top: 34%;
+  .veil {
+    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .enter,
-  .enterProduct,
-  .wash {
-    opacity: 1;
-    transform: none;
+  .cta {
+    transition: none;
   }
-
-  .ready .wash {
-    opacity: 0.9;
-  }
-}
-
-/* Copy swap when the hero product changes — the same small drop the
-   Bestsellers copy uses, so both sections speak one motion language. */
-.swap {
-  transition:
-    opacity var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.swapOut {
-  opacity: 0;
-  transform: translate3d(0, 14px, 0);
-}
-
-.titleProduct {
-  transition:
-    opacity 260ms var(--tbb-ease),
-    color var(--tbb-dur-slow) var(--tbb-ease-inout);
 }

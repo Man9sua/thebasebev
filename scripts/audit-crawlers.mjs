@@ -1,4 +1,4 @@
-const baseUrl = new URL(process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev");
+const baseUrl = new URL(process.argv[2] ?? "https://the-base-staging.mansua.workers.dev");
 baseUrl.pathname = "/";
 baseUrl.search = "";
 baseUrl.hash = "";
