@@ -13,6 +13,7 @@
     "smoke:browser": "node scripts/smoke-browser.mjs",
     "audit:commerce": "node scripts/audit-commerce.mjs",
     "audit:leads": "node scripts/audit-leads.mjs",
+    "audit:staging-lead-relay": "node scripts/audit-staging-lead-relay.mjs",
     "test:lead-live": "node scripts/test-lead-live.mjs",
     "audit:crawlers": "node scripts/audit-crawlers.mjs",
     "audit:seo-parity": "node scripts/audit-seo-parity.mjs",
@@ -23,6 +24,7 @@
     "cf:build": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env staging",
+    "deploy:staging-leads": "wrangler deploy --config wrangler.staging-leads.jsonc",
     "deploy:production-preview": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env production"
   },
   "dependencies": {

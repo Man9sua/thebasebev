@@ -5,10 +5,12 @@ import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 /**
  * Server-side proxy from the Next.js clone to the existing Odoo pipeline.
  *
- *   Next.js form → POST /api/leads → LEAD_API_URL (tilda-odoo Worker) → Odoo
+ *   Next.js form → POST /api/leads → LEAD_API_URL (server-side relay) → Odoo
  *
- * The upstream Worker is production infrastructure serving live Tilda traffic;
- * it is never modified from here, and its URL never reaches the browser.
+ * `LEAD_API_URL` is server-only and never reaches the browser. Staging uses a
+ * dedicated relay so delivery only succeeds when the Odoo webhook confirms it.
+ * Production may continue using its existing Tilda relay until a separately
+ * approved migration.
  */
 
 const FORWARD_TIMEOUT_MS = 10_000;
