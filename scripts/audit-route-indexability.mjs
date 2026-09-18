@@ -6,6 +6,8 @@ const siteSource = fs.readFileSync("src/lib/site-pages.ts", "utf8");
 const nextConfig = fs.readFileSync("next.config.ts", "utf8");
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const glossaryRoutes = glossaryContent.entries.map((entry) => entry.path);
+const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const blogRoutes = blogContent.posts.map((post) => post.path);
 
 function block(source, start, end) {
   const startIndex = source.indexOf(start);
@@ -22,7 +24,12 @@ const productBlock = block(siteSource, "const tildaProductPaths = [", "const exp
 const productSlugs = [...productBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
 const pageFileBlock = block(siteSource, "const allPageFiles = [", "] as const;");
 const pageFiles = [...pageFileBlock.matchAll(/"(page\d+\.html)"/g)].map((match) => match[1]);
-const redirectRows = [...nextConfig.matchAll(/\{ source: "([^"]+)", destination: "([^"]+)", statusCode: 301 \}/g)].map(
+// Whitespace-tolerant: the Blog's three legacy-slug redirects are too long to
+// sit on one line, and a redirect this audit cannot see is a redirect nothing
+// checks.
+const redirectRows = [...nextConfig.matchAll(
+  /\{\s*source:\s*"([^"]+)",\s*destination:\s*"([^"]+)",\s*statusCode:\s*301,?\s*\}/g,
+)].map(
   (match) => ({ route: match[1], destination: match[2] }),
 );
 
@@ -46,6 +53,15 @@ const controlledRoutes = [
     canonical: true,
     sitemap: true,
     reason: "Published production Glossary article preserved at its canonical path",
+  })),
+  ...blogRoutes.map((route) => ({
+    route,
+    type: "blog article",
+    expectedStatus: 200,
+    indexable: true,
+    canonical: true,
+    sitemap: true,
+    reason: "Published production Blog article preserved at its canonical path",
   })),
   ...pageFiles.map((file) => ({
     route: `/${file}`,
@@ -146,13 +162,39 @@ if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.leng
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
   );
 }
-const expectedControlledRoutes = 113 + glossaryRoutes.length;
+const expectedControlledRoutes = 113 + glossaryRoutes.length + blogRoutes.length;
 if (controlledRoutes.length !== expectedControlledRoutes) {
   throw new Error(
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
   );
 }
-if (redirectRows.length !== 6) throw new Error(`Expected six redirects, received ${redirectRows.length}.`);
+if (redirectRows.length !== 9) throw new Error(`Expected nine redirects, received ${redirectRows.length}.`);
+
+/*
+ * `worker.ts` restates the redirect table because its static fast path answers
+ * document requests itself and never reaches the Next router — a redirect
+ * declared only in `next.config.ts` works under `next start` and 404s on
+ * Cloudflare. The duplication is allowed; drifting apart is not.
+ */
+const workerSource = fs.readFileSync("worker.ts", "utf8");
+const workerRedirectBlock = block(workerSource, "const PERMANENT_REDIRECTS = new Map([", "]);");
+const workerRedirects = new Map(
+  [...workerRedirectBlock.matchAll(/\[\s*"([^"]+)",\s*"([^"]+)",?\s*\]/g)].map((match) => [
+    match[1],
+    match[2],
+  ]),
+);
+const redirectDrift = [
+  ...redirectRows
+    .filter((row) => workerRedirects.get(row.route) !== row.destination)
+    .map((row) => `next.config.ts has ${row.route} -> ${row.destination}, worker.ts does not`),
+  ...[...workerRedirects]
+    .filter(([route]) => !redirectRows.some((row) => row.route === route))
+    .map(([route]) => `worker.ts has ${route}, next.config.ts does not`),
+];
+if (redirectDrift.length) {
+  throw new Error(`Redirect tables disagree:\n- ${redirectDrift.join("\n- ")}`);
+}
 
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
@@ -177,7 +219,7 @@ const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
-const expectedSitemapRoutes = 29 + glossaryRoutes.length;
+const expectedSitemapRoutes = 29 + glossaryRoutes.length + blogRoutes.length;
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== expectedSitemapRoutes) {
   throw new Error(
     `Expected HTTP 200 with ${expectedSitemapRoutes} target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,

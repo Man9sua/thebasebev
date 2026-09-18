@@ -194,28 +194,28 @@ try {
     "home: the distributor form is missing one of its three fields",
   );
 
-  // The footer wordmark must fit. It was sized in `vw`, which includes the
-  // scrollbar, so the final E ran off the right edge on desktop only.
+  // The footer closes on the brand lockup — it used to be the word BASE set in
+  // the display face, and the check that it fits stays: the word was sized in
+  // `vw`, which includes the scrollbar, and its final E ran off the right edge
+  // on desktop only. The mark is capped at 44rem, so the share it takes of a
+  // wide viewport is about a half rather than the word's four fifths.
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(900);
-  const wordmark = await page.evaluate(() => {
-    const el = [...document.querySelectorAll("footer *")]
-      .find((e) => e.textContent.trim() === "BASE" && e.children.length === 0);
+  const closingMark = await page.evaluate(() => {
+    const el = document.querySelector("footer svg[data-brand-logo]");
     if (!el) return null;
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const box = range.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
     const cw = document.documentElement.clientWidth;
     return { left: box.left, right: box.right, cw, share: box.width / cw };
   });
-  check(!!wordmark, "footer: BASE wordmark not found");
+  check(!!closingMark, "footer: brand lockup not found");
   check(
-    !!wordmark && wordmark.left >= -2 && wordmark.right <= wordmark.cw + 2,
-    `footer: BASE wordmark overflows (${Math.round(wordmark?.left ?? 0)}..${Math.round(wordmark?.right ?? 0)} of ${wordmark?.cw})`,
+    !!closingMark && closingMark.left >= -2 && closingMark.right <= closingMark.cw + 2,
+    `footer: brand lockup overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
   );
   check(
-    !!wordmark && wordmark.share > 0.7,
-    "footer: BASE wordmark should span most of the width",
+    !!closingMark && closingMark.share > 0.4,
+    `footer: brand lockup should close the page at scale (share ${closingMark?.share?.toFixed(2)})`,
   );
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),

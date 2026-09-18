@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { BLOG_POSTS } from "@/data/blog";
 import { getProduct } from "@/data/products";
 import legacyImageVariants from "@/data/legacy-image-variants.json";
 import catalogTilesJson from "@/data/catalog-tiles.json";
@@ -550,6 +551,54 @@ function dropTemplateDebris(source: string, file: string) {
 }
 
 /**
+ * Tilda destinations that stopped existing when Tilda did, by exported page.
+ *
+ * `/wholesale-strategy` opens on two buttons that were wired to Tilda's cart
+ * (`#order:…`) and to a popup record (`#become-partner`). Neither is on the
+ * migrated page, so both were doing nothing at all. They ask the same question
+ * the contact page answers, and that is where they point now — the same
+ * correction, for the same reason, that `DistributorsPage` makes to the one CTA
+ * inside its preserved hero.
+ *
+ * The export on disk is the parity reference and stays as exported; this is a
+ * rewrite of the served markup only.
+ */
+const RETARGETED_LINKS: Record<string, readonly [string, string][]> = {
+  // /wholesale-strategy
+  "page147468696.html": [
+    ["#order:Request Sample=0", "/contacts"],
+    ["#become-partner", "/contacts"],
+  ],
+};
+
+function retargetDeadLinks(source: string, file: string) {
+  return (RETARGETED_LINKS[file] ?? []).reduce(
+    (value, [from, to]) => value.replaceAll(`href="${from}"`, `href="${to}"`),
+    source,
+  );
+}
+
+/**
+ * Blog links inside the export, pointed at the paths this site serves.
+ *
+ * Tilda routes a `/tpost/` URL on the post id alone and ignores the slug after
+ * it, so a link written when an article had a different title keeps working
+ * there for ever. Next.js does not work that way: every route is generated,
+ * and an old spelling is a 404. `/resources` carries three of them, in the
+ * three-card "Our news" block, and they are the reason those cards led nowhere.
+ *
+ * Rewritten here rather than listed as redirects so the reader never takes the
+ * extra hop; `next.config.ts` still redirects the same three URLs, for links
+ * that were indexed or shared before the migration.
+ */
+function relinkBlogPosts(source: string) {
+  return source.replace(/\/tpost\/([a-z0-9]+)-[a-z0-9-]+/gi, (match, uid: string) => {
+    const post = BLOG_POSTS.find((candidate) => candidate.uid === uid);
+    return post ? post.path : match;
+  });
+}
+
+/**
  * Drop every block on a product page that React now renders itself.
  *
  * All of them are Tilda "zero blocks": the hero, the four figures, the
@@ -843,6 +892,8 @@ export function getSitePage(route: string): SitePage | undefined {
     removeLegacyAnalyticsRuntime,
     (value) => dropReplacedRecords(value, definition.file),
     (value) => dropTemplateDebris(value, definition.file),
+    (value) => retargetDeadLinks(value, definition.file),
+    relinkBlogPosts,
     (value) => normalizeContentLandmarks(value, definition.file),
     (value) => stabilizeCatalogRuntime(value, definition.file),
     deferLegacyImages,

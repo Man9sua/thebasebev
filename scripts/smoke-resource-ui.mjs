@@ -119,13 +119,38 @@ async function auditViewport(browser, viewport) {
     await open(homePage, "/");
     const homePresent = (await homePage.locator("[data-hero]").count()) === 1;
     check(homePresent, `${label}: homepage missing during the blog-link audit`);
-    // The reading rail went with the redesign; the assertion stays so a link to
-    // the removed Blog index cannot reappear on the homepage by another route.
+    /*
+     * The Blog index used to be an empty Tilda feed container — the posts were
+     * fetched in the browser from Tilda and never arrived here — so this
+     * asserted that nothing linked to it. The thirty posts are in the
+     * repository now and the page renders them, so the assertion is the other
+     * way round: the footer's link must be there, and it must reach a shelf
+     * with articles on it.
+     */
     check(
-      (await homePage.locator('a[href="/resources/blog"]').count()) === 0,
-      `${label}: a link to the removed Blog index is back on the homepage`,
+      (await homePage.locator('a[href="/resources/blog"]').count()) > 0,
+      `${label}: the homepage no longer links to the Blog index`,
     );
     await homePage.close();
+
+    const blogPage = await browser.newPage({ viewport });
+    await open(blogPage, "/resources/blog");
+    const posts = await blogPage.locator("[data-blog-post]").count();
+    check(posts >= 10, `${label}: the Blog index rendered ${posts} articles`);
+    const firstPost = await blogPage
+      .locator("[data-blog-post]")
+      .first()
+      .getAttribute("href");
+    check(
+      Boolean(firstPost?.startsWith("/tpost/")),
+      `${label}: the Blog's first card points at ${firstPost}`,
+    );
+    await open(blogPage, firstPost ?? "/resources/blog");
+    check(
+      (await blogPage.locator("[data-blog-article-body] p").count()) > 3,
+      `${label}: the Blog article body is empty at ${firstPost}`,
+    );
+    await blogPage.close();
   }
 
   check(pageErrors.length === 0, `${label}: page errors: ${pageErrors.join(" | ")}`);

@@ -7,7 +7,8 @@ const productionTarget = ["thebasebev.com", "www.thebasebev.com"].includes(
   targetUrl.hostname.toLowerCase(),
 );
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
-const expectedSitemapUrls = 29 + glossaryContent.entries.length;
+const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const expectedSitemapUrls = 29 + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
   "/",
@@ -57,6 +58,20 @@ const redirects = new Map([
   ["/raf-cofee", "/raf-coffee"],
   ["/functional-wellness", "/catalog"],
   ["/cabinet", "/"],
+  // Blog posts renamed after publication — Tilda resolved both spellings on
+  // the post id; every route here is generated, so the old one needs saying.
+  [
+    "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
+    "/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi",
+  ],
+  [
+    "/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb",
+    "/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush",
+  ],
+  [
+    "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
+    "/tpost/eljzud0n91-one-sku-two-builds-30-seconds",
+  ],
 ]);
 
 const failures = [];

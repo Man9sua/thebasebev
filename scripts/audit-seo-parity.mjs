@@ -5,17 +5,28 @@ const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.worker
 const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
-const expectedSitemapRoutes = 29 + glossaryContent.entries.length;
+const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const expectedSitemapRoutes =
+  29 + glossaryContent.entries.length + blogContent.posts.length;
 
+/*
+ * Numeric character references are decoded generically rather than one by one.
+ * The hand-written list missed `&#x27;` and `&#039;` — the two spellings of an
+ * apostrophe that Next.js and Tilda respectively emit — so every Blog title
+ * with one in it was reported as a mismatch against a string it matched
+ * character for character once decoded.
+ */
 function decodeHtml(value = "") {
   return value
     .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&#x([\da-f]+);/gi, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, decimal) => String.fromCodePoint(Number(decimal)))
+    .replace(/&nbsp;/gi, " ")
     .replace(/&amp;/gi, "&")
-    .replace(/&quot;|&#34;/gi, '"')
-    .replace(/&#39;|&apos;/gi, "'")
-    .replace(/&ndash;|&#8211;/gi, "–")
-    .replace(/&mdash;|&#8212;/gi, "—")
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&ndash;/gi, "–")
+    .replace(/&mdash;/gi, "—")
     .replace(/\s+/g, " ")
     .trim();
 }

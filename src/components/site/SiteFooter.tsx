@@ -1,3 +1,4 @@
+import { BrandLogo } from "@/components/site/BrandLogo";
 import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY, FOOTER_LINKS, SOCIAL_LINKS } from "@/lib/site-config";
 import styles from "./SiteFooter.module.css";
@@ -47,10 +48,11 @@ function SocialIcon({ label }: { label: string }) {
 /**
  * Global footer.
  *
- * Information top-left, then the wordmark as the closing statement: BASE sized
- * off viewport width so it spans the full footer at any breakpoint, and clipped
- * at the baseline rather than fitted, so it reads as a crop instead of a logo
- * that happens to be large.
+ * Information top-left, then the brand lockup as the closing statement, set to
+ * the full width of the footer at every breakpoint. It used to be the word
+ * BASE on its own, set in the display face and cropped at the baseline; the
+ * owner asked for the real mark, so the mark is what closes the page — the
+ * same asset the header carries, at the scale the word had.
  *
  * Contacts and social accounts are the real ones from the existing site.
  */
@@ -145,7 +147,7 @@ export function SiteFooter() {
         </div>
 
         <div className={styles.wordmarkWrap} aria-hidden="true">
-          <p className={styles.wordmark}>BASE</p>
+          <BrandLogo className={styles.wordmark} />
         </div>
       </div>
     </footer>

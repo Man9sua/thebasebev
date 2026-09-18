@@ -95,6 +95,26 @@
   .head {
     padding-left: 0;
   }
+
+  /*
+   * On a phone the pair takes the whole line under the heading and sits
+   * centred on it. At the pill's own 2.25rem of side padding the two do not
+   * fit across 375 and wrapped into a left-aligned stack, which read as two
+   * unrelated buttons; the padding and the type come down just enough to keep
+   * them a pair on one line.
+   */
+  .actions {
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .actions :global(.tbb-pill) {
+    min-height: 2.75rem;
+    padding-inline: 1.1rem;
+    font-size: 0.8125rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

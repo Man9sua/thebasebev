@@ -11,6 +11,8 @@ import { ContactPage } from "@/components/contact/ContactPage";
 import { HomePage } from "@/components/home/HomePage";
 import { LegacyDocument } from "@/components/legacy/LegacyDocument";
 import { LegacyPageShell } from "@/components/legacy/LegacyPageShell";
+import { BlogArticlePage } from "@/components/resources/BlogArticlePage";
+import { BlogPage } from "@/components/resources/BlogPage";
 import { GlossaryArticlePage } from "@/components/resources/GlossaryArticlePage";
 import { GlossaryPage } from "@/components/resources/GlossaryPage";
 import { ToolsPage } from "@/components/resources/ToolsPage";
@@ -21,6 +23,7 @@ import { PageIntro } from "@/components/site/PageIntro";
 import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SitemapPage } from "@/components/sitemap/SitemapPage";
+import { ThankYouPage } from "@/components/thanks/ThankYouPage";
 import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
 import {
@@ -29,6 +32,12 @@ import {
   getRelatedGlossaryEntries,
   type GlossaryEntry,
 } from "@/data/glossary";
+import {
+  BLOG_POSTS,
+  findBlogPostByPath,
+  getRelatedBlogPosts,
+  type BlogPost,
+} from "@/data/blog";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 import {
   getSitePage,
@@ -48,11 +57,11 @@ type RouteProps = {
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  const glossaryParams = GLOSSARY_ENTRIES.map(({ path }) => ({
+  const articleParams = [...GLOSSARY_ENTRIES, ...BLOG_POSTS].map(({ path }) => ({
     path: path.replace(/^\//, "").split("/"),
   }));
 
-  return [...getStaticSiteParams(), ...glossaryParams];
+  return [...getStaticSiteParams(), ...articleParams];
 }
 
 function glossaryMetadata(entry: GlossaryEntry): Metadata {
@@ -89,10 +98,59 @@ function glossaryMetadata(entry: GlossaryEntry): Metadata {
   };
 }
 
+/**
+ * A Blog article's metadata, against production's own contract for these URLs.
+ *
+ * Two things here are deliberate and look wrong at a glance. The type is
+ * `website`, not `article` — Tilda publishes every `/tpost/` page that way and
+ * parity is the rule during migration, exactly as the Glossary entries above
+ * do. And the `og:image` is this site's own copy of the cover rather than the
+ * `static.tildacdn.com` URL production points at: the image has to be served
+ * from the canonical host, which is what `audit:seo-parity` checks and what
+ * stops the migrated site depending on Tilda for a share card.
+ */
+function blogMetadata(post: BlogPost): Metadata {
+  const title = post.seo.title || post.title;
+  const description = post.seo.description || post.excerpt || undefined;
+  const canonical = post.seo.canonical || `${SITE_ORIGIN}${post.path}`;
+  const image = post.cover ? `${SITE_ORIGIN}${post.cover.src}` : "";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+      languages: {
+        en: canonical,
+        "x-default": canonical,
+      },
+    },
+    robots: { index: true, follow: true },
+    openGraph: {
+      type: "website",
+      url: canonical,
+      title: post.seo.openGraphTitle || title,
+      description: post.seo.openGraphDescription || description,
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@thebasebev",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+    authors: [{ name: "The Base Beverage LLC" }],
+  };
+}
+
 export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
   const route = normalizeSitePath((await params).path);
   const glossaryEntry = findGlossaryEntryByPath(route);
   if (glossaryEntry) return glossaryMetadata(glossaryEntry);
+
+  const blogPost = findBlogPostByPath(route);
+  if (blogPost) return blogMetadata(blogPost);
 
   const page = getSitePage(route);
   if (!page) return {};
@@ -161,6 +219,17 @@ export default async function SiteRoute({ params }: RouteProps) {
     );
   }
 
+  const blogPost = findBlogPostByPath(route);
+  if (blogPost) {
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <BlogArticlePage post={blogPost} relatedPosts={getRelatedBlogPosts(blogPost)} />
+        <SiteFooter />
+      </div>
+    );
+  }
+
   const page = getSitePage(route);
   if (!page) notFound();
 
@@ -222,6 +291,29 @@ export default async function SiteRoute({ params }: RouteProps) {
     );
   }
 
+  // Where every lead form lands. React, and deliberately small — see the note
+  // in the component for what the exported version was doing on a phone. The
+  // export's Organization graph is carried over: it is the site-wide one, on
+  // every page including this one, and dropping it here would make this the
+  // only route without it.
+  if (route === "/thank-you-form") {
+    const structuredData = getLegacyStructuredData(page.file);
+    return (
+      <div className="tbb">
+        {structuredData.map((block, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: block }}
+          />
+        ))}
+        <SiteHeader />
+        <ThankYouPage />
+        <SiteFooter />
+      </div>
+    );
+  }
+
   if (route === "/resources/tools") {
     const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261"]);
     return (
@@ -234,7 +326,7 @@ export default async function SiteRoute({ params }: RouteProps) {
     );
   }
 
-  if (route === "/resources/glossary") {
+  if (route === "/resources/glossary" || route === "/resources/blog") {
     const structuredData = getLegacyStructuredData(page.file);
     return (
       <div className="tbb">
@@ -246,7 +338,7 @@ export default async function SiteRoute({ params }: RouteProps) {
           />
         ))}
         <SiteHeader />
-        <GlossaryPage />
+        {route === "/resources/blog" ? <BlogPage /> : <GlossaryPage />}
         <SiteFooter />
       </div>
     );

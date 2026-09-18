@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useCart } from "@/components/cart/useCart";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { SiteLink } from "@/components/site/SiteLink";
@@ -37,6 +37,73 @@ function SearchIcon() {
   );
 }
 
+/** `rgb()` / `rgba()` as computed by the browser, to three channels. */
+function parseColor(value: string) {
+  const parts = value.match(/[\d.]+/g);
+  if (!parts || parts.length < 3) return null;
+  const [red, green, blue] = parts.map(Number);
+  const alpha = parts.length > 3 ? Number(parts[3]) : 1;
+  return alpha < 0.5 ? null : { red, green, blue };
+}
+
+/** Rec. 709 luma, which is all the bar needs to pick ink or paper. */
+function isDarkColor({ red, green, blue }: { red: number; green: number; blue: number }) {
+  return (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255 < 0.5;
+}
+
+/**
+ * What an element actually paints, if anything.
+ *
+ * `background-color` is the usual answer, but several surfaces here are
+ * gradients — the distributors hero, the Blog's own head — and a gradient
+ * leaves `background-color` transparent. Computed styles normalise gradient
+ * stops to `rgb()`, so the first stop is readable straight out of the image
+ * string, and the first stop is the end of the gradient the bar sits on.
+ */
+function paintedColor(style: CSSStyleDeclaration) {
+  const background = parseColor(style.backgroundColor);
+  if (background) return background;
+
+  const image = style.backgroundImage;
+  if (image && image.includes("gradient")) {
+    const stop = image.match(/rgba?\([^)]*\)/);
+    if (stop) return parseColor(stop[0]);
+  }
+
+  return null;
+}
+
+/**
+ * The colour of the page directly under the bar.
+ *
+ * Read off the document rather than declared per section: every route on this
+ * site is some mix of React surfaces and injected export markup, and asking
+ * each of them to announce its own paper would mean maintaining that list for
+ * ever. A point just below the bar, then up the ancestor chain to the first
+ * element that actually paints something — that is what the eye does too.
+ *
+ * Only a band the width of the page counts. A button, a chip or a card under
+ * the sampling point is an object sitting on the surface, not the surface: the
+ * first version of this took the black "Request a sample" pill on the homepage
+ * and turned the whole bar black for the height of one button.
+ */
+function surfaceUnderBar(barHeight: number) {
+  const x = Math.round(window.innerWidth / 2);
+  const y = barHeight + 2;
+  const fullWidth = window.innerWidth * 0.9;
+  let node = document.elementFromPoint(x, y);
+
+  while (node) {
+    if (node.getBoundingClientRect().width >= fullWidth) {
+      const color = paintedColor(getComputedStyle(node));
+      if (color) return color;
+    }
+    node = node.parentElement;
+  }
+
+  return null;
+}
+
 export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   const pathname = usePathname();
   const [pastHero, setPastHero] = useState(false);
@@ -52,6 +119,9 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
     : "Cart";
   // Set while a section that declares itself dark sits under the bar.
   const [onDark, setOnDark] = useState(false);
+  // The sampled colour of whatever is under the bar, and whether it is dark.
+  const [surface, setSurface] = useState<string | null>(null);
+  const [surfaceDark, setSurfaceDark] = useState(false);
   const barRef = useRef<HTMLElement>(null);
 
   /**
@@ -119,6 +189,49 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
     };
   }, [pathname]);
 
+  /**
+   * Chameleon: the bar takes the colour of the page it is currently over.
+   *
+   * The plate used to be white on every route, which is right on the paper
+   * pages and wrong everywhere else — a white slab laid across the top of a
+   * beige article or a grey band. Sampling costs one `elementFromPoint` and a
+   * short walk up the tree per animation frame, throttled to one sample per
+   * frame, and the plate's own 620ms colour transition does the rest.
+   *
+   * Skipped while an overlay is open: the menu and the search own the whole
+   * screen, so the bar follows them rather than the page underneath.
+   */
+  useEffect(() => {
+    if (menuOpen || searchOpen) return;
+
+    let frame = 0;
+
+    const sample = () => {
+      frame = 0;
+      const color = surfaceUnderBar(barRef.current?.offsetHeight ?? 0);
+      if (!color) return;
+      setSurface(`rgb(${color.red}, ${color.green}, ${color.blue})`);
+      setSurfaceDark(isDarkColor(color));
+    };
+
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(sample);
+    };
+
+    sample();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [menuOpen, pathname, searchOpen]);
+
+  // A section may declare itself dark even when its top strip is not; the
+  // sampled colour catches everything that does not.
+  const dark = onDark || surfaceDark;
+
   // Cart state is native and shared across every route. Empty means catalogue;
   // a populated cart means the dedicated review/checkout page.
   return (
@@ -130,12 +243,19 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
           solid || menuOpen || searchOpen ? styles.solid : "",
           // An open overlay owns the whole screen, so the bar follows it
           // rather than whatever section happens to be underneath.
-          onDark && !menuOpen && !searchOpen ? styles.inverted : "",
+          dark && !menuOpen && !searchOpen ? styles.inverted : "",
           menuOpen ? styles.open : "",
         ]
           .filter(Boolean)
           .join(" ")}
-        data-header-theme={onDark ? "dark" : solid ? "light" : "hero"}
+        // Null until the first sample, so the server and the first client
+        // render agree and hydration stays quiet.
+        style={
+          surface && !menuOpen && !searchOpen
+            ? ({ "--tbb-header-surface": surface } as CSSProperties)
+            : undefined
+        }
+        data-header-theme={dark ? "dark" : solid ? "light" : "hero"}
       >
         {/* Original Tilda paths, inlined so the small `the` mark can inherit
             the animated header colour without recolouring the red block. */}

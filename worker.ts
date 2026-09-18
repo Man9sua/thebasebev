@@ -16,6 +16,18 @@ type WorkerExecutionContext = {
 };
 
 const PRODUCTION_HOSTS = new Set(["thebasebev.com", "www.thebasebev.com"]);
+
+/**
+ * The same redirects `next.config.ts` declares, restated.
+ *
+ * The fast path below answers every document request itself and falls back to
+ * its own 404 page rather than to the OpenNext worker, so a redirect that only
+ * exists in the Next config is never reached — it 404s in production and works
+ * in `next start`, which is the worst way for a redirect to be wrong.
+ *
+ * The duplication is deliberate and it is checked: `audit:route-indexability`
+ * reads both lists and fails if they disagree, so this cannot quietly drift.
+ */
 const PERMANENT_REDIRECTS = new Map([
   ["/page65953477.html", "/"],
   ["/page65953593.html", "/"],
@@ -23,6 +35,18 @@ const PERMANENT_REDIRECTS = new Map([
   ["/raf-cofee", "/raf-coffee"],
   ["/functional-wellness", "/catalog"],
   ["/cabinet", "/"],
+  [
+    "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
+    "/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi",
+  ],
+  [
+    "/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb",
+    "/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush",
+  ],
+  [
+    "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
+    "/tpost/eljzud0n91-one-sku-two-builds-30-seconds",
+  ],
 ]);
 
 function normalizePathname(pathname: string) {

@@ -1,6 +1,6 @@
 # Route indexability audit
 
-Generated: 2026-09-16T11:52:57.984Z
+Generated: 2026-09-18T10:27:23.830Z
 
 Target: `https://the-base-staging.mansua.workers.dev`
 
@@ -10,11 +10,11 @@ Target: `https://the-base-staging.mansua.workers.dev`
 - Direct `pageNNNN.html` compatibility aliases: 41.
 - Tilda product compatibility aliases: 26.
 - Technical/metadata/API routes: 8.
-- **Controlled route total: 214.**
-- Permanent redirects (not generated pages): 6.
-- Sitemap members: 130.
+- **Controlled route total: 244.**
+- Permanent redirects (not generated pages): 9.
+- Sitemap members: 160.
 
-The 214 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The 244 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
 
 ## Generated and technical routes
 
@@ -159,6 +159,36 @@ The 214 controlled routes explain why the application can generate far more outp
 | `/tpost/xzxdy5f1a1-odm` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
 | `/tpost/1mbozzget1-premix` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
 | `/tpost/tfm5mybkl1-matcha` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
+| `/tpost/ybiotcu9u1-uji-to-warehouse-3-days-reimagined` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/npt03s0tk1-one-po-replaces-the-multi-vendor-trap` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/41vzdz3fe1-raf-coffees-recipe-isnt-ready-to-travel` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/hclad45n81-the-hidden-25-milk-write-off` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/t9hu3f5sc1-four-ingredients-one-sachet` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/k41tekps91-the-steam-wand-is-your-stores-slowest-li` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/oyyu1yzg51-iced-tea-at-scale-is-chemistry-not-brewi` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/mlnjd0nkc1-milkshakes-minus-the-freezer-capex` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/4yz7sltlh1-hot-chocolate-deserves-better-than-syrup` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/4il1j7j341-the-matcha-shortage-wont-fix-itself` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/0eusjcbmx1-booming-cities-one-missing-barista` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/16zfdzkzm1-building-to-the-worlds-toughest-rule` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/ldfe553tl1-one-market-deserves-one-formula` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/81f0isabh1-one-gate-two-filters-cleared-at-entry` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/ltsjdhf7k1-halal-isnt-just-meat-its-paperwork-too` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/oksy2day21-beverage-chains-cashier-mindsets` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/y51pjdevp1-cheap-sticker-costly-certification` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/0vchtbg4i1-one-certified-base-ends-the-scramble` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/9n8pjd70g1-cold-foam-went-viral-labor-didnt-keep-up` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/n6xt2fxuy1-ship-it-dry-not-wet` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/2gm1lf3b91-encapsulation-keeps-flavor-alive-18-mont` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/19v1azct91-brix-variance-is-a-governance-failure` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/r1je7ivvv1-45-seconds-the-handoff-window-rules-the` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/kjnji32hz1-baristas-leave-the-recipe-shouldnt` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/edh081ze31-per-cup-soluble-ends-the-matcha-workarou` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/eljzud0n91-one-sku-two-builds-30-seconds` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/501pcdanj1-14-days-not-120-vertical-integration-win` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
+| `/tpost/251dndgsb1-the-karak-tea-profit-playbook` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
 | `/page114743626.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
 | `/page114837666.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
 | `/page115314536.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
@@ -245,6 +275,9 @@ The 214 controlled routes explain why the application can generate far more outp
 | `/raf-cofee` | 301 | `/raf-coffee` | `/raf-coffee` | PASS |
 | `/functional-wellness` | 301 | `/catalog` | `/catalog` | PASS |
 | `/cabinet` | 301 | `/` | `/` | PASS |
+| `/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we` | 301 | `/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi` | `/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi` | PASS |
+| `/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb` | 301 | `/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush` | `/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush` | PASS |
+| `/tpost/eljzud0n91-karak-and-masala-are-different-builds-on` | 301 | `/tpost/eljzud0n91-one-sku-two-builds-30-seconds` | `/tpost/eljzud0n91-one-sku-two-builds-30-seconds` | PASS |
 
 ## Result
 

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { BLOG_POSTS } from "@/data/blog";
 import { GLOSSARY_ENTRIES } from "@/data/glossary";
 import { SITE_ORIGIN, sitemapRoutes } from "@/lib/site-pages";
 
@@ -57,5 +58,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: `${entry.published}T00:00:00.000Z`,
   }));
 
-  return [...publicPages, ...glossaryArticles];
+  const blogArticles = BLOG_POSTS.map((post) => ({
+    url: `${SITE_ORIGIN}${post.path}`,
+    lastModified: `${post.published}T00:00:00.000Z`,
+  }));
+
+  return [...publicPages, ...glossaryArticles, ...blogArticles];
 }

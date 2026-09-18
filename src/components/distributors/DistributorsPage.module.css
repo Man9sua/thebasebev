@@ -22,6 +22,24 @@
   background: var(--tbb-paper);
 }
 
+/*
+ * The one thing here that does reach into the hero.
+ *
+ * On desktop the export centres that record's content in a 640–900 tall box,
+ * so the fixed bar floats over empty gradient. Below 900 the export switches
+ * it to a column with `padding: 28px 0 0` — and 28 is less than half the bar,
+ * so the page opened with its own `h1` behind the header and no way to scroll
+ * up to it, since the hero is already at the top of the document.
+ *
+ * Reached through `:global` because the hero is injected markup and its class
+ * is the export's, not this module's. Only the top inset is touched.
+ */
+@media (max-width: 900px) {
+  .page :global(.dsth) {
+    padding-top: calc(var(--tbb-header-h) + 1.75rem);
+  }
+}
+
 .inner {
   width: 100%;
   max-width: var(--tbb-measure-wide);

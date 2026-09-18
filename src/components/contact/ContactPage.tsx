@@ -1,3 +1,4 @@
+import { PageAnchor } from "@/components/site/PageAnchor";
 import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY } from "@/lib/site-config";
 import styles from "./ContactPage.module.css";
@@ -28,9 +29,9 @@ export function ContactPage() {
               distributors and private-label partners. Tell us the product, market and
               volume — we will route the brief to the right team.
             </p>
-            <a href="#contact-form" className={styles.heroCta}>
+            <PageAnchor route="/contacts" target="contact-form" className={styles.heroCta}>
               Start a conversation <span aria-hidden="true">↓</span>
-            </a>
+            </PageAnchor>
           </div>
           <p className={styles.heroWord} aria-hidden="true">
             CONTACT

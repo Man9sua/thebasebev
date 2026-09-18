@@ -54,6 +54,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={exo2.variable} suppressHydrationWarning>
       <head>
+        {/*
+          The exported pages reference their assets relatively — `images/…`,
+          `css/…` — and four routes are nested (`/resources/blog`,
+          `/resources/glossary`, `/resources/tools`, `/catalog/tproduct/…`),
+          where a relative path would resolve one directory too deep. This is
+          what keeps them resolving from the root.
+
+          The cost is that a bare `#fragment` anchor resolves against the root
+          too, so an in-page link must carry its own route: `/rnd#rnd-form`,
+          not `#rnd-form`.
+        */}
         <base href="/" />
         {/* Also blocking, and for the same reason: the first touch must be
             recorded before a click can navigate away from the landing page. */}

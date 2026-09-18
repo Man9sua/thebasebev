@@ -1,13 +1,13 @@
 # SEO parity report
 
-Generated: 2026-09-16T12:00:53.756Z
+Generated: 2026-09-18T10:32:22.899Z
 
 - Production: `https://thebasebev.com`
 - Target: `https://the-base-staging.mansua.workers.dev`
-- Canonical public routes: 130
+- Canonical public routes: 160
 - Critical failures: 0
 - Declared h1 changes: 19
-- Non-blocking link/alt observations: 260
+- Non-blocking link/alt observations: 320
 - Preview transport noindex expected: yes
 
 The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.dev` preview. Page-level metadata and canonical URLs must still match production and remain oriented to `https://thebasebev.com`.
@@ -20,7 +20,7 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/about-us` | 200 | 200 | PASS | 28/31 | 25/0/8 | Critical fields match |
 | `/resources` | 200 | 200 | PASS | 28/31 | 12/0/5 | Critical fields match |
 | `/distributors` | 200 | 200 | PASS | 28/31 | 9/0/0 | Critical fields match |
-| `/resources/blog` | 200 | 200 | PASS | 28/31 | 12/0/5 | Critical fields match |
+| `/resources/blog` | 200 | 200 | PASS | 28/61 | 30/0/0 | Critical fields match |
 | `/private-labeling` | 200 | 200 | PASS | 28/31 | 16/0/9 | Critical fields match |
 | `/sitemap` | 200 | 200 | PASS | 30/32 | 11/0/5 | Critical fields match |
 | `/resources/glossary` | 200 | 200 | PASS | 28/132 | 0/0/0 | Critical fields match |
@@ -144,6 +144,36 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/tpost/xzxdy5f1a1-odm` | 200 | 200 | PASS | 2/34 | 0/0/0 | Critical fields match |
 | `/tpost/1mbozzget1-premix` | 200 | 200 | PASS | 2/34 | 0/0/0 | Critical fields match |
 | `/tpost/tfm5mybkl1-matcha` | 200 | 200 | PASS | 1/34 | 0/0/0 | Critical fields match |
+| `/tpost/ybiotcu9u1-uji-to-warehouse-3-days-reimagined` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/npt03s0tk1-one-po-replaces-the-multi-vendor-trap` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/41vzdz3fe1-raf-coffees-recipe-isnt-ready-to-travel` | 200 | 200 | PASS | 2/34 | 6/0/5 | Critical fields match |
+| `/tpost/hclad45n81-the-hidden-25-milk-write-off` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/t9hu3f5sc1-four-ingredients-one-sachet` | 200 | 200 | PASS | 2/34 | 5/0/4 | Critical fields match |
+| `/tpost/k41tekps91-the-steam-wand-is-your-stores-slowest-li` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/oyyu1yzg51-iced-tea-at-scale-is-chemistry-not-brewi` | 200 | 200 | PASS | 2/34 | 5/0/4 | Critical fields match |
+| `/tpost/mlnjd0nkc1-milkshakes-minus-the-freezer-capex` | 200 | 200 | PASS | 2/34 | 5/0/4 | Critical fields match |
+| `/tpost/4yz7sltlh1-hot-chocolate-deserves-better-than-syrup` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/4il1j7j341-the-matcha-shortage-wont-fix-itself` | 200 | 200 | PASS | 2/34 | 5/0/4 | Critical fields match |
+| `/tpost/0eusjcbmx1-booming-cities-one-missing-barista` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/16zfdzkzm1-building-to-the-worlds-toughest-rule` | 200 | 200 | PASS | 2/34 | 5/0/4 | Critical fields match |
+| `/tpost/ldfe553tl1-one-market-deserves-one-formula` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/81f0isabh1-one-gate-two-filters-cleared-at-entry` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/ltsjdhf7k1-halal-isnt-just-meat-its-paperwork-too` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/oksy2day21-beverage-chains-cashier-mindsets` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/y51pjdevp1-cheap-sticker-costly-certification` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/0vchtbg4i1-one-certified-base-ends-the-scramble` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/9n8pjd70g1-cold-foam-went-viral-labor-didnt-keep-up` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/n6xt2fxuy1-ship-it-dry-not-wet` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/2gm1lf3b91-encapsulation-keeps-flavor-alive-18-mont` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/19v1azct91-brix-variance-is-a-governance-failure` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/r1je7ivvv1-45-seconds-the-handoff-window-rules-the` | 200 | 200 | PASS | 1/34 | 6/0/5 | Critical fields match |
+| `/tpost/kjnji32hz1-baristas-leave-the-recipe-shouldnt` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/edh081ze31-per-cup-soluble-ends-the-matcha-workarou` | 200 | 200 | PASS | 2/34 | 5/0/4 | Critical fields match |
+| `/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/eljzud0n91-one-sku-two-builds-30-seconds` | 200 | 200 | PASS | 2/34 | 5/0/4 | Critical fields match |
+| `/tpost/501pcdanj1-14-days-not-120-vertical-integration-win` | 200 | 200 | PASS | 1/34 | 5/0/4 | Critical fields match |
+| `/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush` | 200 | 200 | PASS | 2/34 | 7/0/6 | Critical fields match |
+| `/tpost/251dndgsb1-the-karak-tea-profit-playbook` | 200 | 200 | PASS | 2/34 | 6/0/5 | Critical fields match |
 
 ## Critical failures
 
@@ -191,8 +221,8 @@ h1, so a change on production ends the exemption rather than hiding behind it.
 - /resources: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":12,"missing":0,"empty":5})
 - /distributors: internal links differ (-0/+3)
 - /distributors: image alt stats differ ({"total":27,"missing":0,"empty":10} vs {"total":9,"missing":0,"empty":0})
-- /resources/blog: internal links differ (-0/+3)
-- /resources/blog: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":12,"missing":0,"empty":5})
+- /resources/blog: internal links differ (-0/+33)
+- /resources/blog: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":30,"missing":0,"empty":0})
 - /private-labeling: internal links differ (-0/+3)
 - /private-labeling: image alt stats differ ({"total":18,"missing":0,"empty":10} vs {"total":16,"missing":0,"empty":9})
 - /sitemap: internal links differ (-0/+2)
@@ -439,3 +469,63 @@ h1, so a change on production ends the exemption rather than hiding behind it.
 - /tpost/1mbozzget1-premix: image alt stats differ ({"total":3,"missing":0,"empty":1} vs {"total":0,"missing":0,"empty":0})
 - /tpost/tfm5mybkl1-matcha: internal links differ (-0/+33)
 - /tpost/tfm5mybkl1-matcha: image alt stats differ ({"total":3,"missing":0,"empty":1} vs {"total":0,"missing":0,"empty":0})
+- /tpost/ybiotcu9u1-uji-to-warehouse-3-days-reimagined: internal links differ (-0/+33)
+- /tpost/ybiotcu9u1-uji-to-warehouse-3-days-reimagined: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/npt03s0tk1-one-po-replaces-the-multi-vendor-trap: internal links differ (-0/+33)
+- /tpost/npt03s0tk1-one-po-replaces-the-multi-vendor-trap: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/41vzdz3fe1-raf-coffees-recipe-isnt-ready-to-travel: internal links differ (-0/+32)
+- /tpost/41vzdz3fe1-raf-coffees-recipe-isnt-ready-to-travel: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/hclad45n81-the-hidden-25-milk-write-off: internal links differ (-0/+33)
+- /tpost/hclad45n81-the-hidden-25-milk-write-off: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/t9hu3f5sc1-four-ingredients-one-sachet: internal links differ (-0/+32)
+- /tpost/t9hu3f5sc1-four-ingredients-one-sachet: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/k41tekps91-the-steam-wand-is-your-stores-slowest-li: internal links differ (-0/+33)
+- /tpost/k41tekps91-the-steam-wand-is-your-stores-slowest-li: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/oyyu1yzg51-iced-tea-at-scale-is-chemistry-not-brewi: internal links differ (-0/+32)
+- /tpost/oyyu1yzg51-iced-tea-at-scale-is-chemistry-not-brewi: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/mlnjd0nkc1-milkshakes-minus-the-freezer-capex: internal links differ (-0/+32)
+- /tpost/mlnjd0nkc1-milkshakes-minus-the-freezer-capex: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/4yz7sltlh1-hot-chocolate-deserves-better-than-syrup: internal links differ (-0/+33)
+- /tpost/4yz7sltlh1-hot-chocolate-deserves-better-than-syrup: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/4il1j7j341-the-matcha-shortage-wont-fix-itself: internal links differ (-0/+32)
+- /tpost/4il1j7j341-the-matcha-shortage-wont-fix-itself: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/0eusjcbmx1-booming-cities-one-missing-barista: internal links differ (-0/+33)
+- /tpost/0eusjcbmx1-booming-cities-one-missing-barista: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/16zfdzkzm1-building-to-the-worlds-toughest-rule: internal links differ (-0/+32)
+- /tpost/16zfdzkzm1-building-to-the-worlds-toughest-rule: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/ldfe553tl1-one-market-deserves-one-formula: internal links differ (-0/+33)
+- /tpost/ldfe553tl1-one-market-deserves-one-formula: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/81f0isabh1-one-gate-two-filters-cleared-at-entry: internal links differ (-0/+33)
+- /tpost/81f0isabh1-one-gate-two-filters-cleared-at-entry: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/ltsjdhf7k1-halal-isnt-just-meat-its-paperwork-too: internal links differ (-0/+33)
+- /tpost/ltsjdhf7k1-halal-isnt-just-meat-its-paperwork-too: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/oksy2day21-beverage-chains-cashier-mindsets: internal links differ (-0/+33)
+- /tpost/oksy2day21-beverage-chains-cashier-mindsets: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/y51pjdevp1-cheap-sticker-costly-certification: internal links differ (-0/+33)
+- /tpost/y51pjdevp1-cheap-sticker-costly-certification: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/0vchtbg4i1-one-certified-base-ends-the-scramble: internal links differ (-0/+33)
+- /tpost/0vchtbg4i1-one-certified-base-ends-the-scramble: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/9n8pjd70g1-cold-foam-went-viral-labor-didnt-keep-up: internal links differ (-0/+33)
+- /tpost/9n8pjd70g1-cold-foam-went-viral-labor-didnt-keep-up: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/n6xt2fxuy1-ship-it-dry-not-wet: internal links differ (-0/+33)
+- /tpost/n6xt2fxuy1-ship-it-dry-not-wet: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/2gm1lf3b91-encapsulation-keeps-flavor-alive-18-mont: internal links differ (-0/+33)
+- /tpost/2gm1lf3b91-encapsulation-keeps-flavor-alive-18-mont: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/19v1azct91-brix-variance-is-a-governance-failure: internal links differ (-0/+33)
+- /tpost/19v1azct91-brix-variance-is-a-governance-failure: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/r1je7ivvv1-45-seconds-the-handoff-window-rules-the: internal links differ (-0/+33)
+- /tpost/r1je7ivvv1-45-seconds-the-handoff-window-rules-the: image alt stats differ ({"total":5,"missing":2,"empty":1} vs {"total":6,"missing":0,"empty":5})
+- /tpost/kjnji32hz1-baristas-leave-the-recipe-shouldnt: internal links differ (-0/+33)
+- /tpost/kjnji32hz1-baristas-leave-the-recipe-shouldnt: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/edh081ze31-per-cup-soluble-ends-the-matcha-workarou: internal links differ (-0/+32)
+- /tpost/edh081ze31-per-cup-soluble-ends-the-matcha-workarou: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi: internal links differ (-0/+33)
+- /tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/eljzud0n91-one-sku-two-builds-30-seconds: internal links differ (-0/+32)
+- /tpost/eljzud0n91-one-sku-two-builds-30-seconds: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/501pcdanj1-14-days-not-120-vertical-integration-win: internal links differ (-0/+33)
+- /tpost/501pcdanj1-14-days-not-120-vertical-integration-win: image alt stats differ ({"total":4,"missing":1,"empty":1} vs {"total":5,"missing":0,"empty":4})
+- /tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush: internal links differ (-0/+32)
+- /tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush: image alt stats differ ({"total":6,"missing":3,"empty":1} vs {"total":7,"missing":0,"empty":6})
+- /tpost/251dndgsb1-the-karak-tea-profit-playbook: internal links differ (-0/+32)
+- /tpost/251dndgsb1-the-karak-tea-profit-playbook: image alt stats differ ({"total":6,"missing":3,"empty":1} vs {"total":6,"missing":0,"empty":5})

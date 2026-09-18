@@ -1,3 +1,4 @@
+import { PageAnchor } from "@/components/site/PageAnchor";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./RndPage.module.css";
 
@@ -178,9 +179,11 @@ export function RndPage() {
             market.
           </p>
           <div className={styles.heroActions}>
-            <a href="#rnd-form" className={styles.primary}>
+            {/* A bare `#rnd-form` resolved against `<base href="/">` and sent
+                the reader to the home page — see `PageAnchor`. */}
+            <PageAnchor route="/rnd" target="rnd-form" className={styles.primary}>
               Start a brief <span aria-hidden="true">↓</span>
-            </a>
+            </PageAnchor>
             <SiteLink href="/catalog" className={styles.secondary}>
               See the catalogue
             </SiteLink>

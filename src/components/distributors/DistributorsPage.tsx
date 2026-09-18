@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { PageAnchor } from "@/components/site/PageAnchor";
 import { SiteLink } from "@/components/site/SiteLink";
 import catalogTiles from "@/data/catalog-tiles.json";
 import { CATALOG_PRODUCTS } from "@/data/catalog";
@@ -199,9 +200,13 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
             ))}
           </ol>
 
-          <a href="#distributor-form" className={styles.stepsCta}>
+          <PageAnchor
+            route="/distributors"
+            target="distributor-form"
+            className={styles.stepsCta}
+          >
             Start selling now <span aria-hidden="true">→</span>
-          </a>
+          </PageAnchor>
         </div>
       </section>
 

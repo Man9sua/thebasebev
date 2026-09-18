@@ -43,6 +43,12 @@ const intentionalContentMigrations = new Set([
   "/wholesale-strategy",
   "/private-labeling",
   "/resources/glossary",
+  // The Blog index was a Tilda feed container that fetched its posts in the
+  // browser; the thirty posts are in the repository now and the page renders
+  // them itself. The confirmation page was a fixed-height artboard over a
+  // stock photograph and is now a React page that fits a phone.
+  "/resources/blog",
+  "/thank-you-form",
   "/resources/tools",
   "/rnd",
   "/raf-coffee",

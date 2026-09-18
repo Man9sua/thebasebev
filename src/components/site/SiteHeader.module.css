@@ -38,11 +38,18 @@
  * that used to close the bar is gone — the file separates it from the page with
  * the shadow instead.
  */
+/*
+ * `--tbb-header-surface` is set inline by the observer in `SiteHeader.tsx` from
+ * the colour of the page directly under the bar, so the plate matches the
+ * article's beige, a grey band or the dark footer instead of laying white
+ * across all three. White is the fallback, which is what it was everywhere
+ * before, and what it still is until the first sample lands.
+ */
 .header::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: #ffffff;
+  background: var(--tbb-header-surface, #ffffff);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
   transform: translate3d(0, -101%, 0);
   transition:
@@ -297,8 +304,10 @@
   opacity: 0;
 }
 
+/* The sampled colour still wins here — a dark section is rarely pure ink, and
+   matching it is the whole point. Ink is the fallback. */
 .inverted::after {
-  background: var(--tbb-ink);
+  background: var(--tbb-header-surface, var(--tbb-ink));
   border-bottom-color: rgba(255, 255, 255, 0.14);
 }
 

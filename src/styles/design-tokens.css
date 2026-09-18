@@ -137,6 +137,15 @@
   --tbb-header-h: clamp(3.75rem, 8.5833vw, 6.4375rem);
 }
 
+/*
+ * The bar is fixed, so an anchor jump lands the target under it unless the
+ * scroll stops short by the bar's own height. Set on the scrolling element so
+ * every in-page link on the site gets it, legacy pages included.
+ */
+html {
+  scroll-padding-top: var(--tbb-header-h);
+}
+
 /* Shared surface reset for redesigned sections. */
 .tbb {
   font-family: var(--tbb-font-sans);

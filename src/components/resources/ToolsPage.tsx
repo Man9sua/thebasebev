@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { PageAnchor } from "@/components/site/PageAnchor";
 import styles from "./ToolsPage.module.css";
 
 type Language = "en" | "ru";
@@ -180,16 +181,24 @@ export function ToolsPage() {
             </p>
           </div>
           <div className={styles.heroIndex} aria-label="Available tools">
-            <a href="#cost-calculator" className={styles.heroIndexItem}>
+            <PageAnchor
+              route="/resources/tools"
+              target="cost-calculator"
+              className={styles.heroIndexItem}
+            >
               <span>01</span>
               <strong>Cost calculator</strong>
               <small>Portion cost and margin</small>
-            </a>
-            <a href="#menu-builder" className={styles.heroIndexItem}>
+            </PageAnchor>
+            <PageAnchor
+              route="/resources/tools"
+              target="menu-builder"
+              className={styles.heroIndexItem}
+            >
               <span>02</span>
               <strong>Seasonal menu</strong>
               <small>Select, price and print</small>
-            </a>
+            </PageAnchor>
           </div>
         </div>
       </section>
