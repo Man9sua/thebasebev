@@ -133,6 +133,12 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
   const strip = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((p) => p.slug === slug)).filter(
     (product) => product !== undefined,
   );
+  // This one CTA lives inside the preserved Tilda hero. It used to open the
+  // retired `#form` dialog; the native contact page is now the destination.
+  // Keep the source export read-only and make the route correction at render.
+  const heroForContacts = heroHtml
+    .replace('href="#form"', 'href="/contacts"')
+    .replace(' role="button" aria-haspopup="dialog"', '');
 
   return (
     <main className={styles.page}>
@@ -145,7 +151,7 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
         className="legacy-document"
         data-legacy-record={DISTRIBUTORS_HERO_RECORD}
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: heroHtml }}
+        dangerouslySetInnerHTML={{ __html: heroForContacts }}
       />
 
       <section className={styles.reasons} aria-labelledby="dist-reasons">

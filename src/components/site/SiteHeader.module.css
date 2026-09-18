@@ -142,7 +142,10 @@
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    opacity var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .cta:hover {
@@ -279,6 +282,13 @@
    panel floating above it. */
 .inverted {
   color: var(--tbb-on-dark);
+}
+
+/* The CTA deliberately runs opposite to the header's surface: black on the
+   paper header, then paper with ink type over dark sections and the footer. */
+.inverted .cta {
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
 }
 
 /* The paper wash exists to lift dark icons off the hero; on a dark surface it

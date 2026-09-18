@@ -16,14 +16,16 @@
  */
 
 .section {
-  padding-inline: var(--tbb-gutter);
-  background: var(--tbb-paper);
+  /* The grey band is a page-wide surface, not a card set inside white page
+     gutters. The card retains its own measured width below. */
+  padding-inline: 0;
+  background: var(--tbb-band);
 }
 
 /* 1200 x 565 in the design's own mid grey. */
 .band {
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: none;
   margin-inline: auto;
   padding: clamp(1.5rem, 6.08vw, 4.5625rem) clamp(1rem, 3.67vw, 2.75rem);
   background: var(--tbb-band);
