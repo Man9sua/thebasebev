@@ -152,7 +152,9 @@
    * outlined word it replaced occupied, and a phone is narrower than the cap
    * anyway, so there it still reaches both edges.
    */
-  width: min(100%, 44rem);
+  /* The closing mark returns to the previous BASE wordmark's full width while
+     remaining fluid on narrow viewports. */
+  width: 100%;
   height: auto;
   margin-inline: auto;
   color: var(--tbb-paper);

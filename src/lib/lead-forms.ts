@@ -211,7 +211,11 @@ export function toTildaLeadPayload(
 
   // Attribution — first touch, preserved across the whole session.
   put("landing_page", lead.landingPage);
+  // Send both the original Tilda name and our current pipeline alias.
+  put("submission_page", lead.submissionPage);
   put("current_page", lead.submissionPage);
+  // A manager can scan this route without parsing the full URL.
+  put("source_path", new URL(lead.submissionPage).pathname || "/");
   put("referrer", lead.referrer);
   put("utm_source", lead.utm_source);
   put("utm_medium", lead.utm_medium);

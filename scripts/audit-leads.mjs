@@ -282,7 +282,15 @@ check(
   delivered.utm_campaign === "migration-test",
 );
 check("attribution: landing_page preserved", typeof delivered.landing_page === "string");
+check(
+  "attribution: legacy submission_page preserved",
+  delivered.submission_page === `${baseUrl}/contacts`,
+);
 check("attribution: current_page preserved", typeof delivered.current_page === "string");
+check(
+  "attribution: source path identifies the submitting route",
+  delivered.source_path === "/contacts",
+);
 check(
   "attribution: request id preserved upstream",
   delivered.request_id === okBody.requestId,
@@ -319,6 +327,25 @@ check(
   delivered.formName === undefined &&
     delivered.landingPage === undefined &&
     delivered.submissionPage === undefined,
+);
+
+upstream.received.length = 0;
+await postLead(
+  validLead({
+    formType: "careers",
+    formName: "Join Our Team",
+    submissionPage: `${baseUrl}/about-us`,
+  }),
+);
+const careersDelivered = upstream.received.at(-1) ?? {};
+check(
+  "attribution: careers submission retains its full source URL",
+  careersDelivered.submission_page === `${baseUrl}/about-us` &&
+    careersDelivered.current_page === `${baseUrl}/about-us`,
+);
+check(
+  "attribution: careers submission retains its short source path",
+  careersDelivered.source_path === "/about-us",
 );
 
 upstream.received.length = 0;
