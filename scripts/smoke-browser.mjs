@@ -309,11 +309,25 @@ try {
   await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
   check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
 
+  // The button opens the flavour picker; the picker is what adds the line.
   await page.locator("[data-catalog-card] [data-cart-add]").first().click();
-  await page.waitForTimeout(200);
+  const flavors = page.locator('[data-flavor-picker] [role="radiogroup"]');
+  await flavors.waitFor({ state: "visible" });
+  check(
+    (await flavors.locator("label").count()) > 1,
+    "catalog: the flavour picker offered nothing to choose",
+  );
+  const pickedFlavor = (await flavors.locator("label").first().textContent())?.trim() ?? "";
+  check(
+    await page.locator("[data-flavor-submit]").isDisabled(),
+    "catalog: the picker would add a line before a flavour was chosen",
+  );
+  await flavors.locator("label").first().click();
+  await page.locator("[data-flavor-submit]").click();
+  await page.waitForTimeout(500);
   const cartProducts = await page.evaluate(() => {
     try {
-      return JSON.parse(localStorage.getItem("thebase:cart:v1") ?? "[]");
+      return JSON.parse(localStorage.getItem("thebase:cart:v2") ?? "[]");
     } catch {
       return [];
     }
@@ -321,10 +335,22 @@ try {
   check(cartProducts.length === 1, "catalog: add-to-cart did not create one cart item");
   check(cartProducts[0]?.slug === "milkshake", "catalog: unexpected cart product");
   check(cartProducts[0]?.quantity === 1, "catalog: cart quantity changed");
+  check(
+    Boolean(pickedFlavor) && cartProducts[0]?.flavor === pickedFlavor,
+    "catalog: the chosen flavour did not reach the cart",
+  );
+  check(
+    (await page.locator('[data-flavor-picker]').count()) === 0,
+    "catalog: the flavour picker stayed open after adding",
+  );
   await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
   await page.waitForURL(`${baseUrl}/checkout`);
   const checkoutText = await page.locator("main").textContent();
   check(/Milkshake/i.test(checkoutText ?? ""), "catalog: checkout page lost the selected product");
+  check(
+    (checkoutText ?? "").toLowerCase().includes(pickedFlavor.toLowerCase()),
+    "catalog: checkout page lost the chosen flavour",
+  );
   check(/45\.38/.test(checkoutText ?? ""), "catalog: checkout page did not preserve the selected price");
 
   await page.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
@@ -350,11 +376,29 @@ try {
     /Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""),
     "matcha: product content failed after a hard refresh",
   );
-  await page.locator('a[href="#sample"]').first().click();
-  await page.waitForTimeout(500);
+  // The hero's two calls to action are React modals now rather than the
+  // export's popup anchors, so this no longer waits for `a[href="#sample"]`.
+  // What has to hold is not that a dialog opens but that the form inside it is
+  // one the lead bridge owns: `tildaspec-formname` is how
+  // `LeadAttributionBridge` decides to post a submission to `/api/leads`
+  // instead of leaving it to a Tilda runtime that is not on this page.
+  await page.getByRole("button", { name: "Request a sample" }).first().click();
+  await page.locator("#sample-request-modal-form").waitFor({ state: "visible" });
   check(
-    await page.locator("#form1855223381").isVisible(),
-    "matcha: Place order did not open the shared Free Sample form",
+    (await page
+      .locator('#sample-request-modal-form input[name="tildaspec-formname"]')
+      .inputValue()) === "Free Sample",
+    "matcha: the sample modal carries a form name the lead bridge does not own",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
+  check(
+    (await page.locator("#sample-request-modal-form").count()) === 0,
+    "matcha: the sample modal did not close on Escape",
+  );
+  check(
+    (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
+    "matcha: the sample modal left the page scroll locked",
   );
 
   // Browser smoke must be safe against a credentialed staging environment.

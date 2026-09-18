@@ -1,13 +1,34 @@
 import { getCheckoutProductId } from "@/data/catalog";
 
-export type CartItem = Readonly<{ slug: string; quantity: number }>;
+/**
+ * A line is a product **and a flavour**, not a product.
+ *
+ * Every product THE BASE sells comes in flavours — fourteen for Milkshake,
+ * nineteen for Cordial — and an order that names only the product is an order
+ * the factory cannot fill. So the flavour is part of a line's identity: two
+ * flavours of one product are two lines, and stepping one does not touch the
+ * other.
+ */
+export type CartItem = Readonly<{
+  slug: string;
+  flavor: string;
+  quantity: number;
+}>;
 export type CartState = Readonly<{
   ready: boolean;
   items: readonly CartItem[];
 }>;
 
-const STORAGE_KEY = "thebase:cart:v1";
+/**
+ * v2 because a v1 line has no flavour and there is no way to guess which one
+ * the visitor had meant. Choosing for them would put a flavour in the cart that
+ * nobody picked, so a cart saved before this is left behind rather than
+ * migrated; the reader simply starts empty.
+ */
+const STORAGE_KEY = "thebase:cart:v2";
 const MAX_QUANTITY = 10;
+/** Long enough for "Base No Added Sugar" and every other name on the pages. */
+const MAX_FLAVOR_LENGTH = 48;
 const SERVER_STATE: CartState = Object.freeze({ ready: false, items: Object.freeze([]) });
 
 let state = SERVER_STATE;
@@ -15,29 +36,54 @@ let hydrated = false;
 let storageListenerInstalled = false;
 const listeners = new Set<() => void>();
 
+/**
+ * A line's identity, for keying React lists and for looking one up.
+ *
+ * The separator is a pair neither half can contain — slugs are kebab-case and
+ * flavour names are words — so "Mango" on `iced-tea` cannot collide with some
+ * other pair that happens to concatenate the same way.
+ */
+export function cartLineKey(slug: string, flavor: string): string {
+  return `${slug}::${flavor}`;
+}
+
+function sameLine(item: CartItem, slug: string, flavor: string): boolean {
+  return item.slug === slug && item.flavor === flavor;
+}
+
 function validItems(value: unknown): CartItem[] {
   if (!Array.isArray(value)) return [];
 
-  const bySlug = new Map<string, number>();
+  const byLine = new Map<string, CartItem>();
   for (const item of value) {
     if (
       typeof item !== "object" ||
       item === null ||
       !("slug" in item) ||
+      !("flavor" in item) ||
       !("quantity" in item) ||
       typeof item.slug !== "string" ||
+      typeof item.flavor !== "string" ||
       typeof item.quantity !== "number" ||
       !Number.isInteger(item.quantity) ||
+      item.flavor.length === 0 ||
+      item.flavor.length > MAX_FLAVOR_LENGTH ||
       !getCheckoutProductId(item.slug)
     ) {
       continue;
     }
 
+    const key = cartLineKey(item.slug, item.flavor);
     const quantity = Math.min(Math.max(item.quantity, 1), MAX_QUANTITY);
-    bySlug.set(item.slug, Math.min((bySlug.get(item.slug) ?? 0) + quantity, MAX_QUANTITY));
+    const existing = byLine.get(key);
+    byLine.set(key, {
+      slug: item.slug,
+      flavor: item.flavor,
+      quantity: Math.min((existing?.quantity ?? 0) + quantity, MAX_QUANTITY),
+    });
   }
 
-  return Array.from(bySlug, ([slug, quantity]) => ({ slug, quantity }));
+  return Array.from(byLine.values());
 }
 
 function readStoredItems(): CartItem[] {
@@ -93,36 +139,42 @@ export function getCartServerSnapshot() {
   return SERVER_STATE;
 }
 
-export function addCartItem(slug: string) {
+/** Adds `quantity` of one flavour, up to the per-line ceiling. */
+export function addCartItem(slug: string, flavor: string, quantity = 1) {
   if (!getCheckoutProductId(slug)) return;
+  if (flavor.length === 0 || flavor.length > MAX_FLAVOR_LENGTH) return;
+  if (!Number.isInteger(quantity) || quantity < 1) return;
+
   hydrate();
-  const existing = state.items.find((item) => item.slug === slug);
+  const existing = state.items.find((item) => sameLine(item, slug, flavor));
   const items = existing
     ? state.items.map((item) =>
-        item.slug === slug
-          ? { ...item, quantity: Math.min(item.quantity + 1, MAX_QUANTITY) }
+        sameLine(item, slug, flavor)
+          ? { ...item, quantity: Math.min(item.quantity + quantity, MAX_QUANTITY) }
           : item,
       )
-    : [...state.items, { slug, quantity: 1 }];
+    : [...state.items, { slug, flavor, quantity: Math.min(quantity, MAX_QUANTITY) }];
   persist(items);
 }
 
-export function setCartItemQuantity(slug: string, quantity: number) {
+export function setCartItemQuantity(slug: string, flavor: string, quantity: number) {
   hydrate();
   if (!Number.isInteger(quantity) || quantity <= 0) {
-    removeCartItem(slug);
+    removeCartItem(slug, flavor);
     return;
   }
   persist(
     state.items.map((item) =>
-      item.slug === slug ? { ...item, quantity: Math.min(quantity, MAX_QUANTITY) } : item,
+      sameLine(item, slug, flavor)
+        ? { ...item, quantity: Math.min(quantity, MAX_QUANTITY) }
+        : item,
     ),
   );
 }
 
-export function removeCartItem(slug: string) {
+export function removeCartItem(slug: string, flavor: string) {
   hydrate();
-  persist(state.items.filter((item) => item.slug !== slug));
+  persist(state.items.filter((item) => !sameLine(item, slug, flavor)));
 }
 
 export function clearCart() {

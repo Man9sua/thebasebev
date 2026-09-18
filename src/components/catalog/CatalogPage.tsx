@@ -8,11 +8,12 @@ import {
   type CatalogGroupId,
   type CatalogProduct,
 } from "@/data/catalog";
+import { FlavorPicker } from "@/components/cart/FlavorPicker";
 import { ProductTileArt } from "@/components/product/ProductTileArt";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SortMenu } from "./SortMenu";
 import { useCart } from "@/components/cart/useCart";
-import { addCartItem, setCartItemQuantity } from "@/lib/cart-store";
+import { cartLineKey, setCartItemQuantity, type CartItem } from "@/lib/cart-store";
 import styles from "./CatalogPage.module.css";
 
 type Filter = "all" | CatalogGroupId;
@@ -68,16 +69,28 @@ function sortProducts(
 function ProductCard({
   product,
   weight,
-  quantity,
+  lines,
+  flavors,
+  onPick,
   eager,
 }: {
   product: CatalogProduct;
   weight: string | null;
-  quantity: number;
+  /** This product's cart lines, one per flavour. */
+  lines: readonly CartItem[];
+  flavors: readonly string[];
+  onPick: (product: CatalogProduct) => void;
   eager: boolean;
 }) {
-  const sellable = Boolean(getCheckoutProductId(product.slug));
+  /*
+   * Sellable means a price and a flavour list: the checkout needs the first and
+   * the factory needs the second, and an order that names a product without
+   * saying which flavour is not an order anyone can fill. Either one missing
+   * and the card asks for a quote instead, which is the honest control.
+   */
+  const sellable = Boolean(getCheckoutProductId(product.slug)) && flavors.length > 0;
   const name = SHELF_NAMES[product.slug] ?? product.name;
+  const quantity = lines.reduce((total, line) => total + line.quantity, 0);
 
   return (
     <article
@@ -119,52 +132,80 @@ function ProductCard({
       <p className={styles.description}>{product.description}</p>
 
       {/*
-       * Wholesale buyers order in multiples, so once a product is in the cart
-       * the button becomes the quantity rather than staying a button that has
-       * already been pressed. `data-cart-add` stays on the first press, which
-       * is what the smoke and the commerce audit reach for.
+       * The foot of the card, held to the bottom so the buttons stay level
+       * across a row however long the copy above them runs — and however many
+       * flavours of this one are in the cart.
        */}
-      {!sellable ? (
-        <SiteLink className={styles.action} data-cart-add href="/contacts">
-          Request price
-        </SiteLink>
-      ) : quantity === 0 ? (
-        <button
-          className={styles.action}
-          data-cart-add
-          type="button"
-          onClick={() => addCartItem(product.slug)}
-        >
-          Add to cart
-        </button>
-      ) : (
-        <div
-          className={styles.stepper}
-          role="group"
-          aria-label={`${name} quantity`}
-        >
+      <div className={styles.foot}>
+        {/*
+         * What is in the cart, by flavour, with its own quantity. Wholesale
+         * buyers order in multiples, and stepping a product rather than a
+         * flavour would be stepping something the order does not have.
+         */}
+        {lines.length > 0 && (
+          <ul className={styles.lines}>
+            {lines.map((line) => (
+              <li key={cartLineKey(line.slug, line.flavor)} className={styles.line}>
+                <span className={styles.lineName}>{line.flavor}</span>
+                <span
+                  className={styles.lineStepper}
+                  role="group"
+                  aria-label={`${name} ${line.flavor} quantity`}
+                >
+                  <button
+                    className={styles.step}
+                    type="button"
+                    aria-label={`Remove one ${line.flavor} ${name}`}
+                    onClick={() =>
+                      setCartItemQuantity(line.slug, line.flavor, line.quantity - 1)
+                    }
+                  >
+                    −
+                  </button>
+                  <span className={styles.lineQuantity} aria-live="polite">
+                    {line.quantity}
+                  </span>
+                  <button
+                    className={styles.step}
+                    type="button"
+                    aria-label={`Add one ${line.flavor} ${name}`}
+                    disabled={line.quantity >= 10}
+                    onClick={() =>
+                      setCartItemQuantity(line.slug, line.flavor, line.quantity + 1)
+                    }
+                  >
+                    +
+                  </button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/*
+         * Adding is two steps now, because the flavour is part of the order:
+         * this opens the picker and the picker puts the line in the cart. Same
+         * label whether or not something is already in it — it does the same
+         * thing either way, and what is in the cart is listed above it —
+         * and `data-cart-add` either way, which is what the smoke and the
+         * commerce audit press.
+         */}
+        {!sellable ? (
+          <SiteLink className={styles.action} data-cart-add href="/contacts">
+            Request price
+          </SiteLink>
+        ) : (
           <button
-            className={styles.step}
+            className={styles.action}
+            data-cart-add
             type="button"
-            aria-label={`Remove one ${name}`}
-            onClick={() => setCartItemQuantity(product.slug, quantity - 1)}
+            aria-haspopup="dialog"
+            onClick={() => onPick(product)}
           >
-            −
+            Add to cart
           </button>
-          <span className={styles.quantity} aria-live="polite">
-            {quantity} in cart
-          </span>
-          <button
-            className={styles.step}
-            type="button"
-            aria-label={`Add one ${name}`}
-            disabled={quantity >= 10}
-            onClick={() => addCartItem(product.slug)}
-          >
-            +
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </article>
   );
 }
@@ -172,12 +213,16 @@ function ProductCard({
 function Shelf({
   products,
   weights,
-  quantities,
+  flavors,
+  linesBySlug,
+  onPick,
   offset,
 }: {
   products: CatalogProduct[];
   weights: Record<string, string | null>;
-  quantities: Record<string, number>;
+  flavors: Record<string, string[]>;
+  linesBySlug: Record<string, CartItem[]>;
+  onPick: (product: CatalogProduct) => void;
   offset: number;
 }) {
   return (
@@ -187,7 +232,9 @@ function Shelf({
           key={product.slug}
           product={product}
           weight={weights[product.slug] ?? null}
-          quantity={quantities[product.slug] ?? 0}
+          flavors={flavors[product.slug] ?? EMPTY}
+          lines={linesBySlug[product.slug] ?? EMPTY_LINES}
+          onPick={onPick}
           eager={offset + index < 4}
         />
       ))}
@@ -195,13 +242,28 @@ function Shelf({
   );
 }
 
+/* Stable empties, so a card with nothing in the cart is not handed a new array
+   on every render of the shelf. */
+const EMPTY: readonly string[] = [];
+const EMPTY_LINES: readonly CartItem[] = [];
+
 export function CatalogPage({
   weights = {},
+  flavors = {},
 }: {
   weights?: Record<string, string | null>;
+  /** Per product, the flavours its own page lists — see `catalogFlavors`. */
+  flavors?: Record<string, string[]>;
 }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<Sort>("featured");
+  /*
+   * One picker for the whole shelf rather than one per card: it is a modal over
+   * the page, and sixteen of them waiting in the markup would be sixteen
+   * dialogs for a screen reader to walk past.
+   */
+  const [picking, setPicking] = useState<CatalogProduct | null>(null);
+  const closePicker = useCallback(() => setPicking(null), []);
   const cart = useCart();
   const shelfRef = useRef<HTMLDivElement>(null);
   const filtersRef = useRef<HTMLDivElement>(null);
@@ -253,9 +315,11 @@ export function CatalogPage({
     });
   }, []);
 
-  const quantities = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const item of cart.items) map[item.slug] = item.quantity;
+  /* The cart, grouped the way a card reads it: this product's flavours, in the
+     order they were added. */
+  const linesBySlug = useMemo(() => {
+    const map: Record<string, CartItem[]> = {};
+    for (const item of cart.items) (map[item.slug] ??= []).push(item);
     return map;
   }, [cart.items]);
 
@@ -391,7 +455,9 @@ export function CatalogPage({
                 <Shelf
                   products={inGroup}
                   weights={weights}
-                  quantities={quantities}
+                  flavors={flavors}
+                  linesBySlug={linesBySlug}
+                  onPick={setPicking}
                   offset={groupIndex === 0 ? 0 : 4}
                 />
               </section>
@@ -402,7 +468,9 @@ export function CatalogPage({
             <Shelf
               products={products}
               weights={weights}
-              quantities={quantities}
+              flavors={flavors}
+              linesBySlug={linesBySlug}
+              onPick={setPicking}
               offset={0}
             />
           </section>
@@ -430,6 +498,18 @@ export function CatalogPage({
             Checkout <span aria-hidden="true">→</span>
           </SiteLink>
         </div>
+      )}
+
+      {picking && (
+        <FlavorPicker
+          slug={picking.slug}
+          name={SHELF_NAMES[picking.slug] ?? picking.name}
+          price={picking.price}
+          weight={weights[picking.slug] ?? null}
+          flavors={flavors[picking.slug] ?? EMPTY}
+          lines={linesBySlug[picking.slug] ?? EMPTY_LINES}
+          onClose={closePicker}
+        />
       )}
     </main>
   );

@@ -10,24 +10,103 @@ const MAX_CHECKOUT_BODY_BYTES = 16 * 1024;
 type StripeTestProduct = Readonly<{
   name: string;
   unitAmount: number;
+  /** The slug the product pages publish it under, for the drift test below. */
+  slug: string;
+  /**
+   * The flavours this product may be ordered in.
+   *
+   * Here for the same reason the price is here. A cart line is a product *and*
+   * a flavour — that is what the factory fills — so the flavour is written into
+   * the Stripe line, and anything written into an order is the server's to
+   * decide rather than the client's to send. `tests/stripe-checkout.test.ts`
+   * holds this list against the product pages' own so the two cannot drift.
+   */
+  flavors: readonly string[];
 }>;
 
 // Test-only, server-authoritative snapshot of the prices preserved from the
-// audited Tilda export. The API never accepts an amount supplied by a client.
+// audited Tilda export, and of the flavours each pouch is sold in. The API
+// never accepts an amount supplied by a client, and never a flavour that is not
+// in this list.
 export const STRIPE_TEST_CATALOG = Object.freeze({
-  "194500823312": { name: "Sugar Free", unitAmount: 1422 },
-  "207187094752": { name: "Frappe", unitAmount: 4940 },
-  "293702296702": { name: "Iced Tea", unitAmount: 4281 },
-  "296069682122": { name: "Chocolate", unitAmount: 6788 },
-  "316933484392": { name: "Garnish", unitAmount: 491 },
-  "324849428612": { name: "Jam", unitAmount: 6494 },
-  "389328196132": { name: "Milkshake", unitAmount: 4538 },
-  "466013811412": { name: "Raf", unitAmount: 3874 },
-  "778280145182": { name: "Cordial", unitAmount: 5015 },
-  "781170478702": { name: "Cream Latte", unitAmount: 3876 },
-  "827401503212": { name: "Chai Latte", unitAmount: 5205 },
-  "888812727292": { name: "Sugar Syrop", unitAmount: 4882 },
-  "975474893862": { name: "Matcha", unitAmount: 7042 },
+  "194500823312": {
+    name: "Sugar Free",
+    unitAmount: 1422,
+    slug: "sugar-free",
+    flavors: ["Amaretto", "Banana", "Black Currant", "Blueberry", "Caramel", "Cherry", "Coconut", "Grapefruit", "Green Apple", "Hazelnut", "Heavenly", "Melon", "Mango", "Mint", "Peach", "Pear", "Pineapple", "Pistachio", "Peppermint", "Raspberry", "Strawberry"],
+  },
+  "207187094752": {
+    name: "Frappe",
+    unitAmount: 4940,
+    slug: "frappe",
+    flavors: ["Coffee", "Chocolate", "Base No Added Sugar", "Green Tea", "Mocha", "Pistachio", "Purple Yum UBE", "Salted Caramel", "Strawberry Matcha", "Vanilla"],
+  },
+  "293702296702": {
+    name: "Iced Tea",
+    unitAmount: 4281,
+    slug: "iced-tea",
+    flavors: ["Base No Added Sugar", "Lemon", "Green", "Mango", "Peach", "Strawberry"],
+  },
+  "296069682122": {
+    name: "Chocolate",
+    unitAmount: 6788,
+    slug: "chocolate",
+    flavors: ["Classic", "Orange", "Strawberry", "Mocha", "Pistachio", "Premium"],
+  },
+  "316933484392": {
+    name: "Garnish",
+    unitAmount: 491,
+    slug: "garnish",
+    flavors: ["Banana", "Cherry", "Blueberry", "Mango", "Papaya", "Pomegranate", "Raspberry", "Salted Caramel", "Strawberry", "Kiwi", "Dragon Fruit", "Black Currant"],
+  },
+  "324849428612": {
+    name: "Jam",
+    unitAmount: 6494,
+    slug: "jam",
+    flavors: ["Strawberry", "Watermelon"],
+  },
+  "389328196132": {
+    name: "Milkshake",
+    unitAmount: 4538,
+    slug: "milkshake",
+    flavors: ["Dates", "Banana", "Caramel", "Chocolate", "HoneyDew", "Mango", "Mango Lassi", "Base No Added Sugar", "Rainbow Unicorn", "Raspberry", "Strawberry", "Vanilla", "Yogurt", "Yogurt Base No Added Sugar"],
+  },
+  "466013811412": {
+    name: "Raf",
+    unitAmount: 3874,
+    slug: "raf-coffee",
+    flavors: ["Banana Ice Cream", "Orange Sundae", "Pineapple Caramel", "Pistachio", "Pomegranate", "Ptichye Moloko", "Cherry coconut", "Tary", "Raspberry Coconut", "Salted Caramel", "Spanish Latte", "Spanish Peach", "Vanilla", "Tangerine Cookie", "Raf Base No Added Sugar"],
+  },
+  "778280145182": {
+    name: "Cordial",
+    unitAmount: 5015,
+    slug: "cordial",
+    flavors: ["Classic Mojito", "Red Rose Lemon", "Ginger Citrus", "Hibiscus Apple", "Lemon Ginger", "Lemonade", "Lavender Peach", "Mango", "Frangelico", "Mango Lemongrass", "Mango Pink Grapefruit Mojito", "Minty Pineapple", "Passion Fruit Mojito", "Peach Rosemary", "Raspberry Mint", "Spiced Mandarin", "Strawberry Mojito", "Sweet and Sour Mix", "Watermelon Mojito"],
+  },
+  "781170478702": {
+    name: "Cream Latte",
+    unitAmount: 3876,
+    slug: "cream-latte",
+    flavors: ["Birds Dream", "Blueberry", "Cheesy Cream", "Citrus Sundae", "Tropical Berry", "Salty Carmel Sunset", "Golden Caramel Nana", "Vanilla Sky", "Nutty Pistachio"],
+  },
+  "827401503212": {
+    name: "Chai Latte",
+    unitAmount: 5205,
+    slug: "chai-latte",
+    flavors: ["Karak", "Masala"],
+  },
+  "888812727292": {
+    name: "Sugar Syrop",
+    unitAmount: 4882,
+    slug: "sugar-syrup",
+    flavors: ["Blueberry", "Hazelnut", "Mango", "Peppermint", "Raspberry", "Salted Caramel", "Strawberry", "Vanilla", "Peach", "Pineapple", "Red Apple"],
+  },
+  "975474893862": {
+    name: "Matcha",
+    unitAmount: 7042,
+    slug: "matcha",
+    flavors: ["Anchan Blueberry", "Classic", "Mango Coconut", "Purple Yum Ube", "Pure", "Base No Added Sugar", "Pink", "Raspberry", "Strawberry", "Hojicha", "Pecan Kumquat"],
+  },
 } satisfies Record<string, StripeTestProduct>);
 
 type CatalogProductId = keyof typeof STRIPE_TEST_CATALOG;
@@ -38,6 +117,7 @@ type ValidatedCheckout = Readonly<{
   items: ReadonlyArray<
     Readonly<{
       productId: CatalogProductId;
+      flavor: string;
       quantity: number;
       product: StripeTestProduct;
     }>
@@ -113,7 +193,9 @@ function validateCheckoutPayload(input: unknown): CheckoutValidation {
     return { ok: false, code: "INVALID_EMAIL" };
   }
 
-  const seenProductIds = new Set<string>();
+  // A line is a product and a flavour, so two flavours of one product are two
+  // lines. Only the same pair twice is a duplicate.
+  const seenLines = new Set<string>();
   const items: ValidatedCheckout["items"][number][] = [];
 
   for (const item of input.items) {
@@ -133,8 +215,23 @@ function validateCheckoutPayload(input: unknown): CheckoutValidation {
       return { ok: false, code: "INVALID_PRODUCT" };
     }
 
-    if (seenProductIds.has(productId)) {
-      return { ok: false, code: "DUPLICATE_PRODUCT" };
+    const typedProductId = productId as CatalogProductId;
+    const catalogProduct = STRIPE_TEST_CATALOG[typedProductId];
+
+    /*
+     * The flavour is held against what the product is actually sold in, for the
+     * same reason the price is never taken from the client: it is written into
+     * the line the merchant reads off the order, so an unstocked flavour is a
+     * rejected request rather than something to be produced.
+     */
+    const flavor = item.flavor;
+    if (typeof flavor !== "string" || !catalogProduct.flavors.includes(flavor)) {
+      return { ok: false, code: "INVALID_FLAVOR" };
+    }
+
+    const line = `${productId} ${flavor}`;
+    if (seenLines.has(line)) {
+      return { ok: false, code: "DUPLICATE_LINE" };
     }
 
     const quantity = item.quantity;
@@ -147,12 +244,12 @@ function validateCheckoutPayload(input: unknown): CheckoutValidation {
       return { ok: false, code: "INVALID_QUANTITY" };
     }
 
-    const typedProductId = productId as CatalogProductId;
-    seenProductIds.add(typedProductId);
+    seenLines.add(line);
     items.push({
       productId: typedProductId,
+      flavor,
       quantity,
-      product: STRIPE_TEST_CATALOG[typedProductId],
+      product: catalogProduct,
     });
   }
 
@@ -269,12 +366,15 @@ export async function handleStripeTestCheckout(
   const params: Stripe.Checkout.SessionCreateParams = {
     mode: "payment",
     payment_method_types: ["card"],
-    line_items: validation.data.items.map(({ product, quantity }) => ({
+    // The flavour goes in the name because it is what has to be produced and
+    // shipped. The amount is still the server's own, per pouch, whichever
+    // flavour it is.
+    line_items: validation.data.items.map(({ product, flavor, quantity }) => ({
       quantity,
       price_data: {
         currency: validation.data.currency,
         unit_amount: product.unitAmount,
-        product_data: { name: product.name },
+        product_data: { name: `${product.name} — ${flavor}` },
       },
     })),
     success_url: `${STRIPE_TEST_STAGING_ORIGIN}/thank-you-order?session_id={CHECKOUT_SESSION_ID}`,

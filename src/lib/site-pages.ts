@@ -122,6 +122,31 @@ export function catalogWeights(): Record<string, string | null> {
   );
 }
 
+/**
+ * The flavours each product is sold in, for the catalogue's picker.
+ *
+ * Read off the product pages' own Flavors section rather than listed again
+ * here: those pages are the published range, and a second list would be the
+ * one that goes stale. Handed to the shelf as a prop for weight rather than
+ * imported by it — `product-details.json` is 66 KB of specs, calculators and
+ * FAQ, and the flavour names inside it are two.
+ *
+ * No string literal anywhere in this function, and the same goes for anything
+ * else written between `tildaProductPaths` and `exportRoot`:
+ * `audit:route-indexability` reads that span of this file as text and counts
+ * every quoted string in it as a product slug.
+ */
+export function catalogFlavors(): Record<string, string[]> {
+  return Object.fromEntries(
+    Object.entries(productDetails).flatMap(([slug, detail]) => {
+      const items = (detail.flavors?.items ?? []).filter(
+        (item) => item.trim().length > 0,
+      );
+      return items.length > 0 ? [[slug, items]] : [];
+    }),
+  );
+}
+
 /** Catalogue tile per product — see `scripts/build-catalog-tiles.mjs`. */
 const catalogTiles = catalogTilesJson as Record<string, { image: string }>;
 

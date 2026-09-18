@@ -38,6 +38,7 @@ import {
   SITE_ORIGIN,
   withoutLegacyRecords,
   catalogWeights,
+  catalogFlavors,
 } from "@/lib/site-pages";
 
 type RouteProps = {
@@ -208,7 +209,7 @@ export default async function SiteRoute({ params }: RouteProps) {
         ))}
         <SiteHeader />
         {route === "/catalog" ? (
-          <CatalogPage weights={catalogWeights()} />
+          <CatalogPage weights={catalogWeights()} flavors={catalogFlavors()} />
         ) : route === "/rnd" ? (
           <RndPage />
         ) : route === "/distributors" ? (

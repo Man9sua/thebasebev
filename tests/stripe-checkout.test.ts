@@ -3,8 +3,10 @@ import test from "node:test";
 
 import Stripe from "stripe";
 
+import productDetails from "../src/data/product-details.json";
 import {
   handleStripeTestCheckout,
+  STRIPE_TEST_CATALOG,
   type StripeCheckoutClient,
 } from "../src/lib/stripe-test-checkout";
 import {
@@ -28,7 +30,7 @@ function validPayload() {
   return {
     currency: "AED",
     email: "buyer@example.com",
-    items: [{ productId: "389328196132", quantity: 2 }],
+    items: [{ productId: "389328196132", flavor: "Strawberry", quantity: 2 }],
   };
 }
 
@@ -73,6 +75,10 @@ test("valid checkout uses server price, AED and staging return URLs", async () =
   assert.equal(capturedParams?.line_items?.[0]?.price_data?.currency, "aed");
   assert.equal(capturedParams?.line_items?.[0]?.price_data?.unit_amount, 4538);
   assert.equal(
+    capturedParams?.line_items?.[0]?.price_data?.product_data?.name,
+    "Milkshake — Strawberry",
+  );
+  assert.equal(
     capturedParams?.success_url,
     "https://the-base-staging.mansua.workers.dev/thank-you-order?session_id={CHECKOUT_SESSION_ID}",
   );
@@ -96,7 +102,7 @@ test("invalid product is rejected before Stripe is called", async () => {
   const response = await handleStripeTestCheckout(
     checkoutRequest({
       currency: "AED",
-      items: [{ productId: "not-a-product", quantity: 1 }],
+      items: [{ productId: "not-a-product", flavor: "Strawberry", quantity: 1 }],
     }),
     checkoutDependencies(),
   );
@@ -104,6 +110,108 @@ test("invalid product is rejected before Stripe is called", async () => {
 
   assert.equal(response.status, 422);
   assert.equal(body.error.code, "INVALID_PRODUCT");
+});
+
+test("a flavour the product is not sold in is rejected before Stripe is called", async () => {
+  const response = await handleStripeTestCheckout(
+    checkoutRequest({
+      currency: "AED",
+      items: [{ productId: "389328196132", flavor: "Free Of Charge", quantity: 1 }],
+    }),
+    checkoutDependencies(),
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 422);
+  assert.equal(body.error.code, "INVALID_FLAVOR");
+});
+
+test("an item with no flavour is rejected — the factory cannot fill it", async () => {
+  const response = await handleStripeTestCheckout(
+    checkoutRequest({
+      currency: "AED",
+      items: [{ productId: "389328196132", quantity: 1 }],
+    }),
+    checkoutDependencies(),
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 422);
+  assert.equal(body.error.code, "INVALID_FLAVOR");
+});
+
+test("two flavours of one product are two lines at the same server price", async () => {
+  let capturedParams: Stripe.Checkout.SessionCreateParams | undefined;
+
+  const response = await handleStripeTestCheckout(
+    checkoutRequest({
+      currency: "AED",
+      items: [
+        { productId: "389328196132", flavor: "Strawberry", quantity: 1 },
+        { productId: "389328196132", flavor: "Mango", quantity: 3 },
+      ],
+    }),
+    checkoutDependencies(async (params) => {
+      capturedParams = params;
+      return {
+        id: "cs_test_unit_session",
+        url: "https://checkout.stripe.com/c/pay/cs_test_unit_session",
+        livemode: false,
+      };
+    }),
+  );
+
+  assert.equal(response.status, 201);
+  assert.equal(capturedParams?.line_items?.length, 2);
+  assert.deepEqual(
+    capturedParams?.line_items?.map((line) => [
+      line.price_data?.product_data?.name,
+      line.quantity,
+      line.price_data?.unit_amount,
+    ]),
+    [
+      ["Milkshake — Strawberry", 1, 4538],
+      ["Milkshake — Mango", 3, 4538],
+    ],
+  );
+});
+
+test("the same product and flavour twice is a duplicate line", async () => {
+  const response = await handleStripeTestCheckout(
+    checkoutRequest({
+      currency: "AED",
+      items: [
+        { productId: "389328196132", flavor: "Strawberry", quantity: 1 },
+        { productId: "389328196132", flavor: "Strawberry", quantity: 2 },
+      ],
+    }),
+    checkoutDependencies(),
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 422);
+  assert.equal(body.error.code, "DUPLICATE_LINE");
+});
+
+/**
+ * The server keeps its own flavour list for the same reason it keeps its own
+ * prices, and a second list is the one that goes stale. This holds it against
+ * the product pages, which are what the range is actually published as.
+ */
+test("the server's flavours are the ones the product pages publish", () => {
+  const pages = productDetails as Record<
+    string,
+    { flavors?: { items?: string[] } | null }
+  >;
+
+  for (const [productId, product] of Object.entries(STRIPE_TEST_CATALOG)) {
+    const published = pages[product.slug]?.flavors?.items ?? [];
+    assert.deepEqual(
+      [...product.flavors],
+      published,
+      `${productId} (${product.slug}) has drifted from its product page`,
+    );
+  }
 });
 
 test("invalid customer email is rejected before Stripe is called", async () => {
@@ -135,7 +243,7 @@ test("invalid quantity is rejected", async () => {
   const response = await handleStripeTestCheckout(
     checkoutRequest({
       currency: "AED",
-      items: [{ productId: "389328196132", quantity: 1.5 }],
+      items: [{ productId: "389328196132", flavor: "Strawberry", quantity: 1.5 }],
     }),
     checkoutDependencies(),
   );

@@ -43,7 +43,13 @@ try {
 
   await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
   check((await page.locator("[data-catalog-card]").count()) === 4, "cold filter did not render four products");
+  // Two steps: the card opens the flavour picker, the picker adds the line.
   await page.locator('[data-product-slug="milkshake"] [data-cart-add]').click();
+  const flavorGroup = page.locator('[data-flavor-picker] [role="radiogroup"]');
+  await flavorGroup.waitFor({ state: "visible" });
+  await page.screenshot({ path: `${artifacts}/flavor-picker-desktop.png` });
+  await flavorGroup.locator("label").first().click();
+  await page.locator("[data-flavor-submit]").click();
   await page.locator('header a[aria-label="Cart, 1 item"]').waitFor();
   await page.locator('header a[aria-label="Cart, 1 item"]').click();
   await page.waitForURL(`${baseUrl}/checkout`);
@@ -52,7 +58,7 @@ try {
   check((await page.getByText("AED 45.38", { exact: true }).count()) > 0, "checkout summary price changed");
   await page.screenshot({ path: `${artifacts}/checkout-desktop.png`, fullPage: true });
 
-  await page.evaluate(() => localStorage.removeItem("thebase:cart:v1"));
+  await page.evaluate(() => localStorage.removeItem("thebase:cart:v2"));
   await page.goto(`${baseUrl}/checkout`, { waitUntil: "domcontentloaded" });
   await page.waitForURL(`${baseUrl}/catalog`);
 
