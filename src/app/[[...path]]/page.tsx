@@ -276,7 +276,7 @@ export default async function SiteRoute({ params }: RouteProps) {
             dangerouslySetInnerHTML={{ __html: block }}
           />
         ))}
-        <SiteHeader />
+        <SiteHeader overHero={route === "/distributors"} />
         {route === "/catalog" ? (
           <CatalogPage weights={catalogWeights()} flavors={catalogFlavors()} />
         ) : route === "/rnd" ? (
@@ -380,7 +380,7 @@ export default async function SiteRoute({ params }: RouteProps) {
   // already removed from the markup server-side.
   return (
     <div className="tbb">
-      <SiteHeader />
+      <SiteHeader overHero={route === "/private-labeling"} />
       {intro && <PageIntro intro={intro} />}
       {offers && <PageOffers offers={offers} />}
       {product && <ProductHero product={product} />}

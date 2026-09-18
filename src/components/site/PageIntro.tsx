@@ -20,6 +20,7 @@ export function PageIntro({ intro }: { intro: PageIntroContent }) {
   return (
     <section
       className={`${styles.intro} ${intro.video || intro.tone === "dark" ? styles.dark : ""}`}
+      data-hero
     >
       {intro.video && (
         <div className={styles.media} aria-hidden="true">

@@ -134,11 +134,11 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
   const strip = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((p) => p.slug === slug)).filter(
     (product) => product !== undefined,
   );
-  // This one CTA lives inside the preserved Tilda hero. It used to open the
-  // retired `#form` dialog; the native contact page is now the destination.
+  // This CTA lives inside the preserved Tilda hero. Its old popup is retired;
+  // it now moves the visitor to the native application form on this page.
   // Keep the source export read-only and make the route correction at render.
-  const heroForContacts = heroHtml
-    .replace('href="#form"', 'href="/contacts"')
+  const heroForApplication = heroHtml
+    .replace('href="#form"', 'href="/distributors#distributor-form"')
     .replace(' role="button" aria-haspopup="dialog"', '');
 
   return (
@@ -148,12 +148,14 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
         is rendered here rather than by `LegacyDocument` so it can open this
         page's own `<main>` instead of a second one.
       */}
-      <div
-        className="legacy-document"
-        data-legacy-record={DISTRIBUTORS_HERO_RECORD}
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: heroForContacts }}
-      />
+      <div data-hero>
+        <div
+          className="legacy-document"
+          data-legacy-record={DISTRIBUTORS_HERO_RECORD}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: heroForApplication }}
+        />
+      </div>
 
       <section className={styles.reasons} aria-labelledby="dist-reasons">
         <div className={styles.inner}>

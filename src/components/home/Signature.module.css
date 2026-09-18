@@ -55,6 +55,15 @@
   z-index: -2;
 }
 
+/* The private-label pouch is part of the source image. Keeping its bottom
+   anchored while giving the image a restrained scale makes the pack read as
+   the card's hero rather than as a small background detail. */
+.cardBrand .photo {
+  object-position: center bottom;
+  transform: scale(1.1);
+  transform-origin: center bottom;
+}
+
 /**
  * The sample card, where the design has the copy running straight over a white
  * pouch — "can elevate your menu" is barely readable in the file itself, and no

@@ -21,6 +21,7 @@
 }
 
 .trigger {
+  appearance: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -36,6 +37,8 @@
   text-align: left;
   color: var(--tbb-ink);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /*
