@@ -137,7 +137,11 @@ export function Partner() {
               disabled={state === "sending"}
             />
 
-            {/* The decoy. A bot that fills it gets a cheerful 202 and no lead. */}
+            {/*
+              A bot that fills this decoy gets a cheerful 202 and no lead.
+              Marking it read-only and opting out of password-manager autofill
+              prevents a real visitor's saved profile from tripping the check.
+            */}
             <div className={styles.decoy} aria-hidden>
               <label htmlFor={`${nameId}-decoy`}>Company website</label>
               <input
@@ -145,7 +149,10 @@ export function Partner() {
                 name={LEAD_HONEYPOT_FIELD}
                 type="text"
                 tabIndex={-1}
-                autoComplete="off"
+                autoComplete="new-password"
+                readOnly
+                data-lpignore="true"
+                data-1p-ignore="true"
               />
             </div>
 

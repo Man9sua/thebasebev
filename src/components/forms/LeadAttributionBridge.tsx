@@ -286,7 +286,9 @@ function getApiErrorMessage(body: unknown): string {
 
 /**
  * Add the decoy field to an owned form. It is visually hidden and removed from
- * the tab order and the accessibility tree, so only automated fillers reach it.
+ * the tab order and accessibility tree. The field is also read-only and opted
+ * out of common password-manager autofill so a visitor's saved profile cannot
+ * accidentally be treated as spam.
  */
 function attachHoneypot(form: HTMLFormElement) {
   if (form.querySelector(`input[name="${LEAD_HONEYPOT_FIELD}"]`)) {
@@ -297,8 +299,11 @@ function attachHoneypot(form: HTMLFormElement) {
   input.type = "text";
   input.name = LEAD_HONEYPOT_FIELD;
   input.tabIndex = -1;
-  input.autocomplete = "off";
+  input.autocomplete = "new-password";
+  input.readOnly = true;
   input.setAttribute("aria-hidden", "true");
+  input.setAttribute("data-lpignore", "true");
+  input.setAttribute("data-1p-ignore", "true");
   input.style.cssText =
     "position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;";
   form.append(input);
