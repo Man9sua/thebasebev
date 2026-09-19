@@ -2,7 +2,12 @@
 
 ## Current application strategy
 
-OpenNext uses `staticAssetsIncrementalCache` with cache interception enabled in `open-next.config.ts`. The generated Worker serves `.open-next/assets` through the `ASSETS` binding. This retains OpenNext's adapter-level static/SSG behavior instead of adding an unrelated custom cache implementation.
+OpenNext incremental cache is disabled in `open-next.config.ts`. Every public
+document is prerendered and copied to `.open-next/assets/__static_pages/`, then
+served by the custom Worker fast path. The only non-static endpoints are API
+boundaries that explicitly return `Cache-Control: no-store`, so a read-only
+incremental snapshot would only duplicate the static output under
+`cdn-cgi/_next_cache`.
 
 The site currently has static public pages and four dynamic API boundaries:
 
@@ -13,7 +18,7 @@ The site currently has static public pages and four dynamic API boundaries:
 
 The custom wrapper applies `Cache-Control: no-store` to `/api/*`. No POST response, lead payload, form error, order state, or user-specific data may be placed in a public cache.
 
-The isolated account `mansua` uses per-Worker Static Assets uploads only. THE BASE has no R2, KV, D1, Cache API binding, or cross-account storage dependency. The local asset audit covers 563 referenced public files; OpenNext additionally packages framework chunks and generated SSG cache objects into each deployment manifest.
+The isolated account `mansua` uses per-Worker Static Assets uploads only. THE BASE has no R2, KV, D1, Cache API binding, or cross-account storage dependency. The local asset audit covers 563 referenced public files. Generated static HTML/RSC assets are uploaded once through the fast path; OpenNext does not add a second SSG cache snapshot.
 
 Because `mansua` currently has the Workers Free 10 ms CPU limit, `npm run cf:build` also prepares 110 prerendered document assets under the generated `.open-next/assets/__static_pages/` namespace. `worker.ts` serves document GET/HEAD requests and public files through `ASSETS`, applies the same deployment/noindex/security headers, and uses OpenNext only for dynamic APIs or RSC. This is build output and remains excluded from Git. Worker error-tail and full parity/browser audits are required after changing this path.
 
@@ -23,8 +28,8 @@ Because `mansua` currently has the Workers Free 10 ms CPU limit, `npm run cf:bui
 | --- | --- | --- |
 | Hashed Next/OpenNext static assets | long-lived/immutable adapter defaults | content-addressed assets are safe to retain |
 | Exported images, fonts, CSS, JS, video | Cloudflare/static asset behavior; review TTL after parity | public versioned assets |
-| Static/SSG HTML | OpenNext/Next semantics | preserve framework revalidation and invalidation behavior |
-| ISR data, if introduced | OpenNext incremental cache only | avoid conflicting cache authorities |
+| Static/SSG HTML | `__static_pages` Worker fast path | served as generated; no duplicate incremental snapshot |
+| ISR data, if introduced | OpenNext incremental cache only | restore and test cache before introducing revalidation |
 | `/api/leads` | `no-store`, never Cache Everything | contains personal and attribution data |
 | `/api/health` | `no-store` | deployment freshness signal |
 | `/api/checkout/stripe` | `no-store`, never Cache Everything | external API call and test session state |

@@ -25,6 +25,7 @@
     "audit:routes": "node scripts/audit-route-indexability.mjs",
     "audit:analytics": "node scripts/audit-analytics.mjs",
     "audit:cloudflare-parity": "node scripts/audit-cloudflare-parity.mjs",
+    "audit:deploy-weight": "node scripts/audit-deploy-weight.mjs",
     "audit:glossary": "node scripts/audit-glossary.mjs",
     "smoke:glossary": "node scripts/smoke-glossary.mjs",
     "import:glossary": "node scripts/import-glossary-production.mjs",
