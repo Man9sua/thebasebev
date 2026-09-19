@@ -43,17 +43,12 @@
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);
   /*
-   * One design pixel, and it stops growing at 1.2px.
-   *
-   * Below 1200 the frame shrinks with the window. At and above it the card is
-   * the design at its own size — which is also the size the specification tabs
-   * under this section are set in — and it stands in the middle of the window
-   * with the wash running out to both edges behind it. It is not stretched to
-   * the window and not zoomed to it: a 1200 frame blown up to 1900 is a 76px
-   * name over a 25px paragraph, and one spread to the edges leaves the pouch
-   * and the words at opposite ends of an empty band.
+   * One design pixel. The desktop frame is full-bleed: all coordinates below
+   * are measured against 1200, so 1200 design pixels always resolve to 100vw.
+   * Capping this unit at 1px created wide side gutters and undersized collages
+   * on the 1920px viewport used for the final Figma comparison.
    */
-  --u: min(0.0833333vw, 1px);
+  --u: 0.0833333vw;
   /* The frame's own pixel and left edge, so the product below can be written
      once for both frames. Everything on the card is placed from `--x0`, so the
      card moves as one. */
@@ -104,6 +99,7 @@
    */
   background-color: var(--wash-to, var(--band-foot, var(--tbb-paper)));
   background-image:
+    var(--collage-fade, linear-gradient(transparent, transparent)),
     linear-gradient(100deg, var(--edge, transparent), transparent 52%),
     radial-gradient(
       var(--wash-shape, 49.2% 33.5% at 76.6% 35.8%),
@@ -115,9 +111,11 @@
      wash's outer colour carries on below that, and a tint that stopped there
      would draw a line across the card behind the features panel. */
   background-size:
+    100% calc(675 * var(--u)),
     100% 100%,
     100% calc(821.75 * var(--u));
   background-position:
+    0 var(--tbb-header-h),
     0 0,
     0 var(--tbb-header-h);
 }
@@ -246,13 +244,24 @@
   max-width: none;
 }
 
+/* Figma image fills preserve their layer anchors but crop the source bitmap.
+   The collage config supplies that fill scale for the two measured desktop
+   compositions; vector-like fills keep the original matrix below. */
+.hero img.sceneLayer.sceneWide {
+  transform: translate(calc(var(--e) * var(--k)), calc(var(--f) * var(--k)))
+    matrix(var(--a), var(--b), var(--c), var(--d), 0, 0)
+    scale(var(--scene-image-scale, 1));
+}
+
 /* The rectangle a collage is masked through — Sugar Free's, which is what
    stops its sachets at the copy's edge. The box is the card's own; the layer
    inside is pulled back to the card's corner so its own matrix still places it
    from there. */
 .sceneClip {
   position: absolute;
-  left: calc(var(--x0) + var(--mx) * var(--k));
+  left: calc(
+    var(--x0) + (var(--mx) + var(--scene-clip-shift-x, 0)) * var(--k)
+  );
   top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k));
   z-index: 2;
   display: block;
@@ -551,7 +560,7 @@ span.sceneLayer {
   display: grid;
   justify-items: start;
   row-gap: calc(23 * var(--u));
-  padding-top: calc(72.4 * var(--u));
+  padding-top: calc(98.4 * var(--u));
 }
 
 .copy .marginTitle {
@@ -668,8 +677,8 @@ span.sceneLayer {
    to the width of the words inside them. */
 .primary {
   width: calc(173 * var(--u));
-  background: var(--tbb-ink);
-  color: var(--tbb-on-dark);
+  background: var(--primary-bg, var(--tbb-ink));
+  color: var(--primary-ink, var(--tbb-on-dark));
 }
 
 .primary:hover,
@@ -681,7 +690,7 @@ span.sceneLayer {
    light one, and on a pale wash an outlined button would all but vanish. */
 .secondary {
   width: calc(155 * var(--u));
-  background: var(--tbb-paper);
+  background: var(--secondary-bg, var(--tbb-paper));
   color: var(--tbb-ink);
 }
 
@@ -883,6 +892,10 @@ span.sceneLayer {
 
   .hero .scenePhone {
     display: block;
+  }
+
+  .sceneClip.scenePhone {
+    left: calc(var(--x0) + var(--mx) * var(--k));
   }
 
   /* The drink's own layer, in the card's coordinates. */

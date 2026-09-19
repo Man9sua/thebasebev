@@ -42,6 +42,28 @@ import styles from "./ProductHero.module.css";
 
 const heroes = productHeroes as Record<string, { image: string; band: string; bandFoot: string }>;
 
+type DesktopCollageTuning = {
+  fade: string;
+  imageScale: number;
+  shiftX?: number;
+  primaryInk?: string;
+  secondaryBackground?: string;
+};
+
+const desktopCollageTuning: Record<string, DesktopCollageTuning> = {
+  "sugar-free": {
+    fade: "linear-gradient(180deg, #e8f2e9 0%, #e8f2e9 70%, #e9f3ea 76%, #edf4ed 84%, #f2f5f1 92%, #f5f5f3 100%)",
+    imageScale: 0.82,
+    shiftX: -48,
+  },
+  tea: {
+    fade: "linear-gradient(180deg, #000000 0%, #000000 76%, #050505 79%, #0f0f0f 82.5%, #1f1f1f 86%, #363636 89%, #525250 92.5%, #757472 96%, #a7a6a4 100%)",
+    imageScale: 0.82,
+    primaryInk: "rgba(255, 255, 255, 0.62)",
+    secondaryBackground: "#d9d9d9",
+  },
+};
+
 /*
  * The certification seals, as the owner's own artwork.
  *
@@ -266,6 +288,18 @@ export function ProductHero({ product }: { product: Product }) {
   if (washFrom) vars["--wash-from"] = washFrom;
   if (washTo) vars["--wash-to"] = washTo;
   if (card?.edge) vars["--edge"] = card.edge;
+  const collageTuning = desktopCollageTuning[product.slug];
+  if (collageTuning) {
+    vars["--scene-image-scale"] = collageTuning.imageScale;
+    vars["--collage-fade"] = collageTuning.fade;
+    if (collageTuning.shiftX !== undefined) {
+      vars["--scene-clip-shift-x"] = collageTuning.shiftX;
+    }
+    if (collageTuning.primaryInk) vars["--primary-ink"] = collageTuning.primaryInk;
+    if (collageTuning.secondaryBackground) {
+      vars["--secondary-bg"] = collageTuning.secondaryBackground;
+    }
+  }
   if (banner) {
     vars["--band"] = banner.band;
     vars["--band-foot"] = banner.bandFoot;
