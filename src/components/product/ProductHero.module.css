@@ -459,6 +459,7 @@ span.sceneLayer {
   position: relative;
   z-index: 1;
   display: grid;
+  align-content: start;
   justify-items: start;
   margin-left: calc(642.32 * var(--u));
   padding-top: calc((171.8 - var(--head)) * var(--u));
