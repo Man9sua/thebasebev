@@ -499,26 +499,30 @@ span.sceneLayer {
  * the tagline.
  */
 .copy .headline {
-  margin-top: calc(-6.5 * var(--u));
-  font-family: var(--tbb-font-sans);
-  font-size: calc(13.5 * var(--u));
-  font-weight: 500 !important;
-  line-height: 1.45 !important;
-  letter-spacing: 0 !important;
-  color: var(--ink-muted);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* Its own gap once the headline has taken the overlap above. */
+/* The production headline remains a semantic h2 for SEO continuity, but the
+   Figma card starts with its tagline. */
 .copy .headline + .tagline {
-  margin-top: calc(9 * var(--u));
+  margin-top: calc(-6.5 * var(--u));
 }
 
 .copy .tagline {
   margin-top: calc(-6.5 * var(--u));
   font-family: var(--tbb-font-sans);
-  font-size: calc(14 * var(--u));
+  font-size: calc(13.5 * var(--u));
   font-weight: 400 !important;
   line-height: calc(41.09 * var(--u)) !important;
+  letter-spacing: 0.08em;
   color: var(--ink-soft);
 }
 

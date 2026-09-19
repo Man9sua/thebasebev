@@ -130,7 +130,7 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
   },
   "sugar-free": {
     desktop: [
-      { paint: "#e8f2e9", m: [1200.1602, 0, 0, 685.1641, 0, 105] },
+      { paint: "linear-gradient(180deg, #e8f2e9 0%, #e8f2e9 76%, #ffffff 100%)", m: [1200.1602, 0, 0, 685.1641, 0, 105], back: true },
       { src: "/images/scene-f16e70efc5898x432b400.webp", m: [-22.1914, 208.5744, -141.3663, -15.0408, 167.9235, 577.0702], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-5f33d9e4f813.webp", m: [234.7475, -187.7379, 152.5828, 190.7896, 254.7271, 193.2681], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-cdd1d94df813.webp", m: [255.099, 79.67, -64.7513, 207.3301, 22.3305, 332.9095], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
@@ -168,9 +168,9 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
   },
   "tea": {
     desktop: [
-      { paint: "#000000", m: [1250.2365, 0, 0, 802.3901, -50.3828, 0.3594] },
-      { paint: "#000000", m: [861.4952, 0, 0, 785.7686, -263.1204, 8.6719] },
-      { src: "/images/scene-e84aac77f1210.webp", m: [534.3839, 0, 0, 646.816, 161, 124] },
+      { paint: "linear-gradient(180deg, #000000 0%, #000000 76%, #ffffff 100%)", m: [1250.2365, 0, 0, 802.3901, -50.3828, 0.3594], back: true },
+      { paint: "linear-gradient(180deg, #000000 0%, #000000 76%, #ffffff 100%)", m: [861.4952, 0, 0, 785.7686, -263.1204, 8.6719], back: true },
+      { src: "/images/scene-e84aac77f1210.webp", m: [534.3839, 0, 0, 646.816, 161, 124], back: true },
       { paint: "linear-gradient(-87.4331deg, #000000 36.9523%, rgba(0, 0, 0, 0) 95.8639%)", m: [352.9043, 0, 0, 645.6128, 355.1992, 166.2891] },
       { src: "/images/scene-720e38e5f813b400.webp", m: [222.3992, 40.8617, -33.2101, 180.7535, 102.5508, 137.6484] },
       { src: "/images/scene-1eec80f6f781b200.webp", m: [335.3611, -121.6933, 95.0563, 261.9552, -154.1423, 308.0391] },

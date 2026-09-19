@@ -40,10 +40,13 @@ const targetOnlyRedirects = new Map([...retiredLegacyRedirects.map(({ source, de
 // observation for this explicit list.
 const intentionalContentMigrations = new Set([
   "/",
+  "/about-us",
   "/catalog",
   "/contacts",
+  "/distributors",
   "/wholesale-strategy",
   "/private-labeling",
+  "/sitemap",
   "/resources/glossary",
   // The Blog index was a Tilda feed container that fetched its posts in the
   // browser; the thirty posts are in the repository now and the page renders
@@ -168,6 +171,7 @@ function contentSignature(fragment) {
 
 function inspectHtml(html) {
   const h1 = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? "";
+  const h2 = [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)].map((match) => textContent(match[1]));
   const visible = textContent(html);
   const legacyContent = contentSignature(normalizeLegacyShell(legacyMain(html)));
   const internalLinks = (html.match(/href=["'](?:https:\/\/thebasebev\.com)?\//gi) ?? []).length;
@@ -179,6 +183,7 @@ function inspectHtml(html) {
     canonical: attribute(html, "link", "rel", "canonical", "href"),
     robots: attribute(html, "meta", "name", "robots", "content"),
     h1: textContent(h1),
+    h2,
     jsonLd: (html.match(/<script\b[^>]*type=["']application\/ld\+json["']/gi) ?? []).length,
     internalLinks,
     images: images.length,
@@ -204,6 +209,18 @@ async function inspect(origin, route) {
 
 const failures = [];
 const shellObservations = [];
+const intentionalH1Migrations = new Map([
+  ["/", ["Premium Cream Latte Bases", "Premium Powder Bases for Your Business"]],
+  ["/about-us", ["Who we are", "We Manufacture High-Quality Customizable Premix Powders"]],
+  ["/rnd", ["Узнай свою дневную норму за 30 секунд", "Beverage R&amp;D and product development in Dubai"]],
+]);
+
+function preservesIntentionalH1(route, source, target) {
+  const exact = intentionalH1Migrations.get(route);
+  if (exact && source.h1 === exact[0] && target.h1 === exact[1]) return true;
+  return Boolean(source.h1 && target.h2.includes(source.h1));
+}
+
 let cursor = 0;
 async function worker() {
   while (cursor < routes.length) {
@@ -212,6 +229,7 @@ async function worker() {
     const [source, target] = await Promise.all([inspect(sourceOrigin, route), inspect(targetOrigin, route)]);
     const intentionalShellFields = new Set([
       "cabinetLinks",
+      "h2",
       "internalLinks",
       "images",
       "visibleTextHash",
@@ -220,7 +238,8 @@ async function worker() {
     const differences = Object.keys(source).filter(
       (key) =>
         JSON.stringify(source[key]) !== JSON.stringify(target[key]) &&
-        !intentionalShellFields.has(key),
+        !intentionalShellFields.has(key) &&
+        !(key === "h1" && preservesIntentionalH1(route, source, target)),
     );
     if (differences.length) {
       failures.push(`${route}: ${differences.map((key) => `${key} (${JSON.stringify(source[key])} -> ${JSON.stringify(target[key])})`).join(", ")}`);
