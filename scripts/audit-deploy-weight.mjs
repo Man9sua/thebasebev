@@ -244,12 +244,15 @@ const publicAssets = walk(publicRoot);
 const publicPaths = new Set(publicAssets.map((asset) => asset.relative));
 const staticFiles = allAssets.filter((asset) => asset.relative.startsWith("__static_pages/"));
 const referencedPublicPaths = new Set();
-const referencePattern = /\/(?:images|video|css|js)\/[^\s"'`<>(){}\\]+/g;
+const referencePattern =
+  /(?:["'(]\s*|url\(\s*["']?)(\/?(?:images|video|css|js)\/[^\s"'`<>(){}\\]+)/g;
 for (const asset of allAssets) {
   if (!/\.(?:html|rsc|css|js)$/i.test(asset.relative)) continue;
   const source = fs.readFileSync(asset.absolute, "utf8");
   for (const match of source.matchAll(referencePattern)) {
-    const relative = decodeURIComponent(match[0].slice(1).split(/[?#]/, 1)[0]);
+    const relative = decodeURIComponent(
+      match[1].replace(/^\/+/, "").split(/[?#]/, 1)[0],
+    );
     if (publicPaths.has(relative)) referencedPublicPaths.add(relative);
   }
 }
