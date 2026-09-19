@@ -479,7 +479,10 @@ export function ProductHero({ product }: { product: Product }) {
           <Reveal delay={60} distance={20}>
             {/* Always a name now, so always the display scale the design draws
                 it at — there is no long line left for the size to follow. */}
-            <h1 id="product-title" className={styles.title}>
+            <h1
+              id="product-title"
+              className={`${styles.title}${product.slug === "tea" ? ` ${styles.teaTitle}` : ""}`}
+            >
               {title}
             </h1>
           </Reveal>

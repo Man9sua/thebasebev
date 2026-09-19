@@ -480,6 +480,13 @@ span.sceneLayer {
   color: var(--ink);
 }
 
+/* Tea is the only desktop frame whose display name is all caps. Keep the
+   underlying h1 text untouched for content parity; this is visual treatment
+   only, and its phone frame returns to title case below. */
+.teaTitle {
+  text-transform: uppercase;
+}
+
 /*
  * Production's own `h1`, a level down. Deliberately quieter than the tagline
  * under it — it is the wording the page ranks on rather than a line the design
@@ -673,25 +680,6 @@ span.sceneLayer {
   color: var(--tbb-ink);
 }
 
-/* On Tea, Jam or Chocolate the pair has to swap. A black pill on a near-black
-   or burgundy panel sinks into it while the white one beside it reads as the
-   primary — the hierarchy the design draws, inverted. So there the solid light
-   pill leads and the second becomes the outline. */
-.onDark .primary {
-  background: var(--tbb-paper);
-  color: var(--tbb-ink);
-}
-
-.onDark .secondary {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.5);
-  color: var(--tbb-on-dark);
-}
-
-.onDark .secondary:hover {
-  border-color: var(--tbb-on-dark);
-}
-
 /* ---- the four things the pack is bought for ---- */
 
 /*
@@ -712,7 +700,8 @@ span.sceneLayer {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: calc(35 * var(--k));
   width: calc(1112 * var(--k));
-  margin: 0 0 calc(48 * var(--k)) calc(44.17 * var(--k));
+  min-height: calc(260.573 * var(--k));
+  margin: 0 0 calc(34.72 * var(--k)) calc(44.17 * var(--k));
   padding: calc(53.8 * var(--k)) calc(41.3 * var(--k)) calc(28 * var(--k));
   border-radius: calc(20 * var(--k));
   background: var(--strip);
@@ -975,6 +964,10 @@ span.sceneLayer {
     letter-spacing: -0.02em !important;
   }
 
+  .teaTitle {
+    text-transform: none;
+  }
+
   /* Production's own `h1`, which the design has nothing for — kept as the
      quietest line on the panel rather than dropped. */
   .copy .headline {
@@ -1092,19 +1085,6 @@ span.sceneLayer {
     border-color: transparent;
     background: var(--tbb-paper);
     color: var(--tbb-ink);
-  }
-
-  /* Chocolate's panel and Tea's are dark, and there a black pill sinks into
-     them while the white one beside it reads as the primary. */
-  .panelDark .primary {
-    background: var(--tbb-paper);
-    color: var(--tbb-ink);
-  }
-
-  .panelDark .secondary {
-    border-color: rgba(255, 255, 255, 0.5);
-    background: transparent;
-    color: var(--tbb-on-dark);
   }
 
   /* ---- the four things, two by two ---- */
