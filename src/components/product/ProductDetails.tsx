@@ -1,48 +1,18 @@
-import { Reveal } from "@/components/motion/Reveal";
+import type { CSSProperties } from "react";
+import { Partner } from "@/components/home/Partner";
+import { productDesktop } from "@/data/product-desktop";
+import { productMargins } from "@/data/product-margins";
+import { productMobile } from "@/data/product-mobile";
 import type { Product } from "@/data/products";
+import { isDark } from "@/lib/contrast";
 import { popupAnchorProps } from "@/lib/legacy-popups";
-import flavorShots from "@/data/flavor-shots.json";
 import { productDetails } from "@/lib/site-pages";
 import { ProductFaq } from "./ProductFaq";
-import { ProductTabs, type ProductPane } from "./ProductTabs";
 import styles from "./ProductDetails.module.css";
-
-/**
- * Everything on a product page below the hero.
- *
- * The export puts five Tilda blocks here — the tab strip, the four figures, the
- * comparative table, the flavour list and the usage note — and every one of
- * them is a "zero block": absolutely positioned atoms on a fixed-height
- * artboard, held back behind Tilda's own scroll-animation script. They are the
- * same construction as the hero this component's neighbour replaced.
- *
- * There is no table and no list in that markup, only coordinates, so
- * `scripts/build-product-details.mjs` reads the coordinates and rebuilds the
- * structure they were drawing: tops cluster into rows, and each cell takes the
- * column it was drawn under. What is rendered here is the page's own content —
- * these pages carry two years of ranking — set as ordinary semantic markup.
- *
- * The four sections are four panes of one tab strip rather than four bands
- * stacked down the page — see `ProductTabs`, which owns which one is showing.
- * Everything that is data inside them — a figure, a flavour, a diagram — stands
- * on a card of the product's own colour, so a pane reads as a page of a
- * specification sheet rather than as a block left over from a page builder.
- *
- * The FAQ below them is not a pane. It was Tilda's one working block on the
- * page and it is the last thing a buyer reads, so it stays where it was, under
- * everything, always open.
- */
-
-const SECTION_IDS = {
-  specifications: "specifications",
-  calculation: "calculation",
-  flavors: "product-flavors",
-  usage: "usage",
-} as const;
 
 function Tick() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" role="img" aria-label="Needed" className={styles.mark}>
+    <svg viewBox="0 0 20 20" fill="none" role="img" aria-label="Included" className={styles.mark}>
       <circle cx="10" cy="10" r="9" fill="currentColor" />
       <path
         d="m5.8 10.2 2.6 2.8 5.8-6.4"
@@ -57,7 +27,7 @@ function Tick() {
 
 function Cross() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" role="img" aria-label="Not needed" className={styles.mark}>
+    <svg viewBox="0 0 20 20" fill="none" role="img" aria-label="Not included" className={styles.mark}>
       <circle cx="10" cy="10" r="9" fill="currentColor" />
       <path
         d="m7 7 6 6M13 7l-6 6"
@@ -76,24 +46,25 @@ function Cell({ value }: { value: string | boolean | null }) {
   return <>{value ?? ""}</>;
 }
 
+function Arrow() {
+  return <span aria-hidden="true">{"\u2192"}</span>;
+}
+
 export function ProductDetails({ product }: { product: Product }) {
   const detail = productDetails[product.slug];
   if (!detail) return null;
 
   const { specs, calculation, flavors, usage, faq } = detail;
+  const margin = productMargins[product.slug];
+  const desktopTheme = productDesktop[product.slug]?.panel ?? product.backgroundColor;
+  const mobileTheme = productMobile[product.slug]?.panel ?? desktopTheme;
+  const vars = {
+    ["--product-panel" as string]: desktopTheme,
+    ["--product-panel-mobile" as string]: mobileTheme,
+    ["--product-panel-ink" as string]: isDark(desktopTheme) ? "#ffffff" : "#151515",
+    ["--product-panel-ink-mobile" as string]: isDark(mobileTheme) ? "#ffffff" : "#151515",
+  } as CSSProperties;
 
-  /*
-   * The flavour shots this product has, keyed by the flavour's own name — see
-   * `scripts/build-flavor-shots.mjs`. Neither the design file nor the Tilda
-   * export ever carried a picture per flavour, on any of the sixteen, so the
-   * photographs arrive here product by product and the section shows whatever
-   * has arrived: the ones with a shot as a grid, the rest as the names they
-   * already were.
-   */
-  const shots = (flavorShots as Record<string, Record<string, string>>)[product.slug] ?? {};
-
-  // The page's own column, not the one it is compared against. Every product
-  // happens to put it last, but the label is what actually says so.
   const ours = calculation
     ? calculation.columns.reduce(
         (best, column, index) => (/the base/i.test(column) ? index : best),
@@ -101,66 +72,53 @@ export function ProductDetails({ product }: { product: Product }) {
       )
     : -1;
 
-  // Only the panes this product actually has. Every one of the sixteen has all
-  // four today, but a page that lost one should lose its tab with it rather
-  // than keep a tab that opens nothing.
-  const panes: ProductPane[] = [];
+  return (
+    <div className={styles.root} style={vars}>
+      {specs.length > 0 && (
+        <section className={styles.metricsSection} aria-labelledby="product-operating-figures">
+          <h2 className="tbb-visually-hidden" id="product-operating-figures">
+            {product.name} operating figures
+          </h2>
+          <div className={styles.metrics}>
+            {specs.map((spec) => {
+              const label = spec.label === "Prep Time" ? "Preparation Time" : spec.label;
+              const price = /packaging/i.test(spec.label)
+                ? (product.price ?? "Price on request")
+                : null;
 
-  if (specs.length > 0) {
-    panes.push({
-      id: SECTION_IDS.specifications,
-      label: "Specifications",
-      content: (
-        <div className={styles.pane}>
-          <h2 className="tbb-visually-hidden">{product.name} specifications</h2>
-
-          {/* The four figures, on one card divided by hairlines rather than
-              four columns of their own. They are one reading — a dose, a pack,
-              a yield, a cup — and a single surface is what says so. */}
-          {specs.length > 0 && (
-            <Reveal as="dl" className={styles.specs}>
-              {specs.map((spec) => (
-                <div key={spec.label} className={styles.spec}>
+              return (
+                <div key={spec.label} className={styles.metric}>
                   {spec.icon && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      className={styles.specIcon}
-                      src={spec.icon}
-                      alt=""
-                      width={44}
-                      height={44}
-                      decoding="async"
-                    />
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img className={styles.metricIcon} src={spec.icon} alt="" width={48} height={48} />
                   )}
-                  <dt className={`tbb-label ${styles.specLabel}`}>{spec.label}</dt>
-                  <dd className={styles.specValue}>{spec.value}</dd>
+                  <h3 className={styles.metricTitle}>{label}</h3>
+                  <p className={styles.metricValue}>{spec.value}</p>
+                  {price && (
+                    <p className={styles.metricPrice} aria-label={`Current price ${price}`}>
+                      {price}
+                    </p>
+                  )}
                 </div>
-              ))}
-            </Reveal>
-          )}
+              );
+            })}
+          </div>
+        </section>
+      )}
 
-          {/* The four selling points are not here any more. They are the row
-              the design closes the hero with, and printing them twice on one
-              page said the second set was something new. */}
-        </div>
-      ),
-    });
-  }
+      {calculation && (
+        <section className={styles.section} aria-labelledby="product-calculation-title">
+          <div className={styles.sectionHeading}>
+            <h2 id="product-calculation-title" className={styles.title}>
+              {calculation.title}
+            </h2>
+            <p className={styles.eyebrow}>
+              Actual Recipe <strong>VS</strong> Based on THE BASE
+            </p>
+          </div>
 
-  if (calculation) {
-    panes.push({
-      id: SECTION_IDS.calculation,
-      label: "Calculation",
-      content: (
-        <div className={styles.pane}>
-          <Reveal as="h2" className={styles.title}>
-            {calculation.title}
-          </Reveal>
-
-          {/* The table is wider than a phone and is allowed to scroll inside
-              its own card, so the page body never scrolls sideways. */}
-          <Reveal className={styles.card} delay={80}>
-            <div className={styles.tableWrap}>
+          <div className={styles.tableCard}>
+            <div className={styles.tableWrap} tabIndex={0} aria-label={`${product.name} comparative calculation`}>
               <table className={styles.table}>
                 <thead>
                   <tr>
@@ -172,12 +130,12 @@ export function ProductDetails({ product }: { product: Product }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {calculation.rows.map((row) => (
-                    <tr key={String(row[0])}>
+                  {calculation.rows.map((row, rowIndex) => (
+                    <tr key={`${String(row[0])}-${rowIndex}`}>
                       <th scope="row">{String(row[0] ?? "")}</th>
                       {row.slice(1).map((value, index) => (
                         <td
-                          key={calculation.columns[index + 1]}
+                          key={`${calculation.columns[index + 1]}-${rowIndex}`}
                           data-ours={index + 1 === ours ? "true" : undefined}
                         >
                           <Cell value={value} />
@@ -188,149 +146,79 @@ export function ProductDetails({ product }: { product: Product }) {
                 </tbody>
               </table>
             </div>
-          </Reveal>
-        </div>
-      ),
-    });
-  }
 
-  if (flavors) {
-    // Photographed first, then the rest by name. Split rather than interleaved:
-    // a grid with gaps in it reads as a grid that failed to load.
-    const shot = flavors.items.filter((flavour) => shots[flavour]);
-    const named = flavors.items.filter((flavour) => !shots[flavour]);
-
-    panes.push({
-      id: SECTION_IDS.flavors,
-      label: "Flavors",
-      content: (
-        <div className={styles.pane}>
-          <Reveal as="h2" className={styles.title}>
-            Flavors
-          </Reveal>
-
-          <div className={styles.flavorLayout}>
-            <div>
-              {shot.length > 0 && (
-                <ul className={styles.shots}>
-                  {shot.map((flavour, index) => (
-                    <Reveal
-                      key={flavour}
-                      as="li"
-                      className={styles.shot}
-                      delay={Math.min(index, 12) * 45}
-                      distance={16}
-                    >
-                      <span className={styles.shotFrame}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={shots[flavour]} alt={`${flavour} ${product.name}`} loading="lazy" />
-                      </span>
-                      <span className={styles.shotName}>{flavour}</span>
-                    </Reveal>
-                  ))}
-                </ul>
-              )}
-
-              {/* Named things of the same kind, so they are set as one field of
-                  chips that wraps to whatever width there is. The lists run from
-                  two names to twenty-one and a column count fixed for either end
-                  reads as a mistake at the other. */}
-              {named.length > 0 && (
-                <ul className={`${styles.flavors} ${shot.length > 0 ? styles.flavorsAfterShots : ""}`}>
-                  {named.map((flavour, index) => (
-                    <Reveal
-                      key={flavour}
-                      as="li"
-                      className={styles.flavor}
-                      delay={Math.min(index, 12) * 45}
-                      distance={16}
-                    >
-                      {flavour}
-                    </Reveal>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <Reveal className={styles.custom} delay={120} distance={20}>
-              <h3 className={styles.customTitle}>Custom Flavors</h3>
-              {flavors.note && <p className={styles.customNote}>{flavors.note}</p>}
-              {/* `#flavor` is one of the export's popups, so the link carries
-                  the dialog attributes Tilda's runtime would write onto it
-                  anyway — see `popupAnchorProps`. */}
-              {flavors.cta && (
-                <a
-                  className={styles.customCta}
-                  href={flavors.cta.href}
-                  {...popupAnchorProps(flavors.cta.href)}
-                >
-                  {flavors.cta.label}
-                </a>
-              )}
-            </Reveal>
+            {margin && (
+              <dl className={styles.marginSummary}>
+                <div>
+                  <dt>{margin.legacyLabel}</dt>
+                  <dd>{margin.legacy}</dd>
+                </div>
+                <span aria-hidden="true">VS</span>
+                <div data-ours="true">
+                  <dt>with THE BASE</dt>
+                  <dd>{margin.base}</dd>
+                </div>
+              </dl>
+            )}
           </div>
-        </div>
-      ),
-    });
-  }
+        </section>
+      )}
 
-  if (usage) {
-    panes.push({
-      id: SECTION_IDS.usage,
-      label: "Usage",
-      content: (
-        <div className={styles.pane}>
-          <Reveal as="h2" className={styles.title}>
+      {flavors && (
+        <section className={`${styles.section} ${styles.flavorSection}`} aria-labelledby="product-flavors-title">
+          <div className={styles.flavorCard}>
+            <h2 className={styles.title} id="product-flavors-title">
+              Flavors
+            </h2>
+            <ul className={styles.flavors}>
+              {flavors.items.map((flavor) => (
+                <li key={flavor}>{flavor}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className={styles.customCard}>
+            <h2 className={styles.customTitle}>Custom Flavors</h2>
+            {flavors.note && <p className={styles.customNote}>{flavors.note}</p>}
+            {flavors.cta && (
+              <a className={styles.customCta} href={flavors.cta.href} {...popupAnchorProps(flavors.cta.href)}>
+                <span>Get Started Today</span>
+                <Arrow />
+              </a>
+            )}
+          </div>
+        </section>
+      )}
+
+      {usage && (
+        <section className={`${styles.section} ${styles.usageCard}`} aria-labelledby="product-usage-title">
+          <h2 className={styles.title} id="product-usage-title">
             Usage
-          </Reveal>
-          <Reveal className={styles.usageLines} delay={80}>
+          </h2>
+          <div className={styles.usageCopy}>
             {usage.lines.map((line) => (
-              <p key={line} className={styles.usageLine}>
-                {line}
-              </p>
+              <p key={line}>{line}</p>
             ))}
-          </Reveal>
+          </div>
           {usage.image && (
-            /* The diagram is drawn a thousand pixels wide and its labels do not
-               reflow, so below that width it keeps a legible size and scrolls
-               inside its own card, the same as the table. */
-            <Reveal delay={140} className={`${styles.card} ${styles.usageFigure}`}>
+            <div className={styles.usageFigure}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className={styles.usageImage}
-                src={usage.image}
-                alt={`How to prepare ${product.name}`}
-                loading="lazy"
-                decoding="async"
-              />
-            </Reveal>
+              <img src={usage.image} alt={`How to prepare ${product.name}`} loading="lazy" decoding="async" />
+            </div>
           )}
-        </div>
-      ),
-    });
-  }
+        </section>
+      )}
 
-  return (
-    <div className={styles.root} style={{ ["--tile" as string]: product.backgroundColor }}>
-      {panes.length > 0 && <ProductTabs panes={panes} />}
+      <Partner productName={product.name} />
 
       {faq.length > 0 && (
-        <section id="faq" className={`${styles.pane} ${styles.faq}`}>
-          <Reveal as="h2" className={styles.title}>
-            Frequently Asked Questions
-          </Reveal>
-          <ProductFaq entries={faq} />
-
-          {/*
-            No `FAQPage` graph here on purpose. It is the obvious thing to add
-            with the questions already in hand, and it was added and taken back
-            out: `audit:seo-parity` compares this page's JSON-LD types against
-            the live site's, and a type production does not have fails all
-            sixteen product pages. Search engines retired FAQ rich results for
-            most sites, so it would have cost a green parity check and bought
-            close to nothing. If it is ever wanted, it belongs on production
-            first and here second.
-          */}
+        <section id="faq" className={styles.faq} aria-labelledby="product-faq-title">
+          <div className={styles.faqInner}>
+            <h2 className={styles.title} id="product-faq-title">
+              Frequently Asked Questions
+            </h2>
+            <ProductFaq entries={faq} />
+          </div>
         </section>
       )}
     </div>

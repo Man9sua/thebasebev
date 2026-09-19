@@ -551,7 +551,12 @@ function dropReplacedRecords(source: string, file: string) {
   const records = slug ? productDetails[slug]?.records : null;
   if (!records) return source;
 
-  return Object.values(records)
+  // The same legacy booking CTA follows every exported product body. The new
+  // body already provides the inline partnership form, so retaining this
+  // record would append an obsolete second CTA after the FAQ.
+  const sharedRecords = ["rec2503542591"];
+
+  return [...Object.values(records), ...sharedRecords]
     .filter((recordId): recordId is string => Boolean(recordId))
     .reduce(dropRecord, source);
 }

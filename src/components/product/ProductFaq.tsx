@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Reveal } from "@/components/motion/Reveal";
 import styles from "./ProductFaq.module.css";
 
 /**
@@ -36,12 +35,7 @@ export function ProductFaq({ entries }: { entries: FaqEntry[] }) {
         const expanded = open === entry.question;
 
         return (
-          <Reveal
-            key={entry.question}
-            className={styles.item}
-            delay={index * 70}
-            distance={16}
-          >
+          <div key={entry.question} className={styles.item}>
             <h3 className={styles.heading}>
               <button
                 type="button"
@@ -70,7 +64,7 @@ export function ProductFaq({ entries }: { entries: FaqEntry[] }) {
                 <p className={styles.answerBody}>{entry.answer}</p>
               </div>
             </div>
-          </Reveal>
+          </div>
         );
       })}
     </div>

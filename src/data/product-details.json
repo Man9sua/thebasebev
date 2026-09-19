@@ -8,6 +8,7 @@
       "calculation": "rec1851863371",
       "flavors": "rec860335355",
       "usage": "rec860335356",
+      "partner": "rec861442702",
       "faqTitle": "rec2489108381",
       "faq": "rec2488861531"
     },
@@ -151,6 +152,7 @@
       "calculation": "rec1851920511",
       "flavors": "rec860351178",
       "usage": "rec860351179",
+      "partner": "rec861442702",
       "faqTitle": "rec2489108911",
       "faq": "rec2488892961"
     },
@@ -295,6 +297,7 @@
       "calculation": "rec1851928801",
       "flavors": "rec860392936",
       "usage": "rec860392937",
+      "partner": "rec861442702",
       "faqTitle": "rec2489110761",
       "faq": "rec2488894411"
     },
@@ -429,6 +432,7 @@
       "calculation": "rec1851933761",
       "flavors": "rec860603408",
       "usage": "rec860603409",
+      "partner": "rec861442702",
       "faqTitle": "rec2489111151",
       "faq": "rec2488894691"
     },
@@ -576,6 +580,7 @@
       "calculation": "rec1851891541",
       "flavors": "rec859873027",
       "usage": "rec860104767",
+      "partner": "rec861442702",
       "faqTitle": "rec2489105501",
       "faq": "rec2486979911"
     },
@@ -720,6 +725,7 @@
       "calculation": "rec1851911621",
       "flavors": "rec860240546",
       "usage": "rec860240547",
+      "partner": "rec861442702",
       "faqTitle": "rec2489108101",
       "faq": "rec2488890661"
     },
@@ -852,6 +858,7 @@
       "calculation": "rec860641053",
       "flavors": "rec860641054",
       "usage": "rec860641055",
+      "partner": "rec861442702",
       "faqTitle": "rec2486826251",
       "faq": "rec2488897291"
     },
@@ -998,6 +1005,7 @@
       "calculation": "rec860798130",
       "flavors": "rec860798131",
       "usage": "rec860798132",
+      "partner": "rec861442702",
       "faqTitle": "rec2489112331",
       "faq": "rec2488898131"
     },
@@ -1132,6 +1140,7 @@
       "calculation": "rec1851906461",
       "flavors": "rec860215406",
       "usage": "rec860215407",
+      "partner": "rec861442702",
       "faqTitle": "rec2489106541",
       "faq": "rec2488891731"
     },
@@ -1270,6 +1279,7 @@
       "calculation": "rec860870150",
       "flavors": "rec860870151",
       "usage": "rec860870152",
+      "partner": "rec861442702",
       "faqTitle": "rec2489115201",
       "faq": "rec2488898921"
     },
@@ -1398,6 +1408,7 @@
       "calculation": "rec1851938921",
       "flavors": "rec860613125",
       "usage": "rec860613126",
+      "partner": "rec861442702",
       "faqTitle": "rec2489111691",
       "faq": "rec2488896371"
     },
@@ -1534,6 +1545,7 @@
       "calculation": "rec860881291",
       "flavors": "rec860881292",
       "usage": "rec918906727",
+      "partner": "rec861442702",
       "faqTitle": "rec2489115521",
       "faq": "rec2488899221"
     },
@@ -1654,6 +1666,7 @@
       "calculation": "rec860803879",
       "flavors": "rec860803880",
       "usage": "rec860803881",
+      "partner": "rec861442702",
       "faqTitle": "rec2489113641",
       "faq": "rec2488898321"
     },
@@ -1782,6 +1795,7 @@
       "calculation": "rec860922832",
       "flavors": "rec860922833",
       "usage": "rec860922834",
+      "partner": "rec861442702",
       "faqTitle": "rec2489187971",
       "faq": "rec2488900221"
     },
@@ -1895,6 +1909,7 @@
       "calculation": "rec860897624",
       "flavors": "rec860897625",
       "usage": "rec918906499",
+      "partner": "rec861442702",
       "faqTitle": "rec2489116661",
       "faq": "rec2488899741"
     },
@@ -2032,6 +2047,7 @@
       "calculation": "rec860861277",
       "flavors": "rec860861278",
       "usage": "rec860861279",
+      "partner": "rec861442702",
       "faqTitle": "rec2489114551",
       "faq": "rec2488898571"
     },

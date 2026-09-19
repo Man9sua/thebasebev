@@ -32,7 +32,7 @@ const MESSAGES: Record<"sent" | "error", string> = {
     "That did not send. Please try again, or email info@thebasebev.com directly.",
 };
 
-export function Partner() {
+export function Partner({ productName }: { productName?: string } = {}) {
   const [state, setState] = useState<State>("idle");
   const nameId = useId();
   const phoneId = useId();
@@ -56,6 +56,7 @@ export function Partner() {
           phone: data.get("Phone"),
           formType: "partner",
           formName: "Partner with Us",
+          product: productName,
           consent: null,
           [LEAD_HONEYPOT_FIELD]: data.get(LEAD_HONEYPOT_FIELD) ?? "",
           ...getFirstTouchAttribution(),

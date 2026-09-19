@@ -364,8 +364,8 @@ export default async function SiteRoute({ params }: RouteProps) {
   // the comparative table, the flavours, the usage note, the FAQ and its
   // heading — are all cut out of the markup below by `site-pages.ts`, so the
   // two never both claim the copy or the `h1`. What the export still owns is
-  // what nothing has replaced yet: the partnership block, the cookie banner and
-  // the four popup lead forms the buttons above open.
+  // what no React section has replaced yet: the cookie banner and the four
+  // popup lead forms opened by the buttons above.
   const product = getProduct(route.slice(1));
 
   // Two pages open with a React head instead, and one of them carries its four
