@@ -5,19 +5,6 @@
  */
 
 /**
- * The brand film is no longer the hero — the hero is the product.
- *
- * The encoded files stay in `public/video/` (3.9 MB desktop / 1.8 MB mobile
- * plus a poster) so the asset is available if it is wanted elsewhere. Nothing
- * renders them today.
- */
-export const BRAND_VIDEO = {
-  desktop: "/video/base-hero.mp4",
-  mobile: "/video/base-hero-mobile.mp4",
-  poster: "/video/base-hero-poster.jpg",
-} as const;
-
-/**
  * The menu, and — through `SiteSearch` — the pages the search box offers.
  *
  * Every href is a route of its own. "About Us" used to be `/#about`, an anchor
