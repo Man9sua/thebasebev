@@ -1,20 +1,20 @@
 # Route indexability audit
 
-Generated: 2026-09-18T10:27:23.830Z
+Generated: 2026-09-19T08:49:31.487Z
 
 Target: `https://the-base-staging.mansua.workers.dev`
 
 ## Accounting
 
-- Friendly routes: 38 (29 canonical/indexable + 9 excluded).
-- Direct `pageNNNN.html` compatibility aliases: 41.
-- Tilda product compatibility aliases: 26.
+- Friendly routes: 37 (29 canonical/indexable + 8 excluded).
+- Retired `pageNNNN.html` aliases served as permanent redirects: 41.
+- Retired Tilda product aliases served as permanent redirects: 26.
 - Technical/metadata/API routes: 8.
-- **Controlled route total: 244.**
-- Permanent redirects (not generated pages): 9.
+- **Controlled route total: 176.**
+- Permanent redirects (not generated pages): 77.
 - Sitemap members: 160.
 
-The 244 controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The 176 controlled routes are the pages and endpoints that remain in the application. The 77 historic aliases preserve existing inbound links without generating static HTML/RSC payloads; they must not enter the sitemap.
 
 ## Generated and technical routes
 
@@ -57,7 +57,6 @@ The 244 controlled routes explain why the application can generate far more outp
 | `/retail` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page114837666.html |
 | `/knowledge-recipes` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page154758576.html |
 | `/not-found` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page115314536.html |
-| `/link` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page65943847.html |
 | `/tpost/u0e5dx7os1-crossover-drink` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
 | `/tpost/4v84szhll1-trade-marketing` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
 | `/tpost/ihnuib79b1-franchise-uniformity` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
@@ -189,73 +188,6 @@ The 244 controlled routes explain why the application can generate far more outp
 | `/tpost/501pcdanj1-14-days-not-120-vertical-integration-win` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
 | `/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
 | `/tpost/251dndgsb1-the-karak-tea-profit-playbook` | blog article | 200 | YES | YES | YES | Published production Blog article preserved at its canonical path |
-| `/page114743626.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page114837666.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page115314536.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page120311356.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page147468696.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page151583806.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page151592086.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page151592696.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page151679366.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page154758576.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page154764216.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page154766476.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page155556086.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page155598016.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62361237.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62362389.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62447481.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62448803.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62494049.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62497031.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62508381.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62510271.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62515411.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62539863.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62541199.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62544887.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62565397.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62566191.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62573319.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62574449.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62576005.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62578053.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62581091.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62585333.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page62588185.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page65033993.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page65943847.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page68443067.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page68443503.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page77299576.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/page77849746.html` | legacy HTML alias | 200 | NO | YES | NO | Compatibility alias retained for redirect/traffic analysis |
-| `/catalog/tproduct/194500823312-sugar-free` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/194500823312-sugar-free` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/207187094752-frappe` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/207187094752-frappe` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/293702296702-iced-tea` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/293702296702-iced-tea` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/296069682122-chocolate` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/296069682122-chocolate` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/316933484392-garnish` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/316933484392-garnish` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/324849428612-jam` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/324849428612-jam` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/389328196132-milkshake` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/389328196132-milkshake` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/466013811412-raf` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/466013811412-raf` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/778280145182-cordial` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/778280145182-cordial` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/781170478702-cream-latte` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/781170478702-cream-latte` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/827401503212-chai-latte` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/827401503212-chai-latte` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/888812727292-sugar-syrop` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/888812727292-sugar-syrop` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/catalog/tproduct/975474893862-matcha` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
-| `/tproduct/975474893862-matcha` | Tilda product compatibility alias | 200 | NO | YES | NO | Dynamic Tilda detail data is absent; shell retained without indexing |
 | `/checkout` | technical checkout page | 200 | NO | YES | NO | Cart review and Stripe Test handoff; intentionally excluded from search |
 | `/_not-found` | technical 404 boundary | 404 | NO | NO | NO | Framework/native error boundary |
 | `/robots.txt` | technical SEO endpoint | 200 | NO | NO | NO | Crawler policy endpoint, not a search result page |
@@ -269,6 +201,74 @@ The 244 controlled routes explain why the application can generate far more outp
 
 | Route | Status | Actual destination | Expected destination | Result |
 | --- | ---: | --- | --- | --- |
+| `/link` | 301 | `/` | `/` | PASS |
+| `/page114743626.html` | 301 | `/catalog` | `/catalog` | PASS |
+| `/page114837666.html` | 301 | `/retail` | `/retail` | PASS |
+| `/page115314536.html` | 301 | `/not-found` | `/not-found` | PASS |
+| `/page120311356.html` | 301 | `/private-labeling` | `/private-labeling` | PASS |
+| `/page147468696.html` | 301 | `/wholesale-strategy` | `/wholesale-strategy` | PASS |
+| `/page151583806.html` | 301 | `/resources` | `/resources` | PASS |
+| `/page151592086.html` | 301 | `/resources/blog` | `/resources/blog` | PASS |
+| `/page151592696.html` | 301 | `/resources/glossary` | `/resources/glossary` | PASS |
+| `/page151679366.html` | 301 | `/resources/tools` | `/resources/tools` | PASS |
+| `/page154758576.html` | 301 | `/knowledge-recipes` | `/knowledge-recipes` | PASS |
+| `/page154764216.html` | 301 | `/` | `/` | PASS |
+| `/page154766476.html` | 301 | `/catalog` | `/catalog` | PASS |
+| `/page155556086.html` | 301 | `/sitemap` | `/sitemap` | PASS |
+| `/page155598016.html` | 301 | `/rnd` | `/rnd` | PASS |
+| `/page62361237.html` | 301 | `/` | `/` | PASS |
+| `/page62362389.html` | 301 | `/` | `/` | PASS |
+| `/page62447481.html` | 301 | `/` | `/` | PASS |
+| `/page62448803.html` | 301 | `/raf-coffee` | `/raf-coffee` | PASS |
+| `/page62494049.html` | 301 | `/cream-latte` | `/cream-latte` | PASS |
+| `/page62497031.html` | 301 | `/chai-latte` | `/chai-latte` | PASS |
+| `/page62508381.html` | 301 | `/milkshake` | `/milkshake` | PASS |
+| `/page62510271.html` | 301 | `/frappe` | `/frappe` | PASS |
+| `/page62515411.html` | 301 | `/iced-tea` | `/iced-tea` | PASS |
+| `/page62539863.html` | 301 | `/cordial` | `/cordial` | PASS |
+| `/page62541199.html` | 301 | `/topping` | `/topping` | PASS |
+| `/page62544887.html` | 301 | `/matcha` | `/matcha` | PASS |
+| `/page62565397.html` | 301 | `/chocolate` | `/chocolate` | PASS |
+| `/page62566191.html` | 301 | `/sugar-syrup` | `/sugar-syrup` | PASS |
+| `/page62573319.html` | 301 | `/vending` | `/vending` | PASS |
+| `/page62574449.html` | 301 | `/jam` | `/jam` | PASS |
+| `/page62576005.html` | 301 | `/garnish` | `/garnish` | PASS |
+| `/page62578053.html` | 301 | `/sugar-free` | `/sugar-free` | PASS |
+| `/page62581091.html` | 301 | `/tea` | `/tea` | PASS |
+| `/page62585333.html` | 301 | `/contacts` | `/contacts` | PASS |
+| `/page62588185.html` | 301 | `/about-us` | `/about-us` | PASS |
+| `/page65033993.html` | 301 | `/distributors` | `/distributors` | PASS |
+| `/page65943847.html` | 301 | `/` | `/` | PASS |
+| `/page68443067.html` | 301 | `/terms` | `/terms` | PASS |
+| `/page68443503.html` | 301 | `/privacy` | `/privacy` | PASS |
+| `/page77299576.html` | 301 | `/thank-you-order` | `/thank-you-order` | PASS |
+| `/page77849746.html` | 301 | `/thank-you-form` | `/thank-you-form` | PASS |
+| `/catalog/tproduct/194500823312-sugar-free` | 301 | `/sugar-free` | `/sugar-free` | PASS |
+| `/tproduct/194500823312-sugar-free` | 301 | `/sugar-free` | `/sugar-free` | PASS |
+| `/catalog/tproduct/207187094752-frappe` | 301 | `/frappe` | `/frappe` | PASS |
+| `/tproduct/207187094752-frappe` | 301 | `/frappe` | `/frappe` | PASS |
+| `/catalog/tproduct/293702296702-iced-tea` | 301 | `/iced-tea` | `/iced-tea` | PASS |
+| `/tproduct/293702296702-iced-tea` | 301 | `/iced-tea` | `/iced-tea` | PASS |
+| `/catalog/tproduct/296069682122-chocolate` | 301 | `/chocolate` | `/chocolate` | PASS |
+| `/tproduct/296069682122-chocolate` | 301 | `/chocolate` | `/chocolate` | PASS |
+| `/catalog/tproduct/316933484392-garnish` | 301 | `/garnish` | `/garnish` | PASS |
+| `/tproduct/316933484392-garnish` | 301 | `/garnish` | `/garnish` | PASS |
+| `/catalog/tproduct/324849428612-jam` | 301 | `/jam` | `/jam` | PASS |
+| `/tproduct/324849428612-jam` | 301 | `/jam` | `/jam` | PASS |
+| `/catalog/tproduct/389328196132-milkshake` | 301 | `/milkshake` | `/milkshake` | PASS |
+| `/tproduct/389328196132-milkshake` | 301 | `/milkshake` | `/milkshake` | PASS |
+| `/catalog/tproduct/466013811412-raf` | 301 | `/raf-coffee` | `/raf-coffee` | PASS |
+| `/tproduct/466013811412-raf` | 301 | `/raf-coffee` | `/raf-coffee` | PASS |
+| `/catalog/tproduct/778280145182-cordial` | 301 | `/cordial` | `/cordial` | PASS |
+| `/tproduct/778280145182-cordial` | 301 | `/cordial` | `/cordial` | PASS |
+| `/catalog/tproduct/781170478702-cream-latte` | 301 | `/cream-latte` | `/cream-latte` | PASS |
+| `/tproduct/781170478702-cream-latte` | 301 | `/cream-latte` | `/cream-latte` | PASS |
+| `/catalog/tproduct/827401503212-chai-latte` | 301 | `/chai-latte` | `/chai-latte` | PASS |
+| `/tproduct/827401503212-chai-latte` | 301 | `/chai-latte` | `/chai-latte` | PASS |
+| `/catalog/tproduct/888812727292-sugar-syrop` | 301 | `/sugar-syrup` | `/sugar-syrup` | PASS |
+| `/tproduct/888812727292-sugar-syrop` | 301 | `/sugar-syrup` | `/sugar-syrup` | PASS |
+| `/catalog/tproduct/975474893862-matcha` | 301 | `/matcha` | `/matcha` | PASS |
+| `/tproduct/975474893862-matcha` | 301 | `/matcha` | `/matcha` | PASS |
 | `/page65953477.html` | 301 | `/` | `/` | PASS |
 | `/page65953593.html` | 301 | `/` | `/` | PASS |
 | `/raf-cofeee` | 301 | `/raf-coffee` | `/raf-coffee` | PASS |

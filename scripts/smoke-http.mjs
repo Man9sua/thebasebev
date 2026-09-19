@@ -8,6 +8,7 @@ const productionTarget = ["thebasebev.com", "www.thebasebev.com"].includes(
 );
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
 const expectedSitemapUrls = 29 + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
@@ -48,10 +49,10 @@ const publicRoutes = [
   "/retail",
   "/knowledge-recipes",
   "/not-found",
-  "/link",
 ];
 
 const redirects = new Map([
+  ...retiredLegacyRedirects.map(({ source, destination }) => [source, destination]),
   ["/page65953477.html", "/"],
   ["/page65953593.html", "/"],
   ["/raf-cofeee", "/raf-coffee"],
@@ -82,7 +83,7 @@ for (const route of publicRoutes) {
   if (response.status !== 200) failures.push(`${route}: expected 200, received ${response.status}`);
   if (!/<html[^>]+lang=["']en["']/i.test(html)) failures.push(`${route}: missing static lang=en`);
   if (!/<title[^>]*>[^<]+<\/title>/i.test(html)) failures.push(`${route}: missing title`);
-  if (!["/knowledge-recipes", "/link"].includes(route) && !/<h1\b/i.test(html)) {
+  if (route !== "/knowledge-recipes" && !/<h1\b/i.test(html)) {
     failures.push(`${route}: missing crawler-visible H1`);
   }
   if (route === "/" && (workerTarget || productionTarget)) {

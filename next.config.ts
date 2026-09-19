@@ -1,4 +1,10 @@
 import type { NextConfig } from "next";
+import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
+
+const retiredLegacyRedirects = legacyRouteRedirects as ReadonlyArray<{
+  source: string;
+  destination: string;
+}>;
 
 const nextConfig: NextConfig = {
   agentRules: false,
@@ -12,6 +18,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      ...retiredLegacyRedirects.map(({ source, destination }) => ({
+        source,
+        destination,
+        statusCode: 301,
+      })),
       { source: "/page65953477.html", destination: "/", statusCode: 301 },
       { source: "/page65953593.html", destination: "/", statusCode: 301 },
       { source: "/raf-cofeee", destination: "/raf-coffee", statusCode: 301 },

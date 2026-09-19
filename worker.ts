@@ -1,6 +1,7 @@
 // The OpenNext bundle is generated before Wrangler bundles this entrypoint.
 // @ts-expect-error -- generated module intentionally has no checked-in types.
 import openNextWorker from "./.open-next/worker.js";
+import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
@@ -28,7 +29,13 @@ const PRODUCTION_HOSTS = new Set(["thebasebev.com", "www.thebasebev.com"]);
  * The duplication is deliberate and it is checked: `audit:route-indexability`
  * reads both lists and fails if they disagree, so this cannot quietly drift.
  */
-const PERMANENT_REDIRECTS = new Map([
+const RETIRED_LEGACY_REDIRECTS = legacyRouteRedirects as ReadonlyArray<{
+  source: string;
+  destination: string;
+}>;
+
+const PERMANENT_REDIRECTS = new Map<string, string>([
+  ...RETIRED_LEGACY_REDIRECTS.map(({ source, destination }) => [source, destination] as const),
   ["/page65953477.html", "/"],
   ["/page65953593.html", "/"],
   ["/raf-cofeee", "/raf-coffee"],

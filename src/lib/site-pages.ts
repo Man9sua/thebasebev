@@ -53,24 +53,8 @@ const friendlyRoutes: RouteDefinition[] = [
   { route: "/retail", file: "page114837666.html", indexable: false },
   { route: "/knowledge-recipes", file: "page154758576.html", indexable: false },
   { route: "/not-found", file: "page115314536.html", indexable: false },
-  { route: "/link", file: "page65943847.html", indexable: false },
 ];
 
-const tildaProductPaths = [
-  "194500823312-sugar-free",
-  "207187094752-frappe",
-  "293702296702-iced-tea",
-  "296069682122-chocolate",
-  "316933484392-garnish",
-  "324849428612-jam",
-  "389328196132-milkshake",
-  "466013811412-raf",
-  "778280145182-cordial",
-  "781170478702-cream-latte",
-  "827401503212-chai-latte",
-  "888812727292-sugar-syrop",
-  "975474893862-matcha",
-];
 
 export type ProductSpec = { label: string; value: string; icon?: string };
 
@@ -159,62 +143,10 @@ const PRODUCT_PAGE_FILES: Record<string, string> = Object.fromEntries(
 );
 
 const exportRoot = path.join(process.cwd(), "tilda_export", "project12027355");
-// Keep the audited legacy aliases explicit. Reading the export directory at
-// module evaluation works in Node but fails in the Cloudflare Worker bundle,
-// where the build-time source tree is intentionally unavailable.
-const allPageFiles = [
-  "page114743626.html",
-  "page114837666.html",
-  "page115314536.html",
-  "page120311356.html",
-  "page147468696.html",
-  "page151583806.html",
-  "page151592086.html",
-  "page151592696.html",
-  "page151679366.html",
-  "page154758576.html",
-  "page154764216.html",
-  "page154766476.html",
-  "page155556086.html",
-  "page155598016.html",
-  "page62361237.html",
-  "page62362389.html",
-  "page62447481.html",
-  "page62448803.html",
-  "page62494049.html",
-  "page62497031.html",
-  "page62508381.html",
-  "page62510271.html",
-  "page62515411.html",
-  "page62539863.html",
-  "page62541199.html",
-  "page62544887.html",
-  "page62565397.html",
-  "page62566191.html",
-  "page62573319.html",
-  "page62574449.html",
-  "page62576005.html",
-  "page62578053.html",
-  "page62581091.html",
-  "page62585333.html",
-  "page62588185.html",
-  "page65033993.html",
-  "page65943847.html",
-  "page68443067.html",
-  "page68443503.html",
-  "page77299576.html",
-  "page77849746.html",
-] as const;
-
-const standaloneShellFiles = new Set(["page62362389.html", "page62447481.html"]);
+// Retired aliases are declared once in src/data/legacy-route-redirects.json and answered as 301 by the Worker.
 
 const routeDefinitions: RouteDefinition[] = [
   ...friendlyRoutes,
-  ...allPageFiles.map((file) => ({ route: `/${file}`, file, indexable: false })),
-  ...tildaProductPaths.flatMap((slug) => [
-    { route: `/catalog/tproduct/${slug}`, file: "page114743626.html", indexable: false },
-    { route: `/tproduct/${slug}`, file: "page114743626.html", indexable: false },
-  ]),
 ];
 
 const routeByPath = new Map(routeDefinitions.map((definition) => [definition.route, definition]));
@@ -875,7 +807,7 @@ export function getSitePage(route: string): SitePage | undefined {
   const source = fs.readFileSync(path.join(exportRoot, definition.file), "utf8");
   const assetsMatch = source.match(/<!-- Assets -->([\s\S]*?)<\/head>/i);
   const rawBody = extractBody(source, definition.file);
-  const usesSharedShell = !standaloneShellFiles.has(definition.file);
+  const usesSharedShell = true;
 
   /**
    * What the export is put through on its way out, in order. Written as a list

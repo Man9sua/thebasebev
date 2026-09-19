@@ -16,23 +16,25 @@ function block(source, start, end) {
   return source.slice(startIndex + start.length, endIndex);
 }
 
-const friendlyBlock = block(siteSource, "const friendlyRoutes: RouteDefinition[] = [", "const tildaProductPaths");
+const friendlyBlock = block(siteSource, "const friendlyRoutes: RouteDefinition[] = [", "export type ProductSpec");
 const friendlyRoutes = [...friendlyBlock.matchAll(/\{ route: "([^"]+)", file: "([^"]+)", indexable: (true|false) \}/g)].map(
   (match) => ({ route: match[1], file: match[2], indexable: match[3] === "true" }),
 );
-const productBlock = block(siteSource, "const tildaProductPaths = [", "const exportRoot");
-const productSlugs = [...productBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
-const pageFileBlock = block(siteSource, "const allPageFiles = [", "] as const;");
-const pageFiles = [...pageFileBlock.matchAll(/"(page\d+\.html)"/g)].map((match) => match[1]);
+const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
+const legacyPageRedirects = retiredLegacyRedirects.filter((entry) => entry.source.startsWith("/page"));
+const productAliasRedirects = retiredLegacyRedirects.filter((entry) => entry.source.includes("/tproduct/"));
 // Whitespace-tolerant: the Blog's three legacy-slug redirects are too long to
 // sit on one line, and a redirect this audit cannot see is a redirect nothing
 // checks.
-const redirectRows = [...nextConfig.matchAll(
+const configuredRedirectRows = [...nextConfig.matchAll(
   /\{\s*source:\s*"([^"]+)",\s*destination:\s*"([^"]+)",\s*statusCode:\s*301,?\s*\}/g,
 )].map(
   (match) => ({ route: match[1], destination: match[2] }),
 );
-
+const redirectRows = [
+  ...retiredLegacyRedirects.map((entry) => ({ route: entry.source, destination: entry.destination })),
+  ...configuredRedirectRows,
+];
 const controlledRoutes = [
   ...friendlyRoutes.map((entry) => ({
     route: entry.route,
@@ -63,26 +65,6 @@ const controlledRoutes = [
     sitemap: true,
     reason: "Published production Blog article preserved at its canonical path",
   })),
-  ...pageFiles.map((file) => ({
-    route: `/${file}`,
-    type: "legacy HTML alias",
-    expectedStatus: 200,
-    indexable: false,
-    canonical: true,
-    sitemap: false,
-    reason: "Compatibility alias retained for redirect/traffic analysis",
-  })),
-  ...productSlugs.flatMap((slug) =>
-    ["/catalog/tproduct/", "/tproduct/"].map((prefix) => ({
-      route: `${prefix}${slug}`,
-      type: "Tilda product compatibility alias",
-      expectedStatus: 200,
-      indexable: false,
-      canonical: true,
-      sitemap: false,
-      reason: "Dynamic Tilda detail data is absent; shell retained without indexing",
-    })),
-  ),
   {
     route: "/checkout",
     type: "technical checkout page",
@@ -157,18 +139,18 @@ const controlledRoutes = [
   },
 ];
 
-if (friendlyRoutes.length !== 38 || pageFiles.length !== 41 || productSlugs.length !== 13) {
+if (friendlyRoutes.length !== 37 || legacyPageRedirects.length !== 41 || productAliasRedirects.length !== 26) {
   throw new Error(
-    `Unexpected route source counts: friendly=${friendlyRoutes.length}, pages=${pageFiles.length}, products=${productSlugs.length}.`,
+    `Unexpected route source counts: friendly=${friendlyRoutes.length}, legacyPages=${legacyPageRedirects.length}, productAliases=${productAliasRedirects.length}.`,
   );
 }
-const expectedControlledRoutes = 113 + glossaryRoutes.length + blogRoutes.length;
+const expectedControlledRoutes = 45 + glossaryRoutes.length + blogRoutes.length;
 if (controlledRoutes.length !== expectedControlledRoutes) {
   throw new Error(
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
   );
 }
-if (redirectRows.length !== 9) throw new Error(`Expected nine redirects, received ${redirectRows.length}.`);
+if (redirectRows.length !== 77) throw new Error(`Expected 77 redirects, received ${redirectRows.length}.`);
 
 /*
  * `worker.ts` restates the redirect table because its static fast path answers
@@ -177,7 +159,10 @@ if (redirectRows.length !== 9) throw new Error(`Expected nine redirects, receive
  * Cloudflare. The duplication is allowed; drifting apart is not.
  */
 const workerSource = fs.readFileSync("worker.ts", "utf8");
-const workerRedirectBlock = block(workerSource, "const PERMANENT_REDIRECTS = new Map([", "]);");
+if (!nextConfig.includes("legacy-route-redirects.json") || !workerSource.includes("legacy-route-redirects.json")) {
+  throw new Error("The retired-route redirect manifest must be imported by both Next.js and the static Worker path.");
+}
+const workerRedirectBlock = block(workerSource, "const PERMANENT_REDIRECTS = new Map<string, string>([", "]);" );
 const workerRedirects = new Map(
   [...workerRedirectBlock.matchAll(/\[\s*"([^"]+)",\s*"([^"]+)",?\s*\]/g)].map((match) => [
     match[1],
@@ -185,13 +170,14 @@ const workerRedirects = new Map(
   ]),
 );
 const redirectDrift = [
-  ...redirectRows
+  ...configuredRedirectRows
     .filter((row) => workerRedirects.get(row.route) !== row.destination)
     .map((row) => `next.config.ts has ${row.route} -> ${row.destination}, worker.ts does not`),
   ...[...workerRedirects]
-    .filter(([route]) => !redirectRows.some((row) => row.route === route))
+    .filter(([route]) => !configuredRedirectRows.some((row) => row.route === route))
     .map(([route]) => `worker.ts has ${route}, next.config.ts does not`),
 ];
+
 if (redirectDrift.length) {
   throw new Error(`Redirect tables disagree:\n- ${redirectDrift.join("\n- ")}`);
 }
@@ -311,14 +297,14 @@ Target: \`${targetOrigin}\`
 ## Accounting
 
 - Friendly routes: ${friendlyRoutes.length} (${friendlyRoutes.filter((route) => route.indexable).length} canonical/indexable + ${friendlyRoutes.filter((route) => !route.indexable).length} excluded).
-- Direct \`pageNNNN.html\` compatibility aliases: ${pageFiles.length}.
-- Tilda product compatibility aliases: ${productSlugs.length * 2}.
+- Retired \`pageNNNN.html\` aliases served as permanent redirects: ${legacyPageRedirects.length}.
+- Retired Tilda product aliases served as permanent redirects: ${productAliasRedirects.length}.
 - Technical/metadata/API routes: 8.
 - **Controlled route total: ${controlledRoutes.length}.**
 - Permanent redirects (not generated pages): ${redirectRows.length}.
 - Sitemap members: ${sitemapPaths.size}.
 
-The ${controlledRoutes.length} controlled routes explain why the application can generate far more outputs than the 29 canonical sitemap members. Compatibility aliases, APIs, metadata files, error boundaries, and noindex service pages must not enter the sitemap.
+The ${controlledRoutes.length} controlled routes are the pages and endpoints that remain in the application. The ${redirectRows.length} historic aliases preserve existing inbound links without generating static HTML/RSC payloads; they must not enter the sitemap.
 
 ## Generated and technical routes
 

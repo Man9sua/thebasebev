@@ -85,7 +85,7 @@ const nextConfig = read("next.config.ts");
 const friendlyBlock = block(
   sitePages,
   "const friendlyRoutes: RouteDefinition[] = [",
-  "const tildaProductPaths",
+  "export type ProductSpec",
 );
 const friendlyRoutes = [
   ...friendlyBlock.matchAll(
@@ -96,23 +96,23 @@ const friendlyRoutes = [
   file: match[2],
   indexable: match[3] === "true",
 }));
-const productBlock = block(sitePages, "const tildaProductPaths = [", "const exportRoot");
-const tildaProductSlugs = [...productBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
-const pageFileBlock = block(sitePages, "const allPageFiles = [", "] as const;");
-const pageFiles = [...pageFileBlock.matchAll(/"(page\d+\.html)"/g)].map((match) => match[1]);
 const glossary = JSON.parse(read("src/data/glossary-content.json")).entries;
 const blog = JSON.parse(read("src/data/blog-content.json")).posts;
-const redirectRows = [...nextConfig.matchAll(
+const retiredLegacyRedirects = JSON.parse(read("src/data/legacy-route-redirects.json"));
+const legacyPageRedirects = retiredLegacyRedirects.filter((entry) => entry.source.startsWith("/page"));
+const productAliasRedirects = retiredLegacyRedirects.filter((entry) => entry.source.includes("/tproduct/"));
+const configuredRedirectRows = [...nextConfig.matchAll(
   /\{\s*source:\s*"([^"]+)",\s*destination:\s*"([^"]+)",\s*statusCode:\s*301,?\s*\}/g,
 )].map((match) => ({ source: match[1], destination: match[2], status: 301 }));
+const redirectRows = [
+  ...retiredLegacyRedirects.map((entry) => ({ ...entry, status: 301 })),
+  ...configuredRedirectRows,
+];
 
 const friendlyByRoute = new Map(friendlyRoutes.map((entry) => [entry.route, entry]));
 const glossaryRoutes = new Set(glossary.map((entry) => entry.path));
 const blogRoutes = new Set(blog.map((entry) => entry.path));
-const legacyPageRoutes = new Set(pageFiles.map((file) => `/${file}`));
-const productAliasRoutes = new Set(
-  tildaProductSlugs.flatMap((slug) => [`/catalog/tproduct/${slug}`, `/tproduct/${slug}`]),
-);
+
 
 function classifyRoute(route) {
   if (route === "/_global-error" || route === "/_not-found") {
@@ -162,20 +162,6 @@ function classifyRoute(route) {
       action,
     };
   }
-  if (legacyPageRoutes.has(route)) {
-    return {
-      category: "legacy Tilda HTML alias",
-      visibility: "not linked or indexed",
-      action: "Candidate: map to a canonical route/301 only after Search Console and analytics review.",
-    };
-  }
-  if (productAliasRoutes.has(route)) {
-    return {
-      category: "legacy Tilda product alias",
-      visibility: "not linked or indexed",
-      action: "Candidate: 301 to the modern product route after legacy traffic review.",
-    };
-  }
   if (route === "/checkout") {
     return {
       category: "checkout page",
@@ -212,16 +198,6 @@ const routeRows = [
     route: entry.path,
     ...classifyRoute(entry.path),
     source: "src/data/blog-content.json",
-  })),
-  ...pageFiles.map((file) => ({
-    route: `/${file}`,
-    ...classifyRoute(`/${file}`),
-    source: "tilda_export compatibility map",
-  })),
-  ...[...productAliasRoutes].map((route) => ({
-    route,
-    ...classifyRoute(route),
-    source: "tilda product compatibility map",
   })),
   ...[
     "/checkout",
@@ -341,9 +317,7 @@ for (const row of staticRouteRows) {
 
 const unreferencedPublic = assetRows.filter((row) => row.category.startsWith("public ") && row.category.endsWith("not referenced by build"));
 const cacheRows = assetRows.filter((row) => row.category === "OpenNext incremental cache snapshot");
-const compatibilityRows = staticRouteRows.filter(
-  (row) => row.category === "legacy Tilda HTML alias" || row.category === "legacy Tilda product alias",
-);
+const retiredCompatibilityRedirects = retiredLegacyRedirects;
 
 fs.mkdirSync(outputRoot, { recursive: true });
 fs.writeFileSync(
@@ -442,16 +416,16 @@ const markdown = [
   `- Canonical public pages: **${friendlyRoutes.filter((row) => row.indexable).length}**`,
   `- Published Glossary articles: **${glossary.length}**`,
   `- Published blog articles: **${blog.length}**`,
-  `- Legacy \`/page*.html\` aliases: **${pageFiles.length}**`,
-  `- Legacy \`/tproduct\` aliases: **${productAliasRoutes.size}**`,
+  `- Retired \`/page*.html\` aliases served as 301: **${legacyPageRedirects.length}**`,
+  `- Retired \`/tproduct\` aliases served as 301: **${productAliasRedirects.length}**`,
   `- Permanent redirects (not generated pages): **${redirectRows.length}**`,
   "",
-  "The request's approximately 112 paths corresponds to the 113 non-article controlled routes: 38 friendly routes, 41 legacy HTML aliases, 26 legacy product aliases and 8 technical/checkout routes. The full controlled set is larger because it also retains 101 Glossary and 30 Blog detail routes.",
+  "The active controlled route set is 37 friendly routes, 8 technical/checkout routes, 101 Glossary articles and 30 Blog articles. Historic aliases are preserved separately as 301 redirects and have no static HTML/RSC payloads.",
   "",
   "## Highest-value optimization candidates",
   "",
-  `1. **OpenNext cache snapshot** — ${bytes(cacheRows.length)} objects / ${mib(sum(cacheRows))} MiB. It is not directly user-visible. Validate all static/fallback routes without it before excluding it.`,
-  `2. **Legacy compatibility static payloads** — ${bytes(compatibilityRows.length)} objects / ${mib(sum(compatibilityRows))} MiB. These preserve old URLs but are neither indexed nor normal navigation. Migrate each to a 301 only after Search Console, analytics and backlink review.`,
+  `1. **OpenNext cache snapshot** — ${bytes(cacheRows.length)} objects / ${mib(sum(cacheRows))} MiB. It is disabled when this count is zero; keep it off while all retained pages are static-fast-path pages.`,
+  `2. **Retired compatibility aliases** — ${bytes(retiredCompatibilityRedirects.length)} permanent 301 routes / **0 static page objects**. Retain them to preserve inbound links without generating static HTML/RSC payloads.`,
   `3. **Unreferenced public assets** — ${bytes(unreferencedPublic.length)} objects / ${mib(sum(unreferencedPublic))} MiB. They have no generated HTML/RSC/JS/CSS reference in this build; verify dynamic runtime usage and archive/remove only then.`,
   "",
   "## Files",

@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import fs from "node:fs";
 
 const sourceOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
 const targetOrigin = (process.argv[3] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
@@ -17,7 +18,7 @@ const routes = [
   "/chai-latte", "/milkshake", "/frappe", "/iced-tea", "/cordial", "/topping",
   "/matcha", "/chocolate", "/sugar-syrup", "/vending", "/jam", "/garnish",
   "/sugar-free", "/tea", "/catalog", "/thank-you-order", "/terms", "/privacy",
-  "/thank-you-form", "/retail", "/knowledge-recipes", "/not-found", "/link",
+  "/thank-you-form", "/retail", "/knowledge-recipes", "/not-found",
 ];
 
 const redirects = new Map([
@@ -28,7 +29,8 @@ const redirects = new Map([
   ["/functional-wellness", "/catalog"],
 ]);
 
-const targetOnlyRedirects = new Map([["/cabinet", "/"]]);
+const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
+const targetOnlyRedirects = new Map([...retiredLegacyRedirects.map(({ source, destination }) => [source, destination]), ["/cabinet", "/"]]);
 
 // These routes intentionally no longer render the source account's Tilda
 // `<main>` byte-for-byte. They are the native resource pages and the design
