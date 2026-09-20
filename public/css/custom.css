@@ -13,7 +13,7 @@ border: 1px solid #e5e5e5 !important;
 border-radius: 0px !important;
 padding: 24px 32px !important;
 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif !important;
+font-family: var(--tbb-font-exo, "Exo 2"), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
 position: fixed !important;
 bottom: 32px !important;
 right: 32px !important;
@@ -2140,7 +2140,18 @@ height:52px!important;font-size:13px!important;letter-spacing:.12em!important;te
 #allrecords:not(.avx1):not(.avx2) .t706__product-del{color:#9A9A9A!important}
 /* ============ /AVANTCHA LAYER 28 ============ */
 
-/* ============ AVANTCHA LAYER 29 — единый шрифт Roboto ============ */
+/* ============ AVANTCHA LAYER 29 — one face across the site ============ */
+/*
+ * Exo 2, not Roboto. This block is `!important` at a specificity no module
+ * class can answer, so whatever it names is what the whole site renders in —
+ * the exported Tilda records and every React surface served inside the legacy
+ * shell alike. It was naming Roboto, which is why the product pages, About, the
+ * header and the footer were all in it while the homepage was in the brand
+ * face: the homepage is the one page that does not go through this shell.
+ *
+ * `--tbb-font-exo` is next/font's variable and is declared on <html>, so it is
+ * in scope here; the literal is the fallback for anything served without it.
+ */
 
 html body *:not([class*="t-icon"]):not([class*="icon"]):not(i):not(.t-store__card__mark),
 html body,
@@ -2151,14 +2162,14 @@ html body #rec2772565803, html body #rec2772565803 *,
 html body .t706__cartwin, html body .t706__cartwin *,
 html body .tbh-nav a, html body .bchf-wrap, html body .bchf-wrap *,
 html body .catg-name, html body .catg-price, html body .bfaq-wrap *{
-font-family:'Roboto',-apple-system,Arial,sans-serif!important}
+font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important}
 
 html body .t706__cartwin-heading,
 html body h1, html body h2{letter-spacing:0!important}
 /* ============ /AVANTCHA LAYER 29 ============ */
 
 #allrecords:not(.avx1):not(.avx2) *:not([class*="t-icon"]):not([class*="icon"]):not(i),
-#allrecords:not(.avx1):not(.avx2){font-family:'Roboto',-apple-system,Arial,sans-serif!important}
+#allrecords:not(.avx1):not(.avx2){font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important}
 
 #allrecords #rec2544308101,
 #allrecords #rec2544308101 .t396__artboard{background-color:#000!important;height:auto!important;min-height:0!important;overflow:visible!important}
@@ -2765,15 +2776,15 @@ html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg g,html body
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card{will-change:auto!important}
 
-html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text *{font-family:Roboto,-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important;-moz-osx-font-smoothing:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text *{font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important;-moz-osx-font-smoothing:auto!important}
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{color:#6f6862!important}
 /* ============ /AVANTCHA LAYER 77 ============ */
 
 /* ============ AVANTCHA LAYER 78: блок преимуществ (40/50/60/100%) ============ */
-html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card *{font-family:Roboto,-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card *{font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important}
 
-html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-number.bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-percent.bchm-percent{font-family:Roboto,-apple-system,Arial,sans-serif!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-number.bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-percent.bchm-percent{font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-number{font-weight:300!important;letter-spacing:-1.5px!important;line-height:1!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-percent{font-weight:300!important;color:#b4a99e!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-eyebrow{font-size:10px!important;letter-spacing:1.6px!important;color:#a79c90!important;margin-bottom:4px!important}

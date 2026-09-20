@@ -1,135 +1,241 @@
 .section {
   background: var(--tbb-paper-warm);
-  padding: var(--tbb-section) 0;
+  /* No padding above: the film opens the section flush with the one before it.
+     The bottom keeps the usual rhythm. */
+  padding: 0 0 var(--tbb-section);
   overflow: clip;
 }
+/* ---- film ---- */
+
+/* `--fade` is how much of the frame is given over to the dissolve. It is read
+   by the gradient and by the figure that sits inside it, so the two cannot
+   drift apart. */
+.stage {
+  --fade: clamp(9rem, 22vh, 16rem);
+
+  position: relative;
+  width: 100%;
+  height: clamp(30rem, 84vh, 58rem);
+  background: var(--tbb-ink);
+}
+
+.film {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The footage is painted out into the page rather than stopping on an edge.
+   Opaque at the bottom so the last band is exactly the section colour, which is
+   what lets the proof points below read as the same surface. */
+.dissolve {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: var(--fade);
+  background: linear-gradient(
+    to bottom,
+    rgba(242, 242, 242, 0) 0%,
+    rgba(242, 242, 242, 0.55) 45%,
+    var(--tbb-paper-warm) 100%
+  );
+  pointer-events: none;
+}
+
+/* The film runs from near-black to near-white frame to frame, so the label
+   cannot rely on the footage staying dark. A short scrim under it costs
+   nothing on the dark frames and saves it on the bright ones. */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(6rem, 14vh, 10rem);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+
+.eyebrow {
+  position: absolute;
+  top: clamp(1.5rem, 4vw, 3rem);
+  left: var(--tbb-gutter);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  /* Over footage, not paper. */
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.mark {
+  /* Inherits the eyebrow rather than printing the mark colour: on a page
+     that carries the red only in the logo, one red glyph over the footage
+     read as a rendering fault rather than as an accent. */
+  color: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+/* Sits inside the dissolve, so the number appears to surface out of the fade
+   instead of being stamped on the film. */
+.headlineFigure {
+  position: absolute;
+  right: var(--tbb-gutter);
+  bottom: 0;
+  height: var(--fade);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.15rem;
+  text-align: right;
+}
+
+.figureValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+  line-height: 0.9;
+  letter-spacing: var(--tbb-tracking-display);
+  font-weight: 600;
+  color: var(--tbb-ink);
+}
+
+/* ---- everything on paper ---- */
 
 .inner {
   width: 100%;
   max-width: var(--tbb-max);
   margin: 0 auto;
   padding: 0 var(--tbb-gutter);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: clamp(2rem, 6vw, 6rem);
-  align-items: center;
 }
 
-.copy {
-  max-width: 40ch;
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  padding-bottom: clamp(2rem, 5vw, 3.5rem);
+  border-bottom: 1px solid var(--tbb-line);
 }
 
-.title {
+.fact {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.factValue {
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  line-height: 1.04;
-  letter-spacing: var(--tbb-tracking-display);
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
   font-weight: 600;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
+  color: var(--tbb-ink);
 }
 
 .body {
-  margin-top: clamp(1rem, 2.4vw, 1.75rem);
-  color: var(--tbb-ink-soft);
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
 }
 
-.body + .body {
-  margin-top: 0.9rem;
-}
-
-.stats {
-  margin-top: clamp(1.75rem, 4vw, 2.75rem);
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1.5rem, 4vw, 3rem);
-  border-top: 1px solid var(--tbb-line);
-  padding-top: clamp(1rem, 2vw, 1.5rem);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.statValue {
+/* The gap lives on `.headline` below, not here: `.tbb h2 { margin: 0 }` in the
+   tokens outranks this class and quietly dropped the bottom margin. */
+.title {
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.5rem, 2.6vw, 2.5rem);
+  font-size: var(--tbb-text-display);
+  line-height: 0.98;
+  letter-spacing: var(--tbb-tracking-display);
   font-weight: 600;
-  line-height: 1;
+}
+
+.headline {
+  display: grid;
+  row-gap: clamp(1.5rem, 3.5vw, 2.75rem);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.para {
+  color: var(--tbb-ink-soft);
+  line-height: 1.55;
+}
+
+.aside {
+  text-align: right;
+  display: grid;
+  justify-items: end;
+  align-content: start;
+  gap: 0.35rem;
+}
+
+.asideName {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: var(--tbb-tracking-display);
+  color: var(--tbb-ink);
+}
+
+.asideRole {
+  font-size: 0.875rem;
+  color: var(--tbb-muted);
+}
+
+/* Padding, not margin — the tokens reset every `p` margin to zero. */
+.asidePrompt {
+  padding-top: clamp(1.25rem, 3vw, 2.25rem);
+  max-width: 24ch;
+  font-weight: 500;
 }
 
 .cta {
-  margin-top: clamp(1.75rem, 4vw, 2.5rem);
+  margin-top: clamp(0.75rem, 2vw, 1.25rem);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--tbb-ink);
+  padding: 1rem 1.75rem;
+  border-radius: 999px;
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
   text-decoration: none;
   font-size: var(--tbb-text-label);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid currentColor;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+  font-weight: 500;
+  transition:
+    gap var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.cta svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
 }
 
 .cta:hover {
-  opacity: 0.55;
+  gap: 1.25rem;
+  transform: translate3d(0, -2px, 0);
 }
 
-/* Two plates, offset and overlapping — the composition is the point, so they
-   are placed rather than laid out in a row. */
-.plates {
-  position: relative;
-  aspect-ratio: 1 / 0.98;
+.cta:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 3px;
 }
 
-.plate {
-  position: absolute;
-  overflow: hidden;
-  border-radius: 2px;
-  background: var(--tbb-sand);
-}
-
-.plateA {
-  left: 0;
-  top: 0;
-  width: 62%;
-  height: 72%;
-}
-
-.plateB {
-  right: 0;
-  bottom: 0;
-  width: 52%;
-  height: 62%;
-  box-shadow: -18px -18px 48px rgba(26, 19, 17, 0.14);
-}
-
-.media {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.05);
-}
-
-/* The parallax wrapper is sized by `inset` alone. Adding height:100% here
-   overrode the bottom edge, leaving a 6% strip of bare plate below the image. */
-.layer {
-  position: absolute;
-  inset: -6% 0;
-}
-
-@media (max-width: 1023px) {
-  .inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2rem, 8vw, 3rem);
+@media (max-width: 899px) {
+  .stage {
+    height: clamp(24rem, 62vh, 34rem);
   }
 
-  .plates {
-    order: -1;
-    aspect-ratio: 1 / 0.72;
-    max-width: 34rem;
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aside {
+    text-align: left;
+    justify-items: start;
   }
 }

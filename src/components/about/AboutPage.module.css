@@ -1,0 +1,1042 @@
+.page {
+  overflow-x: clip;
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+}
+
+.container {
+  width: min(1280px, calc(100% - 160px));
+  margin-inline: auto;
+}
+
+.sectionMark {
+  width: 65.74px;
+  height: auto;
+}
+
+.hero {
+  padding: 89px 0 134px;
+  background: #fff;
+}
+
+.hero h1 {
+  width: min(675px, 58vw);
+  margin-top: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.33;
+}
+
+.heroImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1280 / 680;
+  margin-top: 60px;
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--tbb-grey-lightest);
+}
+
+.heroImage img {
+  object-fit: cover;
+  object-position: center 43%;
+}
+
+.benefitGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 60px;
+}
+
+.benefitCard {
+  display: flex;
+  min-height: 240px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px;
+  border-radius: 32px;
+  background: #fafafa;
+}
+
+.benefitCard img {
+  width: 64px;
+  height: 64px;
+}
+
+.benefitCard p {
+  max-width: 230px;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.35 !important;
+}
+
+.teamSection {
+  padding: 109px 0 120px;
+  background: #121212;
+  color: #fff;
+}
+
+.teamSection .sectionMark {
+  filter: invert(1);
+}
+
+.teamSection h2,
+.place h2,
+.faq h2 {
+  width: min-content;
+  margin-top: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.33;
+}
+
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 30px 24px;
+  margin-top: 60px;
+}
+
+.teamCard {
+  min-width: 0;
+  padding: 29px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 32px;
+}
+
+.portrait {
+  position: relative;
+  aspect-ratio: 242 / 292;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #222;
+}
+
+.portrait img {
+  object-fit: cover;
+}
+
+.teamCard h3 {
+  margin-top: 22px !important;
+  font-family: var(--tbb-font-display);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.teamCard p {
+  margin-top: 8px !important;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 14px;
+  line-height: 1.4 !important;
+}
+
+.place {
+  padding: 95px 0 80px;
+  background: #fff;
+}
+
+.placeLayout {
+  display: grid;
+  grid-template-columns: 628px minmax(0, 1fr);
+  gap: 100px;
+  margin-top: 60px;
+  align-items: start;
+}
+
+.processCopy {
+  grid-column: 2;
+  padding-top: 78px;
+}
+
+.processCopy h3 {
+  max-width: 430px;
+  font-family: var(--tbb-font-display);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.22;
+}
+
+.processCopy ol {
+  display: grid;
+  gap: 18px;
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.processCopy li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.processCopy li > span {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid var(--tbb-ink);
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.processCopy li p {
+  max-width: 490px;
+  font-size: 18px;
+  line-height: 1.4 !important;
+}
+
+.placeMosaic {
+  position: relative;
+  grid-row: 1;
+  width: 628px;
+  height: 560px;
+}
+
+.mosaicPhoto,
+.statCard {
+  position: absolute;
+  width: 302px;
+  overflow: hidden;
+  border-radius: 32px;
+}
+
+.mosaicPhoto {
+  height: 331px;
+  background: var(--tbb-grey-lightest);
+}
+
+.mosaicPhoto img {
+  object-fit: cover;
+}
+
+.mosaicPhotoOne {
+  inset: 0 auto auto 0;
+}
+
+.mosaicPhotoTwo {
+  inset: 229px 0 auto auto;
+}
+
+.statCard {
+  display: flex;
+  height: 205px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px;
+}
+
+.capacity {
+  inset: 0 0 auto auto;
+  background: #efe5d9;
+}
+
+.quality {
+  inset: 355px auto auto 0;
+  background: #d9e5dc;
+}
+
+.statCard strong {
+  font-family: var(--tbb-font-display);
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.quality strong {
+  max-width: 8ch;
+  font-size: 32px;
+}
+
+.statCard span {
+  color: var(--tbb-ink-soft);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stories {
+  background: #fff;
+}
+
+.story {
+  min-height: 620px;
+  padding: 80px;
+  background: #f4eee8;
+}
+
+.story:nth-child(even) {
+  background: #fff;
+}
+
+.storyInner {
+  display: grid;
+  width: min(1280px, 100%);
+  min-height: 460px;
+  grid-template-columns: minmax(0, 552px) minmax(0, 628px);
+  gap: 100px;
+  align-items: center;
+  margin-inline: auto;
+}
+
+.storyCopy {
+  max-width: 552px;
+}
+
+.storyCopy h2 {
+  max-width: 12ch;
+  font-family: var(--tbb-font-display);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.18;
+}
+
+.storyCopy p {
+  max-width: 48ch;
+  margin-top: 24px !important;
+  color: var(--tbb-ink-soft);
+  font-size: 18px;
+  line-height: 1.5 !important;
+}
+
+.storyImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 628 / 460;
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--tbb-grey-lightest);
+}
+
+.storyImage img {
+  object-fit: cover;
+}
+
+.storyReverse .storyCopy {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.storyReverse .storyImage {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.labAccent {
+  position: absolute;
+  right: 10%;
+  bottom: -2px;
+  width: 42%;
+  height: 34%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 0;
+}
+
+.careers {
+  position: relative;
+  padding: 80px;
+  overflow: hidden;
+  background: #121212;
+  color: #fff;
+}
+
+.careers::before,
+.careers::after {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  content: '';
+  pointer-events: none;
+}
+
+.careers::before {
+  width: 760px;
+  height: 760px;
+  top: -300px;
+  left: -180px;
+}
+
+.careers::after {
+  width: 560px;
+  height: 560px;
+  right: -160px;
+  bottom: -330px;
+}
+
+.careersInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(1280px, 100%);
+  min-height: 520px;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 520px);
+  gap: 100px;
+  align-items: center;
+  margin-inline: auto;
+}
+
+.careersCopy {
+  max-width: 560px;
+}
+
+.careersCopy h2 {
+  font-family: var(--tbb-font-display);
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+.careersCopy p {
+  max-width: 52ch;
+  margin-top: 24px !important;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 18px;
+  line-height: 1.5 !important;
+}
+
+.careersForm {
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.formFields {
+  display: grid;
+  gap: 16px;
+}
+
+.formFields input,
+.formFields textarea {
+  width: 100%;
+  min-height: 54px;
+  padding: 15px 17px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+}
+
+.formFields textarea {
+  min-height: 125px;
+  resize: vertical;
+}
+
+.formFields input::placeholder,
+.formFields textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.formFields input:focus,
+.formFields textarea:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 1px #fff;
+}
+
+.formFields button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font-family: var(--tbb-font-display);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.formFields button:hover {
+  background: var(--tbb-grey-light);
+}
+
+.formError {
+  color: #ff8d8d;
+  font-size: 13px;
+}
+
+.formSuccess {
+  color: #fff;
+  line-height: 1.45 !important;
+}
+
+.faq {
+  padding: 109px 0 120px;
+  background: #fff;
+}
+
+.faq h2 {
+  width: 410px;
+}
+
+.faqList {
+  width: min(800px, calc(100% - 480px));
+  margin: 60px 0 0 auto;
+}
+
+.faqList details {
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+.faqList details:first-child {
+  border-top: 1px solid var(--tbb-line);
+}
+
+.faqList summary {
+  display: grid;
+  min-height: 88px;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  gap: 24px;
+  align-items: center;
+  padding: 20px 0;
+  font-size: 19px;
+  line-height: 1.35;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faqList summary::-webkit-details-marker {
+  display: none;
+}
+
+.faqList summary i {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--tbb-ink);
+  border-radius: 50%;
+}
+
+.faqList summary i::before,
+.faqList summary i::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 1px;
+  background: currentColor;
+  content: '';
+  transform: translate(-50%, -50%);
+}
+
+.faqList summary i::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  transition: transform 180ms ease;
+}
+
+.faqList details[open] summary i::after {
+  transform: translate(-50%, -50%) rotate(0);
+}
+
+.faqList details > p {
+  max-width: 66ch;
+  padding: 0 52px 24px 0;
+  color: var(--tbb-ink-soft);
+  font-size: 15px;
+  line-height: 1.5 !important;
+}
+
+.partner {
+  padding: 0 80px 120px;
+  background: #fff;
+}
+
+.partnerInner {
+  position: relative;
+  display: grid;
+  width: min(1280px, 100%);
+  min-height: 460px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 640px);
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 32px;
+  background: #f1e5da;
+}
+
+.partnerCopy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  max-width: 520px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+}
+
+.partnerCopy h2 {
+  font-family: var(--tbb-font-display);
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+.partnerCopy p {
+  margin-top: 18px !important;
+  color: var(--tbb-ink-soft);
+  font-size: 17px;
+  line-height: 1.5 !important;
+}
+
+.partnerButton {
+  display: inline-grid;
+  width: max-content;
+  min-width: 148px;
+  min-height: 48px;
+  place-items: center;
+  margin-top: 28px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.partnerButton:hover {
+  transform: translateY(-2px);
+}
+
+.mobileButtonText {
+  display: none;
+}
+
+.partnerImage {
+  position: relative;
+  min-width: 0;
+  min-height: 460px;
+}
+
+.partnerImage img {
+  object-fit: cover;
+}
+
+@media (max-width: 1100px) {
+  .container {
+    width: min(100% - 96px, 1280px);
+  }
+
+  .benefitGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .teamGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .placeLayout,
+  .storyInner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px;
+  }
+
+  .placeMosaic {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 628 / 560;
+  }
+
+  .mosaicPhoto,
+  .statCard {
+    width: 48.09%;
+  }
+
+  .mosaicPhoto {
+    height: 59.11%;
+  }
+
+  .mosaicPhotoTwo {
+    top: 40.89%;
+  }
+
+  .statCard {
+    height: 36.61%;
+  }
+
+  .quality {
+    top: 63.39%;
+  }
+
+  .faqList {
+    width: min(700px, calc(100% - 360px));
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    width: calc(100% - 48px);
+  }
+
+  .sectionMark {
+    width: 35.52px;
+  }
+
+  .hero {
+    padding: 26px 0 60px;
+  }
+
+  .hero h1 {
+    width: 100%;
+    font-size: 32px;
+    letter-spacing: -0.035em;
+    line-height: 1.25;
+  }
+
+  .heroImage {
+    aspect-ratio: 312 / 243;
+    margin-top: 20px;
+    border-radius: 16px;
+  }
+
+  .heroImage img {
+    object-position: center center;
+  }
+
+  .benefitGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 20px;
+  }
+
+  .benefitCard {
+    min-height: 212px;
+    padding: 32px;
+    border-radius: 24px;
+  }
+
+  .benefitCard p {
+    max-width: 245px;
+    font-size: 20px;
+  }
+
+  .teamSection {
+    padding: 54px 0 60px;
+  }
+
+  .teamSection h2,
+  .place h2,
+  .faq h2 {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  .teamSection h2 {
+    width: 220px;
+  }
+
+  .teamGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 8px;
+    margin-top: 32px;
+  }
+
+  .teamCard {
+    padding: 9px;
+    border-radius: 20px;
+  }
+
+  .portrait {
+    aspect-ratio: 132 / 147;
+    border-radius: 12px;
+  }
+
+  .teamCard h3 {
+    margin-top: 12px !important;
+    font-size: 19px;
+    line-height: 1.15;
+  }
+
+  .teamCard p {
+    margin-top: 8px !important;
+    font-size: 14px;
+    line-height: 1.28 !important;
+  }
+
+  .place {
+    padding: 54px 0 60px;
+  }
+
+  .placeLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .processCopy {
+    order: 1;
+    padding-top: 0;
+  }
+
+  .processCopy h3 {
+    max-width: 100%;
+    font-size: 28px;
+    line-height: 1.22;
+  }
+
+  .processCopy ol {
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .processCopy li {
+    gap: 12px;
+  }
+
+  .processCopy li p {
+    font-size: 16px;
+  }
+
+  .placeMosaic {
+    order: 2;
+    width: 100%;
+    aspect-ratio: 312 / 278;
+  }
+
+  .mosaicPhoto,
+  .statCard {
+    border-radius: 16px;
+  }
+
+  .statCard {
+    padding: 16px;
+  }
+
+  .statCard strong {
+    font-size: clamp(30px, 10vw, 40px);
+  }
+
+  .quality strong {
+    font-size: clamp(21px, 6vw, 28px);
+  }
+
+  .statCard span {
+    font-size: 9px;
+  }
+
+  .story,
+  .story:nth-child(even) {
+    min-height: 0;
+    padding: 60px 24px;
+  }
+
+  .story:nth-child(odd) {
+    background: #f4eee8;
+  }
+
+  .storyInner {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .storyCopy,
+  .storyReverse .storyCopy,
+  .storyReverse .storyImage {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .storyCopy h2 {
+    max-width: 100%;
+    font-size: 32px;
+    line-height: 1.08;
+  }
+
+  .storyCopy p {
+    margin-top: 16px !important;
+    font-size: 16px;
+    line-height: 1.5 !important;
+  }
+
+  .storyImage {
+    aspect-ratio: 312 / 229;
+    border-radius: 16px;
+  }
+
+  .careers {
+    margin: 0 24px;
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .careersInner {
+    display: block;
+    min-height: 662px;
+  }
+
+  .careersCopy h2 {
+    font-size: 32px;
+    line-height: 1.15;
+  }
+
+  .careersCopy p {
+    margin-top: 10px !important;
+    font-size: 16px;
+    line-height: 1.5 !important;
+  }
+
+  .careersForm {
+    margin-top: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .formFields {
+    gap: 16px;
+  }
+
+  .formFields input {
+    min-height: 47px;
+  }
+
+  .formFields textarea {
+    min-height: 125px;
+  }
+
+  .formFields button {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .faq {
+    padding: 60px 0;
+  }
+
+  .faq h2 {
+    width: 100%;
+  }
+
+  .faqList {
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  .faqList summary {
+    min-height: 56px;
+    grid-template-columns: minmax(0, 1fr) 22px;
+    gap: 16px;
+    padding: 16px 0;
+    font-size: 16px;
+  }
+
+  .faqList summary i {
+    width: 22px;
+    height: 22px;
+  }
+
+  .faqList details > p {
+    padding: 0 38px 18px 0;
+    font-size: 14px;
+  }
+
+  .partner {
+    padding: 0 24px 60px;
+  }
+
+  .partnerInner {
+    display: block;
+    min-height: 487px;
+    border-radius: 24px;
+  }
+
+  .partnerCopy {
+    max-width: none;
+    height: 282px;
+    padding: 24px;
+  }
+
+  .partnerCopy h2 {
+    font-size: 32px;
+  }
+
+  .partnerCopy p {
+    margin-top: 10px !important;
+    font-size: 14px;
+    line-height: 1.42 !important;
+  }
+
+  .partnerButton {
+    min-width: 122px;
+    min-height: 40px;
+    margin-top: 24px;
+    padding: 0 18px;
+    font-size: 11px;
+  }
+
+  .desktopButtonText {
+    display: none;
+  }
+
+  .mobileButtonText {
+    display: inline;
+  }
+
+  .partnerImage {
+    min-height: 205px;
+    margin: 0 24px;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+@media (max-width: 359px) {
+  .container {
+    width: calc(100% - 32px);
+  }
+
+  .hero {
+    padding-top: 22px;
+  }
+
+  .hero h1,
+  .teamSection h2,
+  .place h2,
+  .faq h2,
+  .careersCopy h2,
+  .partnerCopy h2,
+  .storyCopy h2 {
+    font-size: 29px;
+  }
+
+  .teamCard {
+    padding: 8px;
+  }
+
+  .careers {
+    margin-inline: 16px;
+  }
+
+  .partner {
+    padding-inline: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partnerButton,
+  .faqList summary i::after {
+    transition: none;
+  }
+}

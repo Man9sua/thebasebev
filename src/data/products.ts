@@ -4,7 +4,7 @@
  * Routes and copy come from the existing product pages, so every card links to
  * a URL that already ranks. Never rename a `route` — it is live.
  *
- * `backgroundColor` drives the Bestsellers colour field and the catalog cards.
+ * `backgroundColor` drives the product page's colour field.
  * Most values were sampled from that product's own pack shot, so the artwork
  * blends into the field with no visible edge. Three are hand-set because the
  * product's largest artwork is a dark banner rather than a coloured pack shot;
@@ -26,6 +26,17 @@ export type Product = {
   route: string;
   /** Short display name for cards and the carousel. */
   name: string;
+  /**
+   * `name` with soft hyphens (U+00AD) marking where it may break when it is set
+   * at display size. Only needed for single words long enough to outrun their
+   * column — anything with a space in it already has somewhere to break.
+   *
+   * Set explicitly rather than left to `hyphens: auto`, which needs a
+   * hyphenation dictionary the browser may simply not have: Chromium ships them
+   * as a downloadable component, and without one the property does nothing at
+   * all. A soft hyphen needs no dictionary.
+   */
+  hyphenatedName?: string;
   /** The product page's H1, reused so wording stays consistent across the site. */
   headline: string;
   description: string;
@@ -87,6 +98,7 @@ export const PRODUCTS: Product[] = [
     slug: "milkshake",
     route: "/milkshake",
     name: "Milkshake",
+    hyphenatedName: "Milk\u00ADshake",
     headline: "Milkshake Base Powder — Thick, Creamy & Easy to Blend",
     description:
       "Milkshake base powder for cafés and HoReCa: thick, creamy texture from a single scoop, no dairy prep and no waste.",
@@ -261,22 +273,7 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-/**
- * Shown in the hero, in order.
- *
- * cream-latte is first on purpose: production's homepage h1 is
- * "Premium / Cream Latte / Bases", and the hero carries that h1, so the
- * server-rendered wording has to match.
- */
-export const HERO_SLUGS = ["cream-latte", "matcha", "chocolate"] as const;
-
-/**
- * Featured in the Bestsellers carousel, in order.
- *
- * Same five products, in the same order, as the hero slider running on
- * production today — the redesign changes how they are presented, not which
- * products the homepage promotes.
- */
+/** Featured on the restored homepage, in the reference carousel's order. */
 export const BESTSELLER_SLUGS = [
   "cream-latte",
   "milkshake",

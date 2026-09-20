@@ -5,8 +5,10 @@ Project: THE BASE
 - Production: `https://thebasebev.com`
 - Current production runtime: Tilda
 - New runtime: Next.js + TypeScript + Cloudflare Workers/OpenNext
-- Staging: `https://the-base-staging.mnsdemo.workers.dev`
-- Production preview: a separate `the-base-production` Worker on `workers.dev`; it is not the production domain.
+- Cloudflare account for THE BASE: `mansua` (`678720af4dded7d23aad4a859b6e5f3a`).
+- Staging: `https://the-base-staging.mansua.workers.dev`
+- Production preview: `https://the-base-production.mansua.workers.dev`; it is not the production domain.
+- Legacy source account: `indukok667`; rollback/reference only. Personal infrastructure in this account is not part of THE BASE.
 
 The migration must preserve SEO, organic Google traffic, AI/Search referrals, existing URLs, forms and attribution, and design parity. The local Tilda export is the content/design reference; live production is a read-only comparison target.
 
@@ -18,6 +20,8 @@ The migration must preserve SEO, organic Google traffic, AI/Search referrals, ex
 - DO NOT change production URLs or redesign during parity/migration work.
 - DO NOT introduce `noindex` on the real production hostname.
 - DO NOT expose secrets or commit real `.env`/`.dev.vars` files.
+- DO NOT deploy THE BASE to personal account `indukok667` or touch any resource in it.
+- Invite teammates manually only to Cloudflare account `mansua`.
 - Staging and every `workers.dev` preview MUST be `noindex, nofollow` at the transport layer.
 - The real production hostname MUST be indexable after an approved cutover.
 - Preserve title, description, H1, canonical, structured data, internal links, redirects, image metadata, and UTM attribution.
@@ -39,6 +43,8 @@ See `LEAD_PIPELINE.md` for the full contract and `TELEGRAM_MIGRATION.md` for the
 
 The custom Worker wrapper in `worker.ts` only removes preview `X-Robots-Tag` when `APP_ENV=production` and the exact request hostname is `thebasebev.com` or `www.thebasebev.com`. Canonicals always remain on `https://thebasebev.com`.
 
+`npm run cf:build` must run the generated Static Assets document fast path. It keeps the current public SSG pages below the `mansua` Workers Free 10 ms CPU limit. Do not bypass/remove it without Worker error-tail, repeated stability, route, browser, crawler, and source-target parity checks.
+
 ## Required checks
 
 After substantial changes run, at minimum:
@@ -46,6 +52,8 @@ After substantial changes run, at minimum:
 ```bash
 npm run typecheck
 npm run lint
+npm run audit:leads
+npm run test:stripe
 npm run build
 npm run cf:build
 npm run check:assets
@@ -55,12 +63,25 @@ npm run smoke:browser -- <target-url>
 npm run audit:routes -- <target-url>
 npm run audit:seo-parity -- <target-url>
 npm run audit:crawlers -- <target-url>
+npm run audit:cloudflare-parity
 npm audit
 ```
 
-`npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order.
+`npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 
-Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Deploy staging or production-preview only when explicitly authorized; never add a custom domain during migration preparation.
+Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Before every deployment, verify that Wrangler selects account `mansua` and exact account ID `678720af4dded7d23aad4a859b6e5f3a`. Deploy staging only when the current task explicitly authorizes it; the prelaunch integration workflow is such authorization. Production-preview and the production domain require separate human approval. Never add a custom domain during migration preparation.
+
+## Definition of done
+
+Every generation task ends with these three steps, in this order. None of them is optional and none of them is a separate request: code that compiles is not finished work.
+
+1. **Refactor what was just generated.** Re-read it before shipping. Hoist work that does not belong in a render, delete whatever the change made dead, collapse duplicated branches, and match the naming and comment density of the file it lives in. Then re-run the required checks above — a refactor that was not re-verified did not happen.
+2. **Push to GitHub.** Commit onto a `feature/*`, `fix/*` or `migration/*` branch — never straight onto `main` or `develop` — push to `origin`, and open a PR toward `develop`. One commit message that says what changed and why, per the Git workflow below.
+3. **Deploy to Cloudflare staging.** `npm run deploy:staging`, then verify with `npm run smoke:http`, `npm run smoke:browser` and `npm run audit:crawlers` against the URL wrangler prints. Staging must come back `noindex, nofollow` at the transport layer, and canonicals must still point at `https://thebasebev.com`.
+
+   The authoritative staging Worker is `the-base-staging.mansua.workers.dev`. The older `mnsdemo.workers.dev` Worker is rollback/reference only. The generated Static Assets document fast path is required because it resolved the target account's earlier Worker CPU-limit failures; do not remove it based on a local-only result.
+
+Report each step's real outcome. A failed deploy or a failing check is reported as failed, never smoothed over.
 
 ## Git workflow
 

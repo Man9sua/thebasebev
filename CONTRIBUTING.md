@@ -52,11 +52,15 @@ npm run smoke:http -- http://127.0.0.1:3000
 
 For route, metadata, form, cart, or deployment work also run the relevant remote/browser audits documented in `README.md` and `AGENTS.md`. Pull requests run lightweight CI but do not deploy automatically.
 
+Cloudflare deployment is a separate manual GitHub Actions workflow. Select `staging` or `production` (production-preview only) and use credentials scoped to THE BASE account `mansua`. The workflow rejects any `CLOUDFLARE_ACCOUNT_ID` other than `678720af4dded7d23aad4a859b6e5f3a`.
+
 ## Environment and secrets
 
 - Copy variable names from `.env.example`; never commit values.
 - Never put credentials in source, issue text, screenshots, URLs, or test fixtures.
 - Use Cloudflare environment secrets only for approved preview/production integration tests.
+- Configure `CLOUDFLARE_API_TOKEN` as a GitHub environment secret and `CLOUDFLARE_ACCOUNT_ID` as a GitHub environment variable for both `staging` and `production`; the account ID must identify `mansua`.
+- Never copy a personal `indukok667` token into this repository or its GitHub environments.
 - Do not enable all analytics IDs found in the export.
 
 ## Migration guardrails
@@ -66,5 +70,6 @@ For route, metadata, form, cart, or deployment work also run the relevant remote
 - Do not redesign during parity work.
 - Do not modify GoDaddy, production DNS, Tilda, Search Console, or attach the custom domain.
 - Staging and production-preview must remain noindex; the eventual real production hostname must be indexable.
+- Never deploy THE BASE to personal Cloudflare account `indukok667`. Invite teammates only to `mansua`.
 
-Read `PROJECT_CONTEXT.md`, `CLOUDFLARE_MIGRATION.md`, and `PRODUCTION_CUTOVER.md` before infrastructure changes.
+Read `PROJECT_CONTEXT.md`, `CLOUDFLARE_RESOURCE_INVENTORY.md`, `CLOUDFLARE_ACCOUNT_MIGRATION.md`, `CLOUDFLARE_MIGRATION.md`, and `PRODUCTION_CUTOVER.md` before infrastructure changes.

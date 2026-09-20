@@ -37,14 +37,6 @@ export type Entry = {
 
 export const HOMEPAGE_ENTRIES: Entry[] = [
   {
-    href: "/resources/blog",
-    category: "Guides",
-    title: "B2B Beverage Blog",
-    summary:
-      "Practical guidance on beverage bases and B2B supply for cafés, restaurants and distributors.",
-    image: "/images/tild3239-6265-4237-b866-373233306262__photo-1772986564376-.jpg",
-  },
-  {
     href: "/wholesale-strategy",
     category: "Market",
     title: "Wholesale Strategy and Market Insights",

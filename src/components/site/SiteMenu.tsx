@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { COMPANY, FOOTER_LINKS, SITE_NAV } from "@/lib/site-config";
-import { RegionPicker } from "./RegionPicker";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
 
@@ -34,7 +33,7 @@ export function SiteMenu({
       tabIndex={-1}
       // Keeps the panel and everything in it out of the tab order and the
       // accessibility tree while it is clipped away.
-      {...(open ? {} : { inert: "" as unknown as boolean })}
+      inert={!open}
     >
       <div className={styles.body}>
         <nav className={styles.nav}>
@@ -44,9 +43,13 @@ export function SiteMenu({
               className={styles.item}
               style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
             >
-              <Link href={item.href} className={styles.navLink} onClick={onClose}>
+              <SiteLink
+                href={item.href}
+                className={styles.navLink}
+                onClick={onClose}
+              >
                 {item.label}
-              </Link>
+              </SiteLink>
             </span>
           ))}
         </nav>
@@ -62,7 +65,7 @@ export function SiteMenu({
           <ul className={styles.productList}>
             {PRODUCTS.map((product) => (
               <li key={product.slug}>
-                <Link
+                <SiteLink
                   href={product.route}
                   className={styles.productLink}
                   onClick={onClose}
@@ -73,7 +76,7 @@ export function SiteMenu({
                     aria-hidden="true"
                   />
                   {product.name}
-                </Link>
+                </SiteLink>
               </li>
             ))}
           </ul>
@@ -94,31 +97,27 @@ export function SiteMenu({
           </div>
 
           <div className={styles.metaGroup}>
-            <span className="tbb-label">Account</span>
-            <Link className={styles.metaLink} href="/cabinet" onClick={onClose}>
-              Cabinet
-            </Link>
-            <Link className={styles.metaLink} href="/contacts" onClick={onClose}>
+            <span className="tbb-label">Contact</span>
+            <SiteLink
+              className={styles.metaLink}
+              href="/contacts"
+              onClick={onClose}
+            >
               Contact us
-            </Link>
-          </div>
-
-          <div className={`${styles.metaGroup} ${styles.metaRegion}`}>
-            <span className="tbb-label">Region</span>
-            <RegionPicker compact />
+            </SiteLink>
           </div>
 
           <div className={styles.metaGroup}>
             <span className="tbb-label">Legal</span>
             {FOOTER_LINKS.legal.map((item) => (
-              <Link
+              <SiteLink
                 key={item.href}
                 className={styles.metaLink}
                 href={item.href}
                 onClick={onClose}
               >
                 {item.label}
-              </Link>
+              </SiteLink>
             ))}
           </div>
         </div>

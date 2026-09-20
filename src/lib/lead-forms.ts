@@ -170,6 +170,7 @@ export type LegacyMappableLead = LeadAttributionFields & {
   phone?: string;
   country?: string;
   company?: string;
+  product?: string;
   message?: string;
   consent: boolean | null;
   submissionPage: string;
@@ -184,6 +185,7 @@ export type LegacyMappableLead = LeadAttributionFields & {
  */
 export function toTildaLeadPayload(
   lead: LegacyMappableLead,
+  context?: { requestId?: string; receivedAt?: string },
 ): Record<string, string> {
   const fields = legacyFieldNames(lead.formType);
   const payload: Record<string, string> = {};
@@ -198,9 +200,9 @@ export function toTildaLeadPayload(
   put(fields.name, lead.name);
   put(fields.email, lead.email);
   put(fields.phone, lead.phone);
-  put(fields.message, lead.message);
   put("company", lead.company);
   put("country", lead.country);
+  put("product", lead.product);
 
   // Tilda always sends the form's display name; Odoo routes on it.
   put("tildaspec-formname", lead.formName);
@@ -209,7 +211,11 @@ export function toTildaLeadPayload(
 
   // Attribution — first touch, preserved across the whole session.
   put("landing_page", lead.landingPage);
+  // Send both the original Tilda name and our current pipeline alias.
+  put("submission_page", lead.submissionPage);
   put("current_page", lead.submissionPage);
+  // A manager can scan this route without parsing the full URL.
+  put("source_path", new URL(lead.submissionPage).pathname || "/");
   put("referrer", lead.referrer);
   put("utm_source", lead.utm_source);
   put("utm_medium", lead.utm_medium);
@@ -222,6 +228,12 @@ export function toTildaLeadPayload(
   }
 
   put("client_timestamp", lead.clientTimestamp);
+  put("request_id", context?.requestId);
+  put("server_timestamp", context?.receivedAt);
+
+  // Attribution remains in its own flat fields. It must not be copied into the
+  // customer request field that Odoo renders as a business-facing note.
+  put(fields.message, lead.message);
 
   if (lead.order !== undefined && lead.order !== null) {
     payload.order_json = JSON.stringify(lead.order);

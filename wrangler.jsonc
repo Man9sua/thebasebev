@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "the-base-staging",
+  "account_id": "678720af4dded7d23aad4a859b6e5f3a",
   "main": "worker.ts",
   "compatibility_date": "2026-08-21",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -15,6 +16,7 @@
     "staging": {
       "name": "the-base-staging",
       "workers_dev": true,
+      "preview_urls": true,
       "vars": {
         "APP_ENV": "staging"
       }
@@ -22,6 +24,7 @@
     "production": {
       "name": "the-base-production",
       "workers_dev": true,
+      "preview_urls": true,
       "vars": {
         "APP_ENV": "production"
       }

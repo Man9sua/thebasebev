@@ -51,6 +51,7 @@ export type LeadPayload = FirstTouchAttribution & {
   phone?: string;
   country?: string;
   company?: string;
+  product?: string;
   message?: string;
   formType: LeadFormType;
   formName: string;
@@ -417,6 +418,7 @@ export function validateLeadPayload(input: unknown): LeadValidationResult {
     ),
     country: readOptionalString(input, "country", 128, issues),
     company: readOptionalString(input, "company", MAX_SHORT_TEXT_LENGTH, issues),
+    product: readOptionalString(input, "product", MAX_SHORT_TEXT_LENGTH, issues),
     message: readOptionalString(input, "message", MAX_TEXT_LENGTH, issues),
     formType,
     formName,

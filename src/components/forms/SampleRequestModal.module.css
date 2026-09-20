@@ -1,0 +1,399 @@
+.trigger {
+  appearance: none;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.backdrop {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  z-index: 10000002;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100dvh;
+  padding: 16px;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  background: rgb(31 21 12 / 38%);
+  backdrop-filter: blur(5px);
+  animation: backdropIn 220ms ease-out both;
+}
+
+.panel {
+  box-sizing: border-box;
+  position: relative;
+  width: min(100%, 440px);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border-radius: 24px;
+  padding: 62px 30px 28px;
+  color: #151515;
+  background:
+    linear-gradient(112deg, rgb(255 255 255 / 8%) 0 22%, transparent 22% 46%, rgb(255 255 255 / 7%) 46% 58%, transparent 58%),
+    #f8e7c8;
+  box-shadow: 0 24px 70px rgb(32 20 10 / 24%);
+  font-family: var(--tbb-font-sans);
+  animation: panelIn 260ms var(--tbb-ease) both;
+}
+
+.close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #29231d;
+  cursor: pointer;
+}
+
+.close::before,
+.close::after {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  width: 25px;
+  height: 1px;
+  background: currentColor;
+  content: "";
+}
+
+.close::before {
+  transform: rotate(45deg);
+}
+
+.close::after {
+  transform: rotate(-45deg);
+}
+
+.close:hover {
+  opacity: 0.58;
+}
+
+.close:focus-visible,
+.field input:focus-visible,
+.agreement input:focus-visible + .checkbox,
+.submit:focus-visible {
+  outline: 2px solid #151515;
+  outline-offset: 3px;
+}
+
+.intro {
+  padding-right: 10px;
+}
+
+.title {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.5rem, 6.3vw, 1.9rem);
+  font-weight: 400;
+  line-height: 1.17;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+
+.businessTitle {
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(1.7rem, 7vw, 2.125rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.description {
+  max-width: 24rem;
+  margin: 16px 0 0;
+  color: #6e6962;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.businessDescription {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.form {
+  margin-top: 28px;
+}
+
+.fields {
+  display: grid;
+  gap: 15px;
+}
+
+.field {
+  display: block;
+}
+
+.field input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 56px;
+  border: 1px solid #d7d4cf;
+  border-radius: 9px;
+  padding: 0 16px;
+  outline: none;
+  background: #fff;
+  color: #151515;
+  font: 400 0.875rem/1 var(--tbb-font-sans);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.field input:focus {
+  border-color: #7d756b;
+  box-shadow: 0 0 0 3px rgb(21 21 21 / 7%);
+}
+
+.field input::placeholder {
+  color: #aaa7a3;
+  opacity: 1;
+}
+
+.phoneField {
+  position: relative;
+}
+
+.phoneField input {
+  padding-left: 50px;
+}
+
+.flag {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 16px;
+  width: 18px;
+  height: 12px;
+  border-radius: 1px;
+  background: #08a8bf;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 7%);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.flag::before {
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f5cf36;
+  box-shadow:
+    -5px 0 0 -1px #f5cf36,
+    5px 0 0 -1px #f5cf36;
+  content: "";
+}
+
+.agreement {
+  position: relative;
+  display: grid;
+  grid-template-columns: 19px 1fr;
+  gap: 10px;
+  align-items: start;
+  min-height: 44px;
+  padding-top: 1px;
+  color: #24211e;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.agreement input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.checkbox {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border: 1px solid #6f6860;
+  background: rgb(255 255 255 / 38%);
+}
+
+.agreement input:checked + .checkbox::after {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 9px;
+  border: solid #151515;
+  border-width: 0 2px 2px 0;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.agreement a {
+  color: inherit;
+  text-underline-offset: 2px;
+}
+
+.error,
+.success {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.error {
+  background: #8c2520;
+  color: #fff;
+}
+
+.success {
+  margin-top: 24px;
+  background: #151515;
+  color: #fff;
+  text-align: center;
+}
+
+.submit {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid #151515;
+  border-radius: 0;
+  background: #151515;
+  color: #fff;
+  font: 500 0.6875rem/1 var(--tbb-font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.submit:hover {
+  background: transparent;
+  color: #151515;
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 479px) {
+  .backdrop {
+    padding: 16px;
+  }
+
+  .panel {
+    width: 100%;
+    padding: 58px 26px 24px;
+  }
+
+  .title {
+    font-size: clamp(1.35rem, 6.4vw, 1.65rem);
+  }
+
+  .businessTitle {
+    font-size: clamp(1.55rem, 7.4vw, 1.85rem);
+  }
+
+  .description {
+    margin-top: 14px;
+    font-size: 0.8125rem;
+  }
+
+  .form {
+    margin-top: 24px;
+  }
+
+  .fields {
+    gap: 14px;
+  }
+
+  .field input {
+    height: 55px;
+  }
+}
+
+@media (max-width: 349px) {
+  .backdrop {
+    padding: 10px;
+  }
+
+  .panel {
+    max-height: calc(100dvh - 20px);
+    padding: 48px 20px 18px;
+    border-radius: 20px;
+  }
+
+  .close {
+    top: 11px;
+    right: 12px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .businessTitle {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.75rem;
+  }
+
+  .form {
+    margin-top: 18px;
+  }
+
+  .fields {
+    gap: 11px;
+  }
+
+  .field input {
+    height: 48px;
+  }
+
+  .agreement {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .panel {
+    animation: none;
+  }
+}

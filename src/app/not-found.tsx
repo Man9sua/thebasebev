@@ -1,20 +1,20 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./not-found.module.css";
 
 export default function NotFound() {
   return (
     <main className={styles.page}>
-      <Link className={styles.logo} href="/" aria-label="THE BASE home">
+      <SiteLink className={styles.logo} href="/" aria-label="THE BASE home">
         <span className={styles.the}>the</span>
         <span className={styles.base}>BASE</span>
-      </Link>
+      </SiteLink>
       <section className={styles.content}>
         <p className={styles.code}>Error 404</p>
         <h1>Page not found</h1>
         <p>The page may have moved, or the address may be incorrect.</p>
-        <Link className={styles.button} href="/">
+        <SiteLink className={styles.button} href="/">
           Return to homepage
-        </Link>
+        </SiteLink>
       </section>
     </main>
   );
