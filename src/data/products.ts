@@ -273,6 +273,15 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
+/** Featured on the restored homepage, in the reference carousel's order. */
+export const BESTSELLER_SLUGS = [
+  "cream-latte",
+  "milkshake",
+  "matcha",
+  "iced-tea",
+  "cordial",
+] as const;
+
 /** The homepage mini-catalog shows at most four. */
 export const CATALOG_SLUGS = [
   "chai-latte",
