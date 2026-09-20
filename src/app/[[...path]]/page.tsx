@@ -380,7 +380,7 @@ export default async function SiteRoute({ params }: RouteProps) {
   // already removed from the markup server-side.
   return (
     <div className="tbb">
-      <SiteHeader overHero={route === "/private-labeling"} />
+      <SiteHeader overHero={route === "/private-labeling" || Boolean(product)} />
       {intro && <PageIntro intro={intro} />}
       {offers && <PageOffers offers={offers} />}
       {product && <ProductHero product={product} />}

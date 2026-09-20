@@ -49,6 +49,8 @@
    * on the 1920px viewport used for the final Figma comparison.
    */
   --u: 0.0833333vw;
+  --art-trim-factor: 1;
+  --art-top-trim: calc(32 * var(--u) * var(--art-trim-factor));
   /* The frame's own pixel and left edge, so the product below can be written
      once for both frames. Everything on the card is placed from `--x0`, so the
      card moves as one. */
@@ -128,6 +130,30 @@
   --ink-muted: rgba(255, 255, 255, 0.55);
 }
 
+/* Tea's reference uses one uninterrupted light falloff across the bottom of
+   the composition. It must remain a translucent layer: an exported rectangle
+   here produced the opaque white panels that cut through the CTA. */
+@media (min-width: 900px) {
+  .tea::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: calc(606.79 * var(--u));
+    z-index: 1;
+    width: 100%;
+    height: calc(205.961 * var(--u));
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(21, 21, 21, 0.05) 15%,
+      rgba(72, 72, 70, 0.2) 43%,
+      rgba(142, 142, 139, 0.46) 74%,
+      rgba(211, 211, 208, 0.72) 100%
+    );
+  }
+}
+
 /* Above the artwork, which is the one thing the tiers below must not reach:
    the words are the page, and a collage runs the whole width of the band. */
 .frame {
@@ -165,7 +191,7 @@
 .mark {
   position: absolute;
   left: var(--x0);
-  top: calc(var(--tbb-header-h) + (207.6 - var(--head)) * var(--k));
+  top: calc(var(--tbb-header-h) + (207.6 - var(--head)) * var(--k) - var(--art-top-trim));
   /* Over a collage's backdrop and under everything else, which is where the
      design has it: the mark reads across Tea's photograph and stops at the edge
      of Garnish's pouch. */
@@ -231,8 +257,8 @@
   position: absolute;
   /* The card's own top left; the layer's matrix does the rest. */
   left: var(--x0);
-  top: calc(var(--tbb-header-h) - var(--head) * var(--k));
-  z-index: 2;
+  top: calc(var(--tbb-header-h) - var(--head) * var(--k) - var(--art-top-trim));
+  z-index: var(--scene-z, 2);
   width: var(--k);
   height: var(--k);
   transform-origin: 0 0;
@@ -262,8 +288,8 @@
   left: calc(
     var(--x0) + (var(--mx) + var(--scene-clip-shift-x, 0)) * var(--k)
   );
-  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k));
-  z-index: 2;
+  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k) - var(--art-top-trim));
+  z-index: var(--scene-z, 2);
   display: block;
   overflow: hidden;
   width: calc(var(--mw) * var(--k));
@@ -278,7 +304,7 @@
 /* Tea's is the one layer that is a ground rather than a cut-out, and the brand
    mark belongs over it. */
 .hero .sceneBack {
-  z-index: 0;
+  z-index: var(--scene-z, 0);
 }
 
 /* A fill layer is a box rather than a picture, so it needs the display an image
@@ -297,7 +323,7 @@ span.sceneLayer {
 .stage {
   position: absolute;
   left: calc(var(--x0) + var(--ink-x) * var(--k));
-  top: calc(var(--tbb-header-h) + (var(--ink-y) - var(--head)) * var(--k));
+  top: calc(var(--tbb-header-h) + (var(--ink-y) - var(--head)) * var(--k) - var(--art-top-trim));
   z-index: 2;
   width: calc(var(--ink-w) * var(--k));
   height: calc(var(--ink-h) * var(--k));
@@ -430,7 +456,7 @@ span.sceneLayer {
 .seal {
   position: absolute;
   left: calc(var(--x0) + var(--seal-x) * var(--k));
-  top: calc(var(--tbb-header-h) + (var(--seal-y) - var(--head)) * var(--k));
+  top: calc(var(--tbb-header-h) + (var(--seal-y) - var(--head)) * var(--k) - var(--art-top-trim));
   /* On the page's own tier with the words: the design stands both in front of
      the product, and a collage runs under where they sit. */
   z-index: 3;
@@ -791,6 +817,7 @@ span.sceneLayer {
 @media (max-width: 899px) {
   .hero {
     --p: min(0.2777778vw, 1.2px);
+    --art-top-trim: calc(14 * var(--p) * var(--art-trim-factor));
     --k: var(--p);
     --x0: calc(50% - 180 * var(--p));
     /* The phone's header instance is 108 tall, and its pouch layer is one box
@@ -850,7 +877,7 @@ span.sceneLayer {
    */
   .mark {
     left: calc(var(--x0) - 3 * var(--p));
-    top: calc(var(--tbb-header-h) + 8 * var(--p));
+    top: calc(var(--tbb-header-h) + 8 * var(--p) - var(--art-top-trim));
     width: calc(366 * var(--p));
     height: calc(204.4 * var(--p));
     --mark-strength: 0.8;

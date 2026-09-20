@@ -87,11 +87,13 @@ function paintedColor(style: CSSStyleDeclaration) {
  * first version of this took the black "Request a sample" pill on the homepage
  * and turned the whole bar black for the height of one button.
  */
-function surfaceUnderBar(barHeight: number) {
+function surfaceUnderBar(barHeight: number, header: HTMLElement | null) {
   const x = Math.round(window.innerWidth / 2);
   const y = barHeight + 2;
   const fullWidth = window.innerWidth * 0.9;
-  let node = document.elementFromPoint(x, y);
+  let node = document
+    .elementsFromPoint(x, y)
+    .find((element) => element !== header && !header?.contains(element)) ?? null;
 
   while (node) {
     if (node.getBoundingClientRect().width >= fullWidth) {
@@ -208,7 +210,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
 
     const sample = () => {
       frame = 0;
-      const color = surfaceUnderBar(barRef.current?.offsetHeight ?? 0);
+      const color = surfaceUnderBar(barRef.current?.offsetHeight ?? 0, barRef.current);
       if (!color) return;
       setSurface(`rgb(${color.red}, ${color.green}, ${color.blue})`);
       setSurfaceDark(isDarkColor(color));

@@ -57,7 +57,7 @@ const desktopCollageTuning: Record<string, DesktopCollageTuning> = {
     shiftX: -48,
   },
   tea: {
-    fade: "linear-gradient(180deg, #000000 0%, #000000 76%, #050505 79%, #0f0f0f 82.5%, #1f1f1f 86%, #363636 89%, #525250 92.5%, #757472 96%, #a7a6a4 100%)",
+    fade: "linear-gradient(transparent, transparent)",
     imageScale: 0.82,
     primaryInk: "rgba(255, 255, 255, 0.62)",
     secondaryBackground: "#d9d9d9",
@@ -268,6 +268,9 @@ export function ProductHero({ product }: { product: Product }) {
     "--tile": product.backgroundColor,
     "--tile-panel": tile,
     "--strip": strip,
+    // Sugar Free already has the Figma composition clipped at the hero's top.
+    // The other product visuals rise by the small shared trim below.
+    "--art-trim-factor": product.slug === "sugar-free" ? 0 : 1,
     "--panel-ink": stripDark ? "var(--tbb-white)" : "var(--tbb-ink)",
     "--panel-ink-soft": stripDark ? "rgba(255, 255, 255, 0.76)" : "var(--tbb-ink-soft)",
     // Named for the desktop rather than set as `--pack-*` directly: an inline
@@ -325,6 +328,7 @@ export function ProductHero({ product }: { product: Product }) {
     <section
       className={[
         styles.hero,
+        product.slug === "tea" ? styles.tea : "",
         onDark ? styles.onDark : "",
         plain ? styles.plain : "",
         paleWash ? styles.paleWash : "",
@@ -333,6 +337,7 @@ export function ProductHero({ product }: { product: Product }) {
         .filter(Boolean)
         .join(" ")}
       style={vars}
+      data-hero
       aria-labelledby="product-title"
     >
       {/*
@@ -376,6 +381,7 @@ export function ProductHero({ product }: { product: Product }) {
             ["--d" as string]: layer.m[3],
             ["--e" as string]: layer.m[4],
             ["--f" as string]: layer.m[5],
+            ...(layer.z !== undefined ? { ["--scene-z" as string]: layer.z } : {}),
             ...(layer.opacity ? { opacity: layer.opacity } : {}),
             ...(layer.round ? { borderRadius: "50%" } : {}),
           } as CSSProperties;
@@ -393,6 +399,7 @@ export function ProductHero({ product }: { product: Product }) {
             ["--my" as string]: layer.mask[1],
             ["--mw" as string]: layer.mask[2],
             ["--mh" as string]: layer.mask[3],
+            ...(layer.z !== undefined ? { ["--scene-z" as string]: layer.z } : {}),
           } as CSSProperties;
           /* A fill rather than a picture: the ramps the file lays over a
              photograph's edges, without which it sits on the card as a
