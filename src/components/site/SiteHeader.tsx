@@ -39,6 +39,19 @@ function SearchIcon() {
 
 /** `rgb()` / `rgba()` as computed by the browser, to three channels. */
 function parseColor(value: string) {
+  const srgb = value.match(
+    /color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/i,
+  );
+  if (srgb) {
+    const [, red, green, blue, alpha = "1"] = srgb;
+    if (Number(alpha) < 0.5) return null;
+    return {
+      red: Math.round(Number(red) * 255),
+      green: Math.round(Number(green) * 255),
+      blue: Math.round(Number(blue) * 255),
+    };
+  }
+
   const parts = value.match(/[\d.]+/g);
   if (!parts || parts.length < 3) return null;
   const [red, green, blue] = parts.map(Number);
