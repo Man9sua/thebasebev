@@ -165,8 +165,13 @@ const TIERS = [
 /** The six the document shows, in the order it shows them. */
 const STRIP_SLUGS = ["milkshake", "raf-coffee", "iced-tea", "matcha", "cordial", "chocolate"];
 
-/** The tier chips on the form. The first is the one selected by default. */
-const FORM_TIERS = ["Regional", "Starter", "Strategic"];
+/**
+ * The tier chips on the form, in the ladder's own order. Regional is the one
+ * that starts selected — it is the tier the block above marks "most chosen",
+ * so it is also the safest default for someone who has not decided.
+ */
+const FORM_TIERS = ["Starter", "Regional", "Strategic"];
+const DEFAULT_TIER = "Regional";
 
 const FAQ = [
   {
@@ -515,13 +520,13 @@ export function DistributorsPage() {
               <fieldset className={styles.chips}>
                 <legend>Tier you are interested in</legend>
                 <div className={styles.chipRow}>
-                  {FORM_TIERS.map((tier, index) => (
+                  {FORM_TIERS.map((tier) => (
                     <label key={tier} className={styles.chip}>
                       <input
                         type="radio"
                         name="product"
                         value={tier}
-                        defaultChecked={index === 0}
+                        defaultChecked={tier === DEFAULT_TIER}
                       />
                       <span>{tier}</span>
                     </label>
