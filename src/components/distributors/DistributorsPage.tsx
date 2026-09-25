@@ -40,41 +40,6 @@ import styles from "./DistributorsPage.module.css";
 
 const tiles = catalogTiles as Record<string, { image: string }>;
 
-/** The three facts the hero stands on. */
-const HERO_FACTS = [
-  { value: "20", label: "product categories" },
-  { value: "26", label: "markets" },
-  { value: "18 mo", label: "shelf life" },
-];
-
-/**
- * The pack shots the exported hero used, kept — the transparent cut-outs, not
- * the catalogue's framed tiles, which carry their own coloured panel and would
- * read as three photographs laid on the ink rather than as pouches standing in
- * it. The arrangement below is the export's own: three sizes, overlapped, the
- * furthest one dimmed.
- */
-const HERO_PACKS = [
-  {
-    key: "frappe",
-    src: "/images/tild3065-3261-4639-a232-303433373631__hero-frappe.png",
-    width: 760,
-    height: 958,
-  },
-  {
-    key: "matcha",
-    src: "/images/tild3539-3639-4431-b963-333932383239__hero-matcha.png",
-    width: 760,
-    height: 735,
-  },
-  {
-    key: "raf",
-    src: "/images/tild3334-3061-4431-a366-333338646666__hero-raf.png",
-    width: 760,
-    height: 888,
-  },
-] as const;
-
 const REASONS = [
   {
     title: "Up to 40% margin",
@@ -203,47 +168,52 @@ export function DistributorsPage() {
 
   return (
     <main className={styles.page}>
+      {/*
+        The truck, full bleed, with the copy on the dark half of the frame —
+        the document's second first-screen rather than its first. The three
+        figures the other version carried are in the sentence instead, which is
+        what that version does with them.
+      */}
       <section className={styles.hero} aria-labelledby="dist-title">
-        <div className={styles.heroScene} aria-hidden="true">
-          {HERO_PACKS.map((pack) => (
-            <Image
-              key={pack.key}
-              className={`${styles.heroPack} ${styles[`heroPack_${pack.key}`]}`}
-              src={pack.src}
-              alt=""
-              width={pack.width}
-              height={pack.height}
-              sizes="(max-width: 47.9375rem) 44vw, 30vw"
-              priority
-            />
-          ))}
-        </div>
+        {/* The frame is what gets positioned, not the image: `fill` writes its
+            own `inset` and `height` inline, and inline beats a stylesheet — so
+            sizing the image itself was silently ignored and the phone got a
+            close-up of the light bar. */}
+        <span className={styles.heroFrame} aria-hidden="true">
+          <Image
+            className={styles.heroPhoto}
+            src="/images/distributors-hero-truck.webp"
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+          />
+        </span>
         <span className={styles.heroVeil} aria-hidden="true" />
 
         <div className={styles.heroInner}>
           <h1 id="dist-title" className={styles.heroTitle}>
             Become a distributor
           </h1>
-          <p className={styles.heroLede}>
-            One pouch replaces cream, syrups and toppings: no refrigeration, 18 months shelf life,
-            the same taste in every outlet. Made in our own plant in the UAE.
-          </p>
-          <div className={styles.heroActions}>
-            <PageAnchor route="/distributors" target="distributor-form" className={styles.primary}>
-              Apply for distribution
-            </PageAnchor>
-            <SiteLink href="/catalog" className={styles.ghost}>
-              View catalogue
-            </SiteLink>
+
+          <div className={styles.heroFoot}>
+            <p className={styles.heroLede}>
+              Twenty categories from our own plant in the UAE, 18 months shelf life, no
+              refrigeration. Built to move across 26 markets.
+            </p>
+            <div className={styles.heroActions}>
+              <PageAnchor
+                route="/distributors"
+                target="distributor-form"
+                className={styles.primary}
+              >
+                Apply for distribution
+              </PageAnchor>
+              <SiteLink href="/catalog" className={styles.ghost}>
+                View catalogue
+              </SiteLink>
+            </div>
           </div>
-          <dl className={styles.heroFacts}>
-            {HERO_FACTS.map((fact) => (
-              <div key={fact.label} className={styles.heroFact}>
-                <dt className={styles.heroFactValue}>{fact.value}</dt>
-                <dd className={styles.heroFactLabel}>{fact.label}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </section>
 
