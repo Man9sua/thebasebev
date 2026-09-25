@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/about/AboutPage";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import {
-  DISTRIBUTORS_HERO_RECORD,
-  DistributorsPage,
-} from "@/components/distributors/DistributorsPage";
+import { DistributorsPage } from "@/components/distributors/DistributorsPage";
 import { RndPage } from "@/components/rnd/RndPage";
 import { ContactPage } from "@/components/contact/ContactPage";
 import { HomePage } from "@/components/home/HomePage";
@@ -41,7 +38,6 @@ import {
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 import {
   getSitePage,
-  legacyRecordHtml,
   getStaticSiteParams,
   normalizeSitePath,
   SITE_ORIGIN,
@@ -282,7 +278,7 @@ export default async function SiteRoute({ params }: RouteProps) {
         ) : route === "/rnd" ? (
           <RndPage />
         ) : route === "/distributors" ? (
-          <DistributorsPage heroHtml={legacyRecordHtml(page, DISTRIBUTORS_HERO_RECORD)} />
+          <DistributorsPage />
         ) : (
           <ContactPage />
         )}

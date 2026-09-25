@@ -3,158 +3,126 @@ import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./RndPage.module.css";
 
 /**
- * R&D and product development.
+ * R&D and product development, rebuilt to the redesign document.
  *
- * A React page in place of the exported Tilda document, which is what `/catalog`
- * and `/contacts` already are. What it replaces was 15,000 pixels tall and said
- * most things twice: three product families appeared once as "16 Product Lines"
- * and again inside "Our Beverage Development Services"; the fourteen-day
- * timeline appeared once as "14 Days to Commercial Reality" and again as "Your
- * Journey From Concept to Commercialization". Between them sat a grid of stock
- * photographs of beaches, palm trees and a hotel pool.
+ * The page it replaces said most things twice — three product families once as
+ * "16 Product Lines" and again under "Our Beverage Development Services", the
+ * fourteen-day timeline once as "14 Days to Commercial Reality" and again as
+ * "Your Journey From Concept to Commercialization" — and the redesign folds
+ * each pair into one block. Six blocks now where there were eight, and the
+ * page is two screens shorter.
  *
- * The copy here is the page's own, verbatim — it is what the page ranks on —
- * minus the duplication. The order is the argument: what it saves, what it
- * makes, how fast, what it does, who does it, what it is certified to, and how
- * to start.
+ * Three changes matter beyond layout:
  *
- * The `h1` is new, and it had to be. The exported page's only `h1` was "Узнай
- * свою дневную норму за 30 секунд" — a Russian calorie-calculator heading left
- * over from a Tilda template, on an English B2B page whose `<title>` is
- * "Beverage R&D and Product Development Dubai". That is the mismatch
- * `audit:seo-parity` has been reporting for `/rnd`, and it will keep reporting
- * it until production carries this wording too.
+ * - **The page says development is paid.** The old one offered a complimentary
+ *   sample box and a free R&D audit on the same page it sold formulation work.
+ *   The two are separated now: the call is free, the range's samples are free,
+ *   the development is quoted, and the fee is credited to the first production
+ *   order. That is said in the hero, again in the process block, and again
+ *   above the form, so nobody reaches a call expecting otherwise.
+ * - **The invented percentages are gone.** "40% cost reduction", "50% savings
+ *   on logistics", "60% time saved" had no measurement behind them, and one
+ *   unverifiable figure costs a B2B reader the whole page. What replaces them
+ *   is three things the lab actually hands over: a cost per cup, a one-step
+ *   build, and storage without a cold chain. The document's note says to bring
+ *   figures back when there are two or three client measurements to cite.
+ * - **The `h1` is short.** "Your recipe. Our lab." rather than the keyword
+ *   phrase, which stays in the `<title>` and in the lede. See the entry in
+ *   `H1_NOT_PRESERVED` in `scripts/audit-seo-parity.mjs`.
  *
- * The form is the page's own `Partner with Us` — same id, same
- * `tildaspec-formname` — so leads keep landing exactly where
- * `LEGACY_FORM_NAMES` in `lib/lead-forms.ts` already routes them.
+ * The form keeps its id and its `tildaspec-formname`, so leads from here reach
+ * the sales team under the name `LEGACY_FORM_NAMES` already routes them by.
+ *
+ * The photography is the page's own, still stock and still flagged by the
+ * document as needing a real shoot of the Dubai lab. It is kept rather than
+ * removed so the layout can be judged with pictures in it.
  */
 
-/** What the blends save, and why. The page's own figures. */
-const FIGURES = [
+/** The three conditions under the hero's buttons. */
+const HERO_TERMS = [
+  { title: "Paid development", body: "Fee credited to your first order" },
+  { title: "You own the formula", body: "Full rights after sign-off" },
+  { title: "Made in our plant", body: "From lab batch to production" },
+];
+
+/** What every formula leaves the lab with. Replaces the three percentages. */
+const VALUE = [
   {
-    value: "40%",
-    label: "Cost reduction",
-    body: "Smart blends deliver exact gram-to-cup ratios, eliminating spoilage and overpouring for predictable profit margins.",
+    title: "Cost per cup",
+    body: "Calculated for your serve size and menu price during development, not after launch.",
   },
   {
-    value: "50%",
-    label: "Savings on logistics",
-    body: "Lightweight, stable powders and cordials require zero refrigeration, slashing storage and shipping expenses.",
+    title: "One-step prep",
+    body: "Scoop, add milk or water, serve. No whisking, no separate syrups, the same drink from any barista.",
   },
   {
-    value: "60%",
-    label: "Time saved behind the bar",
-    body: "Advanced instantization technology means zero whisking and complex recipes, allowing staff to craft beverages in seconds.",
+    title: "No cold chain",
+    body: "Room-temperature storage and 18 months shelf life. Lower storage and shipping costs, no spoilage.",
+    dark: true,
   },
 ];
 
-const LINES = [
+/**
+ * The three platforms development starts from — the reason it takes weeks
+ * rather than months, and the reason it can be quoted at all.
+ */
+const BASES = [
   {
-    title: "Smart Dry Blends",
-    body: "Engineered for vending machines or to dissolve instantly under an espresso steam wand. Includes Matcha, Chai, Frappe.",
+    title: "Powder bases",
+    body: "For vending or the steam wand, dissolving in seconds. Matcha, chai, frappe, milkshake.",
     image: "/images/tild3335-6562-4638-b361-626264373764__905191c477e5451de329.jpg",
     alt: "Beverage base powder measured out with a wooden scoop",
   },
   {
-    title: "High-Brix Cordials & Syrups",
-    body: "Stable liquid bases available in over 600 premium flavors, including zero-calorie options.",
+    title: "Sauces, syrups and purées",
+    body: "Chocolate and caramel sauces, cordials and fruit purées, including sugar-free versions.",
     image: "/images/tild3239-6265-4237-b866-373233306262__photo-1772986564376-.jpg",
     alt: "Chocolate and fruit syrup swirled together",
   },
   {
-    title: "Signature & Seasonal Creations",
-    body: "Custom, private-label blends tailored to your brand's DNA and seasonal menus.",
+    title: "Signature and seasonal",
+    body: "A drink only your brand serves, or a limited run for the season, under your label.",
     image: "/images/tild6132-3863-4132-a630-386136393833__photo-1725268093455-.jpg",
     alt: "Four mixed drinks raised in a toast",
   },
 ];
 
-const STEPS = [
+const PROCESS = [
   {
-    title: "The Blueprint",
-    body: "We reverse-engineer your target market, lock in your COGS (Cost of Goods Sold), and map the Halal HACCP regulatory pathways.",
+    title: "Brief",
+    body: "We study your market, set the target cost per cup and map Halal and HACCP requirements.",
   },
   {
-    title: "The Alchemy",
-    body: "Rapid benchtop prototyping in our lab. We craft the perfect sensory experience and send you physical samples to taste and approve.",
+    title: "Samples",
+    body: "Our lab builds prototypes and sends physical samples until you approve the taste.",
   },
   {
-    title: "The Compound",
-    body: "We shift immediately to our in-house manufacturing lines, producing your bespoke premix with four stages of rigorous quality control.",
+    title: "Production",
+    body: "The approved formula moves to our lines in Dubai, with quality control at four stages.",
   },
   {
-    title: "The Takeover",
-    body: "Your product is shipped, fully certified, and ready to dominate the HoReCa market across Europe, the Middle East, and Asia.",
-  },
-];
-
-const SERVICES = [
-  {
-    title: "Custom Formulation",
-    body: "We engineer unique flavor profiles, textures, and stability for your signature drinks, optimizing for taste and cost.",
-  },
-  {
-    title: "Advanced Manufacturing",
-    body: "Leverage our state-of-the-art UAE facility for seamless, high-quality production of your beverage compounds.",
-  },
-  {
-    title: "Market Entry Support",
-    body: "Navigate the complexities of market launch with our expertise in logistics, regulatory compliance, and supply chain integration.",
-  },
-  {
-    title: "Rapid Prototyping & Production",
-    body: "Experience an accelerated 14-day turnaround from concept to commercial reality with our vertically integrated process.",
-  },
-  {
-    title: "Cost Optimization",
-    body: "Achieve significant cost reductions through smart blending, reduced spoilage, and efficient logistics.",
+    title: "Launch",
+    body: "Your product ships certified and documented, with logistics support for your market.",
   },
 ];
 
-const LAB = [
-  {
-    title: "Beverage Science Expertise",
-    body: "Mastering flavor masking, stability, and texture to create unique and high-quality beverages.",
-  },
-  {
-    title: "State-of-the-Art UAE Facility",
-    body: "Our high-tech laboratory and manufacturing plant in Dubai ensures seamless production and quality control.",
-  },
-  {
-    title: "Creating Liquid Assets",
-    body: "Transforming bold concepts into market-ready commercial compounds that drive business success.",
-  },
-  {
-    title: "Market Leadership",
-    body: "Partnering with clients to establish dominance in the HoReCa beverage market through innovation and efficiency.",
-  },
+/** The compliance block, folded into the lab block as four checkable facts. */
+const LAB_FACTS = [
+  { value: "Halal", body: "Certified across the full range" },
+  { value: "HACCP", body: "Audited food safety system" },
+  { value: "4 stages", body: "Of quality control in production" },
+  { value: "Export", body: "Documents for 26 markets" },
 ];
 
-const COMPLIANCE = [
-  {
-    title: "HACCP Certification",
-    body: "Our adherence to the Hazard Analysis and Critical Control Points system guarantees that potential food safety hazards are systematically identified and controlled.",
-  },
-  {
-    title: "Halal Certification",
-    body: "We proudly maintain Halal certification, ensuring our products meet the strict dietary and ethical requirements of Halal consumers.",
-  },
-  {
-    title: "Rigorous Quality Control",
-    body: "Our manufacturing process includes four distinct stages of rigorous quality control.",
-  },
-  {
-    title: "International Standards Compliance",
-    body: "We are committed to ensuring all our products comply with international quality and safety standards.",
-  },
+/** What happens after the brief is sent. */
+const BRIEF_STEPS = [
+  { title: "Brief call", body: "30 minutes with a technologist, free of charge." },
+  { title: "Proposal", body: "Scope, development fee and timeline in writing." },
+  { title: "Lab work", body: "Starts after sign-off. The fee is credited to your first order." },
 ];
 
-const OFFER = [
-  { title: "Sample Box", body: "Receive a complimentary sample box of potential product bases." },
-  { title: "R&D Audit", body: "Get an audit of your current R&D or product line." },
-  { title: "Low Commitment", body: "A perfect entry point for potential clients." },
-];
+/** The project-type chips on the form. The first is selected by default. */
+const PROJECT_TYPES = ["Custom formula", "Private label", "Reformulation"];
 
 export function RndPage() {
   return (
@@ -170,142 +138,155 @@ export function RndPage() {
         <span className={styles.heroVeil} aria-hidden="true" />
 
         <div className={styles.heroInner}>
-          <span className={`tbb-label ${styles.eyebrow}`}>R&D and product development</span>
           <h1 id="rnd-title" className={styles.heroTitle}>
-            Beverage R&amp;D and product development in Dubai
+            Your recipe.
+            <br />
+            Our lab.
           </h1>
           <p className={styles.heroLede}>
-            Most R&amp;D labs hand you a recipe, wish you luck, and walk away. We hand you the
-            market.
+            Custom beverage development for chains, brands and private label. Our Dubai lab takes
+            your brief to a production-ready formula, and the recipe is yours.
           </p>
+
           <div className={styles.heroActions}>
             {/* A bare `#rnd-form` resolved against `<base href="/">` and sent
                 the reader to the home page — see `PageAnchor`. */}
             <PageAnchor route="/rnd" target="rnd-form" className={styles.primary}>
-              Start a brief <span aria-hidden="true">↓</span>
+              Start a brief
             </PageAnchor>
-            <SiteLink href="/catalog" className={styles.secondary}>
-              See the catalogue
-            </SiteLink>
-          </div>
-        </div>
-      </section>
-
-      {/* The three figures open the page because they are the argument: the
-          formulation work is bought for what it saves, not for its chemistry. */}
-      <section className={styles.figures} aria-labelledby="rnd-figures">
-        <div className={styles.inner}>
-          <div className={styles.sectionHead}>
-            <h2 id="rnd-figures" className={styles.sectionTitle}>
-              Engineered for taste, costed for the till
-            </h2>
-            <p className={styles.sectionLede}>
-              Our bespoke formulations aren&apos;t just delicious — they are mathematically designed
-              to optimize your business operations.
-            </p>
+            <PageAnchor route="/rnd" target="rnd-process" className={styles.ghost}>
+              How it works
+            </PageAnchor>
           </div>
 
-          <dl className={styles.figureRow}>
-            {FIGURES.map((figure) => (
-              <div key={figure.label} className={styles.figure}>
-                <dt className={styles.figureValue}>{figure.value}</dt>
-                <dd className={styles.figureBody}>
-                  <span className={`tbb-label ${styles.figureLabel}`}>{figure.label}</span>
-                  {figure.body}
-                </dd>
+          <dl className={styles.heroTerms}>
+            {HERO_TERMS.map((term) => (
+              <div key={term.title} className={styles.heroTerm}>
+                <dt className={styles.heroTermTitle}>{term.title}</dt>
+                <dd className={styles.heroTermBody}>{term.body}</dd>
               </div>
             ))}
           </dl>
         </div>
       </section>
 
-      <section className={styles.lines} aria-labelledby="rnd-lines">
+      <section className={styles.value} aria-labelledby="rnd-value">
         <div className={styles.inner}>
           <div className={styles.sectionHead}>
-            <span className={`tbb-label ${styles.eyebrow}`}>16 product lines</span>
-            <h2 id="rnd-lines" className={styles.sectionTitle}>
-              Three families to build from
+            <h2 id="rnd-value" className={styles.sectionTitle}>
+              Engineered for taste,
+              <br />
+              costed for the till
             </h2>
             <p className={styles.sectionLede}>
-              We have the architecture to build solutions for various needs, from global franchises
-              to distributors.
+              Every formula leaves the lab with its cost per cup, prep steps and storage terms
+              signed off, so you know the margin before launch.
             </p>
           </div>
 
-          <div className={styles.lineGrid}>
-            {LINES.map((line) => (
-              <article key={line.title} className={styles.line}>
-                <span className={styles.lineMedia}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={line.image} alt={line.alt} loading="lazy" decoding="async" />
-                </span>
-                <h3 className={styles.lineTitle}>{line.title}</h3>
-                <p className={styles.lineBody}>{line.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* One timeline, not two: the exported page told this story twice, once
-          here and once as "Your Journey From Concept to Commercialization". */}
-      <section className={styles.timeline} aria-labelledby="rnd-timeline">
-        <div className={styles.inner}>
-          <div className={styles.sectionHead}>
-            <span className={`tbb-label ${styles.eyebrow}`}>Concept to commercialization</span>
-            <h2 id="rnd-timeline" className={styles.sectionTitle}>
-              14 days to commercial reality
-            </h2>
-            <p className={styles.sectionLede}>
-              In the beverage industry, where competition is fierce and consumer expectations are
-              high, speed is leverage that can significantly impact market share and revenue.
-            </p>
-          </div>
-
-          <ol className={styles.steps}>
-            {STEPS.map((step, index) => (
-              <li key={step.title} className={styles.step}>
-                <span className={styles.stepNumber} aria-hidden="true">
+          <ol className={styles.valueGrid}>
+            {VALUE.map((item, index) => (
+              <li
+                key={item.title}
+                className={`${styles.valueCard} ${item.dark ? styles.valueCardDark : ""}`}
+              >
+                <span className={styles.valueNumber} aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepBody}>{step.body}</p>
+                <h3 className={styles.valueTitle}>{item.title}</h3>
+                <p className={styles.valueBody}>{item.body}</p>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      <section className={styles.services} aria-labelledby="rnd-services">
+      <section className={styles.bases} aria-labelledby="rnd-bases">
         <div className={styles.inner}>
           <div className={styles.sectionHead}>
-            <h2 id="rnd-services" className={styles.sectionTitle}>
-              Our beverage development services
+            <h2 id="rnd-bases" className={styles.sectionTitle}>
+              Three bases
+              <br />
+              to build from
             </h2>
             <p className={styles.sectionLede}>
-              Discover how we transform concepts into market-leading beverages with our
-              comprehensive R&amp;D and manufacturing services.
+              Every custom product starts from one of our proven platforms, so development takes
+              weeks, not months.
             </p>
           </div>
 
-          <ul className={styles.serviceList}>
-            {SERVICES.map((service) => (
-              <li key={service.title} className={styles.service}>
-                <h3 className={styles.serviceTitle}>{service.title}</h3>
-                <p className={styles.serviceBody}>{service.body}</p>
-              </li>
+          <div className={styles.baseGrid}>
+            {BASES.map((base) => (
+              <article key={base.title} className={styles.base}>
+                <span className={styles.baseMedia}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={base.image} alt={base.alt} loading="lazy" decoding="async" />
+                </span>
+                <h3 className={styles.baseTitle}>{base.title}</h3>
+                <p className={styles.baseBody}>{base.body}</p>
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
+      {/* One process block where the page had a timeline and a services list
+          saying the same four things. The banner at its foot is where the page
+          states the commercial terms. */}
+      <section className={styles.process} id="rnd-process" aria-labelledby="rnd-process-title">
+        <div className={styles.inner}>
+          <div className={styles.sectionHead}>
+            <h2 id="rnd-process-title" className={styles.sectionTitle}>
+              From brief
+              <br />
+              to first shipment
+            </h2>
+            <p className={styles.sectionLede}>
+              One team runs the whole project: lab, production and export. Approved samples in 14
+              days.
+            </p>
+          </div>
+
+          <ol className={styles.processGrid}>
+            {PROCESS.map((step, index) => (
+              <li key={step.title} className={styles.processStep}>
+                <span className={styles.processNumber} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className={styles.processTitle}>{step.title}</h3>
+                <p className={styles.processBody}>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+
+          <div className={styles.paidBanner}>
+            <div className={styles.paidCopy}>
+              <span className={styles.paidTitle}>Development is a paid service</span>
+              <span className={styles.paidBody}>
+                The fee is credited to your first production order. The formula is yours after
+                sign-off.
+              </span>
+            </div>
+            <PageAnchor route="/rnd" target="rnd-form" className={styles.primary}>
+              Start a brief
+            </PageAnchor>
+          </div>
+        </div>
+      </section>
+
+      {/* The lab and what certifies it, in one block — the page used to carry
+          them as two, and the second was four sentences of "highest standards"
+          with no standard named. */}
       <section className={styles.lab} aria-labelledby="rnd-lab">
         <div className={styles.labInner}>
           <span className={styles.labMedia}>
+            {/* Stock, and flagged as such in the design document: a bottling
+                line is the wrong picture for a powder plant. Kept until the
+                real shoot of the Dubai lab exists. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg"
-              alt="Beverage bottling line in production"
+              alt="THE BASE production facility in Dubai"
               loading="lazy"
               decoding="async"
             />
@@ -313,19 +294,20 @@ export function RndPage() {
 
           <div className={styles.labCopy}>
             <h2 id="rnd-lab" className={styles.sectionTitle}>
-              The Base R&amp;D Lab
+              Our lab
+              <br />
+              in Dubai
             </h2>
             <p className={styles.sectionLede}>
-              We go beyond simply chasing fleeting trends in the beverage industry, as we strive to
-              invent entirely new and innovative beverage experiences that delight and inspire our
-              customers.
+              Technologists, a pilot line and production under one roof. Every formula is tested
+              for taste, texture and stability before it reaches you.
             </p>
 
-            <dl className={styles.labList}>
-              {LAB.map((item) => (
-                <div key={item.title} className={styles.labItem}>
-                  <dt className={styles.labTitle}>{item.title}</dt>
-                  <dd className={styles.labBody}>{item.body}</dd>
+            <dl className={styles.labFacts}>
+              {LAB_FACTS.map((fact) => (
+                <div key={fact.value} className={styles.labFact}>
+                  <dt className={styles.labFactValue}>{fact.value}</dt>
+                  <dd className={styles.labFactBody}>{fact.body}</dd>
                 </div>
               ))}
             </dl>
@@ -333,49 +315,39 @@ export function RndPage() {
         </div>
       </section>
 
-      <section className={styles.compliance} aria-labelledby="rnd-compliance">
-        <div className={styles.inner}>
-          <div className={styles.sectionHead}>
-            <h2 id="rnd-compliance" className={styles.sectionTitle}>
-              Quality and compliance
-            </h2>
-            <p className={styles.sectionLede}>
-              We are dedicated to upholding the highest standards of quality assurance and
-              certification.
-            </p>
-          </div>
-
-          <ul className={styles.complianceList}>
-            {COMPLIANCE.map((item) => (
-              <li key={item.title} className={styles.complianceItem}>
-                <h3 className={styles.complianceTitle}>{item.title}</h3>
-                <p className={styles.complianceBody}>{item.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       <section className={styles.form} id="rnd-form" aria-labelledby="rnd-form-title">
         <div className={styles.formInner}>
           <div className={styles.formCopy}>
-            <span className={`tbb-label ${styles.eyebrow}`}>How it works</span>
             <h2 id="rnd-form-title" className={styles.sectionTitle}>
-              Connect with The Base R&amp;D Lab
+              Start
+              <br />
+              a brief
             </h2>
             <p className={styles.sectionLede}>
-              Feel free to request a complimentary sample box along with a detailed research and
-              development audit.
+              Tell us what you want to develop. What happens next:
             </p>
 
-            <ol className={styles.offer}>
-              {OFFER.map((item) => (
-                <li key={item.title} className={styles.offerItem}>
-                  <span className={styles.offerTitle}>{item.title}</span>
-                  <span className={styles.offerBody}>{item.body}</span>
+            <ol className={styles.briefSteps}>
+              {BRIEF_STEPS.map((step, index) => (
+                <li key={step.title} className={styles.briefStep}>
+                  <span className={styles.briefNumber} aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.briefTitle}>{step.title}</span>
+                  <span className={styles.briefBody}>{step.body}</span>
                 </li>
               ))}
             </ol>
+
+            {/*
+              The one place the free sample box still lives, and it is the
+              existing range rather than a development project — which is the
+              distinction the old page collapsed.
+            */}
+            <SiteLink href="/contacts" className={styles.briefAside}>
+              Only need samples of our existing range? Request a sample box{" "}
+              <span aria-hidden="true">→</span>
+            </SiteLink>
           </div>
 
           {/*
@@ -408,8 +380,8 @@ export function RndPage() {
                   <input name="email" type="email" autoComplete="email" required />
                 </label>
                 <label className={styles.field}>
-                  <span>Phone</span>
-                  <input name="Phone" type="tel" autoComplete="tel" required />
+                  <span>Phone / WhatsApp</span>
+                  <input name="Phone" type="tel" autoComplete="tel" placeholder="+971" required />
                 </label>
               </div>
 
@@ -418,13 +390,36 @@ export function RndPage() {
                 <input name="country" type="text" autoComplete="country-name" required />
               </label>
 
+              {/*
+                The project type rides `product` — the field the lead pipeline
+                already carries for "what is this enquiry about", validated in
+                `lib/leads.ts` and mapped in `lib/lead-forms.ts`. Same treatment
+                as the tier chips on `/distributors`.
+              */}
+              <fieldset className={styles.chips}>
+                <legend>Project type</legend>
+                <div className={styles.chipRow}>
+                  {PROJECT_TYPES.map((type, index) => (
+                    <label key={type} className={styles.chip}>
+                      <input
+                        type="radio"
+                        name="product"
+                        value={type}
+                        defaultChecked={index === 0}
+                      />
+                      <span>{type}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
               <label className={styles.field}>
-                <span>What would you like us to develop?</span>
+                <span>What should we develop?</span>
                 <textarea
                   name="text"
-                  rows={5}
+                  rows={4}
                   required
-                  placeholder="Product category, target market, expected monthly volume and timing."
+                  placeholder="Product, target market, expected monthly volume and timing."
                 />
               </label>
 
@@ -444,7 +439,7 @@ export function RndPage() {
               </div>
 
               <button type="submit" className={styles.submit}>
-                Request a sample box <span aria-hidden="true">→</span>
+                Send brief
               </button>
             </div>
 

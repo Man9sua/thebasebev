@@ -232,6 +232,17 @@ const H1_NOT_PRESERVED = new Map([
         "and a hidden one would be an exemption dressed up as markup",
     },
   ],
+  [
+    "/distributors",
+    {
+      h1: "Become a distributor of The Base",
+      reason:
+        'h1 is the Distributors redesign\'s "Become a distributor"; the brand ' +
+        "is in the logo two inches above it and in the title tag, so the " +
+        "trailing three words were repeating what the page already says. The " +
+        "ranking phrase — Become a distributor — is unchanged",
+    },
+  ],
 ]);
 
 const criticalFailures = [];

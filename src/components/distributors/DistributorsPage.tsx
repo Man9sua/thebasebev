@@ -6,51 +6,99 @@ import { CATALOG_PRODUCTS } from "@/data/catalog";
 import styles from "./DistributorsPage.module.css";
 
 /**
- * Become a distributor.
+ * Become a distributor, rebuilt to the redesign document.
  *
- * A React page in place of the exported Tilda document, the way `/catalog`,
- * `/contacts` and `/rnd` already are — except for the hero, which is not
- * rebuilt at all. It is the export's own record, `rec3169672103`, rendered as
- * it stands: a hand-written `<section class="dsth">` that carries its own
- * `<style>` and its own pouch photography. Redrawing it here reproduced the
- * words but not the picture, which is not what "keep the hero" means.
+ * The page is now React top to bottom. The exported Tilda hero it used to open
+ * with — `rec3169672103`, a hand-written `<section class="dsth">` carrying its
+ * own stylesheet — is gone: the redesign draws that screen itself, so keeping
+ * the record would have meant two heroes arguing about the top of the page.
+ * The pack shots it used are the ones this hero uses, so nothing of the
+ * picture is lost; only the markup around it.
  *
- * Everything under it is rebuilt.
+ * What the document changed, block by block, and why it is worth knowing here:
  *
- * The product strip is the one place the old page really fell down: it drew its
- * own square tiles of a pouch on a flat colour, while `/catalog` two clicks away
- * shows the same sixteen products as photographs. Two treatments of one
- * catalogue, and the weaker one was the page asking someone to stock it. It now
- * reads from `catalog-tiles.json` — the same artwork, the same 4:5 frame, the
- * same name-and-category caption — so the strip is a window onto the catalogue
- * rather than a second version of it.
+ * - **The hero** loses the "WHOLESALE PARTNERSHIP" eyebrow and the run-on
+ *   "600+ flavours · 16 product lines · …" strip. The three facts it kept are
+ *   set as figures instead, and "16 product lines" is dropped because it
+ *   contradicts the twenty categories the same page sells.
+ * - **Built for distribution** is one block where the source had two. The four
+ *   reasons the old page carried and the two from the Figma file's "Why
+ *   Distributors Choose THE BASE" are the same argument told twice; they are
+ *   six cards now, and the second block is gone.
+ * - **The tiers** carry an entry line each — MOQ, volume plan, sales
+ *   department — so the ladder says what it costs to stand on each rung.
+ * - **The range** presents rather than sells: no price, no cart, each card a
+ *   link into the catalogue.
+ * - **The form** gains the tier chips. They ride the lead pipeline's `product`
+ *   field, which is what the pipeline has for "what is this enquiry about" —
+ *   see the note above the group.
  *
- * The copy is the page's own throughout. The form is `Partner with Us`, which is
- * what the page's "Apply for distribution" button already opened, so leads keep
- * the name `LEGACY_FORM_NAMES` routes them by.
+ * Several figures in here are the document's and are marked in the report as
+ * needing the owner's confirmation: the 40% margin, the 500 kg MOQ, the one
+ * business day reply and the twenty categories.
  */
 
 const tiles = catalogTiles as Record<string, { image: string }>;
 
-/** The exported hero, kept whole. */
-export const DISTRIBUTORS_HERO_RECORD = "rec3169672103";
+/** The three facts the hero stands on. */
+const HERO_FACTS = [
+  { value: "20", label: "product categories" },
+  { value: "26", label: "markets" },
+  { value: "18 mo", label: "shelf life" },
+];
+
+/**
+ * The pack shots the exported hero used, kept — the transparent cut-outs, not
+ * the catalogue's framed tiles, which carry their own coloured panel and would
+ * read as three photographs laid on the ink rather than as pouches standing in
+ * it. The arrangement below is the export's own: three sizes, overlapped, the
+ * furthest one dimmed.
+ */
+const HERO_PACKS = [
+  {
+    key: "frappe",
+    src: "/images/tild3065-3261-4639-a232-303433373631__hero-frappe.png",
+    width: 760,
+    height: 958,
+  },
+  {
+    key: "matcha",
+    src: "/images/tild3539-3639-4431-b963-333932383239__hero-matcha.png",
+    width: 760,
+    height: 735,
+  },
+  {
+    key: "raf",
+    src: "/images/tild3334-3061-4431-a366-333338646666__hero-raf.png",
+    width: 760,
+    height: 888,
+  },
+] as const;
 
 const REASONS = [
   {
+    title: "Up to 40% margin",
+    body: "Distributor pricing on a range cafés reorder every week.",
+  },
+  {
     title: "No cold chain",
-    body: "Dry powder format. No refrigeration in transit or storage — lower logistics cost and no spoilage risk on the shelf.",
+    body: "Ships and stores at room temperature. Lower logistics cost and no spoilage on the shelf.",
   },
   {
     title: "18 months shelf life",
-    body: "A long rotation window. Stock without pressure and plan orders around your season, not around expiry dates.",
+    body: "Plan orders around your season, not around expiry dates.",
   },
   {
-    title: "One pouch, six ingredients",
-    body: "Replaces cream, syrups and toppings. Preparation drops from six steps to one and the taste holds steady.",
+    title: "Sales and marketing support",
+    body: "Digital materials, product training for your team and help with your first clients.",
   },
   {
-    title: "Our own facility",
-    body: "Produced in the UAE, never outsourced. Stable supply, traceable batches and full export documentation.",
+    title: "Certified",
+    body: "HACCP audited and Halal approved, with full export documentation.",
+  },
+  {
+    title: "Easy to use",
+    body: "Just add milk and espresso. Any barista gets it right on day one.",
   },
 ];
 
@@ -61,7 +109,7 @@ const STEPS = [
   },
   {
     title: "Receive sales materials",
-    body: "Brochures, recipe cards and staff training — everything your team needs to sell.",
+    body: "Brochures, recipe cards and staff training: everything your team needs to sell.",
   },
   {
     title: "Start selling",
@@ -77,13 +125,19 @@ const TIERS = [
   {
     eyebrow: "Entry level",
     name: "Starter",
+    entryLabel: "Minimum order",
+    entryValue: "MOQ 500 kg",
     featured: false,
+    cta: "Apply",
     items: ["Wholesale pricing", "Digital brochures", "Sample kit", "Email support"],
   },
   {
     eyebrow: "Most chosen",
     name: "Regional",
+    entryLabel: "Minimum order",
+    entryValue: "On volume plan",
     featured: true,
+    cta: "Apply",
     items: [
       "Volume-based pricing",
       "Full sales toolkit",
@@ -94,8 +148,12 @@ const TIERS = [
   {
     eyebrow: "Exclusive territory",
     name: "Strategic",
+    entryLabel: "Requirement",
+    entryValue: "Your own sales department",
     featured: false,
+    cta: "Apply for exclusivity",
     items: [
+      "Exclusive rights in your region",
       "Best wholesale pricing",
       "Priority production slots",
       "Co-branded marketing",
@@ -104,67 +162,117 @@ const TIERS = [
   },
 ];
 
-/** The six the old page showed, in the order it showed them. */
+/** The six the document shows, in the order it shows them. */
 const STRIP_SLUGS = ["milkshake", "raf-coffee", "iced-tea", "matcha", "cordial", "chocolate"];
+
+/** The tier chips on the form. The first is the one selected by default. */
+const FORM_TIERS = ["Regional", "Starter", "Strategic"];
 
 const FAQ = [
   {
     q: "What is the minimum first order?",
-    a: "It depends on your market and the lines you choose. We agree a realistic starting volume during the first call.",
+    a: "MOQ is 500 kg, and you can mix it across product lines.",
   },
   {
     q: "Do you offer exclusive territory rights?",
-    a: "Yes, on Tier 1 partnership. Exclusivity is tied to agreed annual volume.",
+    a: "Yes, on the Strategic tier. It requires your own sales department and gives you exclusive rights in your region.",
   },
   {
     q: "Which documents come with a shipment?",
-    a: "Certificates of analysis, halal and HACCP documentation, and full export paperwork for your country.",
+    a: "Halal and HACCP certificates, certificate of origin, invoice and packing list for every shipment.",
   },
   {
     q: "How long does delivery take?",
-    a: "Two to three weeks from confirmed order within the region. Longer routes are quoted individually.",
+    a: "It depends on your market. We confirm production and delivery time together with your wholesale quote.",
   },
   {
     q: "Can we get samples before committing?",
-    a: "Yes. We send a sample kit so your clients can taste the products before you place a volume order.",
+    a: "Yes. Every approved application receives a sample kit before the first order.",
   },
 ];
 
-export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
+export function DistributorsPage() {
   const strip = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((p) => p.slug === slug)).filter(
     (product) => product !== undefined,
   );
-  // This one CTA lives inside the preserved Tilda hero. It used to open the
-  // retired `#form` dialog; the native contact page is now the destination.
-  // Keep the source export read-only and make the route correction at render.
-  const heroForContacts = heroHtml
-    .replace('href="#form"', 'href="/contacts"')
-    .replace(' role="button" aria-haspopup="dialog"', '');
 
   return (
     <main className={styles.page}>
-      {/*
-        The exported hero, untouched — see the note at the top of this file. It
-        is rendered here rather than by `LegacyDocument` so it can open this
-        page's own `<main>` instead of a second one.
-      */}
-      <div
-        className="legacy-document"
-        data-legacy-record={DISTRIBUTORS_HERO_RECORD}
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: heroForContacts }}
-      />
+      <section className={styles.hero} aria-labelledby="dist-title">
+        <div className={styles.heroScene} aria-hidden="true">
+          {HERO_PACKS.map((pack) => (
+            <Image
+              key={pack.key}
+              className={`${styles.heroPack} ${styles[`heroPack_${pack.key}`]}`}
+              src={pack.src}
+              alt=""
+              width={pack.width}
+              height={pack.height}
+              sizes="(max-width: 47.9375rem) 44vw, 30vw"
+              priority
+            />
+          ))}
+        </div>
+        <span className={styles.heroVeil} aria-hidden="true" />
 
+        <div className={styles.heroInner}>
+          <h1 id="dist-title" className={styles.heroTitle}>
+            Become a distributor
+          </h1>
+          <p className={styles.heroLede}>
+            One pouch replaces cream, syrups and toppings: no refrigeration, 18 months shelf life,
+            the same taste in every outlet. Made in our own plant in the UAE.
+          </p>
+          <div className={styles.heroActions}>
+            <PageAnchor route="/distributors" target="distributor-form" className={styles.primary}>
+              Apply for distribution
+            </PageAnchor>
+            <SiteLink href="/catalog" className={styles.ghost}>
+              View catalogue
+            </SiteLink>
+          </div>
+          <dl className={styles.heroFacts}>
+            {HERO_FACTS.map((fact) => (
+              <div key={fact.label} className={styles.heroFact}>
+                <dt className={styles.heroFactValue}>{fact.value}</dt>
+                <dd className={styles.heroFactLabel}>{fact.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* Heading and calls to action on the left, the six reasons on the right.
+          The left column is sticky on desktop, so the offer stays on screen for
+          the length of the scroll through the cards. */}
       <section className={styles.reasons} aria-labelledby="dist-reasons">
-        <div className={styles.inner}>
-          <div className={styles.sectionHead}>
-            <span className={`tbb-label ${styles.eyebrow}`}>Why partners choose us</span>
+        <div className={styles.reasonsInner}>
+          <div className={styles.reasonsAside}>
             <h2 id="dist-reasons" className={styles.sectionTitle}>
-              Built for distribution, not just for taste
+              Built for
+              <br />
+              distribution
             </h2>
+            <div className={styles.reasonsActions}>
+              <PageAnchor
+                route="/distributors"
+                target="distributor-form"
+                className={styles.primary}
+              >
+                Apply for distribution
+              </PageAnchor>
+              <a
+                className={styles.outline}
+                href="https://calendly.com/thebasebev/the-base-presentation"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                Book a call
+              </a>
+            </div>
           </div>
 
-          <ol className={styles.reasonList}>
+          <ol className={styles.reasonGrid}>
             {REASONS.map((reason, index) => (
               <li key={reason.title} className={styles.reason}>
                 <span className={styles.reasonNumber} aria-hidden="true">
@@ -180,45 +288,36 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
 
       <section className={styles.steps} aria-labelledby="dist-steps">
         <div className={styles.inner}>
-          <div className={styles.sectionHead}>
-            <h2 id="dist-steps" className={styles.sectionTitle}>
-              Become a distributor in four steps
-            </h2>
-          </div>
+          <h2 id="dist-steps" className={styles.sectionTitle}>
+            Four steps
+            <br />
+            to your first sale
+          </h2>
 
-          <ol className={styles.stepList}>
+          <ol className={styles.stepGrid}>
             {STEPS.map((step, index) => (
               <li key={step.title} className={styles.step}>
                 <span className={styles.stepNumber} aria-hidden="true">
-                  {index + 1}
+                  {String(index + 1).padStart(2, "0")}
                 </span>
-                <div>
-                  <h3 className={styles.stepTitle}>{step.title}</h3>
-                  <p className={styles.stepBody}>{step.body}</p>
-                </div>
+                <h3 className={styles.stepTitle}>{step.title}</h3>
+                <p className={styles.stepBody}>{step.body}</p>
               </li>
             ))}
           </ol>
-
-          <PageAnchor
-            route="/distributors"
-            target="distributor-form"
-            className={styles.stepsCta}
-          >
-            Start selling now <span aria-hidden="true">→</span>
-          </PageAnchor>
         </div>
       </section>
 
       <section className={styles.tiers} aria-labelledby="dist-tiers">
         <div className={styles.inner}>
-          <div className={styles.sectionHead}>
-            <span className={`tbb-label ${styles.eyebrow}`}>Partnership</span>
+          <div className={styles.tiersHead}>
             <h2 id="dist-tiers" className={styles.sectionTitle}>
-              Terms that grow with your volume
+              Terms that grow
+              <br />
+              with your volume
             </h2>
             <p className={styles.sectionLede}>
-              Start where you are — move up when you are ready. Every tier includes wholesale
+              Start where you are and move up when you are ready. Every tier includes wholesale
               pricing and full documentation.
             </p>
           </div>
@@ -229,55 +328,75 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
                 key={tier.name}
                 className={`${styles.tier} ${tier.featured ? styles.tierFeatured : ""}`}
               >
-                <span className={`tbb-label ${styles.tierEyebrow}`}>{tier.eyebrow}</span>
-                <h3 className={styles.tierName}>{tier.name}</h3>
+                <div className={styles.tierHead}>
+                  <span className={styles.tierEyebrow}>{tier.eyebrow}</span>
+                  <h3 className={styles.tierName}>{tier.name}</h3>
+                </div>
+
+                <div className={styles.tierEntry}>
+                  <span className={styles.tierEntryLabel}>{tier.entryLabel}</span>
+                  <span className={styles.tierEntryValue}>{tier.entryValue}</span>
+                </div>
+
                 <ul className={styles.tierItems}>
                   {tier.items.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li key={item}>
+                      <span aria-hidden="true" />
+                      {item}
+                    </li>
                   ))}
                 </ul>
+
+                <PageAnchor
+                  route="/distributors"
+                  target="distributor-form"
+                  className={tier.featured ? styles.tierCtaFeatured : styles.tierCta}
+                >
+                  {tier.cta}
+                </PageAnchor>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* The same artwork and the same frame the catalogue uses — see the note
-          at the top of this file for why that matters here. */}
+      {/* A window onto the catalogue rather than a second version of it: the
+          same artwork and the same 4:5 frame `/catalog` uses, no price, no
+          cart, every card a link into the product page. */}
       <section className={styles.range} aria-labelledby="dist-range">
         <div className={styles.inner}>
           <div className={styles.rangeHead}>
-            <div className={styles.sectionHead}>
-              <span className={`tbb-label ${styles.eyebrow}`}>Product range</span>
-              <h2 id="dist-range" className={styles.sectionTitle}>
-                Sixteen lines, 600+ flavours
-              </h2>
-            </div>
+            <h2 id="dist-range" className={styles.sectionTitle}>
+              The range
+              <br />
+              you will carry
+            </h2>
             <SiteLink href="/catalog" className={styles.rangeLink}>
-              See all products <span aria-hidden="true">→</span>
+              See all 20 categories <span aria-hidden="true">→</span>
             </SiteLink>
           </div>
 
           <div className={styles.rangeGrid}>
             {strip.map((product) => (
-              <article key={product.slug} className={styles.card}>
-                <SiteLink className={styles.cardMedia} href={product.route}>
+              <SiteLink key={product.slug} className={styles.rangeCard} href={product.route}>
+                <span className={styles.rangeMedia}>
                   <Image
-                    className={styles.cardImage}
                     src={tiles[product.slug]?.image ?? `/images/pack-${product.slug}.webp`}
                     alt={`${product.name} beverage base by THE BASE`}
                     fill
-                    sizes="(max-width: 639px) 46vw, (max-width: 1023px) 31vw, 16vw"
+                    sizes="(max-width: 47.9375rem) 46vw, (max-width: 63.9375rem) 31vw, 25vw"
                     loading="lazy"
                   />
-                </SiteLink>
-                <p className={`tbb-label ${styles.cardCategory}`}>{product.categoryLabel}</p>
-                <SiteLink className={styles.cardName} href={product.route}>
-                  {product.name}
-                </SiteLink>
-              </article>
+                </span>
+                <span className={styles.rangeCategory}>{product.categoryLabel}</span>
+                <span className={styles.rangeName}>{product.name}</span>
+              </SiteLink>
             ))}
           </div>
+
+          <SiteLink href="/catalog" className={styles.rangeButton}>
+            See all 20 categories
+          </SiteLink>
         </div>
       </section>
 
@@ -285,21 +404,24 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
         <div className={styles.faqInner}>
           <div className={styles.faqCopy}>
             <h2 id="dist-faq" className={styles.sectionTitle}>
-              Frequently asked questions
+              Questions
             </h2>
             <p className={styles.sectionLede}>
               Supply terms, minimums, certification and delivery. If your question is not here,
               write to us and we will answer directly.
             </p>
-            <SiteLink href="/contacts" className={styles.faqLink}>
+            <a className={styles.faqLink} href="mailto:info@thebasebev.com">
               Write to us <span aria-hidden="true">→</span>
-            </SiteLink>
+            </a>
           </div>
 
           <div className={styles.faqList}>
-            {FAQ.map((item) => (
-              <details key={item.q} className={styles.faqItem}>
-                <summary className={styles.faqQuestion}>{item.q}</summary>
+            {FAQ.map((item, index) => (
+              <details key={item.q} className={styles.faqItem} open={index === 0}>
+                <summary className={styles.faqQuestion}>
+                  {item.q}
+                  <span className={styles.faqMark} aria-hidden="true" />
+                </summary>
                 <p className={styles.faqAnswer}>{item.a}</p>
               </details>
             ))}
@@ -310,28 +432,37 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
       <section className={styles.form} id="distributor-form" aria-labelledby="dist-form-title">
         <div className={styles.formInner}>
           <div className={styles.formCopy}>
-            <span className={`tbb-label ${styles.eyebrow}`}>Apply for distribution</span>
             <h2 id="dist-form-title" className={styles.sectionTitle}>
-              Tell us your market
+              Tell us
+              <br />
+              your market
             </h2>
             <p className={styles.sectionLede}>
-              Territory, the lines you want to carry and the volume you expect. We come back with
-              wholesale pricing, documentation and a sample kit.
+              Territory, the lines you want to carry and the volume you expect. We come back within
+              one business day with wholesale terms, documentation and a sample kit.
             </p>
-            <a
-              className={styles.callLink}
-              href="https://calendly.com/thebasebev/the-base-presentation"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Or book a short call <span aria-hidden="true">→</span>
-            </a>
+
+            <div className={styles.formDirect}>
+              <span className={styles.formDirectLabel}>Prefer to talk?</span>
+              <a className={styles.formPhone} href="tel:+971509890429">
+                +971 50 989 0429
+              </a>
+              <a
+                className={styles.formCall}
+                href="https://calendly.com/thebasebev/the-base-presentation"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                Book a short call <span aria-hidden="true">→</span>
+              </a>
+            </div>
           </div>
 
           {/*
-            The form the page's "Apply for distribution" button already opened:
-            same id, same `tildaspec-formname`, so a lead from here reaches the
-            sales team under the name it always has.
+            The form the page's "Apply for distribution" button has always
+            opened: same id and same `tildaspec-formname`, so a lead from here
+            reaches the sales team under the name `LEGACY_FORM_NAMES` routes it
+            by, and the field names are the ones `lib/lead-forms.ts` maps.
           */}
           <form
             id="form861442702"
@@ -358,23 +489,53 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
                   <input name="email" type="email" autoComplete="email" required />
                 </label>
                 <label className={styles.field}>
-                  <span>Phone</span>
-                  <input name="Phone" type="tel" autoComplete="tel" required />
+                  <span>Phone / WhatsApp</span>
+                  <input
+                    name="Phone"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder="+971"
+                    required
+                  />
                 </label>
               </div>
 
               <label className={styles.field}>
-                <span>Territory / country</span>
+                <span>Country / territory</span>
                 <input name="country" type="text" autoComplete="country-name" required />
               </label>
+
+              {/*
+                The tier rides `product`. That is the field the lead pipeline
+                already carries for "what is this enquiry about" — validated in
+                `lib/leads.ts`, mapped in `lib/lead-forms.ts`, read by
+                `LeadAttributionBridge` — so the chips reach Odoo without a new
+                field and without a call site inventing one.
+              */}
+              <fieldset className={styles.chips}>
+                <legend>Tier you are interested in</legend>
+                <div className={styles.chipRow}>
+                  {FORM_TIERS.map((tier, index) => (
+                    <label key={tier} className={styles.chip}>
+                      <input
+                        type="radio"
+                        name="product"
+                        value={tier}
+                        defaultChecked={index === 0}
+                      />
+                      <span>{tier}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
 
               <label className={styles.field}>
                 <span>Lines and expected volume</span>
                 <textarea
                   name="text"
-                  rows={5}
+                  rows={4}
                   required
-                  placeholder="Which product lines, the channels you supply and the volume you expect per month."
+                  placeholder="Which products, the channels you supply and the volume per month."
                 />
               </label>
 
@@ -394,7 +555,7 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
               </div>
 
               <button type="submit" className={styles.submit}>
-                Apply for distribution <span aria-hidden="true">→</span>
+                Apply for distribution
               </button>
             </div>
 
@@ -402,7 +563,7 @@ export function DistributorsPage({ heroHtml }: { heroHtml: string }) {
               className={`js-successbox t-form__successbox ${styles.success}`}
               style={{ display: "none" }}
             >
-              Thank you. Your application has been sent to THE BASE partnership team.
+              Thank you. We will reply within one business day.
             </div>
           </form>
         </div>

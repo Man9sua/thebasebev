@@ -1,605 +1,1029 @@
 /**
- * Become a distributor.
+ * Become a distributor — the redesign.
  *
- * Nothing here styles the hero: that is the export's own record, which carries
- * its own `<style>` — see the note in the component. This is everything under
- * it, alternating paper and warm paper with one dark band at the foot, and
- * separating by hairline rather than by shadow, which is how the rest of this
- * site separates things.
+ * Seven blocks, alternating paper and ink, on the 1440 × 96 grid the design
+ * document draws: 144 of vertical padding, 96 of gutter, a 1248 measure. The
+ * numbers below are that grid expressed fluidly, so the same proportions hold
+ * from 320 up rather than snapping at breakpoints.
  *
- * The product strip borrows the catalogue's frame exactly: a 4:5 tile, the
- * category above the name, no panel around it. That is the point of it — the
- * page asking someone to stock the catalogue should show the catalogue, not a
- * second version of it.
+ * Type: Exo 2 Black, uppercase, −2% tracking, 0.86 line height for every
+ * section heading. That one rule is what makes the page read as one page.
  *
- * `!important` where it appears is answering the exported Tilda sheet, which is
- * global on this route: `html body p { line-height: 1.7 }` and `html body h1,
- * html body [class*="title"] { font-weight: 300 }` both carry it, and the second
- * outranks a single class — hence the two-class selectors on headings.
+ * Colour comes from the `--tbb-rd-*` block in `design-tokens.css` — see the
+ * note there about why this palette is warmer than the rest of the site's.
+ *
+ * `!important` where it appears is answering the exported Tilda sheet, which
+ * is global on this route: `html body p { line-height: 1.7 }` and
+ * `html body h1, html body [class*="title"] { font-weight: 300 }` both carry
+ * it, and the second outranks a single class.
  */
 
 .page {
-  background: var(--tbb-paper);
-}
+  --pad-y: clamp(4rem, 10vw, 9rem);
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+  --radius: clamp(1.25rem, 1.9444vw, 1.75rem);
 
-/*
- * The one thing here that does reach into the hero.
- *
- * On desktop the export centres that record's content in a 640–900 tall box,
- * so the fixed bar floats over empty gradient. Below 900 the export switches
- * it to a column with `padding: 28px 0 0` — and 28 is less than half the bar,
- * so the page opened with its own `h1` behind the header and no way to scroll
- * up to it, since the hero is already at the top of the document.
- *
- * Reached through `:global` because the hero is injected markup and its class
- * is the export's, not this module's. Only the top inset is touched.
- */
-@media (max-width: 900px) {
-  .page :global(.dsth) {
-    padding-top: calc(var(--tbb-header-h) + 1.75rem);
-  }
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+  font-family: var(--tbb-font-sans);
 }
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-measure-wide);
+  max-width: 78rem;
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
 }
 
-.eyebrow {
-  display: block;
-  color: var(--tbb-muted);
-}
-
-.sectionHead {
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.6rem, 1.4vw, 1rem);
-  max-width: 46rem;
-  margin-bottom: clamp(2.25rem, 5vw, 4rem);
-}
-
-.page .sectionTitle {
+/* One rule for every heading on the page. */
+.sectionTitle {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  font-weight: 600 !important;
-  line-height: 1.04;
-  letter-spacing: var(--tbb-tracking-display) !important;
-  color: var(--tbb-ink);
-  max-width: 18ch;
+  font-size: clamp(2.5rem, 5.5556vw, 5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink);
+  text-wrap: balance;
 }
 
 .sectionLede {
-  font-size: var(--tbb-text-body);
+  margin: 0 !important;
+  max-width: 32rem;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
   line-height: 1.55 !important;
-  color: var(--tbb-ink-soft);
-  max-width: 52ch;
+  text-wrap: pretty;
 }
 
-.stepsCta,
-.submit {
+/* ---- buttons ---- */
+
+.primary,
+.ghost,
+.outline,
+.submit,
+.tierCta,
+.tierCtaFeatured,
+.rangeButton {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  height: 3rem;
-  padding-inline: 1.6rem;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: clamp(3.5rem, 4.1667vw, 3.75rem);
+  padding-inline: clamp(1.5rem, 2.5vw, 2.25rem);
+  border: 1.5px solid transparent;
   border-radius: 999px;
-  border: 1px solid transparent;
-  font-size: var(--tbb-text-label);
+  font-family: var(--tbb-font-sans);
+  font-size: 0.875rem;
   font-weight: 600;
-  letter-spacing: var(--tbb-tracking-label);
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-align: center;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   white-space: nowrap;
   cursor: pointer;
   transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
     border-color var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+    color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.stepsCta:hover,
-.submit:hover {
-  transform: translate3d(0, -2px, 0);
+.primary,
+.submit,
+.tierCtaFeatured {
+  background: var(--tbb-rd-red);
+  border-color: var(--tbb-rd-red);
+  color: #fff !important;
 }
 
-/* ---- why partners choose us ---- */
+.primary:hover,
+.submit:hover,
+.tierCtaFeatured:hover {
+  background: var(--tbb-rd-red-dark);
+  border-color: var(--tbb-rd-red-dark);
+  color: #fff !important;
+}
+
+/* On ink: a hairline in paper at half strength, solid on hover. */
+.ghost {
+  border-color: rgba(246, 246, 244, 0.5);
+  color: var(--tbb-rd-paper) !important;
+}
+
+.ghost:hover {
+  border-color: var(--tbb-rd-paper);
+  color: #fff !important;
+}
+
+/* On paper: an ink hairline that fills in. */
+.outline,
+.tierCta,
+.rangeButton {
+  border-color: var(--tbb-rd-ink);
+  color: var(--tbb-rd-ink) !important;
+}
+
+.outline:hover,
+.tierCta:hover,
+.rangeButton:hover {
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper) !important;
+}
+
+.primary:focus-visible,
+.ghost:focus-visible,
+.outline:focus-visible,
+.submit:focus-visible,
+.tierCta:focus-visible,
+.tierCtaFeatured:focus-visible,
+.rangeButton:focus-visible,
+.rangeCard:focus-visible,
+.rangeLink:focus-visible,
+.faqLink:focus-visible,
+.faqQuestion:focus-visible,
+.formPhone:focus-visible,
+.formCall:focus-visible {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 3px;
+}
+
+/* ---- 1 · hero ---- */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: min(56rem, 100vh);
+  padding: calc(var(--tbb-header-h) + var(--pad-y)) var(--gutter) var(--pad-y);
+  overflow: clip;
+  background: #141414;
+  color: var(--tbb-rd-paper);
+}
+
+/*
+ * The pack shots, bled off the right edge and overlapped.
+ *
+ * The exported hero laid the same three out as a scene; this keeps the
+ * arrangement and drops the markup around it. They are decorative — the
+ * heading carries the meaning — so they are `aria-hidden` and alt-empty.
+ */
+.heroScene {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(100%, 68rem);
+  pointer-events: none;
+}
+
+.heroPack {
+  position: absolute;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* The export's own placement, proportions and all: three sizes overlapping,
+   the furthest dimmed back, the nearest carrying the deepest shadow. */
+.heroPack_frappe {
+  width: 40%;
+  right: -14%;
+  top: -14%;
+  z-index: 1;
+  opacity: 0.8;
+  filter: brightness(0.95);
+}
+
+.heroPack_matcha {
+  width: 29%;
+  right: 25%;
+  top: 48%;
+  z-index: 2;
+  filter: drop-shadow(0 18px 38px rgba(0, 0, 0, 0.5)) brightness(0.92);
+}
+
+.heroPack_raf {
+  width: 43%;
+  right: 0;
+  top: 36%;
+  z-index: 3;
+  filter: drop-shadow(0 26px 54px rgba(0, 0, 0, 0.6));
+}
+
+/* The copy has to stay legible over the shots; the veil is what buys it. */
+.heroVeil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #141414 0%,
+    #141414 42%,
+    rgba(20, 20, 20, 0.72) 62%,
+    rgba(20, 20, 20, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  margin: 0 !important;
+  max-width: 11ch;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(3rem, 8.3333vw, 7.5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-rd-paper);
+}
+
+.heroLede {
+  margin: clamp(1.25rem, 2.2222vw, 2rem) 0 0 !important;
+  max-width: 31rem;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: clamp(1.75rem, 3.3333vw, 3rem);
+}
+
+.heroFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 3.8889vw, 3.5rem);
+  margin: clamp(2.5rem, 5.5556vw, 5rem) 0 0;
+}
+
+.heroFact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.heroFactValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.75rem, 2.7778vw, 2.5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: var(--tbb-rd-paper);
+}
+
+.heroFactLabel {
+  margin: 0;
+  color: var(--tbb-rd-dim);
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+/* ---- 2 · built for distribution ---- */
 
 .reasons {
-  padding: var(--tbb-section) 0;
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
 }
 
-.reasonList {
+.reasonsInner {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(1.25rem, 2.5vw, 2.5rem);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2rem, 4.4444vw, 4rem);
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* The offer stays on screen for the length of the scroll past the cards. */
+.reasonsAside {
+  position: sticky;
+  top: calc(var(--tbb-header-h) + 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 3.3333vw, 3rem);
+}
+
+.reasonsActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.reasonGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--tbb-line);
 }
 
 .reason {
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.35rem, 0.9vw, 0.6rem);
-  padding-top: clamp(1.1rem, 2.4vw, 1.75rem);
+  display: flex;
+  min-height: 16.25rem;
+  flex-direction: column;
+  gap: 0.875rem;
+  box-sizing: border-box;
+  padding: clamp(1.25rem, 2.2222vw, 2rem);
+  border-radius: clamp(1rem, 1.6667vw, 1.5rem);
+  background: var(--tbb-rd-card);
 }
 
 .reasonNumber {
-  font-family: var(--tbb-font-display);
-  font-size: 0.75rem;
+  color: var(--tbb-rd-dim);
+  font-size: 0.875rem;
   font-weight: 600;
-  letter-spacing: var(--tbb-tracking-label);
-  color: var(--tbb-muted);
+  font-variant-numeric: tabular-nums;
 }
 
+/* Pushed to the foot of its own space, so the titles sit on one line across a
+   row whatever the length of the sentence under them. */
 .page .reasonTitle {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
-  font-weight: 600 !important;
-  line-height: 1.2;
-  letter-spacing: -0.01em !important;
-  color: var(--tbb-ink);
+  margin: auto 0 0 !important;
+  font-size: clamp(1.25rem, 1.8056vw, 1.625rem);
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  color: var(--tbb-rd-ink);
+  text-wrap: balance;
 }
 
 .reasonBody {
-  font-size: 0.9375rem;
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
   line-height: 1.55 !important;
-  color: var(--tbb-ink-soft);
+  text-wrap: pretty;
 }
 
-/* ---- four steps ---- */
+/* ---- 3 · four steps ---- */
 
 .steps {
-  padding: var(--tbb-section) 0;
-  background: var(--tbb-paper-warm);
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
 }
 
-.stepList {
+.steps .inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5.5556vw, 5rem);
+}
+
+.stepGrid {
   display: grid;
-  gap: 0;
-  margin: 0 0 clamp(1.75rem, 3.5vw, 2.75rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3.3333vw, 3rem);
+  margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--tbb-line);
 }
 
 .step {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(1rem, 2.5vw, 2rem);
-  align-items: start;
-  padding: clamp(1.1rem, 2.4vw, 1.75rem) 0;
-  border-bottom: 1px solid var(--tbb-line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .stepNumber {
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 999px;
-  border: 1px solid var(--tbb-ink);
   font-family: var(--tbb-font-display);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--tbb-ink);
+  font-size: clamp(2rem, 4.4444vw, 4rem);
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--tbb-rd-red);
+  font-variant-numeric: tabular-nums;
 }
 
 .page .stepTitle {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
-  font-weight: 600 !important;
-  line-height: 1.2;
-  letter-spacing: -0.01em !important;
-  color: var(--tbb-ink);
+  margin: 0.5rem 0 0 !important;
+  font-size: clamp(1.25rem, 1.6667vw, 1.5rem);
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  color: var(--tbb-rd-ink);
 }
 
 .stepBody {
-  margin-top: 0.3rem !important;
-  font-size: 0.9375rem;
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
   line-height: 1.55 !important;
-  color: var(--tbb-ink-soft);
-  max-width: 60ch;
+  text-wrap: pretty;
 }
 
-.stepsCta {
-  background: var(--tbb-ink);
-  color: var(--tbb-paper);
-}
-
-/* ---- tiers ---- */
+/* ---- 4 · tiers ---- */
 
 .tiers {
-  padding: var(--tbb-section) 0;
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.tiers .inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.tiersHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 21.25rem;
+  gap: clamp(1.5rem, 4.4444vw, 4rem);
+  align-items: end;
 }
 
 .tierGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1rem, 2vw, 1.75rem);
+  gap: 1rem;
 }
 
 .tier {
-  display: grid;
-  justify-items: start;
-  align-content: start;
-  row-gap: clamp(0.4rem, 1vw, 0.7rem);
-  padding: clamp(1.25rem, 2.6vw, 2rem);
-  border: 1px solid var(--tbb-line);
-  border-radius: clamp(0.5rem, 1vw, 0.9rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.2222vw, 2rem);
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 2.7778vw, 2.5rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-card);
+  color: var(--tbb-rd-ink);
 }
 
-/* The middle tier is the one most partners take, so it is the one the eye
-   lands on: inverted rather than badged. */
 .tierFeatured {
-  background: var(--tbb-ink-black);
-  border-color: var(--tbb-ink-black);
-  color: var(--tbb-on-dark);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.tierHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
 }
 
 .tierEyebrow {
-  color: var(--tbb-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tbb-rd-muted);
 }
 
 .tierFeatured .tierEyebrow {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--tbb-rd-red);
 }
 
-.tierName {
+.page .tierName {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.35rem, 2vw, 1.75rem);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.75rem, 3.0556vw, 2.75rem);
+  font-weight: 900 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.tierEntry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.tierEntryLabel {
+  font-size: 0.875rem;
+  color: var(--tbb-rd-muted);
+}
+
+.tierFeatured .tierEntryLabel {
+  color: var(--tbb-rd-dim);
+}
+
+.tierEntryValue {
+  font-size: clamp(1.125rem, 1.5278vw, 1.375rem);
+  font-weight: 800;
+  line-height: 1.2;
   color: inherit;
 }
 
 .tierItems {
-  display: grid;
-  row-gap: 0.5rem;
-  margin: clamp(0.5rem, 1.2vw, 0.9rem) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.9375rem;
-  color: var(--tbb-ink-soft);
-  width: 100%;
-}
-
-.tierFeatured .tierItems {
-  color: rgba(255, 255, 255, 0.78);
 }
 
 .tierItems li {
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--tbb-line);
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  color: var(--tbb-rd-body);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.4;
 }
 
 .tierFeatured .tierItems li {
-  border-top-color: rgba(255, 255, 255, 0.16);
+  color: var(--tbb-rd-on-ink);
 }
 
-/* ---- the product strip ---- */
+/* A square, not a disc: the document's own bullet. */
+.tierItems li span {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--tbb-rd-ink);
+  transform: translateY(-3px);
+}
+
+.tierFeatured .tierItems li span {
+  background: var(--tbb-rd-red);
+}
+
+.tierCta,
+.tierCtaFeatured {
+  margin-top: auto;
+}
+
+/* ---- 5 · the range ---- */
 
 .range {
-  padding: var(--tbb-section) 0;
-  background: var(--tbb-paper-warm);
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.range .inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
 }
 
 .rangeHead {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  gap: clamp(1.5rem, 3.3333vw, 3rem);
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 1rem;
-}
-
-.rangeHead .sectionHead {
-  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .rangeLink {
-  font-size: var(--tbb-text-label);
-  font-weight: 500;
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--tbb-ink);
-  text-decoration: none;
-  border-bottom: 1px solid var(--tbb-line);
-  padding-bottom: 0.25rem;
-  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+  flex: none;
+  padding-bottom: 0.375rem;
+  color: var(--tbb-rd-ink) !important;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .rangeLink:hover {
-  border-bottom-color: var(--tbb-ink);
+  color: var(--tbb-rd-red) !important;
 }
 
 .rangeGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1.25rem, 2.5vw, 2.5rem) clamp(1rem, 1.8vw, 1.75rem);
+  column-gap: clamp(0.625rem, 1.6667vw, 1.5rem);
+  row-gap: clamp(1.75rem, 3.8889vw, 3.5rem);
 }
 
-/* The catalogue's own card, minus the price and the cart button: a 4:5 tile,
-   the category above the name, nothing drawn around it. */
-.card {
-  display: grid;
-  align-content: start;
+.rangeCard {
+  display: flex;
   min-width: 0;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.3889vw, 1.25rem);
+  color: var(--tbb-rd-ink) !important;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.cardMedia {
+.rangeCard:hover {
+  color: var(--tbb-rd-red) !important;
+}
+
+.rangeMedia {
   position: relative;
   display: block;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  margin-bottom: clamp(0.6rem, 1.2vw, 0.9rem);
-  background: var(--tbb-paper);
+  border-radius: clamp(1rem, 1.6667vw, 1.5rem);
+  background: var(--tbb-rd-card);
 }
 
-.cardImage {
+.rangeMedia img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: center;
-  transition: transform var(--tbb-dur) var(--tbb-ease) !important;
+  transition: transform 700ms var(--tbb-ease);
 }
 
-.card:hover .cardImage {
-  transform: scale(1.025);
+.rangeCard:hover .rangeMedia img {
+  transform: scale(1.04);
 }
 
-.cardCategory {
-  margin: 0 0 0.25rem !important;
-  color: var(--tbb-muted);
+.rangeCategory {
+  color: var(--tbb-rd-muted);
+  font-size: 0.875rem;
+  line-height: 1.2;
 }
 
-.cardName {
-  font-size: clamp(0.85rem, 1vw, 0.95rem);
-  font-weight: 600;
-  line-height: 1.25;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--tbb-ink);
+.rangeName {
+  font-size: clamp(1.0625rem, 1.6667vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.15;
 }
 
-/* ---- FAQ ---- */
+/* The link above the grid is the desktop's; the button under it is the
+   phone's, where there is no room beside the heading. */
+.rangeButton {
+  display: none;
+}
+
+/* ---- 6 · questions ---- */
 
 .faq {
-  padding: var(--tbb-section) 0;
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
 }
 
 .faqInner {
-  width: 100%;
-  max-width: var(--tbb-measure-wide);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(2rem, 5vw, 5rem);
+  grid-template-columns: 27.5rem minmax(0, 1fr);
+  gap: clamp(2rem, 6.6667vw, 6rem);
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
   align-items: start;
 }
 
 .faqCopy {
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.6rem, 1.4vw, 1rem);
-}
-
-.faqCopy .sectionTitle {
-  max-width: 14ch;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 1.9444vw, 1.75rem);
 }
 
 .faqLink {
-  font-size: var(--tbb-text-label);
-  font-weight: 500;
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--tbb-ink);
-  text-decoration: none;
-  border-bottom: 1px solid var(--tbb-line);
-  padding-bottom: 0.25rem;
+  width: fit-content;
+  color: var(--tbb-rd-ink) !important;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .faqLink:hover {
-  border-bottom-color: var(--tbb-ink);
+  color: var(--tbb-rd-red) !important;
 }
 
 .faqList {
-  border-top: 1px solid var(--tbb-line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
 }
 
 .faqItem {
-  border-bottom: 1px solid var(--tbb-line);
+  padding-inline: clamp(1.25rem, 1.9444vw, 1.75rem);
+  border-radius: clamp(1rem, 1.3889vw, 1.25rem);
+  background: var(--tbb-rd-card);
 }
 
 .faqQuestion {
   display: flex;
+  gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: clamp(0.9rem, 2vw, 1.35rem) 0;
-  font-family: var(--tbb-font-display);
-  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-  font-weight: 600;
-  color: var(--tbb-ink);
-  cursor: pointer;
+  padding-block: clamp(1.25rem, 1.9444vw, 1.75rem);
   list-style: none;
+  cursor: pointer;
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--tbb-rd-ink);
 }
 
 .faqQuestion::-webkit-details-marker {
   display: none;
 }
 
-/* A plus that becomes a minus. Drawn with content rather than an icon so it
-   costs no request and follows the type. */
-.faqQuestion::after {
-  content: "+";
-  font-size: 1.2em;
-  font-weight: 400;
-  color: var(--tbb-muted);
-  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+/* Two strokes rather than a glyph, so the "+" can rotate into an "×". */
+.faqMark {
+  position: relative;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--tbb-rd-paper);
+  transition: transform var(--tbb-dur) var(--tbb-ease);
 }
 
-.faqItem[open] .faqQuestion::after {
-  content: "−";
-  color: var(--tbb-ink);
+.faqMark::before,
+.faqMark::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.75rem;
+  height: 1.5px;
+  background: var(--tbb-rd-ink);
+  transform: translate(-50%, -50%);
+}
+
+.faqMark::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.faqItem[open] .faqMark {
+  transform: rotate(45deg);
 }
 
 .faqAnswer {
-  padding: 0 0 clamp(1rem, 2vw, 1.35rem);
-  font-size: 0.9375rem;
-  line-height: 1.6 !important;
-  color: var(--tbb-ink-soft);
-  max-width: 62ch;
+  margin: 0 !important;
+  padding: 0 clamp(1.5rem, 3.3333vw, 3rem) clamp(1.25rem, 1.9444vw, 1.75rem) 0;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-/* ---- the application ---- */
+/* ---- 7 · the form ---- */
 
 .form {
-  background: var(--tbb-ink-black);
-  color: var(--tbb-on-dark);
-  padding: var(--tbb-section) 0;
-  scroll-margin-top: var(--tbb-header-h);
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
 }
 
 .formInner {
-  width: 100%;
-  max-width: var(--tbb-measure-wide);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  gap: clamp(2rem, 5vw, 5rem);
+  grid-template-columns: minmax(0, 1fr) 37.5rem;
+  gap: clamp(2rem, 4.4444vw, 4rem);
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
   align-items: start;
 }
 
 .formCopy {
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.6rem, 1.5vw, 1.1rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.2222vw, 2rem);
 }
 
-.form .eyebrow {
-  color: rgba(255, 255, 255, 0.62);
-}
-
-.form .sectionTitle,
-.page .form .sectionTitle {
-  color: var(--tbb-on-dark);
+.form .sectionTitle {
+  color: var(--tbb-rd-paper);
 }
 
 .form .sectionLede {
-  color: rgba(255, 255, 255, 0.72);
+  max-width: 29rem;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
 }
 
-.callLink {
-  font-size: var(--tbb-text-label);
-  font-weight: 500;
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--tbb-on-dark);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
-  padding-bottom: 0.25rem;
+.formDirect {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: clamp(0.75rem, 1.6667vw, 1.5rem);
 }
 
-.callLink:hover {
-  border-bottom-color: var(--tbb-on-dark);
+.formDirectLabel {
+  color: var(--tbb-rd-dim);
+  font-size: 0.875rem;
+}
+
+.formPhone {
+  width: fit-content;
+  color: var(--tbb-rd-paper) !important;
+  font-size: clamp(1.375rem, 1.9444vw, 1.75rem);
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.formCall {
+  width: fit-content;
+  margin-top: 0.375rem;
+  color: var(--tbb-rd-paper) !important;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.formPhone:hover,
+.formCall:hover {
+  color: var(--tbb-rd-red) !important;
 }
 
 .formCard {
-  background: var(--tbb-paper);
-  border-radius: clamp(0.75rem, 1.4vw, 1.25rem);
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  color: var(--tbb-ink);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 1.9444vw, 1.75rem);
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 3.3333vw, 3rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
 }
 
 .inputs {
-  display: grid;
-  row-gap: clamp(0.9rem, 1.8vw, 1.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 1.3889vw, 1.25rem);
 }
 
 .twoColumns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+  gap: clamp(1rem, 1.3889vw, 1.25rem);
 }
 
 .field {
-  display: grid;
-  row-gap: 0.35rem;
+  display: flex;
   min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .field > span {
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--tbb-muted);
+  color: var(--tbb-rd-body);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .field input,
 .field textarea {
   width: 100%;
-  padding: 0.75rem 0.9rem;
-  border: 1px solid var(--tbb-line);
-  border-radius: 0.5rem;
-  background: var(--tbb-paper);
-  font: inherit;
-  font-size: 0.9375rem;
-  color: var(--tbb-ink);
-  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+  box-sizing: border-box;
+  min-height: 3.5rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 0.875rem;
+  outline: none;
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-ink);
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.field textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--tbb-rd-placeholder);
 }
 
 .field input:focus,
 .field textarea:focus {
-  outline: none;
-  border-color: var(--tbb-ink);
+  border-color: var(--tbb-rd-ink);
+  background: #fff;
 }
 
-.field textarea {
-  resize: vertical;
+/* ---- the tier chips ---- */
+
+.chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
+
+.chips legend {
+  padding: 0;
+  color: var(--tbb-rd-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/*
+ * The label is the chip and the radio inside it is the control, so the whole
+ * chip is the hit area and the keyboard still gets a radio group. The input is
+ * taken out of the paint rather than out of the tree — `display: none` would
+ * take it off the arrow keys with it.
+ */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding-inline: 1.25rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 999px;
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip:hover {
+  border-color: var(--tbb-rd-ink);
+}
+
+.chip:has(input:checked) {
+  border-color: var(--tbb-rd-ink);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 2px;
+}
+
+/* ---- consent, errors, success ---- */
 
 .consent {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.6rem;
-  align-items: start;
-  font-size: 0.8125rem;
-  line-height: 1.5 !important;
-  color: var(--tbb-muted);
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  color: var(--tbb-rd-body-soft);
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 .consent input {
-  margin-top: 0.15rem;
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.125rem 0 0;
+  accent-color: var(--tbb-rd-ink);
 }
 
 .consent a {
-  color: var(--tbb-ink);
+  color: var(--tbb-rd-ink) !important;
+  text-decoration: underline;
 }
 
 .error {
-  color: var(--tbb-accent);
+  color: var(--tbb-rd-red);
   font-size: 0.875rem;
+  line-height: 1.4;
 }
 
 .success {
-  padding-top: 1rem;
-  font-size: 0.9375rem;
-  color: var(--tbb-ink);
+  padding: clamp(1rem, 1.6667vw, 1.5rem);
+  border-radius: 0.875rem;
+  background: var(--tbb-rd-card);
+  color: var(--tbb-rd-ink);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-.submit {
-  justify-self: start;
-  border: 0;
-  background: var(--tbb-ink);
-  color: var(--tbb-paper);
-  font-family: inherit;
-}
+/* ---- narrower than the design's own frame ---- */
 
-@media (max-width: 1023px) {
-  .reasonList {
+@media (max-width: 63.9375rem) {
+  .reasonsInner,
+  .faqInner,
+  .formInner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reasonsAside {
+    position: static;
+  }
+
+  .tiersHead {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .stepGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -607,25 +1031,90 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .faqInner,
-  .formInner {
-    grid-template-columns: minmax(0, 1fr);
+  /* The one the document says to lead with on a narrow screen. */
+  .tierFeatured {
+    order: -1;
   }
 
-  .faqCopy .sectionTitle {
-    max-width: 22ch;
+  .heroScene {
+    opacity: 0.6;
   }
 }
 
-@media (max-width: 639px) {
-  .reasonList,
+@media (max-width: 47.9375rem) {
+  .hero {
+    min-height: 0;
+    padding-bottom: clamp(3rem, 8vw, 4rem);
+  }
+
+  /*
+   * On a phone the shots sit behind the copy rather than beside it, so the
+   * veil runs top to bottom instead of left to right.
+   */
+  .heroScene {
+    width: 150%;
+    opacity: 0.42;
+  }
+
+  .heroVeil {
+    background: linear-gradient(
+      180deg,
+      rgba(20, 20, 20, 0.55) 0%,
+      rgba(20, 20, 20, 0.88) 45%,
+      #141414 100%
+    );
+  }
+
+  .heroActions .primary,
+  .heroActions .ghost,
+  .reasonsActions .primary,
+  .reasonsActions .outline {
+    flex: 1 1 100%;
+  }
+
+  .reasonGrid,
+  .stepGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reason {
+    min-height: 0;
+  }
+
+  .page .reasonTitle {
+    margin-top: 0.5rem !important;
+  }
+
+  .rangeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The heading takes the whole line, so the link moves under the grid. */
+  .rangeLink {
+    display: none;
+  }
+
+  .rangeButton {
+    display: inline-flex;
+    width: 100%;
+  }
+
   .twoColumns {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Two across, like the catalogue itself on a phone. */
-  .rangeGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+  .formCard {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rangeMedia img,
+  .faqMark {
+    transition: none;
+  }
+
+  .rangeCard:hover .rangeMedia img {
+    transform: none;
   }
 }

@@ -135,6 +135,36 @@
    * which the file has no frame for.
    */
   --tbb-header-h: clamp(3.75rem, 8.5833vw, 6.4375rem);
+
+  /* ---- the page-redesign palette ----
+   *
+   * The set the Distributors and R&D redesign documents are drawn in, and the
+   * one the Contacts, Menu and Cookie documents use too. It is warmer than the
+   * Guidebook's pure black-and-white above and its red is a shade off the mark
+   * red: #E3141B rather than #FF0000.
+   *
+   * It lives here rather than inside the two page modules so there is one
+   * place to change when the rest of the site follows. Until then the two
+   * redesigned pages are deliberately a touch warmer than their neighbours —
+   * that is the switch being made one page at a time, not a mistake.
+   */
+  --tbb-rd-ink: #0e0e0e;
+  --tbb-rd-ink-deep: #0b0e14;
+  --tbb-rd-paper: #f6f6f4;
+  --tbb-rd-card: #ece9e3;
+  --tbb-rd-field: #f1efea;
+  --tbb-rd-field-line: #e2ded6;
+  --tbb-rd-red: #e3141b;
+  --tbb-rd-red-dark: #c20f15;
+
+  /* Type, darkest to faintest — on paper, then on ink. */
+  --tbb-rd-body: #3a3835;
+  --tbb-rd-body-soft: #5a5751;
+  --tbb-rd-muted: #6e6a63;
+  --tbb-rd-dim: #8a867f;
+  --tbb-rd-placeholder: #9a968e;
+  --tbb-rd-on-ink: #c9c6c0;
+  --tbb-rd-on-ink-soft: #b5b1aa;
 }
 
 /*

@@ -23,7 +23,10 @@ import "./globals.css";
  */
 const exo2 = Exo_2({
   subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700"],
+  // 800 and 900 are the redesign's display weights — the Distributors and R&D
+  // headings are set in Black at 80–120px, and at that size 700 reads as a
+  // different typeface rather than as the same one one step lighter.
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
   variable: "--tbb-font-exo",
 });
