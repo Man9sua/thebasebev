@@ -297,7 +297,8 @@
 
 .reasonsInner {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  /* The design's own split, 560 against 624 at 1440. */
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
   gap: clamp(2rem, 4.4444vw, 4rem);
   width: 100%;
   max-width: 78rem;
@@ -312,6 +313,27 @@
   display: flex;
   flex-direction: column;
   gap: clamp(1.75rem, 3.3333vw, 3rem);
+  /* The heading below is sized against this column — see the note there. */
+  container-type: inline-size;
+}
+
+/*
+ * The one heading on the page that shares its row with something else, sized
+ * against its own column instead of the viewport.
+ *
+ * "DISTRIBUTION" is twelve characters of Exo 2 Black. At the viewport's 80px
+ * it draws 541px wide and the column holding it was 474 — so the word ran out
+ * of its track, across the 64px gap, and touched the first card. Every desktop
+ * width was over by 48 to 68px, because both numbers scale together and the
+ * word scales faster.
+ *
+ * `cqw` breaks that tie: the measured word is 6.76x the font size, so 14cqw
+ * keeps it at about 95% of whatever the column happens to be, at every width,
+ * and lands on 76px at 1440 — four off the design's 80, which is invisible
+ * next to a heading that used to collide.
+ */
+.reasonsAside .sectionTitle {
+  font-size: clamp(2.5rem, 14cqw, 5rem);
 }
 
 .reasonsActions {
@@ -1007,15 +1029,33 @@
 
 /* ---- narrower than the design's own frame ---- */
 
-@media (max-width: 63.9375rem) {
-  .reasonsInner,
-  .faqInner,
-  .formInner {
+/*
+ * The reasons block stacks earlier than the rest.
+ *
+ * Below about 1200 the two columns leave the cards around 220px each — two
+ * words to a line inside a 32px inset — while the sticky aside has nothing to
+ * stick to on a screen barely taller than it is. Stacked, the heading takes a
+ * full line and the six cards keep the page's width.
+ */
+@media (max-width: 74.9375rem) {
+  .reasonsInner {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .reasonsAside {
     position: static;
+  }
+
+  /* Full width now, so it goes back to the page's own heading scale. */
+  .reasonsAside .sectionTitle {
+    font-size: clamp(2.5rem, 5.5556vw, 5rem);
+  }
+}
+
+@media (max-width: 63.9375rem) {
+  .faqInner,
+  .formInner {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .tiersHead {
