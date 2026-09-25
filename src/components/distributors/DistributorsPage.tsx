@@ -175,18 +175,27 @@ export function DistributorsPage() {
         what that version does with them.
       */}
       <section className={styles.hero} aria-labelledby="dist-title">
-        {/* The frame is what gets positioned, not the image: `fill` writes its
-            own `inset` and `height` inline, and inline beats a stylesheet — so
-            sizing the image itself was silently ignored and the phone got a
-            close-up of the light bar. */}
+        {/*
+          A plain `img` rather than `next/image`.
+
+          `images.unoptimized` is on, so `next/image` would serve one file at
+          every size anyway — and with `fill` it writes `inset` and `height`
+          inline, which beat the stylesheet and made the phone's band
+          impossible to size. Two widths in a `srcset` do the job it would
+          have done: 1280 for phones, 2400 for desktops, 67 and 128 KB.
+        */}
         <span className={styles.heroFrame} aria-hidden="true">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             className={styles.heroPhoto}
             src="/images/distributors-hero-truck.webp"
-            alt=""
-            fill
+            srcSet="/images/distributors-hero-truck.webp 1280w, /images/distributors-hero-truck-2x.webp 2400w"
             sizes="100vw"
-            priority
+            alt=""
+            width={2400}
+            height={1696}
+            fetchPriority="high"
+            decoding="async"
           />
         </span>
         <span className={styles.heroVeil} aria-hidden="true" />
