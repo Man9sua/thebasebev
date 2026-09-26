@@ -26,15 +26,14 @@ export const BRAND_VIDEO = {
  * reloaded the homepage while `/about-us` — a real page, indexable, and one the
  * footer already links to — went unlinked from the menu entirely.
  *
- * The first label went "Shop" → "Catalogue" with the menu redesign and back
- * again with the hero redesign, which is the newer document and the one the
- * owner pointed at: its bar reads Shop · Distributors · R&D · About, and so
- * does the site review's note about the header. The page it opens is still
- * headed CATALOGUE, because that is what the catalogue document draws — the
- * link is the shop, the page is the range.
+ * "Shop" is now "Catalogue". The menu redesign renames it because the label was
+ * doing two jobs: the shop — cart, Stripe checkout — and the presentation of the
+ * range, which is what the route actually opens. The document goes further and
+ * moves the shop out to an external `Shop ↗` button; there is no external shop
+ * to point one at, so that half waits for a URL. See the note in `SiteMenu.tsx`.
  */
 export const SITE_NAV = [
-  { label: "Shop", href: "/catalog" },
+  { label: "Catalogue", href: "/catalog" },
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
   { label: "About", href: "/about-us" },
@@ -53,7 +52,7 @@ export const SITE_NAV_SECONDARY = [
 
 export const FOOTER_LINKS = {
   products: [
-    { label: "Shop", href: "/catalog" },
+    { label: "Catalogue", href: "/catalog" },
     { label: "Private Labeling", href: "/private-labeling" },
     { label: "Sugar Free", href: "/sugar-free" },
     { label: "Vending", href: "/vending" },

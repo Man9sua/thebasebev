@@ -5,7 +5,7 @@
   height: var(--tbb-header-h);
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 3.5vw, 4rem);
+  justify-content: space-between;
   padding: 0 var(--tbb-gutter);
   /* The hero is paper now, not a dark video, so the bar starts in ink and
      simply stays there. The old scrim existed to keep white icons legible over
@@ -90,18 +90,21 @@
 }
 
 /*
- * Height-driven, width auto: the mark's aspect is never touched, and it is the
- * same asset at every breakpoint — only the scale changes.
+ * Height-driven, width auto: the lockup's aspect ratio is never touched, and it
+ * is the same asset at every breakpoint — only the scale changes.
  *
- * It is the stacked lockup now, a portrait block rather than the landscape
- * band, which is what the hero redesign draws in the bar. The document sets it
- * 100 tall inside a 160 header — 62% of the bar. This bar is 60 to 103, so the
- * mark is capped at 56 and lands on the same proportion without the whole site
- * having to grow a 160px header first.
+ * The design's logo group is 142.61 x 82.13, and that box is deliberately NOT
+ * taken. The file's lockup is a near-square red mark (77.95 x 82.13) beside a
+ * grey "Beverage Production"; this project carries the wider mark the live site
+ * and the Tilda original both use (142.88 x 79.12). Set to the file's height,
+ * ours comes out 179.64 wide against the file's 142.61 — nearly a third wider,
+ * and it swallows the bar. Two different marks, so the box does not transplant,
+ * and the size the site already had stands until the file's own lockup is
+ * available as an asset.
  */
 .logo svg {
   display: block;
-  height: clamp(2.25rem, 3.9vw, 3.5rem);
+  height: clamp(1.5rem, 2.1vw, 2rem);
   width: auto;
 }
 
@@ -110,97 +113,50 @@
   outline-offset: 4px;
 }
 
-/*
- * The four sections, back in the bar. A soft pad under the label on hover
- * rather than an underline: the bar changes colour under the chameleon, and a
- * rule drawn in `currentColor` disappears the moment the surface matches it.
- */
-.nav {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.navLink {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-  padding: 0 1rem;
-  border-radius: 999px;
-  color: inherit;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.navLink:hover,
-.navLink:focus-visible {
-  background: color-mix(in srgb, currentColor 10%, transparent);
-}
-
-.navLink[aria-current="page"] {
-  font-weight: 700;
-}
-
-.navLink:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
 .actions {
   position: relative;
   z-index: 1;
-  margin-left: auto;
   display: flex;
   align-items: center;
   gap: clamp(0.35rem, 1.1vw, 0.9rem);
 }
 
 /*
- * The call to action: 48 tall on a 24 radius, filled ink, "Get a quote" in 13
- * SemiBold caps at 0.1em, red on hover. Every one of the redesign documents
- * draws it that way, and the width follows the words rather than the 189px box
- * the first homepage file fixed it at — the words changed.
+ * The design's call to action: `Frame 156`, 189 x 50, radius 100, filled black,
+ * with "Get your best deal now" set in 14 over a 50 line, white, and 10 of
+ * padding inside a horizontal Auto Layout.
  *
- * It points at /contacts rather than at a popup: the files give it no target,
+ * It points at /contacts rather than at a popup: the file gives it no target,
  * and the export's own lead popups only exist on routes served through the
- * legacy shell, while this bar is on every route.
+ * legacy shell — this bar is on every route.
  */
 .cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: none;
-  box-sizing: border-box;
-  /* The document's 16 between the icons and the pill. */
-  margin-left: 0.625rem;
-  min-height: 3rem;
-  padding: 0 1.625rem;
-  border-radius: 999px;
+  width: 189px;
+  height: 50px;
+  padding: 0 10px;
+  border-radius: 100px;
   background: var(--tbb-ink);
   color: var(--tbb-on-dark);
   font-family: var(--tbb-font-sans);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: 0.1em;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 50px;
+  letter-spacing: 0;
   text-align: center;
-  text-transform: uppercase;
   text-decoration: none;
   white-space: nowrap;
   transition:
     background-color var(--tbb-dur-fast) var(--tbb-ease),
-    color var(--tbb-dur-fast) var(--tbb-ease);
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    opacity var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .cta:hover {
-  background: var(--tbb-rd-red);
-  color: #fff;
+  opacity: 0.86;
 }
 
 .cta:focus-visible {
@@ -208,14 +164,9 @@
   outline-offset: 3px;
 }
 
-/*
- * The bar holds the mark, four labels, three controls and the quote, and below
- * about 1100 it cannot hold all of them on one line. So that is where the two
- * swap: the sections and the call to action go behind the burger, which is the
- * only width the burger is for now.
- */
+/* Below the design's own frame width the bar has to hold the logo, four
+   controls and this; the controls are the half anyone reaches for. */
 @media (max-width: 1099px) {
-  .nav,
   .cta {
     display: none;
   }
@@ -362,11 +313,3 @@
 
 /* BrandLogo draws only `the` with currentColor. It therefore interpolates to
    white with the controls while the red BASE block remains unchanged. */
-
-/* Last in the sheet on purpose: `.action` sets its own `display` further up,
-   and this has to be the rule that answers it. */
-@media (min-width: 1100px) {
-  .burger {
-    display: none;
-  }
-}
