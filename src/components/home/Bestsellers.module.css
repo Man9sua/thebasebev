@@ -28,20 +28,43 @@
   transition: background-color var(--tbb-dur) var(--tbb-ease);
 }
 
+/*
+ * The page's measure, like every other block. Without the cap the stage grew
+ * with the viewport and the percentages on it grew with it: on a 1900 screen
+ * the drink ended up a third of the page away from the pack it belongs to.
+ *
+ * Two rows rather than one, so the foot is a grid cell under the stage instead
+ * of an absolutely positioned strip that has to be told where the copy column
+ * ends. It cannot drift out of step with the columns now, because it is one of
+ * them.
+ */
 .inner {
   position: relative;
   display: grid;
-  /* 520 of copy, then the stage — the document's split at 1440. */
-  grid-template-columns: minmax(0, 36.1111%) minmax(0, 1fr);
-  column-gap: clamp(2rem, 4.4444vw, 4rem);
+  /*
+   * The document's own split, as shares of the measure rather than of the
+   * frame: 520 of copy and 624 of stage inside 1248, with the 104 between them
+   * falling out as the gap. Taken against the frame instead, the copy column
+   * came out 381 wide and the button and the price stopped fitting on one line.
+   */
+  grid-template-columns: minmax(0, 41.6667%) minmax(0, 50%);
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-content: space-between;
+  column-gap: clamp(1.5rem, 8.3333%, 6.5rem);
+  row-gap: clamp(1.5rem, 2.7778vw, 2.5rem);
   align-items: center;
+  width: 100%;
+  max-width: 78rem;
   min-height: 51.25rem;
+  margin-inline: auto;
   padding: clamp(3rem, 5vw, 4.5rem) var(--gutter);
 }
 
 /* ---- the copy ---- */
 
 .copy {
+  grid-column: 1;
+  grid-row: 1;
   position: relative;
   z-index: 2;
   display: flex;
@@ -125,6 +148,8 @@
 /* ---- the stage ---- */
 
 .stage {
+  grid-column: 2;
+  grid-row: 1;
   position: relative;
   z-index: 1;
   align-self: stretch;
@@ -134,7 +159,7 @@
 .stage img {
   position: absolute;
   display: block;
-  width: auto;
+  height: auto;
 }
 
 /*
@@ -146,7 +171,7 @@
 .ghostLeft,
 .ghostRight {
   top: 12%;
-  height: 62%;
+  width: 45%;
   opacity: 0.38;
   filter: saturate(0.7);
   transition:
@@ -184,19 +209,29 @@
   pointer-events: none;
 }
 
-/* The pack leads, the drink it makes stands in front and to the right. */
+/*
+ * The pack leads, the drink it makes stands in front and to the right.
+ *
+ * Sized against the stage's WIDTH, not its height. The document draws the pack
+ * at two thirds of the stage across and the glass at two fifths, and it is that
+ * horizontal relationship that says the two belong together — tie the heights
+ * to the stage instead and a narrower stage leaves the glass covering the name
+ * printed on the pack.
+ */
 .pack {
-  left: 6%;
-  top: 2%;
-  height: 92%;
+  left: 9.5%;
+  bottom: 3%;
+  width: 67%;
+  height: auto;
   z-index: 2;
   filter: drop-shadow(0 24px 40px rgba(80, 30, 40, 0.18));
 }
 
 .glass {
-  right: 4%;
-  bottom: 4%;
-  height: 66%;
+  right: 6.5%;
+  bottom: 2%;
+  width: 42%;
+  height: auto;
   z-index: 3;
   filter: drop-shadow(0 20px 30px rgba(80, 30, 40, 0.2));
 }
@@ -212,29 +247,34 @@
 }
 
 .groundPack {
-  left: 8%;
-  bottom: 3%;
-  width: 42%;
+  left: 11%;
+  bottom: 2%;
+  width: 44%;
   height: 4%;
 }
 
 .groundGlass {
-  right: 3%;
-  bottom: 2%;
-  width: 32%;
+  right: 5%;
+  bottom: 1%;
+  width: 30%;
   height: 3.5%;
 }
 
 /* ---- the foot: counter, tabs, arrows ---- */
 
+/*
+ * The whole measure, with the row hugging the right edge — the stage column is
+ * 528 at the site's width and the counter, five names and two arrows need more
+ * than that, so held inside it the last tab was simply scrolled out of sight.
+ */
 .foot {
-  position: absolute;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  position: relative;
   z-index: 3;
-  left: calc(var(--gutter) + 36.1111%);
-  right: var(--gutter);
-  bottom: clamp(3rem, 5vw, 4.5rem);
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: clamp(1rem, 1.6667vw, 1.5rem);
 }
 
@@ -248,7 +288,7 @@
 
 .tabs {
   display: flex;
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
   gap: clamp(0.75rem, 1.3889vw, 1.25rem);
   overflow-x: auto;
@@ -367,9 +407,20 @@
    */
   .inner {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
     min-height: 0;
     padding: 2rem 0 1.75rem;
     row-gap: 0;
+  }
+
+  /* One column, so the explicit placement above has to go — a `grid-column: 2`
+     left standing would open a second, implicit column beside it. Order is
+     what arranges the block here. */
+  .copy,
+  .stage,
+  .foot {
+    grid-column: 1;
+    grid-row: auto;
   }
 
   .foot {
