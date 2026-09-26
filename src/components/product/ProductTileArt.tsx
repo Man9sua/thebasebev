@@ -2,17 +2,13 @@ import Image from "next/image";
 import styles from "./ProductTileArt.module.css";
 
 /**
- * The product card's artwork, shared by the homepage grid and the catalogue
- * shelf so the two cannot drift apart.
+ * The made drink, on the homepage design file's paper.
  *
- * It draws the card and nothing else: paper, ground, drink, name. Everything
- * that makes a catalogue card a catalogue card — the price, the weight, the
- * add-to-cart — belongs to the caller, which is why this takes a name to print
- * rather than a product.
- *
- * `name` is rendered inside the frame because that is where the design puts it.
- * Pass a node, not a string, when it has to be a link: the catalogue's name is
- * the card's route and carries the hooks the commerce audit reaches for.
+ * Four layers in one frame: a warm radial paper, the ground the drink stands
+ * on, the drink itself, and its name over the lower left. The catalogue shelf
+ * used to share it; the redesign puts the pouch on the shelf instead — see the
+ * note in `CatalogPage.tsx` — so the flavour picker is its one caller, where it
+ * shows what the thing being ordered becomes.
  */
 export function ProductTileArt({
   slug,

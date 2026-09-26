@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   CATALOG_GROUPS,
@@ -8,13 +9,41 @@ import {
   type CatalogGroupId,
   type CatalogProduct,
 } from "@/data/catalog";
+import catalogTiles from "@/data/catalog-tiles.json";
 import { FlavorPicker } from "@/components/cart/FlavorPicker";
-import { ProductTileArt } from "@/components/product/ProductTileArt";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SortMenu } from "./SortMenu";
 import { useCart } from "@/components/cart/useCart";
 import { cartLineKey, setCartItemQuantity, type CartItem } from "@/lib/cart-store";
 import styles from "./CatalogPage.module.css";
+
+/**
+ * The shop, rebuilt to the catalogue redesign.
+ *
+ * What the design changes, and what it deliberately does not:
+ *
+ * - **Ink, not paper.** The page is the redesign's dark ground, so the tiles
+ *   are the only colour on it and the range reads as a range.
+ * - **The card is a tile and a line.** The plate carries the pouch and a "Buy"
+ *   pill in its corner; the name, the pouch size, the price and "Learn more"
+ *   sit under it on the dark. The name used to be printed inside the frame,
+ *   over the foot of a drink, where it competed with the packaging — which
+ *   already says what the product is.
+ * - **The plate is the pouch again, on its own colour.** It was the made drink
+ *   in a glass on one wash shared by all sixteen, normalised from the homepage
+ *   design file. `catalog-tiles.json` has carried a pouch per product on a
+ *   colour sampled from its own banner since before that, and the Distributors
+ *   range strip already stands on them; this is the shop standing on them too.
+ *   The shop sells the pouch — the drink is what the product page is for.
+ * - **A search field.** Sixteen products is three screens, and someone who
+ *   came for matcha should not have to find it.
+ *
+ * Price, the four range filters and the sort menu stay, and so does the cart:
+ * the design draws "BUY ↗" as though the shop were on another platform, and it
+ * is not — this site holds the catalogue, the flavour picker and the Stripe
+ * checkout. So the pill adds to the cart and carries no arrow, because an arrow
+ * promises to leave and nothing leaves.
+ */
 
 type Filter = "all" | CatalogGroupId;
 type Sort = "featured" | "price-asc" | "price-desc" | "name";
@@ -30,6 +59,8 @@ const SHELF_NAMES: Partial<Record<string, string>> = {
   topping: "Topping",
   "sugar-syrup": "Syrup",
 };
+
+const tiles = catalogTiles as Record<string, { image: string }>;
 
 const SORTS: readonly { id: Sort; label: string }[] = [
   { id: "featured", label: "Featured" },
@@ -66,6 +97,20 @@ function sortProducts(
   return sorted;
 }
 
+function shelfName(product: CatalogProduct) {
+  return SHELF_NAMES[product.slug] ?? product.name;
+}
+
+/**
+ * Matches on everything the card shows plus the range it belongs to, so
+ * "cold" finds the four cold products and "matcha" finds the one.
+ */
+function matches(product: CatalogProduct, query: string) {
+  if (!query) return true;
+  const haystack = `${shelfName(product)} ${product.name} ${product.categoryLabel}`;
+  return haystack.toLowerCase().includes(query);
+}
+
 function ProductCard({
   product,
   weight,
@@ -89,7 +134,7 @@ function ProductCard({
    * and the card asks for a quote instead, which is the honest control.
    */
   const sellable = Boolean(getCheckoutProductId(product.slug)) && flavors.length > 0;
-  const name = SHELF_NAMES[product.slug] ?? product.name;
+  const name = shelfName(product);
   const quantity = lines.reduce((total, line) => total + line.quantity, 0);
 
   return (
@@ -99,113 +144,116 @@ function ProductCard({
       data-product-slug={product.slug}
       data-in-cart={quantity > 0 ? "true" : undefined}
     >
-      {/*
-       * The whole tile is the link and the name is printed inside it, which is
-       * how the design draws the card. One anchor per card rather than the
-       * hidden-image-plus-name pair this used to carry: the name is the only
-       * text in the frame, so the anchor announces itself correctly without a
-       * second route to the same page.
-       */}
-      <h3 className={styles.heading}>
+      {/* The plate: the pouch whole, standing on a field of its own colour —
+          `build-catalog-tiles.mjs` builds all sixteen the same way, and the
+          Distributors range strip stands on the same set. The whole of it is
+          the route to the product page. */}
+      <div className={styles.tile}>
         <SiteLink
           className={styles.tileLink}
-          data-catalog-name
           href={product.route}
+          tabIndex={-1}
+          aria-hidden="true"
         >
-          <ProductTileArt
-            slug={product.slug}
-            name={name}
-            sizes="(max-width: 639px) 46vw, (max-width: 1099px) 31vw, 23vw"
+          <Image
+            src={tiles[product.slug]?.image ?? `/images/pack-${product.slug}.webp`}
+            alt=""
+            fill
+            sizes="(max-width: 639px) 46vw, (max-width: 1099px) 31vw, 25vw"
+            loading={eager ? "eager" : "lazy"}
             priority={eager}
           />
         </SiteLink>
-      </h3>
-      {quantity > 0 && <span className={styles.inCart}>In cart</span>}
-
-      <p className={styles.priceRow}>
-        <span className={styles.price} data-catalog-price>
-          {product.price ?? "Price on request"}
-        </span>
-      </p>
-
-      <p className={styles.meta}>{weight ? `${weight} pouch` : ""}</p>
-      <p className={styles.description}>{product.description}</p>
-
-      {/*
-       * The foot of the card, held to the bottom so the buttons stay level
-       * across a row however long the copy above them runs — and however many
-       * flavours of this one are in the cart.
-       */}
-      <div className={styles.foot}>
-        {/*
-         * What is in the cart, by flavour, with its own quantity. Wholesale
-         * buyers order in multiples, and stepping a product rather than a
-         * flavour would be stepping something the order does not have.
-         */}
-        {lines.length > 0 && (
-          <ul className={styles.lines}>
-            {lines.map((line) => (
-              <li key={cartLineKey(line.slug, line.flavor)} className={styles.line}>
-                <span className={styles.lineName}>{line.flavor}</span>
-                <span
-                  className={styles.lineStepper}
-                  role="group"
-                  aria-label={`${name} ${line.flavor} quantity`}
-                >
-                  <button
-                    className={styles.step}
-                    type="button"
-                    aria-label={`Remove one ${line.flavor} ${name}`}
-                    onClick={() =>
-                      setCartItemQuantity(line.slug, line.flavor, line.quantity - 1)
-                    }
-                  >
-                    −
-                  </button>
-                  <span className={styles.lineQuantity} aria-live="polite">
-                    {line.quantity}
-                  </span>
-                  <button
-                    className={styles.step}
-                    type="button"
-                    aria-label={`Add one ${line.flavor} ${name}`}
-                    disabled={line.quantity >= 10}
-                    onClick={() =>
-                      setCartItemQuantity(line.slug, line.flavor, line.quantity + 1)
-                    }
-                  >
-                    +
-                  </button>
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
 
         {/*
-         * Adding is two steps now, because the flavour is part of the order:
-         * this opens the picker and the picker puts the line in the cart. Same
-         * label whether or not something is already in it — it does the same
-         * thing either way, and what is in the cart is listed above it —
-         * and `data-cart-add` either way, which is what the smoke and the
-         * commerce audit press.
+         * Adding is two steps, because the flavour is part of the order: this
+         * opens the picker and the picker puts the line in the cart. Same label
+         * whether or not something is already in it — it does the same thing
+         * either way — and `data-cart-add` either way, which is what the smoke
+         * and the commerce audit press.
          */}
         {!sellable ? (
-          <SiteLink className={styles.action} data-cart-add href="/contacts">
+          <SiteLink className={styles.buy} data-cart-add href="/contacts">
             Request price
           </SiteLink>
         ) : (
           <button
-            className={styles.action}
+            className={styles.buy}
             data-cart-add
             type="button"
             aria-haspopup="dialog"
             onClick={() => onPick(product)}
           >
-            Add to cart
+            Buy
+            <span className="tbb-visually-hidden"> {name}</span>
           </button>
         )}
+
+        {quantity > 0 && <span className={styles.inCart}>In cart</span>}
       </div>
+
+      <div className={styles.info}>
+        <h3 className={styles.name}>
+          <SiteLink data-catalog-name href={product.route}>
+            {name}
+          </SiteLink>
+        </h3>
+        <SiteLink className={styles.learn} href={product.route} tabIndex={-1} aria-hidden="true">
+          Learn more
+        </SiteLink>
+      </div>
+
+      <p className={styles.meta}>
+        {weight && <span className={styles.weight}>{weight} pouch</span>}
+        <span className={styles.price} data-catalog-price>
+          {product.price ?? "Price on request"}
+        </span>
+      </p>
+
+      {/*
+       * What is in the cart, by flavour, with its own quantity. Wholesale
+       * buyers order in multiples, and stepping a product rather than a flavour
+       * would be stepping something the order does not have.
+       */}
+      {lines.length > 0 && (
+        <ul className={styles.lines}>
+          {lines.map((line) => (
+            <li key={cartLineKey(line.slug, line.flavor)} className={styles.line}>
+              <span className={styles.lineName}>{line.flavor}</span>
+              <span
+                className={styles.lineStepper}
+                role="group"
+                aria-label={`${name} ${line.flavor} quantity`}
+              >
+                <button
+                  className={styles.step}
+                  type="button"
+                  aria-label={`Remove one ${line.flavor} ${name}`}
+                  onClick={() =>
+                    setCartItemQuantity(line.slug, line.flavor, line.quantity - 1)
+                  }
+                >
+                  −
+                </button>
+                <span className={styles.lineQuantity} aria-live="polite">
+                  {line.quantity}
+                </span>
+                <button
+                  className={styles.step}
+                  type="button"
+                  aria-label={`Add one ${line.flavor} ${name}`}
+                  disabled={line.quantity >= 10}
+                  onClick={() =>
+                    setCartItemQuantity(line.slug, line.flavor, line.quantity + 1)
+                  }
+                >
+                  +
+                </button>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </article>
   );
 }
@@ -235,7 +283,7 @@ function Shelf({
           flavors={flavors[product.slug] ?? EMPTY}
           lines={linesBySlug[product.slug] ?? EMPTY_LINES}
           onPick={onPick}
-          eager={offset + index < 4}
+          eager={offset + index < 3}
         />
       ))}
     </div>
@@ -257,6 +305,7 @@ export function CatalogPage({
 }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<Sort>("featured");
+  const [query, setQuery] = useState("");
   /*
    * One picker for the whole shelf rather than one per card: it is a modal over
    * the page, and sixteen of them waiting in the markup would be sixteen
@@ -323,31 +372,39 @@ export function CatalogPage({
     return map;
   }, [cart.items]);
 
+  const search = query.trim().toLowerCase();
+
   const products = useMemo(() => {
-    const picked =
-      filter === "all"
-        ? CATALOG_PRODUCTS
-        : CATALOG_PRODUCTS.filter((product) => product.categoryId === filter);
+    const picked = CATALOG_PRODUCTS.filter(
+      (product) =>
+        (filter === "all" || product.categoryId === filter) && matches(product, search),
+    );
     return sortProducts(picked, sort);
-  }, [filter, sort]);
+  }, [filter, search, sort]);
 
   /*
    * The whole range is four ranges, and a flat run of sixteen tiles says so
    * nowhere. Left alone it is laid out under its own headings, which is both
    * the structure and a second way to read what is on offer. Sorting is a
-   * question about the whole shelf, so it collapses the sections — as does
-   * filtering, where the one heading left would only repeat the filter.
+   * question about the whole shelf, so it collapses the sections — as do
+   * filtering and searching, where the headings left would only repeat what was
+   * asked for.
    */
-  const grouped = filter === "all" && sort === "featured";
+  const grouped = filter === "all" && sort === "featured" && !search;
   const lines = cart.items.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-surface="dark">
       <section className={styles.intro} aria-labelledby="catalog-title">
-        <div>
+        <div className={styles.introCopy}>
           <h1 id="catalog-title" className={styles.title}>
-            Shop
+            Catalogue
           </h1>
+          <p className={styles.lede}>
+            {CATALOG_PRODUCTS.length} categories for cafés, restaurants and hotels.
+            <br />
+            Wholesale and private label supply from Dubai.
+          </p>
           {/*
             Production's own h1 for this route, a level down — the wording the
             page ranks on, kept on the page rather than dropped when the shelf
@@ -358,30 +415,27 @@ export function CatalogPage({
           </h2>
         </div>
 
-        <div className={styles.introSide}>
-          <p className={styles.lede}>
-            Dry premixes for cafes, restaurants and hotels. Bulk and private
-            label supply across the UAE and worldwide.
-          </p>
-          <dl className={styles.facts}>
-            <div>
-              <dt>Products</dt>
-              <dd>{CATALOG_PRODUCTS.length}</dd>
-            </div>
-            <div>
-              <dt>Ranges</dt>
-              <dd>{CATALOG_GROUPS.length}</dd>
-            </div>
-            <div>
-              <dt>Made in</dt>
-              <dd>Dubai</dd>
-            </div>
-          </dl>
-        </div>
+        <label className={styles.search}>
+          <span className="tbb-visually-hidden">Search products</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" strokeLinecap="round" />
+          </svg>
+          {/* Hooked, because the site-wide search overlay is mounted on this
+              page too and a bare `input[type=search]` matches both. */}
+          <input
+            data-catalog-search
+            type="search"
+            value={query}
+            placeholder="Search products by name"
+            autoComplete="off"
+            onChange={(event) => setQuery(event.currentTarget.value)}
+          />
+        </label>
       </section>
 
       {/*
-        Sticky: sixteen products are four screens of scrolling, and a filter row
+        Sticky: sixteen products are three screens of scrolling, and a filter row
         that scrolls away with the heading is a filter row nobody uses twice.
       */}
       <div className={styles.bar}>
@@ -437,7 +491,13 @@ export function CatalogPage({
       </div>
 
       <div className={styles.shelf} ref={shelfRef}>
-        {grouped ? (
+        {products.length === 0 ? (
+          <p className={styles.empty} role="status">
+            Nothing matches “{query.trim()}”. Try a product name, or{" "}
+            <SiteLink href="/contacts">ask us</SiteLink> — the range is wider than the
+            shelf.
+          </p>
+        ) : grouped ? (
           CATALOG_GROUPS.map((group, groupIndex) => {
             const inGroup = products.filter(
               (product) => product.categoryId === group.id,
@@ -448,17 +508,21 @@ export function CatalogPage({
                 className={styles.range}
                 aria-label={group.label}
               >
-                <header className={styles.rangeHead}>
+                {/* A `div`, not a `header`: four of those on one page turns
+                    `locator("header")` — which several of the smoke scripts use
+                    for the site bar — into a strict-mode violation, and the
+                    range head is a heading and a count, not a landmark. */}
+                <div className={styles.rangeHead}>
                   <h2 className={styles.rangeName}>{group.label}</h2>
                   <span className={styles.rangeCount}>{inGroup.length}</span>
-                </header>
+                </div>
                 <Shelf
                   products={inGroup}
                   weights={weights}
                   flavors={flavors}
                   linesBySlug={linesBySlug}
                   onPick={setPicking}
-                  offset={groupIndex === 0 ? 0 : 4}
+                  offset={groupIndex === 0 ? 0 : 3}
                 />
               </section>
             );
@@ -478,12 +542,15 @@ export function CatalogPage({
       </div>
 
       <section className={styles.close}>
-        <p className={styles.closeText}>
-          Ordering for a chain, or putting your own name on the pouch? We quote
-          bulk volumes and private label runs directly.
-        </p>
+        <div className={styles.closeCopy}>
+          <p className={styles.closeTitle}>Need wholesale prices or samples?</p>
+          <p className={styles.closeText}>
+            Tell us the volume and the market, and we will come back with terms and a
+            sample kit.
+          </p>
+        </div>
         <SiteLink className={styles.closeLink} href="/contacts">
-          Request a price list <span aria-hidden="true">→</span>
+          Get a quote
         </SiteLink>
       </section>
 
@@ -503,7 +570,7 @@ export function CatalogPage({
       {picking && (
         <FlavorPicker
           slug={picking.slug}
-          name={SHELF_NAMES[picking.slug] ?? picking.name}
+          name={shelfName(picking)}
           price={picking.price}
           weight={weights[picking.slug] ?? null}
           flavors={flavors[picking.slug] ?? EMPTY}

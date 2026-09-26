@@ -46,14 +46,28 @@ function SocialIcon({ label }: { label: string }) {
   );
 }
 
+const COLUMNS = [
+  { title: "Products", links: FOOTER_LINKS.products },
+  { title: "Company", links: FOOTER_LINKS.company },
+  { title: "Resources", links: FOOTER_LINKS.resources },
+] as const;
+
 /**
- * Global footer.
+ * Global footer, rebuilt to the redesign.
  *
- * Information top-left, then the brand lockup as the closing statement, set to
- * the full width of the footer at every breakpoint. It used to be the word
- * BASE on its own, set in the display face and cropped at the baseline; the
- * owner asked for the real mark, so the mark is what closes the page — the
- * same asset the header carries, at the scale the word had.
+ * The sentence and the two ways to reach a person lead, at the size someone
+ * actually looks for them — the email and the phone used to be the same 15px as
+ * every link beside them, which made the footer a wall of equal grey. The three
+ * link columns sit to the right of them rather than around them.
+ *
+ * Along the bottom: the copyright, then Sitemap, Terms, Privacy, the cookie
+ * dialog and the four accounts, all on one line. Social had its own "Follow"
+ * heading inside the Resources column, which read as a fourth kind of resource.
+ *
+ * Then the mark, as a watermark: the same lockup the header carries, run to the
+ * width of the page in two greys a shade off the ground. It used to close the
+ * page in paper and brand red at that scale, which is a billboard rather than a
+ * signature — see the `--tbb-logo-*` overrides in the stylesheet.
  *
  * Contacts and social accounts are the real ones from the existing site.
  */
@@ -65,79 +79,39 @@ export function SiteFooter() {
       <div className={styles.inner}>
         <div className={styles.top}>
           <div className={styles.brand}>
-            <span className="tbb-label">The Base Beverage</span>
             <p className={styles.statement}>
-              Dry beverage bases and instant premixes, manufactured in Dubai for
-              HoReCa, retail and private label.
+              Beverage ingredients for HoReCa, retail and private label. Made in Dubai.
             </p>
 
             <div className={styles.contact}>
-              <a className={styles.link} href={COMPANY.emailHref}>
+              <a className={styles.contactLink} href={COMPANY.emailHref}>
                 {COMPANY.email}
               </a>
-              <a className={styles.link} href={COMPANY.phoneHref}>
+              <a className={styles.contactLink} href={COMPANY.phoneHref}>
                 {COMPANY.phone}
               </a>
-              <span className={styles.link} style={{ pointerEvents: "none" }}>
-                {COMPANY.city}, {COMPANY.country}
-              </span>
             </div>
           </div>
 
-          <div className={styles.column}>
-            <span className={`tbb-label ${styles.columnTitle}`}>Products</span>
-            {FOOTER_LINKS.products.map((item) => (
-              <SiteLink key={item.href} className={styles.link} href={item.href}>
-                {item.label}
-              </SiteLink>
+          <div className={styles.columns}>
+            {COLUMNS.map((column) => (
+              <div key={column.title} className={styles.column}>
+                <span className={styles.columnTitle}>{column.title}</span>
+                {column.links.map((item) => (
+                  <SiteLink key={item.href} className={styles.link} href={item.href}>
+                    {item.label}
+                  </SiteLink>
+                ))}
+              </div>
             ))}
-          </div>
-
-          <div className={styles.column}>
-            <span className={`tbb-label ${styles.columnTitle}`}>Company</span>
-            {FOOTER_LINKS.company.map((item) => (
-              <SiteLink key={item.href} className={styles.link} href={item.href}>
-                {item.label}
-              </SiteLink>
-            ))}
-          </div>
-
-          <div className={styles.column}>
-            <span className={`tbb-label ${styles.columnTitle}`}>Resources</span>
-            {FOOTER_LINKS.resources.map((item) => (
-              <SiteLink key={item.href} className={styles.link} href={item.href}>
-                {item.label}
-              </SiteLink>
-            ))}
-
-            <span
-              className={`tbb-label ${styles.columnTitle}`}
-              style={{ marginTop: "1.25rem" }}
-            >
-              Follow
-            </span>
-            <span className={styles.social}>
-              {SOCIAL_LINKS.map((item) => (
-                <a
-                  key={item.href}
-                  className={styles.socialLink}
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={item.label}
-                >
-                  <SocialIcon label={item.label} />
-                  <span className="tbb-visually-hidden">{item.label}</span>
-                </a>
-              ))}
-            </span>
           </div>
         </div>
 
         <div className={styles.legal}>
-          <span>
-            © {year} {COMPANY.legalName}. All rights reserved.
+          <span className={styles.copyright}>
+            © {year} {COMPANY.legalName} · {COMPANY.city}, {COMPANY.country}
           </span>
+
           <span className={styles.legalLinks}>
             {FOOTER_LINKS.legal.map((item) => (
               <SiteLink key={item.href} className={styles.link} href={item.href}>
@@ -147,6 +121,22 @@ export function SiteFooter() {
             {/* The one way back to a choice already made. A consent banner that
                 cannot be reopened is a consent banner that cannot be withdrawn. */}
             <CookieSettingsButton className={styles.link} />
+          </span>
+
+          <span className={styles.social}>
+            {SOCIAL_LINKS.map((item) => (
+              <a
+                key={item.href}
+                className={styles.socialLink}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={item.label}
+              >
+                <SocialIcon label={item.label} />
+                <span className="tbb-visually-hidden">{item.label}</span>
+              </a>
+            ))}
           </span>
         </div>
 

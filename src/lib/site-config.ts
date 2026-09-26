@@ -59,17 +59,24 @@ export const FOOTER_LINKS = {
   ],
   company: [
     { label: "About Us", href: "/about-us" },
-    { label: "Wholesale Strategy", href: "/wholesale-strategy" },
     { label: "Distributors", href: "/distributors" },
     { label: "R&D", href: "/rnd" },
+    { label: "Contacts", href: "/contacts" },
   ],
   resources: [
     { label: "Blog", href: "/resources/blog" },
     { label: "Glossary", href: "/resources/glossary" },
     { label: "Tools", href: "/resources/tools" },
-    { label: "Sitemap", href: "/sitemap" },
+    { label: "Wholesale Strategy", href: "/wholesale-strategy" },
   ],
+  /*
+   * The bottom line of the footer. The redesign moves Sitemap here, out of
+   * Resources: it is a map of the site rather than something to read, which is
+   * what the other three in that column are. Every route stays linked — the
+   * three columns and this row are the same set, dealt differently.
+   */
   legal: [
+    { label: "Sitemap", href: "/sitemap" },
     { label: "Terms", href: "/terms" },
     { label: "Privacy", href: "/privacy" },
   ],

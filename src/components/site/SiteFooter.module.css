@@ -1,56 +1,99 @@
+/**
+ * Global footer — the redesign.
+ *
+ * Three bands: the statement and the two direct channels beside the three link
+ * columns; one line of legal, cookie and social; and the mark as a watermark
+ * closing the page.
+ */
+
 .footer {
   position: relative;
-  background: var(--tbb-ink);
-  color: var(--tbb-on-dark);
-  padding: var(--tbb-section) 0 0;
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-on-ink);
+  padding: clamp(3rem, 7vw, 6rem) 0 0;
   overflow: clip;
 }
+
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: 78rem;
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
+  padding: 0 clamp(1.25rem, 6.6667vw, 6rem);
 }
 
 .top {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
   gap: clamp(2rem, 5vw, 4rem);
-  padding-bottom: clamp(3rem, 8vw, 6rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
+/* ---- the statement and the two channels ---- */
+
 .brand {
-  max-width: 34ch;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  max-width: 28rem;
 }
 
 .statement {
-  font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h3);
-  /* Important for the same reason as `.wordmark` below — Tilda's stylesheets
+  margin: 0 !important;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(0.9375rem, 1.1111vw, 1.0625rem);
+  /* Important for the same reason as the wordmark below — Tilda's stylesheets
      force 1.7 on every `p` of a parity page, which opened this block up by
      60px there and nowhere else. */
-  line-height: 1.25 !important;
-  font-weight: 400;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
-  color: var(--tbb-paper);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
 .contact {
-  margin-top: clamp(1.25rem, 3vw, 2rem);
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.25rem;
+}
+
+/*
+ * The two things someone opens a footer to find, at the size that says so. They
+ * used to be the same 15px as every link beside them, which made the footer a
+ * wall of equal grey.
+ */
+.contactLink {
+  width: fit-content;
+  color: var(--tbb-rd-paper);
+  font-size: clamp(1.0625rem, 1.3889vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.contactLink:hover,
+.contactLink:focus-visible {
+  color: var(--tbb-rd-red);
+}
+
+/* ---- the three columns ---- */
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .column {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .columnTitle {
   margin-bottom: 0.35rem;
-  color: rgba(253, 250, 245, 0.5);
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
 /* Shared by the anchors and by the legal row's one button — the reset is what
@@ -62,47 +105,72 @@
   border: 0;
   background: none;
   font-family: inherit;
-  color: rgba(253, 250, 245, 0.82);
+  color: var(--tbb-rd-on-ink);
   text-decoration: none;
   font-size: 0.9375rem;
   text-align: left;
   width: fit-content;
   cursor: pointer;
-  transition:
-    color var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .link:hover,
 .link:focus-visible {
-  color: var(--tbb-paper);
-  transform: translate3d(3px, 0, 0);
+  color: var(--tbb-rd-paper);
+}
+
+/* ---- one line of legal, cookies and accounts ---- */
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem clamp(1.25rem, 2.5vw, 2rem);
+  padding: clamp(1rem, 2vw, 1.5rem) 0;
+  border-top: 1px solid #1e1e1e;
+}
+
+.copyright {
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
+}
+
+.legalLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  margin-left: auto;
+}
+
+.legalLinks .link {
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
 }
 
 .social {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
+  gap: 0.5rem;
 }
 
 .socialLink {
   display: grid;
-  width: 2.35rem;
-  height: 2.35rem;
+  width: 2.125rem;
+  height: 2.125rem;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid #2c2c2c;
   border-radius: 50%;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--tbb-rd-on-ink);
   text-decoration: none;
   transition:
     color var(--tbb-dur-fast) var(--tbb-ease),
     background var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .socialLink svg {
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1rem;
+  height: 1rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.55;
@@ -112,80 +180,60 @@
 
 .socialLink:hover,
 .socialLink:focus-visible {
-  color: var(--tbb-ink);
-  background: var(--tbb-on-dark);
-  transform: translateY(-2px);
-}
-
-.legal {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem 2rem;
-  padding: clamp(1rem, 2vw, 1.5rem) 0;
-  border-top: 1px solid rgba(253, 250, 245, 0.16);
-  color: rgba(253, 250, 245, 0.5);
-  font-size: 0.8125rem;
-}
-
-.legalLinks {
-  display: flex;
-  gap: 1.5rem;
+  border-color: var(--tbb-rd-paper);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
 }
 
 /* --- the closing mark --- */
 
 .wordmarkWrap {
   /* Full-bleed past the page gutter so the mark can reach the edges. */
-  margin: 0 calc(var(--tbb-gutter) * -1);
-  padding: clamp(1rem, 2.5vw, 2rem) clamp(0.5rem, 1.5vw, 1.25rem)
-    clamp(1.5rem, 3.5vw, 3rem);
+  margin: 0 calc(clamp(1.25rem, 6.6667vw, 6rem) * -1);
+  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(0.5rem, 1.5vw, 1.25rem);
   overflow: clip;
 }
 
 /*
- * The lockup, at the width of the footer.
+ * The lockup as a watermark, which is what the redesign draws.
  *
- * The small `the` mark inside it is drawn in `currentColor`, so it inherits
- * the footer's paper; the block stays the brand red and the letters stay
- * white, exactly as the header serves it. Nothing is cropped — the mark is a
- * mark, and the word it replaced was the only thing here that could be cut
- * across its baseline and still read.
+ * Two shades off the ground rather than paper on brand red: at this width the
+ * red block is 700px of saturated colour under a page that has just finished,
+ * and the mark is meant to be the last quiet thing on it, not the loudest. The
+ * variables are `BrandLogo`'s own, so this recolours the block and the letters
+ * without a second asset; `currentColor` carries the small `the`.
  */
 .wordmark {
+  --tbb-logo-block: #1b1b1b;
+  --tbb-logo-letter: #0e0e0e;
+
   display: block;
-  /*
-   * Capped rather than run to the full width. The mark is 175 x 80, so a
-   * 1440 footer would give it a 630px-tall block of solid red — a billboard
-   * where the page wants a signature. 44rem lands it at about the height the
-   * outlined word it replaced occupied, and a phone is narrower than the cap
-   * anyway, so there it still reaches both edges.
-   */
-  width: min(100%, 44rem);
+  width: 100%;
   height: auto;
-  margin-inline: auto;
-  color: var(--tbb-paper);
+  color: #1b1b1b;
   user-select: none;
 }
 
-@media (max-width: 1023px) {
-  .top {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .brand {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 559px) {
+@media (max-width: 63.9375rem) {
   .top {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .brand {
-    grid-column: span 1;
+    max-width: none;
+  }
+}
+
+@media (max-width: 39.9375rem) {
+  .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Four links under a heading is a column; two of those and a stray third is a
+     stack. The last one takes the width instead. */
+  .column:last-child {
+    grid-column: span 2;
   }
 
   .legal {
@@ -194,6 +242,7 @@
   }
 
   .legalLinks {
-    gap: 1.25rem;
+    margin-left: 0;
+    order: -1;
   }
 }
