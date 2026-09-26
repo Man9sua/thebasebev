@@ -215,9 +215,10 @@ const H1_NOT_PRESERVED = new Map([
     {
       h1: "Premium Cream Latte Bases",
       reason:
-        'h1 is the redesign\'s "Premium Powder Bases for Your Business"; ' +
-        "production names one of sixteen products in the homepage headline, " +
-        "and the ranking phrase Premium ... Bases is kept",
+        'h1 is "Premium Beverage Bases"; production names one of sixteen ' +
+        "products in the homepage headline, and the ranking phrase " +
+        "Premium ... Bases is kept. The exemption ends by itself if " +
+        "production ever carries this wording too",
     },
   ],
   [
@@ -230,6 +231,17 @@ const H1_NOT_PRESERVED = new Map([
         "found for, and the new line carries the manufacturing wording instead. " +
         "Declared rather than kept as an h2: the redesign has no such heading, " +
         "and a hidden one would be an exemption dressed up as markup",
+    },
+  ],
+  [
+    "/distributors",
+    {
+      h1: "Become a distributor of The Base",
+      reason:
+        'h1 is the Distributors redesign\'s "Become a distributor"; the brand ' +
+        "is in the logo two inches above it and in the title tag, so the " +
+        "trailing three words were repeating what the page already says. The " +
+        "ranking phrase — Become a distributor — is unchanged",
     },
   ],
 ]);

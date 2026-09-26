@@ -4,7 +4,7 @@
  * Routes and copy come from the existing product pages, so every card links to
  * a URL that already ranks. Never rename a `route` — it is live.
  *
- * `backgroundColor` drives the product page's colour field.
+ * `backgroundColor` drives the Bestsellers colour field and the product page's.
  * Most values were sampled from that product's own pack shot, so the artwork
  * blends into the field with no visible edge. Three are hand-set because the
  * product's largest artwork is a dark banner rather than a coloured pack shot;
@@ -273,7 +273,13 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-/** Featured on the restored homepage, in the reference carousel's order. */
+/**
+ * Featured in the Bestsellers carousel, in order.
+ *
+ * Same five products, in the same order, as the hero slider running on
+ * production today — the homepage changes how they are presented, not which
+ * products it promotes.
+ */
 export const BESTSELLER_SLUGS = [
   "cream-latte",
   "milkshake",

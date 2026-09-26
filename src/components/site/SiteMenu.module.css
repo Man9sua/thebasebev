@@ -1,0 +1,345 @@
+/**
+ * The menu panel — the redesign.
+ *
+ * The shell it sits in (the clipped wipe, the scroll container, the staggered
+ * children) is `Overlay.module.css`, shared with the search. Everything here is
+ * the menu's own layout and skin: four items in Exo 2 Black caps at −2%, the
+ * range beside them in two columns, contacts along the foot, all of it on one
+ * 1440 × 900 screen.
+ *
+ * Colour is the `--tbb-rd-*` block from `design-tokens.css` — the same palette
+ * the Distributors, R&D and Contacts redesigns use, so the panel and the pages
+ * it opens are the same dark.
+ */
+
+.layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  row-gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 27.5rem;
+  column-gap: clamp(2rem, 5.5556vw, 5rem);
+  align-items: start;
+  /* The block is the panel's 1fr row, so without this the single stacked row a
+     phone gets would be stretched to the full height and the range card would
+     float in the middle of the screen. */
+  align-content: start;
+}
+
+/* ---- the four ---- */
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.navLink {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  padding: clamp(0.15rem, 0.5556vw, 0.5rem) 0;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-rd-paper);
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  color: var(--tbb-rd-red);
+}
+
+/*
+ * "Стрелка → только у пункта под курсором". Set outside the flow so the four
+ * items do not shift sideways as the pointer crosses them, and hidden from the
+ * accessibility tree because it says nothing a link does not already say.
+ */
+.navLink::after {
+  content: "→";
+  position: absolute;
+  left: calc(100% + 0.28em);
+  bottom: clamp(0.15rem, 0.5556vw, 0.5rem);
+  font-size: 0.45em;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.navLink:hover::after,
+.navLink:focus-visible::after {
+  opacity: 1;
+}
+
+/* The page you are on, in both levels. */
+.current {
+  color: var(--tbb-rd-red);
+}
+
+/* ---- the quieter row, in the foot ---- */
+
+.secondaryLink {
+  color: var(--tbb-rd-paper);
+  font-size: clamp(0.9375rem, 1.1111vw, 1rem);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.secondaryLink:hover,
+.secondaryLink:focus-visible {
+  color: var(--tbb-rd-red);
+}
+
+/* ---- the range ---- */
+
+/*
+ * A `<details>` at every width, open on a desktop and collapsed on a phone —
+ * see the note on `productsOpen` in `SiteMenu.tsx`. Wide, the summary is a
+ * heading rather than a control, so it loses its marker and its pointer.
+ */
+.products {
+  position: relative;
+  min-width: 0;
+  padding-top: 0.875rem;
+}
+
+.productsHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  list-style: none;
+  cursor: default;
+}
+
+.productsHead::-webkit-details-marker {
+  display: none;
+}
+
+.productsLabel {
+  color: var(--tbb-rd-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* The `+` is the disclosure's own affordance; wide, there is nothing to
+   disclose. */
+.productsMark {
+  display: none;
+}
+
+/* The other end of the summary's line. Taken out of the flow rather than put
+   inside the `<summary>`, where a link would also toggle the disclosure. */
+.productsAll {
+  position: absolute;
+  top: 0.875rem;
+  right: 0;
+  color: var(--tbb-rd-paper);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.productsAll:hover,
+.productsAll:focus-visible {
+  color: var(--tbb-rd-red);
+}
+
+.productList {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2.2222vw, 2rem);
+}
+
+.productLink {
+  display: block;
+  padding: 0.4375rem 0;
+  color: var(--tbb-rd-on-ink);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.productLink:hover,
+.productLink:focus-visible {
+  color: var(--tbb-rd-paper);
+}
+
+/* ---- the foot ---- */
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1rem, 1.9444vw, 1.75rem);
+  padding-top: clamp(1rem, 2.2222vw, 2rem);
+  border-top: 1px solid #262626;
+}
+
+/* Desktop puts the call to action in the bar; this is the phone's copy of it. */
+.footCta {
+  display: none;
+}
+
+.footLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 1.9444vw, 1.75rem);
+}
+
+.footMeta {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(0.875rem, 1.5556vw, 1.375rem);
+}
+
+.footLegal {
+  color: var(--tbb-rd-muted);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.footLegal:hover {
+  color: var(--tbb-rd-paper);
+}
+
+.footPhone {
+  color: var(--tbb-rd-paper);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.footPhone:hover {
+  color: var(--tbb-rd-red);
+}
+
+.footWhatsapp {
+  color: #25d366;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footWhatsapp:hover {
+  opacity: 0.8;
+}
+
+.footRegion {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 2.25rem;
+  padding-inline: 0.875rem;
+  border: 1px solid #333;
+  border-radius: 999px;
+  color: var(--tbb-rd-on-ink);
+  font-size: 0.875rem;
+}
+
+/* ---- the phone ---- */
+
+@media (max-width: 63.9375rem) {
+  .main {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(1.25rem, 5vw, 2rem);
+  }
+
+  /* Collapsed, the range is a card with a control rather than a column. */
+  .products {
+    padding: 0 1.125rem;
+    border-radius: 1.125rem;
+    background: #1a1a1a;
+  }
+
+  .productsHead {
+    align-items: center;
+    min-height: 3.5rem;
+    cursor: pointer;
+  }
+
+  .productsLabel {
+    color: var(--tbb-rd-paper);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .productsMark {
+    display: block;
+    color: var(--tbb-rd-paper);
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+
+  .products[open] .productsMark {
+    transform: rotate(45deg);
+  }
+
+  /* No room for the heading and the link on one line, so it goes back into the
+     flow as a row of its own. */
+  .productsAll {
+    position: static;
+    display: block;
+    margin: 0.75rem 0 0.875rem;
+  }
+
+  .productList {
+    margin-top: 0;
+  }
+
+  .productLink {
+    font-size: 0.9375rem;
+  }
+
+  /* Three rows: the call to action across the top, the secondary links, then
+     the number, WhatsApp, the region and the legal pair. */
+  .foot {
+    gap: 0.875rem;
+  }
+
+  .footCta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 100%;
+    box-sizing: border-box;
+    min-height: 3.5rem;
+    padding-inline: 1.5rem;
+    border-radius: 999px;
+    background: var(--tbb-rd-red);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .footLinks,
+  .footMeta {
+    flex: 1 1 100%;
+    margin-left: 0;
+    gap: 1rem;
+  }
+}

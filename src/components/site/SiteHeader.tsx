@@ -38,24 +38,40 @@ function SearchIcon() {
 }
 
 /** `rgb()` / `rgba()` as computed by the browser, to three channels. */
-function parseColor(value: string) {
-  const srgb = value.match(
-    /color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/i,
-  );
-  if (srgb) {
-    const [, red, green, blue, alpha = "1"] = srgb;
-    if (Number(alpha) < 0.5) return null;
-    return {
-      red: Math.round(Number(red) * 255),
-      green: Math.round(Number(green) * 255),
-      blue: Math.round(Number(blue) * 255),
-    };
-  }
+/**
+ * Any colour a computed style can hand back, in 0–255 channels.
+ *
+ * Two serialisations reach this, and they do not use the same scale. `rgb()`
+ * and `rgba()` count 0–255; `color(srgb 0.96 0.92 0.92)` — which is what a
+ * browser returns for `color-mix(in srgb, …)`, and the Bestsellers band on the
+ * homepage is exactly that — counts 0–1. Read on the wrong scale, a cream wash
+ * arrives as 0.96 of 255, the bar decides the page under it is nearly black,
+ * and it inverts itself on the lightest surface on the site.
+ *
+ * The colourspace keyword is skipped rather than parsed: `rec2020` has digits
+ * in its name, so pulling numbers out of the whole string picks up 2020 as a
+ * channel. Non-sRGB spaces are read as if they were sRGB, which is wrong by a
+ * few percent and irrelevant to a light-or-dark decision.
+ */
+const COLOR_FUNCTION = /^color\(\s*[a-z0-9-]+\s+([^)]*)\)/i;
+const RGB_FUNCTION = /^rgba?\(([^)]*)\)/i;
 
-  const parts = value.match(/[\d.]+/g);
+function parseColor(value: string) {
+  const trimmed = value.trim();
+  const modern = trimmed.match(COLOR_FUNCTION);
+  const legacy = modern ? null : trimmed.match(RGB_FUNCTION);
+  const body = modern?.[1] ?? legacy?.[1];
+  if (!body) return null;
+
+  const parts = body.match(/-?\d*\.?\d+(?:e[-+]?\d+)?%?/gi);
   if (!parts || parts.length < 3) return null;
-  const [red, green, blue] = parts.map(Number);
-  const alpha = parts.length > 3 ? Number(parts[3]) : 1;
+
+  const scale = modern ? 255 : 1;
+  const [red, green, blue] = parts.slice(0, 3).map((part) =>
+    part.endsWith("%") ? (Number.parseFloat(part) / 100) * 255 : Number(part) * scale,
+  );
+  const alpha = parts.length > 3 ? Number.parseFloat(parts[3]) : 1;
+
   return alpha < 0.5 ? null : { red, green, blue };
 }
 
@@ -70,8 +86,8 @@ function isDarkColor({ red, green, blue }: { red: number; green: number; blue: n
  * `background-color` is the usual answer, but several surfaces here are
  * gradients — the distributors hero, the Blog's own head — and a gradient
  * leaves `background-color` transparent. Computed styles normalise gradient
- * stops to `rgb()`, so the first stop is readable straight out of the image
- * string, and the first stop is the end of the gradient the bar sits on.
+ * stops to a colour function, so the first stop is readable straight out of the
+ * image string, and the first stop is the end of the gradient the bar sits on.
  */
 function paintedColor(style: CSSStyleDeclaration) {
   const background = parseColor(style.backgroundColor);
@@ -79,7 +95,7 @@ function paintedColor(style: CSSStyleDeclaration) {
 
   const image = style.backgroundImage;
   if (image && image.includes("gradient")) {
-    const stop = image.match(/rgba?\([^)]*\)/);
+    const stop = image.match(/(?:rgba?|color)\([^)]*\)/i);
     if (stop) return parseColor(stop[0]);
   }
 
@@ -100,13 +116,11 @@ function paintedColor(style: CSSStyleDeclaration) {
  * first version of this took the black "Request a sample" pill on the homepage
  * and turned the whole bar black for the height of one button.
  */
-function surfaceUnderBar(barHeight: number, header: HTMLElement | null) {
+function surfaceUnderBar(barHeight: number) {
   const x = Math.round(window.innerWidth / 2);
   const y = barHeight + 2;
   const fullWidth = window.innerWidth * 0.9;
-  let node = document
-    .elementsFromPoint(x, y)
-    .find((element) => element !== header && !header?.contains(element)) ?? null;
+  let node = document.elementFromPoint(x, y);
 
   while (node) {
     if (node.getBoundingClientRect().width >= fullWidth) {
@@ -223,9 +237,13 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
 
     const sample = () => {
       frame = 0;
-      const color = surfaceUnderBar(barRef.current?.offsetHeight ?? 0, barRef.current);
+      const color = surfaceUnderBar(barRef.current?.offsetHeight ?? 0);
       if (!color) return;
-      setSurface(`rgb(${color.red}, ${color.green}, ${color.blue})`);
+      // Rounded because a `color-mix()` surface parses to fractional channels,
+      // and this string ends up in the DOM as an inline custom property.
+      setSurface(
+        `rgb(${Math.round(color.red)}, ${Math.round(color.green)}, ${Math.round(color.blue)})`,
+      );
       setSurfaceDark(isDarkColor(color));
     };
 
@@ -247,6 +265,20 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   // sampled colour catches everything that does not.
   const dark = onDark || surfaceDark;
 
+  /*
+   * What the bar sits on, in priority order. The menu panel is the redesign's
+   * ink screen and it opens under the bar rather than over it, so while it is
+   * open the bar belongs to the panel: inverted, and painted the panel's own
+   * colour so the two meet without a seam. The search panel is paper, so it
+   * takes the plain solid bar. Otherwise the page below decides.
+   */
+  const inverted = menuOpen || (dark && !searchOpen);
+  const plate = menuOpen
+    ? "var(--tbb-rd-ink)"
+    : !searchOpen && surface
+      ? surface
+      : null;
+
   // Cart state is native and shared across every route. Empty means catalogue;
   // a populated cart means the dedicated review/checkout page.
   return (
@@ -256,21 +288,21 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         className={[
           styles.header,
           solid || menuOpen || searchOpen ? styles.solid : "",
-          // An open overlay owns the whole screen, so the bar follows it
-          // rather than whatever section happens to be underneath.
-          dark && !menuOpen && !searchOpen ? styles.inverted : "",
+          // An open overlay owns the whole screen, so the bar follows it rather
+          // than whatever section happens to be underneath. The menu panel is
+          // ink and the search panel is paper, so the menu is the one that
+          // takes the inverted bar with it.
+          inverted ? styles.inverted : "",
           menuOpen ? styles.open : "",
         ]
           .filter(Boolean)
           .join(" ")}
         // Null until the first sample, so the server and the first client
-        // render agree and hydration stays quiet.
-        style={
-          surface && !menuOpen && !searchOpen
-            ? ({ "--tbb-header-surface": surface } as CSSProperties)
-            : undefined
-        }
-        data-header-theme={dark ? "dark" : solid ? "light" : "hero"}
+        // render agree and hydration stays quiet. While the menu is open the
+        // plate is painted to the panel's own ink instead, so the two do not
+        // meet at a seam.
+        style={plate ? ({ "--tbb-header-surface": plate } as CSSProperties) : undefined}
+        data-header-theme={inverted ? "dark" : solid ? "light" : "hero"}
       >
         {/* Original Tilda paths, inlined so the small `the` mark can inherit
             the animated header colour without recolouring the red block. */}

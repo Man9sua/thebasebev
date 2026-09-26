@@ -1,194 +1,100 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./Hero.module.css";
 
 /**
- * Photographic hero.
+ * The first screen, rebuilt to the hero redesign document (8a / 8b).
  *
- * One photograph running the height of the frame from its right edge, with the
- * copy held on the left against a veil that fades the image out under the type.
+ * One photograph of THE BASE's own showroom, full bleed, with a white veil
+ * drawn across the left two thirds so the heading sits on paper rather than on
+ * furniture. WHERE TASTE BEGINS is on the wall in the photograph; it used to be
+ * an eyebrow pill above the heading as well, which is the same line twice.
  *
- * The copy is about the company, not about one product. A hero built on a
- * single base put the homepage's biggest words behind a product the visitor had
- * no reason to have picked yet, and spent the only above-the-fold link on that
- * one page. It now says what THE BASE makes and sends the visitor to the range.
+ * What the document and the site review change, and why:
  *
- * The h1 still reads "Premium … Bases" — that is the wording production ranks
- * on, so it is SEO surface rather than a design choice, and it must be
- * identical in the server HTML and must not rewrite itself afterwards. Only the
- * middle of the phrase changed, from a product name to what the company sells.
+ * - **Two eyebrows become none.** The pill and a letter-spaced "P R E M I U M"
+ *   both sat above the h1. The review's note is that the tracking broke the
+ *   word into letters and stopped it being read at all; it is part of the
+ *   heading now, which is also the wording the page ranks on.
+ * - **Two buttons, not one.** The hero offered "Explore the shop" and nothing
+ *   for a trade visitor — the only B2B action on the screen was in the bar.
+ *   "Request samples" leads in brand red; the shop keeps an outlined second.
+ * - **The badge strip goes.** 600+ FLAVOURS · HALAL · HACCP · MADE IN DUBAI
+ *   wrapped to two lines with MADE IN DUBAI orphaned, and was set in a grey
+ *   under 4.5:1 against the veil. The same four facts are made three more times
+ *   further down the page, which is the review's other note about them.
+ *
+ * The parallax the old hero ran on scroll is gone with it: the document draws a
+ * still screen, and the movement was the one thing on the page competing with
+ * the heading for attention.
+ *
+ * The h1 still reads "Premium Beverage Bases" — production's ranking phrase,
+ * SEO surface rather than a design choice, identical in the server HTML.
  */
-
-/**
- * Decorative, so it carries an empty alt and its wrapper is hidden from the
- * accessibility tree. Everything the section means is in the copy beside it.
- *
- * Cropped from the brand key visual: the original has the slogan and the
- * lockup printed into it, and the page already carries both — the header logo
- * and the h1 — so the crop keeps the photograph and drops the artwork.
- */
-const BACKDROP = "/images/hero-taste-begins.jpg";
-
-function ArrowIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export function Hero() {
-  const heroRef = useRef<HTMLElement>(null);
-  const copyRef = useRef<HTMLDivElement>(null);
-  const mediaRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * Scroll hand-off into Bestsellers: the copy lifts away while the photograph
-   * drifts the other way, so the two sections read as one movement rather than
-   * one block ending and another starting.
-   *
-   * Written straight to `style` in a rAF loop that only runs while the hero is
-   * on screen — no state, no render per frame.
-   */
-  useEffect(() => {
-    const hero = heroRef.current;
-    const copy = copyRef.current;
-    const media = mediaRef.current;
-    if (!hero || !copy || !media) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let frame = 0;
-    let visible = false;
-
-    const tick = () => {
-      const rect = hero.getBoundingClientRect();
-      // 0 while the hero fills the viewport, 1 once it has fully left.
-      const progress = Math.min(1, Math.max(0, -rect.top / window.innerHeight));
-      const eased = progress * progress;
-
-      copy.style.transform = `translate3d(0, ${(eased * -70).toFixed(1)}px, 0)`;
-      copy.style.opacity = Math.max(0, 1 - progress * 1.6).toFixed(3);
-      media.style.transform = `scale(${(1 + eased * 0.06).toFixed(4)}) translate3d(0, ${(
-        eased * 34
-      ).toFixed(1)}px, 0)`;
-
-      frame = visible ? requestAnimationFrame(tick) : 0;
-    };
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting;
-        if (visible && !frame) frame = requestAnimationFrame(tick);
-      },
-      { threshold: [0, 0.01, 0.5, 1] },
-    );
-
-    observer.observe(hero);
-
-    return () => {
-      observer.disconnect();
-      if (frame) cancelAnimationFrame(frame);
-      copy.style.transform = "";
-      copy.style.opacity = "";
-      media.style.transform = "";
-    };
-  }, []);
-
   return (
-    <section
-      ref={heroRef}
-      className={styles.hero}
-      data-hero
-      aria-label="THE BASE"
-    >
-      <div ref={mediaRef} className={styles.media} aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={styles.photo} src={BACKDROP} alt="" fetchPriority="high" />
+    <section className={styles.hero} data-hero aria-label="THE BASE">
+      <div className={styles.media} aria-hidden="true">
+        {/*
+          Two crops of one photograph — see `build-home-hero.mjs`. The desktop
+          frame is the room wide; the phone's band is the stair and the wall.
+          `<picture>` rather than `next/image` because the choice is art
+          direction, not resolution: one is not a scaled copy of the other.
+        */}
+        <picture>
+          <source
+            media="(max-width: 47.9375rem)"
+            srcSet="/images/home-hero-room-mobile.webp 780w, /images/home-hero-room-mobile-2x.webp 1170w"
+            sizes="100vw"
+          />
+          <img
+            className={styles.photo}
+            src="/images/home-hero-room.webp"
+            srcSet="/images/home-hero-room.webp 1600w, /images/home-hero-room-2x.webp 2880w"
+            sizes="100vw"
+            alt=""
+            width={1600}
+            height={1000}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
       </div>
 
-      {/* Fades the photograph out from the left so the copy sits on paper
-          rather than on glassware. Without it the headline fights the image at
-          every scroll position and loses somewhere. */}
+      {/* Carries the photograph into the paper the copy stands on: dense to 40%
+          of the width, gone by 66%, which is where the lettering on the wall
+          begins. The second is the band under the bar. */}
       <span className={styles.veil} aria-hidden="true" />
+      <span className={styles.veilTop} aria-hidden="true" />
 
-      <div ref={copyRef} className={styles.inner}>
+      <div className={styles.inner}>
         <div className={styles.copy}>
-          <span
-            className={`tbb-label ${styles.tagline} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "180ms" }}
-          >
-            Where taste begins
-          </span>
-
           {/*
-            One word to a row. The DOM serves the three as one string.
-
-            It read "Premium Cream Latte Bases" — the wording live production
-            still carries, and what `audit:seo-parity` compares this page's h1
-            against character for character. The owner asked for the product
-            name out of it: a homepage headline that names one of sixteen
-            products describes the catalogue wrongly. "Beverage" takes its
-            place, so the phrase the page ranks on — Premium … Bases — is
-            intact and only the product goes. Expect / to report an h1
-            mismatch against production until production carries this wording
-            too.
+            One word to a row, and the DOM serves the three as one string: a
+            `<br>` contributes nothing to `textContent`, so the heading would
+            reach `audit:seo-parity` and the smoke as "PremiumBeverageBases" —
+            not the phrase production ranks on. Blocks with real spaces between
+            them read the same to the eye and correctly to everything else.
           */}
           <h1 className={styles.title}>
-            <span className={styles.line}>
-              <span
-                className={`${styles.lineInner} ${styles.titleAffix}`}
-                style={{ ["--enter-delay" as string]: "300ms" }}
-              >
-                Premium
-              </span>
-            </span>{" "}
-            <span className={styles.line}>
-              <span
-                className={`${styles.lineInner} ${styles.titleLead}`}
-                style={{ ["--enter-delay" as string]: "400ms" }}
-              >
-                Beverage
-              </span>
-            </span>{" "}
-            <span className={styles.line}>
-              <span
-                className={`${styles.lineInner} ${styles.titleLead}`}
-                style={{ ["--enter-delay" as string]: "520ms" }}
-              >
-                Bases
-              </span>
-            </span>
+            <span className={styles.line}>Premium</span>{" "}
+            <span className={styles.line}>Beverage</span>{" "}
+            <span className={styles.line}>Bases</span>
           </h1>
 
-          <p
-            className={`${styles.description} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "640ms" }}
-          >
-            THE BASE makes dry beverage bases in Dubai — over 600 flavours for
-            cafés, franchises and private label, built from a single scoop so the
-            drink tastes the same in every outlet.
+          <p className={styles.description}>
+            THE BASE crafts dry beverage bases in the UAE for cafés, bars, franchises and
+            private label. One full-cycle partner behind the bar, from the recipe to the
+            cup.
           </p>
 
-          <SiteLink
-            href="/catalog"
-            className={`${styles.cta} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "730ms" }}
-          >
-            Explore the shop
-            <ArrowIcon />
-          </SiteLink>
-
-          <p
-            className={`${styles.badges} ${styles.enter}`}
-            style={{ ["--enter-delay" as string]: "820ms" }}
-          >
-            <span className="tbb-label">600+ flavours</span>
-            <span className="tbb-label">Halal certified</span>
-            <span className="tbb-label">HACCP audited</span>
-            <span className="tbb-label">Made in Dubai</span>
-          </p>
+          <div className={styles.actions}>
+            <SiteLink href="/contacts" className={styles.primary}>
+              Request samples
+            </SiteLink>
+            <SiteLink href="/catalog" className={styles.ghost}>
+              Explore the shop
+            </SiteLink>
+          </div>
         </div>
       </div>
     </section>

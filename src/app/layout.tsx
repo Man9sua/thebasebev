@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
+import { CookieConsent } from "@/components/consent/CookieConsent";
 import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
 import { FIRST_TOUCH_SCRIPT } from "@/components/forms/first-touch";
 import "./globals.css";
@@ -23,7 +24,10 @@ import "./globals.css";
  */
 const exo2 = Exo_2({
   subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700"],
+  // 800 and 900 are the redesign's display weights — the Distributors and R&D
+  // headings are set in Black at 80–120px, and at that size 700 reads as a
+  // different typeface rather than as the same one one step lighter.
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
   variable: "--tbb-font-exo",
 });
@@ -83,6 +87,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="t-body" suppressHydrationWarning>
         {children}
         <LeadAttributionBridge />
+        {/* In the layout, not in a page: the widget it replaces only existed on
+            the routes served through the legacy shell, so the site asked some
+            visitors for consent and not others. Above `Analytics`, which reads
+            the answer it stores. */}
+        <CookieConsent />
         <Analytics />
       </body>
     </html>

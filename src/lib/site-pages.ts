@@ -624,13 +624,18 @@ function deferLegacyImages(source: string) {
  *
  * - all of the page's JSON-LD (`rec2483211811`);
  * - four of the nine owned lead forms (`rec861442702`, `rec1855213141`,
- *   `rec1855223381`, `rec1855232921`) and their popup triggers;
- * - the cookie-consent banner (`rec913700125`).
+ *   `rec1855223381`, `rec1855232921`) and their popup triggers.
  *
  * So the removal is per record, and only of the parts the new shell replaces.
  * Note that four of these were already `display:none` in the export — the
  * client had replaced them with the `.tbh-wrap` header long ago — so they were
  * dead weight that still shipped a duplicate navigation to crawlers.
+ *
+ * The cookie banner used to be on that keep-list. It is not any more: the T972
+ * widget existed only here, on the 37 legacy routes, so half the site never
+ * asked at all — and it offered no way to refuse. `CookieConsent`, mounted in
+ * the root layout, replaces it on every route. Leaving the record in place
+ * would put two banners on the same page.
  */
 const REMOVED_SHELL_RECORDS = new Set([
   "rec2676415503", // .tbh-wrap header, ticker and spacer — SiteHeader replaces it
@@ -639,6 +644,7 @@ const REMOVED_SHELL_RECORDS = new Set([
   "rec860980632", //  old nav column, already display:none, duplicate nav links
   "rec859870796", //  visible footer nav — SiteFooter replaces it
   "rec2989879303", // legacy Tilda cart/form — native /checkout replaces it
+  "rec913700125", // T972 cookie banner — CookieConsent replaces it, site-wide
 ]);
 
 const SHELL_CONTAINERS = [
@@ -774,21 +780,13 @@ export type SitePage = RouteDefinition & {
 };
 
 /**
- * One exported record's markup, on its own.
- *
- * The counterpart to `withoutLegacyRecords`: that one keeps a document and drops
- * records from it, this one keeps a record and drops the document. It exists for
- * a page that is otherwise React but has one block worth keeping exactly as the
- * export draws it — `/distributors` keeps its hero that way, styles and all,
- * because the record carries its own `<style>` and its own class names.
- *
- * Returns an empty string when the record is not on the page, so a caller that
- * loses its record renders nothing rather than the whole document.
+ * Note: `legacyRecordHtml` used to sit here — the counterpart to the function
+ * below, keeping one exported record and dropping the document around it. Its
+ * only caller was `/distributors`, which kept its Tilda hero that way; that
+ * page is React top to bottom now and nothing else ever wanted a single
+ * record, so the helper went with it. `splitShellRecords` is what it was built
+ * on and is still used by everything below.
  */
-export function legacyRecordHtml(page: SitePage, recordId: string): string {
-  return splitShellRecords(page.bodyHtml).find((record) => record.id === recordId)?.html ?? "";
-}
-
 export function withoutLegacyRecords(page: SitePage, recordIds: readonly string[]): SitePage {
   return {
     ...page,
