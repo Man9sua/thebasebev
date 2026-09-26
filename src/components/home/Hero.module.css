@@ -1,58 +1,71 @@
+/**
+ * The homepage's first screen — the hero redesign (8a / 8b).
+ *
+ * One photograph full bleed, a white veil across the left two thirds, and the
+ * copy standing on it. Every number below is the document's, expressed against
+ * the frame it draws them in: 1440 x 900 on a desktop, 390 x 844 on a phone.
+ *
+ * Type: Exo 2 Black, uppercase, −2% tracking, 0.86 line height at 120px; the
+ * lede 20 on 1.55; the buttons 14 SemiBold caps at 0.1em. Colour is the
+ * `--tbb-rd-*` block in `design-tokens.css`, the same palette the redesigned
+ * pages use, so the hero and everything below it are one site.
+ */
+
 .hero {
   position: relative;
   min-height: 100svh;
   display: grid;
   align-items: center;
   overflow: clip;
-  background: var(--tbb-paper);
+  background: var(--tbb-rd-paper);
+  font-family: var(--tbb-font-sans);
 }
 
 /* ---- photograph ---- */
 
-/* The photograph is a tall frame, not a wide one — it is a crop of a key visual
-   rather than a landscape plate — so a full-bleed box would have to overscan it
-   by half again to fill the viewport, and all that survived was one glass at
-   1.4x.
- *
-   Anchored to the right instead, in a box cut to roughly the crop's own 0.88,
-   so on a laptop the shot plays back whole: both glasses, the lockup, no
-   overscan. The veil then carries it into the paper the copy sits on, so there
-   is no vertical edge where the box begins. */
 .media {
   position: absolute;
-  inset: 0 0 0 47%;
-  /* The box has a left edge and the veil is angled, so at the foot of the frame
-     the gradient runs out before the edge does and leaves a vertical line. The
-     mask dissolves the edge itself, at every height. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
-  mask-image: linear-gradient(to right, transparent 0%, #000 24%);
-  opacity: 1;
-  transform: none;
-  will-change: transform, opacity;
+  inset: 0;
 }
 
 .photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* On a frame wider than the crop there is height to give up, and the lockup
-     sits in the top eighth of it — so what goes is the foot of the picture. */
-  object-position: 50% 22%;
+  /* The crop is already the design's framing, so there is nothing to hold: the
+     only give is on a frame taller or wider than 1.6, and it is taken evenly. */
+  object-position: 50% 50%;
 }
 
-/* Fades the photograph out from the left so the copy sits on paper rather than
-   on glassware. Angled rather than straight so the boundary is never a vertical
-   line the eye can find. */
+/*
+ * The veil. Dense to 40% of the width, half gone by 53%, and clear by 66% —
+ * which is where WHERE TASTE BEGINS starts on the wall. It has to be this
+ * strong: the room carries its own lettering (EFFICIENT, COST-EFECTIVE,
+ * AFFORDABLE on the mezzanine) that would otherwise read through the heading.
+ */
 .veil {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    100deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 1) 40%,
-    rgba(255, 255, 255, 0.84) 50%,
-    rgba(255, 255, 255, 0.26) 65%,
-    rgba(255, 255, 255, 0) 78%
+    90deg,
+    rgba(246, 246, 244, 0.97) 0%,
+    rgba(246, 246, 244, 0.96) 40%,
+    rgba(246, 246, 244, 0.6) 53%,
+    rgba(246, 246, 244, 0) 66%
+  );
+  pointer-events: none;
+}
+
+/* A second, under the bar, so the header's controls have paper to sit on
+   wherever the photograph happens to be bright. */
+.veilTop {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(9rem, 17vw, 15rem);
+  background: linear-gradient(
+    180deg,
+    rgba(246, 246, 244, 0.8),
+    rgba(246, 246, 244, 0)
   );
   pointer-events: none;
 }
@@ -63,156 +76,188 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto;
-  padding: calc(var(--tbb-header-h) + clamp(2rem, 6vh, 5rem)) var(--tbb-gutter)
-    clamp(3rem, 8vh, 6rem);
-  will-change: transform, opacity;
+  padding: calc(var(--tbb-header-h) + clamp(2rem, 4vw, 3rem)) clamp(1.25rem, 6.6667vw, 6rem)
+    clamp(2.5rem, 5vw, 4.5rem);
 }
 
-/* Grid with a row gap, not margins on the children.
-
-   `design-tokens.css` carries `.tbb h1, .tbb p { margin: 0 }`, and at (0,1,1)
-   that outranks any single class here — every `margin-top` set on the headline,
-   the description or the badges was being dropped on the floor, which is what
-   closed the gaps up. A gap belongs to the container, so nothing can reset it. */
 .copy {
-  /* Ends before the photograph's box begins, so the copy sits on paper the
-     whole way across rather than running under the masked edge. */
-  max-width: min(46ch, 45%);
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(1.4rem, 3.4vh, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  /* 600 of 1440 — the column the document sets the heading in. */
+  max-width: 41.6667%;
+  min-width: min(100%, 22rem);
 }
 
-.tagline {
-  display: inline-block;
-  padding: 0.55rem 1.1rem;
-  border: 1px solid var(--tbb-line);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.6);
-}
-
-/* ---- headline ----
- *
- * One word to a row, each in its own mask so it can rise on its own beat. A
- * grid rather than the reordered flex row this used to be: with the product
- * name gone from the middle, the three parts already read top to bottom in DOM
- * order — "Premium Cream Latte Bases", the production H1 and the one
- * the smoke test reads — so nothing needs moving. */
 .title {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
+  /* 120 at 1440. */
+  font-size: clamp(2.75rem, 8.3333vw, 7.5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em !important;
   text-transform: uppercase;
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.2rem, 0.8vw, 0.6rem);
+  color: var(--tbb-rd-ink-deep);
 }
 
-/* The mask each part rises out of. The padding/margin pair gives descenders
-   room inside it; without it the clip shaves the type at rest, not only
-   mid-reveal. */
+/* One word to a row — see the note in the component for why these are blocks
+   rather than `<br>`. */
 .line {
   display: block;
-  overflow: hidden;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
-}
-
-.lineInner {
-  display: block;
-  transform: none;
-}
-
-.titleAffix {
-  font-size: clamp(0.75rem, 1.05vw, 1rem);
-  font-weight: 400;
-  letter-spacing: 0.4em;
-  line-height: 1.4;
-  color: var(--tbb-muted);
-}
-
-/* Two large rows now instead of one, so Cream Latte and Bases stay inside the
-   fold on a laptop. */
-.titleLead {
-  font-size: clamp(2.9rem, min(8vw, 12vh), 7.5rem);
-  font-weight: 700;
-  line-height: 0.88;
-  letter-spacing: -0.03em;
-  color: var(--tbb-ink);
 }
 
 .description {
-  color: var(--tbb-ink-soft);
-  font-size: clamp(1rem, 1.25vw, 1.1875rem);
-  max-width: 42ch;
+  /* 32 under the heading, 48 above the buttons — the document's 8px step. */
+  margin: clamp(1.25rem, 2.2222vw, 2rem) 0 clamp(1.75rem, 3.3333vw, 3rem) !important;
+  max-width: 30rem;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-.cta {
+/* ---- the two calls to action ---- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primary,
+.ghost {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.05rem 1.9rem;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: clamp(3.5rem, 4.1667vw, 3.75rem);
+  padding-inline: clamp(1.75rem, 2.5vw, 2.25rem);
+  border: 1.5px solid transparent;
   border-radius: 999px;
-  background: var(--tbb-ink);
-  color: var(--tbb-on-dark);
-  text-decoration: none;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
+  font-family: var(--tbb-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-align: center;
   text-transform: uppercase;
-  font-weight: 500;
+  text-decoration: none !important;
+  white-space: nowrap;
   transition:
-    gap var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.cta svg {
-  width: 14px;
-  height: 14px;
-  flex: none;
+/* The one red thing on the screen. The review's note is that the brand's red
+   lived only in the logo while the hero was black and white; one accent per
+   screen, and this is the action the page is for. */
+.primary {
+  background: var(--tbb-rd-red);
+  border-color: var(--tbb-rd-red);
+  color: #fff !important;
+  box-shadow: 0 8px 24px rgba(227, 20, 27, 0.25);
 }
 
-.cta:hover {
-  gap: 1.25rem;
-  transform: translate3d(0, -2px, 0);
+.primary:hover,
+.primary:focus-visible {
+  background: var(--tbb-rd-red-dark);
+  border-color: var(--tbb-rd-red-dark);
 }
 
-.cta:focus-visible {
-  outline: 2px solid var(--tbb-ink);
+.ghost {
+  border-color: var(--tbb-rd-ink);
+  color: var(--tbb-rd-ink) !important;
+}
+
+.ghost:hover,
+.ghost:focus-visible {
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper) !important;
+}
+
+.primary:focus-visible,
+.ghost:focus-visible {
+  outline: 2px solid var(--tbb-rd-ink);
   outline-offset: 3px;
 }
 
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  /* Split, so a wrapped row does not sit tight against the one above it. */
-  column-gap: clamp(0.9rem, 2vw, 1.75rem);
-  row-gap: 0.6rem;
-  color: var(--tbb-muted);
+/* ---- narrower than the design's own frame ---- */
+
+/* The veil is horizontal, so it can only hold a column that is beside the
+   photograph rather than over it. Below about 1100 there is no room for both,
+   and the copy takes the width. */
+@media (max-width: 68.6875rem) {
+  .copy {
+    max-width: 34rem;
+  }
+
+  /* The copy takes a bigger share of a narrower frame, so the dense part runs
+     further — but it has to be clear again by 76%, which is where the wall
+     lettering starts at this width. Washing that out is the one thing the
+     photograph is here for. */
+  .veil {
+    background: linear-gradient(
+      90deg,
+      rgba(246, 246, 244, 0.97) 0%,
+      rgba(246, 246, 244, 0.94) 55%,
+      rgba(246, 246, 244, 0.5) 64%,
+      rgba(246, 246, 244, 0) 76%
+    );
+  }
 }
 
-@media (max-width: 899px) {
-  /* No room for a side-by-side split: the photograph takes the whole frame, the
-     veil covers all of it lightly, and the copy runs the full width over it. */
+@media (max-width: 47.9375rem) {
+  /*
+   * On a phone the photograph is a band at the top and the copy stands under
+   * it on paper — the room is landscape, and a veil strong enough to carry
+   * type over the whole of it would have left no photograph at all.
+   */
+  .hero {
+    align-items: end;
+  }
+
   .media {
-    inset: 0;
-    -webkit-mask-image: none;
-    mask-image: none;
+    inset: 0 0 auto 0;
+    height: 26.25rem;
   }
 
   .veil {
+    inset: 0 0 auto 0;
+    height: 26.25rem;
     background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.94) 0%,
-      rgba(255, 255, 255, 0.86) 45%,
-      rgba(255, 255, 255, 0.74) 100%
+      180deg,
+      rgba(246, 246, 244, 0) 55%,
+      var(--tbb-rd-paper) 100%
     );
   }
 
-  .photo {
-    object-position: center;
+  .veilTop {
+    height: 9.375rem;
+    background: linear-gradient(
+      180deg,
+      rgba(246, 246, 244, 0.9),
+      rgba(246, 246, 244, 0)
+    );
+  }
+
+  .inner {
+    padding-top: calc(var(--tbb-header-h) + 20rem);
   }
 
   .copy {
     max-width: none;
+    min-width: 0;
+  }
+
+  .title {
+    font-size: clamp(2.75rem, 13.3333vw, 3.5rem);
+    line-height: 0.88 !important;
+  }
+
+  /* Both buttons full width, one under the other. */
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

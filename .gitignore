@@ -38,3 +38,8 @@ Desktop.ini
 assets/design-shots/*
 !assets/design-shots/README.md
 assets/design-scenes/*
+
+# The showroom photograph behind the homepage hero — 8.5 MB, and
+# `build-home-hero.mjs` is what turns it into the served crops.
+assets/home-hero/*
+!assets/home-hero/README.md

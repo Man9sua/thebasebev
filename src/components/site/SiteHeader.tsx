@@ -3,15 +3,19 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useCart } from "@/components/cart/useCart";
-import { BrandLogo } from "@/components/site/BrandLogo";
+import { BrandMarkStacked } from "@/components/site/BrandMarkStacked";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
+import { SITE_NAV } from "@/lib/site-config";
 import styles from "./SiteHeader.module.css";
 
 /**
- * Global header — minimal by design: mark on the left, actions on the right,
- * centre deliberately empty. Navigation lives behind the burger.
+ * Global header: the mark, the four sections, then search, cart and the quote.
+ *
+ * The sections were behind the burger at every width until the hero redesign
+ * put them back in the bar — the burger is a phone control now, and the panel
+ * behind it still carries the range, the second level and the contacts.
  *
  * The bar starts transparent over the hero and turns to paper once past it, and
  * from then on it stays exactly where it is. It used to slide away on
@@ -304,32 +308,38 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         style={plate ? ({ "--tbb-header-surface": plate } as CSSProperties) : undefined}
         data-header-theme={inverted ? "dark" : solid ? "light" : "hero"}
       >
-        {/* Original Tilda paths, inlined so the small `the` mark can inherit
-            the animated header colour without recolouring the red block. */}
+        {/* The lockup inlined rather than served as an image, so the small
+            `the` inherits the animated header colour without recolouring the
+            block — and so the Tilda runtime on parity routes, which re-sets
+            `src` on every `img` it finds, has nothing here to rewrite. */}
         <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
-          {/* The Tilda runtime on parity routes re-sets src and adds
-              decoding/fetchpriority on every img it finds, this one included.
-              The rewrite is cosmetic, but React would still read it as a
-              mismatch on a node it owns. */}
-          <BrandLogo />
+          <BrandMarkStacked />
         </SiteLink>
 
+        {/*
+          The hero redesign puts the four sections back in the bar. They were
+          behind the burger at every width, which the site review's first note
+          about the header is: on a B2B site the sections a buyer came for
+          should be one click, not two. The burger stays below 1100, where four
+          labels and four controls do not fit on one line, and the panel behind
+          it is unchanged — it still carries the range and the rest.
+        */}
+        <nav className={styles.nav} aria-label="Sections">
+          {SITE_NAV.map((item) => (
+            <SiteLink
+              key={item.href}
+              href={item.href}
+              className={styles.navLink}
+              aria-current={pathname === item.href ? "page" : undefined}
+            >
+              {item.label}
+            </SiteLink>
+          ))}
+        </nav>
+
+        {/* Search, cart, then the quote — the order every design document sets
+            them in, and the order that leaves the burger last on a phone. */}
         <div className={styles.actions}>
-          {/* The design's own call to action — see `.cta`. It is the one thing
-              the file's header carries that this bar did not. */}
-          <SiteLink href="/contacts" className={styles.cta}>
-            Get your best deal now
-          </SiteLink>
-
-          <SiteLink
-            href={cartHref}
-            className={styles.action}
-            aria-label={cartLabel}
-          >
-            <CartIcon />
-            {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
-          </SiteLink>
-
           <button
             type="button"
             className={styles.action}
@@ -343,9 +353,25 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             <SearchIcon />
           </button>
 
+          <SiteLink
+            href={cartHref}
+            className={styles.action}
+            aria-label={cartLabel}
+          >
+            <CartIcon />
+            {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
+          </SiteLink>
+
+          {/* "Get your best deal now" read as a sale and did not say what the
+              click does — the review's note. This is the wording every one of
+              the design documents puts in the bar. */}
+          <SiteLink href="/contacts" className={styles.cta}>
+            Get a quote
+          </SiteLink>
+
           <button
             type="button"
-            className={styles.action}
+            className={`${styles.action} ${styles.burger}`}
             onClick={() => {
               setSearchOpen(false);
               setMenuOpen((open) => !open);

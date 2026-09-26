@@ -120,11 +120,16 @@ try {
     (await hero.locator("a[href='/catalog']").count()) > 0,
     "home: hero CTA must point at the catalog",
   );
-  // The header carries the original Tilda path geometry inline so the small
-  // `the` mark can interpolate with the header surface colour.
+  /*
+   * The bar carries the stacked lockup — the hero redesign's, a portrait block
+   * rather than the landscape band — and it is inlined rather than served as an
+   * image so the small `the` can interpolate with the header surface colour and
+   * so the Tilda runtime on parity routes has no `img` here to rewrite. Both
+   * are the original vector paths; neither is a second asset.
+   */
   check(
-    (await page.locator("header a[href='/'] svg[data-brand-logo][viewBox='0 0 175 80']").count()) === 1,
-    "header: original BASE logo asset missing",
+    (await page.locator("header a[href='/'] svg[data-brand-mark='stacked']").count()) === 1,
+    "header: stacked BASE lockup missing",
   );
 
   check(
@@ -284,7 +289,25 @@ try {
     "header: the region picker is back in the bar",
   );
 
-  // Everything the old mega-menu linked to now lives in the menu panel.
+  /*
+   * The four sections are in the bar again — the hero redesign put them back —
+   * and the burger is a phone control below 1100. So the bar is asserted at
+   * this width and the panel behind the burger at the width it exists at:
+   * everything the old mega-menu linked to still has to be reachable, and most
+   * of it (the whole range) is still only in the panel.
+   */
+  const barLinks = page.locator("header nav a[href^='/']");
+  check(
+    (await barLinks.count()) === 4,
+    `header: expected four sections in the bar, got ${await barLinks.count()}`,
+  );
+  check(
+    (await page.locator("header button[aria-label='Open menu']").isVisible()) === false,
+    "header: the burger is still on screen at desktop width",
+  );
+
+  await page.setViewportSize({ width: 1024, height: 1000 });
+  await page.waitForTimeout(400);
   await page.locator("header button[aria-label='Open menu']").click();
   await page.waitForTimeout(900);
   const menu = page.locator("#site-menu");
@@ -302,6 +325,8 @@ try {
   );
   await page.keyboard.press("Escape");
   await page.waitForTimeout(600);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.waitForTimeout(400);
 
   await page.evaluate(() => window.scrollTo(0, 1200));
   // The bar cross-fades over --tbb-dur (720ms); sample after it settles.
