@@ -97,7 +97,7 @@ try {
   );
   check(strayZoomControls === 0, "stray Tilda zoom controls are visible");
 
-  await page.getByRole("button", { name: "Send inquiry" }).click();
+  await page.getByRole("button", { name: "Send enquiry" }).click();
   await page.waitForURL(`${baseUrl}/thank-you-form`);
 
   // Reproduce the intermittent failure path: a client-side navigation from a

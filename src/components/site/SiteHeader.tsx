@@ -232,6 +232,20 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
   // sampled colour catches everything that does not.
   const dark = onDark || surfaceDark;
 
+  /*
+   * What the bar sits on, in priority order. The menu panel is the redesign's
+   * ink screen and it opens under the bar rather than over it, so while it is
+   * open the bar belongs to the panel: inverted, and painted the panel's own
+   * colour so the two meet without a seam. The search panel is paper, so it
+   * takes the plain solid bar. Otherwise the page below decides.
+   */
+  const inverted = menuOpen || (dark && !searchOpen);
+  const plate = menuOpen
+    ? "var(--tbb-rd-ink)"
+    : !searchOpen && surface
+      ? surface
+      : null;
+
   // Cart state is native and shared across every route. Empty means catalogue;
   // a populated cart means the dedicated review/checkout page.
   return (
@@ -241,21 +255,21 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
         className={[
           styles.header,
           solid || menuOpen || searchOpen ? styles.solid : "",
-          // An open overlay owns the whole screen, so the bar follows it
-          // rather than whatever section happens to be underneath.
-          dark && !menuOpen && !searchOpen ? styles.inverted : "",
+          // An open overlay owns the whole screen, so the bar follows it rather
+          // than whatever section happens to be underneath. The menu panel is
+          // ink and the search panel is paper, so the menu is the one that
+          // takes the inverted bar with it.
+          inverted ? styles.inverted : "",
           menuOpen ? styles.open : "",
         ]
           .filter(Boolean)
           .join(" ")}
         // Null until the first sample, so the server and the first client
-        // render agree and hydration stays quiet.
-        style={
-          surface && !menuOpen && !searchOpen
-            ? ({ "--tbb-header-surface": surface } as CSSProperties)
-            : undefined
-        }
-        data-header-theme={dark ? "dark" : solid ? "light" : "hero"}
+        // render agree and hydration stays quiet. While the menu is open the
+        // plate is painted to the panel's own ink instead, so the two do not
+        // meet at a seam.
+        style={plate ? ({ "--tbb-header-surface": plate } as CSSProperties) : undefined}
+        data-header-theme={inverted ? "dark" : solid ? "light" : "hero"}
       >
         {/* Original Tilda paths, inlined so the small `the` mark can inherit
             the animated header colour without recolouring the red block. */}

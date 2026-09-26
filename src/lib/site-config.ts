@@ -18,26 +18,40 @@ export const BRAND_VIDEO = {
 } as const;
 
 /**
- * The menu, and — through `SiteSearch` — the pages the search box offers.
+ * The menu's first level — the four the redesign sets in Black caps.
  *
  * Every href is a route of its own. "About Us" used to be `/#about`, an anchor
  * on the homepage that no section carries an id for, so the menu's About just
  * reloaded the homepage while `/about-us` — a real page, indexable, and one the
  * footer already links to — went unlinked from the menu entirely.
+ *
+ * "Shop" is now "Catalogue". The menu redesign renames it because the label was
+ * doing two jobs: the shop — cart, Stripe checkout — and the presentation of the
+ * range, which is what the route actually opens. The document goes further and
+ * moves the shop out to an external `Shop ↗` button; there is no external shop
+ * to point one at, so that half waits for a URL. See the note in `SiteMenu.tsx`.
  */
 export const SITE_NAV = [
-  { label: "Shop", href: "/catalog" },
-  { label: "Private Label", href: "/private-labeling" },
+  { label: "Catalogue", href: "/catalog" },
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
+  { label: "About", href: "/about-us" },
+] as const;
+
+/**
+ * The menu's second level, and the rest of what `SiteSearch` offers: three real
+ * pages that are not one of the four above. A quieter row under the display
+ * type rather than three more 72px headings.
+ */
+export const SITE_NAV_SECONDARY = [
+  { label: "Private label", href: "/private-labeling" },
   { label: "Resources", href: "/resources" },
-  { label: "About Us", href: "/about-us" },
   { label: "Contacts", href: "/contacts" },
 ] as const;
 
 export const FOOTER_LINKS = {
   products: [
-    { label: "Shop", href: "/catalog" },
+    { label: "Catalogue", href: "/catalog" },
     { label: "Private Labeling", href: "/private-labeling" },
     { label: "Sugar Free", href: "/sugar-free" },
     { label: "Vending", href: "/vending" },
@@ -76,6 +90,11 @@ export const COMPANY = {
   country: "United Arab Emirates",
   phone: "+971 50 989 0429",
   phoneHref: "tel:+971509890429",
+  /* The same number on WhatsApp, which the menu redesign puts beside it.
+     `wa.me/971509890429` is the link the export already carries on 110 of its
+     pages, so this publishes a channel the business runs rather than one
+     invented to fill a slot in a mockup. */
+  whatsappHref: "https://wa.me/971509890429",
   email: "info@thebasebev.com",
   emailHref: "mailto:info@thebasebev.com",
 } as const;

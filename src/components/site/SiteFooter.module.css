@@ -53,11 +53,21 @@
   color: rgba(253, 250, 245, 0.5);
 }
 
+/* Shared by the anchors and by the legal row's one button — the reset is what
+   lets `CookieSettingsButton` sit beside Terms and Privacy without looking like
+   a control that wandered in. */
 .link {
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
   color: rgba(253, 250, 245, 0.82);
   text-decoration: none;
   font-size: 0.9375rem;
+  text-align: left;
   width: fit-content;
+  cursor: pointer;
   transition:
     color var(--tbb-dur-fast) var(--tbb-ease),
     transform var(--tbb-dur-fast) var(--tbb-ease);

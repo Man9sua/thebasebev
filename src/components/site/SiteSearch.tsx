@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { resizedImage } from "@/lib/images";
-import { SITE_NAV } from "@/lib/site-config";
+import { SITE_NAV, SITE_NAV_SECONDARY } from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
 
@@ -25,7 +25,10 @@ type Hit = {
   color?: string;
 };
 
-const PAGE_HITS: Hit[] = SITE_NAV.map((item) => ({
+/* Both levels of the menu: the split is a matter of typographic weight in the
+   panel, and search has no use for it — all seven are pages someone may look
+   for by name. */
+const PAGE_HITS: Hit[] = [...SITE_NAV, ...SITE_NAV_SECONDARY].map((item) => ({
   href: item.href,
   name: item.label,
   kind: "Page",

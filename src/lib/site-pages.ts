@@ -687,13 +687,18 @@ function deferLegacyImages(source: string) {
  *
  * - all of the page's JSON-LD (`rec2483211811`);
  * - four of the nine owned lead forms (`rec861442702`, `rec1855213141`,
- *   `rec1855223381`, `rec1855232921`) and their popup triggers;
- * - the cookie-consent banner (`rec913700125`).
+ *   `rec1855223381`, `rec1855232921`) and their popup triggers.
  *
  * So the removal is per record, and only of the parts the new shell replaces.
  * Note that four of these were already `display:none` in the export — the
  * client had replaced them with the `.tbh-wrap` header long ago — so they were
  * dead weight that still shipped a duplicate navigation to crawlers.
+ *
+ * The cookie banner used to be on that keep-list. It is not any more: the T972
+ * widget existed only here, on the 37 legacy routes, so half the site never
+ * asked at all — and it offered no way to refuse. `CookieConsent`, mounted in
+ * the root layout, replaces it on every route. Leaving the record in place
+ * would put two banners on the same page.
  */
 const REMOVED_SHELL_RECORDS = new Set([
   "rec2676415503", // .tbh-wrap header, ticker and spacer — SiteHeader replaces it
@@ -702,6 +707,7 @@ const REMOVED_SHELL_RECORDS = new Set([
   "rec860980632", //  old nav column, already display:none, duplicate nav links
   "rec859870796", //  visible footer nav — SiteFooter replaces it
   "rec2989879303", // legacy Tilda cart/form — native /checkout replaces it
+  "rec913700125", // T972 cookie banner — CookieConsent replaces it, site-wide
 ]);
 
 const SHELL_CONTAINERS = [

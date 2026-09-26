@@ -1,3 +1,4 @@
+import { CookieSettingsButton } from "@/components/consent/CookieSettingsButton";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY, FOOTER_LINKS, SOCIAL_LINKS } from "@/lib/site-config";
@@ -143,6 +144,9 @@ export function SiteFooter() {
                 {item.label}
               </SiteLink>
             ))}
+            {/* The one way back to a choice already made. A consent banner that
+                cannot be reopened is a consent banner that cannot be withdrawn. */}
+            <CookieSettingsButton className={styles.link} />
           </span>
         </div>
 

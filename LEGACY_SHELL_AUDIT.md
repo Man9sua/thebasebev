@@ -28,7 +28,9 @@ header and footer" — would also delete, from every public page:
 - **four of the nine owned lead forms** (`rec861442702`, `rec1855213141`,
   `rec1855223381`, `rec1855232921`), whose record ids match
   `OWNED_TILDA_FORM_IDS` in `LeadAttributionBridge`, plus their popup triggers;
-- **the cookie-consent banner** (`rec913700125`).
+- ~~**the cookie-consent banner** (`rec913700125`)~~ — no longer a reason
+  to keep the container: `CookieConsent` replaces it in the root layout, on
+  every route rather than on the 37 legacy ones.
 
 So removal is per record.
 
@@ -61,7 +63,7 @@ internal links.
 
 | Record | Size | Role | Class | Status |
 | --- | ---: | --- | --- | --- |
-| `rec913700125` | 7 KB | cookie-consent banner | C | kept |
+| `rec913700125` | 7 KB | cookie-consent banner | B | **removed** — `CookieConsent` |
 | `rec2503542591` | 6 KB | partnership CTA (content) | B | kept — page content, not chrome |
 | `rec859870796` | 15 KB | visible footer navigation | B | **removed** — `SiteFooter` |
 | `rec861442702` | 31 KB | "Partner with Us" lead form | C | kept |
