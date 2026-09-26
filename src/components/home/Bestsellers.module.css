@@ -259,10 +259,15 @@
 /*
  * The pack leads, the drink it makes stands in front and to the right.
  *
- * Sized against the stage's WIDTH, not its height. The document draws the pack
- * at two thirds of the stage across, and it is that horizontal relationship
- * that says the two belong together — tie the heights to the stage instead and
- * a narrower stage leaves the drink covering the name printed on the pack.
+ * Sized against the stage's WIDTH, not its height. It is the horizontal
+ * relationship between the pouch and the drink that says the two belong
+ * together — tie the heights to the stage instead and a narrower stage leaves
+ * the drink covering the name printed on the pack.
+ *
+ * The pair is a tenth larger than the document draws it and grows to the
+ * right, holding the pouch's left edge where it was: the neighbour on that
+ * side is only visible in the strip before the live pack begins, and taking
+ * the group out from its centre instead would have eaten most of it.
  *
  * Every pack file is framed identically (a 516 x 845 pouch on a 720 x 960
  * canvas), so the box can be placed and the pouch follows. Its foot is the
@@ -270,9 +275,9 @@
  * below comes from.
  */
 .pack {
-  left: 9.5%;
+  left: 8.5%;
   bottom: 3%;
-  width: 67%;
+  width: 73.7%;
   height: auto;
   z-index: 2;
   filter: drop-shadow(0 24px 40px rgba(80, 30, 40, 0.18));
@@ -298,13 +303,13 @@
  */
 .drinkSlot {
   position: absolute;
-  left: 58%;
+  left: 62%;
   /* The pack's foot: 3% of the stage plus that 4.48% of the pack's own box. */
-  bottom: 6.6%;
-  /* Square, so this is the drink's height as well as the slot's width: 43% of
-     the stage against the pouch's 67% is a drink a little over half the pack
-     tall, which is the proportion the document draws. */
-  width: 43%;
+  bottom: 7%;
+  /* Square, so this is the drink's height as well as the slot's width: 47.3%
+     of the stage against the pouch's 73.7% is a drink a little over half the
+     pack tall, which is the proportion the document draws. */
+  width: 47.3%;
   aspect-ratio: 1;
   z-index: 3;
   display: flex;
@@ -336,16 +341,16 @@
 
 .groundPack {
   left: 21%;
-  bottom: 4.6%;
-  width: 44%;
+  bottom: 5%;
+  width: 48.5%;
   height: 4%;
 }
 
 .groundDrink {
-  left: 55%;
-  bottom: 5%;
-  width: 24%;
-  height: 3.5%;
+  left: 60%;
+  bottom: 5.1%;
+  width: 26.5%;
+  height: 3.85%;
 }
 
 /* ---- the foot: counter, tabs, arrows ---- */
@@ -518,10 +523,12 @@
 
   /* A ratio rather than a fixed height: the pack and the drink are placed as
      shares of the stage's width, so a stage whose height does not follow that
-     width leaves a different gap over them on every phone. */
+     width leaves a different gap over them on every phone. Taller than the
+     stage is wide, and by more than the desktop band — a pouch three quarters
+     of the phone across is most of the phone tall. */
   .stage {
     order: 2;
-    aspect-ratio: 39 / 40;
+    aspect-ratio: 39 / 44;
     margin-top: 0.5rem;
   }
 
