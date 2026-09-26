@@ -1,217 +1,146 @@
 /**
- * The photo essay.
+ * From base to cup — 10a / 10b of the redesign.
  *
- * Two things carry it. The heading is sticky, so the claim stays in view for as
- * long as the evidence takes to pass it — which is what makes this read as an
- * argument rather than as a gallery. And the pictures are two columns offset
- * against each other, each tile keeping its own proportion, rather than a grid
- * of equal rectangles: the eye has somewhere to go down the page.
- *
- * The block used to be a twelve-column mosaic of eight tiles in three even
- * bands, with the heading sitting above it and half the width beside it empty.
- * That space is now the heading's column, and the pictures are twice the size
- * they were.
+ * 120 of vertical padding, 96 of gutter, the heading at 80 in a 1fr column
+ * against a 440 sentence, then four 400-tall frames in one row.
  */
 
 .section {
-  position: relative;
-  background: var(--tbb-paper-warm);
-  padding: var(--tbb-section) 0;
-  /* The last column is allowed to run past the measure — see `.grid`. */
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+
+  background: var(--tbb-rd-paper);
+  padding: clamp(3.5rem, 8.3333vw, 7.5rem) 0;
+  font-family: var(--tbb-font-sans);
   overflow: clip;
 }
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: 78rem;
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
-  display: grid;
-  grid-template-columns: minmax(0, clamp(20rem, 32vw, 30rem)) minmax(0, 1fr);
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: start;
 }
 
-/* ---- the claim ---- */
-
-/*
- * `align-self: start` is what makes the stickiness possible: a grid item
- * stretches to the row's height by default, and a box the full height of the
- * row has nowhere to stick to.
- */
 .head {
-  position: sticky;
-  top: calc(var(--tbb-header-h) + clamp(1.5rem, 4vw, 3.5rem));
-  align-self: start;
-}
-
-.headInner {
   display: grid;
-  justify-items: start;
-  row-gap: clamp(0.75rem, 2vw, 1.25rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 27.5rem);
+  gap: clamp(1.5rem, 6.6667vw, 6rem);
+  align-items: end;
+  padding-inline: var(--gutter);
 }
 
 .title {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  line-height: 1.04;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-  max-width: 16ch;
+  /* 80 at 1440. */
+  font-size: clamp(2.25rem, 5.5556vw, 5rem);
+  font-weight: 900 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink-deep);
+  text-wrap: balance;
 }
 
 .lede {
-  color: var(--tbb-ink-soft);
-  max-width: 42ch;
+  margin: 0 !important;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-/*
- * The three figures the heading is claiming, under it rather than in the
- * pictures. A description list because that is what it is — a value and what
- * the value counts — and the rule down the left binds them into one block
- * instead of three loose numbers.
- */
-.figures {
+/* ---- the four steps ---- */
+
+.steps {
+  list-style: none;
+  margin: clamp(2rem, 5vw, 4.5rem) 0 0;
+  padding-inline: var(--gutter);
   display: grid;
-  row-gap: clamp(0.9rem, 1.8vw, 1.4rem);
-  margin: clamp(0.75rem, 2vw, 1.5rem) 0 0;
-  padding-left: clamp(1rem, 2vw, 1.5rem);
-  border-left: 1px solid var(--tbb-line);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.6667vw, 1.5rem);
 }
 
-.figure {
-  display: grid;
-  row-gap: 0.2rem;
+.step {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.figureValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.75rem, 2.8vw, 2.5rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: var(--tbb-tracking-display);
-  color: var(--tbb-ink);
-}
-
-.figureLabel {
-  margin: 0;
-  color: var(--tbb-muted);
-}
-
-/* ---- the pictures ---- */
-
-/*
- * Wider than its column, so the right-hand pictures run past the page's measure
- * and are cut by the section's own edge. It is the one place on this page where
- * the composition admits there is more of it than the screen holds, and it is
- * what stops two tidy columns reading as a table.
- */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.75rem, 1.8vw, 1.75rem);
-  width: calc(100% + clamp(0rem, 3vw, 3.5rem));
-}
-
-.column {
-  display: grid;
-  align-content: start;
-  gap: clamp(0.75rem, 1.8vw, 1.75rem);
-}
-
-/* Offset against the first, so the two columns never line up across and the
-   eye is carried down one of them rather than reading in rows. */
-.column:nth-child(2) {
-  margin-top: clamp(2.5rem, 8vw, 7rem);
-}
-
-.tile {
+.frame {
   position: relative;
+  display: block;
+  /* 400 tall against a 288 column at 1440 — kept as a ratio so the row holds
+     its proportion at every width instead of four fixed rectangles. */
+  aspect-ratio: 288 / 400;
+  border-radius: clamp(0.875rem, 1.3889vw, 1.25rem);
   overflow: hidden;
-  margin: 0;
-  border-radius: clamp(2px, 0.4vw, 6px);
-  background: var(--tbb-sand);
-  aspect-ratio: var(--ratio, 4 / 5);
+  background: var(--tbb-rd-card);
 }
 
-/* Sized by `inset` alone — it overhangs the tile so the parallax shift never
-   exposes an edge. Do not add height:100%: it would override the bottom edge. */
-.layer {
-  position: absolute;
-  inset: -8% 0;
-}
-
-.media {
-  width: 100%;
-  height: 100%;
+.frame :global(img) {
   object-fit: cover;
-  /* Oversized so the parallax shift never exposes an edge. */
-  transform: scale(1.06);
-  transition: transform var(--tbb-dur-slow) var(--tbb-ease);
 }
 
-.tile:hover .media {
-  transform: scale(1.1);
-}
-
-/*
- * On a scrim rather than on a text shadow. Half of these photographs are pale —
- * the powder, the syrup, the apron — and white type with a shadow on a light
- * ground is a smudge; a small dark plate reads on every one of them.
- */
 .caption {
-  position: absolute;
-  left: clamp(0.6rem, 1.2vw, 1rem);
-  bottom: clamp(0.6rem, 1.2vw, 1rem);
-  z-index: 1;
-  padding: 0.4rem 0.7rem;
-  border-radius: 999px;
-  background: rgba(18, 18, 18, 0.62);
-  color: var(--tbb-paper);
-  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
 }
 
-@media (max-width: 1023px) {
-  /* The claim stops sticking and simply opens the section: there is no second
-     column beside it to stay level with. */
-  .inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2rem, 6vw, 3rem);
-  }
+.number {
+  color: var(--tbb-rd-dim);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
 
+.label {
+  color: var(--tbb-rd-ink);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  font-weight: 600;
+}
+
+@media (max-width: 63.9375rem) {
   .head {
-    position: static;
-  }
-
-  .title {
-    max-width: 22ch;
-  }
-
-  .grid {
-    width: 100%;
-  }
-
-  .column:nth-child(2) {
-    margin-top: clamp(1.5rem, 6vw, 3rem);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1rem;
   }
 }
 
-@media (max-width: 599px) {
-  /* Two across on a phone as well, which is what keeps this a composition
-     rather than a stack of postcards. Tighter gaps and a smaller plate under
-     the captions are what pays for it. */
-  .grid {
-    gap: 0.5rem;
+@media (max-width: 47.9375rem) {
+  /*
+   * A rail rather than a 2 × 2 grid: four frames stacked two-up on a phone are
+   * four small rectangles, and the sequence is the point. Native overflow
+   * scroll with snap points, so the trackpad, the finger, the keyboard and
+   * find-on-page all keep working and a vertical swipe still scrolls the page.
+   */
+  .steps {
+    display: flex;
+    padding-right: 0;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    /* Same reason as the guides rail: the snapport starts at the content. */
+    scroll-padding-left: var(--gutter);
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
   }
 
-  .column {
-    gap: 0.5rem;
+  .steps::-webkit-scrollbar {
+    display: none;
   }
 
-  .caption {
-    left: 0.5rem;
-    bottom: 0.5rem;
-    padding: 0.3rem 0.55rem;
-    font-size: 0.5625rem;
+  .step {
+    flex: none;
+    width: 17.5rem;
+    scroll-snap-align: start;
+  }
+
+  /* The last frame gets the gutter back as trailing space, so the rail ends
+     where the text column does. */
+  .step:last-child {
+    margin-right: var(--gutter);
   }
 }

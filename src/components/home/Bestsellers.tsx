@@ -1,437 +1,212 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { packBox, productGlass } from "@/data/product-glass";
-import productHeroes from "@/data/product-heroes.json";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
-
 import styles from "./Bestsellers.module.css";
 
 /**
- * Bestsellers carousel.
+ * Bestsellers, rebuilt to the redesign (9c desktop / 9d mobile).
  *
- * Composition: the copy has the left column, the rail takes the rest with its
- * controls under it, and the ground is a wash of the slide's own key visual —
- * the same colour its product page stands on, held well back because the cards
- * carry it at full strength.
+ * One product at a time on a field of its own colour: the name at display
+ * size, the sentence it already carries in the registry, a button into its
+ * page and the price it starts at. The pack stands beside the drink it makes,
+ * with the two neighbours ghosted behind — the "гармошка" the document draws,
+ * which is what says there are more without showing five of everything.
  *
- * A card is built from the same pieces a product page builds its hero from,
- * rather than from the flat plate the Tilda export shipped; the stylesheet's
- * opening note says what that plate cost and why it went.
+ * It replaces a five-slide carousel that animated the whole composition per
+ * slide and carried its own dots, arrows, swipe handling and a scene graph of
+ * measured boxes. The design asks for far less: the images are placed as
+ * shares of the frame, and moving between products is a state change, not a
+ * choreography.
  *
- * Slides are stacked and cross-faded rather than remounted: images stay decoded,
- * and switching is pure opacity/transform plus one background-color transition,
- * which is why it reads as a single movement rather than four separate ones.
+ * The order is the registry's `BESTSELLER_SLUGS` — the same five, in the same
+ * order, as the slider production runs today.
  */
 
 const PRODUCTS = getProducts(BESTSELLER_SLUGS);
-const HEROES = productHeroes as Record<string, { band: string; bandFoot: string }>;
-/** Long enough to read a slide, not so long the section feels static. */
-const AUTOPLAY_MS = 7000;
-/** Slots either side of the centre card, so the rail wraps symmetrically. */
-const HALF = Math.floor(PRODUCTS.length / 2);
-const SWIPE_THRESHOLD_PX = 44;
-const DRAG_INTENT_PX = 10;
-const TRACKPAD_IDLE_MS = 180;
-const TRACKPAD_LOCK_MS = 420;
 
-function Arrow({ back = false }: { back?: boolean }) {
+function Chevron({ back = false }: { back?: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <path
-        d={back ? "M15 5 8 12l7 7" : "M9 5l7 7-7 7"}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <path d={back ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 export function Bestsellers() {
   const [index, setIndex] = useState(0);
-  const [swapping, setSwapping] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const swapTimer = useRef<number | undefined>(undefined);
-  // Autoplay reads the current slide from here, so the interval does not have
-  // to be torn down and rebuilt on every change.
-  const indexRef = useRef(index);
+  const panelId = useId();
+  const railRef = useRef<HTMLDivElement>(null);
 
-  const active = PRODUCTS[index];
-  const pack = packBox(active.slug);
+  const product = PRODUCTS[index];
+  const step = useCallback(
+    (delta: number) => setIndex((current) => (current + delta + PRODUCTS.length) % PRODUCTS.length),
+    [],
+  );
 
-  const goTo = useCallback((next: number) => {
-    setIndex((current) => {
-      const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
-      if (resolved === current) return current;
+  /*
+   * The two behind the live one, in order, so the ghosts are always this
+   * product's neighbours rather than a fixed pair.
+   */
+  const before = PRODUCTS[(index - 1 + PRODUCTS.length) % PRODUCTS.length];
+  const after = PRODUCTS[(index + 1) % PRODUCTS.length];
 
-      setSwapping(true);
-      window.clearTimeout(swapTimer.current);
-      swapTimer.current = window.setTimeout(() => setSwapping(false), 260);
-      indexRef.current = resolved;
-      return resolved;
-    });
-  }, []);
-
-  useEffect(() => () => window.clearTimeout(swapTimer.current), []);
-
-  // Natural document scrolling owns section visibility, so autoplay follows
-  // the section itself instead of an external scene controller.
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let timer: number | undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        window.clearInterval(timer);
-        if (entry.isIntersecting) {
-          timer = window.setInterval(() => goTo(indexRef.current + 1), AUTOPLAY_MS);
-        }
-      },
-      { threshold: 0.4 },
-    );
-
-    observer.observe(section);
-    return () => {
-      window.clearInterval(timer);
-      observer.disconnect();
-    };
-  }, [goTo]);
-
+  /* Left and right move the tab row, which is what a tablist is expected to
+     do. The rest of the section is not a keyboard trap. */
   const onKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "ArrowLeft") {
+    if (event.key === "ArrowRight") {
       event.preventDefault();
-      goTo(index - 1);
-    } else if (event.key === "ArrowRight") {
+      step(1);
+    } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      goTo(index + 1);
+      step(-1);
     }
   };
 
-  const completeSwipe = (startX: number, startY: number, endX: number, endY: number) => {
-    const deltaX = endX - startX;
-    const deltaY = endY - startY;
-    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX || Math.abs(deltaX) <= Math.abs(deltaY)) {
-      return false;
-    }
-    goTo(indexRef.current + (deltaX < 0 ? 1 : -1));
-    return true;
-  };
-
-  const stageRef = useRef<HTMLDivElement>(null);
-  const swipe = useRef({ active: false, pointerId: 0, startX: 0, startY: 0 });
-  const wheel = useRef({ deltaX: 0, lastAt: 0, lockedUntil: 0 });
-  const suppressClick = useRef(false);
-
-  // A horizontal two-finger trackpad gesture has no pointer events. Listen
-  // natively so it can be cancelled without React's passive wheel delegation,
-  // while a vertical wheel remains ordinary page scroll.
+  /* Keep the live tab in view on a phone, where the row scrolls sideways. */
   useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const onWheel = (event: WheelEvent) => {
-      const scale =
-        event.deltaMode === WheelEvent.DOM_DELTA_LINE
-          ? 16
-          : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
-            ? window.innerWidth
-            : 1;
-      const deltaX = event.deltaX * scale;
-      const deltaY = event.deltaY * scale;
-
-      if (Math.abs(deltaX) < 4 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-      event.preventDefault();
-
-      const now = performance.now();
-      if (now - wheel.current.lastAt > TRACKPAD_IDLE_MS) wheel.current.deltaX = 0;
-      wheel.current.lastAt = now;
-      if (now < wheel.current.lockedUntil) return;
-
-      wheel.current.deltaX += deltaX;
-      if (Math.abs(wheel.current.deltaX) < SWIPE_THRESHOLD_PX) return;
-
-      goTo(indexRef.current + (wheel.current.deltaX > 0 ? 1 : -1));
-      wheel.current = { deltaX: 0, lastAt: now, lockedUntil: now + TRACKPAD_LOCK_MS };
-    };
-
-    stage.addEventListener("wheel", onWheel, { passive: false });
-    return () => stage.removeEventListener("wheel", onWheel);
-  }, [goTo]);
-
-  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
-    suppressClick.current = false;
-    swipe.current = {
-      active: true,
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
-  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    const gesture = swipe.current;
-    if (!gesture.active || gesture.pointerId !== event.pointerId) return;
-
-    const deltaX = event.clientX - gesture.startX;
-    const deltaY = event.clientY - gesture.startY;
-    if (Math.abs(deltaX) > DRAG_INTENT_PX && Math.abs(deltaX) > Math.abs(deltaY)) {
-      suppressClick.current = true;
-      event.preventDefault();
-    }
-  };
-  const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
-    const gesture = swipe.current;
-    swipe.current = { ...gesture, active: false };
-    if (!gesture.active || gesture.pointerId !== event.pointerId) return;
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-
-    suppressClick.current =
-      completeSwipe(gesture.startX, gesture.startY, event.clientX, event.clientY) ||
-      suppressClick.current;
-  };
-
-  const onPointerCancel = (event: React.PointerEvent<HTMLDivElement>) => {
-    swipe.current = { ...swipe.current, active: false };
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
+    const rail = railRef.current;
+    const tab = rail?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!rail || !tab) return;
+    const left = tab.offsetLeft - (rail.clientWidth - tab.offsetWidth) / 2;
+    rail.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }, [index]);
 
   return (
     <section
-      ref={sectionRef}
       id="bestsellers"
       className={styles.section}
-      style={{
-        ["--band" as string]: HEROES[active.slug]?.band ?? active.backgroundColor,
-        ["--band-foot" as string]: HEROES[active.slug]?.bandFoot ?? active.backgroundColor,
-        ["--pack-left" as string]: pack.left,
-        ["--pack-top" as string]: pack.top,
-        ["--pack-width" as string]: pack.width,
-        ["--pack-height" as string]: pack.height,
-      }}
-      aria-roledescription="carousel"
       aria-label="Bestsellers"
-      onKeyDown={onKeyDown}
-      data-active-product={active.slug}
-      data-active-product-index={index}
-      data-product-count={PRODUCTS.length}
+      /* The field is the product's own colour, mixed well back into paper —
+         one value per product from the registry rather than five hand-set
+         tints. */
+      style={{ ["--tone" as string]: product.backgroundColor }}
     >
       <div className={styles.inner}>
         <div className={styles.copy}>
-          <span className={`tbb-label ${styles.eyebrow}`}>Bestsellers</span>
-
-          {/* The affixes are wrapped so the stylesheet can place them: bare text
-              nodes cannot be given an order. The spaces between the three parts
-              stay, so the heading still reads as one string — "Premium <product>
-              Bases" — rather than three fragments glued together. */}
-          <h2 className={styles.heading}>
-            <span className={styles.headingAffix}>Premium</span>{" "}
-            <span
-              className={`${styles.headingProduct} ${styles.swap} ${
-                swapping ? styles.swapOut : ""
-              }`}
-            >
-              {/* Soft-hyphenated where the name is one long word, so it breaks
-                  inside the column instead of running out over the artwork. The
-                  hyphen is invisible unless the break is taken, and every other
-                  use of the name — the dots, the CTA, the slide labels — keeps
-                  the plain string. */}
-              {active.hyphenatedName ?? active.name}
-            </span>{" "}
-            <span className={styles.headingAffix}>Bases</span>
+          <h2 className={styles.name} id={`${panelId}-name`}>
+            {product.hyphenatedName ?? product.name}
           </h2>
+          <p className={styles.description}>{product.description}</p>
 
-          <p className={`${styles.description} ${styles.swap} ${swapping ? styles.swapOut : ""}`}>
-            {active.description}
-          </p>
-
-          {/* The price moved off the card and into the copy: on a turned card it
-              was unreadable, and the centre one had to carry a row of type that
-              held every shot a line shorter than it needed to be. */}
-          <p className={`${styles.price} ${styles.swap} ${swapping ? styles.swapOut : ""}`}>
-            {active.price ? (
-              <>
-                <span className="tbb-label">From</span>
-                <span className={styles.priceValue}>{active.price}</span>
-              </>
-            ) : (
-              <span className={styles.priceValue}>Price on request</span>
+          <div className={styles.actions}>
+            <SiteLink className={styles.cta} href={product.route}>
+              Explore {product.name}
+            </SiteLink>
+            {product.price && (
+              <p className={styles.price}>
+                <span>from</span>
+                <strong>{product.price}</strong>
+              </p>
             )}
-          </p>
-
-          <SiteLink href={active.route} className={styles.cta}>
-            Explore {active.name}
-            <Arrow />
-          </SiteLink>
-
-          {/* The same claim the three stacked figures made, as one line. It is
-              framing for the range rather than a fact about this slide, so it
-              sits under the call to action and does not change with it. */}
-          <p className={styles.proof}>
-            600+ flavours <span aria-hidden="true">·</span> HALAL certified{" "}
-            <span aria-hidden="true">·</span> HACCP food safety
-          </p>
+          </div>
         </div>
 
-        <div className={styles.showcase}>
+        {/*
+          The stage. Both images are placed as shares of it, so the pack and
+          the drink hold their relationship at every width rather than being
+          re-measured per breakpoint.
+        */}
+        <div
+          className={styles.stage}
+          id={`${panelId}-panel`}
+          role="tabpanel"
+          aria-labelledby={`${panelId}-name`}
+        >
+          {[before, after].map((ghost, position) => (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              key={ghost.slug}
+              className={position === 0 ? styles.ghostLeft : styles.ghostRight}
+              src={`/images/pack-${ghost.slug}.webp`}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              aria-hidden="true"
+            />
+          ))}
+
+          {/* Dissolves the two neighbours back into the field at both edges, so
+              the shelf runs off the stage instead of ending at a crop. Above
+              the ghosts, below the pack. */}
+          <span className={styles.fade} aria-hidden="true" />
+
+          <span className={styles.groundPack} aria-hidden="true" />
+          <span className={styles.groundGlass} aria-hidden="true" />
+
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className={styles.pack}
+            src={`/images/pack-${product.slug}.webp`}
+            alt={`${product.name} base by THE BASE`}
+            loading="lazy"
+            decoding="async"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className={styles.glass}
+            src={`/images/glass-${product.slug}.webp`}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <div className={styles.foot}>
+          <span className={styles.count}>
+            {String(index + 1).padStart(2, "0")} / {String(PRODUCTS.length).padStart(2, "0")}
+          </span>
+
           <div
-            ref={stageRef}
-            className={styles.stage}
-            aria-live="polite"
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onDragStart={(event) => event.preventDefault()}
-            onClickCapture={(event) => {
-              if (!suppressClick.current) return;
-              suppressClick.current = false;
-              event.preventDefault();
-              event.stopPropagation();
-            }}
-            onPointerCancel={onPointerCancel}
+            ref={railRef}
+            className={styles.tabs}
+            role="tablist"
+            aria-label="Bestsellers"
+            onKeyDown={onKeyDown}
           >
-            {PRODUCTS.map((product, slide) => {
-              // Signed distance from the centre, wrapped so the rail is a loop.
-              const forward = (slide - index + PRODUCTS.length) % PRODUCTS.length;
-              const slot = forward > HALF ? forward - PRODUCTS.length : forward;
-              const depth = Math.abs(slot);
-              const isActive = slot === 0;
-              const glass = productGlass[product.slug];
-
-              return (
-                <div
-                  key={product.slug}
-                  className={`${styles.slide} ${isActive ? styles.slideActive : ""}`}
-                  role="group"
-                  aria-roledescription="slide"
-                  aria-label={`${slide + 1} of ${PRODUCTS.length}: ${product.name} bases`}
-                  aria-hidden={!isActive}
-                  style={{
-                    ["--band" as string]: HEROES[product.slug]?.band ?? product.backgroundColor,
-                    ["--band-foot" as string]:
-                      HEROES[product.slug]?.bandFoot ?? product.backgroundColor,
-                    // Nearer the centre sits nearer the front, and every shot
-                    // stays on screen — the whole range is the point of a
-                    // coverflow, so nothing is faded out entirely.
-                    zIndex: PRODUCTS.length - depth,
-                    opacity: 1 - depth * 0.3,
-                    transform: `translate3d(${slot * 30}%, 0, 0) scale(${
-                      1 - depth * 0.2
-                    }) rotateY(${slot * -20}deg)`,
-                  }}
-                >
-                  {!isActive && (
-                    /* Mouse affordance only: it duplicates a control the product
-                     list already exposes, so it stays out of the tab order and
-                     out of the accessibility tree rather than announcing a
-                     second way to do the same thing. */
-                    <button
-                      type="button"
-                      className={styles.pull}
-                      onClick={() => goTo(slide)}
-                      tabIndex={-1}
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  {/*
-                  The card, built the way a product page builds its hero: the
-                  wordmark behind, the cut-out pouch on the product's own wash,
-                  the drink standing in front of it at the box the design
-                  measures. It used to be one exported plate per product —
-                  1170x1703 with the colour, the mark, both pictures and two
-                  certification rosettes all flattened into it. Five of those
-                  made this page 8.8 MB, the rosettes were a certifier's artwork
-                  nobody here can vouch for, and the flat square could not
-                  follow the rest of the site when the design moved on.
-                */}
-                  <span className={styles.card}>
-                    <span className={styles.cardMark} aria-hidden="true" />
-
-                    <span className={styles.cardStage}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        className={styles.shot}
-                        src={`/images/pack-${product.slug}.webp`}
-                        alt={`${product.name} base by THE BASE`}
-                        // The coverflow exposes the active card and both
-                        // neighbours. Keep those three decoded so a click/swipe
-                        // never reveals an empty stage; distant cards stay lazy.
-                        loading={depth <= 1 ? "eager" : "lazy"}
-                        decoding="async"
-                        draggable={false}
-                      />
-
-                      {glass?.image && (
-                        <span
-                          className={styles.cardGlass}
-                          style={{
-                            ["--glass-left" as string]: glass.left,
-                            ["--glass-top" as string]: glass.top,
-                            ["--glass-width" as string]: glass.width,
-                            ["--glass-height" as string]: glass.height,
-                          }}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={glass.image}
-                            alt=""
-                            loading={depth <= 1 ? "eager" : "lazy"}
-                            decoding="async"
-                            draggable={false}
-                          />
-                        </span>
-                      )}
-                    </span>
-                  </span>
-                </div>
-              );
-            })}
+            {PRODUCTS.map((item, position) => (
+              <button
+                key={item.slug}
+                type="button"
+                role="tab"
+                className={position === index ? styles.tabActive : styles.tab}
+                aria-selected={position === index}
+                aria-controls={`${panelId}-panel`}
+                tabIndex={position === index ? 0 : -1}
+                onClick={() => setIndex(position)}
+              >
+                {item.name}
+              </button>
+            ))}
           </div>
 
-          <div className={styles.controls}>
-            <div className={styles.arrows}>
-              <button
-                type="button"
-                className={styles.arrow}
-                onClick={() => goTo(index - 1)}
-                aria-label="Previous product"
-              >
-                <Arrow back />
-              </button>
-              <button
-                type="button"
-                className={styles.arrow}
-                onClick={() => goTo(index + 1)}
-                aria-label="Next product"
-              >
-                <Arrow />
-              </button>
-            </div>
+          {/* The phone gets a progress bar instead of the tab row's underline:
+              five labels do not fit, so the row scrolls and the bar is what
+              says how far along the five you are. */}
+          <div className={styles.progress} aria-hidden="true">
+            {PRODUCTS.map((item, position) => (
+              <span key={item.slug} className={position === index ? styles.barOn : styles.bar} />
+            ))}
+          </div>
 
-            <div className={styles.dots}>
-              {PRODUCTS.map((product, slide) => (
-                <button
-                  key={product.slug}
-                  type="button"
-                  className={`${styles.dot} ${slide === index ? styles.dotActive : ""}`}
-                  onClick={() => goTo(slide)}
-                  aria-label={`Show ${product.name}`}
-                  aria-current={slide === index}
-                >
-                  <span className={styles.dotLabel}>{product.name}</span>
-                  <span className={styles.dotLine} aria-hidden="true" />
-                </button>
-              ))}
-            </div>
+          <div className={styles.arrows}>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => step(-1)}
+              aria-label="Previous product"
+            >
+              <Chevron back />
+            </button>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => step(1)}
+              aria-label="Next product"
+            >
+              <Chevron />
+            </button>
           </div>
         </div>
       </div>

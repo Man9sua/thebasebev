@@ -1,503 +1,489 @@
 /**
- * Bestsellers.
+ * Bestsellers — the redesign (9c desktop, 9d mobile).
  *
- * The carousel's movement is unchanged — the rail, the turn, the depth and the
- * wrap-around are the component's, and this only dresses them. Everything
- * around it is new.
+ * A 1440 x 820 band in the product's own colour: the copy in a 520 column at
+ * the left gutter, the pack and the drink on a stage from 720 to the right
+ * gutter, the two neighbouring packs ghosted behind, and the counter, the tabs
+ * and the arrows along the foot of the stage.
  *
- * What changed and why: each card used to be one exported Tilda plate, 1170x1703
- * with the product's colour, the brand mark, the pouch, the drink and two
- * certification rosettes all flattened into a single square. Five of them made
- * the homepage 8.8 MB, the rosettes were a certifier's artwork nobody here can
- * vouch for, and a flat plate cannot follow the site when the design moves.
- *
- * So a card is now built the way a product page builds its hero, from the same
- * pieces: the wordmark behind, the cut-out pouch on that product's own key
- * visual wash, and the drink standing in front of it at the box the design
- * measures for it. `PACK_BOX` and `productGlass` in `data/product-glass.ts` are
- * read by both surfaces, so the drink sits on the pouch the same way here as it
- * does at full size.
- *
- * The composition around the rail is two columns rather than three. The old one
- * put the copy left, the rail centre and a column of product names right, which
- * held the rail to a narrow middle third and read as three separate things. Now
- * the copy has the left, the rail takes the rest at nearly twice the size, and
- * the controls sit under it as its own furniture. The name and the price came
- * off the cards while they were at it: on a turned card neither could be read,
- * and carrying them cost every shot two rows of height.
+ * Everything on the stage is placed as a share of it rather than in pixels, so
+ * the pack, the drink and the shadows under them hold their relationship at
+ * every width instead of being re-measured per breakpoint.
  */
 
 .section {
+  /* 96 of gutter, 820 tall, both of the document's. */
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+
+  /* The product's registry colour, taken well back: at full strength it is a
+     pack colour, and this is the ground a pack has to stand on. Named, because
+     `.fade` over the shelf has to be the identical value. */
+  --field: color-mix(in srgb, var(--tone, #dfa9b5) 26%, #f6f6f4);
+
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  overflow: clip;
-  /*
-   * A wash of the slide's own key visual rather than a flat tint of its
-   * registry colour, so the section takes the same temperature the product page
-   * does. Held well back — the cards carry that colour at full strength and
-   * this is the ground they stand on. The long transition is the section's main
-   * beat, and it is the one thing kept from the old ground.
-   */
-  background: color-mix(in srgb, var(--band, var(--tbb-sand)) 30%, var(--tbb-paper));
-  transition: background-color var(--tbb-dur-slow) var(--tbb-ease-inout);
-  padding: var(--tbb-section) 0;
+  overflow: hidden;
+  background: var(--field);
+  color: var(--tbb-rd-ink);
+  font-family: var(--tbb-font-sans);
+  transition: background-color var(--tbb-dur) var(--tbb-ease);
 }
 
 .inner {
   position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
   display: grid;
-  /* `minmax(0, …)` rather than a bare fraction on both: a bare `1fr` floors at
-     min-content, and a long product name like MILKSHAKE grew the copy column
-     until the headline was lying across the artwork. */
-  grid-template-columns: minmax(0, clamp(18rem, 26vw, 25rem)) minmax(0, 1fr);
+  /* 520 of copy, then the stage — the document's split at 1440. */
+  grid-template-columns: minmax(0, 36.1111%) minmax(0, 1fr);
+  column-gap: clamp(2rem, 4.4444vw, 4rem);
   align-items: center;
-  gap: clamp(2rem, 5vw, 4.5rem);
+  min-height: 51.25rem;
+  padding: clamp(3rem, 5vw, 4.5rem) var(--gutter);
 }
 
-/* ---- the words ---- */
+/* ---- the copy ---- */
 
-/*
- * Spacing is a row gap rather than margins on the children, because
- * `design-tokens.css` carries `.tbb h2, .tbb p { margin: 0 }` — at (0,1,1) that
- * outranks a single class here, so a `margin-top` on the description was being
- * dropped and the copy closed up against the headline. A gap belongs to the
- * container and nothing can reset it.
- */
 .copy {
   position: relative;
   z-index: 2;
-  min-width: 0;
-  display: grid;
-  justify-items: start;
-  row-gap: clamp(0.9rem, 1.8vw, 1.35rem);
-}
-
-.eyebrow {
-  display: block;
-  color: var(--tbb-muted);
-}
-
-/*
- * "Premium <product> Bases" is one string in the markup and stays one string;
- * only the arrangement is visual. The framing words sit together on a quiet
- * line and the product takes the row below on its own, at display size.
- */
-.heading {
-  font-family: var(--tbb-font-display);
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: clamp(0.6rem, 1.2vw, 1rem);
+  flex-direction: column;
+}
+
+.name {
+  margin: 0 0 clamp(1rem, 1.9444vw, 1.75rem) !important;
+  font-family: var(--tbb-font-display);
+  /* 96 at 1440. */
+  font-size: clamp(2.75rem, 6.6667vw, 6rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em !important;
   text-transform: uppercase;
-  margin: 0;
-  max-width: 100%;
-}
-
-.headingAffix {
-  order: 1;
-  font-size: clamp(0.65rem, 0.85vw, 0.8rem);
-  line-height: 1;
-  letter-spacing: 0.34em;
-  font-weight: 400;
-  color: var(--tbb-muted);
-}
-
-/* The two affixes are not adjacent — the product sits between them — so this is
-   the closing one by position, not by sibling combinator. */
-.headingAffix:last-child {
-  order: 2;
-}
-
-/* Binds the two framing words into one phrase. Generated content, so it never
-   reaches `textContent`. */
-.headingAffix:last-child::before {
-  content: "·";
-  margin-right: clamp(0.6rem, 1.2vw, 1rem);
-  color: var(--tbb-muted);
-}
-
-/* Full basis forces the break, so the product always lands on its own row
-   however long its name is. `min-width: 0` is what lets that row then be
-   narrower than the word inside it, which is what allows the soft hyphen to be
-   taken instead of the word overhanging the column. */
-.headingProduct {
-  order: 3;
-  flex: 0 0 100%;
-  min-width: 0;
-  padding-top: clamp(0.3rem, 0.8vw, 0.6rem);
-  font-size: clamp(2.6rem, 5.4vw, 5rem);
-  font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: -0.03em;
-  color: var(--tbb-ink);
-  hyphens: manual;
+  color: var(--tbb-rd-ink-deep);
+  text-wrap: balance;
 }
 
 .description {
-  max-width: 34ch;
-  font-size: var(--tbb-text-body);
-  line-height: 1.55;
-  color: var(--tbb-ink-soft);
+  margin: 0 0 clamp(1.5rem, 2.7778vw, 2.5rem) !important;
+  max-width: 27.5rem;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-/* Off the card and into the copy: on a turned card it was unreadable, and the
-   centre one had to carry a row of type that held every shot a line shorter. */
-.price {
+.actions {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  padding-top: clamp(0.2rem, 0.6vw, 0.5rem);
-  color: var(--tbb-muted);
-}
-
-.priceValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.35rem, 2vw, 1.75rem);
-  font-weight: 600;
-  letter-spacing: var(--tbb-tracking-display);
-  color: var(--tbb-ink);
-}
-
-.swap {
-  transition:
-    opacity var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.swapOut {
-  opacity: 0;
-  transform: translate3d(0, 14px, 0);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1rem, 2.2222vw, 2rem);
 }
 
 .cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.95rem 1.6rem;
-  background: var(--tbb-ink);
-  color: var(--tbb-paper);
-  text-decoration: none;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: clamp(3.5rem, 4.1667vw, 3.75rem);
+  padding-inline: clamp(1.75rem, 2.3611vw, 2.125rem);
   border-radius: 999px;
-  font-size: var(--tbb-text-label);
-  font-weight: 500;
-  letter-spacing: var(--tbb-tracking-label);
+  background: var(--tbb-rd-ink);
+  color: #fff !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
   text-transform: uppercase;
+  text-decoration: none !important;
   white-space: nowrap;
-  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.cta:hover {
-  transform: translate3d(0, -2px, 0);
+.cta:hover,
+.cta:focus-visible {
+  background: var(--tbb-rd-red);
 }
 
-.cta svg {
-  width: 14px;
-  height: 14px;
-  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+.price {
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  line-height: 1.2 !important;
 }
 
-.cta:hover svg {
-  transform: translate3d(4px, 0, 0);
+.price span {
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
 }
 
-/* The three stacked figures — 600+, HALAL, HACCP — as one line. They frame the
-   range rather than describe the slide, so they close the column instead of
-   sitting in the middle of it competing with the product's own name. */
-.proof {
-  padding-top: clamp(0.3rem, 1vw, 0.8rem);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--tbb-muted);
-  text-wrap: balance;
+.price strong {
+  color: var(--tbb-rd-ink);
+  font-size: clamp(1.125rem, 1.6667vw, 1.5rem);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.proof span {
-  padding: 0 0.35rem;
-  opacity: 0.6;
-}
-
-/* ---- the rail ---- */
-
-.showcase {
-  display: grid;
-  justify-items: center;
-  row-gap: clamp(1.25rem, 2.6vw, 2rem);
-  min-width: 0;
-}
+/* ---- the stage ---- */
 
 .stage {
   position: relative;
-  width: min(100%, 30rem);
-  aspect-ratio: 4 / 5;
-  /* The depth the turn is read through. Shallower than the usual 1400px because
-     these cards sit close together — a deeper camera flattens the rotation
-     until the side shots look merely scaled rather than turned. */
-  perspective: 1200px;
-  touch-action: pan-y;
+  z-index: 1;
+  align-self: stretch;
+  min-height: 0;
 }
 
-/* Cards are stacked on one another and moved only by transform, so images stay
-   decoded and every switch stays on the compositor. Slot, depth and opacity
-   come from the component, which is where the wrap-around maths lives. */
-.slide {
+.stage img {
   position: absolute;
-  inset: 0;
-  transform-origin: center center;
-  transition:
-    opacity var(--tbb-dur-slow) var(--tbb-ease),
-    transform var(--tbb-dur-slow) var(--tbb-ease);
-  will-change: opacity, transform;
-}
-
-.slideActive {
-  pointer-events: auto;
-}
-
-/* Covers the whole card, so anywhere on a turned shot pulls it to the centre. */
-.pull {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
+  display: block;
+  width: auto;
 }
 
 /*
- * The card. The wash is the product's own key visual sampled at its head and
- * its foot, the same pair the product page stands its hero on, so the two
- * surfaces show the same product in the same colour.
- *
- * Two shadows, not one: the cast shadow gives the card weight, the tight
- * ambient one keeps its edges off the ground so it reads as a card rather than
- * a crop.
+ * The two neighbours, laid behind and turned a few degrees so the group reads
+ * as a shelf rather than as three of the same photograph. They run off both
+ * edges of the stage on purpose — the field fades them out, which is what says
+ * the row continues.
  */
-.card {
+.ghostLeft,
+.ghostRight {
+  top: 12%;
+  height: 62%;
+  opacity: 0.38;
+  filter: saturate(0.7);
+  transition:
+    opacity var(--tbb-dur) var(--tbb-ease),
+    transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.ghostLeft {
+  left: -14%;
+  transform: rotate(-4deg);
+}
+
+.ghostRight {
+  right: -10%;
+  transform: rotate(4deg);
+}
+
+/*
+ * The field, painted back over the shelf so the neighbours fade out at both
+ * edges of the stage rather than ending at its crop. `--field` is the
+ * section's own colour, named once there and reused here — the gradient and
+ * the ground behind it have to be the same value or the seam shows.
+ */
+.fade {
   position: absolute;
   inset: 0;
-  display: block;
-  overflow: hidden;
-  border-radius: clamp(0.75rem, 1.6vw, 1.35rem);
-  background: linear-gradient(180deg, var(--band, var(--tbb-sand)), var(--band-foot, var(--tbb-sand)));
-  box-shadow:
-    0 36px 56px rgba(26, 19, 17, 0.24),
-    0 2px 10px rgba(26, 19, 17, 0.1);
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    var(--field) 0%,
+    transparent 24%,
+    transparent 82%,
+    var(--field) 100%
+  );
+  pointer-events: none;
 }
 
-/* The wordmark, cut by the card's own left edge the way it is cut by the page
-   edge on a product page. Painted through a mask rather than placed as a
-   picture, because the artwork is white at half opacity and the card needs it
-   quieter than that. */
-.cardMark {
-  position: absolute;
-  left: -7%;
-  top: 11%;
-  width: 84%;
-  aspect-ratio: 1174 / 568;
-  background: rgba(255, 255, 255, 0.55);
-  -webkit-mask-image: url("/images/mark-base.webp");
-  mask-image: url("/images/mark-base.webp");
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
-/* The pouch's group, at the proportion the design measures for it — the drink
-   inside is placed as a share of this box, so a box of another shape would
-   slide it off the pouch. */
-.cardStage {
-  position: absolute;
+/* The pack leads, the drink it makes stands in front and to the right. */
+.pack {
   left: 6%;
-  bottom: 5%;
-  height: 84%;
-  aspect-ratio: var(--pack-width) / var(--pack-height);
+  top: 2%;
+  height: 92%;
+  z-index: 2;
+  filter: drop-shadow(0 24px 40px rgba(80, 30, 40, 0.18));
 }
 
-.shot {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
-  filter: drop-shadow(0 14px 22px rgba(26, 19, 17, 0.18));
+.glass {
+  right: 4%;
+  bottom: 4%;
+  height: 66%;
+  z-index: 3;
+  filter: drop-shadow(0 20px 30px rgba(80, 30, 40, 0.2));
 }
 
-/* The same arithmetic the product hero uses, against the same box — see
-   `PACK_BOX` in `data/product-glass.ts`. */
-.cardGlass {
+/* Soft ellipses rather than one shadow under both: the pack and the glass sit
+   at different depths, and one smear under the pair reads as neither. */
+.groundPack,
+.groundGlass {
   position: absolute;
-  left: calc((var(--glass-left) - var(--pack-left)) / var(--pack-width) * 100%);
-  top: calc((var(--glass-top) - var(--pack-top)) / var(--pack-height) * 100%);
-  width: calc(var(--glass-width) / var(--pack-width) * 100%);
-  height: calc(var(--glass-height) / var(--pack-height) * 100%);
+  z-index: 1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(70, 25, 35, 0.18), rgba(70, 25, 35, 0));
 }
 
-.cardGlass img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
+.groundPack {
+  left: 8%;
+  bottom: 3%;
+  width: 42%;
+  height: 4%;
 }
 
-/* ---- controls ---- */
+.groundGlass {
+  right: 3%;
+  bottom: 2%;
+  width: 32%;
+  height: 3.5%;
+}
 
-/* Under the rail rather than beside it: they belong to the carousel, and a
-   column of them on the right used to read as a third thing in the composition
-   and hold the rail to a narrow middle. */
-.controls {
+/* ---- the foot: counter, tabs, arrows ---- */
+
+.foot {
+  position: absolute;
+  z-index: 3;
+  left: calc(var(--gutter) + 36.1111%);
+  right: var(--gutter);
+  bottom: clamp(3rem, 5vw, 4.5rem);
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: clamp(1rem, 2.4vw, 2rem);
-  color: var(--tbb-ink);
+  gap: clamp(1rem, 1.6667vw, 1.5rem);
+}
+
+.count {
+  flex: none;
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabs {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: clamp(0.75rem, 1.3889vw, 1.25rem);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab,
+.tabActive {
+  appearance: none;
+  flex: none;
+  padding: 0.5rem 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.tab {
+  color: var(--tbb-rd-muted);
+}
+
+.tab:hover,
+.tab:focus-visible {
+  color: var(--tbb-rd-ink);
+}
+
+.tabActive {
+  border-bottom-color: var(--tbb-rd-ink);
+  color: var(--tbb-rd-ink);
+  font-weight: 600;
+}
+
+.tab:focus-visible,
+.tabActive:focus-visible {
+  outline: 2px solid var(--tbb-rd-ink);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Only on a phone — see the note in the component. */
+.progress {
+  display: none;
 }
 
 .arrows {
+  flex: none;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .arrow {
-  width: 2.75rem;
-  height: 2.75rem;
+  appearance: none;
+  display: inline-flex;
+  width: clamp(2.75rem, 3.6111vw, 3.25rem);
+  height: clamp(2.75rem, 3.6111vw, 3.25rem);
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #cfcbc4;
   border-radius: 999px;
-  border: 1px solid currentColor;
-  background: transparent;
-  color: inherit;
-  opacity: 0.65;
-  display: inline-grid;
-  place-items: center;
+  background: none;
+  color: var(--tbb-rd-ink);
   cursor: pointer;
   transition:
-    background var(--tbb-dur-fast) var(--tbb-ease),
-    color var(--tbb-dur-fast) var(--tbb-ease),
-    opacity var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .arrow svg {
-  width: 16px;
-  height: 16px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
-.arrow:hover {
-  background: currentColor;
-  opacity: 1;
-  transform: translate3d(0, -2px, 0);
-}
-
-/* The glyph has to invert against the filled pill, and the fill is
-   currentColor, so the icon takes the ground's own colour. */
-.arrow:hover svg {
-  color: color-mix(in srgb, var(--band, var(--tbb-sand)) 30%, var(--tbb-paper));
+.arrow:hover,
+.arrow:focus-visible {
+  border-color: var(--tbb-rd-ink);
 }
 
 .arrow:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
+  outline: 2px solid var(--tbb-rd-ink);
+  outline-offset: 2px;
 }
 
-/* A row of names with the active one underlined, rather than a stack of labels
-   with a growing rule. Reading across matches the way the rail itself moves. */
-.dots {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: clamp(0.6rem, 1.4vw, 1.1rem);
-}
+/* ---- narrower than the design's own frame ---- */
 
-.dot {
-  appearance: none;
-  border: 0;
-  background: none;
-  padding: 0.35rem 0;
-  cursor: pointer;
-  display: grid;
-  justify-items: center;
-  row-gap: 0.4rem;
-  color: inherit;
-  opacity: 0.45;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  white-space: nowrap;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.dotLine {
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.dot:hover,
-.dotActive {
-  opacity: 1;
-}
-
-.dotActive .dotLine {
-  transform: scaleX(1);
-}
-
-@media (max-width: 1023px) {
-  /* Below the desktop grid the composition is rebuilt, not squeezed: the rail
-     takes the top of the frame with its controls under it, and the copy follows
-     as an ordinary block. */
-  .section {
-    min-height: 0;
-    padding: var(--tbb-section) 0 clamp(3rem, 8vw, 5rem);
+@media (max-width: 68.6875rem) {
+  .inner {
+    grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
+    min-height: 44rem;
   }
 
+  .foot {
+    left: calc(var(--gutter) + 40%);
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  /*
+   * 9d: tabs, then the product, the progress bar, the name and the price, the
+   * sentence, the button and the arrows. The block is exactly as tall as its
+   * content — the desktop band's fixed height would be empty space here.
+   *
+   *  on the foot is what lets those five pieces be
+   * ordered independently: the tabs belong at the top of the block and the
+   * arrows at the bottom, and they are siblings in one row on a desktop.
+   */
   .inner {
     grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2rem, 6vw, 3rem);
+    min-height: 0;
+    padding: 2rem 0 1.75rem;
+    row-gap: 0;
   }
 
-  .showcase {
-    grid-row: 1;
+  .foot {
+    display: contents;
+  }
+
+  .tabs {
+    order: 1;
+    padding-inline: var(--gutter);
   }
 
   .stage {
-    width: min(100%, 22rem);
+    order: 2;
+    height: 25rem;
+    margin-top: 0.5rem;
+  }
+
+  .progress {
+    order: 3;
+    display: flex;
+    gap: 0.375rem;
+    margin: 0.75rem 0 1.5rem;
+    padding-inline: var(--gutter);
   }
 
   .copy {
-    grid-row: 2;
-    max-width: 46ch;
+    order: 4;
+    padding-inline: var(--gutter);
   }
 
-  .dotLabel {
+  .arrows {
+    order: 5;
+    margin-top: 1rem;
+    padding-inline: var(--gutter);
+  }
+
+  .count {
     display: none;
   }
 
-  .dot {
-    width: 1.75rem;
+  .pack {
+    left: 3%;
+    top: 3%;
+    height: 92%;
   }
 
-  .dotLine {
-    transform: scaleX(0.6);
-    opacity: 0.5;
+  .glass {
+    right: 4%;
+    bottom: 3%;
+    height: 69%;
   }
 
-  .dotActive .dotLine {
-    opacity: 1;
+  /* No room for a shelf beside a pack this size, and a ghost cropped to a
+     sliver is a rendering fault rather than a hint. Qualified by `.stage`
+     because `.stage img` above is what sets their `display`, and a bare class
+     cannot outrank a class plus a type selector. */
+  .stage .ghostLeft,
+  .stage .ghostRight,
+  .stage .fade {
+    display: none;
+  }
+
+  .name {
+    font-size: clamp(2.25rem, 11.2821vw, 2.75rem);
+    line-height: 0.88 !important;
+  }
+
+  .description {
+    max-width: none;
+  }
+
+  /* The button takes the width and the price sits at the gutter beside it. */
+  .actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cta {
+    width: 100%;
+    min-height: 3.5rem;
+  }
+
+  .price {
+    align-items: flex-end;
+  }
+
+  .bar,
+  .barOn {
+    flex: 1;
+    height: 2px;
+    border-radius: 1px;
+    transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+  }
+
+  .bar {
+    background: rgba(17, 17, 17, 0.15);
+  }
+
+  .barOn {
+    background: var(--tbb-rd-ink);
+  }
+
+  .arrow {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section,
+  .ghostLeft,
+  .ghostRight {
+    transition: none;
   }
 }

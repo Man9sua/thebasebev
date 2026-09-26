@@ -6,36 +6,91 @@ import { BLOG_POSTS } from "@/data/blog";
 import styles from "./BlogCarousel.module.css";
 
 /**
- * Horizontal editorial rail.
+ * Guides and tools — the redesign's 11a / 11b.
  *
- * Built on a native `overflow-x` scroller with snap points rather than a
- * transform-driven track. Trackpad, touch, keyboard, scrollbar and browser
- * find-on-page all keep working, and — importantly — a vertical wheel over the
- * rail still scrolls the page instead of being captured.
+ * A horizontal rail of cards under one display heading, with "All resources"
+ * and a pair of arrows opposite it. Built on a native `overflow-x` scroller
+ * with snap points rather than a transform-driven track, so trackpad, touch,
+ * keyboard, scrollbar and browser find-on-page all keep working — and,
+ * importantly, a vertical wheel over the rail still scrolls the page instead
+ * of being captured.
  *
  * Drag-to-scroll is layered on top for mouse users, and is careful to let a
  * click through when the pointer barely moved.
  *
- * It reads the blog now. When this section was first built the feed fetched
- * nothing — `/resources/blog` rendered zero posts — so the rail was seeded from
- * `data/posts.ts`, five existing pages standing in for articles, with a note
- * saying to repoint it the day real posts arrived. They have: the production
- * feed is imported into `data/blog.ts`, so the rail carries actual articles
- * with their own covers, topics and publication dates, and the stand-in is not
- * restored with the rest of this page.
+ * **What the rail carries.** The document names five: the wholesale strategy
+ * guide, the R&D page, the cost calculator, private label and the glossary —
+ * four services and tools, and one reference. They are all real routes, and
+ * they are what someone weighing up a supplier opens. The newest article from
+ * the imported blog closes the row, so the rail is not only evergreen pages;
+ * "All resources" is the way to the other forty-five.
+ *
+ * The site review would rather the services were their own block — see its
+ * note about mixing services with content. This follows the document, which
+ * is the newer of the two, and puts them in one rail called what it is.
  */
 
-/** As many as a rail can hold before it stops being a rail. */
-const RAIL_LENGTH = 8;
+type Entry = {
+  href: string;
+  category: string;
+  title: string;
+  summary: string;
+  image: string | null;
+};
 
-const ENTRIES = BLOG_POSTS.slice(0, RAIL_LENGTH).map((post) => ({
+const GUIDES: Entry[] = [
+  {
+    href: "/wholesale-strategy",
+    category: "Market",
+    title: "Wholesale Strategy and Market Insights",
+    summary:
+      "Wholesale beverage distribution in the GCC: margins, MOQ, supplier checklist and the mistakes that cost money.",
+    image: "/images/tild3935-6337-4533-a633-643534346539__photo-1590497008432-.jpg",
+  },
+  {
+    href: "/rnd",
+    category: "R&D",
+    title: "Beverage R&D and Product Development",
+    summary:
+      "Custom beverage R&D in Dubai: recipe development, flavour matching and pilot batches for HoReCa and private label.",
+    image: "/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg",
+  },
+  {
+    href: "/resources/tools",
+    category: "Tools",
+    title: "HoReCa Cost Calculator",
+    summary:
+      "Estimate ingredient costs, portion pricing and margins for cafés and restaurants.",
+    image: "/images/tild3232-3361-4536-b535-383330393461__photo-1732365898359-.jpg",
+  },
+  {
+    href: "/private-labeling",
+    category: "Service",
+    title: "Private Label & Wholesale Premixes",
+    summary:
+      "Beverage premixes under your own brand: sixteen product lines, custom development and contract manufacturing.",
+    image: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
+  },
+  {
+    href: "/resources/glossary",
+    category: "Reference",
+    title: "Beverage Glossary",
+    summary:
+      "Definitions of key beverage and HoReCa supply terms, from base powders to garnishes.",
+    image: "/images/tild3161-3138-4736-b333-353231303039__photo-1447933601403-.jpg",
+  },
+];
+
+/** The newest article, so the rail is not five evergreen pages on their own. */
+const LATEST: Entry[] = BLOG_POSTS.slice(0, 1).map((post) => ({
   href: post.path,
   category: post.topic.label,
   title: post.title,
   summary: post.excerpt,
   image: post.cover?.src ?? null,
-  date: post.published,
 }));
+
+const ENTRIES: Entry[] = [...GUIDES, ...LATEST];
 
 /** Beyond this, a press counts as a drag and the click is suppressed. */
 const DRAG_THRESHOLD_PX = 6;
@@ -173,32 +228,34 @@ export function BlogCarousel() {
   return (
     <section className={styles.section} aria-labelledby="reading-title">
       <div className={styles.head}>
-        <div>
-          <span className="tbb-label">Reading</span>
-          <h2 id="reading-title" className={styles.title}>
-            Guides, tools and market notes
-          </h2>
-        </div>
+        <h2 id="reading-title" className={styles.title}>
+          Guides and tools
+        </h2>
 
         <div className={styles.controls}>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => scrollByCard(-1)}
-            disabled={atStart}
-            aria-label="Scroll left"
-          >
-            <Arrow back />
-          </button>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => scrollByCard(1)}
-            disabled={atEnd}
-            aria-label="Scroll right"
-          >
-            <Arrow />
-          </button>
+          <SiteLink href="/resources" className={styles.all}>
+            All resources
+          </SiteLink>
+          <div className={styles.arrows}>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => scrollByCard(-1)}
+              disabled={atStart}
+              aria-label="Scroll left"
+            >
+              <Arrow back />
+            </button>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => scrollByCard(1)}
+              disabled={atEnd}
+              aria-label="Scroll right"
+            >
+              <Arrow />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -219,16 +276,10 @@ export function BlogCarousel() {
         onClickCapture={onClickCapture}
       >
         {ENTRIES.map((entry) => (
-          <SiteLink
-            key={entry.href}
-            href={entry.href}
-            className={styles.card}
-            data-card
-          >
+          <SiteLink key={entry.href} href={entry.href} className={styles.card} data-card>
             <span className={styles.frame}>
-              {/* A post without a cover keeps the scrim and the type, which is
-                  the card's whole structure — only the photograph is missing.
-                  eslint-disable-next-line @next/next/no-img-element */}
+              {/* An entry without a picture keeps the frame, which is what holds
+                  the row's rhythm — only the photograph is missing. */}
               {entry.image && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -240,24 +291,12 @@ export function BlogCarousel() {
                   draggable={false}
                 />
               )}
-              <span className={styles.scrim} aria-hidden="true" />
-              <span className={styles.overlay}>
-                <span className={`tbb-label ${styles.category}`}>{entry.category}</span>
-                <span className={styles.cardTitle}>{entry.title}</span>
-              </span>
             </span>
 
-            <span className={styles.summary}>
-              {entry.summary}
-              {entry.date && (
-                <time className={`tbb-label ${styles.date}`} dateTime={entry.date}>
-                  {new Date(entry.date).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </time>
-              )}
+            <span className={styles.copy}>
+              <span className={styles.category}>{entry.category}</span>
+              <span className={styles.cardTitle}>{entry.title}</span>
+              <span className={styles.summary}>{entry.summary}</span>
             </span>
           </SiteLink>
         ))}

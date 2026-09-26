@@ -1,85 +1,136 @@
+/**
+ * Guides and tools — 11a / 11b of the redesign.
+ *
+ * 120 of vertical padding, the heading at 80 with "All resources" and the
+ * arrows opposite it, then a rail of 300-wide cards: a 375-tall frame, then the
+ * category, the title and the summary under it.
+ *
+ * The rail begins at the page gutter and runs off the right edge on purpose —
+ * a row that ends inside the measure looks finished, and this one is not.
+ */
+
 .section {
-  background: var(--tbb-paper);
-  padding: var(--tbb-section) 0;
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+
+  background: #fff;
+  padding: clamp(3.5rem, 8.3333vw, 7.5rem) 0;
+  font-family: var(--tbb-font-sans);
   overflow: clip;
 }
 
 .head {
-  width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto clamp(2rem, 5vw, 3.5rem);
-  padding: 0 var(--tbb-gutter);
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
+  padding-inline: var(--gutter);
 }
 
 .title {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  line-height: 1.04;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-  margin-top: clamp(0.5rem, 1.5vw, 1rem);
+  /* 80 at 1440. */
+  font-size: clamp(2.25rem, 5.5556vw, 5rem);
+  font-weight: 900 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink-deep);
 }
 
 .controls {
-  flex: none;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 1.6667vw, 1.5rem);
+}
+
+.all {
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--tbb-rd-ink);
+  color: var(--tbb-rd-ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.all:hover,
+.all:focus-visible {
+  color: var(--tbb-rd-red);
+  border-bottom-color: var(--tbb-rd-red);
+}
+
+.arrows {
   display: flex;
   gap: 0.5rem;
 }
 
 .arrow {
-  width: 3rem;
-  height: 3rem;
+  appearance: none;
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(17, 17, 17, 0.25);
   border-radius: 999px;
-  border: 1px solid rgba(26, 19, 17, 0.28);
-  background: transparent;
-  color: var(--tbb-ink);
-  display: inline-grid;
-  place-items: center;
+  background: none;
+  color: var(--tbb-rd-ink);
   cursor: pointer;
   transition:
-    background var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease),
-    opacity var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+    opacity var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .arrow svg {
-  width: 16px;
-  height: 16px;
-}
-
-.arrow:hover:not(:disabled) {
-  background: var(--tbb-ink);
-  color: var(--tbb-paper);
-  transform: translate3d(0, -2px, 0);
+  width: 1rem;
+  height: 1rem;
 }
 
 .arrow:disabled {
-  opacity: 0.28;
+  border-color: rgba(17, 17, 17, 0.12);
+  color: var(--tbb-rd-on-ink-soft);
   cursor: default;
 }
 
+.arrow:not(:disabled):hover,
 .arrow:focus-visible {
-  outline: 2px solid var(--tbb-ink);
-  outline-offset: 3px;
+  border-color: var(--tbb-rd-ink);
 }
 
-/* A real horizontal scroller, not a hijacked page scroll: native overflow with
-   snap points, so trackpads, touch, keyboard and the scrollbar all work and
-   vertical scrolling over it still moves the page. */
+.arrow:focus-visible {
+  outline: 2px solid var(--tbb-rd-ink);
+  outline-offset: 2px;
+}
+
+/* ---- the rail ---- */
+
+/*
+ * Aligned to the page's measure on the left and bleeding past it on the right.
+ * `calc` rather than a wrapper: the rail has to be the scroller itself for
+ * native snapping, and a padded parent would clip the overflow instead.
+ */
 .rail {
   display: flex;
-  gap: clamp(1rem, 2vw, 1.75rem);
+  gap: 1.5rem;
+  margin-top: clamp(2rem, 3.8889vw, 3.5rem);
+  padding-inline: max(var(--gutter), calc((100% - 78rem) / 2 + var(--gutter)));
+  /* The snapport has to start where the content does, or the first card snaps
+     its left edge to the padding box and the rail opens already scrolled by
+     the width of the gutter. */
+  scroll-padding-inline: max(var(--gutter), calc((100% - 78rem) / 2 + var(--gutter)));
   overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: var(--tbb-gutter);
-  padding: 0 var(--tbb-gutter) 1rem;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
+  overscroll-behavior-x: contain;
   cursor: grab;
 }
 
@@ -94,140 +145,122 @@
 }
 
 .card {
-  flex: 0 0 auto;
-  width: clamp(15rem, 24vw, 22rem);
-  scroll-snap-align: start;
-  text-decoration: none;
-  color: var(--tbb-ink);
+  flex: none;
+  width: 18.75rem;
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
+  color: var(--tbb-rd-ink);
+  text-decoration: none;
+  scroll-snap-align: start;
 }
 
 .frame {
-  display: block;
   position: relative;
-  aspect-ratio: 1 / 1.34;
+  display: block;
+  /* 300 x 375. */
+  aspect-ratio: 300 / 375;
+  border-radius: 1.25rem;
   overflow: hidden;
-  /* The arch is the one shape borrowed from the reference — it is what makes a
-     rail of photographs read as editorial rather than as a filmstrip. */
-  border-radius: 999px 999px 3px 3px;
-  background: var(--tbb-sand);
+  background: var(--tbb-rd-card);
 }
 
 .media {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.03);
-  transition: transform var(--tbb-dur-slow) var(--tbb-ease);
-}
-
-.card:hover .media,
-.card:focus-visible .media {
-  transform: scale(1.09);
-}
-
-.scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(18, 18, 18, 0.62) 0%,
-    rgba(18, 18, 18, 0.12) 46%,
-    rgba(18, 18, 18, 0) 70%
-  );
-}
-
-.overlay {
   display: block;
-  position: absolute;
-  left: clamp(1rem, 1.8vw, 1.5rem);
-  right: clamp(1rem, 1.8vw, 1.5rem);
-  bottom: clamp(1.1rem, 2vw, 1.6rem);
-  color: var(--tbb-paper);
+  transition: transform var(--tbb-dur) var(--tbb-ease);
 }
 
-/* Both of these are spans (they sit inside an anchor), so they need to be told
-   to stack — otherwise the label and the title run together on one line. */
+.card:hover .media {
+  transform: scale(1.04);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .category {
-  display: block;
-  color: rgba(253, 250, 245, 0.75);
+  color: var(--tbb-rd-dim);
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .cardTitle {
-  display: block;
-  margin-top: 0.5rem;
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
-  line-height: 1.18;
-  font-weight: 500;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-wrap: balance;
 }
 
 .card:hover .cardTitle,
 .card:focus-visible .cardTitle {
-  transform: translate3d(0, -3px, 0);
+  color: var(--tbb-rd-red);
 }
 
 .summary {
-  display: block;
-  margin-top: clamp(0.75rem, 1.4vw, 1.1rem);
-  color: var(--tbb-ink-soft);
+  color: var(--tbb-rd-body-soft);
   font-size: 0.9375rem;
-  line-height: 1.5;
-}
-
-.date {
-  display: block;
-  margin-top: 0.5rem;
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--tbb-ink);
-  outline-offset: 5px;
-  border-radius: 3px;
+  outline: 2px solid var(--tbb-rd-ink);
+  outline-offset: 4px;
+  border-radius: 1.25rem;
 }
 
-/* Progress rail mirrors how far the list has been scrolled. */
+/* ---- how far along the rail is ---- */
+
 .progress {
   width: 100%;
-  max-width: var(--tbb-max);
-  margin: clamp(1.25rem, 3vw, 2rem) auto 0;
-  padding: 0 var(--tbb-gutter);
+  max-width: 78rem;
+  margin: clamp(1.5rem, 2.7778vw, 2.5rem) auto 0;
+  padding-inline: var(--gutter);
 }
 
 .track {
   display: block;
-  position: relative;
-  width: 100%;
-  height: 1px;
-  background: var(--tbb-line);
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(17, 17, 17, 0.1);
+  overflow: hidden;
 }
 
+/* Full width and scaled down, so the thumb is the share of the row on screen —
+   see `readPosition`, which writes the transform on every scroll frame. */
 .thumb {
   display: block;
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 100%;
-  height: 1px;
-  background: var(--tbb-ink);
-  transform-origin: left center;
-  will-change: transform;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--tbb-rd-ink);
+  transform-origin: 0 50%;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 47.9375rem) {
   .head {
-    flex-direction: column;
     align-items: flex-start;
-    gap: 1.25rem;
-  }
-
-  /* Arrows are redundant next to a native swipe. */
-  .controls {
-    display: none;
+    flex-direction: column;
   }
 
   .card {
-    width: min(78vw, 20rem);
+    width: 15.625rem;
+  }
+
+  /* No pointer to press, and the tabs of the rail are the finger. */
+  .arrows {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .card:hover .media {
+    transition: none;
+    transform: none;
   }
 }

@@ -127,13 +127,11 @@ try {
     "header: original BASE logo asset missing",
   );
 
+  // Bestsellers is a tablist now, not a five-slide carousel: one product on a
+  // field of its own colour, and a row of five names under it.
   check(
-    (await page.locator(`${BESTSELLERS} [aria-roledescription='slide']`).count()) === 5,
-    "home: expected five bestseller slides",
-  );
-  check(
-    (await page.locator(`${BESTSELLERS} [aria-current]`).count()) === 5,
-    "home: expected five bestseller dots",
+    (await page.locator(`${BESTSELLERS} [role='tab']`).count()) === 5,
+    "home: expected five bestseller tabs",
   );
   check(
     (await page.locator("h1").count()) === 1,
@@ -151,32 +149,32 @@ try {
   await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
   await page.locator(BESTSELLERS).scrollIntoViewIfNeeded();
   await page.waitForTimeout(300);
+  const firstBestseller = await page.locator(`${BESTSELLERS} h2`).textContent();
   await page.locator(`${BESTSELLERS} [aria-label='Next product']`).click();
   await page.waitForTimeout(900);
   check(
-    (await page
-      .locator(
-        `${BESTSELLERS} .is-active, ${BESTSELLERS} [aria-hidden='false'][aria-roledescription='slide']`,
-      )
-      .first()
-      .getAttribute("aria-label"))?.startsWith("2 of 5"),
-    "home: next arrow did not activate slide two",
+    (await page.locator(`${BESTSELLERS} h2`).textContent()) !== firstBestseller,
+    "home: next arrow did not change the product",
+  );
+  check(
+    (await page.locator(`${BESTSELLERS} [role='tab'][aria-selected='true']`).count()) === 1,
+    "home: bestsellers lost its one live tab",
   );
 
-  // Horizontal reading rail: a native overflow scroller, so the arrows move it
-  // and a vertical wheel over it must still scroll the page. It reads the
-  // imported blog now, so its cards are articles rather than the five standing
-  // pages it was seeded with.
+  // Guides and tools: a native overflow scroller, so the arrows move it and a
+  // vertical wheel over it must still scroll the page. It carries the five
+  // pages the design names, with the newest article behind them.
   const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
   await rail.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
   check(
-    (await rail.locator("[data-card]").count()) === 8,
-    "reading: expected eight cards on the rail",
+    (await rail.locator("[data-card]").count()) === 6,
+    "reading: expected six cards on the rail",
   );
   check(
-    (await rail.locator("a[href^='/tpost/']").count()) === 8,
-    "reading: the rail is not pointing at blog articles",
+    (await rail.locator("a[href='/wholesale-strategy']").count()) === 1 &&
+      (await rail.locator("a[href^='/tpost/']").count()) === 1,
+    "reading: the rail lost either its guides or its article",
   );
   check(
     await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),

@@ -93,18 +93,19 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className={styles.columns}>
-            {COLUMNS.map((column) => (
-              <div key={column.title} className={styles.column}>
-                <span className={styles.columnTitle}>{column.title}</span>
-                {column.links.map((item) => (
-                  <SiteLink key={item.href} className={styles.link} href={item.href}>
-                    {item.label}
-                  </SiteLink>
-                ))}
-              </div>
-            ))}
-          </div>
+          {/* Direct children of the top grid, not wrapped: the design sets
+              three 200px columns beside the fluid first one, and a wrapper
+              would take one cell and then have to re-divide it. */}
+          {COLUMNS.map((column) => (
+            <div key={column.title} className={styles.column}>
+              <span className={styles.columnTitle}>{column.title}</span>
+              {column.links.map((item) => (
+                <SiteLink key={item.href} className={styles.link} href={item.href}>
+                  {item.label}
+                </SiteLink>
+              ))}
+            </div>
+          ))}
         </div>
 
         <div className={styles.legal}>
