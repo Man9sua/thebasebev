@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import { Partner } from "@/components/home/Partner";
 import { productDesktop } from "@/data/product-desktop";
 import { productMargins } from "@/data/product-margins";
 import { productMobile } from "@/data/product-mobile";
@@ -209,7 +208,6 @@ export function ProductDetails({ product }: { product: Product }) {
         </section>
       )}
 
-      <Partner productName={product.name} />
 
       {faq.length > 0 && (
         <section id="faq" className={styles.faq} aria-labelledby="product-faq-title">
