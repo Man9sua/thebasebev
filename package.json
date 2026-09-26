@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build:hero-css": "tailwindcss -c tailwind.hero.config.cjs -i src/styles/hero-tailwind.css -o public/css/tbs-tailwind.css --minify",
     "build": "npm run build:hero-css && next build",
     "start": "next start",
