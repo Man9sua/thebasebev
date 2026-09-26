@@ -1,10 +1,6 @@
 /**
  * The shop's sort control — see `SortMenu.tsx` for why it is not a `<select>`.
  *
- * Painted for the catalogue redesign's ink ground, from the `--tbb-rd-*` block
- * in `design-tokens.css`. The shop is its only caller, so the palette lives
- * here rather than as a variant the page has to ask for.
- *
  * The list is always in the document and always laid out; open and closed are a
  * matter of opacity, a few pixels of travel and `visibility`. That way it can
  * animate out as well as in, which a list that is only mounted while open
@@ -26,7 +22,7 @@
 }
 
 .label {
-  color: var(--tbb-rd-muted);
+  color: var(--tbb-muted);
   font-size: var(--tbb-text-label);
   font-weight: 500;
   letter-spacing: var(--tbb-tracking-label);
@@ -40,10 +36,10 @@
   align-items: center;
   padding: 0.35rem 0.15rem;
   border: 0;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--tbb-line);
   border-radius: 0;
   background: transparent;
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-ink);
   font: 500 var(--tbb-text-label) / 1 var(--tbb-font-sans);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
@@ -53,15 +49,15 @@
 }
 
 .trigger:hover {
-  border-bottom-color: var(--tbb-rd-paper);
+  border-bottom-color: var(--tbb-ink);
 }
 
 /* Ink, not the accent: a red ring around a control anyone can click reads as a
    validation error rather than as focus. */
 .trigger:focus-visible {
-  outline: 2px solid var(--tbb-rd-paper);
+  outline: 2px solid var(--tbb-ink);
   outline-offset: 3px;
-  border-bottom-color: var(--tbb-rd-paper);
+  border-bottom-color: var(--tbb-ink);
 }
 
 .chevron {
@@ -84,10 +80,10 @@
   margin: 0;
   padding: 0.4rem;
   list-style: none;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--tbb-line);
   border-radius: 0.75rem;
-  background: #171717;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  background: var(--tbb-paper);
+  box-shadow: 0 18px 40px rgba(26, 19, 17, 0.16);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-0.35rem);
@@ -114,7 +110,7 @@
 .option {
   padding: 0.62rem 0.75rem;
   border-radius: 0.5rem;
-  color: var(--tbb-rd-on-ink);
+  color: var(--tbb-ink-soft);
   font-size: var(--tbb-text-label);
   font-weight: 500;
   letter-spacing: var(--tbb-tracking-label);
@@ -139,12 +135,12 @@
 }
 
 .option[data-active="true"] {
-  background: #242424;
-  color: var(--tbb-rd-paper);
+  background: var(--tbb-paper-warm);
+  color: var(--tbb-ink);
 }
 
 .option[aria-selected="true"] {
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-ink);
   font-weight: 600;
 }
 

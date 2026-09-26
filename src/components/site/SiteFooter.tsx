@@ -1,5 +1,5 @@
 import { CookieSettingsButton } from "@/components/consent/CookieSettingsButton";
-import { BrandLogo } from "@/components/site/BrandLogo";
+import { BrandMarkStacked } from "@/components/site/BrandMarkStacked";
 import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY, FOOTER_LINKS, SOCIAL_LINKS } from "@/lib/site-config";
 import styles from "./SiteFooter.module.css";
@@ -141,7 +141,7 @@ export function SiteFooter() {
         </div>
 
         <div className={styles.wordmarkWrap} aria-hidden="true">
-          <BrandLogo className={styles.wordmark} />
+          <BrandMarkStacked className={styles.wordmark} />
         </div>
       </div>
     </footer>

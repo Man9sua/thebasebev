@@ -188,27 +188,26 @@
 /* --- the closing mark --- */
 
 .wordmarkWrap {
-  /* Full-bleed past the page gutter so the mark can reach the edges. */
-  margin: 0 calc(clamp(1.25rem, 6.6667vw, 6rem) * -1);
-  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(0.5rem, 1.5vw, 1.25rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2rem, 4vw, 3.5rem);
   overflow: clip;
 }
 
 /*
- * The lockup as a watermark, which is what the redesign draws.
+ * The lockup as a watermark, standing at the left on the page's own gutter —
+ * `BrandMarkStacked`, which breaks BASE across two rows so the mark is a block
+ * rather than a band.
  *
- * Two shades off the ground rather than paper on brand red: at this width the
- * red block is 700px of saturated colour under a page that has just finished,
- * and the mark is meant to be the last quiet thing on it, not the loudest. The
- * variables are `BrandLogo`'s own, so this recolours the block and the letters
- * without a second asset; `currentColor` carries the small `the`.
+ * Two shades off the ground rather than paper on brand red: it is the last
+ * quiet thing on the page, not the loudest. The variables are the mark's own,
+ * so this recolours the block and the letters without a second asset, and
+ * `currentColor` carries the small `the`.
  */
 .wordmark {
   --tbb-logo-block: #1b1b1b;
   --tbb-logo-letter: #0e0e0e;
 
   display: block;
-  width: 100%;
+  width: clamp(9rem, 22vw, 20rem);
   height: auto;
   color: #1b1b1b;
   user-select: none;
@@ -236,9 +235,15 @@
     grid-column: span 2;
   }
 
+  /* Stacked, and in the design's own order: the accounts, then the legal
+     links, then the copyright last. */
   .legal {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .social {
+    order: -2;
   }
 
   .legalLinks {

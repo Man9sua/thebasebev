@@ -233,28 +233,38 @@ try {
     "home: the brand film never attached its source",
   );
 
-  // The footer closes on the brand lockup — it used to be the word BASE set in
-  // the display face, and the check that it fits stays: the word was sized in
-  // `vw`, which includes the scrollbar, and its final E ran off the right edge
-  // on desktop only. The mark is capped at 44rem, so the share it takes of a
-  // wide viewport is about a half rather than the word's four fifths.
+  /*
+   * The footer closes on the brand mark. The check that it fits stays — it
+   * began as the word BASE sized in `vw`, which includes the scrollbar, and its
+   * final E ran off the right edge on desktop only.
+   *
+   * What it is has changed twice. It is now `BrandMarkStacked`, a portrait
+   * block with BASE broken across two rows, standing at the page gutter rather
+   * than run to the full width; so the share of the viewport it takes is no
+   * longer the thing to assert. Its height is: a watermark that collapses to a
+   * few pixels is the failure this replaces.
+   */
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(900);
   const closingMark = await page.evaluate(() => {
-    const el = document.querySelector("footer svg[data-brand-logo]");
+    const el = document.querySelector('footer svg[data-brand-mark="stacked"]');
     if (!el) return null;
     const box = el.getBoundingClientRect();
-    const cw = document.documentElement.clientWidth;
-    return { left: box.left, right: box.right, cw, share: box.width / cw };
+    return {
+      left: box.left,
+      right: box.right,
+      height: box.height,
+      cw: document.documentElement.clientWidth,
+    };
   });
-  check(!!closingMark, "footer: brand lockup not found");
+  check(!!closingMark, "footer: stacked brand mark not found");
   check(
     !!closingMark && closingMark.left >= -2 && closingMark.right <= closingMark.cw + 2,
-    `footer: brand lockup overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
+    `footer: brand mark overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
   );
   check(
-    !!closingMark && closingMark.share > 0.4,
-    `footer: brand lockup should close the page at scale (share ${closingMark?.share?.toFixed(2)})`,
+    !!closingMark && closingMark.height > 160,
+    `footer: brand mark should close the page at scale (height ${Math.round(closingMark?.height ?? 0)})`,
   );
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),

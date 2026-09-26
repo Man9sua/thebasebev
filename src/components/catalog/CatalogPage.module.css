@@ -1,11 +1,15 @@
 /**
  * The shop — the catalogue redesign.
  *
- * Ink ground, paper type, and one colour per plate taken from the product's own
- * pack. Laid out as four ranges under their own headings rather than one run of
+ * Paper ground, ink type, and one colour per plate — sixteen pouches each on a
+ * field sampled from its own banner, which is the only colour on the page.
+ * Laid out as four ranges under their own headings rather than one run of
  * sixteen tiles: the range is the thing being sold, and a flat grid says nowhere
  * that it is four of them. Sorting, filtering or searching collapses the
  * sections, because all three are questions about the whole shelf.
+ *
+ * Only the closing banner and the running total are ink, and they are ink
+ * because they are the two things on the page that are not the shelf.
  *
  * The rest is built around getting to a product and then ordering more than one
  * of it: the filter row sticks under the site header, the card turns into a
@@ -25,8 +29,8 @@
 
   min-height: 100vh;
   padding-bottom: var(--pad-y);
-  background: var(--tbb-rd-ink);
-  color: var(--tbb-rd-paper);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
   font-family: var(--tbb-font-sans);
 }
 
@@ -64,7 +68,7 @@
   line-height: 0.86 !important;
   letter-spacing: -0.02em !important;
   text-transform: uppercase;
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
 }
 
 /* Wide enough that the two sentences the design writes take one line each —
@@ -73,7 +77,7 @@
 .intro .lede {
   margin: 0 !important;
   max-width: 44ch;
-  color: var(--tbb-rd-on-ink-soft);
+  color: var(--tbb-rd-body);
   font-size: clamp(0.9375rem, 1.1111vw, 1.0625rem);
   line-height: 1.55 !important;
 }
@@ -104,18 +108,18 @@
   box-sizing: border-box;
   min-height: 3.25rem;
   padding: 0 1.25rem;
-  border: 1px solid #262626;
+  border: 1px solid var(--tbb-rd-field-line);
   border-radius: 999px;
-  background: #171717;
-  color: var(--tbb-rd-dim);
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-muted);
   transition:
     border-color var(--tbb-dur-fast) var(--tbb-ease),
     background-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .search:focus-within {
-  border-color: #3a3a3a;
-  background: #1c1c1c;
+  border-color: var(--tbb-rd-ink);
+  background: #fff;
 }
 
 .search svg {
@@ -131,18 +135,16 @@
   border: 0;
   outline: none;
   background: none;
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
   font-family: inherit;
   font-size: 0.9375rem;
 }
 
 .search input::placeholder {
-  color: var(--tbb-rd-muted);
+  color: var(--tbb-rd-placeholder);
 }
 
-/* The native clear affordance draws a black glyph on a dark field. */
 .search input::-webkit-search-cancel-button {
-  filter: invert(1);
   opacity: 0.5;
   cursor: pointer;
 }
@@ -154,9 +156,9 @@
   top: var(--tbb-header-h);
   z-index: 20;
   padding-block: 0.75rem;
-  background: rgba(14, 14, 14, 0.92);
+  background: color-mix(in srgb, var(--tbb-rd-paper) 92%, transparent);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid #1e1e1e;
+  border-bottom: 1px solid var(--tbb-rd-field-line);
 }
 
 .barInner {
@@ -208,11 +210,11 @@
 
 .filter:hover,
 .filter:focus-visible {
-  color: var(--tbb-rd-on-ink);
+  color: var(--tbb-rd-body);
 }
 
 .filterActive {
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
 }
 
 /* The mark travels to the label that was just picked — see `measureRule`. */
@@ -268,7 +270,7 @@
   line-height: 1.2 !important;
   letter-spacing: 0 !important;
   text-transform: none;
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
 }
 
 .rangeCount {
@@ -285,13 +287,13 @@
 
 .empty {
   padding: clamp(2rem, 5vw, 4rem) var(--gutter);
-  color: var(--tbb-rd-on-ink-soft);
+  color: var(--tbb-rd-body);
   font-size: 1rem;
   line-height: 1.6 !important;
 }
 
 .empty a {
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
   text-decoration: underline;
 }
 
@@ -413,7 +415,7 @@
 }
 
 .name a {
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
   text-decoration: none;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
@@ -433,7 +435,7 @@
 }
 
 .card:hover .learn {
-  color: var(--tbb-rd-on-ink);
+  color: var(--tbb-rd-ink);
 }
 
 .meta {
@@ -451,7 +453,7 @@
 }
 
 .price {
-  color: var(--tbb-rd-on-ink);
+  color: var(--tbb-rd-body);
   font-size: 0.8125rem;
   font-weight: 600;
 }
@@ -474,13 +476,13 @@
   gap: 0.5rem;
   padding: 0.375rem 0.375rem 0.375rem 0.75rem;
   border-radius: 999px;
-  background: #1a1a1a;
+  background: var(--tbb-rd-card);
 }
 
 .lineName {
   min-width: 0;
   overflow: hidden;
-  color: var(--tbb-rd-on-ink);
+  color: var(--tbb-rd-body);
   font-size: 0.8125rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -495,7 +497,7 @@
 
 .lineQuantity {
   min-width: 1.25rem;
-  color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
   font-size: 0.8125rem;
   font-weight: 600;
   text-align: center;
@@ -510,8 +512,8 @@
   justify-content: center;
   border: 0;
   border-radius: 999px;
-  background: #2a2a2a;
-  color: var(--tbb-rd-paper);
+  background: #fff;
+  color: var(--tbb-rd-ink);
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1;
@@ -521,6 +523,7 @@
 
 .step:hover:not(:disabled) {
   background: var(--tbb-rd-red);
+  color: #fff;
 }
 
 .step:disabled {
@@ -544,7 +547,8 @@
   margin-top: clamp(2.5rem, 5vw, 4.5rem);
   padding: clamp(1.75rem, 3.3333vw, 3rem);
   border-radius: clamp(1.25rem, 1.9444vw, 1.75rem);
-  background: #171717;
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
 }
 
 .closeCopy {
@@ -609,11 +613,11 @@
   max-width: calc(100vw - 2rem);
   padding: 0.625rem 0.625rem 0.625rem 1.25rem;
   border-radius: 999px;
-  background: var(--tbb-rd-paper);
-  color: var(--tbb-rd-ink);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
   font-size: 0.875rem;
   font-weight: 600;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
 }
 
 .trayLink {

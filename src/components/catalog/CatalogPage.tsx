@@ -22,8 +22,10 @@ import styles from "./CatalogPage.module.css";
  *
  * What the design changes, and what it deliberately does not:
  *
- * - **Ink, not paper.** The page is the redesign's dark ground, so the tiles
- *   are the only colour on it and the range reads as a range.
+ * - **Paper, and the plates are the only colour on it.** Sixteen pouches, each
+ *   on a field sampled from its own banner, against a page that does nothing.
+ *   The closing banner and the running total are ink, because they are the two
+ *   things here that are not the shelf.
  * - **The card is a tile and a line.** The plate carries the pouch and a "Buy"
  *   pill in its corner; the name, the pouch size, the price and "Learn more"
  *   sit under it on the dark. The name used to be printed inside the frame,
@@ -394,7 +396,7 @@ export function CatalogPage({
   const lines = cart.items.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <main className={styles.page} data-surface="dark">
+    <main className={styles.page}>
       <section className={styles.intro} aria-labelledby="catalog-title">
         <div className={styles.introCopy}>
           <h1 id="catalog-title" className={styles.title}>
