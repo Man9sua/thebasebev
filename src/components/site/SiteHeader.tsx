@@ -38,11 +38,40 @@ function SearchIcon() {
 }
 
 /** `rgb()` / `rgba()` as computed by the browser, to three channels. */
+/**
+ * Any colour a computed style can hand back, in 0–255 channels.
+ *
+ * Two serialisations reach this, and they do not use the same scale. `rgb()`
+ * and `rgba()` count 0–255; `color(srgb 0.96 0.92 0.92)` — which is what a
+ * browser returns for `color-mix(in srgb, …)`, and the Bestsellers band on the
+ * homepage is exactly that — counts 0–1. Read on the wrong scale, a cream wash
+ * arrives as 0.96 of 255, the bar decides the page under it is nearly black,
+ * and it inverts itself on the lightest surface on the site.
+ *
+ * The colourspace keyword is skipped rather than parsed: `rec2020` has digits
+ * in its name, so pulling numbers out of the whole string picks up 2020 as a
+ * channel. Non-sRGB spaces are read as if they were sRGB, which is wrong by a
+ * few percent and irrelevant to a light-or-dark decision.
+ */
+const COLOR_FUNCTION = /^color\(\s*[a-z0-9-]+\s+([^)]*)\)/i;
+const RGB_FUNCTION = /^rgba?\(([^)]*)\)/i;
+
 function parseColor(value: string) {
-  const parts = value.match(/[\d.]+/g);
+  const trimmed = value.trim();
+  const modern = trimmed.match(COLOR_FUNCTION);
+  const legacy = modern ? null : trimmed.match(RGB_FUNCTION);
+  const body = modern?.[1] ?? legacy?.[1];
+  if (!body) return null;
+
+  const parts = body.match(/-?\d*\.?\d+(?:e[-+]?\d+)?%?/gi);
   if (!parts || parts.length < 3) return null;
-  const [red, green, blue] = parts.map(Number);
-  const alpha = parts.length > 3 ? Number(parts[3]) : 1;
+
+  const scale = modern ? 255 : 1;
+  const [red, green, blue] = parts.slice(0, 3).map((part) =>
+    part.endsWith("%") ? (Number.parseFloat(part) / 100) * 255 : Number(part) * scale,
+  );
+  const alpha = parts.length > 3 ? Number.parseFloat(parts[3]) : 1;
+
   return alpha < 0.5 ? null : { red, green, blue };
 }
 
@@ -57,8 +86,8 @@ function isDarkColor({ red, green, blue }: { red: number; green: number; blue: n
  * `background-color` is the usual answer, but several surfaces here are
  * gradients — the distributors hero, the Blog's own head — and a gradient
  * leaves `background-color` transparent. Computed styles normalise gradient
- * stops to `rgb()`, so the first stop is readable straight out of the image
- * string, and the first stop is the end of the gradient the bar sits on.
+ * stops to a colour function, so the first stop is readable straight out of the
+ * image string, and the first stop is the end of the gradient the bar sits on.
  */
 function paintedColor(style: CSSStyleDeclaration) {
   const background = parseColor(style.backgroundColor);
@@ -66,7 +95,7 @@ function paintedColor(style: CSSStyleDeclaration) {
 
   const image = style.backgroundImage;
   if (image && image.includes("gradient")) {
-    const stop = image.match(/rgba?\([^)]*\)/);
+    const stop = image.match(/(?:rgba?|color)\([^)]*\)/i);
     if (stop) return parseColor(stop[0]);
   }
 
@@ -210,7 +239,11 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
       frame = 0;
       const color = surfaceUnderBar(barRef.current?.offsetHeight ?? 0);
       if (!color) return;
-      setSurface(`rgb(${color.red}, ${color.green}, ${color.blue})`);
+      // Rounded because a `color-mix()` surface parses to fractional channels,
+      // and this string ends up in the DOM as an inline custom property.
+      setSurface(
+        `rgb(${Math.round(color.red)}, ${Math.round(color.green)}, ${Math.round(color.blue)})`,
+      );
       setSurfaceDark(isDarkColor(color));
     };
 

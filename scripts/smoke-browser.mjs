@@ -8,8 +8,8 @@ const chromePath =
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const artifactRoot = path.resolve(".visual-artifacts");
 const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
-/** The redesigned homepage's range section — the page's tallest landmark. */
-const PRODUCTS = 'section[aria-labelledby="our-product"]';
+/** The homepage's first section below the hero — what "the page has arrived". */
+const BESTSELLERS = "#bestsellers";
 const failures = [];
 const pageErrors = [];
 const hydrationErrors = [];
@@ -81,12 +81,11 @@ try {
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage is the redesigned surface: a photographic hero, the four
-  // savings, then the whole range as a grid. Navigation moved out of the old
-  // hover mega-menu into the full-screen menu panel, so it is asserted there
-  // rather than on hover.
+  // The homepage: a photographic hero, then the bestsellers carousel.
+  // Navigation and the product grid moved out of the old hover mega-menu into
+  // the full-screen menu panel, so they are asserted there rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await page.locator(PRODUCTS).waitFor();
+  await page.locator(BESTSELLERS).waitFor();
   // Nothing covers the page any more — the loading screen is gone — so this is
   // just a frame for the hero and the scene controller to settle in before the
   // first desktop wheel event.
@@ -129,6 +128,14 @@ try {
   );
 
   check(
+    (await page.locator(`${BESTSELLERS} [aria-roledescription='slide']`).count()) === 5,
+    "home: expected five bestseller slides",
+  );
+  check(
+    (await page.locator(`${BESTSELLERS} [aria-current]`).count()) === 5,
+    "home: expected five bestseller dots",
+  );
+  check(
     (await page.locator("h1").count()) === 1,
     "home: expected exactly one h1",
   );
@@ -137,61 +144,93 @@ try {
     "home: h1 must keep the production wording (Premium … Bases)",
   );
 
-  // The homepage uses the browser's natural document scroll. Verify a desktop
-  // wheel actually moves it before walking down the sections below the hero.
+  // The homepage uses the browser's natural document scroll. Verify that a
+  // desktop wheel actually moves it before bringing the carousel into view.
   const initialScrollY = await page.evaluate(() => window.scrollY);
   await page.mouse.wheel(0, 600);
   await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
-
-  // The range: sixteen cards, each a link to its own product page, each drawn
-  // from the shot the design supplies rather than the old catalogue tile.
-  const cards = page.locator(`${PRODUCTS} li a[href]`);
-  const cardCount = await cards.count();
-  check(cardCount === 16, `home: expected sixteen product cards, got ${cardCount}`);
+  await page.locator(BESTSELLERS).scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await page.locator(`${BESTSELLERS} [aria-label='Next product']`).click();
+  await page.waitForTimeout(900);
   check(
-    (await page.locator(`${PRODUCTS} a[href='/milkshake']`).count()) === 1,
-    "home: product cards do not link to their product pages",
-  );
-  check(
-    (await cards.first().locator("img[src*='/images/shot-']").count()) === 1,
-    "home: product card is missing its drink",
-  );
-
-  // The three rows of four the design stacks around the range.
-  const rowsOfFour = [
-    ["savings", "section[aria-label='What THE BASE saves you'] li"],
-    ["reasons", "section[aria-label='Why THE BASE'] li"],
-    ["assurances", "section[aria-label='How THE BASE manufactures'] li"],
-  ];
-  for (const [label, selector] of rowsOfFour) {
-    const found = await page.locator(selector).count();
-    check(found === 4, `home: expected four ${label}, got ${found}`);
-  }
-
-  // Both offer cards, and both of their calls to action.
-  const offers = page.locator("section[aria-label='Work with THE BASE'] article");
-  check((await offers.count()) === 2, "home: expected two offer cards");
-  check(
-    (await offers.locator("a[href='/private-labeling']").count()) === 1 &&
-      (await offers.locator("a[href='/contacts']").count()) === 1,
-    "home: offer cards lost their destinations",
+    (await page
+      .locator(
+        `${BESTSELLERS} .is-active, ${BESTSELLERS} [aria-hidden='false'][aria-roledescription='slide']`,
+      )
+      .first()
+      .getAttribute("aria-label"))?.startsWith("2 of 5"),
+    "home: next arrow did not activate slide two",
   );
 
-  // The team frame and the sentence across its foot.
+  // Horizontal reading rail: a native overflow scroller, so the arrows move it
+  // and a vertical wheel over it must still scroll the page. It reads the
+  // imported blog now, so its cards are articles rather than the five standing
+  // pages it was seeded with.
+  const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
+  await rail.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
   check(
-    (await page.locator("figure img[src='/images/home-team.webp']").count()) === 1,
-    "home: the team photograph is missing",
+    (await rail.locator("[data-card]").count()) === 8,
+    "reading: expected eight cards on the rail",
+  );
+  check(
+    (await rail.locator("a[href^='/tpost/']").count()) === 8,
+    "reading: the rail is not pointing at blog articles",
+  );
+  check(
+    await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
+    "reading: rail is not horizontally scrollable",
   );
 
-  // The distributor form. It must ask for an email as well as a name, because
-  // `/api/leads` rejects a lead without one.
-  const partner = page.locator("section[aria-labelledby='partner-with-us'] form");
-  await partner.scrollIntoViewIfNeeded();
+  const railNext = page.locator(
+    "section[aria-labelledby='reading-title'] button[aria-label='Scroll right']",
+  );
   check(
-    (await partner.locator('input[name="name"]').count()) === 1 &&
-      (await partner.locator('input[name="email"]').count()) === 1 &&
-      (await partner.locator('input[name="Phone"]').count()) === 1,
-    "home: the distributor form is missing one of its three fields",
+    await page
+      .locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']")
+      .isDisabled(),
+    "reading: left arrow should start disabled",
+  );
+  await railNext.click();
+  await page.waitForTimeout(1_200);
+  check(
+    (await rail.evaluate((el) => el.scrollLeft)) > 100,
+    "reading: right arrow did not advance the rail",
+  );
+  check(
+    !(await page
+      .locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']")
+      .isDisabled()),
+    "reading: left arrow should enable once scrolled",
+  );
+
+  // The progress thumb tracks the rail rather than sitting still.
+  const thumbShift = await page
+    .locator("section[aria-labelledby='reading-title'] [class*='thumb']")
+    .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
+  check(thumbShift > 5, "reading: progress indicator did not follow the rail");
+
+  // A vertical wheel over the rail must scroll the page, not be swallowed.
+  const beforeY = await page.evaluate(() => window.scrollY);
+  await rail.hover();
+  await page.mouse.wheel(0, 400);
+  await page.waitForTimeout(700);
+  check(
+    (await page.evaluate(() => window.scrollY)) > beforeY + 50,
+    "reading: rail swallowed vertical scrolling",
+  );
+
+  // The brand film, which is the whole reason this page came back. It arms on
+  // intersection, so the source is only attached once the frame is approached —
+  // hence the scroll before the check rather than a look at the initial markup.
+  const film = page.locator("section#about video");
+  await film.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(900);
+  check((await film.count()) === 1, "home: the brand film is missing from About");
+  check(
+    (await film.getAttribute("src")) === "/video/base-hero.mp4",
+    "home: the brand film never attached its source",
   );
 
   // The footer closes on the brand lockup — it used to be the word BASE set in
@@ -422,27 +461,15 @@ try {
   await page.goto(`${baseUrl}/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
     waitUntil: "domcontentloaded",
   });
-  await page.locator(PRODUCTS).waitFor();
+  await page.locator(BESTSELLERS).waitFor();
 
-  // The homepage form runs through the same mocked 503. It must say so rather
-  // than thanking anyone for a lead that was never delivered.
-  const partnerForm = page.locator("section[aria-labelledby='partner-with-us'] form");
-  await partnerForm.scrollIntoViewIfNeeded();
-  await partnerForm.locator('input[name="name"]').fill("Browser Smoke");
-  await partnerForm.locator('input[name="Phone"]').fill("500000000");
-  await partnerForm.locator('input[name="email"]').fill("smoke@example.com");
-  await partnerForm.locator('button[type="submit"]').click();
-  await page.waitForTimeout(700);
-  const partnerStatus = (await partnerForm.locator('[role="status"]').textContent()) ?? "";
-  check(
-    /did not send/i.test(partnerStatus),
-    `home: unconfigured lead backend did not show an honest error (said "${partnerStatus.trim()}")`,
-  );
-  check(
-    !/thank you/i.test(partnerStatus),
-    "home: distributor form thanked the visitor for an undelivered lead",
-  );
-
+  /*
+   * The homepage carried a distributor form while it was the eight-section
+   * redesign, and this is where its failure path was exercised. The page has
+   * no form of its own again, so the mocked 503 is proved against /contacts
+   * below instead — the landing is still loaded here, because the first touch
+   * it records is what the attribution check at the end reads.
+   */
   await page.goto(`${baseUrl}/contacts`, {
     waitUntil: "domcontentloaded",
   });
@@ -550,7 +577,7 @@ try {
   for (const { width, height } of viewports) {
     await visualPage.setViewportSize({ width, height });
     await visualPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-    await visualPage.locator(PRODUCTS).waitFor();
+    await visualPage.locator(BESTSELLERS).waitFor();
     await visualPage.waitForTimeout(3_500);
     check(
       await visualPage.evaluate(
@@ -611,6 +638,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, menu, the range grid, the three rows of four, both offer cards, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, menu, bestsellers, reading rail, the brand film, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

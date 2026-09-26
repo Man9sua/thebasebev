@@ -215,9 +215,10 @@ const H1_NOT_PRESERVED = new Map([
     {
       h1: "Premium Cream Latte Bases",
       reason:
-        'h1 is the redesign\'s "Premium Powder Bases for Your Business"; ' +
-        "production names one of sixteen products in the homepage headline, " +
-        "and the ranking phrase Premium ... Bases is kept",
+        'h1 is "Premium Beverage Bases"; production names one of sixteen ' +
+        "products in the homepage headline, and the ranking phrase " +
+        "Premium ... Bases is kept. The exemption ends by itself if " +
+        "production ever carries this wording too",
     },
   ],
   [

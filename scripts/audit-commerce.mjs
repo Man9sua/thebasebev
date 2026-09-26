@@ -104,6 +104,17 @@ try {
         await cartButton.click();
         await page.waitForURL(`${baseUrl}/checkout`);
       }
+      /*
+       * The cart lives in localStorage and the summary is rendered from it on
+       * the client, so arriving at /checkout is not the same as the order being
+       * on screen — the page shows "Preparing your cart…" in between. Reading
+       * the document the moment the URL changes caught that placeholder often
+       * enough to red the audit at random.
+       */
+      await page
+        .locator("main")
+        .filter({ hasNotText: /Preparing your cart/i })
+        .waitFor({ timeout: 15_000 });
       const checkoutPage = await page.evaluate(() => {
         const main = document.querySelector("main");
         return {

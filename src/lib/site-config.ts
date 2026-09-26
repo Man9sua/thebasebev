@@ -5,11 +5,12 @@
  */
 
 /**
- * The brand film is no longer the hero — the hero is the product.
+ * The brand film. It is not the hero — the hero is a photograph — and it plays
+ * inside the homepage's About frame, lazily and muted: see `BrandFilm`.
  *
- * The encoded files stay in `public/video/` (3.9 MB desktop / 1.8 MB mobile
- * plus a poster) so the asset is available if it is wanted elsewhere. Nothing
- * renders them today.
+ * 3.9 MB desktop and 1.8 MB mobile plus a poster, in `public/video/`. Only the
+ * desktop encode is rendered today; the mobile one is here for whenever the
+ * frame gets a source of its own on a small screen.
  */
 export const BRAND_VIDEO = {
   desktop: "/video/base-hero.mp4",
