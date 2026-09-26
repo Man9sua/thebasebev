@@ -260,10 +260,14 @@
  * The pack leads, the drink it makes stands in front and to the right.
  *
  * Sized against the stage's WIDTH, not its height. The document draws the pack
- * at two thirds of the stage across and the glass at two fifths, and it is that
- * horizontal relationship that says the two belong together — tie the heights
- * to the stage instead and a narrower stage leaves the glass covering the name
- * printed on the pack.
+ * at two thirds of the stage across, and it is that horizontal relationship
+ * that says the two belong together — tie the heights to the stage instead and
+ * a narrower stage leaves the drink covering the name printed on the pack.
+ *
+ * Every pack file is framed identically (a 516 x 845 pouch on a 720 x 960
+ * canvas), so the box can be placed and the pouch follows. Its foot is the
+ * 4.48% of padding up from the bottom edge, which is where the shelf line
+ * below comes from.
  */
 .pack {
   left: 9.5%;
@@ -274,19 +278,56 @@
   filter: drop-shadow(0 24px 40px rgba(80, 30, 40, 0.18));
 }
 
-.glass {
-  right: 6.5%;
-  bottom: 2%;
-  width: 42%;
-  height: auto;
+/*
+ * The drink, which is the one thing here that is NOT interchangeable by file.
+ * The five photographs were shot at different distances and framed to their
+ * own canvases: as shipped, the drink is between 40% and 66% of the file's
+ * width and stands between 8.7% and 18% up from its bottom edge. Placing the
+ * file put a different drink, at a different size, on a different line, under
+ * every product — which is the flying.
+ *
+ * So the files are trimmed to what is painted on them — see
+ * `scripts/build-bestseller-drinks.mjs` — and what is placed here is a slot
+ * rather than an image. The slot is square, and a square sized by the stage's
+ * width has a height in the stage's width too: that is what lets every drink
+ * be given the same height, which no percentage on the image itself can say.
+ *
+ * Left edge and floor, not right edge and floor. The overlap with the pack is
+ * the thing that has to hold — pin the right edge instead and a narrow glass
+ * steps away from the pack it belongs to.
+ */
+.drinkSlot {
+  position: absolute;
+  left: 58%;
+  /* The pack's foot: 3% of the stage plus that 4.48% of the pack's own box. */
+  bottom: 6.6%;
+  /* Square, so this is the drink's height as well as the slot's width: 43% of
+     the stage against the pouch's 67% is a drink a little over half the pack
+     tall, which is the proportion the document draws. */
+  width: 43%;
+  aspect-ratio: 1;
   z-index: 3;
-  filter: drop-shadow(0 20px 30px rgba(80, 30, 40, 0.2));
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
 }
 
-/* Soft ellipses rather than one shadow under both: the pack and the glass sit
-   at different depths, and one smear under the pair reads as neither. */
+/* Beats `.stage img` on order at equal specificity, which is what it has to
+   do: the drink is laid out by its slot, not absolutely like everything else
+   on the stage. */
+.drinkSlot img {
+  position: static;
+  width: auto;
+  max-width: none;
+  height: 100%;
+  filter: drop-shadow(0 18px 26px rgba(80, 30, 40, 0.2));
+}
+
+/* Soft ellipses rather than one shadow under both: the pack and the drink sit
+   at different depths, and one smear under the pair reads as neither. Both are
+   centred on the shelf line the two of them stand on. */
 .groundPack,
-.groundGlass {
+.groundDrink {
   position: absolute;
   z-index: 1;
   border-radius: 50%;
@@ -294,16 +335,16 @@
 }
 
 .groundPack {
-  left: 11%;
-  bottom: 2%;
+  left: 21%;
+  bottom: 4.6%;
   width: 44%;
   height: 4%;
 }
 
-.groundGlass {
-  right: 5%;
-  bottom: 1%;
-  width: 30%;
+.groundDrink {
+  left: 55%;
+  bottom: 5%;
+  width: 24%;
   height: 3.5%;
 }
 

@@ -157,7 +157,7 @@ export function Bestsellers() {
           </div>
 
           <span className={styles.groundPack} aria-hidden="true" />
-          <span className={styles.groundGlass} aria-hidden="true" />
+          <span className={styles.groundDrink} aria-hidden="true" />
 
           {PRODUCTS.map((item, position) => {
             const live = position === index;
@@ -176,14 +176,17 @@ export function Bestsellers() {
                   loading="lazy"
                   decoding="async"
                 />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  className={styles.glass}
-                  src={`/images/glass-${item.slug}.webp`}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                {/* The slot is the fixed thing, and the drink stands on its
+                    floor at its own width — see the note in the stylesheet. */}
+                <span className={styles.drinkSlot}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/images/drink-${item.slug}.webp`}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
               </div>
             );
           })}
