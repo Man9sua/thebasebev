@@ -15,6 +15,12 @@
   /* 96 of gutter, 820 tall, both of the document's. */
   --gutter: clamp(1.25rem, 6.6667vw, 6rem);
 
+  /* One tempo for the whole swap: the field, the shelf and the frames have to
+     arrive together, or the band reads as three things moving at once.
+     Shorter than the house 720ms, which is a scroll-reveal duration and feels
+     like a stall on something that was clicked. */
+  --swap: 520ms;
+
   /* The product's registry colour, taken well back: at full strength it is a
      pack colour, and this is the ground a pack has to stand on. Named, because
      `.fade` over the shelf has to be the identical value. */
@@ -25,7 +31,7 @@
   background: var(--field);
   color: var(--tbb-rd-ink);
   font-family: var(--tbb-font-sans);
-  transition: background-color var(--tbb-dur) var(--tbb-ease);
+  transition: background-color var(--swap) var(--tbb-ease);
 }
 
 /*
@@ -163,50 +169,91 @@
 }
 
 /*
- * The two neighbours, laid behind and turned a few degrees so the group reads
- * as a shelf rather than as three of the same photograph. They run off both
- * edges of the stage on purpose — the field fades them out, which is what says
- * the row continues.
+ * The shelf behind the product: all five packs, of which the two beside the
+ * live one are lit. They run off both edges of the stage on purpose — a row
+ * that ends inside the frame has nothing more in it.
+ *
+ * Dissolved by a mask rather than by a rectangle of `--field` painted over it.
+ * That rectangle had to be exactly the band's colour to be invisible, and the
+ * band is transitioned when the product changes while an overlay built from
+ * the same custom property is not — so for the length of every swap it stood
+ * there as a square of the wrong colour. A mask has no colour to get wrong.
+ *
+ * `no-repeat` matters: masks tile by default, and a tiled fade would paint a
+ * second one past the stage instead of clipping what overhangs it.
  */
-.ghostLeft,
-.ghostRight {
-  top: 12%;
-  width: 45%;
-  opacity: 0.38;
-  filter: saturate(0.7);
-  transition:
-    opacity var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.ghostLeft {
-  left: -14%;
-  transform: rotate(-4deg);
-}
-
-.ghostRight {
-  right: -10%;
-  transform: rotate(4deg);
+.shelf {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 24%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 24%, #000 82%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  pointer-events: none;
 }
 
 /*
- * The field, painted back over the shelf so the neighbours fade out at both
- * edges of the stage rather than ending at its crop. `--field` is the
- * section's own colour, named once there and reused here — the gradient and
- * the ground behind it have to be the same value or the seam shows.
+ * One slot, held at the midpoint of the two places the document draws a
+ * neighbour (-14% and 65% across the stage) and carried out to its own by its
+ * offset: 39.5% of the stage per step, which is 87.7778% of a pack 45% wide.
+ * Transform and opacity only, so a step is a composited slide rather than five
+ * elements being laid out again.
  */
-.fade {
+.ghost,
+.ghostOn {
+  left: 25.5%;
+  bottom: 34%;
+  width: 45%;
+  opacity: 0;
+  filter: saturate(0.7);
+  transform: translateX(calc(var(--rel, 0) * 87.7778%)) rotate(calc(var(--rel, 0) * 4deg));
+  transition:
+    opacity var(--swap) var(--tbb-ease),
+    transform var(--swap) var(--tbb-ease);
+}
+
+.ghostOn {
+  opacity: 0.38;
+}
+
+/*
+ * One frame per product, stacked and crossfaded. The frame is what moves; the
+ * pack and the drink inside it keep the placement below at every step.
+ *
+ * The offset is signed rather than a remembered direction: a product ahead of
+ * the live one waits to the right and one behind it leaves to the left, so
+ * "next" hands the stage over left to right on its own.
+ *
+ * `visibility` is in the transition with a delay rather than a duration. It is
+ * a discrete property, so it flips once the delay is out — which keeps a faded
+ * frame out of the focus order and off the compositor without cutting the fade
+ * short.
+ */
+.frame,
+.frameOn {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    90deg,
-    var(--field) 0%,
-    transparent 24%,
-    transparent 82%,
-    var(--field) 100%
-  );
-  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(calc(var(--rel, 0) * 7%)) scale(0.97);
+  transition:
+    opacity var(--swap) var(--tbb-ease),
+    transform var(--swap) var(--tbb-ease),
+    visibility 0s linear var(--swap);
+}
+
+.frameOn {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity var(--swap) var(--tbb-ease),
+    transform var(--swap) var(--tbb-ease),
+    visibility 0s;
 }
 
 /*
@@ -389,10 +436,6 @@
     grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
     min-height: 44rem;
   }
-
-  .foot {
-    left: calc(var(--gutter) + 40%);
-  }
 }
 
 @media (max-width: 47.9375rem) {
@@ -401,9 +444,9 @@
    * sentence, the button and the arrows. The block is exactly as tall as its
    * content — the desktop band's fixed height would be empty space here.
    *
-   *  on the foot is what lets those five pieces be
-   * ordered independently: the tabs belong at the top of the block and the
-   * arrows at the bottom, and they are siblings in one row on a desktop.
+   * `display: contents` on the foot is what lets those five pieces be ordered
+   * independently: the tabs belong at the top of the block and the arrows at
+   * the bottom, and they are siblings in one row on a desktop.
    */
   .inner {
     grid-template-columns: minmax(0, 1fr);
@@ -432,9 +475,12 @@
     padding-inline: var(--gutter);
   }
 
+  /* A ratio rather than a fixed height: the pack and the drink are placed as
+     shares of the stage's width, so a stage whose height does not follow that
+     width leaves a different gap over them on every phone. */
   .stage {
     order: 2;
-    height: 25rem;
+    aspect-ratio: 39 / 40;
     margin-top: 0.5rem;
   }
 
@@ -461,25 +507,9 @@
     display: none;
   }
 
-  .pack {
-    left: 3%;
-    top: 3%;
-    height: 92%;
-  }
-
-  .glass {
-    right: 4%;
-    bottom: 3%;
-    height: 69%;
-  }
-
   /* No room for a shelf beside a pack this size, and a ghost cropped to a
-     sliver is a rendering fault rather than a hint. Qualified by `.stage`
-     because `.stage img` above is what sets their `display`, and a bare class
-     cannot outrank a class plus a type selector. */
-  .stage .ghostLeft,
-  .stage .ghostRight,
-  .stage .fade {
+     sliver is a rendering fault rather than a hint. */
+  .shelf {
     display: none;
   }
 
@@ -531,10 +561,14 @@
   }
 }
 
+/*
+ * One value covers the field, the shelf and the frames, so the swap becomes a
+ * cut without any of them being named again. Not zero: `visibility` is driven
+ * by a delay of `--swap`, and a delay of zero would hide the outgoing frame in
+ * the same frame the incoming one is still transparent.
+ */
 @media (prefers-reduced-motion: reduce) {
-  .section,
-  .ghostLeft,
-  .ghostRight {
-    transition: none;
+  .section {
+    --swap: 1ms;
   }
 }

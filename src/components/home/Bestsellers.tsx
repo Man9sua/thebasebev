@@ -14,17 +14,43 @@ import styles from "./Bestsellers.module.css";
  * with the two neighbours ghosted behind — the "гармошка" the document draws,
  * which is what says there are more without showing five of everything.
  *
- * It replaces a five-slide carousel that animated the whole composition per
- * slide and carried its own dots, arrows, swipe handling and a scene graph of
- * measured boxes. The design asks for far less: the images are placed as
- * shares of the frame, and moving between products is a state change, not a
- * choreography.
+ * It replaces a five-slide carousel that carried its own dots, swipe handling
+ * and a scene graph of measured boxes. The images are placed as shares of the
+ * frame instead, so there is nothing to measure — but stepping between them is
+ * still a move, not a cut.
+ *
+ * **Everything is mounted, nothing is swapped.** Each product owns a frame
+ * holding its own pack and drink, and each owns a pack on the shelf behind.
+ * Changing product changes which of them is live; no `src` is ever rewritten.
+ * That is what stops the jump: an `img` handed a new `src` loses its intrinsic
+ * size for a frame or two, collapses to the box a replaced element falls back
+ * to, and snaps open again once the new file decodes.
+ *
+ * The shelf is dissolved at both edges by a mask rather than by a rectangle of
+ * the field colour painted over it. The rectangle was the second half of the
+ * same fault: the field is transitioned when the product changes and an
+ * overlay built out of it is not, so for the length of every swap it stood on
+ * the band as a square of the wrong colour around the product.
  *
  * The order is the registry's `BESTSELLER_SLUGS` — the same five, in the same
  * order, as the slider production runs today.
  */
 
 const PRODUCTS = getProducts(BESTSELLER_SLUGS);
+
+/**
+ * Where a product stands relative to the live one, signed and wrapped: -1 and
+ * +1 are the neighbours on the shelf, and the sign is what sends a frame out
+ * the side it belongs on without anyone having to remember which arrow was
+ * pressed.
+ */
+function offsetFrom(position: number, index: number) {
+  const half = Math.floor(PRODUCTS.length / 2);
+  let rel = position - index;
+  if (rel > half) rel -= PRODUCTS.length;
+  if (rel < -half) rel += PRODUCTS.length;
+  return rel;
+}
 
 function Chevron({ back = false }: { back?: boolean }) {
   return (
@@ -44,13 +70,6 @@ export function Bestsellers() {
     (delta: number) => setIndex((current) => (current + delta + PRODUCTS.length) % PRODUCTS.length),
     [],
   );
-
-  /*
-   * The two behind the live one, in order, so the ghosts are always this
-   * product's neighbours rather than a fixed pair.
-   */
-  const before = PRODUCTS[(index - 1 + PRODUCTS.length) % PRODUCTS.length];
-  const after = PRODUCTS[(index + 1) % PRODUCTS.length];
 
   /* Left and right move the tab row, which is what a tablist is expected to
      do. The rest of the section is not a keyboard trap. */
@@ -104,9 +123,9 @@ export function Bestsellers() {
         </div>
 
         {/*
-          The stage. Both images are placed as shares of it, so the pack and
-          the drink hold their relationship at every width rather than being
-          re-measured per breakpoint.
+          The stage. Everything on it is placed as a share of it, so the pack
+          and the drink hold their relationship at every width rather than
+          being re-measured per breakpoint.
         */}
         <div
           className={styles.stage}
@@ -114,43 +133,60 @@ export function Bestsellers() {
           role="tabpanel"
           aria-labelledby={`${panelId}-name`}
         >
-          {[before, after].map((ghost, position) => (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              key={ghost.slug}
-              className={position === 0 ? styles.ghostLeft : styles.ghostRight}
-              src={`/images/pack-${ghost.slug}.webp`}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              aria-hidden="true"
-            />
-          ))}
-
-          {/* Dissolves the two neighbours back into the field at both edges, so
-              the shelf runs off the stage instead of ending at a crop. Above
-              the ghosts, below the pack. */}
-          <span className={styles.fade} aria-hidden="true" />
+          {/*
+            The shelf: all five packs, each parked at its own offset, the two
+            beside the live one lit. Stepping slides the whole row along — the
+            document's accordion, actually folding.
+          */}
+          <div className={styles.shelf} aria-hidden="true">
+            {PRODUCTS.map((item, position) => {
+              const rel = offsetFrom(position, index);
+              return (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  key={item.slug}
+                  className={Math.abs(rel) === 1 ? styles.ghostOn : styles.ghost}
+                  style={{ ["--rel" as string]: String(rel) }}
+                  src={`/images/pack-${item.slug}.webp`}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              );
+            })}
+          </div>
 
           <span className={styles.groundPack} aria-hidden="true" />
           <span className={styles.groundGlass} aria-hidden="true" />
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className={styles.pack}
-            src={`/images/pack-${product.slug}.webp`}
-            alt={`${product.name} base by THE BASE`}
-            loading="lazy"
-            decoding="async"
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className={styles.glass}
-            src={`/images/glass-${product.slug}.webp`}
-            alt=""
-            loading="lazy"
-            decoding="async"
-          />
+          {PRODUCTS.map((item, position) => {
+            const live = position === index;
+            return (
+              <div
+                key={item.slug}
+                className={live ? styles.frameOn : styles.frame}
+                style={{ ["--rel" as string]: String(offsetFrom(position, index)) }}
+                aria-hidden={!live}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  className={styles.pack}
+                  src={`/images/pack-${item.slug}.webp`}
+                  alt={live ? `${item.name} base by THE BASE` : ""}
+                  loading="lazy"
+                  decoding="async"
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  className={styles.glass}
+                  src={`/images/glass-${item.slug}.webp`}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            );
+          })}
         </div>
 
         <div className={styles.foot}>
