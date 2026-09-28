@@ -252,7 +252,7 @@
 .stage {
   position: relative;
   width: min(100%, 38rem);
-  aspect-ratio: 1.13;
+  aspect-ratio: 1.22;
   /* The depth the turn is read through. Shallower than the usual 1400px because
      these cards sit close together — a deeper camera flattens the rotation
      until the side shots look merely scaled rather than turned. */
@@ -319,7 +319,7 @@
 .cardMark {
   position: absolute;
   left: 4%;
-  top: 8%;
+  top: 6%;
   width: 92%;
   aspect-ratio: 1174 / 568;
   background: rgba(255, 255, 255, 0.55);
@@ -341,9 +341,9 @@
  */
 .cardStage {
   position: absolute;
-  left: 25%;
-  bottom: 24.8%;
-  height: 72.7%;
+  left: 16%;
+  bottom: 14%;
+  height: 84%;
   aspect-ratio: var(--pack-width) / var(--pack-height);
 }
 
@@ -378,10 +378,10 @@
    it, so the overlap with the pouch is the same under every product. */
 .cardGlass {
   position: absolute;
-  left: 78%;
-  top: 37.9%;
-  width: 56%;
-  height: 71.5%;
+  left: 72%;
+  top: 38%;
+  width: 50%;
+  height: 62%;
 }
 
 /* The small `the`, above the left shoulder of the word. */
