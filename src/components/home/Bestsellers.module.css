@@ -319,11 +319,15 @@
 /* The pouch's group, at the proportion the design measures for it — the drink
    inside is placed as a share of this box, so a box of another shape would
    slide it off the pouch. */
+/*
+ * The pouch, at the box the design measures, with room at its right for the
+ * drink to stand rather than to lie across it.
+ */
 .cardStage {
   position: absolute;
-  left: 6%;
-  bottom: 5%;
-  height: 84%;
+  left: 3%;
+  bottom: 6%;
+  height: 76%;
   aspect-ratio: var(--pack-width) / var(--pack-height);
 }
 
@@ -338,12 +342,26 @@
 
 /* The same arithmetic the product hero uses, against the same box — see
    `PACK_BOX` in `data/product-glass.ts`. */
+/*
+ * Beside the pouch, not across it.
+ *
+ * The placement used to come from `product-glass.ts`, which measures the
+ * PRODUCT PAGE's hero — and that composition stands the drink over the middle
+ * of the pouch, where on a card this size it covers the product's own name. The
+ * key visual the client shoots puts the drink against the pouch's right edge
+ * with the label clear, and this is that: one slot, in shares of the pouch's
+ * own box, the same for every product.
+ *
+ * A slot rather than a measured box because the five drinks are framed
+ * differently in their files — `contain` and a floor to stand on is what makes
+ * them interchangeable, and it is what the accordion learned the hard way.
+ */
 .cardGlass {
   position: absolute;
-  left: calc((var(--glass-left) - var(--pack-left)) / var(--pack-width) * 100%);
-  top: calc((var(--glass-top) - var(--pack-top)) / var(--pack-height) * 100%);
-  width: calc(var(--glass-width) / var(--pack-width) * 100%);
-  height: calc(var(--glass-height) / var(--pack-height) * 100%);
+  left: 64%;
+  top: 14%;
+  width: 60%;
+  height: 86%;
 }
 
 .cardGlass img {

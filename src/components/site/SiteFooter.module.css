@@ -215,7 +215,7 @@
  */
 .wordmark {
   display: block;
-  width: clamp(7rem, 11vw, 12rem);
+  width: clamp(9rem, 15vw, 17rem);
   height: auto;
   color: #2e2e2e;
   user-select: none;
@@ -240,15 +240,44 @@
     column-gap: 1.25rem;
   }
 
-  /* Stacked, and in the design's own order: the accounts, then the legal
-     links, then the copyright last. */
+  /*
+   * The mark closes the footer on a phone instead of heading it. Stacked, the
+   * brand column is the first thing on the band, and a watermark is the last
+   * thing on a page rather than its opening — so it is ordered out of the
+   * column and laid across the foot of the grid.
+   */
+  .brand {
+    display: contents;
+  }
+
+  .wordmarkWrap {
+    order: 2;
+    grid-column: 1 / -1;
+    margin-top: clamp(1.5rem, 6vw, 2.5rem);
+    margin-bottom: 0;
+  }
+
+  .statement {
+    grid-column: 1 / -1;
+  }
+
+  .wordmark {
+    width: clamp(8rem, 40vw, 13rem);
+  }
+
+  /* The contact column takes the width: an email address does not fit in half
+     a phone, and the accounts want one row rather than two. */
+  .column:last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Stacked, and in the design's own order: the legal links, then the
+     copyright last. The accounts moved up into the Contact column, and the
+     `order: -2` that used to lift them here was pulling them above that
+     column's own heading. */
   .legal {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .social {
-    order: -2;
   }
 
   .legalLinks {

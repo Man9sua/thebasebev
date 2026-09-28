@@ -371,15 +371,10 @@ export function Bestsellers() {
                       />
 
                       {glass?.image && (
-                        <span
-                          className={styles.cardGlass}
-                          style={{
-                            ["--glass-left" as string]: glass.left,
-                            ["--glass-top" as string]: glass.top,
-                            ["--glass-width" as string]: glass.width,
-                            ["--glass-height" as string]: glass.height,
-                          }}
-                        >
+                        /* One slot for every drink — see `.cardGlass`. The
+                           measured box this used to take is the product page's
+                           hero placement, which lies across the pouch's name. */
+                        <span className={styles.cardGlass}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={glass.image}
