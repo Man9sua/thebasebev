@@ -22,8 +22,10 @@
 
 /* `--fade` is how much of the frame is given over to the dissolve. It is read
    by the gradient and by the stage, so the two cannot drift apart. */
+/* Shallow, because the subtitles sit along the foot of the frame and a fade
+   that deep washes the words out. */
 .stage {
-  --fade: clamp(9rem, 22vh, 16rem);
+  --fade: clamp(3rem, 7vh, 5rem);
 
   position: relative;
   width: 100%;
@@ -31,15 +33,16 @@
   background: var(--tbb-rd-ink);
 }
 
-/* `cover`, so the film fills the band and the band is what frames it. On this
-   footage that also does a second job: the stage is close to 2.4:1 against a
-   16:9 film, so covering crops roughly an eighth off the top and the bottom —
-   and the subtitle line sits inside the bottom eighth. */
+/* `contain`, so the whole 16:9 frame is on screen and the subtitles burned
+   along its foot stay readable. Covering fills the band instead, at the cost of
+   roughly an eighth off the top and the bottom — and the subtitle line sits
+   inside the bottom eighth. The ink the stage is painted fills the sides. */
 .film {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: var(--tbb-rd-ink);
 }
 
 /* The footage is painted out into the page rather than stopping on an edge.

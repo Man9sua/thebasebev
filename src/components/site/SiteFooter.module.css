@@ -21,20 +21,33 @@
   padding: 0 clamp(1.25rem, 6.6667vw, 6rem);
 }
 
+/*
+ * The brand column is held to its measure and the three link columns take the
+ * slack, rather than the other way round.
+ *
+ * It used to be `1fr` against three 200s, which on a 1920 page handed the brand
+ * cell 916 and then capped what stands in it at 448 — the empty half of that
+ * cell was the hole in the middle of the footer. Columns that share what is
+ * left spread across the width instead, and the row reads as a row.
+ *
+ * Four of them, because the two ways to reach a person are one of them. Hung
+ * under the statement on the left they left the right of the band empty from
+ * the last link down to the legal line.
+ */
 .top {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(0, 12.5rem));
+  grid-template-columns: minmax(0, 24rem) repeat(4, minmax(0, 1fr));
   gap: clamp(2rem, 5vw, 4rem);
   padding-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
 /* ---- the statement and the two channels ---- */
 
+/* The cap lives on the column now — see `.top`. */
 .brand {
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 2.5vw, 2rem);
-  max-width: 28rem;
 }
 
 .statement {
@@ -48,23 +61,21 @@
   text-wrap: pretty;
 }
 
-.contact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
+
 
 /*
  * The two things someone opens a footer to find, at the size that says so. They
  * used to be the same 15px as every link beside them, which made the footer a
  * wall of equal grey.
  */
+/* Bigger and brighter than the links above them, because they are what someone
+   opens a footer to find — but a column's width now, not a headline's. */
 .contactLink {
   width: fit-content;
   color: var(--tbb-rd-paper);
-  font-size: clamp(1.375rem, 1.9444vw, 1.75rem);
+  font-size: 1.125rem;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.5;
   text-decoration: none;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
@@ -147,6 +158,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin-top: clamp(0.75rem, 1.5vw, 1.25rem);
 }
 
 .socialLink {
@@ -210,9 +222,9 @@
 }
 
 @media (max-width: 63.9375rem) {
-  /* The three columns drop under the statement rather than beside it. */
+  /* The columns drop under the statement rather than beside it. */
   .top {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     row-gap: clamp(2.5rem, 6vw, 4rem);
   }
 
@@ -226,12 +238,6 @@
   .top {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 1.25rem;
-  }
-
-  /* Four links under a heading is a column; two of those and a stray third is a
-     stack. The last one takes the width instead. */
-  .column:last-child {
-    grid-column: span 2;
   }
 
   /* Stacked, and in the design's own order: the accounts, then the legal
