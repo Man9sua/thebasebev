@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { packBox, productGlass } from "@/data/product-glass";
+import { packBox } from "@/data/product-glass";
 import productHeroes from "@/data/product-heroes.json";
 import { BESTSELLER_SLUGS, getProducts } from "@/data/products";
 
@@ -307,7 +307,6 @@ export function Bestsellers() {
               const slot = forward > HALF ? forward - PRODUCTS.length : forward;
               const depth = Math.abs(slot);
               const isActive = slot === 0;
-              const glass = productGlass[product.slug];
 
               return (
                 <div
@@ -357,6 +356,10 @@ export function Bestsellers() {
                   follow the rest of the site when the design moved on.
                 */}
                   <span className={styles.card}>
+                    {/* The lockup behind, as the key visual draws it: the small
+                        `the` above the left shoulder of a BASE that runs the
+                        width of the card. */}
+                    <span className={styles.cardThe} aria-hidden="true" />
                     <span className={styles.cardMark} aria-hidden="true" />
 
                     <span className={styles.cardStage}>
@@ -373,21 +376,29 @@ export function Bestsellers() {
                         draggable={false}
                       />
 
-                      {glass?.image && (
-                        /* One slot for every drink — see `.cardGlass`. The
-                           measured box this used to take is the product page's
-                           hero placement, which lies across the pouch's name. */
-                        <span className={styles.cardGlass}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={glass.image}
-                            alt=""
-                            loading={depth <= 1 ? "eager" : "lazy"}
-                            decoding="async"
-                            draggable={false}
-                          />
-                        </span>
-                      )}
+                      {/*
+                        One slot for every drink — see `.cardGlass`. The measured
+                        box this used to take is the product page's hero
+                        placement, which lies across the pouch's name.
+
+                        `drink-` rather than `glass-`: the same photograph
+                        trimmed to what is painted on it. The originals are
+                        framed one per file — the drink is between 40% and 66%
+                        of the width and stands between 8.7% and 18% up from the
+                        bottom edge — so a shared slot holding them puts a
+                        different drink at a different size on a different line
+                        under every product.
+                      */}
+                      <span className={styles.cardGlass}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/images/drink-${product.slug}.webp`}
+                          alt=""
+                          loading={depth <= 1 ? "eager" : "lazy"}
+                          decoding="async"
+                          draggable={false}
+                        />
+                      </span>
                     </span>
                   </span>
                 </div>

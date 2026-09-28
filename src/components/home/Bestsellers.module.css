@@ -247,10 +247,12 @@
   min-width: 0;
 }
 
+/* Landscape, the shape the key visual is composed in: the pouch and the drink
+   stand side by side, and a portrait card makes them stand on each other. */
 .stage {
   position: relative;
-  width: min(100%, 30rem);
-  aspect-ratio: 4 / 5;
+  width: min(100%, 38rem);
+  aspect-ratio: 1.13;
   /* The depth the turn is read through. Shallower than the usual 1400px because
      these cards sit close together — a deeper camera flattens the rotation
      until the side shots look merely scaled rather than turned. */
@@ -311,13 +313,14 @@
    edge on a product page. Painted through a mask rather than placed as a
    picture, because the artwork is white at half opacity and the card needs it
    quieter than that. */
-/* Centred on the card, which is where the design file puts it. It used to
-   hang off the left edge, so the word read as BAS with the E behind the pouch. */
+/* BASE runs the width of the card and is centred on it. It used to hang seven
+   percent off the left edge, so the word read as BAS with the E behind the
+   pouch. */
 .cardMark {
   position: absolute;
-  left: 8%;
-  top: 11%;
-  width: 84%;
+  left: 4%;
+  top: 8%;
+  width: 92%;
   aspect-ratio: 1174 / 568;
   background: rgba(255, 255, 255, 0.55);
   -webkit-mask-image: url("/images/mark-base.webp");
@@ -332,15 +335,15 @@
    inside is placed as a share of this box, so a box of another shape would
    slide it off the pouch. */
 /*
- * The pouch, at the box the design measures — the product is what the card is
- * for, so it takes four fifths of its height, with what is left at the right
- * the room the drink stands in rather than lies across.
+ * The pouch, at the box the design measures, standing left of the card's centre
+ * with the drink beside it — the arrangement of the key visual rather than of
+ * the product page's hero, which stands the drink across the pouch's name.
  */
 .cardStage {
   position: absolute;
-  left: 2%;
-  bottom: 6%;
-  height: 80%;
+  left: 25%;
+  bottom: 24.8%;
+  height: 72.7%;
   aspect-ratio: var(--pack-width) / var(--pack-height);
 }
 
@@ -369,14 +372,32 @@
  * differently in their files — `contain` and a floor to stand on is what makes
  * them interchangeable, and it is what the accordion learned the hard way.
  */
+/* Past the pouch's own foot: the drink stands in front of it, nearer the
+   camera, which is where the key visual puts it. Wide enough to hold the
+   broadest of the five — they are anchored to its left edge, not centred in
+   it, so the overlap with the pouch is the same under every product. */
 .cardGlass {
   position: absolute;
-  left: 62%;
-  /* Past the pouch's own foot: the drink stands in front of it, nearer the
-     camera, which is where the key visual puts it. */
-  top: 23%;
-  width: 62%;
-  height: 81%;
+  left: 78%;
+  top: 37.9%;
+  width: 56%;
+  height: 71.5%;
+}
+
+/* The small `the`, above the left shoulder of the word. */
+.cardThe {
+  position: absolute;
+  left: 3%;
+  top: 4%;
+  width: 8%;
+  aspect-ratio: 47 / 31;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-mask-image: url("/images/mark-the.svg");
+  mask-image: url("/images/mark-the.svg");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 .cardGlass img {
@@ -384,7 +405,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center bottom;
+  object-position: left bottom;
 }
 
 /* ---- controls ---- */
@@ -512,7 +533,7 @@
   }
 
   .stage {
-    width: min(100%, 22rem);
+    width: min(100%, 27rem);
   }
 
   .copy {
