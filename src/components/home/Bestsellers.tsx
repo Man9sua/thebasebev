@@ -38,6 +38,10 @@ import styles from "./Bestsellers.module.css";
 
 const PRODUCTS = getProducts(BESTSELLER_SLUGS);
 
+/** The old carousel's own cadence: long enough to read a product, short enough
+    that the band is not standing still. */
+const AUTOPLAY_MS = 7000;
+
 /**
  * Where a product stands relative to the live one, signed and wrapped: -1 and
  * +1 are the neighbours on the shelf, and the sign is what sends a frame out
@@ -64,12 +68,64 @@ export function Bestsellers() {
   const [index, setIndex] = useState(0);
   const panelId = useId();
   const railRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  /* Autoplay reads the live product from here, so the interval does not have to
+     be torn down and rebuilt on every change. */
+  const liveRef = useRef(0);
+  const [steered, setSteered] = useState(false);
 
   const product = PRODUCTS[index];
-  const step = useCallback(
-    (delta: number) => setIndex((current) => (current + delta + PRODUCTS.length) % PRODUCTS.length),
-    [],
+
+  const go = useCallback((next: number) => {
+    const resolved = (next + PRODUCTS.length) % PRODUCTS.length;
+    liveRef.current = resolved;
+    setIndex(resolved);
+  }, []);
+
+  /** Everything a visitor presses. Pressing anything stops the rotation: a band
+      that carries on turning past the product someone just chose is a band
+      arguing with them. */
+  const steer = useCallback(
+    (next: number) => {
+      setSteered(true);
+      go(next);
+    },
+    [go],
   );
+
+  const step = useCallback(
+    (delta: number) => steer(liveRef.current + delta),
+    [steer],
+  );
+
+  /*
+   * Turns by itself, the way the carousel this replaced did: every seven
+   * seconds, only while the band is on screen, and never under reduced motion —
+   * an unprompted change of everything in a full-width band is exactly the
+   * movement that setting asks to be spared.
+   */
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || steered) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let timer: number | undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        window.clearInterval(timer);
+        if (entry.isIntersecting) {
+          timer = window.setInterval(() => go(liveRef.current + 1), AUTOPLAY_MS);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    observer.observe(section);
+    return () => {
+      window.clearInterval(timer);
+      observer.disconnect();
+    };
+  }, [go, steered]);
 
   /* Left and right move the tab row, which is what a tablist is expected to
      do. The rest of the section is not a keyboard trap. */
@@ -94,6 +150,7 @@ export function Bestsellers() {
 
   return (
     <section
+      ref={sectionRef}
       id="bestsellers"
       className={styles.section}
       aria-label="Bestsellers"
@@ -213,7 +270,7 @@ export function Bestsellers() {
                 aria-selected={position === index}
                 aria-controls={`${panelId}-panel`}
                 tabIndex={position === index ? 0 : -1}
-                onClick={() => setIndex(position)}
+                onClick={() => steer(position)}
               >
                 {item.name}
               </button>

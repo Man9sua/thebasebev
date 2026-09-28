@@ -1,32 +1,83 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { BRAND_VIDEO } from "@/lib/site-config";
 
 /**
  * The brand film, played inside the About frame.
  *
- * **A player, not a loop.** It used to be ambient footage: armed on
- * intersection, muted, looping, no controls. The film it carries now is a
- * forty-seven second piece to camera with speech and burned-in subtitles —
- * played silently on repeat that is someone mouthing words at a visitor who
- * cannot hear them, and who has no way to start it, stop it or turn it up. So
- * the poster stands until it is pressed, and pressing it plays the film once,
- * with sound and with a scrubber.
+ * Ambient: muted, looping, no controls — the way the block was asked for.
  *
- * That also settles what the ambient version had to work around. `preload` is
- * "none" and nothing is armed on intersection, so the 7 MB is fetched when a
- * visitor asks for it and never otherwise — which is why this no longer needs
- * to be a client component at all, and why reduced motion needs no special
- * case: nothing moves until it is asked to.
+ * The film is 7 MB and sits well below the fold, so nothing is fetched until
+ * the frame is actually approaching the viewport: `src` is attached on first
+ * intersection and playback follows once React has applied it. Calling `play()`
+ * in the same tick as arming does not work — the element has no source yet and
+ * the promise is rejected — which is why the two live in separate effects.
+ *
+ * The footage is a piece to camera with speech and burned-in subtitles, so two
+ * things in `About.module.css` are load-bearing rather than decoration: the
+ * frame covers rather than contains, which crops the subtitle line away with
+ * the rest of the bottom band, and the dissolve is deep enough to carry what
+ * survives out into the page.
+ *
+ * Reduced motion gets the poster and nothing else: an autoplaying loop is
+ * exactly the kind of ambient movement that setting asks to be spared.
  */
 export function BrandFilm({ className }: { className?: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [armed, setArmed] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setVisible(entry.isIntersecting);
+        if (entry.isIntersecting) setArmed(true);
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !armed) return;
+
+    if (!visible) {
+      video.pause();
+      return;
+    }
+
+    // `play()` is what starts the fetch under `preload="none"`, so it is called
+    // unconditionally rather than waiting on `loadeddata` — that event never
+    // arrives while nothing has asked for the bytes.
+    //
+    // Autoplay can still be refused by the browser; the poster stays underneath
+    // either way, so a rejection costs the motion and nothing else.
+    void video.play().catch(() => {});
+  }, [armed, visible]);
+
   return (
     <video
+      ref={videoRef}
       className={className}
-      src={BRAND_VIDEO.desktop}
+      // Attached late, so the poster is the only request until the frame is near.
+      src={armed ? BRAND_VIDEO.desktop : undefined}
       poster={BRAND_VIDEO.poster}
-      controls
+      muted
+      loop
       playsInline
       preload="none"
-      aria-label="THE BASE — an introduction to the range"
+      aria-label="THE BASE brand film"
+      // Ambient footage is decoration: it says nothing a visitor has to reach,
+      // and a control strip over it is the thing this block asked to lose.
+      tabIndex={-1}
     />
   );
 }

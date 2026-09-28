@@ -102,15 +102,14 @@
  * Height-driven, width auto: the mark's aspect ratio is never touched, and it
  * is the same asset at every breakpoint — only the scale changes.
  *
- * The height is the design file's own: it draws the near-square mark at
- * 77.95 x 82.13 in a 1440 frame, which is the 5.7vw below. The landscape
- * lockup the live site carries is 142.88 x 79.12 — at this height it comes out
- * nearly a third wider and swallows the bar, which is why the file's height
- * could not be used until the vertical artwork existed.
+ * Below the design file's own 82.13, which put an 82px drawing in a 103px bar
+ * and left the mark reading as the loudest thing on the page. Two thirds of it,
+ * in a bar cut down to match: the mark is still the first thing in the corner
+ * and the bar is a bar again.
  */
 .logo svg {
   display: block;
-  height: clamp(2.5rem, 5.7vw, 5.1331rem);
+  height: clamp(1.875rem, 3.6111vw, 3.25rem);
   width: auto;
 }
 

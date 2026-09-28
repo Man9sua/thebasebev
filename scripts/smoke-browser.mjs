@@ -226,25 +226,25 @@ try {
     "reading: rail swallowed vertical scrolling",
   );
 
-  // The brand film, which is the whole reason this page came back. It is a
-  // player rather than an ambient loop now — a piece to camera with speech and
-  // burned-in subtitles — so what has to hold is that it carries its source and
-  // its poster, that it offers controls, and that it does not start on its own.
+  // The brand film, which is the whole reason this page came back. It is
+  // ambient — muted, looping, no controls — and it arms on intersection, so the
+  // source is only attached once the frame is approached; hence the scroll
+  // before the check rather than a look at the initial markup.
   const film = page.locator("section#about video");
   await film.scrollIntoViewIfNeeded();
   await page.waitForTimeout(900);
   check((await film.count()) === 1, "home: the brand film is missing from About");
   check(
     (await film.getAttribute("src")) === "/video/base-film.mp4",
-    "home: the brand film is not carrying its source",
+    "home: the brand film never attached its source",
   );
   check(
     (await film.getAttribute("poster")) === "/video/base-film-poster.jpg",
-    "home: the brand film has no frame to stand on until it is played",
+    "home: the brand film has no frame to stand on until it arrives",
   );
   check(
-    (await film.evaluate((video) => video.controls && video.paused && !video.loop)) === true,
-    "home: the brand film should wait to be played, with controls, and not loop",
+    (await film.evaluate((video) => video.loop && video.muted && !video.controls)) === true,
+    "home: the brand film should be an ambient loop, not a player",
   );
 
   /*

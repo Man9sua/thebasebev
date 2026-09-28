@@ -134,7 +134,7 @@
    * width up; below it the bar scales down to the 60px it needs on a phone,
    * which the file has no frame for.
    */
-  --tbb-header-h: clamp(3.75rem, 8.5833vw, 6.4375rem);
+  --tbb-header-h: clamp(3.25rem, 5.2778vw, 4.75rem);
 
   /*
    * The page's measure: how wide a band's content may run before it stops and
