@@ -22,10 +22,21 @@
  */
 export const SHOP_URL = "https://odoo.thebasebev.com/shop";
 
+/**
+ * The brand film and the frame that stands until it is played.
+ *
+ * One file, not two: art direction by viewport belonged to the ambient loop
+ * this replaced, where a phone had no use for a 4 MB panorama it would see a
+ * strip of. A film someone presses play on is the same film on every screen.
+ *
+ * The poster is cut from the film itself — see `BrandFilm` for why the block
+ * is a player now. The previous loop and its own poster stay in `public/video`
+ * under their own names; nothing links them, and they are what to put back if
+ * ambient footage arrives.
+ */
 export const BRAND_VIDEO = {
-  desktop: "/video/base-hero.mp4",
-  mobile: "/video/base-hero-mobile.mp4",
-  poster: "/video/base-hero-poster.jpg",
+  desktop: "/video/base-film.mp4",
+  poster: "/video/base-film-poster.jpg",
 } as const;
 
 /**

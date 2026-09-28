@@ -183,14 +183,12 @@
 
 /* --- the closing mark --- */
 
-/* Centred, not pushed to the gutter. The drawing is square, so it cannot be
-   laid across the page the way a house wordmark is; what it can do is stand in
-   the middle of the band with the same space on both sides, which is what reads
-   as a closing mark rather than as a logo that ran out of room. */
+/* At the head of the brand column, not on a band under the page. The drawing
+   is square, so it can never be laid across the foot the way a house wordmark
+   is — and a band holding one square and nothing else is the emptiness this
+   footer kept being asked about. Up here it has three columns beside it. */
 .wordmarkWrap {
-  display: flex;
-  justify-content: center;
-  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2rem, 4vw, 3.5rem);
+  margin-bottom: clamp(0.5rem, 1.5vw, 1.25rem);
   overflow: clip;
 }
 
@@ -199,16 +197,15 @@
  * stacked artwork, in which the letters are cut out of the block rather than
  * painted on it.
  *
- * One grey a shade off the ground, so the ground is what reads as BASE. It is
- * the last quiet thing on the page, not the loudest: at this size the brand red
- * would be a third of the page in saturated colour under a page that has just
- * finished.
+ * One grey off the ground, so the ground is what reads as BASE — a watermark
+ * standing behind the footer's own words rather than a second red mark under
+ * the one in the bar.
  */
 .wordmark {
   display: block;
-  width: clamp(10rem, 20vw, 22rem);
+  width: clamp(7rem, 11vw, 12rem);
   height: auto;
-  color: #1b1b1b;
+  color: #2e2e2e;
   user-select: none;
 }
 

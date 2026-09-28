@@ -226,16 +226,25 @@ try {
     "reading: rail swallowed vertical scrolling",
   );
 
-  // The brand film, which is the whole reason this page came back. It arms on
-  // intersection, so the source is only attached once the frame is approached —
-  // hence the scroll before the check rather than a look at the initial markup.
+  // The brand film, which is the whole reason this page came back. It is a
+  // player rather than an ambient loop now — a piece to camera with speech and
+  // burned-in subtitles — so what has to hold is that it carries its source and
+  // its poster, that it offers controls, and that it does not start on its own.
   const film = page.locator("section#about video");
   await film.scrollIntoViewIfNeeded();
   await page.waitForTimeout(900);
   check((await film.count()) === 1, "home: the brand film is missing from About");
   check(
-    (await film.getAttribute("src")) === "/video/base-hero.mp4",
-    "home: the brand film never attached its source",
+    (await film.getAttribute("src")) === "/video/base-film.mp4",
+    "home: the brand film is not carrying its source",
+  );
+  check(
+    (await film.getAttribute("poster")) === "/video/base-film-poster.jpg",
+    "home: the brand film has no frame to stand on until it is played",
+  );
+  check(
+    (await film.evaluate((video) => video.controls && video.paused && !video.loop)) === true,
+    "home: the brand film should wait to be played, with controls, and not loop",
   );
 
   /*
@@ -244,10 +253,11 @@ try {
    * final E ran off the right edge on desktop only.
    *
    * What it is has changed twice. It is now `BrandMarkStacked`, a portrait
-   * block with BASE broken across two rows, laid the width of the measure and
-   * cropped by its band. The share of the viewport it takes sideways is the
-   * measure's business; what this asserts is that it is there, that it does not
-   * spill past the page, and that the band has not collapsed.
+   * block with BASE broken across two rows, standing at the head of the brand
+   * column rather than closing the page on a band of its own. The share of the
+   * viewport it takes is the measure's business; what this asserts is that it
+   * is there, that it does not spill past the page, and that it is a watermark
+   * rather than a few collapsed pixels.
    */
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(900);
@@ -268,8 +278,8 @@ try {
     `footer: brand mark overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
   );
   check(
-    !!closingMark && closingMark.height > 160,
-    `footer: brand mark should close the page at scale (height ${Math.round(closingMark?.height ?? 0)})`,
+    !!closingMark && closingMark.height > 90,
+    `footer: brand mark collapsed (height ${Math.round(closingMark?.height ?? 0)})`,
   );
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),

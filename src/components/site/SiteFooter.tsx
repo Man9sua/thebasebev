@@ -79,6 +79,12 @@ export function SiteFooter() {
       <div className={styles.inner}>
         <div className={styles.top}>
           <div className={styles.brand}>
+            {/* The mark heads its own column, level with the column headings
+                beside it, rather than closing the page on a band of its own. */}
+            <div className={styles.wordmarkWrap} aria-hidden="true">
+              <BrandMarkStacked className={styles.wordmark} />
+            </div>
+
             <p className={styles.statement}>
               Beverage ingredients for HoReCa, retail and private label. Made in Dubai.
             </p>
@@ -141,9 +147,6 @@ export function SiteFooter() {
           </span>
         </div>
 
-        <div className={styles.wordmarkWrap} aria-hidden="true">
-          <BrandMarkStacked className={styles.wordmark} />
-        </div>
       </div>
     </footer>
   );

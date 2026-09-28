@@ -22,8 +22,11 @@
 
 /* `--fade` is how much of the frame is given over to the dissolve. It is read
    by the gradient and by the stage, so the two cannot drift apart. */
+/* Shallower than it was: the dissolve exists to carry ambient footage out into
+   the page, and over a film with subtitles along its foot a fade that deep
+   washes out the words. */
 .stage {
-  --fade: clamp(9rem, 22vh, 16rem);
+  --fade: clamp(4rem, 9vh, 7rem);
 
   position: relative;
   width: 100%;
@@ -31,11 +34,16 @@
   background: var(--tbb-rd-ink);
 }
 
+/* `contain`, not `cover`. The stage is close to 2.7:1 and the film is 16:9, so
+   covering it crops the top and the bottom away — which on a piece to camera is
+   the speaker's head and the subtitles under her. The ink the stage is painted
+   is what fills the sides. */
 .film {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: var(--tbb-rd-ink);
 }
 
 /* The footage is painted out into the page rather than stopping on an edge.
