@@ -311,9 +311,11 @@
    edge on a product page. Painted through a mask rather than placed as a
    picture, because the artwork is white at half opacity and the card needs it
    quieter than that. */
+/* Centred on the card, which is where the design file puts it. It used to
+   hang off the left edge, so the word read as BAS with the E behind the pouch. */
 .cardMark {
   position: absolute;
-  left: -7%;
+  left: 8%;
   top: 11%;
   width: 84%;
   aspect-ratio: 1174 / 568;
@@ -330,14 +332,15 @@
    inside is placed as a share of this box, so a box of another shape would
    slide it off the pouch. */
 /*
- * The pouch, at the box the design measures, with room at its right for the
- * drink to stand rather than to lie across it.
+ * The pouch, at the box the design measures — the product is what the card is
+ * for, so it takes four fifths of its height, with what is left at the right
+ * the room the drink stands in rather than lies across.
  */
 .cardStage {
   position: absolute;
-  left: 3%;
+  left: 2%;
   bottom: 6%;
-  height: 76%;
+  height: 80%;
   aspect-ratio: var(--pack-width) / var(--pack-height);
 }
 
@@ -368,10 +371,12 @@
  */
 .cardGlass {
   position: absolute;
-  left: 64%;
-  top: 14%;
-  width: 60%;
-  height: 86%;
+  left: 62%;
+  /* Past the pouch's own foot: the drink stands in front of it, nearer the
+     camera, which is where the key visual puts it. */
+  top: 23%;
+  width: 62%;
+  height: 81%;
 }
 
 .cardGlass img {
