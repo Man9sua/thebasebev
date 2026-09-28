@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { ProductBuy } from "@/components/cart/ProductBuy";
 import { PartnerRequestModal } from "@/components/forms/PartnerRequestModal";
 import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { Reveal } from "@/components/motion/Reveal";
@@ -12,7 +13,7 @@ import { productScene } from "@/data/product-scene";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
 import { isDark, luminance } from "@/lib/contrast";
-import { productDetails } from "@/lib/site-pages";
+import { catalogFlavors, catalogWeights, productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
 
 /**
@@ -534,11 +535,29 @@ export function ProductHero({ product }: { product: Product }) {
             </Reveal>
           )}
 
-          {/* Both product actions use native fixed dialogs and the shared
-              server-side lead pipeline. Legacy Tilda popups stay untouched for
-              routes that still reference them. */}
+          {/*
+            Buying and asking, in that order.
+
+            "Add to cart" is the one way into the native cart now that the
+            catalogue's own button hands the visitor to the Odoo shop — the
+            header's bag and `/checkout` are still here, and this is what fills
+            them. It renders nothing for a product with no flavours to choose,
+            which is a product that is quoted rather than listed.
+
+            Both enquiry actions use native fixed dialogs and the shared
+            server-side lead pipeline. Legacy Tilda popups stay untouched for
+            routes that still reference them.
+          */}
           <Reveal className={styles.actions} delay={250} distance={16}>
-            <SampleRequestModal className={styles.primary} productName={product.name} />
+            <ProductBuy
+              className={styles.primary}
+              slug={product.slug}
+              name={product.name}
+              price={product.price}
+              weight={catalogWeights()[product.slug] ?? null}
+              flavors={catalogFlavors()[product.slug] ?? []}
+            />
+            <SampleRequestModal className={styles.secondary} productName={product.name} />
             <PartnerRequestModal className={styles.secondary} productName={product.name} />
           </Reveal>
         </div>

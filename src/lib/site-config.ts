@@ -12,6 +12,16 @@
  * desktop encode is rendered today; the mobile one is here for whenever the
  * frame gets a source of its own on a small screen.
  */
+/**
+ * The Odoo storefront, which is where a purchase is actually made.
+ *
+ * The catalogue here is the shelf and the product pages are the specification;
+ * "Buy" hands the visitor to the shop rather than trying to be it. Not an
+ * `/api` route and not called from anywhere but a link — see the Odoo rules in
+ * AGENTS.md, which are about the lead webhook and not about this.
+ */
+export const SHOP_URL = "https://odoo.thebasebev.com/shop";
+
 export const BRAND_VIDEO = {
   desktop: "/video/base-hero.mp4",
   mobile: "/video/base-hero-mobile.mp4",

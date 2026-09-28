@@ -61,27 +61,6 @@
   color: var(--tbb-rd-red);
 }
 
-/*
- * "Стрелка → только у пункта под курсором". Set outside the flow so the four
- * items do not shift sideways as the pointer crosses them, and hidden from the
- * accessibility tree because it says nothing a link does not already say.
- */
-.navLink::after {
-  content: "→";
-  position: absolute;
-  left: calc(100% + 0.28em);
-  bottom: clamp(0.15rem, 0.5556vw, 0.5rem);
-  font-size: 0.45em;
-  font-weight: 500;
-  opacity: 0;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.navLink:hover::after,
-.navLink:focus-visible::after {
-  opacity: 1;
-}
-
 /* The page you are on, in both levels. */
 .current {
   color: var(--tbb-rd-red);
@@ -97,9 +76,11 @@
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
+/* Paper, not red. Red is what marks the page you are on — see `.current` —
+   and a hover that borrows it says you are already there. */
 .secondaryLink:hover,
 .secondaryLink:focus-visible {
-  color: var(--tbb-rd-red);
+  color: var(--tbb-rd-paper);
 }
 
 /* ---- the range ---- */

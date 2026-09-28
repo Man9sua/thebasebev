@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useCart } from "@/components/cart/useCart";
-import { BrandLogo } from "@/components/site/BrandLogo";
+import { BrandMarkStacked } from "@/components/site/BrandMarkStacked";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
@@ -24,6 +24,16 @@ function CartIcon() {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
       <path d="M6 7h12l-1 12H7L6 7Z" strokeLinejoin="round" />
       <path d="M9.5 9V6.5a2.5 2.5 0 0 1 5 0V9" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Beside the bag, and not it: this one is the way to a person. */
+function PersonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+      <circle cx="12" cy="8" r="3.4" />
+      <path d="M5.5 19.5a6.5 6.5 0 0 1 13 0" strokeLinecap="round" />
     </svg>
   );
 }
@@ -311,7 +321,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
               decoding/fetchpriority on every img it finds, this one included.
               The rewrite is cosmetic, but React would still read it as a
               mismatch on a node it owns. */}
-          <BrandLogo />
+          <BrandMarkStacked />
         </SiteLink>
 
         <div className={styles.actions}>
@@ -319,6 +329,10 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
               the file's header carries that this bar did not. */}
           <SiteLink href="/contacts" className={styles.cta}>
             Get your best deal now
+          </SiteLink>
+
+          <SiteLink href="/contacts" className={styles.action} aria-label="Contact us">
+            <PersonIcon />
           </SiteLink>
 
           <SiteLink

@@ -120,11 +120,19 @@ try {
     (await hero.locator("a[href='/catalog']").count()) > 0,
     "home: hero CTA must point at the catalog",
   );
-  // The header carries the original Tilda path geometry inline so the small
-  // `the` mark can interpolate with the header surface colour.
+  // The bar carries the stacked mark — the near-square one the design file
+  // draws — rather than the landscape lockup the live site still uses. It is
+  // one colour with the letters cut out of the block, so it no longer takes
+  // part in the bar's colour interpolation; what it has to be is present, and
+  // at the file's own height.
+  const headerMark = await page.evaluate(() => {
+    const el = document.querySelector('header a[href="/"] svg[data-brand-mark="stacked"]');
+    return el ? el.getBoundingClientRect().height : 0;
+  });
+  check(headerMark > 0, "header: stacked BASE mark missing");
   check(
-    (await page.locator("header a[href='/'] svg[data-brand-logo][viewBox='0 0 175 80']").count()) === 1,
-    "header: original BASE logo asset missing",
+    headerMark >= 36,
+    `header: the mark collapsed (height ${Math.round(headerMark)})`,
   );
 
   // Bestsellers is a tablist now, not a five-slide carousel: one product on a
@@ -237,10 +245,11 @@ try {
    * final E ran off the right edge on desktop only.
    *
    * What it is has changed twice. It is now `BrandMarkStacked`, a portrait
-   * block with BASE broken across two rows, standing at the page gutter rather
-   * than run to the full width; so the share of the viewport it takes is no
-   * longer the thing to assert. Its height is: a watermark that collapses to a
-   * few pixels is the failure this replaces.
+   * block with BASE broken across two rows. It heads the footer's brand column
+   * now rather than closing the page as a watermark under the legal line — a
+   * band holding one drawing and nothing else was the emptiness that change
+   * removed — so the share of the viewport it takes is not the thing to assert.
+   * Its presence and a height that has not collapsed are.
    */
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(900);
@@ -261,8 +270,8 @@ try {
     `footer: brand mark overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
   );
   check(
-    !!closingMark && closingMark.height > 160,
-    `footer: brand mark should close the page at scale (height ${Math.round(closingMark?.height ?? 0)})`,
+    !!closingMark && closingMark.height > 40,
+    `footer: brand mark collapsed (height ${Math.round(closingMark?.height ?? 0)})`,
   );
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
@@ -356,49 +365,22 @@ try {
   await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
   check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
 
-  // The button opens the flavour picker; the picker is what adds the line.
-  await page.locator("[data-catalog-card] [data-cart-add]").first().click();
-  const flavors = page.locator('[data-flavor-picker] [role="radiogroup"]');
-  await flavors.waitFor({ state: "visible" });
+  // Buying happens in the Odoo shop: the shelf hands the visitor over, and the
+  // product's own page is what fills the native cart. What the shelf has to
+  // get right is the destination.
   check(
-    (await flavors.locator("label").count()) > 1,
-    "catalog: the flavour picker offered nothing to choose",
-  );
-  const pickedFlavor = (await flavors.locator("label").first().textContent())?.trim() ?? "";
-  check(
-    await page.locator("[data-flavor-submit]").isDisabled(),
-    "catalog: the picker would add a line before a flavour was chosen",
-  );
-  await flavors.locator("label").first().click();
-  await page.locator("[data-flavor-submit]").click();
-  await page.waitForTimeout(500);
-  const cartProducts = await page.evaluate(() => {
-    try {
-      return JSON.parse(localStorage.getItem("thebase:cart:v2") ?? "[]");
-    } catch {
-      return [];
-    }
-  });
-  check(cartProducts.length === 1, "catalog: add-to-cart did not create one cart item");
-  check(cartProducts[0]?.slug === "milkshake", "catalog: unexpected cart product");
-  check(cartProducts[0]?.quantity === 1, "catalog: cart quantity changed");
-  check(
-    Boolean(pickedFlavor) && cartProducts[0]?.flavor === pickedFlavor,
-    "catalog: the chosen flavour did not reach the cart",
+    (await page.locator("[data-catalog-card] [data-shop-link]").count()) > 0,
+    "catalog: no card offers the shop",
   );
   check(
-    (await page.locator('[data-flavor-picker]').count()) === 0,
-    "catalog: the flavour picker stayed open after adding",
+    (await page.locator("[data-catalog-card] [data-shop-link]").first().getAttribute("href")) ===
+      "https://odoo.thebasebev.com/shop",
+    "catalog: Buy does not point at the shop",
   );
-  await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
-  await page.waitForURL(`${baseUrl}/checkout`);
-  const checkoutText = await page.locator("main").textContent();
-  check(/Milkshake/i.test(checkoutText ?? ""), "catalog: checkout page lost the selected product");
   check(
-    (checkoutText ?? "").toLowerCase().includes(pickedFlavor.toLowerCase()),
-    "catalog: checkout page lost the chosen flavour",
+    (await page.locator("[data-catalog-card] [data-cart-add]").count()) === 0,
+    "catalog: the shelf still carries an add-to-cart control",
   );
-  check(/45\.38/.test(checkoutText ?? ""), "catalog: checkout page did not preserve the selected price");
 
   await page.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
   await page.locator("h1").first().waitFor();
@@ -447,6 +429,52 @@ try {
     (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
     "matcha: the sample modal left the page scroll locked",
   );
+
+  // The product page is the one way into the native cart now. Two steps: the
+  // button opens the flavour picker and the picker is what adds the line — a
+  // line with no flavour is an order nobody can fill.
+  await page.getByRole("button", { name: "Add to cart" }).first().click();
+  const flavors = page.locator('[data-flavor-picker] [role="radiogroup"]');
+  await flavors.waitFor({ state: "visible" });
+  check(
+    (await flavors.locator("label").count()) > 1,
+    "matcha: the flavour picker offered nothing to choose",
+  );
+  const pickedFlavor = (await flavors.locator("label").first().textContent())?.trim() ?? "";
+  check(
+    await page.locator("[data-flavor-submit]").isDisabled(),
+    "matcha: the picker would add a line before a flavour was chosen",
+  );
+  await flavors.locator("label").first().click();
+  await page.locator("[data-flavor-submit]").click();
+  await page.waitForTimeout(500);
+  const cartProducts = await page.evaluate(() => {
+    try {
+      return JSON.parse(localStorage.getItem("thebase:cart:v2") ?? "[]");
+    } catch {
+      return [];
+    }
+  });
+  check(cartProducts.length === 1, "matcha: add-to-cart did not create one cart item");
+  check(cartProducts[0]?.slug === "matcha", "matcha: unexpected cart product");
+  check(cartProducts[0]?.quantity === 1, "matcha: cart quantity changed");
+  check(
+    Boolean(pickedFlavor) && cartProducts[0]?.flavor === pickedFlavor,
+    "matcha: the chosen flavour did not reach the cart",
+  );
+  check(
+    (await page.locator("[data-flavor-picker]").count()) === 0,
+    "matcha: the flavour picker stayed open after adding",
+  );
+  await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
+  await page.waitForURL(`${baseUrl}/checkout`);
+  const checkoutText = await page.locator("main").textContent();
+  check(/Matcha/i.test(checkoutText ?? ""), "matcha: checkout page lost the selected product");
+  check(
+    (checkoutText ?? "").toLowerCase().includes(pickedFlavor.toLowerCase()),
+    "matcha: checkout page lost the chosen flavour",
+  );
+  check(/70\.42/.test(checkoutText ?? ""), "matcha: checkout page did not preserve the selected price");
 
   // Browser smoke must be safe against a credentialed staging environment.
   // Mock only the same-origin lead boundary so the UX and attribution path are

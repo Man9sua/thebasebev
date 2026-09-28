@@ -201,12 +201,15 @@ export function CookieConsent() {
                     <input
                       type="checkbox"
                       checked={draft[category.key]}
-                      onChange={(event) =>
-                        setDraft((current) => ({
-                          ...current,
-                          [category.key]: event.currentTarget.checked,
-                        }))
-                      }
+                      onChange={(event) => {
+                        // Read before the updater, not inside it. React clears
+                        // `currentTarget` on a synthetic event the moment the
+                        // handler returns, and the updater runs after that — so
+                        // reading it there threw on every toggle and took the
+                        // dialog down with it.
+                        const { checked } = event.currentTarget;
+                        setDraft((current) => ({ ...current, [category.key]: checked }));
+                      }}
                     />
                     <span className={styles.knob} aria-hidden="true" />
                   </span>

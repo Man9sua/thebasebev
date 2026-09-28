@@ -48,19 +48,26 @@
   position: relative;
   display: grid;
   /*
-   * The document's own split, as shares of the measure rather than of the
-   * frame: 520 of copy and 624 of stage inside 1248, with the 104 between them
-   * falling out as the gap. Taken against the frame instead, the copy column
-   * came out 381 wide and the button and the price stopped fitting on one line.
+   * The stage holds the width it was tuned at and the copy takes what the
+   * wider measure added.
+   *
+   * The document splits 520 of copy against 624 of stage inside 1248. Kept as
+   * those shares, a measure widened to 1440 widens the stage too — and the
+   * pack and the drink are placed as shares of the stage, so they would have
+   * had to shrink against it to still fit its unchanged height. The band is
+   * 820 tall in the document at both widths.
+   *
+   * So the extra 192 goes to the copy, where it does some good: the display
+   * name gets a line it fits on.
    */
-  grid-template-columns: minmax(0, 41.6667%) minmax(0, 50%);
+  grid-template-columns: minmax(0, 49.4%) minmax(0, 42.3%);
   grid-template-rows: minmax(0, 1fr) auto;
   justify-content: space-between;
   column-gap: clamp(1.5rem, 8.3333%, 6.5rem);
   row-gap: clamp(1.5rem, 2.7778vw, 2.5rem);
   align-items: center;
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   min-height: 51.25rem;
   margin-inline: auto;
   padding: clamp(3rem, 5vw, 4.5rem) var(--gutter);

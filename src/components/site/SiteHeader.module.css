@@ -80,31 +80,35 @@
   display: contents;
 }
 
+/*
+ * Red rather than the bar's ink. The stacked drawing is one colour and the
+ * letters are cut out of the block, so whatever the bar is painted shows
+ * through them — which is how the lockup is built, and why this mark takes no
+ * part in the chameleon below.
+ */
 .logo {
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  color: inherit;
+  color: var(--tbb-red);
   text-decoration: none;
 }
 
 /*
- * Height-driven, width auto: the lockup's aspect ratio is never touched, and it
+ * Height-driven, width auto: the mark's aspect ratio is never touched, and it
  * is the same asset at every breakpoint — only the scale changes.
  *
- * The design's logo group is 142.61 x 82.13, and that box is deliberately NOT
- * taken. The file's lockup is a near-square red mark (77.95 x 82.13) beside a
- * grey "Beverage Production"; this project carries the wider mark the live site
- * and the Tilda original both use (142.88 x 79.12). Set to the file's height,
- * ours comes out 179.64 wide against the file's 142.61 — nearly a third wider,
- * and it swallows the bar. Two different marks, so the box does not transplant,
- * and the size the site already had stands until the file's own lockup is
- * available as an asset.
+ * The height is the design file's own: it draws the near-square mark at
+ * 77.95 x 82.13 in a 1440 frame, which is the 5.7vw below. The landscape
+ * lockup the live site carries is 142.88 x 79.12 — at this height it comes out
+ * nearly a third wider and swallows the bar, which is why the file's height
+ * could not be used until the stacked artwork existed.
  */
+
 .logo svg {
   display: block;
-  height: clamp(1.5rem, 2.1vw, 2rem);
+  height: clamp(2.5rem, 5.7vw, 5.1331rem);
   width: auto;
 }
 
@@ -311,5 +315,5 @@
   border-bottom-color: rgba(255, 255, 255, 0.14);
 }
 
-/* BrandLogo draws only `the` with currentColor. It therefore interpolates to
-   white with the controls while the red BASE block remains unchanged. */
+/* The mark is red on every surface and takes no part in this — see `.logo`.
+   What interpolates with the bar is the controls beside it. */

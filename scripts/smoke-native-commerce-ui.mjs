@@ -43,8 +43,11 @@ try {
 
   await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
   check((await page.locator("[data-catalog-card]").count()) === 4, "cold filter did not render four products");
-  // Two steps: the card opens the flavour picker, the picker adds the line.
-  await page.locator('[data-product-slug="milkshake"] [data-cart-add]').click();
+  // Two steps: the button opens the flavour picker, the picker adds the line.
+  // It moved to the product's own page when the shelf's Buy became a link into
+  // the Odoo shop.
+  await page.goto(`${baseUrl}/milkshake`, { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Add to cart" }).first().click();
   const flavorGroup = page.locator('[data-flavor-picker] [role="radiogroup"]');
   await flavorGroup.waitFor({ state: "visible" });
   await page.screenshot({ path: `${artifacts}/flavor-picker-desktop.png` });

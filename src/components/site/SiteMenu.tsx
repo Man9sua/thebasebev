@@ -126,7 +126,7 @@ export function SiteMenu({
               </summary>
 
               <SiteLink href="/catalog" className={styles.productsAll} onClick={onClose}>
-                All <span aria-hidden="true">→</span>
+                All
               </SiteLink>
 
               <ul className={styles.productList}>
@@ -183,7 +183,7 @@ export function SiteMenu({
               >
                 WhatsApp
               </a>
-              <span className={styles.footRegion}>UAE · EN</span>
+              <span className={styles.footRegion}>UAE EN</span>
               {/* Where the light version of the document puts them, and the one
                   thing the dark version's foot was missing: Terms and Privacy
                   are reachable from the menu as well as from every footer. */}

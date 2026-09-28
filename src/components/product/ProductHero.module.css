@@ -164,10 +164,13 @@
  * phone draws the word from a different export, whose white is solid where the
  * desktop's runs out through the S and the E.
  */
+/* `--mark-drop` lets the word sit lower than the file draws it, in the same
+   design units as everything else here: it is behind the pouch, and the file's
+   height put it level with the type it is supposed to be underneath. */
 .mark {
   position: absolute;
   left: var(--x0);
-  top: calc(var(--tbb-header-h) + (207.6 - var(--head)) * var(--k));
+  top: calc(var(--tbb-header-h) + (207.6 - var(--head) + var(--mark-drop, 56)) * var(--k));
   /* Over a collage's backdrop and under everything else, which is where the
      design has it: the mark reads across Tea's photograph and stops at the edge
      of Garnish's pouch. */
@@ -340,10 +343,16 @@ span.sceneLayer {
  * the pair keeps its overlap at any width and on either frame.
  * See `data/product-glass.ts`.
  */
+/*
+ * `--drink-x` / `--drink-y` carry the drink off the table's own placement.
+ * The table is measured from the design file, where the drink is drawn hard
+ * against the pouch; a little to the right and a little down sets it in front
+ * of the pouch rather than beside it.
+ */
 .glass {
   position: absolute;
-  left: calc((var(--glass-left) - var(--ink-x)) / var(--ink-w) * 100%);
-  top: calc((var(--glass-top) - var(--ink-y)) / var(--ink-h) * 100%);
+  left: calc((var(--glass-left) - var(--ink-x)) / var(--ink-w) * 100% + var(--drink-x, 2.4%));
+  top: calc((var(--glass-top) - var(--ink-y)) / var(--ink-h) * 100% + var(--drink-y, 2.6%));
   z-index: 1;
   width: calc(var(--glass-width) / var(--ink-w) * 100%);
   height: calc(var(--glass-height) / var(--ink-h) * 100%);
@@ -847,7 +856,7 @@ span.sceneLayer {
    */
   .mark {
     left: calc(var(--x0) - 3 * var(--p));
-    top: calc(var(--tbb-header-h) + 8 * var(--p));
+    top: calc(var(--tbb-header-h) + (8 + var(--mark-drop-phone, 28)) * var(--p));
     width: calc(366 * var(--p));
     height: calc(204.4 * var(--p));
     --mark-strength: 0.8;
@@ -893,8 +902,8 @@ span.sceneLayer {
 
   /* The drink's own layer, in the card's coordinates. */
   .glass {
-    left: calc((var(--m-glass-left) - var(--ink-x)) / var(--ink-w) * 100%);
-    top: calc((var(--m-glass-top) - var(--ink-y)) / var(--ink-h) * 100%);
+    left: calc((var(--m-glass-left) - var(--ink-x)) / var(--ink-w) * 100% + var(--drink-x, 2.4%));
+    top: calc((var(--m-glass-top) - var(--ink-y)) / var(--ink-h) * 100% + var(--drink-y, 2.6%));
     width: calc(var(--m-glass-width) / var(--ink-w) * 100%);
     height: calc(var(--m-glass-height) / var(--ink-h) * 100%);
   }

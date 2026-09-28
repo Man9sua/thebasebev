@@ -3,7 +3,6 @@
 import { useMemo, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
-import { resizedImage } from "@/lib/images";
 import { SITE_NAV, SITE_NAV_SECONDARY } from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
@@ -22,7 +21,6 @@ type Hit = {
   name: string;
   kind: string;
   image: string | null;
-  color?: string;
 };
 
 /* Both levels of the menu: the split is a matter of typographic weight in the
@@ -36,17 +34,19 @@ const PAGE_HITS: Hit[] = [...SITE_NAV, ...SITE_NAV_SECONDARY].map((item) => ({
 }));
 
 /**
- * The swatch is 44px square and it was painting the product's full pack plate
- * into it — six of them at around 1.1 MB each, fetched on every page of the
- * site because this overlay is mounted everywhere. That was 6.8 MB of the
- * 14.7 MB a product page weighed, and none of it was even on screen.
+ * The pouch on its own, on white — not the product's photographed plate.
+ *
+ * The plate was a 44px square holding a full styled shot: six of them at around
+ * 1.1 MB each, fetched on every page of the site because this overlay is
+ * mounted everywhere. That was 6.8 MB of the 14.7 MB a product page weighed,
+ * and none of it was on screen. The cut-out is a twentieth of that, and at this
+ * size a pouch is legible where a plated drink is a smudge.
  */
 const PRODUCT_HITS: Hit[] = PRODUCTS.map((product) => ({
   href: product.route,
   name: product.name,
   kind: "Product",
-  image: resizedImage(product.image),
-  color: product.backgroundColor,
+  image: `/images/pack-${product.slug}.webp`,
 }));
 
 function score(hit: Hit, query: string, haystack: string): number {
@@ -152,15 +152,16 @@ export function SiteSearch({
                   onClick={close}
                 >
                   <span
-                    className={styles.swatch}
-                    style={{
-                      backgroundColor: hit.color ?? "var(--tbb-sand)",
-                      backgroundImage: hit.image ? `url(${hit.image})` : undefined,
-                    }}
+                    className={hit.image ? styles.pouch : styles.swatch}
+                    style={hit.image ? { backgroundImage: `url(${hit.image})` } : undefined}
                   />
                   <span>
                     <span className={styles.resultName}>{hit.name}</span>
-                    <span className={styles.resultKind}>{hit.kind}</span>
+                    {/* A pouch is already the word "product". The label earns its
+                        place only where the row is something else. */}
+                    {hit.kind !== "Product" && (
+                      <span className={styles.resultKind}>{hit.kind}</span>
+                    )}
                   </span>
                 </SiteLink>
               </span>

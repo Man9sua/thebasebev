@@ -25,7 +25,7 @@
   justify-content: space-between;
   gap: 1.5rem;
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
   padding-inline: var(--gutter);
 }
@@ -122,11 +122,15 @@
   display: flex;
   gap: 1.5rem;
   margin-top: clamp(2rem, 3.8889vw, 3.5rem);
-  padding-inline: max(var(--gutter), calc((100% - 78rem) / 2 + var(--gutter)));
+  /* The page gutter, not the measure. The heading above is held to the measure
+     and the rail is not: it begins at the left edge of the page and runs off
+     the right, which is what says it is a row you scroll rather than a block
+     that has ended. */
+  padding-inline: var(--gutter);
   /* The snapport has to start where the content does, or the first card snaps
      its left edge to the padding box and the rail opens already scrolled by
      the width of the gutter. */
-  scroll-padding-inline: max(var(--gutter), calc((100% - 78rem) / 2 + var(--gutter)));
+  scroll-padding-inline: var(--gutter);
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
@@ -196,11 +200,6 @@
   text-wrap: balance;
 }
 
-.card:hover .cardTitle,
-.card:focus-visible .cardTitle {
-  color: var(--tbb-rd-red);
-}
-
 .summary {
   color: var(--tbb-rd-body-soft);
   font-size: 0.9375rem;
@@ -218,7 +217,7 @@
 
 .progress {
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: clamp(1.5rem, 2.7778vw, 2.5rem) auto 0;
   padding-inline: var(--gutter);
 }

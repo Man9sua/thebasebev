@@ -16,7 +16,7 @@
 
 .inner {
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
   padding: 0 clamp(1.25rem, 6.6667vw, 6rem);
 }
@@ -69,9 +69,11 @@
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
+/* White, not red: on a ground this dark red is the loudest thing on the page,
+   and it is spent on the one line nobody needs pointing at. */
 .contactLink:hover,
 .contactLink:focus-visible {
-  color: var(--tbb-rd-red);
+  color: #fff;
 }
 
 /* ---- the three columns ---- */
@@ -110,7 +112,7 @@
 
 .link:hover,
 .link:focus-visible {
-  color: var(--tbb-rd-red);
+  color: var(--tbb-rd-paper);
 }
 
 /* ---- one line of legal, cookies and accounts ---- */
@@ -120,7 +122,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 1rem clamp(1.25rem, 2.5vw, 2rem);
-  padding: clamp(1rem, 2vw, 1.5rem) 0;
+  padding: clamp(1rem, 2vw, 1.5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
   border-top: 1px solid #1e1e1e;
 }
 
@@ -179,27 +181,23 @@
   color: var(--tbb-rd-ink);
 }
 
-/* --- the closing mark --- */
-
-.wordmarkWrap {
-  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2rem, 4vw, 3.5rem);
-  overflow: clip;
-}
+/* --- the mark at the head of the brand column --- */
 
 /*
- * The lockup as a watermark, standing at the left on the page's own gutter —
  * `BrandMarkStacked`, the owner's stacked artwork, in which the letters are cut
- * out of the block rather than painted on it.
+ * out of the block rather than painted on it — so the footer's own ground is
+ * what reads as BASE and there is no second fill to keep in step.
  *
- * One grey a shade off the ground, so the ground is what reads as BASE. It is
- * the last quiet thing on the page, not the loudest: at this width the brand
- * red would be 480px of saturated colour under a page that has just finished.
+ * Red, the same as the bar's: it is the brand's mark standing over the brand's
+ * column, not a watermark under a page that has finished. It closed the page
+ * that way before, at 480px of grey on a row of its own, and a row holding one
+ * drawing and nothing else is the emptiness this replaced.
  */
 .wordmark {
   display: block;
-  width: clamp(12.5rem, 33.3333vw, 30rem);
+  width: clamp(3.5rem, 5vw, 4.5rem);
   height: auto;
-  color: #1b1b1b;
+  color: var(--tbb-red);
   user-select: none;
 }
 
@@ -221,6 +219,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 1.25rem;
   }
+
+
 
   /* Four links under a heading is a column; two of those and a stray third is a
      stack. The last one takes the width instead. */
