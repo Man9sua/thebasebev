@@ -81,17 +81,20 @@
 }
 
 /*
- * Red rather than the bar's ink. The stacked drawing is one colour and the
- * letters are cut out of the block, so whatever the bar is painted shows
- * through them — which is how the lockup is built, and why this mark takes no
- * part in the chameleon below.
+ * The block keeps the file's red on every surface; the small `the` is handed
+ * the bar's own ink, so it interpolates to paper with the controls when the bar
+ * inverts. Left at the file's near-black it was black on black over the brand
+ * film and over the menu — and BASE itself is cut out of the block rather than
+ * painted, so it takes whatever is behind and needs nothing.
  */
 .logo {
+  --tbb-mark-letter: currentColor;
+
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  color: var(--tbb-red);
+  color: inherit;
   text-decoration: none;
 }
 
@@ -103,9 +106,8 @@
  * 77.95 x 82.13 in a 1440 frame, which is the 5.7vw below. The landscape
  * lockup the live site carries is 142.88 x 79.12 — at this height it comes out
  * nearly a third wider and swallows the bar, which is why the file's height
- * could not be used until the stacked artwork existed.
+ * could not be used until the vertical artwork existed.
  */
-
 .logo svg {
   display: block;
   height: clamp(2.5rem, 5.7vw, 5.1331rem);

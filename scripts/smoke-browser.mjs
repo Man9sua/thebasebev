@@ -120,13 +120,12 @@ try {
     (await hero.locator("a[href='/catalog']").count()) > 0,
     "home: hero CTA must point at the catalog",
   );
-  // The bar carries the stacked mark — the near-square one the design file
-  // draws — rather than the landscape lockup the live site still uses. It is
-  // one colour with the letters cut out of the block, so it no longer takes
-  // part in the bar's colour interpolation; what it has to be is present, and
-  // at the file's own height.
+  // The bar carries the vertical mark — the near-square one the design file
+  // draws — rather than the landscape lockup the live site still uses. It
+  // carries its own two colours, so it no longer takes part in the bar's colour
+  // interpolation; what it has to be is present, and at the file's own height.
   const headerMark = await page.evaluate(() => {
-    const el = document.querySelector('header a[href="/"] svg[data-brand-mark="stacked"]');
+    const el = document.querySelector('header a[href="/"] svg[data-brand-mark="vertical"]');
     return el ? el.getBoundingClientRect().height : 0;
   });
   check(headerMark > 0, "header: stacked BASE mark missing");
@@ -245,11 +244,10 @@ try {
    * final E ran off the right edge on desktop only.
    *
    * What it is has changed twice. It is now `BrandMarkStacked`, a portrait
-   * block with BASE broken across two rows. It heads the footer's brand column
-   * now rather than closing the page as a watermark under the legal line — a
-   * band holding one drawing and nothing else was the emptiness that change
-   * removed — so the share of the viewport it takes is not the thing to assert.
-   * Its presence and a height that has not collapsed are.
+   * block with BASE broken across two rows, laid the width of the measure and
+   * cropped by its band. The share of the viewport it takes sideways is the
+   * measure's business; what this asserts is that it is there, that it does not
+   * spill past the page, and that the band has not collapsed.
    */
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(900);
@@ -270,8 +268,8 @@ try {
     `footer: brand mark overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
   );
   check(
-    !!closingMark && closingMark.height > 40,
-    `footer: brand mark collapsed (height ${Math.round(closingMark?.height ?? 0)})`,
+    !!closingMark && closingMark.height > 160,
+    `footer: brand mark should close the page at scale (height ${Math.round(closingMark?.height ?? 0)})`,
   );
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),

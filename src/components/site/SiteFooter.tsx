@@ -79,12 +79,6 @@ export function SiteFooter() {
       <div className={styles.inner}>
         <div className={styles.top}>
           <div className={styles.brand}>
-            {/* The mark heads its own column rather than closing the page under
-                the legal line. Standing alone down there it was one small
-                drawing in a band of nothing; here it is what the sentence and
-                the two channels hang from. */}
-            <BrandMarkStacked className={styles.wordmark} />
-
             <p className={styles.statement}>
               Beverage ingredients for HoReCa, retail and private label. Made in Dubai.
             </p>
@@ -145,6 +139,10 @@ export function SiteFooter() {
               </a>
             ))}
           </span>
+        </div>
+
+        <div className={styles.wordmarkWrap} aria-hidden="true">
+          <BrandMarkStacked className={styles.wordmark} />
         </div>
       </div>
     </footer>
