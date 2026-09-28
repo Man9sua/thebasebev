@@ -60,7 +60,7 @@
   /* `minmax(0, …)` rather than a bare fraction on both: a bare `1fr` floors at
      min-content, and a long product name like MILKSHAKE grew the copy column
      until the headline was lying across the artwork. */
-  grid-template-columns: minmax(0, clamp(18rem, 26vw, 25rem)) minmax(0, 1fr);
+  grid-template-columns: minmax(0, clamp(19rem, 30vw, 32rem)) minmax(0, 1fr);
   align-items: center;
   gap: clamp(2rem, 5vw, 4.5rem);
 }
@@ -153,10 +153,13 @@
 
 /* Off the card and into the copy: on a turned card it was unreadable, and the
    centre one had to carry a row of type that held every shot a line shorter. */
+/* Stepped in from the flush-left stack above and below it, so the number reads
+   as a note against the sentence rather than as another line of it. */
 .price {
   display: flex;
   align-items: baseline;
   gap: 0.6rem;
+  margin-left: clamp(0.75rem, 1.4vw, 1.5rem);
   padding-top: clamp(0.2rem, 0.6vw, 0.5rem);
   color: var(--tbb-muted);
 }
@@ -214,13 +217,20 @@
 /* The three stacked figures — 600+, HALAL, HACCP — as one line. They frame the
    range rather than describe the slide, so they close the column instead of
    sitting in the middle of it competing with the product's own name. */
+/* `balance` used to break it mid-claim — HALAL on one line and CERTIFIED on
+   the next, which reads as two things rather than one. The claims are held
+   together in the markup instead and the line breaks between them. */
 .proof {
   padding-top: clamp(0.3rem, 1vw, 0.8rem);
   font-size: var(--tbb-text-label);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   color: var(--tbb-muted);
-  text-wrap: balance;
+}
+
+.proof b {
+  font-weight: inherit;
+  white-space: nowrap;
 }
 
 .proof span {
