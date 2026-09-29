@@ -167,11 +167,19 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
     ],
   },
   "tea": {
+    /*
+     * The first four are ground, not cut-outs: two black fills, the photograph
+     * of the cup, and the gradient that carries its right edge back into the
+     * black. `back` puts them under the brand mark, which is where the design
+     * frame has them — BASE reads across the cup and the sachets stand in front
+     * of the letters. The phone list was imported with the flags and this one
+     * was not, which is why the word was on one frame and not the other.
+     */
     desktop: [
-      { paint: "#000000", m: [1250.2365, 0, 0, 802.3901, -50.3828, 0.3594] },
-      { paint: "#000000", m: [861.4952, 0, 0, 785.7686, -263.1204, 8.6719] },
-      { src: "/images/scene-e84aac77f1210.webp", m: [534.3839, 0, 0, 646.816, 161, 124] },
-      { paint: "linear-gradient(-87.4331deg, #000000 36.9523%, rgba(0, 0, 0, 0) 95.8639%)", m: [352.9043, 0, 0, 645.6128, 355.1992, 166.2891] },
+      { paint: "#000000", m: [1250.2365, 0, 0, 802.3901, -50.3828, 0.3594], back: true },
+      { paint: "#000000", m: [861.4952, 0, 0, 785.7686, -263.1204, 8.6719], back: true },
+      { src: "/images/scene-e84aac77f1210.webp", m: [534.3839, 0, 0, 646.816, 161, 124], back: true },
+      { paint: "linear-gradient(-87.4331deg, #000000 36.9523%, rgba(0, 0, 0, 0) 95.8639%)", m: [352.9043, 0, 0, 645.6128, 355.1992, 166.2891], back: true },
       { src: "/images/scene-720e38e5f813b400.webp", m: [222.3992, 40.8617, -33.2101, 180.7535, 102.5508, 137.6484] },
       { src: "/images/scene-1eec80f6f781b200.webp", m: [335.3611, -121.6933, 95.0563, 261.9552, -154.1423, 308.0391] },
       { src: "/images/scene-37eb1716f813.webp", m: [390.6021, 151.6401, -123.2445, 317.4594, 63.1201, 339.6484] },
