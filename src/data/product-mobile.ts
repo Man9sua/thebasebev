@@ -92,5 +92,7 @@ export const productMobile: Record<string, MobileCard> = {
   // rather than the collage's: between the phone frame's cap and the desktop
   // breakpoint the card stands in the middle of the window, and that mauve was
   // showing either side of a photograph that fades to black.
-  tea: { panel: "#5e5a57", mark: 0.065 },
+  /* Same reason as the desktop's — see `product-desktop.ts`. 0.34 is the
+     phone's weight for a dark ground. */
+  tea: { panel: "#5e5a57", mark: 0.34 },
 };
