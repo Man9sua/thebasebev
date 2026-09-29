@@ -264,6 +264,7 @@ export function ProductHero({ product }: { product: Product }) {
   // stylesheet reads off the wash.
   if (card?.mark !== undefined) vars["--mark-desk"] = card.mark;
   if (card?.markClip) vars["--mark-clip"] = card.markClip;
+  if (card?.markFill) vars["--mark-fill"] = card.markFill;
   if (washFrom) vars["--wash-from"] = washFrom;
   if (washTo) vars["--wash-to"] = washTo;
   if (card?.edge) vars["--edge"] = card.edge;

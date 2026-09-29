@@ -195,13 +195,27 @@
   --mark-strength: 0.16;
 }
 
+/*
+ * Both halves of the lockup are painted through their own artwork rather than
+ * being the artwork: the file is white letters on nothing, so as a mask its
+ * alpha is the letterforms — the fade to transparent the word carries down its
+ * right side included — and `--mark-fill` is what colours them.
+ *
+ * White is the default, which is what every card had when the drawing was the
+ * background. A card whose mark crosses a photograph wants a grey instead: a
+ * white at any opacity can only lighten, so over dark footage it lands as pale
+ * blocks and over a white cup as a haze. A mid grey lightens the dark and
+ * darkens the light, which is what a watermark laid over a picture does.
+ */
 .markThe {
   position: absolute;
   left: calc(71 * var(--k));
   top: 0;
   width: calc(47 * var(--k));
   height: calc(31 * var(--k));
-  background: url("/images/mark-the.svg") left top / 100% 100% no-repeat;
+  background: var(--mark-fill, #ffffff);
+  -webkit-mask: url("/images/mark-the.svg") left top / 100% 100% no-repeat;
+  mask: url("/images/mark-the.svg") left top / 100% 100% no-repeat;
 }
 
 .markWord {
@@ -210,7 +224,9 @@
   top: calc(38.2 * var(--k));
   width: 100%;
   height: calc(283.8 * var(--k));
-  background: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
+  background: var(--mark-fill, #ffffff);
+  -webkit-mask: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
+  mask: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
 }
 
 /*
@@ -884,7 +900,8 @@ span.sceneLayer {
   .markWord {
     top: 0;
     height: 100%;
-    background-image: url("/images/mark-phone.svg");
+    -webkit-mask-image: url("/images/mark-phone.svg");
+    mask-image: url("/images/mark-phone.svg");
   }
 
 

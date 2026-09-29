@@ -94,5 +94,6 @@ export const productMobile: Record<string, MobileCard> = {
   // showing either side of a photograph that fades to black.
   /* Same reason as the desktop's — see `product-desktop.ts`. 0.34 is the
      phone's weight for a dark ground. */
-  tea: { panel: "#5e5a57", mark: 0.34 },
+  /* The fill is the desktop card's — one element, one variable, both frames. */
+  tea: { panel: "#5e5a57", mark: 0.45 },
 };

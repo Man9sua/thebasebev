@@ -58,6 +58,15 @@ export type DesktopCard = {
    * Without this it stands as a white bar down the band's left edge.
    */
   markClip?: number;
+  /**
+   * What the mark is painted in, when white is wrong.
+   *
+   * Tea's is the one that crosses a photograph. White can only lighten, so at
+   * any opacity it lands on the footage as pale blocks; the grey the design
+   * uses lightens the black ground and darkens the white cup, which is what
+   * reads as a watermark rather than as a patch.
+   */
+  markFill?: string;
 };
 
 /** Where the file puts the light on all but three of the sixteen. */
@@ -83,5 +92,5 @@ export const productDesktop: Record<string, DesktopCard> = {
      `paleWash` decides from a white default and hands the mark the weight meant
      for a near-white ground. At 0.16 of white on that collage the word is not
      there. 0.42 is the weight the stylesheet gives a dark ground. */
-  tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, mark: 0.42 },
+  tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, mark: 0.45, markFill: "#9b9b9b" },
 };
