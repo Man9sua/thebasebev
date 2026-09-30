@@ -132,14 +132,14 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
   },
   "sugar-free": {
     desktop: [
-      { paint: "#e8f2e9", m: [1200.1602, 0, 0, 685.1641, 0, 105] },
+      { paint: "#e8f2e9", m: [1200.1602, 0, 0, 685.1641, 0, 105], back: true },
       { src: "/images/scene-f16e70efc5898x432b400.webp", m: [-22.1914, 208.5744, -141.3663, -15.0408, 167.9235, 577.0702], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-5f33d9e4f813.webp", m: [234.7475, -187.7379, 152.5828, 190.7896, 254.7271, 193.2681], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-cdd1d94df813.webp", m: [255.099, 79.67, -64.7513, 207.3301, 22.3305, 332.9095], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-3c519f85f813.webp", m: [311.0721, -101.0633, 82.1385, 252.8219, 410.8188, 457.3213], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-118.7615, 103.8374, 117.0408, 133.8625, 437.3321, 379.345], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-f16e70efc5898x432.webp", m: [121.5925, 0, 0, 82.4123, 159.0449, 348.5779], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
-      { paint: "#a4c4b0", m: [239.6411, -30.5591, 12.2042, 95.7039, 263.8083, 627.4891], mask: [46.9141, 118.3516, 610.6379, 626.2354], round: true },
+      { paint: "#a4c4b0", m: [239.6411, -30.5591, 12.2042, 95.7039, 263.8083, 627.4891], mask: [46.9141, 118.3516, 610.6379, 626.2354], z: 1, round: true },
       { src: "/images/scene-f16e70efc5898x432b400.webp", m: [32.9987, 152.8733, 103.6135, -22.3657, 569.95, 381.684], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-f16e70efc7127x6439.webp", m: [82.5183, 0, 0, 157.9891, 427.935, 379.345], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-101.3291, 120.9228, -136.2986, -114.2135, 421.2313, 337.4233], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
@@ -149,7 +149,6 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { paint: "linear-gradient(-90.8561deg, rgba(232, 242, 233, 0) 97.4054%)", m: [773.5, 0, 0, 685.1641, 496.7651, 118.3516], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { paint: "linear-gradient(-88.7188deg, #e8f2e9 24.6575%, rgba(232, 242, 233, 0) 96.153%)", m: [-186.6956, 0, 0, -645.6128, 226.9141, 824.9297], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
       { paint: "linear-gradient(-88.876deg, #e8f2e9 24.3001%, rgba(232, 242, 233, 0) 96.9894%)", m: [212.8031, 0, 0, 645.6128, 457.9619, 179.3203], mask: [46.9141, 118.3516, 610.6379, 626.2354] },
-      { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 93.8748, 622.0819], round: true },
     ],
     phone: [
       { src: "/images/scene-f16e70efc5898x432b801.webp", m: [-13.0829, 122.9645, -83.3422, -8.8673, 71.3408, 325.8765], back: true, mask: [-360, 108, 1080, 316.6348] },
@@ -170,23 +169,16 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
   },
   "tea": {
     /*
-     * The first four are ground, not cut-outs: two black fills, the photograph
-     * of the cup, and the gradient that carries its right edge back into the
-     * black. `back` puts them under the brand mark, which is where the design
-     * frame has them — BASE reads across the cup and the sachets stand in front
-     * of the letters. The phone list was imported with the flags and this one
-     * was not, which is why the word was on one frame and not the other.
+     * The cup and its right-edge gradient sit under the brand mark, with the
+     * sachets in front. The full-width hero wash supplies the black ground;
+     * separate fill rectangles left visible seams on wide screens.
      */
     desktop: [
-      { paint: "#000000", m: [1250.2365, 0, 0, 802.3901, -50.3828, 0.3594], back: true },
-      { paint: "#000000", m: [861.4952, 0, 0, 785.7686, -263.1204, 8.6719], back: true },
       { src: "/images/scene-e84aac77f1210.webp", m: [534.3839, 0, 0, 646.816, 161, 124], back: true },
       { paint: "linear-gradient(-87.4331deg, #000000 36.9523%, rgba(0, 0, 0, 0) 95.8639%)", m: [352.9043, 0, 0, 645.6128, 355.1992, 166.2891], back: true },
       { src: "/images/scene-720e38e5f813b400.webp", m: [222.3992, 40.8617, -33.2101, 180.7535, 102.5508, 137.6484] },
       { src: "/images/scene-1eec80f6f781b200.webp", m: [335.3611, -121.6933, 95.0563, 261.9552, -154.1423, 308.0391] },
       { src: "/images/scene-37eb1716f813.webp", m: [390.6021, 151.6401, -123.2445, 317.4594, 63.1201, 339.6484] },
-      { paint: "#ffffff", m: [54.7782, 0, 0, 34.3454, 93.8748, 622.0819], round: true },
-      { paint: "linear-gradient(-88.2904deg, #000000 25.786%, rgba(0, 0, 0, 0) 93.5121%)", m: [-139.8934, 0, 0, -645.6128, 133.7, 811.8984] },
     ],
     phone: [
       { paint: "radial-gradient(42.6289% 41.5251% at 64.1419% 41.7228%, #3f3239 24.6049%, #17070a 100%)", m: [368.8984, 0, 0, 395.6914, -2.3105, 105.0859], back: true },

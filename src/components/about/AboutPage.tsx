@@ -142,6 +142,7 @@ function AboutTeam() {
               <div className={styles.portrait}>
                 <Image
                   src={`/images/about/${image}`}
+                  className={image === "team-irina.webp" ? styles.portraitCrop : undefined}
                   alt={`${name}, ${role}`}
                   fill
                   sizes="(max-width: 767px) 132px, (max-width: 1100px) 28vw, 242px"

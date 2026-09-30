@@ -1,5 +1,4 @@
 import type { CSSProperties, ReactNode } from "react";
-import { ProductBuy } from "@/components/cart/ProductBuy";
 import { PartnerRequestModal } from "@/components/forms/PartnerRequestModal";
 import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { Reveal } from "@/components/motion/Reveal";
@@ -13,7 +12,7 @@ import { productScene } from "@/data/product-scene";
 import { productShadows } from "@/data/product-shadows";
 import { productWashes } from "@/data/product-washes";
 import { isDark, luminance } from "@/lib/contrast";
-import { catalogFlavors, catalogWeights, productDetails } from "@/lib/site-pages";
+import { productDetails } from "@/lib/site-pages";
 import styles from "./ProductHero.module.css";
 
 /**
@@ -42,28 +41,6 @@ import styles from "./ProductHero.module.css";
  */
 
 const heroes = productHeroes as Record<string, { image: string; band: string; bandFoot: string }>;
-
-type DesktopCollageTuning = {
-  fade: string;
-  imageScale: number;
-  shiftX?: number;
-  primaryInk?: string;
-  secondaryBackground?: string;
-};
-
-const desktopCollageTuning: Record<string, DesktopCollageTuning> = {
-  "sugar-free": {
-    fade: "linear-gradient(180deg, #e8f2e9 0%, #e8f2e9 70%, #e9f3ea 76%, #edf4ed 84%, #f2f5f1 92%, #f5f5f3 100%)",
-    imageScale: 0.82,
-    shiftX: -48,
-  },
-  tea: {
-    fade: "linear-gradient(transparent, transparent)",
-    imageScale: 0.82,
-    primaryInk: "rgba(255, 255, 255, 0.62)",
-    secondaryBackground: "#d9d9d9",
-  },
-};
 
 /*
  * The certification seals, as the owner's own artwork.
@@ -293,18 +270,6 @@ export function ProductHero({ product }: { product: Product }) {
   if (washFrom) vars["--wash-from"] = washFrom;
   if (washTo) vars["--wash-to"] = washTo;
   if (card?.edge) vars["--edge"] = card.edge;
-  const collageTuning = desktopCollageTuning[product.slug];
-  if (collageTuning) {
-    vars["--scene-image-scale"] = collageTuning.imageScale;
-    vars["--collage-fade"] = collageTuning.fade;
-    if (collageTuning.shiftX !== undefined) {
-      vars["--scene-clip-shift-x"] = collageTuning.shiftX;
-    }
-    if (collageTuning.primaryInk) vars["--primary-ink"] = collageTuning.primaryInk;
-    if (collageTuning.secondaryBackground) {
-      vars["--secondary-bg"] = collageTuning.secondaryBackground;
-    }
-  }
   if (banner) {
     vars["--band"] = banner.band;
     vars["--band-foot"] = banner.bandFoot;
@@ -331,6 +296,8 @@ export function ProductHero({ product }: { product: Product }) {
       className={[
         styles.hero,
         product.slug === "tea" ? styles.tea : "",
+        product.slug === "sugar-free" ? styles.sugarFree : "",
+        product.slug === "garnish" ? styles.garnish : "",
         onDark ? styles.onDark : "",
         plain ? styles.plain : "",
         paleWash ? styles.paleWash : "",
@@ -522,10 +489,7 @@ export function ProductHero({ product }: { product: Product }) {
           <Reveal delay={60} distance={20}>
             {/* Always a name now, so always the display scale the design draws
                 it at — there is no long line left for the size to follow. */}
-            <h1
-              id="product-title"
-              className={`${styles.title}${product.slug === "tea" ? ` ${styles.teaTitle}` : ""}`}
-            >
+            <h1 id="product-title" className={styles.title}>
               {title}
             </h1>
           </Reveal>
@@ -580,29 +544,9 @@ export function ProductHero({ product }: { product: Product }) {
             </Reveal>
           )}
 
-          {/*
-            Buying and asking, in that order.
-
-            "Add to cart" is the one way into the native cart now that the
-            catalogue's own button hands the visitor to the Odoo shop — the
-            header's bag and `/checkout` are still here, and this is what fills
-            them. It renders nothing for a product with no flavours to choose,
-            which is a product that is quoted rather than listed.
-
-            Both enquiry actions use native fixed dialogs and the shared
-            server-side lead pipeline. Legacy Tilda popups stay untouched for
-            routes that still reference them.
-          */}
+          {/* Enquiry actions keep their native dialogs and shared lead pipeline. */}
           <Reveal className={styles.actions} delay={250} distance={16}>
-            <ProductBuy
-              className={styles.primary}
-              slug={product.slug}
-              name={product.name}
-              price={product.price}
-              weight={catalogWeights()[product.slug] ?? null}
-              flavors={catalogFlavors()[product.slug] ?? []}
-            />
-            <SampleRequestModal className={styles.secondary} productName={product.name} />
+            <SampleRequestModal className={styles.primary} productName={product.name} />
             <PartnerRequestModal className={styles.secondary} productName={product.name} />
           </Reveal>
         </div>

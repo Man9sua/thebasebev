@@ -13,10 +13,10 @@ import styles from "./SiteHeader.module.css";
  * Global header — minimal by design: mark on the left, actions on the right,
  * centre deliberately empty. Navigation lives behind the burger.
  *
- * The bar starts transparent over the hero and turns to paper once past it, and
- * from then on it stays exactly where it is. It used to slide away on
- * scroll-down and come back on scroll-up, which meant the one element on the
- * page that is supposed to be a fixed point was the one that moved most.
+ * Routes with `overHero` start transparent and turn to paper after the hero.
+ * Product routes keep a white plate and dark controls throughout the page.
+ * The homepage opts out of surface sampling but keeps its transparent opening;
+ * other routes retain their surface sampling. The bar stays fixed in place.
  */
 
 function CartIcon() {
@@ -133,11 +133,20 @@ function surfaceUnderBar(barHeight: number) {
   return null;
 }
 
-export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
+export function SiteHeader({
+  overHero = false,
+  productPage = false,
+  sampleSurface = true,
+}: {
+  overHero?: boolean;
+  productPage?: boolean;
+  sampleSurface?: boolean;
+}) {
   const pathname = usePathname();
   const [pastHero, setPastHero] = useState(false);
   // Derived, not stored: away from the hero the bar is always solid.
-  const solid = !overHero || pastHero;
+  const solid = productPage || !overHero || pastHero;
+  const adaptSurface = !productPage && sampleSurface;
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const cart = useCart();
@@ -184,6 +193,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
    * the header strip, so this costs one observer and no scroll maths.
    */
   useEffect(() => {
+    if (!adaptSurface) return;
     const surfaces = Array.from(document.querySelectorAll("[data-surface='dark']"));
     if (!surfaces.length) return;
 
@@ -216,7 +226,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
       window.removeEventListener("resize", build);
       observer?.disconnect();
     };
-  }, [pathname]);
+  }, [adaptSurface, pathname]);
 
   /**
    * Chameleon: the bar takes the colour of the page it is currently over.
@@ -231,7 +241,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
    * screen, so the bar follows them rather than the page underneath.
    */
   useEffect(() => {
-    if (menuOpen || searchOpen) return;
+    if (!adaptSurface || menuOpen || searchOpen) return;
 
     let frame = 0;
 
@@ -259,25 +269,25 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, [menuOpen, pathname, searchOpen]);
+  }, [adaptSurface, menuOpen, pathname, searchOpen]);
 
   // A section may declare itself dark even when its top strip is not; the
   // sampled colour catches everything that does not.
-  const dark = onDark || surfaceDark;
+  const dark = adaptSurface && (onDark || surfaceDark);
 
   /*
-   * What the bar sits on, in priority order. The menu panel is the redesign's
-   * ink screen and it opens under the bar rather than over it, so while it is
-   * open the bar belongs to the panel: inverted, and painted the panel's own
-   * colour so the two meet without a seam. The search panel is paper, so it
-   * takes the plain solid bar. Otherwise the page below decides.
+   * Product pages keep their white bar even while an overlay is open.
+   * Elsewhere the menu gives the bar its ink surface, the search panel uses
+   * paper, and the current section supplies the default.
    */
-  const inverted = menuOpen || (dark && !searchOpen);
-  const plate = menuOpen
-    ? "var(--tbb-rd-ink)"
-    : !searchOpen && surface
-      ? surface
-      : null;
+  const inverted = !productPage && (menuOpen || (dark && !searchOpen));
+  const plate = productPage
+    ? "#ffffff"
+    : menuOpen
+      ? "var(--tbb-rd-ink)"
+      : adaptSurface && !searchOpen && surface
+        ? surface
+        : null;
 
   // Cart state is native and shared across every route. Empty means catalogue;
   // a populated cart means the dedicated review/checkout page.

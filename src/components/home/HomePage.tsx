@@ -48,7 +48,7 @@ export function HomePage() {
         />
       ))}
 
-      <SiteHeader overHero />
+      <SiteHeader overHero sampleSurface={false} />
       <main>
         <Hero />
         <Bestsellers />

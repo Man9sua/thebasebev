@@ -122,6 +122,11 @@
   object-fit: cover;
 }
 
+/* Irina's source image has a baked-in dark border; fill the shared frame. */
+.portrait img.portraitCrop {
+  transform: scale(1.12);
+}
+
 .teamCard h3 {
   margin-top: 22px !important;
   font-family: var(--tbb-font-display);
