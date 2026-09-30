@@ -92,6 +92,8 @@ export type SceneLayer = {
   back?: true;
   /** left, top, width, height — the rectangle the design masks this through. */
   mask?: [number, number, number, number];
+  /** Explicit stacking order for layers that cross a scene shadow. */
+  z?: number;
   opacity?: number;
   round?: boolean;
 };
