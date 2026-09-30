@@ -7,7 +7,7 @@
  * and must never run in CI: without LEAD_LIVE_TEST=1 it refuses to do anything.
  *
  * Usage:
- *   LEAD_LIVE_TEST=1 npm run test:lead-live -- https://the-base-staging.mnsdemo.workers.dev
+ *   LEAD_LIVE_TEST=1 npm run test:lead-live -- https://the-base-staging.mansua.workers.dev
  */
 
 if (process.env.CI) {

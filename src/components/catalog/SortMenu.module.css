@@ -1,0 +1,162 @@
+/**
+ * The shop's sort control — see `SortMenu.tsx` for why it is not a `<select>`.
+ *
+ * The list is always in the document and always laid out; open and closed are a
+ * matter of opacity, a few pixels of travel and `visibility`. That way it can
+ * animate out as well as in, which a list that is only mounted while open
+ * cannot. `visibility` is stepped rather than eased so it flips at the end of
+ * the fade going out and at the start coming in, which is what keeps a closed
+ * list off the pointer and out of the tab order.
+ *
+ * The rows come in one after another. It is the whole of the effect and it is
+ * deliberately small — a control that takes half a second to answer is a
+ * control that feels broken.
+ */
+
+.root {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.label {
+  color: var(--tbb-muted);
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+}
+
+.trigger {
+  appearance: none;
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.35rem 0.15rem;
+  border: 0;
+  border-bottom: 1px solid var(--tbb-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--tbb-ink);
+  font: 500 var(--tbb-text-label) / 1 var(--tbb-font-sans);
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.trigger:hover {
+  border-bottom-color: var(--tbb-ink);
+}
+
+/* Ink, not the accent: a red ring around a control anyone can click reads as a
+   validation error rather than as focus. */
+.trigger:focus-visible {
+  outline: 2px solid var(--tbb-ink);
+  outline-offset: 3px;
+  border-bottom-color: var(--tbb-ink);
+}
+
+.chevron {
+  width: 10px;
+  height: 7px;
+  flex: none;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.chevron[data-open="true"] {
+  transform: rotate(180deg);
+}
+
+.list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.55rem);
+  z-index: 30;
+  min-width: max(100%, 13rem);
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  border: 1px solid var(--tbb-line);
+  border-radius: 0.75rem;
+  background: var(--tbb-paper);
+  box-shadow: 0 18px 40px rgba(26, 19, 17, 0.16);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.35rem);
+  transition:
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    visibility 0s linear var(--tbb-dur-fast);
+}
+
+.list:focus-visible {
+  outline: none;
+}
+
+.list[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    visibility 0s;
+}
+
+.option {
+  padding: 0.62rem 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--tbb-ink-soft);
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  /* Each row arrives just after the one above it. */
+  opacity: 0;
+  transform: translateY(-0.25rem);
+  transition:
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.list[data-open="true"] .option {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: calc(var(--row) * 30ms);
+}
+
+.option[data-active="true"] {
+  background: var(--tbb-paper-warm);
+  color: var(--tbb-ink);
+}
+
+.option[aria-selected="true"] {
+  color: var(--tbb-ink);
+  font-weight: 600;
+}
+
+@media (max-width: 639px) {
+  /* The bar cannot hold both at this width, and the filters are the half
+     anyone reaches for. */
+  .root {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron,
+  .list,
+  .list .option {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

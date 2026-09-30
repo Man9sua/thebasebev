@@ -7,8 +7,12 @@ const chromePath =
   process.env.CHROME_PATH ??
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const artifactRoot = path.resolve(".visual-artifacts");
+const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
+/** The homepage's first section below the hero — what "the page has arrived". */
+const BESTSELLERS = "#bestsellers";
 const failures = [];
 const pageErrors = [];
+const hydrationErrors = [];
 const localResponseErrors = [];
 
 fs.mkdirSync(artifactRoot, { recursive: true });
@@ -17,7 +21,25 @@ function check(condition, message) {
   if (!condition) failures.push(message);
 }
 
+// React reports a hydration mismatch through `console.error`, not as a page
+// error, so nothing here used to see it: every product page logged one for
+// months while this smoke passed. The cause is always the same shape — the
+// exported Tilda runtime rewriting a node React owns before React reaches it —
+// and the report names the attributes, so it is worth failing on.
+const hydrationMarkers = [
+  "hydrated but some attributes",
+  "Hydration failed",
+  "did not match",
+];
+
 function observe(page, label) {
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const text = message.text();
+    if (hydrationMarkers.some((marker) => text.includes(marker))) {
+      hydrationErrors.push(`${label}: ${text.split("\n")[0]}`);
+    }
+  });
   page.on("pageerror", (error) => pageErrors.push(`${label}: ${error.message}`));
   page.on("response", (response) => {
     const url = new URL(response.url());
@@ -34,50 +56,90 @@ function observe(page, label) {
 const browser = await chromium.launch({
   executablePath: chromePath,
   headless: true,
-  args: ["--disable-background-networking", "--disable-component-update", "--disable-sync"],
 });
 
 try {
+  const history = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const historyPage = await history.newPage();
+  observe(historyPage, "history");
+  await historyPage.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
+  await historyPage.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
+  await Promise.all([
+    historyPage.waitForURL(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" }),
+    historyPage.evaluate(() => window.history.back()),
+  ]);
+  check(historyPage.url().endsWith("/catalog"), "navigation: browser Back did not restore catalog");
+  await Promise.all([
+    historyPage.waitForURL(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" }),
+    historyPage.evaluate(() => window.history.forward()),
+  ]);
+  check(historyPage.url().endsWith("/matcha"), "navigation: browser Forward did not restore product route");
+  await history.close();
+  console.log("Browser smoke phase passed: history");
+
   const desktop = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage is the redesigned surface: a video hero, then the Bestsellers
-  // carousel. Navigation, product grid and the region picker moved out of the
-  // old hover mega-menu into the full-screen menu panel, so they are asserted
-  // there rather than on hover.
+  // The homepage: a photographic hero, then the bestsellers carousel.
+  // Navigation and the product grid moved out of the old hover mega-menu into
+  // the full-screen menu panel, so they are asserted there rather than on hover.
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await page.locator("#bestsellers").waitFor();
-  await page.waitForTimeout(900);
+  await page.locator(BESTSELLERS).waitFor();
+  // Nothing covers the page any more — the loading screen is gone — so this is
+  // just a frame for the hero and the scene controller to settle in before the
+  // first desktop wheel event.
+  await page.waitForTimeout(250);
 
-  // The hero is product-first: no video, and the pack shot is the dominant
-  // object in the first viewport.
+  // The hero is one photograph anchored to the right edge with the copy held on
+  // the left. It replaced a marquee of product tiles, so the rail assertions are
+  // gone; what still matters is that it is a picture and not video, that the
+  // picture runs the height of the frame and takes the half the copy does not,
+  // and that the one above-the-fold CTA still opens the range.
   const hero = page.locator("section[data-hero]");
   check((await hero.locator("video").count()) === 0, "home: hero must not use video");
-  const heroShot = hero.locator("[aria-roledescription='slide']:not([aria-hidden='true']) img").first();
-  check(await heroShot.count() === 1, "home: expected one visible hero product");
-  const heroBox = await heroShot.boundingBox();
+  const heroImage = hero.locator("img").first();
+  check((await heroImage.count()) === 1, "home: hero is missing its photograph");
+  const heroImageBox = await heroImage.boundingBox();
   const view = page.viewportSize();
   check(
-    !!heroBox && heroBox.height > view.height * 0.4,
-    `home: hero product is not dominant (${Math.round(heroBox?.height ?? 0)}px of ${view.height})`,
+    !!heroImageBox && heroImageBox.x + heroImageBox.width >= view.width - 1,
+    `home: hero photograph must reach the right edge (ends at ${Math.round(
+      (heroImageBox?.x ?? 0) + (heroImageBox?.width ?? 0),
+    )} of ${view.width})`,
   );
   check(
-    !!heroBox && Math.abs(heroBox.x + heroBox.width / 2 - view.width / 2) < 60,
-    "home: hero product is not centred",
+    !!heroImageBox && heroImageBox.width > view.width * 0.5,
+    `home: hero photograph must take at least half the frame (got ${Math.round(heroImageBox?.width ?? 0)} of ${view.width})`,
   );
-  // The header must carry the original Tilda lockup, not a text substitute.
   check(
-    (await page.locator("header a[href='/'] img[src$='base-logo.svg']").count()) === 1,
-    "header: original BASE logo asset missing",
+    !!heroImageBox && heroImageBox.height > view.height * 0.6,
+    `home: hero photograph is too short (${Math.round(heroImageBox?.height ?? 0)}px of ${view.height})`,
+  );
+  check(
+    (await hero.locator("a[href='/catalog']").count()) > 0,
+    "home: hero CTA must point at the catalog",
+  );
+  // The bar carries the vertical mark — the near-square one the design file
+  // draws — rather than the landscape lockup the live site still uses. It
+  // carries its own two colours, so it no longer takes part in the bar's colour
+  // interpolation; what it has to be is present, and at the file's own height.
+  const headerMark = await page.evaluate(() => {
+    const el = document.querySelector('header a[href="/"] svg[data-brand-mark="vertical"]');
+    return el ? el.getBoundingClientRect().height : 0;
+  });
+  check(headerMark > 0, "header: stacked BASE mark missing");
+  check(
+    headerMark >= 36,
+    `header: the mark collapsed (height ${Math.round(headerMark)})`,
   );
 
   check(
-    (await page.locator("#bestsellers [aria-roledescription='slide']").count()) === 5,
+    (await page.locator(`${BESTSELLERS} [aria-roledescription='slide']`).count()) === 5,
     "home: expected five bestseller slides",
   );
   check(
-    (await page.locator("#bestsellers [aria-current]").count()) === 5,
+    (await page.locator(`${BESTSELLERS} [aria-current]`).count()) === 5,
     "home: expected five bestseller dots",
   );
   check(
@@ -85,36 +147,56 @@ try {
     "home: expected exactly one h1",
   );
   check(
-    /^Premium\s+.+\s+Bases$/.test(((await page.locator("h1").textContent()) ?? "").trim()),
+    /^Premium\s+.+\s+Bases\b/.test(((await page.locator("h1").textContent()) ?? "").trim()),
     "home: h1 must keep the production wording (Premium … Bases)",
   );
 
-  await page.locator("#bestsellers [aria-label='Next product']").click();
+  // The homepage uses the browser's natural document scroll. Verify that a
+  // desktop wheel actually moves it before bringing the carousel into view.
+  const initialScrollY = await page.evaluate(() => window.scrollY);
+  await page.mouse.wheel(0, 600);
+  await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
+  await page.locator(BESTSELLERS).scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await page.locator(`${BESTSELLERS} [aria-label='Next product']`).click();
   await page.waitForTimeout(900);
   check(
-    (await page.locator("#bestsellers .is-active, #bestsellers [aria-hidden='false'][aria-roledescription='slide']")
+    (await page
+      .locator(
+        `${BESTSELLERS} .is-active, ${BESTSELLERS} [aria-hidden='false'][aria-roledescription='slide']`,
+      )
       .first()
       .getAttribute("aria-label"))?.startsWith("2 of 5"),
     "home: next arrow did not activate slide two",
   );
 
-  // Horizontal reading rail: a native overflow scroller, so the arrows move it
-  // and vertical wheel over it must still scroll the page.
+  // Guides and tools: a native overflow scroller, so the arrows move it and a
+  // vertical wheel over it must still scroll the page. It carries the five
+  // pages the design names, with the newest article behind them.
   const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
   await rail.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
   check(
-    (await rail.locator("[data-card]").count()) === 7,
-    "reading: expected seven cards in the rail",
+    (await rail.locator("[data-card]").count()) === 6,
+    "reading: expected six cards on the rail",
+  );
+  check(
+    (await rail.locator("a[href='/wholesale-strategy']").count()) === 1 &&
+      (await rail.locator("a[href^='/tpost/']").count()) === 1,
+    "reading: the rail lost either its guides or its article",
   );
   check(
     await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
     "reading: rail is not horizontally scrollable",
   );
 
-  const railNext = page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll right']");
+  const railNext = page.locator(
+    "section[aria-labelledby='reading-title'] button[aria-label='Scroll right']",
+  );
   check(
-    await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled(),
+    await page
+      .locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']")
+      .isDisabled(),
     "reading: left arrow should start disabled",
   );
   await railNext.click();
@@ -124,12 +206,15 @@ try {
     "reading: right arrow did not advance the rail",
   );
   check(
-    !(await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled()),
+    !(await page
+      .locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']")
+      .isDisabled()),
     "reading: left arrow should enable once scrolled",
   );
 
   // The progress thumb tracks the rail rather than sitting still.
-  const thumbShift = await page.locator("section[aria-labelledby='reading-title'] [class*='thumb']")
+  const thumbShift = await page
+    .locator("section[aria-labelledby='reading-title'] [class*='thumb']")
     .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
   check(thumbShift > 5, "reading: progress indicator did not follow the rail");
 
@@ -143,54 +228,77 @@ try {
     "reading: rail swallowed vertical scrolling",
   );
 
-  // The footer wordmark must fit. It was sized in `vw`, which includes the
-  // scrollbar, so the final E ran off the right edge on desktop only.
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  // The brand film, which is the whole reason this page came back. It is
+  // ambient — muted, looping, no controls — and it arms on intersection, so the
+  // source is only attached once the frame is approached; hence the scroll
+  // before the check rather than a look at the initial markup.
+  const film = page.locator("section#about video");
+  await film.scrollIntoViewIfNeeded();
   await page.waitForTimeout(900);
-  const wordmark = await page.evaluate(() => {
-    const el = [...document.querySelectorAll("footer *")]
-      .find((e) => e.textContent.trim() === "BASE" && e.children.length === 0);
-    if (!el) return null;
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const box = range.getBoundingClientRect();
-    const cw = document.documentElement.clientWidth;
-    return { left: box.left, right: box.right, cw, share: box.width / cw };
-  });
-  check(!!wordmark, "footer: BASE wordmark not found");
+  check((await film.count()) === 1, "home: the brand film is missing from About");
   check(
-    !!wordmark && wordmark.left >= -2 && wordmark.right <= wordmark.cw + 2,
-    `footer: BASE wordmark overflows (${Math.round(wordmark?.left ?? 0)}..${Math.round(wordmark?.right ?? 0)} of ${wordmark?.cw})`,
+    (await film.getAttribute("src")) === "/video/base-film.mp4",
+    "home: the brand film never attached its source",
   );
   check(
-    !!wordmark && wordmark.share > 0.7,
-    "footer: BASE wordmark should span most of the width",
+    (await film.getAttribute("poster")) === "/video/base-film-poster.jpg",
+    "home: the brand film has no frame to stand on until it arrives",
+  );
+  check(
+    (await film.evaluate((video) => video.loop && video.muted && !video.controls)) === true,
+    "home: the brand film should be an ambient loop, not a player",
+  );
+
+  /*
+   * The footer closes on the brand mark. The check that it fits stays — it
+   * began as the word BASE sized in `vw`, which includes the scrollbar, and its
+   * final E ran off the right edge on desktop only.
+   *
+   * What it is has changed twice. It is now `BrandMarkStacked`, a portrait
+   * block with BASE broken across two rows, standing at the head of the brand
+   * column rather than closing the page on a band of its own. The share of the
+   * viewport it takes is the measure's business; what this asserts is that it
+   * is there, that it does not spill past the page, and that it is a watermark
+   * rather than a few collapsed pixels.
+   */
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForTimeout(900);
+  const closingMark = await page.evaluate(() => {
+    const el = document.querySelector('footer svg[data-brand-mark="stacked"]');
+    if (!el) return null;
+    const box = el.getBoundingClientRect();
+    return {
+      left: box.left,
+      right: box.right,
+      height: box.height,
+      cw: document.documentElement.clientWidth,
+    };
+  });
+  check(!!closingMark, "footer: stacked brand mark not found");
+  check(
+    !!closingMark && closingMark.left >= -2 && closingMark.right <= closingMark.cw + 2,
+    `footer: brand mark overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
+  );
+  check(
+    !!closingMark && closingMark.height > 90,
+    `footer: brand mark collapsed (height ${Math.round(closingMark?.height ?? 0)})`,
   );
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
     "home: horizontal overflow on the page",
   );
+  // Walking the sections scrolled the page; come back to the top so the header
+  // is over the hero and in the state the checks below expect. The bar itself
+  // no longer moves — it is fixed once it has turned to paper.
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
-  // Clicking a carousel control scrolls the page, and the bar hides on
-  // scroll-down by design, so come back to the top before touching the header.
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(700);
-
-  // Region picker — ported from production, still display-only.
-  const region = page.locator("header button[aria-label^='Region:']");
-  await region.click();
-  await page.waitForTimeout(200);
+  // The region control the bar used to carry is gone — the owner asked for it
+  // off, and the design's header does not have one. Asserted rather than merely
+  // dropped, so it cannot come back unnoticed.
   check(
-    (await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").count()) === 5,
-    "header: region panel did not list five regions",
-  );
-  await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").nth(2).click();
-  await page.waitForTimeout(200);
-  check(
-    ((await region.textContent()) ?? "").includes("KZ"),
-    "header: region selection did not update",
+    (await page.locator("header button[aria-label^='Region:']").count()) === 0,
+    "header: the region picker is back in the bar",
   );
 
   // Everything the old mega-menu linked to now lives in the menu panel.
@@ -204,6 +312,10 @@ try {
   check(
     (await menu.locator("a[href^='/']").evaluateAll((links) => new Set(links.map((a) => a.getAttribute("href"))).size)) >= 24,
     "header: menu lost links the mega-menu used to expose",
+  );
+  check(
+    (await menu.locator("a[href='/cabinet']").count()) === 0,
+    "header: cabinet link leaked into desktop navigation",
   );
   await page.keyboard.press("Escape");
   await page.waitForTimeout(600);
@@ -222,15 +334,15 @@ try {
   );
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
-  await page.locator(".catg-card").first().waitFor();
+  await page.locator("[data-catalog-card]").first().waitFor();
   await page.waitForTimeout(1_200);
-  check((await page.locator(".catg-card").count()) === 16, "catalog: expected 16 product cards");
-  check((await page.locator(".catg-price").count()) === 16, "catalog: expected a price or request label on every card");
-  const catalogPrices = await page.locator(".catg-card").evaluateAll((cards) =>
+  check((await page.locator("[data-catalog-card]").count()) === 16, "catalog: expected 16 product cards");
+  check((await page.locator("[data-catalog-price]").count()) === 16, "catalog: expected a price or request label on every card");
+  const catalogPrices = await page.locator("[data-catalog-card]").evaluateAll((cards) =>
     Object.fromEntries(
       cards.map((card) => [
-        card.querySelector(".catg-name")?.textContent?.trim() ?? "",
-        card.querySelector(".catg-price")?.textContent?.trim() ?? "",
+        card.querySelector("[data-catalog-name]")?.textContent?.trim() ?? "",
+        card.querySelector("[data-catalog-price]")?.textContent?.trim() ?? "",
       ]),
     ),
   );
@@ -255,52 +367,147 @@ try {
   for (const [name, expectedPrice] of Object.entries(expectedCatalogPrices)) {
     check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
   }
-  check((await page.locator(".catg-flt button").count()) === 5, "catalog: expected All plus four filters");
-  await page.locator('.catg-flt button[data-f="Cold & Refreshing"]').click();
-  check((await page.locator(".catg-card:not(.is-hidden)").count()) === 4, "catalog: cold filter did not leave four cards");
-
-  await page.locator(".catg-card:not(.is-hidden) .tbc-add").first().click();
-  await page.waitForTimeout(200);
-  const cartProducts = await page.evaluate(() =>
-    Array.isArray(window.tcart?.products) ? window.tcart.products : [],
+  check((await page.locator("[data-catalog-filters] button").count()) === 5, "catalog: expected All plus four filters");
+  check(
+    !(await page.locator("#rec2839951603 .js-store-grid-cont-preloader").isVisible()),
+    "catalog: hidden Tilda store preloader leaked into the public grid",
   );
-  check(cartProducts.length === 1, "catalog: add-to-cart did not create one cart item");
-  check(cartProducts[0]?.name === "Milkshake", "catalog: unexpected cart product");
-  check(Number(cartProducts[0]?.price) === 45.38, "catalog: cart product price changed");
-  await page.waitForTimeout(900);
-  await page.locator('.tbh-ico[aria-label="Cart"]').first().click();
-  await page.waitForTimeout(500);
-  const openCartText = await page.evaluate(() => {
-    const cart = [...document.querySelectorAll('[class*="t706__cartwin"]')].find((element) => {
-      const style = getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
-    });
-    return cart?.textContent ?? "";
-  });
-  check(/Milkshake/.test(openCartText), "catalog: cart dialog did not open with the selected product");
-  check(/45\.38/.test(openCartText), "catalog: cart dialog did not preserve the selected price");
+  await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
+  check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
+
+  // The catalogue sends buying to Odoo; the shelf must point to that shop.
+  check(
+    (await page.locator("[data-catalog-card] [data-shop-link]").count()) > 0,
+    "catalog: no card offers the shop",
+  );
+  check(
+    (await page.locator("[data-catalog-card] [data-shop-link]").first().getAttribute("href")) ===
+      "https://odoo.thebasebev.com/shop",
+    "catalog: Buy does not point at the shop",
+  );
+  check(
+    (await page.locator("[data-catalog-card] [data-cart-add]").count()) === 0,
+    "catalog: the shelf still carries an add-to-cart control",
+  );
 
   await page.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
   await page.locator("h1").first().waitFor();
+  await page.waitForTimeout(1_200);
   check(/Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""), "matcha: unexpected H1");
   check((await page.locator("img").count()) > 10, "matcha: expected product imagery");
-  await page.locator('a[href="#sample"]').first().click();
-  await page.waitForTimeout(500);
+  const hiddenProductContent = await page.locator("main .t-animate").evaluateAll((elements) =>
+    elements.filter((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return rect.width > 24 && rect.height > 24 &&
+        (style.opacity === "0" || style.visibility === "hidden");
+    }).length,
+  );
   check(
-    await page.locator("#form1855223381").isVisible(),
-    "matcha: Place order did not open the shared Free Sample form",
+    hiddenProductContent === 0,
+    `matcha: ${hiddenProductContent} meaningful product elements stayed hidden`,
+  );
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator("h1").first().waitFor();
+  check(
+    /Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""),
+    "matcha: product content failed after a hard refresh",
+  );
+  // The hero's two calls to action are React modals now rather than the
+  // export's popup anchors, so this no longer waits for `a[href="#sample"]`.
+  // What has to hold is not that a dialog opens but that the form inside it is
+  // one the lead bridge owns: `tildaspec-formname` is how
+  // `LeadAttributionBridge` decides to post a submission to `/api/leads`
+  // instead of leaving it to a Tilda runtime that is not on this page.
+  await page.getByRole("button", { name: "Request a sample" }).first().click();
+  await page.locator("#sample-request-modal-form").waitFor({ state: "visible" });
+  check(
+    (await page
+      .locator('#sample-request-modal-form input[name="tildaspec-formname"]')
+      .inputValue()) === "Free Sample",
+    "matcha: the sample modal carries a form name the lead bridge does not own",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
+  check(
+    (await page.locator("#sample-request-modal-form").count()) === 0,
+    "matcha: the sample modal did not close on Escape",
+  );
+  check(
+    (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
+    "matcha: the sample modal left the page scroll locked",
   );
 
-  await page.evaluate(() => sessionStorage.removeItem("thebase:first-touch-attribution:v1"));
-  await page.goto(`${baseUrl}/contacts?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+  // Product pages collect enquiries; the catalogue sends buying to Odoo.
+  check(
+    (await page.locator("[data-cart-add]").count()) === 0,
+    "matcha: product page still has an add-to-cart control",
+  );
+  check(
+    (await page.locator('header a[aria-label^="Cart"]').first().getAttribute("href")) ===
+      "/catalog",
+    "matcha: empty cart does not lead to catalogue",
+  );
+  await page.getByRole("button", { name: "Request pricing" }).first().click();
+  const pricingForm = page.locator("#partner-request-modal-form");
+  await pricingForm.waitFor({ state: "visible" });
+  check(
+    (await pricingForm.locator('input[name="tildaspec-formname"]').inputValue()) ===
+      "Partner with Us",
+    "matcha: pricing modal carries an unexpected lead form name",
+  );
+  check(
+    (await pricingForm.locator('input[name="product"]').inputValue()) === "Matcha",
+    "matcha: pricing modal lost product context",
+  );
+  await page.keyboard.press("Escape");
+  await pricingForm.waitFor({ state: "detached" });
+  check(
+    (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
+    "matcha: pricing modal left the page scroll locked",
+  );
+  // Browser smoke must be safe against a credentialed staging environment.
+  // Mock only the same-origin lead boundary so the UX and attribution path are
+  // exercised without creating a real CRM lead or contacting any recipient.
+  await page.route("**/api/leads", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      headers: { "Cache-Control": "no-store" },
+      body: JSON.stringify({
+        ok: false,
+        error: "lead_backend_unavailable",
+        message: "Lead delivery is temporarily unavailable. Please contact us directly.",
+        requestId: "browser-smoke-mocked",
+      }),
+    });
+  });
+
+  await page.evaluate((storageKey) => sessionStorage.removeItem(storageKey), firstTouchStorageKey);
+  await page.goto(`${baseUrl}/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.locator(BESTSELLERS).waitFor();
+
+  /*
+   * The homepage carried a distributor form while it was the eight-section
+   * redesign, and this is where its failure path was exercised. The page has
+   * no form of its own again, so the mocked 503 is proved against /contacts
+   * below instead — the landing is still loaded here, because the first touch
+   * it records is what the attribution check at the end reads.
+   */
+  await page.goto(`${baseUrl}/contacts`, {
     waitUntil: "domcontentloaded",
   });
   const contactForm = page.locator("#form860957415");
   await contactForm.waitFor();
   await contactForm.locator('input[name="name"]').fill("Browser Smoke");
+  await contactForm.locator('input[name="company"]').fill("THE BASE QA");
   await contactForm.locator('input[name="email"]').fill("smoke@example.com");
-  const consent = contactForm.locator('input[name="bch_privacy_agreement"]');
+  await contactForm.locator('input[name="Phone"]').fill("500000000");
+  await contactForm.locator('input[name="country"]').fill("United Arab Emirates");
+  await contactForm.locator('textarea[name="text"]').fill("Browser-safe form error UX check.");
+  const consent = contactForm.locator('input[name="privacy-consent"]');
   if (await consent.count()) {
     await consent.evaluate((input) => {
       input.checked = true;
@@ -313,8 +520,9 @@ try {
     /temporarily unavailable/i.test((await contactForm.locator(".js-rule-error-all").textContent()) ?? ""),
     "contacts: unconfigured lead backend did not show an honest error",
   );
-  const attribution = await page.evaluate(() =>
-    JSON.parse(sessionStorage.getItem("thebase:first-touch-attribution:v1") ?? "null"),
+  const attribution = await page.evaluate(
+    (storageKey) => JSON.parse(sessionStorage.getItem(storageKey) ?? "null"),
+    firstTouchStorageKey,
   );
   check(attribution?.utm_source === "chatgpt.com", "contacts: chatgpt.com attribution was not retained");
   check(
@@ -324,57 +532,138 @@ try {
   );
 
   await desktop.close();
+  console.log("Browser smoke phase passed: desktop interactions");
 
   const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  // On a remote Worker the static HTML can arrive before its client chunks.
+  // The attribution bridge writes this key from a React effect, giving the
+  // smoke test a deterministic hydration signal before it clicks the menu.
+  await mobilePage.waitForFunction(
+    (storageKey) => sessionStorage.getItem(storageKey) !== null,
+    firstTouchStorageKey,
+  );
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
-  await mobileBurger.click();
-  await mobilePage.waitForTimeout(900);
+  // The button ships in the server HTML, so it is clickable well before React
+  // has hydrated and an early click is simply dropped. On localhost hydration
+  // wins that race every time; against a deployed Worker it loses it every
+  // time, which read as a broken menu rather than as a test clicking too soon.
+  // So click until the menu answers, giving each click room to finish its
+  // transition before deciding it went nowhere.
+  const mobileMenu = mobilePage.locator("#site-menu");
+  const menuIsOpen = () =>
+    mobileMenu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)");
+  let mobileMenuOpen = false;
+  for (let attempt = 0; attempt < 6 && !mobileMenuOpen; attempt += 1) {
+    // Once it opens the button relabels itself to "Close menu" and this locator
+    // stops matching — which only happens after the loop has already won.
+    await mobileBurger.click({ timeout: 5_000 }).catch(() => {});
+    for (let tick = 0; tick < 8 && !mobileMenuOpen; tick += 1) {
+      await mobilePage.waitForTimeout(250);
+      mobileMenuOpen = await menuIsOpen();
+    }
+  }
+  check(mobileMenuOpen, "mobile: burger menu did not open");
+  // Cabinet is no longer public.
   check(
-    await mobilePage.locator("#site-menu").evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
-    "mobile: burger menu did not open",
+    (await mobilePage.locator("a[href='/cabinet']").count()) === 0,
+    "mobile: cabinet link leaked into public navigation",
   );
-  // Account and the region picker leave the bar on small screens, so the menu
-  // is the only place they exist — if they are missing there, they are gone.
   check(
-    (await mobilePage.locator("#site-menu a[href='/cabinet']").count()) === 1,
-    "mobile: account link missing from the menu",
+    (await mobilePage.locator("#site-menu a[href='/contacts']").count()) >= 1,
+    "mobile: contact link missing from the menu",
   );
   check(
-    (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 1,
-    "mobile: region picker missing from the menu",
+    (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 0,
+    "mobile: the region picker is back in the menu",
   );
   await mobile.close();
+  console.log("Browser smoke phase passed: mobile interactions");
 
-  const viewportWidths = [1440, 1280, 1024, 768, 430, 390, 375, 360, 320];
+  const viewports = [
+    { width: 1920, height: 1080 },
+    { width: 1536, height: 864 },
+    { width: 1440, height: 900 },
+    { width: 1366, height: 768 },
+    { width: 1280, height: 900 },
+    { width: 1024, height: 768 },
+    { width: 768, height: 1024 },
+    { width: 430, height: 932 },
+    { width: 414, height: 896 },
+    { width: 390, height: 844 },
+    { width: 375, height: 812 },
+    { width: 360, height: 800 },
+    { width: 320, height: 720 },
+  ];
   const visual = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const visualPage = await visual.newPage();
-  for (const width of viewportWidths) {
-    const height = width <= 430 ? 844 : 1000;
+  for (const { width, height } of viewports) {
     await visualPage.setViewportSize({ width, height });
     await visualPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-    await visualPage.locator("#bestsellers").waitFor();
+    await visualPage.locator(BESTSELLERS).waitFor();
     await visualPage.waitForTimeout(3_500);
+    check(
+      await visualPage.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      ),
+      `home: horizontal overflow at ${width}x${height}`,
+    );
     await visualPage.screenshot({
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
       fullPage: false,
     });
   }
   await visual.close();
+  console.log("Browser smoke phase passed: responsive captures");
+
+  const reduced = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce",
+  });
+  const reducedPage = await reduced.newPage();
+  observe(reducedPage, "reduced-motion");
+  // These fallbacks are CSS-driven. On a remote origin DOMContentLoaded can
+  // precede the last render-blocking stylesheet in Playwright's no-JS context,
+  // which observes a transient browser-default `display: block` that a real
+  // painted frame never exposes. Assert once the document and its styles are
+  // render-ready instead of racing the stylesheet response.
+  await reducedPage.goto(`${baseUrl}/`, { waitUntil: "load" });
+  check(
+    await reducedPage.locator("section[data-hero] h1").isVisible(),
+    "reduced-motion: homepage hero content is not immediately visible",
+  );
+  await reduced.close();
+  console.log("Browser smoke phase passed: reduced motion");
+
+  const noScript = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    javaScriptEnabled: false,
+  });
+  const noScriptPage = await noScript.newPage();
+  observe(noScriptPage, "no-script");
+  await noScriptPage.goto(`${baseUrl}/`, { waitUntil: "load" });
+  check(
+    await noScriptPage.locator("section[data-hero] h1").isVisible(),
+    "no-script: homepage hero content is not visible",
+  );
+  await noScript.close();
+  console.log("Browser smoke phase passed: no JavaScript");
+
 } finally {
   await browser.close();
 }
 
 for (const error of [...new Set(pageErrors)]) failures.push(`pageerror: ${error}`);
+for (const error of [...new Set(hydrationErrors)]) failures.push(`hydration: ${error}`);
 for (const error of [...new Set(localResponseErrors)]) failures.push(`response: ${error}`);
 
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-    console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
-  console.log(`Captured nine homepage viewports in ${artifactRoot}.`);
+  console.log("Browser smoke passed: hero, header, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

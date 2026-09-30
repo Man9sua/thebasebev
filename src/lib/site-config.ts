@@ -5,85 +5,125 @@
  */
 
 /**
- * The brand film is no longer the hero — the hero is the product.
+ * The brand film. It is not the hero — the hero is a photograph — and it plays
+ * inside the homepage's About frame, lazily and muted: see `BrandFilm`.
  *
- * The encoded files stay in `public/video/` (3.9 MB desktop / 1.8 MB mobile
- * plus a poster) so the asset is available if it is wanted elsewhere. Nothing
- * renders them today.
+ * 3.9 MB desktop and 1.8 MB mobile plus a poster, in `public/video/`. Only the
+ * desktop encode is rendered today; the mobile one is here for whenever the
+ * frame gets a source of its own on a small screen.
+ */
+/**
+ * The Odoo storefront, which is where a purchase is actually made.
+ *
+ * The catalogue here is the shelf and the product pages are the specification;
+ * "Buy" hands the visitor to the shop rather than trying to be it. Not an
+ * `/api` route and not called from anywhere but a link — see the Odoo rules in
+ * AGENTS.md, which are about the lead webhook and not about this.
+ */
+export const SHOP_URL = "https://odoo.thebasebev.com/shop";
+
+/**
+ * The brand film and the frame that stands until it is played.
+ *
+ * One file, not two: art direction by viewport belonged to the ambient loop
+ * this replaced, where a phone had no use for a 4 MB panorama it would see a
+ * strip of. A film someone presses play on is the same film on every screen.
+ *
+ * The poster is cut from the film itself — see `BrandFilm` for why the block
+ * is a player now. The previous loop and its own poster stay in `public/video`
+ * under their own names; nothing links them, and they are what to put back if
+ * ambient footage arrives.
  */
 export const BRAND_VIDEO = {
-  desktop: "/video/base-hero.mp4",
-  mobile: "/video/base-hero-mobile.mp4",
-  poster: "/video/base-hero-poster.jpg",
+  desktop: "/video/base-film.mp4",
+  poster: "/video/base-film-poster.jpg",
 } as const;
 
 /**
- * Regions offered by the header picker, copied from the control on production.
+ * The menu's first level — the four the redesign sets in Black caps.
  *
- * Display-only for now — see RegionPicker. The shape matches the future
- * locale/currency model in PROJECT_CONTEXT.md so wiring it up later is a data
- * change rather than a rewrite.
+ * Every href is a route of its own. "About Us" used to be `/#about`, an anchor
+ * on the homepage that no section carries an id for, so the menu's About just
+ * reloaded the homepage while `/about-us` — a real page, indexable, and one the
+ * footer already links to — went unlinked from the menu entirely.
+ *
+ * "Shop" is now "Catalogue". The menu redesign renames it because the label was
+ * doing two jobs: the shop — cart, Stripe checkout — and the presentation of the
+ * range, which is what the route actually opens. The document goes further and
+ * moves the shop out to an external `Shop ↗` button; there is no external shop
+ * to point one at, so that half waits for a URL. See the note in `SiteMenu.tsx`.
  */
-export type Region = {
-  short: string;
-  label: string;
-  name: string;
-  flag: string;
-  currency: string;
-};
-
-export const REGIONS: Region[] = [
-  { short: "AE", label: "UAE (EN)", name: "United Arab Emirates", flag: "🇦🇪", currency: "AED" },
-  { short: "SA", label: "KSA (EN)", name: "Saudi Arabia", flag: "🇸🇦", currency: "SAR" },
-  { short: "KZ", label: "KZ (RU)", name: "Kazakhstan", flag: "🇰🇿", currency: "KZT" },
-  { short: "RU", label: "RU (RU)", name: "Russia", flag: "🇷🇺", currency: "RUB" },
-  { short: "UK", label: "UK (EN)", name: "United Kingdom", flag: "🇬🇧", currency: "GBP" },
-];
-
 export const SITE_NAV = [
-  { label: "Catalog", href: "/catalog" },
-  { label: "Private Label", href: "/private-labeling" },
+  { label: "Catalogue", href: "/catalog" },
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
-  { label: "Resources", href: "/resources" },
   { label: "About", href: "/about-us" },
+] as const;
+
+/**
+ * The menu's second level, and the rest of what `SiteSearch` offers: three real
+ * pages that are not one of the four above. A quieter row under the display
+ * type rather than three more 72px headings.
+ */
+export const SITE_NAV_SECONDARY = [
+  { label: "Private label", href: "/private-labeling" },
+  { label: "Resources", href: "/resources" },
   { label: "Contacts", href: "/contacts" },
 ] as const;
 
 export const FOOTER_LINKS = {
   products: [
-    { label: "Catalog", href: "/catalog" },
+    { label: "Catalogue", href: "/catalog" },
     { label: "Private Labeling", href: "/private-labeling" },
     { label: "Sugar Free", href: "/sugar-free" },
     { label: "Vending", href: "/vending" },
   ],
   company: [
     { label: "About Us", href: "/about-us" },
-    { label: "Wholesale Strategy", href: "/wholesale-strategy" },
     { label: "Distributors", href: "/distributors" },
     { label: "R&D", href: "/rnd" },
+    { label: "Contacts", href: "/contacts" },
   ],
   resources: [
     { label: "Blog", href: "/resources/blog" },
     { label: "Glossary", href: "/resources/glossary" },
     { label: "Tools", href: "/resources/tools" },
-    { label: "Sitemap", href: "/sitemap" },
+    { label: "Wholesale Strategy", href: "/wholesale-strategy" },
   ],
+  /*
+   * The bottom line of the footer. The redesign moves Sitemap here, out of
+   * Resources: it is a map of the site rather than something to read, which is
+   * what the other three in that column are. Every route stays linked — the
+   * three columns and this row are the same set, dealt differently.
+   */
   legal: [
+    { label: "Sitemap", href: "/sitemap" },
     { label: "Terms", href: "/terms" },
     { label: "Privacy", href: "/privacy" },
   ],
 } as const;
 
 /** Taken from the existing site — every value appears in the Tilda export. */
+/**
+ * `phoneAlt` used to carry +971 58 932 7887. It is retired: the export still
+ * contains it in 37 files, and the site ships a `fixPhone` script that rewrites
+ * every occurrence — links, text nodes and WhatsApp numbers — to the number
+ * below on page load. Publishing it from the shared footer meant the React shell
+ * was the one place still advertising a number the business rewrites away, and
+ * `fixPhone` duly corrected it after hydration, which is what broke hydration on
+ * every parity page. One number, and it is this one.
+ */
 export const COMPANY = {
   legalName: "The Base Beverage LLC",
   city: "Dubai",
   country: "United Arab Emirates",
   phone: "+971 50 989 0429",
   phoneHref: "tel:+971509890429",
-  phoneAlt: "+971 58 932 7887",
-  phoneAltHref: "tel:+971589327887",
+  /* The same number on WhatsApp, which the menu redesign puts beside it.
+     `wa.me/971509890429` is the link the export already carries on 110 of its
+     pages, so this publishes a channel the business runs rather than one
+     invented to fill a slot in a mockup. */
+  whatsappHref: "https://wa.me/971509890429",
   email: "info@thebasebev.com",
   emailHref: "mailto:info@thebasebev.com",
 } as const;

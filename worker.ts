@@ -1,9 +1,13 @@
 // The OpenNext bundle is generated before Wrangler bundles this entrypoint.
 // @ts-expect-error -- generated module intentionally has no checked-in types.
 import openNextWorker from "./.open-next/worker.js";
+import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
+  ASSETS?: {
+    fetch(request: Request): Promise<Response>;
+  };
   [key: string]: unknown;
 };
 
@@ -13,6 +17,66 @@ type WorkerExecutionContext = {
 };
 
 const PRODUCTION_HOSTS = new Set(["thebasebev.com", "www.thebasebev.com"]);
+
+/**
+ * The same redirects `next.config.ts` declares, restated.
+ *
+ * The fast path below answers every document request itself and falls back to
+ * its own 404 page rather than to the OpenNext worker, so a redirect that only
+ * exists in the Next config is never reached — it 404s in production and works
+ * in `next start`, which is the worst way for a redirect to be wrong.
+ *
+ * The duplication is deliberate and it is checked: `audit:route-indexability`
+ * reads both lists and fails if they disagree, so this cannot quietly drift.
+ */
+const RETIRED_LEGACY_REDIRECTS = legacyRouteRedirects as ReadonlyArray<{
+  source: string;
+  destination: string;
+}>;
+
+const PERMANENT_REDIRECTS = new Map<string, string>([
+  ...RETIRED_LEGACY_REDIRECTS.map(({ source, destination }) => [source, destination] as const),
+  ["/page65953477.html", "/"],
+  ["/page65953593.html", "/"],
+  ["/raf-cofeee", "/raf-coffee"],
+  ["/raf-cofee", "/raf-coffee"],
+  ["/functional-wellness", "/catalog"],
+  ["/cabinet", "/"],
+  [
+    "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
+    "/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi",
+  ],
+  [
+    "/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb",
+    "/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush",
+  ],
+  [
+    "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
+    "/tpost/eljzud0n91-one-sku-two-builds-30-seconds",
+  ],
+]);
+
+function normalizePathname(pathname: string) {
+  if (pathname === "/") return pathname;
+  return pathname.replace(/\/+$/, "") || "/";
+}
+
+function staticPageAssetPath(pathname: string) {
+  if (pathname === "/") return "/__static_pages/index.html";
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
+    return `/__static_pages${pathname}`;
+  }
+  return `/__static_pages${pathname}.html`;
+}
+
+function requestForAsset(request: Request, pathname: string) {
+  const url = new URL(request.url);
+  url.pathname = pathname;
+  return new Request(url, {
+    method: request.method,
+    headers: request.headers,
+  });
+}
 
 function withDeploymentHeaders(
   request: Request,
@@ -40,6 +104,21 @@ function withDeploymentHeaders(
 
   if (new URL(request.url).pathname.startsWith("/api/")) {
     headers.set("Cache-Control", "no-store");
+  } else if (!isApprovedProductionHost) {
+    /**
+     * A preview must never be a stale preview.
+     *
+     * `workers.dev` caches at the edge, in front of this Worker, and it kept
+     * serving one page for hours after three deploys had replaced it — the
+     * version's own preview URL had the new page the whole time, so nothing
+     * inside the Worker could see the difference, let alone fix it. Reviewing a
+     * change against a copy of the change before it is worse than not being
+     * able to review it at all.
+     *
+     * Only previews. The real hostname keeps its caching, which is most of what
+     * makes the static fast path worth having.
+     */
+    headers.set("Cache-Control", "no-store");
   }
 
   return new Response(response.body, {
@@ -49,13 +128,99 @@ function withDeploymentHeaders(
   });
 }
 
+async function staticFastPath(
+  request: Request,
+  environment: WorkerEnvironment,
+): Promise<Response | null> {
+  if (!environment.ASSETS || !["GET", "HEAD"].includes(request.method)) return null;
+
+  const url = new URL(request.url);
+  const pathname = normalizePathname(url.pathname);
+
+  if (pathname === "/api/health" && request.method === "GET") {
+    return Response.json(
+      { status: "ok" },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  const redirect = PERMANENT_REDIRECTS.get(pathname);
+  if (redirect) {
+    return new Response(null, {
+      status: 301,
+      headers: { Location: new URL(redirect, request.url).toString() },
+    });
+  }
+
+  // Let Workers Static Assets serve hashed chunks and exported media directly.
+  const directAsset = await environment.ASSETS.fetch(request);
+  if (directAsset.status !== 404) return directAsset;
+
+  if (pathname.startsWith("/api/")) return null;
+
+  /**
+   * The router's own request for a page.
+   *
+   * Next asks for an RSC payload on every in-page navigation and prefetch — the
+   * same URL as the document, with an `RSC` header — and OpenNext cannot answer
+   * those here: it looks them up in an incremental cache the prerendered
+   * payloads are not in, so all of them came back 404 and the router fell back
+   * to a full page load every time. `prepare-static-fast-path.mjs` now copies
+   * the payloads beside the documents, so they are served the same way.
+   *
+   * A hovered link asks for a slice of the route tree instead, naming it in
+   * `Next-Router-Segment-Prefetch`; the build writes those beside the page as
+   * `<route>.segments/<slice>.segment.rsc`, so the header is the file name. It
+   * is used as a path, so it is checked like one.
+   */
+  if (request.headers.has("RSC")) {
+    const segment = request.headers.get("Next-Router-Segment-Prefetch");
+    if (segment && (!segment.startsWith("/") || segment.includes(".."))) return null;
+
+    const base = staticPageAssetPath(pathname).replace(/\.html$/, "");
+    const payload = await environment.ASSETS.fetch(
+      requestForAsset(request, segment ? `${base}.segments${segment}.segment.rsc` : `${base}.rsc`),
+    );
+    if (payload.status === 404) return null;
+
+    const headers = new Headers(payload.headers);
+    headers.set("Content-Type", "text/x-component; charset=utf-8");
+    headers.set(
+      "Vary",
+      "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+    );
+    return new Response(payload.body, { status: 200, headers });
+  }
+
+  const pageAsset = await environment.ASSETS.fetch(
+    requestForAsset(request, staticPageAssetPath(pathname)),
+  );
+  if (pageAsset.status !== 404) {
+    const status = pathname === "/_not-found" ? 404 : pageAsset.status;
+    return new Response(pageAsset.body, {
+      status,
+      headers: pageAsset.headers,
+    });
+  }
+
+  const notFoundAsset = await environment.ASSETS.fetch(
+    requestForAsset(request, "/__static_pages/not-found.html"),
+  );
+  return new Response(notFoundAsset.body, {
+    status: 404,
+    headers: notFoundAsset.headers,
+  });
+}
+
 const worker = {
   async fetch(
     request: Request,
     environment: WorkerEnvironment,
     context: WorkerExecutionContext,
   ) {
-    const response = await openNextWorker.fetch(request, environment, context);
+    const response =
+      (await staticFastPath(request, environment)) ??
+      (await openNextWorker.fetch(request, environment, context));
     return withDeploymentHeaders(request, response, environment);
   },
 };
