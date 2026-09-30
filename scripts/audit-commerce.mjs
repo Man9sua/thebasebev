@@ -88,78 +88,27 @@ try {
     }
 
     if (route === "/matcha") {
-      // Adding is two steps: the page's button opens the flavour picker and the
-      // picker is what puts the line in the cart. A line with no flavour is an
-      // order nobody can fill, so this walks the path a buyer walks instead of
-      // reaching past the dialog into the store.
-      const addButton = page.locator("[data-cart-add]").first();
-      await addButton.click();
-      const picker = page.locator('[data-flavor-picker] [role="radiogroup"]');
-      await picker.waitFor({ state: "visible" });
-      const firstFlavor = picker.locator("label").first();
-      const flavorName = (await firstFlavor.textContent())?.trim() ?? "";
-      await firstFlavor.click();
-      await page.locator("[data-flavor-submit]").click();
-      await page.waitForTimeout(400);
-      const afterAdd = await page.evaluate(() => ({
-        url: location.pathname,
-        buttonText: document.querySelector("[data-cart-add]")?.textContent?.trim() ?? null,
-        dialogs: document.querySelectorAll('[data-flavor-picker]').length,
-        products: (() => {
-          try {
-            return JSON.parse(localStorage.getItem("thebase:cart:v2") ?? "[]");
-          } catch {
-            return [];
-          }
-        })(),
-      }));
+      if (await page.locator("[data-cart-add]").count()) {
+        failures.push("/matcha: product page still has an add-to-cart control");
+      }
 
-      const cartButton = page.locator('header a[aria-label^="Cart"]').first();
-      if (await cartButton.count()) {
-        await cartButton.click();
-        await page.waitForURL(`${baseUrl}/checkout`);
-      }
-      /*
-       * The cart lives in localStorage and the summary is rendered from it on
-       * the client, so arriving at /checkout is not the same as the order being
-       * on screen — the page shows "Preparing your cart…" in between. Reading
-       * the document the moment the URL changes caught that placeholder often
-       * enough to red the audit at random.
-       */
-      await page
-        .locator("main")
-        .filter({ hasNotText: /Preparing your cart/i })
-        .waitFor({ timeout: 15_000 });
-      const checkoutPage = await page.evaluate(() => {
-        const main = document.querySelector("main");
-        return {
-          visible: Boolean(main),
-          text: main?.textContent?.replace(/\s+/g, " ").trim().slice(0, 600) ?? "",
-          path: location.pathname,
-        };
-      });
-      console.log(JSON.stringify({ route, afterAdd, checkoutPage }, null, 2));
-      if (afterAdd.url !== "/matcha") failures.push(`/matcha: add-to-cart navigated to ${afterAdd.url}`);
-      if (afterAdd.products.length !== 1) failures.push(`/matcha: expected one cart item`);
-      if (afterAdd.products[0]?.slug !== "matcha" || afterAdd.products[0]?.quantity !== 1) {
-        failures.push(`/matcha: Matcha cart identity/quantity changed`);
-      }
-      if (!flavorName || afterAdd.products[0]?.flavor !== flavorName) {
-        failures.push(
-          `/matcha: the chosen flavour did not reach the cart (picked "${flavorName}", stored "${afterAdd.products[0]?.flavor}")`,
-        );
-      }
-      if (afterAdd.dialogs !== 0) {
-        failures.push("/matcha: the flavour picker stayed open after adding");
-      }
-      if (
-        checkoutPage.path !== "/checkout" ||
-        !checkoutPage.visible ||
-        !/Matcha/.test(checkoutPage.text) ||
-        !checkoutPage.text.toLowerCase().includes(flavorName.toLowerCase()) ||
-        !/70\.42/.test(checkoutPage.text)
-      ) {
-        failures.push(`/matcha: populated checkout page did not open`);
+      const cartHref = await page.locator('header a[aria-label^="Cart"]').first().getAttribute("href");
+      if (cartHref !== "/catalog") failures.push("/matcha: empty cart does not lead to catalogue");
+
+      for (const action of [
+        { label: "Request a sample", form: "#sample-request-modal-form", formName: "Free Sample" },
+        { label: "Request pricing", form: "#partner-request-modal-form", formName: "Partner with Us" },
+      ]) {
+        await page.getByRole("button", { name: action.label }).first().click();
+        const form = page.locator(action.form);
+        await form.waitFor({ state: "visible" });
+        const formName = await form.locator('input[name="tildaspec-formname"]').inputValue();
+        const productName = await form.locator('input[name="product"]').inputValue();
+        if (formName !== action.formName || productName !== "Matcha") {
+          failures.push("/matcha: " + action.label + " lost its lead form identity or product context");
+        }
+        await page.keyboard.press("Escape");
+        await form.waitFor({ state: "detached" });
       }
     }
   }

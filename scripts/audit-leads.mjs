@@ -76,7 +76,7 @@ const baseUrl = `http://127.0.0.1:${appPort}`;
 // Launch Next directly rather than through `npm run dev`: no shell in between
 // means one process to wait on and one process to kill.
 const nextBin = path.resolve("node_modules", "next", "dist", "bin", "next");
-const app = spawn(process.execPath, [nextBin, "dev", "--port", String(appPort)], {
+const app = spawn(process.execPath, [nextBin, "dev", "--webpack", "--port", String(appPort)], {
   env: { ...process.env, LEAD_API_URL: mockUrl, LEAD_API_KEY: "" },
   stdio: ["ignore", "pipe", "pipe"],
   detached: process.platform !== "win32",

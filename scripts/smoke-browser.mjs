@@ -375,9 +375,7 @@ try {
   await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
   check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
 
-  // Buying happens in the Odoo shop: the shelf hands the visitor over, and the
-  // product's own page is what fills the native cart. What the shelf has to
-  // get right is the destination.
+  // The catalogue sends buying to Odoo; the shelf must point to that shop.
   check(
     (await page.locator("[data-catalog-card] [data-shop-link]").count()) > 0,
     "catalog: no card offers the shop",
@@ -440,52 +438,34 @@ try {
     "matcha: the sample modal left the page scroll locked",
   );
 
-  // The product page is the one way into the native cart now. Two steps: the
-  // button opens the flavour picker and the picker is what adds the line — a
-  // line with no flavour is an order nobody can fill.
-  await page.getByRole("button", { name: "Add to cart" }).first().click();
-  const flavors = page.locator('[data-flavor-picker] [role="radiogroup"]');
-  await flavors.waitFor({ state: "visible" });
+  // Product pages collect enquiries; the catalogue sends buying to Odoo.
   check(
-    (await flavors.locator("label").count()) > 1,
-    "matcha: the flavour picker offered nothing to choose",
-  );
-  const pickedFlavor = (await flavors.locator("label").first().textContent())?.trim() ?? "";
-  check(
-    await page.locator("[data-flavor-submit]").isDisabled(),
-    "matcha: the picker would add a line before a flavour was chosen",
-  );
-  await flavors.locator("label").first().click();
-  await page.locator("[data-flavor-submit]").click();
-  await page.waitForTimeout(500);
-  const cartProducts = await page.evaluate(() => {
-    try {
-      return JSON.parse(localStorage.getItem("thebase:cart:v2") ?? "[]");
-    } catch {
-      return [];
-    }
-  });
-  check(cartProducts.length === 1, "matcha: add-to-cart did not create one cart item");
-  check(cartProducts[0]?.slug === "matcha", "matcha: unexpected cart product");
-  check(cartProducts[0]?.quantity === 1, "matcha: cart quantity changed");
-  check(
-    Boolean(pickedFlavor) && cartProducts[0]?.flavor === pickedFlavor,
-    "matcha: the chosen flavour did not reach the cart",
+    (await page.locator("[data-cart-add]").count()) === 0,
+    "matcha: product page still has an add-to-cart control",
   );
   check(
-    (await page.locator("[data-flavor-picker]").count()) === 0,
-    "matcha: the flavour picker stayed open after adding",
+    (await page.locator('header a[aria-label^="Cart"]').first().getAttribute("href")) ===
+      "/catalog",
+    "matcha: empty cart does not lead to catalogue",
   );
-  await page.locator(String.raw`header a[aria-label^="Cart"]`).first().click();
-  await page.waitForURL(`${baseUrl}/checkout`);
-  const checkoutText = await page.locator("main").textContent();
-  check(/Matcha/i.test(checkoutText ?? ""), "matcha: checkout page lost the selected product");
+  await page.getByRole("button", { name: "Request pricing" }).first().click();
+  const pricingForm = page.locator("#partner-request-modal-form");
+  await pricingForm.waitFor({ state: "visible" });
   check(
-    (checkoutText ?? "").toLowerCase().includes(pickedFlavor.toLowerCase()),
-    "matcha: checkout page lost the chosen flavour",
+    (await pricingForm.locator('input[name="tildaspec-formname"]').inputValue()) ===
+      "Partner with Us",
+    "matcha: pricing modal carries an unexpected lead form name",
   );
-  check(/70\.42/.test(checkoutText ?? ""), "matcha: checkout page did not preserve the selected price");
-
+  check(
+    (await pricingForm.locator('input[name="product"]').inputValue()) === "Matcha",
+    "matcha: pricing modal lost product context",
+  );
+  await page.keyboard.press("Escape");
+  await pricingForm.waitFor({ state: "detached" });
+  check(
+    (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
+    "matcha: pricing modal left the page scroll locked",
+  );
   // Browser smoke must be safe against a credentialed staging environment.
   // Mock only the same-origin lead boundary so the UX and attribution path are
   // exercised without creating a real CRM lead or contacting any recipient.
@@ -684,6 +664,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, menu, bestsellers, reading rail, the brand film, catalog filters/framing, cart, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }
