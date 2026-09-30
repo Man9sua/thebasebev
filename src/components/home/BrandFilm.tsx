@@ -6,11 +6,19 @@ import { BRAND_VIDEO } from "@/lib/site-config";
 /**
  * The brand film, played inside the About frame.
  *
- * It is 3.9 MB and sits well below the fold, so nothing is fetched until the
- * frame is actually approaching the viewport: `src` is attached on first
+ * Ambient: muted, looping, no controls — the way the block was asked for.
+ *
+ * The film is 7 MB and sits well below the fold, so nothing is fetched until
+ * the frame is actually approaching the viewport: `src` is attached on first
  * intersection and playback follows once React has applied it. Calling `play()`
  * in the same tick as arming does not work — the element has no source yet and
  * the promise is rejected — which is why the two live in separate effects.
+ *
+ * The footage is a piece to camera with speech and burned-in subtitles, so two
+ * things in `About.module.css` are load-bearing rather than decoration: the
+ * frame covers rather than contains, which crops the subtitle line away with
+ * the rest of the bottom band, and the dissolve is deep enough to carry what
+ * survives out into the page.
  *
  * Reduced motion gets the poster and nothing else: an autoplaying loop is
  * exactly the kind of ambient movement that setting asks to be spared.
@@ -67,6 +75,9 @@ export function BrandFilm({ className }: { className?: string }) {
       playsInline
       preload="none"
       aria-label="THE BASE brand film"
+      // Ambient footage is decoration: it says nothing a visitor has to reach,
+      // and a control strip over it is the thing this block asked to lose.
+      tabIndex={-1}
     />
   );
 }

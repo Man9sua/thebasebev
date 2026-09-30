@@ -10,11 +10,11 @@ import {
   type CatalogProduct,
 } from "@/data/catalog";
 import catalogTiles from "@/data/catalog-tiles.json";
-import { FlavorPicker } from "@/components/cart/FlavorPicker";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SortMenu } from "./SortMenu";
 import { useCart } from "@/components/cart/useCart";
 import { cartLineKey, setCartItemQuantity, type CartItem } from "@/lib/cart-store";
+import { SHOP_URL } from "@/lib/site-config";
 import styles from "./CatalogPage.module.css";
 
 /**
@@ -118,7 +118,6 @@ function ProductCard({
   weight,
   lines,
   flavors,
-  onPick,
   eager,
 }: {
   product: CatalogProduct;
@@ -126,7 +125,6 @@ function ProductCard({
   /** This product's cart lines, one per flavour. */
   lines: readonly CartItem[];
   flavors: readonly string[];
-  onPick: (product: CatalogProduct) => void;
   eager: boolean;
 }) {
   /*
@@ -168,27 +166,22 @@ function ProductCard({
         </SiteLink>
 
         {/*
-         * Adding is two steps, because the flavour is part of the order: this
-         * opens the picker and the picker puts the line in the cart. Same label
-         * whether or not something is already in it — it does the same thing
-         * either way — and `data-cart-add` either way, which is what the smoke
-         * and the commerce audit press.
+         * Buying happens in the Odoo shop. The shelf hands the visitor over
+         * rather than filling a cart here; the product's own page still carries
+         * "Add to cart" for the native cart and the Stripe checkout behind it.
+         *
+         * A plain link, out of the app router, because it leaves the site —
+         * `SiteLink` is for routes this build owns.
          */}
         {!sellable ? (
-          <SiteLink className={styles.buy} data-cart-add href="/contacts">
+          <SiteLink className={styles.buy} href="/contacts">
             Request price
           </SiteLink>
         ) : (
-          <button
-            className={styles.buy}
-            data-cart-add
-            type="button"
-            aria-haspopup="dialog"
-            onClick={() => onPick(product)}
-          >
+          <a className={styles.buy} data-shop-link href={SHOP_URL}>
             Buy
-            <span className="tbb-visually-hidden"> {name}</span>
-          </button>
+            <span className="tbb-visually-hidden"> {name} in the shop</span>
+          </a>
         )}
 
         {quantity > 0 && <span className={styles.inCart}>In cart</span>}
@@ -265,14 +258,12 @@ function Shelf({
   weights,
   flavors,
   linesBySlug,
-  onPick,
   offset,
 }: {
   products: CatalogProduct[];
   weights: Record<string, string | null>;
   flavors: Record<string, string[]>;
   linesBySlug: Record<string, CartItem[]>;
-  onPick: (product: CatalogProduct) => void;
   offset: number;
 }) {
   return (
@@ -284,7 +275,6 @@ function Shelf({
           weight={weights[product.slug] ?? null}
           flavors={flavors[product.slug] ?? EMPTY}
           lines={linesBySlug[product.slug] ?? EMPTY_LINES}
-          onPick={onPick}
           eager={offset + index < 3}
         />
       ))}
@@ -308,13 +298,6 @@ export function CatalogPage({
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<Sort>("featured");
   const [query, setQuery] = useState("");
-  /*
-   * One picker for the whole shelf rather than one per card: it is a modal over
-   * the page, and sixteen of them waiting in the markup would be sixteen
-   * dialogs for a screen reader to walk past.
-   */
-  const [picking, setPicking] = useState<CatalogProduct | null>(null);
-  const closePicker = useCallback(() => setPicking(null), []);
   const cart = useCart();
   const shelfRef = useRef<HTMLDivElement>(null);
   const filtersRef = useRef<HTMLDivElement>(null);
@@ -523,7 +506,6 @@ export function CatalogPage({
                   weights={weights}
                   flavors={flavors}
                   linesBySlug={linesBySlug}
-                  onPick={setPicking}
                   offset={groupIndex === 0 ? 0 : 3}
                 />
               </section>
@@ -536,7 +518,6 @@ export function CatalogPage({
               weights={weights}
               flavors={flavors}
               linesBySlug={linesBySlug}
-              onPick={setPicking}
               offset={0}
             />
           </section>
@@ -567,18 +548,6 @@ export function CatalogPage({
             Checkout <span aria-hidden="true">→</span>
           </SiteLink>
         </div>
-      )}
-
-      {picking && (
-        <FlavorPicker
-          slug={picking.slug}
-          name={shelfName(picking)}
-          price={picking.price}
-          weight={weights[picking.slug] ?? null}
-          flavors={flavors[picking.slug] ?? EMPTY}
-          lines={linesBySlug[picking.slug] ?? EMPTY_LINES}
-          onClose={closePicker}
-        />
       )}
     </main>
   );

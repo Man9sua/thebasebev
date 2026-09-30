@@ -43,14 +43,17 @@
   --ink-soft: var(--tbb-ink-soft);
   --ink-muted: var(--tbb-muted);
   /*
-   * One design pixel. The desktop frame is full-bleed: all coordinates below
-   * are measured against 1200, so 1200 design pixels always resolve to 100vw.
-   * Capping this unit at 1px created wide side gutters and undersized collages
-   * on the 1920px viewport used for the final Figma comparison.
+   * One design pixel, and it stops growing at 1.2px.
+   *
+   * Below 1200 the frame shrinks with the window. At and above it the card is
+   * the design at its own size — which is also the size the specification tabs
+   * under this section are set in — and it stands in the middle of the window
+   * with the wash running out to both edges behind it. It is not stretched to
+   * the window and not zoomed to it: a 1200 frame blown up to 1900 is a 76px
+   * name over a 25px paragraph, and one spread to the edges leaves the pouch
+   * and the words at opposite ends of an empty band.
    */
-  --u: 0.0833333vw;
-  --art-trim-factor: 1;
-  --art-top-trim: calc(32 * var(--u) * var(--art-trim-factor));
+  --u: min(0.0833333vw, 1px);
   /* The frame's own pixel and left edge, so the product below can be written
      once for both frames. Everything on the card is placed from `--x0`, so the
      card moves as one. */
@@ -101,7 +104,6 @@
    */
   background-color: var(--wash-to, var(--band-foot, var(--tbb-paper)));
   background-image:
-    var(--collage-fade, linear-gradient(transparent, transparent)),
     linear-gradient(100deg, var(--edge, transparent), transparent 52%),
     radial-gradient(
       var(--wash-shape, 49.2% 33.5% at 76.6% 35.8%),
@@ -113,11 +115,9 @@
      wash's outer colour carries on below that, and a tint that stopped there
      would draw a line across the card behind the features panel. */
   background-size:
-    100% calc(675 * var(--u)),
     100% 100%,
     100% calc(821.75 * var(--u));
   background-position:
-    0 var(--tbb-header-h),
     0 0,
     0 var(--tbb-header-h);
 }
@@ -128,30 +128,6 @@
   --ink: #ffffff;
   --ink-soft: rgba(255, 255, 255, 0.78);
   --ink-muted: rgba(255, 255, 255, 0.55);
-}
-
-/* Tea's reference uses one uninterrupted light falloff across the bottom of
-   the composition. It must remain a translucent layer: an exported rectangle
-   here produced the opaque white panels that cut through the CTA. */
-@media (min-width: 900px) {
-  .tea::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: calc(606.79 * var(--u));
-    z-index: 1;
-    width: 100%;
-    height: calc(205.961 * var(--u));
-    pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(21, 21, 21, 0.05) 15%,
-      rgba(72, 72, 70, 0.2) 43%,
-      rgba(142, 142, 139, 0.46) 74%,
-      rgba(211, 211, 208, 0.72) 100%
-    );
-  }
 }
 
 /* Above the artwork, which is the one thing the tiers below must not reach:
@@ -188,10 +164,13 @@
  * phone draws the word from a different export, whose white is solid where the
  * desktop's runs out through the S and the E.
  */
+/* `--mark-drop` lets the word sit lower than the file draws it, in the same
+   design units as everything else here: it is behind the pouch, and the file's
+   height put it level with the type it is supposed to be underneath. */
 .mark {
   position: absolute;
   left: var(--x0);
-  top: calc(var(--tbb-header-h) + (207.6 - var(--head)) * var(--k) - var(--art-top-trim));
+  top: calc(var(--tbb-header-h) + (207.6 - var(--head) + var(--mark-drop, 56)) * var(--k));
   /* Over a collage's backdrop and under everything else, which is where the
      design has it: the mark reads across Tea's photograph and stops at the edge
      of Garnish's pouch. */
@@ -216,13 +195,27 @@
   --mark-strength: 0.16;
 }
 
+/*
+ * Both halves of the lockup are painted through their own artwork rather than
+ * being the artwork: the file is white letters on nothing, so as a mask its
+ * alpha is the letterforms — the fade to transparent the word carries down its
+ * right side included — and `--mark-fill` is what colours them.
+ *
+ * White is the default, which is what every card had when the drawing was the
+ * background. A card whose mark crosses a photograph wants a grey instead: a
+ * white at any opacity can only lighten, so over dark footage it lands as pale
+ * blocks and over a white cup as a haze. A mid grey lightens the dark and
+ * darkens the light, which is what a watermark laid over a picture does.
+ */
 .markThe {
   position: absolute;
   left: calc(71 * var(--k));
   top: 0;
   width: calc(47 * var(--k));
   height: calc(31 * var(--k));
-  background: url("/images/mark-the.svg") left top / 100% 100% no-repeat;
+  background: var(--mark-fill, #ffffff);
+  -webkit-mask: url("/images/mark-the.svg") left top / 100% 100% no-repeat;
+  mask: url("/images/mark-the.svg") left top / 100% 100% no-repeat;
 }
 
 .markWord {
@@ -231,7 +224,9 @@
   top: calc(38.2 * var(--k));
   width: 100%;
   height: calc(283.8 * var(--k));
-  background: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
+  background: var(--mark-fill, #ffffff);
+  -webkit-mask: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
+  mask: url("/images/mark-word.svg") left top / 100% 100% no-repeat;
 }
 
 /*
@@ -257,8 +252,8 @@
   position: absolute;
   /* The card's own top left; the layer's matrix does the rest. */
   left: var(--x0);
-  top: calc(var(--tbb-header-h) - var(--head) * var(--k) - var(--art-top-trim));
-  z-index: var(--scene-z, 2);
+  top: calc(var(--tbb-header-h) - var(--head) * var(--k));
+  z-index: 2;
   width: var(--k);
   height: var(--k);
   transform-origin: 0 0;
@@ -270,26 +265,15 @@
   max-width: none;
 }
 
-/* Figma image fills preserve their layer anchors but crop the source bitmap.
-   The collage config supplies that fill scale for the two measured desktop
-   compositions; vector-like fills keep the original matrix below. */
-.hero img.sceneLayer.sceneWide {
-  transform: translate(calc(var(--e) * var(--k)), calc(var(--f) * var(--k)))
-    matrix(var(--a), var(--b), var(--c), var(--d), 0, 0)
-    scale(var(--scene-image-scale, 1));
-}
-
 /* The rectangle a collage is masked through — Sugar Free's, which is what
    stops its sachets at the copy's edge. The box is the card's own; the layer
    inside is pulled back to the card's corner so its own matrix still places it
    from there. */
 .sceneClip {
   position: absolute;
-  left: calc(
-    var(--x0) + (var(--mx) + var(--scene-clip-shift-x, 0)) * var(--k)
-  );
-  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k) - var(--art-top-trim));
-  z-index: var(--scene-z, 2);
+  left: calc(var(--x0) + var(--mx) * var(--k));
+  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k));
+  z-index: 2;
   display: block;
   overflow: hidden;
   width: calc(var(--mw) * var(--k));
@@ -304,7 +288,7 @@
 /* Tea's is the one layer that is a ground rather than a cut-out, and the brand
    mark belongs over it. */
 .hero .sceneBack {
-  z-index: var(--scene-z, 0);
+  z-index: 0;
 }
 
 /* A fill layer is a box rather than a picture, so it needs the display an image
@@ -323,7 +307,7 @@ span.sceneLayer {
 .stage {
   position: absolute;
   left: calc(var(--x0) + var(--ink-x) * var(--k));
-  top: calc(var(--tbb-header-h) + (var(--ink-y) - var(--head)) * var(--k) - var(--art-top-trim));
+  top: calc(var(--tbb-header-h) + (var(--ink-y) - var(--head)) * var(--k));
   z-index: 2;
   width: calc(var(--ink-w) * var(--k));
   height: calc(var(--ink-h) * var(--k));
@@ -375,10 +359,16 @@ span.sceneLayer {
  * the pair keeps its overlap at any width and on either frame.
  * See `data/product-glass.ts`.
  */
+/*
+ * `--drink-x` / `--drink-y` carry the drink off the table's own placement.
+ * The table is measured from the design file, where the drink is drawn hard
+ * against the pouch; a little to the right and a little down sets it in front
+ * of the pouch rather than beside it.
+ */
 .glass {
   position: absolute;
-  left: calc((var(--glass-left) - var(--ink-x)) / var(--ink-w) * 100%);
-  top: calc((var(--glass-top) - var(--ink-y)) / var(--ink-h) * 100%);
+  left: calc((var(--glass-left) - var(--ink-x)) / var(--ink-w) * 100% + var(--drink-x, 2.4%));
+  top: calc((var(--glass-top) - var(--ink-y)) / var(--ink-h) * 100% + var(--drink-y, 2.6%));
   z-index: 1;
   width: calc(var(--glass-width) / var(--ink-w) * 100%);
   height: calc(var(--glass-height) / var(--ink-h) * 100%);
@@ -456,7 +446,7 @@ span.sceneLayer {
 .seal {
   position: absolute;
   left: calc(var(--x0) + var(--seal-x) * var(--k));
-  top: calc(var(--tbb-header-h) + (var(--seal-y) - var(--head)) * var(--k) - var(--art-top-trim));
+  top: calc(var(--tbb-header-h) + (var(--seal-y) - var(--head)) * var(--k));
   /* On the page's own tier with the words: the design stands both in front of
      the product, and a collage runs under where they sit. */
   z-index: 3;
@@ -494,7 +484,6 @@ span.sceneLayer {
   position: relative;
   z-index: 1;
   display: grid;
-  align-content: start;
   justify-items: start;
   margin-left: calc(642.32 * var(--u));
   padding-top: calc((171.8 - var(--head)) * var(--u));
@@ -516,13 +505,6 @@ span.sceneLayer {
   color: var(--ink);
 }
 
-/* Tea is the only desktop frame whose display name is all caps. Keep the
-   underlying h1 text untouched for content parity; this is visual treatment
-   only, and its phone frame returns to title case below. */
-.teaTitle {
-  text-transform: uppercase;
-}
-
 /*
  * Production's own `h1`, a level down. Deliberately quieter than the tagline
  * under it — it is the wording the page ranks on rather than a line the design
@@ -535,30 +517,26 @@ span.sceneLayer {
  * the tagline.
  */
 .copy .headline {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  margin-top: calc(-6.5 * var(--u));
+  font-family: var(--tbb-font-sans);
+  font-size: calc(13.5 * var(--u));
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  color: var(--ink-muted);
 }
 
-/* The production headline remains a semantic h2 for SEO continuity, but the
-   Figma card starts with its tagline. */
+/* Its own gap once the headline has taken the overlap above. */
 .copy .headline + .tagline {
-  margin-top: calc(-6.5 * var(--u));
+  margin-top: calc(9 * var(--u));
 }
 
 .copy .tagline {
   margin-top: calc(-6.5 * var(--u));
   font-family: var(--tbb-font-sans);
-  font-size: calc(13.5 * var(--u));
+  font-size: calc(14 * var(--u));
   font-weight: 400 !important;
   line-height: calc(41.09 * var(--u)) !important;
-  letter-spacing: 0.08em;
   color: var(--ink-soft);
 }
 
@@ -586,7 +564,7 @@ span.sceneLayer {
   display: grid;
   justify-items: start;
   row-gap: calc(23 * var(--u));
-  padding-top: calc(98.4 * var(--u));
+  padding-top: calc(72.4 * var(--u));
 }
 
 .copy .marginTitle {
@@ -703,8 +681,8 @@ span.sceneLayer {
    to the width of the words inside them. */
 .primary {
   width: calc(173 * var(--u));
-  background: var(--primary-bg, var(--tbb-ink));
-  color: var(--primary-ink, var(--tbb-on-dark));
+  background: var(--tbb-ink);
+  color: var(--tbb-on-dark);
 }
 
 .primary:hover,
@@ -716,8 +694,27 @@ span.sceneLayer {
    light one, and on a pale wash an outlined button would all but vanish. */
 .secondary {
   width: calc(155 * var(--u));
-  background: var(--secondary-bg, var(--tbb-paper));
+  background: var(--tbb-paper);
   color: var(--tbb-ink);
+}
+
+/* On Tea, Jam or Chocolate the pair has to swap. A black pill on a near-black
+   or burgundy panel sinks into it while the white one beside it reads as the
+   primary — the hierarchy the design draws, inverted. So there the solid light
+   pill leads and the second becomes the outline. */
+.onDark .primary {
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+}
+
+.onDark .secondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--tbb-on-dark);
+}
+
+.onDark .secondary:hover {
+  border-color: var(--tbb-on-dark);
 }
 
 /* ---- the four things the pack is bought for ---- */
@@ -740,8 +737,7 @@ span.sceneLayer {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: calc(35 * var(--k));
   width: calc(1112 * var(--k));
-  min-height: calc(260.573 * var(--k));
-  margin: 0 0 calc(34.72 * var(--k)) calc(44.17 * var(--k));
+  margin: 0 0 calc(48 * var(--k)) calc(44.17 * var(--k));
   padding: calc(53.8 * var(--k)) calc(41.3 * var(--k)) calc(28 * var(--k));
   border-radius: calc(20 * var(--k));
   background: var(--strip);
@@ -817,7 +813,6 @@ span.sceneLayer {
 @media (max-width: 899px) {
   .hero {
     --p: min(0.2777778vw, 1.2px);
-    --art-top-trim: calc(14 * var(--p) * var(--art-trim-factor));
     --k: var(--p);
     --x0: calc(50% - 180 * var(--p));
     /* The phone's header instance is 108 tall, and its pouch layer is one box
@@ -877,7 +872,7 @@ span.sceneLayer {
    */
   .mark {
     left: calc(var(--x0) - 3 * var(--p));
-    top: calc(var(--tbb-header-h) + 8 * var(--p) - var(--art-top-trim));
+    top: calc(var(--tbb-header-h) + (8 + var(--mark-drop-phone, 28)) * var(--p));
     width: calc(366 * var(--p));
     height: calc(204.4 * var(--p));
     --mark-strength: 0.8;
@@ -905,7 +900,8 @@ span.sceneLayer {
   .markWord {
     top: 0;
     height: 100%;
-    background-image: url("/images/mark-phone.svg");
+    -webkit-mask-image: url("/images/mark-phone.svg");
+    mask-image: url("/images/mark-phone.svg");
   }
 
 
@@ -921,14 +917,10 @@ span.sceneLayer {
     display: block;
   }
 
-  .sceneClip.scenePhone {
-    left: calc(var(--x0) + var(--mx) * var(--k));
-  }
-
   /* The drink's own layer, in the card's coordinates. */
   .glass {
-    left: calc((var(--m-glass-left) - var(--ink-x)) / var(--ink-w) * 100%);
-    top: calc((var(--m-glass-top) - var(--ink-y)) / var(--ink-h) * 100%);
+    left: calc((var(--m-glass-left) - var(--ink-x)) / var(--ink-w) * 100% + var(--drink-x, 2.4%));
+    top: calc((var(--m-glass-top) - var(--ink-y)) / var(--ink-h) * 100% + var(--drink-y, 2.6%));
     width: calc(var(--m-glass-width) / var(--ink-w) * 100%);
     height: calc(var(--m-glass-height) / var(--ink-h) * 100%);
   }
@@ -1007,10 +999,6 @@ span.sceneLayer {
     font-size: calc(18 * var(--p));
     line-height: 1.25;
     letter-spacing: -0.02em !important;
-  }
-
-  .teaTitle {
-    text-transform: none;
   }
 
   /* Production's own `h1`, which the design has nothing for — kept as the
@@ -1130,6 +1118,19 @@ span.sceneLayer {
     border-color: transparent;
     background: var(--tbb-paper);
     color: var(--tbb-ink);
+  }
+
+  /* Chocolate's panel and Tea's are dark, and there a black pill sinks into
+     them while the white one beside it reads as the primary. */
+  .panelDark .primary {
+    background: var(--tbb-paper);
+    color: var(--tbb-ink);
+  }
+
+  .panelDark .secondary {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: var(--tbb-on-dark);
   }
 
   /* ---- the four things, two by two ---- */

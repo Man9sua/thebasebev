@@ -122,13 +122,28 @@
   background: var(--tbb-sand);
 }
 
+/* A page has no picture, so its row is held open by a plain tile — the list
+   reads as a list only while every row starts at the same place. */
 .swatch {
   width: 2.75rem;
   height: 2.75rem;
   flex: none;
   border-radius: 2px;
-  background-size: cover;
+  background: var(--tbb-sand);
+}
+
+/* The product rows: a cut-out pouch, so the frame is white and the image is
+   contained rather than cropped — `cover` on a cut-out crops the pouch and
+   leaves the transparent margin filling the square. */
+.pouch {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+  border-radius: 2px;
+  background-color: #fff;
+  background-size: contain;
   background-position: center;
+  background-repeat: no-repeat;
 }
 
 .resultName {

@@ -16,7 +16,7 @@
 
 .inner {
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
 }
 

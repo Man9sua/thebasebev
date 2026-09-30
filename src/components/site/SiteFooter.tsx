@@ -79,23 +79,20 @@ export function SiteFooter() {
       <div className={styles.inner}>
         <div className={styles.top}>
           <div className={styles.brand}>
+            {/* The mark heads its own column, level with the column headings
+                beside it, rather than closing the page on a band of its own. */}
+            <div className={styles.wordmarkWrap} aria-hidden="true">
+              <BrandMarkStacked className={styles.wordmark} />
+            </div>
+
             <p className={styles.statement}>
               Beverage ingredients for HoReCa, retail and private label. Made in Dubai.
             </p>
-
-            <div className={styles.contact}>
-              <a className={styles.contactLink} href={COMPANY.emailHref}>
-                {COMPANY.email}
-              </a>
-              <a className={styles.contactLink} href={COMPANY.phoneHref}>
-                {COMPANY.phone}
-              </a>
-            </div>
           </div>
 
-          {/* Direct children of the top grid, not wrapped: the design sets
-              three 200px columns beside the fluid first one, and a wrapper
-              would take one cell and then have to re-divide it. */}
+          {/* Direct children of the top grid, not wrapped: the row is four
+              columns beside the brand, and a wrapper would take one cell and
+              then have to re-divide it. */}
           {COLUMNS.map((column) => (
             <div key={column.title} className={styles.column}>
               <span className={styles.columnTitle}>{column.title}</span>
@@ -106,6 +103,46 @@ export function SiteFooter() {
               ))}
             </div>
           ))}
+
+          {/*
+            The two ways to reach a person, and the accounts, as the row's
+            fourth column. They used to hang under the statement on the left,
+            which left the right of the band empty from the last link down to
+            the legal line.
+          */}
+          <div className={styles.column}>
+            <span className={styles.columnTitle}>Contact</span>
+            <a className={styles.contactLink} href={COMPANY.emailHref}>
+              {COMPANY.email}
+            </a>
+            <a className={styles.contactLink} href={COMPANY.phoneHref}>
+              {COMPANY.phone}
+            </a>
+            <a
+              className={styles.link}
+              href={COMPANY.whatsappHref}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              WhatsApp
+            </a>
+
+            <span className={styles.social}>
+              {SOCIAL_LINKS.map((item) => (
+                <a
+                  key={item.href}
+                  className={styles.socialLink}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label={item.label}
+                >
+                  <SocialIcon label={item.label} />
+                  <span className="tbb-visually-hidden">{item.label}</span>
+                </a>
+              ))}
+            </span>
+          </div>
         </div>
 
         <div className={styles.legal}>
@@ -124,26 +161,8 @@ export function SiteFooter() {
             <CookieSettingsButton className={styles.link} />
           </span>
 
-          <span className={styles.social}>
-            {SOCIAL_LINKS.map((item) => (
-              <a
-                key={item.href}
-                className={styles.socialLink}
-                href={item.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                aria-label={item.label}
-              >
-                <SocialIcon label={item.label} />
-                <span className="tbb-visually-hidden">{item.label}</span>
-              </a>
-            ))}
-          </span>
         </div>
 
-        <div className={styles.wordmarkWrap} aria-hidden="true">
-          <BrandMarkStacked className={styles.wordmark} />
-        </div>
       </div>
     </footer>
   );

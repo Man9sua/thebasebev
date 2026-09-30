@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useCart } from "@/components/cart/useCart";
-import { BrandLogo } from "@/components/site/BrandLogo";
+import { BrandMarkVertical } from "@/components/site/BrandMarkVertical";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
@@ -311,7 +311,7 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
               decoding/fetchpriority on every img it finds, this one included.
               The rewrite is cosmetic, but React would still read it as a
               mismatch on a node it owns. */}
-          <BrandLogo />
+          <BrandMarkVertical />
         </SiteLink>
 
         <div className={styles.actions}>

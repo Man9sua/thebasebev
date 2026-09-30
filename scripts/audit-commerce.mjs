@@ -73,7 +73,22 @@ try {
     }
 
     if (route === "/catalog") {
-      // Adding is two steps: the card's button opens the flavour picker and the
+      // The shelf hands buying over to the Odoo shop. What it has to get right
+      // is the destination — a "Buy" that stays on this site now goes nowhere.
+      const shopLinks = page.locator("[data-shop-link]");
+      const shopCount = await shopLinks.count();
+      const firstShopHref = shopCount ? await shopLinks.first().getAttribute("href") : null;
+      if (shopCount === 0) failures.push("/catalog: no card offers the shop");
+      if (firstShopHref !== "https://odoo.thebasebev.com/shop") {
+        failures.push(`/catalog: Buy points at ${firstShopHref}`);
+      }
+      if (await page.locator("[data-cart-add]").count()) {
+        failures.push("/catalog: the shelf still carries an add-to-cart control");
+      }
+    }
+
+    if (route === "/matcha") {
+      // Adding is two steps: the page's button opens the flavour picker and the
       // picker is what puts the line in the cart. A line with no flavour is an
       // order nobody can fill, so this walks the path a buyer walks instead of
       // reaching past the dialog into the store.
@@ -124,27 +139,27 @@ try {
         };
       });
       console.log(JSON.stringify({ route, afterAdd, checkoutPage }, null, 2));
-      if (afterAdd.url !== "/catalog") failures.push(`/catalog: add-to-cart navigated to ${afterAdd.url}`);
-      if (afterAdd.products.length !== 1) failures.push(`/catalog: expected one cart item`);
-      if (afterAdd.products[0]?.slug !== "milkshake" || afterAdd.products[0]?.quantity !== 1) {
-        failures.push(`/catalog: Milkshake cart identity/quantity changed`);
+      if (afterAdd.url !== "/matcha") failures.push(`/matcha: add-to-cart navigated to ${afterAdd.url}`);
+      if (afterAdd.products.length !== 1) failures.push(`/matcha: expected one cart item`);
+      if (afterAdd.products[0]?.slug !== "matcha" || afterAdd.products[0]?.quantity !== 1) {
+        failures.push(`/matcha: Matcha cart identity/quantity changed`);
       }
       if (!flavorName || afterAdd.products[0]?.flavor !== flavorName) {
         failures.push(
-          `/catalog: the chosen flavour did not reach the cart (picked "${flavorName}", stored "${afterAdd.products[0]?.flavor}")`,
+          `/matcha: the chosen flavour did not reach the cart (picked "${flavorName}", stored "${afterAdd.products[0]?.flavor}")`,
         );
       }
       if (afterAdd.dialogs !== 0) {
-        failures.push("/catalog: the flavour picker stayed open after adding");
+        failures.push("/matcha: the flavour picker stayed open after adding");
       }
       if (
         checkoutPage.path !== "/checkout" ||
         !checkoutPage.visible ||
-        !/Milkshake/.test(checkoutPage.text) ||
+        !/Matcha/.test(checkoutPage.text) ||
         !checkoutPage.text.toLowerCase().includes(flavorName.toLowerCase()) ||
-        !/45\.38/.test(checkoutPage.text)
+        !/70\.42/.test(checkoutPage.text)
       ) {
-        failures.push(`/catalog: populated checkout page did not open`);
+        failures.push(`/matcha: populated checkout page did not open`);
       }
     }
   }

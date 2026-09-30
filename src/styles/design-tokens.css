@@ -134,7 +134,29 @@
    * width up; below it the bar scales down to the 60px it needs on a phone,
    * which the file has no frame for.
    */
-  --tbb-header-h: clamp(3.75rem, 8.5833vw, 6.4375rem);
+  --tbb-header-h: clamp(3.25rem, 5.2778vw, 4.75rem);
+
+  /*
+   * The page's measure: how wide a band's content may run before it stops and
+   * the page's ground takes over.
+   *
+   * The redesign documents are drawn on a 1440 frame and the blocks were built
+   * to 1248 — the frame less its 96 gutters — which left 336 of empty ground
+   * down each side of a 1920 screen, and 240 once the gutters were taken out of
+   * the frame instead of added to it. Both still read as a band that stopped
+   * early rather than as a margin.
+   *
+   * 1920, so that every screen up to that width is left with its gutter and
+   * nothing else. It is a cap rather than no cap at all: above 1920 a block
+   * would otherwise keep growing, and a heading set at 5vw on a 2560 monitor is
+   * a heading nobody asked for.
+   *
+   * One value, used by every block that has a measure. Paragraph widths are not
+   * this: a column of text has its own cap where it is set, because the point
+   * at which a line becomes hard to read has nothing to do with the width of
+   * the page.
+   */
+  --tbb-measure: 120rem;
 
   /* ---- the page-redesign palette ----
    *

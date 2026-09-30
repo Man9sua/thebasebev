@@ -22,19 +22,42 @@
 
 /* `--fade` is how much of the frame is given over to the dissolve. It is read
    by the gradient and by the stage, so the two cannot drift apart. */
+/*
+ * The band takes the film's PICTURE, not the film's frame.
+ *
+ * The file is 16:9 with the picture letterboxed inside it: measured off a frame
+ * of it, 3.125% of the height is black at the top and the same at the foot, and
+ * what is left is 1.896:1. A band cut to 16:9 therefore still showed those two
+ * bars — they are in the footage, not in the layout.
+ *
+ * So the band is 1.903:1, a hair flatter than the picture to be sure the edge
+ * of the bar is outside it, and the film is laid over it 1/0.934 of the band's
+ * height and centred. The bars fall above and below the band and are clipped.
+ *
+ * The fade is shallow because the subtitles sit along the foot of the picture,
+ * and at its old depth it washed them out.
+ */
 .stage {
-  --fade: clamp(9rem, 22vh, 16rem);
+  --fade: clamp(3rem, 7vh, 5rem);
 
   position: relative;
   width: 100%;
-  height: clamp(30rem, 84vh, 58rem);
+  aspect-ratio: 1.903;
+  overflow: hidden;
   background: var(--tbb-rd-ink);
 }
 
+/* Taller than the band by the letterbox baked into the file, and centred on it
+   — see `.stage`. `cover` has nothing left to crop at this size, so the picture
+   is whole and the subtitles along its foot are readable. */
 .film {
+  position: absolute;
+  left: 0;
+  top: 50%;
   display: block;
   width: 100%;
-  height: 100%;
+  height: calc(100% / 0.934);
+  transform: translateY(-50%);
   object-fit: cover;
 }
 
@@ -58,7 +81,7 @@
 
 .inner {
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
   padding: clamp(3rem, 8vw, 9rem) var(--gutter) 0;
 }

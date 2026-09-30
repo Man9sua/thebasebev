@@ -58,6 +58,15 @@ export type DesktopCard = {
    * Without this it stands as a white bar down the band's left edge.
    */
   markClip?: number;
+  /**
+   * What the mark is painted in, when white is wrong.
+   *
+   * Tea's is the one that crosses a photograph. White can only lighten, so at
+   * any opacity it lands on the footage as pale blocks; the grey the design
+   * uses lightens the black ground and darkens the white cup, which is what
+   * reads as a watermark rather than as a patch.
+   */
+  markFill?: string;
 };
 
 /** Where the file puts the light on all but three of the sixteen. */
@@ -79,5 +88,9 @@ export const productDesktop: Record<string, DesktopCard> = {
   vending: { pouch: { left: 106.15, top: 132.35, width: 390.87, height: 569.06 }, washIn: "#c5a880", washOut: "#4e342e", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#4e342e" },
   jam: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, washIn: "#973139", washOut: "#3d060a", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#3d060a" },
   "sugar-free": { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#acc4b2", mark: 0.7, markClip: 46.91 },
-  tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, mark: 0.16 },
+  /* Tea's key visual is a dark photograph, but it carries no wash — so
+     `paleWash` decides from a white default and hands the mark the weight meant
+     for a near-white ground. At 0.16 of white on that collage the word is not
+     there. 0.42 is the weight the stylesheet gives a dark ground. */
+  tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, mark: 0.45, markFill: "#9b9b9b" },
 };

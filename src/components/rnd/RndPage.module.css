@@ -29,7 +29,7 @@
   flex-direction: column;
   gap: clamp(2.5rem, 5vw, 4.5rem);
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
 }
 
@@ -166,7 +166,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
 }
 
@@ -440,7 +440,7 @@
   grid-template-columns: 35rem minmax(0, 1fr);
   gap: clamp(2rem, 5.5556vw, 5rem);
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
   align-items: stretch;
 }
@@ -512,7 +512,7 @@
   grid-template-columns: minmax(0, 1fr) 37.5rem;
   gap: clamp(2rem, 4.4444vw, 4rem);
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin: 0 auto;
   align-items: start;
 }

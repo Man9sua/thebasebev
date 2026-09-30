@@ -39,7 +39,7 @@
 .range,
 .close {
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--tbb-measure);
   margin-inline: auto;
 }
 
@@ -158,7 +158,6 @@
   padding-block: 0.75rem;
   background: color-mix(in srgb, var(--tbb-rd-paper) 92%, transparent);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--tbb-rd-field-line);
 }
 
 .barInner {
