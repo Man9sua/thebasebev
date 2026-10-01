@@ -106,11 +106,12 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { paint: "linear-gradient(0.0001deg, #eee6d8 67.038%, rgba(238, 230, 216, 0) 77.8139%)", m: [766.877, 0, 0, 244.5977, -49.8948, 545.8867], back: true },
       { paint: "linear-gradient(0deg, #eee6d8 67.038%, rgba(238, 230, 216, 0) 77.8139%)", m: [0, -693.7725, 680.3472, 0, 536.6072, 795.0469], back: true },
       { paint: GROUND, m: [452.187, -44.578, 19.613, 198.966, 77.05, 600.01], round: true },
-      /* Six percent up on the file's own 450.0353 x 655.1899 at 61.5906,
-         56.8594, taken about the picture's centre so it grows into the card
-         rather than off one of its edges: the pouch was reading small against
-         the band it stands in. */
-      { src: "/images/scene-a8524cbfc3419x1973.webp", m: [477.0374, 0, 0, 694.5013, 48.0896, 37.2037] },
+      /* The file's own box, confirmed against the product page: the printed
+         GARNISH on the pouch lands 142 wide at 165, 424.3 there and 142.0 at
+         164.3, 424.1 here. It had been carrying six percent more, which was
+         read as the pouch being small on the band — the card that is actually
+         undersized is the phone's, and that one is in the stylesheet. */
+      { src: "/images/scene-a8524cbfc3419x1973.webp", m: [450.0353, 0, 0, 655.1899, 61.5906, 56.8594] },
     ],
     /*
      * Nothing: the phone card is not a collage. An empty list hands the card

@@ -157,6 +157,14 @@
     min-height: calc((825.13 - var(--head)) * var(--u));
   }
 
+  /* The product page stands this collage 13.3 higher than the frame its layer
+     transforms were read out of — measured on the drink's own petals, which
+     land at 227.3 below the band there and were landing at 240.7 here, and
+     confirmed on a mint leaf at the other end of the group. */
+  .sugarFree {
+    --scene-rise: 13.3;
+  }
+
   .sugarFree .sceneClip {
     /* The mask group starts at the frame edge; --mx belongs to its contents. */
     left: var(--x0);
@@ -231,6 +239,24 @@
 }
 
 /*
+ * The two collages, as the product-page frames draw the lockup.
+ *
+ * Those frames are not the one the rest of this file is measured against, and
+ * on the lockup they disagree twice. The drop is the first: 56 exists because
+ * a pouch stands in front of the word, and on a collage nothing does, so the
+ * frame leaves it at the height the artwork itself carries. The second is the
+ * small `the`, which the pouch frames hang over the word's left shoulder at
+ * 71 and these tuck in at the band's own edge. Both measured off the Garnish
+ * and Sugar Free frames rendered at 1200: `the` lands at 23.6 across and 105
+ * below the band's top, where this file was putting it at 71 and 160.
+ */
+.garnish,
+.sugarFree {
+  --mark-drop: 0;
+  --mark-the-x: 23.6;
+}
+
+/*
  * Both halves of the lockup are painted through their own artwork rather than
  * being the artwork: the file is white letters on nothing, so as a mask its
  * alpha is the letterforms — the fade to transparent the word carries down its
@@ -244,7 +270,7 @@
  */
 .markThe {
   position: absolute;
-  left: calc(71 * var(--k));
+  left: calc(var(--mark-the-x, 71) * var(--k));
   top: 0;
   width: calc(47 * var(--k));
   height: calc(31 * var(--k));
@@ -283,11 +309,17 @@
  * box and forces it to `display: block` — which outranks a single class and
  * had both compositions showing at once.
  */
+/* `--scene-rise` carries a whole collage up the card, in the same design units
+   as its layers. It is there for the same reason as `--mark-drop`: the frames
+   these compositions are drawn in are not the frame their layer transforms were
+   read out of, and Sugar Free's group stands 13.3 lower here than the product
+   page puts it. One number moves the group, which is what moved in the design —
+   rewriting seventeen transforms would say the layers drifted apart. */
 .sceneLayer {
   position: absolute;
   /* The card's own top left; the layer's matrix does the rest. */
   left: var(--x0);
-  top: calc(var(--tbb-header-h) - var(--head) * var(--k));
+  top: calc(var(--tbb-header-h) - (var(--head) + var(--scene-rise, 0)) * var(--k));
   z-index: var(--scene-z, 2);
   width: var(--k);
   height: var(--k);
@@ -307,7 +339,9 @@
 .sceneClip {
   position: absolute;
   left: calc(var(--x0) + var(--mx) * var(--k));
-  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k));
+  top: calc(
+    var(--tbb-header-h) + (var(--my) - var(--head) - var(--scene-rise, 0)) * var(--k)
+  );
   z-index: var(--scene-z, 2);
   display: block;
   overflow: hidden;
@@ -888,11 +922,47 @@ span.sceneLayer {
     --ink-muted: rgba(255, 255, 255, 0.6);
   }
 
+  /*
+   * Garnish's phone card, at the size the product page draws it.
+   *
+   * That frame stands the pouch beside its drink across a band 292 deep, and
+   * the pack shot standing here alone was being drawn into the 268.7 the other
+   * fifteen share — the printed GARNISH on the pouch came out 58 wide against
+   * the frame's 63. The pouch is taken back to that size and the band to its
+   * depth; it keeps the card's own centre, because the drink that would stand
+   * to its right is a photograph this project does not hold.
+   */
+  .hero.garnish {
+    --pack-left: 77;
+    --pack-top: 126.7;
+    --pack-width: 164.4;
+    --pack-height: 239.4;
+  }
+
+  /* The product page puts Sugar Free's group 8 lower than the frame its layer
+     transforms came from — the opposite way to the same card's desktop, and
+     measured the same way. */
+  .sugarFree {
+    --scene-rise: -8;
+  }
+
+  /* And it carries the lockup 20 higher on both, the phone's half of the two
+     disagreements the desktop rule above records: `the` opens 8.6 below the
+     band there against the 28.6 the shared drop puts it at. */
+  .garnish,
+  .sugarFree {
+    --mark-drop-phone: 8;
+  }
+
   .frame {
     width: 100%;
     /* Where the band closes and the copy's panel opens — one line for all
-       sixteen. Garnish held 33 more while its card was a collage. */
+       sixteen. Garnish stands on a deeper one, above. */
     padding-top: calc(var(--tbb-header-h) + 268.7 * var(--p));
+  }
+
+  .garnish .frame {
+    padding-top: calc(var(--tbb-header-h) + 292 * var(--p));
   }
 
   /*

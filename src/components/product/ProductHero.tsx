@@ -246,9 +246,6 @@ export function ProductHero({ product }: { product: Product }) {
     "--tile": product.backgroundColor,
     "--tile-panel": tile,
     "--strip": strip,
-    // Sugar Free already has the Figma composition clipped at the hero's top.
-    // The other product visuals rise by the small shared trim below.
-    "--art-trim-factor": product.slug === "sugar-free" ? 0 : 1,
     "--panel-ink": stripDark ? "var(--tbb-white)" : "var(--tbb-ink)",
     "--panel-ink-soft": stripDark ? "rgba(255, 255, 255, 0.76)" : "var(--tbb-ink-soft)",
     // Named for the desktop rather than set as `--pack-*` directly: an inline
