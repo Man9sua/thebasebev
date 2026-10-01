@@ -163,15 +163,25 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { src: "/images/scene-f16e70efc0x0.webp", m: [-70.0155, 61.2171, 69.0011, 78.9183, 230.1699, 209.3077], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc5898x432.webp", m: [71.6846, 0, 0, 48.5859, 66.1064, 191.1695], mask: [-360, 108, 1080, 316.6348] },
       /*
-       * The drink's ground shadow, and the one layer whose ramp the export
-       * turned around. Figma's angle is not the CSS angle: written out as
-       * 52.3862deg the solid end lands at the ellipse's bottom left, which is
-       * below the glass's foot, so the drink stood over a hard green patch
-       * instead of on a shadow. The frame has it the other way — nothing under
-       * the foot and a soft sweep out to the right, reaching about four tenths
-       * where this was painting ten. Turned round and taken down to that.
+       * The drink's ground shadow, and the one layer the export could not carry
+       * over. In the file it is a blurred ellipse; what came out is a flat fill
+       * with a linear ramp across it, and a fill has an edge. However faint it
+       * was taken, it read as an oval lying beside the glass rather than as the
+       * shadow the glass stands in — and the ramp was turned around as well,
+       * because Figma's angle is not the CSS angle: 52.3862deg puts the solid
+       * end at the ellipse's bottom left, which is right under the foot.
+       *
+       * A radial fading to nothing at its own edge is how this project already
+       * draws a ground shadow — see `.stage::after` — and it is what a blurred
+       * ellipse is. Flat on purpose: a steep one puts a dark middle somewhere,
+       * and wherever that middle fell it read as a mark on the ground rather
+       * than as shade. Three tenths across most of the ellipse and out by its
+       * edge leaves the thing the frame has, which is a wash leaving the foot
+       * and spreading right. Measured, not chosen: out on the ground past the
+       * glass the file is twelve to twenty-four points off its ground colour,
+       * and three tenths of this green on this ground is twenty-three.
        */
-      { paint: "linear-gradient(232.3862deg, #a4c4b0 29.8103%, rgba(164, 196, 176, 0) 68.9122%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348], round: true, opacity: 0.42 },
+      { paint: "radial-gradient(closest-side at 44% 48%, rgba(164, 196, 176, 0.34), rgba(164, 196, 176, 0.22) 58%, rgba(164, 196, 176, 0) 100%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc5898x432b800.webp", m: [19.4543, 90.1261, 61.0851, -13.1856, 308.3545, 210.6866], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, 224.6299, 209.3077], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, 220.6777, 184.5928], mask: [-360, 108, 1080, 316.6348] },
