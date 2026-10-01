@@ -241,7 +241,10 @@ export const PRODUCTS: Product[] = [
   {
     slug: "garnish",
     route: "/garnish",
-    name: "Garnishes",
+    /* The design names it in the singular and so does the pouch, where
+       GARNISH is printed across the front. The plural is production's own
+       heading, which stays whole one level down as `headline`. */
+    name: "Garnish",
     headline: "Professional Garnishes for Beverages and Desserts",
     description:
       "Garnishes built for service speed — consistent size, colour and shelf life across every cover.",

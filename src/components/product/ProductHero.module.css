@@ -939,11 +939,17 @@ span.sceneLayer {
     --pack-height: 239.4;
   }
 
-  /* The product page puts Sugar Free's group 8 lower than the frame its layer
-     transforms came from — the opposite way to the same card's desktop, and
-     measured the same way. */
+  /*
+   * The product page puts Sugar Free's group 8 lower than the frame its layer
+   * transforms came from — the opposite way to the same card's desktop, and
+   * measured the same way. The second 8 is the band's own: `--tbb-header-h` is
+   * 52 where the header paints to 60, so the top of every phone card is under
+   * it and a composition drawn to the full 268.7 opens 8 high in the 260.7 that
+   * shows. On a pouch that is nothing; on this one it is the strip of empty
+   * ground the drink was left standing above.
+   */
   .sugarFree {
-    --scene-rise: -8;
+    --scene-rise: -16;
   }
 
   /* And it carries the lockup 20 higher on both, the phone's half of the two
