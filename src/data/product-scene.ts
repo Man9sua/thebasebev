@@ -171,17 +171,26 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
        * because Figma's angle is not the CSS angle: 52.3862deg puts the solid
        * end at the ellipse's bottom left, which is right under the foot.
        *
-       * A radial fading to nothing at its own edge is how this project already
-       * draws a ground shadow — see `.stage::after` — and it is what a blurred
-       * ellipse is. Flat on purpose: a steep one puts a dark middle somewhere,
-       * and wherever that middle fell it read as a mark on the ground rather
-       * than as shade. Three tenths across most of the ellipse and out by its
-       * edge leaves the thing the frame has, which is a wash leaving the foot
-       * and spreading right. Measured, not chosen: out on the ground past the
-       * glass the file is twelve to twenty-four points off its ground colour,
-       * and three tenths of this green on this ground is twenty-three.
+       * A radial fading to nothing at its own edge is what a blurred ellipse
+       * is, and it is how this project already draws a ground shadow — see
+       * `.stage::after`. The numbers below are read off the frame rather than
+       * chosen. Where the ground shows past the glass the file's own render
+       * carries this green at these strengths, in hundredths, x across and the
+       * card's own y down:
+       *
+       *          190  200  210  220  230
+       *   +225         -    35   19    3
+       *   +230         -    42   26   12
+       *   +235    -    66   51   34    0
+       *   +240   88     9    0    0    0
+       *   +245    0     0    0    0    0
+       *
+       * So: a short wedge leaving the foot at full strength, out by thirty
+       * across and ten down, and nothing at all below it — the last is the
+       * ellipse's own edge, which is why `round` is back. Everything left of
+       * 190 is behind the glass in both compositions and cannot be read.
        */
-      { paint: "radial-gradient(closest-side at 44% 48%, rgba(164, 196, 176, 0.34), rgba(164, 196, 176, 0.22) 58%, rgba(164, 196, 176, 0) 100%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348] },
+      { paint: "radial-gradient(46% 42% at 42% 86%, #a4c4b0, rgba(164, 196, 176, 0) 100%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348], round: true },
       { src: "/images/scene-f16e70efc5898x432b800.webp", m: [19.4543, 90.1261, 61.0851, -13.1856, 308.3545, 210.6866], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, 224.6299, 209.3077], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, 220.6777, 184.5928], mask: [-360, 108, 1080, 316.6348] },
