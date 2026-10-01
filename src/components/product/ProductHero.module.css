@@ -339,9 +339,7 @@
 .sceneClip {
   position: absolute;
   left: calc(var(--x0) + var(--mx) * var(--k));
-  top: calc(
-    var(--tbb-header-h) + (var(--my) - var(--head) - var(--scene-rise, 0)) * var(--k)
-  );
+  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k));
   z-index: var(--scene-z, 2);
   display: block;
   overflow: hidden;
@@ -349,9 +347,13 @@
   height: calc(var(--mh) * var(--k));
 }
 
+/* `--scene-rise` moves the collage, not the window it is seen through: the
+   mask is the band's own opening and the band has not moved. Carrying the two
+   together left a strip of bare ground under the header and cut the top sachet
+   along the mask's edge instead of along the band's. */
 .sceneClip .sceneLayer {
   left: calc(-1 * var(--mx) * var(--k));
-  top: calc(-1 * var(--my) * var(--k));
+  top: calc(-1 * (var(--my) + var(--scene-rise, 0)) * var(--k));
 }
 
 /* Tea's is the one layer that is a ground rather than a cut-out, and the brand
