@@ -162,7 +162,16 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { src: "/images/scene-3c519f85f813.webp", m: [183.3918, -59.5816, 48.4246, 149.0505, 214.5391, 255.2784], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-70.0155, 61.2171, 69.0011, 78.9183, 230.1699, 209.3077], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc5898x432.webp", m: [71.6846, 0, 0, 48.5859, 66.1064, 191.1695], mask: [-360, 108, 1080, 316.6348] },
-      { paint: "linear-gradient(52.3862deg, #a4c4b0 29.8103%, rgba(164, 196, 176, 0) 68.9122%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348], round: true },
+      /*
+       * The drink's ground shadow, and the one layer whose ramp the export
+       * turned around. Figma's angle is not the CSS angle: written out as
+       * 52.3862deg the solid end lands at the ellipse's bottom left, which is
+       * below the glass's foot, so the drink stood over a hard green patch
+       * instead of on a shadow. The frame has it the other way — nothing under
+       * the foot and a soft sweep out to the right, reaching about four tenths
+       * where this was painting ten. Turned round and taken down to that.
+       */
+      { paint: "linear-gradient(232.3862deg, #a4c4b0 29.8103%, rgba(164, 196, 176, 0) 68.9122%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348], round: true, opacity: 0.42 },
       { src: "/images/scene-f16e70efc5898x432b800.webp", m: [19.4543, 90.1261, 61.0851, -13.1856, 308.3545, 210.6866], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, 224.6299, 209.3077], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, 220.6777, 184.5928], mask: [-360, 108, 1080, 316.6348] },

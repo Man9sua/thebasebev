@@ -339,7 +339,13 @@
 .sceneClip {
   position: absolute;
   left: calc(var(--x0) + var(--mx) * var(--k));
-  top: calc(var(--tbb-header-h) + (var(--my) - var(--head)) * var(--k));
+  /* The rise is on the window as well as on what it shows: in the design it is
+     the masked group that sits at a different height, mask included. Pinning
+     the window and sliding only the contents cut the top sachet along the
+     mask's edge instead of along the band's, and left bare ground above it. */
+  top: calc(
+    var(--tbb-header-h) + (var(--my) - var(--head) - var(--scene-rise, 0)) * var(--k)
+  );
   z-index: var(--scene-z, 2);
   display: block;
   overflow: hidden;
@@ -347,13 +353,9 @@
   height: calc(var(--mh) * var(--k));
 }
 
-/* `--scene-rise` moves the collage, not the window it is seen through: the
-   mask is the band's own opening and the band has not moved. Carrying the two
-   together left a strip of bare ground under the header and cut the top sachet
-   along the mask's edge instead of along the band's. */
 .sceneClip .sceneLayer {
   left: calc(-1 * var(--mx) * var(--k));
-  top: calc(-1 * (var(--my) + var(--scene-rise, 0)) * var(--k));
+  top: calc(-1 * var(--my) * var(--k));
 }
 
 /* Tea's is the one layer that is a ground rather than a cut-out, and the brand
@@ -941,17 +943,14 @@ span.sceneLayer {
     --pack-height: 239.4;
   }
 
-  /*
-   * The product page puts Sugar Free's group 8 lower than the frame its layer
-   * transforms came from — the opposite way to the same card's desktop, and
-   * measured the same way. The second 8 is the band's own: `--tbb-header-h` is
-   * 52 where the header paints to 60, so the top of every phone card is under
-   * it and a composition drawn to the full 268.7 opens 8 high in the 260.7 that
-   * shows. On a pouch that is nothing; on this one it is the strip of empty
-   * ground the drink was left standing above.
-   */
+  /* The product page puts Sugar Free's group 8 lower than the frame its layer
+     transforms came from — the opposite way to the same card's desktop, and
+     measured the same way. Eight is also as far as it can go: the mask moves
+     with the group and its top edge is the band's own, so a ninth would open
+     bare ground under the header. What read as the drink hanging in the air was
+     its ground shadow — see the ellipse in `data/product-scene.ts`. */
   .sugarFree {
-    --scene-rise: -16;
+    --scene-rise: -8;
   }
 
   /* And it carries the lockup 20 higher on both, the phone's half of the two
