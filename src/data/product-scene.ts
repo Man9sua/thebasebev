@@ -106,7 +106,11 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { paint: "linear-gradient(0.0001deg, #eee6d8 67.038%, rgba(238, 230, 216, 0) 77.8139%)", m: [766.877, 0, 0, 244.5977, -49.8948, 545.8867], back: true },
       { paint: "linear-gradient(0deg, #eee6d8 67.038%, rgba(238, 230, 216, 0) 77.8139%)", m: [0, -693.7725, 680.3472, 0, 536.6072, 795.0469], back: true },
       { paint: GROUND, m: [452.187, -44.578, 19.613, 198.966, 77.05, 600.01], round: true },
-      { src: "/images/scene-a8524cbfc3419x1973.webp", m: [450.0353, 0, 0, 655.1899, 61.5906, 56.8594] },
+      /* Six percent up on the file's own 450.0353 x 655.1899 at 61.5906,
+         56.8594, taken about the picture's centre so it grows into the card
+         rather than off one of its edges: the pouch was reading small against
+         the band it stands in. */
+      { src: "/images/scene-a8524cbfc3419x1973.webp", m: [477.0374, 0, 0, 694.5013, 48.0896, 37.2037] },
     ],
     /*
      * Nothing: the phone card is not a collage. An empty list hands the card
