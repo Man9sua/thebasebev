@@ -163,39 +163,32 @@ export const productScene: Record<string, { desktop: SceneLayer[]; phone: SceneL
       { src: "/images/scene-f16e70efc0x0.webp", m: [-70.0155, 61.2171, 69.0011, 78.9183, 230.1699, 209.3077], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc5898x432.webp", m: [71.6846, 0, 0, 48.5859, 66.1064, 191.1695], mask: [-360, 108, 1080, 316.6348] },
       /*
-       * The drink's ground shadow, and the one layer the export could not carry
-       * over. In the file it is a blurred ellipse; what came out is a flat fill
-       * with a linear ramp across it, and a fill has an edge. However faint it
-       * was taken, it read as an oval lying beside the glass rather than as the
-       * shadow the glass stands in — and the ramp was turned around as well,
-       * because Figma's angle is not the CSS angle: 52.3862deg puts the solid
-       * end at the ellipse's bottom left, which is right under the foot.
-       *
-       * A radial fading to nothing at its own edge is what a blurred ellipse
-       * is, and it is how this project already draws a ground shadow — see
-       * `.stage::after`. The numbers below are read off the frame rather than
-       * chosen. Where the ground shows past the glass the file's own render
-       * carries this green at these strengths, in hundredths, x across and the
-       * card's own y down:
-       *
-       *          190  200  210  220  230
-       *   +225         -    35   19    3
-       *   +230         -    42   26   12
-       *   +235    -    66   51   34    0
-       *   +240   88     9    0    0    0
-       *   +245    0     0    0    0    0
-       *
-       * So: a short wedge leaving the foot at full strength, out by thirty
-       * across and ten down, and nothing at all below it — the last is the
-       * ellipse's own edge, which is why `round` is back. Everything left of
-       * 190 is behind the glass in both compositions and cannot be read.
+       * The drink's ground shadow — artwork rather than a fill, because the
+       * file blurs it and neither a flat fill nor a CSS gradient in its place
+       * came out as shade: a scene layer is a one-pixel box carrying the
+       * design's matrix, so a gradient is resolved against that box and then
+       * stretched by two hundred. It is drawn to the frame's own readings by
+       * `scripts/build-scene-shadows.mjs`, which carries them.
        */
-      { paint: "radial-gradient(46% 42% at 42% 86%, #a4c4b0, rgba(164, 196, 176, 0) 100%)", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348], round: true },
+      { src: "/images/scene-shade-sugar-free.webp", m: [111.8805, -14.267, 5.6977, 44.6811, 134.7051, 311.1715], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc5898x432b800.webp", m: [19.4543, 90.1261, 61.0851, -13.1856, 308.3545, 210.6866], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc7127x6439.webp", m: [48.6484, 0, 0, 93.1421, 224.6299, 209.3077], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-59.7383, 71.2897, -80.3545, -67.3342, 220.6777, 184.5928], mask: [-360, 108, 1080, 316.6348] },
       { src: "/images/scene-f16e70efc0x0.webp", m: [-24.033, 89.8446, 101.2687, 27.0888, -37.6865, 98.5279], mask: [-360, 108, 1080, 316.6348] },
-      { src: "/images/scene-0a906e54c0x3180.webp", m: [169.6461, 0, 0, 184.4492, 69.1582, 172.525], mask: [-360, 108, 1080, 316.6348] },
+      /*
+       * The drink, at the box this frame draws it in rather than the one the
+       * rest of the phone list came from — the only layer of the fourteen that
+       * disagreed, and the reason the glass looked like it was hanging over its
+       * own shadow. Fitted on two landmarks that can be read in both renders:
+       * the rose petals on the foam and the foot of the glass. The frame opens
+       * the petals at 179 and closes the foot at 346, 167 apart and 84 across;
+       * the old box gave 177.5 and 316.7, 139 apart and 70 across — the same
+       * drink at 0.83, hung from the same shoulder, so its foot stopped short
+       * of the ground the shadow lies on. Inside the artwork the glass runs
+       * from 2.7% to 78.2% of the file's height, which is what turns those two
+       * readings into the box below.
+       */
+      { src: "/images/scene-0a906e54c0x3180.webp", m: [203.5, 0, 0, 221.3, 68.5, 173.0], mask: [-360, 108, 1080, 316.6348] },
       { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, 288.3193, 176.562], mask: [-360, 108, 1080, 316.6348], round: true },
       { paint: "#ffffff", m: [33.2112, 0, 0, 20.8231, 287.7959, 176.9604], round: true },
     ],
