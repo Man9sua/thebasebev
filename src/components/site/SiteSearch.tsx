@@ -67,7 +67,7 @@ export function SiteSearch({
   const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  useOverlay(open, onClose, panelRef, inputRef);
+  const leaving = useOverlay(open, onClose, panelRef, inputRef);
 
   const corpus = useMemo(
     () =>
@@ -104,7 +104,7 @@ export function SiteSearch({
   return (
     <div
       ref={panelRef}
-      className={`${styles.root} ${open ? styles.open : ""}`}
+      className={`${styles.root} ${open ? styles.open : ""} ${leaving ? styles.leaving : ""}`}
       role="dialog"
       aria-modal="true"
       aria-label="Search"

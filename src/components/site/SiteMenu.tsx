@@ -57,7 +57,7 @@ export function SiteMenu({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  useOverlay(open, onClose, panelRef);
+  const leaving = useOverlay(open, onClose, panelRef);
 
   /**
    * The range is a disclosure on a phone and a plain list on a desktop, and
@@ -86,7 +86,9 @@ export function SiteMenu({
   return (
     <div
       ref={panelRef}
-      className={`${overlay.root} ${overlay.ink} ${open ? overlay.open : ""}`}
+      className={`${overlay.root} ${overlay.ink} ${open ? overlay.open : ""} ${
+        leaving ? overlay.leaving : ""
+      }`}
       id="site-menu"
       role="dialog"
       aria-modal="true"

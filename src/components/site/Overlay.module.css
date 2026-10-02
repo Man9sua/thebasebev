@@ -24,25 +24,37 @@
    * behind it — is what reads as laggy.
    */
   clip-path: inset(0 0 100% 0);
-  opacity: 0;
-  transition:
-    clip-path 0s linear var(--tbb-dur-fast),
-    opacity var(--tbb-dur-fast) var(--leave-ease),
-    visibility 0s linear var(--tbb-dur-fast);
+  transition: visibility 0s linear var(--tbb-dur-fast);
   visibility: hidden;
 }
 
 /*
- * Leaving runs on its own curve.
+ * And leaves the same way, downward, rather than reversing back into the bar.
  *
- * `--tbb-ease` is an ease-out — fast away from the start, a long settle at the
- * end — which is what a wipe wants and the opposite of what a fade wants. On
- * the way out it put nine tenths of the fade inside the first hundred and ten
- * milliseconds, so the panel read as cut rather than closed and the owner saw
- * no exit at all. An ease-in holds it for a moment and then takes it.
+ * A reversed wipe retreats upward and uncovers the bar last, so the bar has to
+ * hold the panel's ink until it has — which is the black bar the owner found
+ * left behind. A fade instead of a wipe answered that and cost the exit: there
+ * was nothing to see leaving. Going down costs neither. The bar is free in the
+ * first frame and settles with the panel, and the gesture is the one that
+ * brought the panel in, carried on.
+ *
+ * It is a state of its own because two clip states cannot both be "closed" —
+ * `useOverlay` holds it for the length of the wipe.
  */
-.root {
-  --leave-ease: cubic-bezier(0.5, 0, 0.9, 0.4);
+.leaving {
+  clip-path: inset(100% 0 0 0);
+  visibility: visible;
+  transition:
+    clip-path var(--tbb-dur-fast) var(--tbb-ease),
+    visibility 0s linear var(--tbb-dur-fast);
+}
+
+/* The panel leaves as one thing, contents and all: they are inside the clip,
+   so animating them out as well is a second motion nobody can see. */
+.leaving .item {
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 
 .open {
@@ -79,17 +91,10 @@
 
 /* Children stagger in behind the panel, at its pace rather than the page's —
    see the note above. Their delays are in `SiteMenu.tsx`, which is where the
-   order they arrive in lives. On the way out they go with it, on its curve, so
-   the panel and its contents leave as one thing. */
+   order they arrive in lives. */
 .item {
   opacity: 0;
   transform: translate3d(0, 14px, 0);
-  transition:
-    opacity var(--tbb-dur-fast) var(--leave-ease),
-    transform var(--tbb-dur-fast) var(--leave-ease);
-}
-
-.open .item {
   transition:
     opacity var(--tbb-dur-fast) var(--tbb-ease),
     transform var(--tbb-dur-fast) var(--tbb-ease);
