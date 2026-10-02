@@ -286,13 +286,17 @@
  * third of it empty either side, which is what the owner asked for. A fixed
  * three columns turns that straight into size: at a 1920 window each tile came
  * out 557 by 756, half a metre of pack shot. `auto-fill` against a floor keeps
- * the band full and the tile near the size the design draws it — 397 at the
- * 1440 frame, where the count is still three, and 323 at 1920, where it is
- * five. `min(100%, …)` is what keeps one card from overflowing a phone.
+ * the band full and the tile at the size the design draws it — 397 at the 1440
+ * frame, where the count is still three, and 411 at 1920, where it is four.
+ * `min(100%, …)` is what keeps one card from overflowing a phone.
+ *
+ * The floor is what picks the count, and a column is the only step there is:
+ * at 21rem a 1920 window takes four, at 19rem it takes five and the tile drops
+ * to 323, which the owner read as small. Four it is.
  */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
   gap: clamp(1rem, 2.2222vw, 2rem) clamp(1rem, 1.9444vw, 1.75rem);
 }
 

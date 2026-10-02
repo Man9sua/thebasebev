@@ -513,29 +513,34 @@
 /* ---- 6 · the brief ---- */
 
 /*
- * The brief, and the page's own paper under it.
+ * The brief, as a panel on the page rather than a band across it.
  *
- * This band is ink and so is the footer, so with nothing between them the two
- * ran together as one black field with the brief's card floating in the top of
- * it — the owner read the footer as part of the section above. The page's
- * ground showing through for a band closes it: the footer arrives as its own
- * block, which is what it is on every other route, where the page above it is
- * paper.
+ * Full-bleed ink here ran into the footer's ink: the two read as one black
+ * field with the form card floating in the top of it. A strip of the page's
+ * paper between them did separate the two, but a white line across a dark
+ * close is its own kind of wrong. So the ink takes the shape the page already
+ * uses for ink on paper — `paidBanner`, two sections up — and the paper is
+ * simply the ground it stands on. The footer then arrives as the only
+ * full-width dark thing at the foot of the page, which is what it is
+ * everywhere else.
  */
 .form {
-  padding: var(--pad-y) var(--gutter) calc(var(--pad-y) * 0.667);
-  margin-bottom: clamp(2rem, 4.4444vw, 4rem);
-  background: var(--tbb-rd-ink);
-  color: var(--tbb-rd-paper);
+  padding: 0 var(--gutter) var(--pad-y);
+  background: var(--tbb-rd-paper);
 }
 
 .formInner {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 37.5rem;
   gap: clamp(2rem, 4.4444vw, 4rem);
+  box-sizing: border-box;
   width: 100%;
   max-width: var(--tbb-measure);
   margin: 0 auto;
+  padding: clamp(2rem, 4.4444vw, 4rem) clamp(1.5rem, 3.3333vw, 3rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
   align-items: start;
 }
 
