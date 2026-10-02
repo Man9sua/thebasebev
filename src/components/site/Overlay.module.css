@@ -27,9 +27,22 @@
   opacity: 0;
   transition:
     clip-path 0s linear var(--tbb-dur-fast),
-    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    opacity var(--tbb-dur-fast) var(--leave-ease),
     visibility 0s linear var(--tbb-dur-fast);
   visibility: hidden;
+}
+
+/*
+ * Leaving runs on its own curve.
+ *
+ * `--tbb-ease` is an ease-out — fast away from the start, a long settle at the
+ * end — which is what a wipe wants and the opposite of what a fade wants. On
+ * the way out it put nine tenths of the fade inside the first hundred and ten
+ * milliseconds, so the panel read as cut rather than closed and the owner saw
+ * no exit at all. An ease-in holds it for a moment and then takes it.
+ */
+.root {
+  --leave-ease: cubic-bezier(0.5, 0, 0.9, 0.4);
 }
 
 .open {
@@ -66,10 +79,17 @@
 
 /* Children stagger in behind the panel, at its pace rather than the page's —
    see the note above. Their delays are in `SiteMenu.tsx`, which is where the
-   order they arrive in lives. */
+   order they arrive in lives. On the way out they go with it, on its curve, so
+   the panel and its contents leave as one thing. */
 .item {
   opacity: 0;
   transform: translate3d(0, 14px, 0);
+  transition:
+    opacity var(--tbb-dur-fast) var(--leave-ease),
+    transform var(--tbb-dur-fast) var(--leave-ease);
+}
+
+.open .item {
   transition:
     opacity var(--tbb-dur-fast) var(--tbb-ease),
     transform var(--tbb-dur-fast) var(--tbb-ease);
@@ -153,15 +173,14 @@
   background: var(--tbb-sand);
 }
 
-/* The product rows: a cut-out pouch, so the frame is white and the image is
-   contained rather than cropped — `cover` on a cut-out crops the pouch and
-   leaves the transparent margin filling the square. */
+/* The product rows: a cut-out pouch, and nothing behind it. It used to stand
+   on a white tile, which on the row's own warm paper read as a second card
+   inside the first. `contain` rather than `cover`, because `cover` on a cut-out
+   crops the pouch and leaves its transparent margin filling the square. */
 .pouch {
   width: 2.75rem;
   height: 2.75rem;
   flex: none;
-  border-radius: 2px;
-  background-color: #fff;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

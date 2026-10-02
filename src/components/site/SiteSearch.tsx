@@ -34,7 +34,7 @@ const PAGE_HITS: Hit[] = [...SITE_NAV, ...SITE_NAV_SECONDARY].map((item) => ({
 }));
 
 /**
- * The pouch on its own, on white — not the product's photographed plate.
+ * The pouch on its own, on nothing — not the product's photographed plate.
  *
  * The plate was a 44px square holding a full styled shot: six of them at around
  * 1.1 MB each, fetched on every page of the site because this overlay is
