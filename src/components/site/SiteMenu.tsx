@@ -106,7 +106,7 @@ export function SiteMenu({
                   key={item.href}
                   href={item.href}
                   className={navLink(item.href)}
-                  style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
+                  style={{ transitionDelay: open ? `${40 + index * 40}ms` : "0ms" }}
                   aria-current={pathname === item.href ? "page" : undefined}
                   onClick={onClose}
                 >
@@ -120,7 +120,7 @@ export function SiteMenu({
                 count where `smoke:browser` expects it. */}
             <details
               className={`${styles.products} ${overlay.item}`}
-              style={{ transitionDelay: open ? `${160 + SITE_NAV.length * 55}ms` : "0ms" }}
+              style={{ transitionDelay: open ? `${40 + SITE_NAV.length * 40}ms` : "0ms" }}
               open={productsOpen}
               onToggle={(event) => setProductsOpen(event.currentTarget.open)}
             >
@@ -153,7 +153,7 @@ export function SiteMenu({
 
           <div
             className={`${styles.foot} ${overlay.item}`}
-            style={{ transitionDelay: open ? `${200 + SITE_NAV.length * 55}ms` : "0ms" }}
+            style={{ transitionDelay: open ? `${80 + SITE_NAV.length * 40}ms` : "0ms" }}
           >
             {/* The bar drops its call to action below 1100px, so on a phone the
                 foot of the menu is the only place it can be. */}

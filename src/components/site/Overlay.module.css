@@ -6,20 +6,39 @@
   flex-direction: column;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
-  /* Clipped rather than faded: the panel wipes down from the header line, which
-     reads as one motion with the bar instead of a generic modal fade. */
+  /*
+   * Wipes in, fades out.
+   *
+   * Clipped rather than faded on the way in: the panel comes down out of the
+   * bar, which reads as one motion with it instead of a generic modal fade.
+   *
+   * Out is the other way round, and not for want of symmetry. Reversed, the
+   * wipe retreats upward and the bar is the last thing it uncovers, so the bar
+   * has to hold the panel's ink until it has — and the owner found the bar
+   * sitting black over a page that was already back. A fade has no edge to
+   * disagree with, so the bar can simply settle at the same time. The clip is
+   * reset in a step once the fade is done, so it never un-wipes on screen.
+   *
+   * At `--tbb-dur-fast` rather than `--tbb-dur`: 720ms is a page's pace, and
+   * a menu that takes that long to arrive — with its own contents staggered
+   * behind it — is what reads as laggy.
+   */
   clip-path: inset(0 0 100% 0);
+  opacity: 0;
   transition:
-    clip-path var(--tbb-dur) var(--tbb-ease),
-    visibility 0s linear var(--tbb-dur);
+    clip-path 0s linear var(--tbb-dur-fast),
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    visibility 0s linear var(--tbb-dur-fast);
   visibility: hidden;
 }
 
 .open {
   clip-path: inset(0 0 0 0);
+  opacity: 1;
   visibility: visible;
   transition:
-    clip-path var(--tbb-dur) var(--tbb-ease),
+    clip-path var(--tbb-dur-fast) var(--tbb-ease),
+    opacity 0s,
     visibility 0s;
 }
 
@@ -45,13 +64,15 @@
   color: var(--tbb-rd-paper);
 }
 
-/* Children stagger in only once the panel itself has opened. */
+/* Children stagger in behind the panel, at its pace rather than the page's —
+   see the note above. Their delays are in `SiteMenu.tsx`, which is where the
+   order they arrive in lives. */
 .item {
   opacity: 0;
-  transform: translate3d(0, 22px, 0);
+  transform: translate3d(0, 14px, 0);
   transition:
-    opacity var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .open .item {

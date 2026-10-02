@@ -12,8 +12,12 @@
      footage that ran from near-black to bright white. */
   color: var(--tbb-on-light);
   /* Colour only. The bar itself is never transformed — the paper behind it
-     slides in, which is the `::after` below. */
-  transition: color 620ms var(--tbb-ease);
+     slides in, which is the `::after` below.
+
+     One speed for everything on the bar, and the overlay's: the plate used to
+     cross 620ms where the panel wiped in 720, which is how the two came to
+     disagree in the first place. */
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 /* Transparent over the hero: the bar reads as part of the composition rather
@@ -54,7 +58,7 @@
   transform: translate3d(0, -101%, 0);
   transition:
     transform var(--tbb-dur) var(--tbb-ease),
-    background-color 620ms var(--tbb-ease);
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
   pointer-events: none;
 }
 
