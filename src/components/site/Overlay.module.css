@@ -6,64 +6,20 @@
   flex-direction: column;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
-  /*
-   * Wipes in, fades out.
-   *
-   * Clipped rather than faded on the way in: the panel comes down out of the
-   * bar, which reads as one motion with it instead of a generic modal fade.
-   *
-   * Out is the other way round, and not for want of symmetry. Reversed, the
-   * wipe retreats upward and the bar is the last thing it uncovers, so the bar
-   * has to hold the panel's ink until it has — and the owner found the bar
-   * sitting black over a page that was already back. A fade has no edge to
-   * disagree with, so the bar can simply settle at the same time. The clip is
-   * reset in a step once the fade is done, so it never un-wipes on screen.
-   *
-   * At `--tbb-dur-fast` rather than `--tbb-dur`: 720ms is a page's pace, and
-   * a menu that takes that long to arrive — with its own contents staggered
-   * behind it — is what reads as laggy.
-   */
+  /* Clipped rather than faded: the panel wipes down from the header line, which
+     reads as one motion with the bar instead of a generic modal fade. */
   clip-path: inset(0 0 100% 0);
-  transition: visibility 0s linear var(--tbb-dur-fast);
-  visibility: hidden;
-}
-
-/*
- * And leaves the same way, downward, rather than reversing back into the bar.
- *
- * A reversed wipe retreats upward and uncovers the bar last, so the bar has to
- * hold the panel's ink until it has — which is the black bar the owner found
- * left behind. A fade instead of a wipe answered that and cost the exit: there
- * was nothing to see leaving. Going down costs neither. The bar is free in the
- * first frame and settles with the panel, and the gesture is the one that
- * brought the panel in, carried on.
- *
- * It is a state of its own because two clip states cannot both be "closed" —
- * `useOverlay` holds it for the length of the wipe.
- */
-.leaving {
-  clip-path: inset(100% 0 0 0);
-  visibility: visible;
   transition:
-    clip-path var(--tbb-dur-fast) var(--tbb-ease),
-    visibility 0s linear var(--tbb-dur-fast);
-}
-
-/* The panel leaves as one thing, contents and all: they are inside the clip,
-   so animating them out as well is a second motion nobody can see. */
-.leaving .item {
-  opacity: 1;
-  transform: none;
-  transition: none;
+    clip-path var(--tbb-dur) var(--tbb-ease),
+    visibility 0s linear var(--tbb-dur);
+  visibility: hidden;
 }
 
 .open {
   clip-path: inset(0 0 0 0);
-  opacity: 1;
   visibility: visible;
   transition:
-    clip-path var(--tbb-dur-fast) var(--tbb-ease),
-    opacity 0s,
+    clip-path var(--tbb-dur) var(--tbb-ease),
     visibility 0s;
 }
 
@@ -89,15 +45,13 @@
   color: var(--tbb-rd-paper);
 }
 
-/* Children stagger in behind the panel, at its pace rather than the page's —
-   see the note above. Their delays are in `SiteMenu.tsx`, which is where the
-   order they arrive in lives. */
+/* Children stagger in only once the panel itself has opened. */
 .item {
   opacity: 0;
-  transform: translate3d(0, 14px, 0);
+  transform: translate3d(0, 22px, 0);
   transition:
-    opacity var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+    opacity var(--tbb-dur) var(--tbb-ease),
+    transform var(--tbb-dur) var(--tbb-ease);
 }
 
 .open .item {

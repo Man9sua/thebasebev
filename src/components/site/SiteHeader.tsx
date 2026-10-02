@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { BrandMarkVertical } from "@/components/site/BrandMarkVertical";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
@@ -157,7 +157,6 @@ export function SiteHeader({
   const solid = productPage || !overHero || pastHero;
   const adaptSurface = !productPage && sampleSurface;
   const [menuOpen, setMenuOpen] = useState(false);
-  const closeMenu = useCallback(() => setMenuOpen(false), []);
   const [searchOpen, setSearchOpen] = useState(false);
   // Set while a section that declares itself dark sits under the bar.
   const [onDark, setOnDark] = useState(false);
@@ -349,7 +348,7 @@ export function SiteHeader({
             type="button"
             className={styles.action}
             onClick={() => {
-              closeMenu();
+              setMenuOpen(false);
               setSearchOpen(true);
             }}
             aria-label="Search"
@@ -377,7 +376,7 @@ export function SiteHeader({
         </div>
       </header>
 
-      <SiteMenu open={menuOpen} onClose={closeMenu} />
+      <SiteMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       <SiteSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
