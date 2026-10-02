@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { BrandMarkVertical } from "@/components/site/BrandMarkVertical";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
@@ -28,6 +28,14 @@ import styles from "./SiteHeader.module.css";
  * left for that slot is the way back into an account on that platform. Drawn
  * in the same line as the search beside it rather than taken from a set.
  */
+/**
+ * How long the menu panel takes to wipe, in milliseconds — `--tbb-dur` in
+ * `design-tokens.css`, which is where it is set and where it has to be changed.
+ * Repeated here because the bar holds the panel's ink for exactly that long and
+ * a timer cannot read a CSS token without a layout pass.
+ */
+const WIPE_MS = 720;
+
 function AccountIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
@@ -157,6 +165,30 @@ export function SiteHeader({
   const solid = productPage || !overHero || pastHero;
   const adaptSurface = !productPage && sampleSurface;
   const [menuOpen, setMenuOpen] = useState(false);
+  /*
+   * Whether the bar is still wearing the menu's ink after the menu has gone.
+   *
+   * The panel closes by retreating upward, so the bar is the last thing it
+   * uncovers. Let the ink go with the click and the bar crossfades back to the
+   * page while the panel is still on screen — a second thing moving, which is
+   * the whole complaint. It is held for one wipe instead. The burger is not
+   * held: it is the control that was just pressed and it answers at once.
+   */
+  const [menuSettling, setMenuSettling] = useState(false);
+  const menuWearsInk = menuOpen || menuSettling;
+
+  const closeMenu = useCallback(() => {
+    setMenuOpen((open) => {
+      if (open) setMenuSettling(true);
+      return false;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!menuSettling) return;
+    const timer = window.setTimeout(() => setMenuSettling(false), WIPE_MS);
+    return () => window.clearTimeout(timer);
+  }, [menuSettling]);
   const [searchOpen, setSearchOpen] = useState(false);
   // Set while a section that declares itself dark sits under the bar.
   const [onDark, setOnDark] = useState(false);
@@ -283,10 +315,10 @@ export function SiteHeader({
    * Elsewhere the menu gives the bar its ink surface, the search panel uses
    * paper, and the current section supplies the default.
    */
-  const inverted = !productPage && (menuOpen || (dark && !searchOpen));
+  const inverted = !productPage && (menuWearsInk || (dark && !searchOpen));
   const plate = productPage
     ? "#ffffff"
-    : menuOpen
+    : menuWearsInk
       ? "var(--tbb-rd-ink)"
       : adaptSurface && !searchOpen && surface
         ? surface
@@ -348,7 +380,7 @@ export function SiteHeader({
             type="button"
             className={styles.action}
             onClick={() => {
-              setMenuOpen(false);
+              closeMenu();
               setSearchOpen(true);
             }}
             aria-label="Search"
@@ -362,7 +394,10 @@ export function SiteHeader({
             className={styles.action}
             onClick={() => {
               setSearchOpen(false);
-              setMenuOpen((open) => !open);
+              setMenuOpen((open) => {
+                if (open) setMenuSettling(true);
+                return !open;
+              });
             }}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
@@ -376,7 +411,7 @@ export function SiteHeader({
         </div>
       </header>
 
-      <SiteMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SiteMenu open={menuOpen} onClose={closeMenu} />
       <SiteSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );

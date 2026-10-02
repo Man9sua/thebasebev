@@ -271,6 +271,32 @@
   bottom: 0;
 }
 
+/*
+ * While the menu is open the bar has no surface of its own: the panel behind it
+ * is the surface.
+ *
+ * Everything on the bar crossfades as the page scrolls under it — the plate to
+ * the colour of whatever section it is over, the scrim out, the type to ink —
+ * which is right for scrolling and wrong for this. The panel wipes down in
+ * 720ms and the plate was crossfading to ink in 620, so halfway through an open
+ * the bar was a grey band with the black panel already behind it, and the edge
+ * between the two was a second line travelling down beside the wipe. That is
+ * what the owner saw.
+ *
+ * Matching the two timings would only make them agree while nothing else moved.
+ * Taking the plate away instead makes the question not arise: the bar shows the
+ * panel, so it is the panel, opening and closing. The plate leaves in the
+ * instant the burger starts to turn and comes back only once the wipe has
+ * cleared the bar again — hence the delay rather than a duration on the way
+ * back. Its opacity is otherwise untouched, so the scroll crossfade above is
+ * exactly as it was.
+ */
+.open,
+.open::before,
+.open::after {
+  transition: none;
+}
+
 .open .burgerBox span:nth-child(1) {
   transform: translate3d(0, 6.25px, 0) rotate(45deg);
 }
