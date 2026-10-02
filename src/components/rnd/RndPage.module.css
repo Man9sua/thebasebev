@@ -297,8 +297,19 @@
 
 /* ---- 3 · three bases ---- */
 
+/*
+ * One rhythm at a boundary, not two.
+ *
+ * Every section here opens and closes on `--pad-y`, which is 144 at the design
+ * frame, so paper meeting paper left 288 of empty ground between them. Where
+ * the section above ends on type that reads as air; where it ends on the black
+ * band the process section closes with, it reads as a hole, which is what the
+ * owner is pointing at. So the three that follow another paper section open on
+ * nothing and stand on the closing pad of the one above — `bases`, `process`
+ * and `lab` below. `value` keeps its own, because what it follows is the hero.
+ */
 .bases {
-  padding: var(--pad-y) var(--gutter);
+  padding: 0 var(--gutter) var(--pad-y);
   background: var(--tbb-rd-paper);
 }
 
@@ -351,7 +362,7 @@
 /* ---- 4 · process ---- */
 
 .process {
-  padding: var(--pad-y) var(--gutter);
+  padding: 0 var(--gutter) var(--pad-y);
   background: var(--tbb-rd-paper);
 }
 
@@ -431,7 +442,7 @@
 /* ---- 5 · the lab ---- */
 
 .lab {
-  padding: var(--pad-y) var(--gutter);
+  padding: 0 var(--gutter) var(--pad-y);
   background: var(--tbb-rd-paper);
 }
 
@@ -501,8 +512,19 @@
 
 /* ---- 6 · the brief ---- */
 
+/*
+ * The brief, and the page's own paper under it.
+ *
+ * This band is ink and so is the footer, so with nothing between them the two
+ * ran together as one black field with the brief's card floating in the top of
+ * it — the owner read the footer as part of the section above. The page's
+ * ground showing through for a band closes it: the footer arrives as its own
+ * block, which is what it is on every other route, where the page above it is
+ * paper.
+ */
 .form {
-  padding: var(--pad-y) var(--gutter);
+  padding: var(--pad-y) var(--gutter) calc(var(--pad-y) * 0.667);
+  margin-bottom: clamp(2rem, 4.4444vw, 4rem);
   background: var(--tbb-rd-ink);
   color: var(--tbb-rd-paper);
 }

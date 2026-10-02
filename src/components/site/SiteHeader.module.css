@@ -107,9 +107,19 @@
  * in a bar cut down to match: the mark is still the first thing in the corner
  * and the bar is a bar again.
  */
+/*
+ * The mark, and its floor is what matters.
+ *
+ * The bar is 76 tall on the design's frame and 52 at its own minimum, and the
+ * mark used to run 52 in the first and 30 in the second — two thirds of the bar
+ * on a desktop against half of it on a phone, which is where the owner saw it
+ * as small. The floor now holds 36, which is the same two thirds of the
+ * narrowest bar the header ever draws, and the ceiling is 56 rather than 52 so
+ * the desktop gains the same touch.
+ */
 .logo svg {
   display: block;
-  height: clamp(1.875rem, 3.6111vw, 3.25rem);
+  height: clamp(2.25rem, 3.6111vw, 3.5rem);
   width: auto;
 }
 

@@ -278,9 +278,21 @@
   font-weight: 600;
 }
 
+/*
+ * Three across the design's own frame, and more as the window grows rather
+ * than three bigger ones.
+ *
+ * The measure runs to 1920 so a band fills the screen instead of leaving a
+ * third of it empty either side, which is what the owner asked for. A fixed
+ * three columns turns that straight into size: at a 1920 window each tile came
+ * out 557 by 756, half a metre of pack shot. `auto-fill` against a floor keeps
+ * the band full and the tile near the size the design draws it — 397 at the
+ * 1440 frame, where the count is still three, and 323 at 1920, where it is
+ * five. `min(100%, …)` is what keeps one card from overflowing a phone.
+ */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
   gap: clamp(1rem, 2.2222vw, 2rem) clamp(1rem, 1.9444vw, 1.75rem);
 }
 
@@ -642,6 +654,8 @@
 /* ---- narrower than the design's own frame ---- */
 
 @media (max-width: 68.6875rem) {
+  /* Two, and two at any width down to a phone: below the floor above, one card
+     per row is a column of 400px pictures. */
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
