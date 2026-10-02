@@ -179,6 +179,36 @@
   display: none;
 }
 
+/* The document's outlined `Shop ↗`, and unlike the quote button it is here at
+   every width: the bar has a call to action of its own on a desktop, but
+   nothing anywhere that leaves for the platform the range is sold on. */
+.footShop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding-inline: 1.5rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.footShop:hover,
+.footShop:focus-visible {
+  background: currentColor;
+  color: var(--tbb-rd-ink);
+}
+
 .footLinks {
   display: flex;
   flex-wrap: wrap;
@@ -315,6 +345,18 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
+  }
+
+  /* Beside the quote button rather than under it: two rows of one pill each
+     is most of a phone's menu foot. */
+  .footCta {
+    flex: 1 1 60%;
+  }
+
+  .footShop {
+    flex: 1 1 30%;
+    min-height: 3.5rem;
+    padding-inline: 1rem;
   }
 
   .footLinks,

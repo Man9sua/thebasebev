@@ -4,7 +4,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
-import { COMPANY, FOOTER_LINKS, SITE_NAV, SITE_NAV_SECONDARY } from "@/lib/site-config";
+import {
+  COMPANY,
+  FOOTER_LINKS,
+  SHOP_URL,
+  SITE_NAV,
+  SITE_NAV_SECONDARY,
+} from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
 import overlay from "./Overlay.module.css";
 import styles from "./SiteMenu.module.css";
@@ -154,6 +160,19 @@ export function SiteMenu({
             <SiteLink href="/contacts" className={styles.footCta} onClick={onClose}>
               Get a quote
             </SiteLink>
+
+            {/* The one thing the menu document asked for that this panel could
+                not carry: an outlined `Shop ↗` leaving for the platform that
+                sells the range. It waited for a URL, and the UAE now has one —
+                see `SHOP_URL`. Off-site, so its own tab. */}
+            <a
+              className={styles.footShop}
+              href={SHOP_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Shop <span aria-hidden="true">↗</span>
+            </a>
 
             <div className={styles.footLinks}>
               {SITE_NAV_SECONDARY.map((item) => (

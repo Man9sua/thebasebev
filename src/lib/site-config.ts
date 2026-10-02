@@ -13,14 +13,30 @@
  * frame gets a source of its own on a small screen.
  */
 /**
- * The Odoo storefront, which is where a purchase is actually made.
+ * Where a purchase is actually made, which is not here.
  *
- * The catalogue here is the shelf and the product pages are the specification;
- * "Buy" hands the visitor to the shop rather than trying to be it. Not an
- * `/api` route and not called from anywhere but a link — see the Odoo rules in
- * AGENTS.md, which are about the lead webhook and not about this.
+ * This site is the company's card: the catalogue is the shelf and the product
+ * pages are the specification, and buying happens on whichever platform sells
+ * the range in the visitor's country. In the UAE that is Bidfood, and their
+ * app is what the owner asked `Shop` to open.
+ *
+ * One constant for now because there is one country. It is read rather than
+ * repeated — `audit:commerce` and `smoke:browser` both check the rendered
+ * href against this file — so the per-country table the roadmap calls for can
+ * replace it without a second place to update.
  */
-export const SHOP_URL = "https://odoo.thebasebev.com/shop";
+export const SHOP_URL = "https://apps.apple.com/ae/app/bidfood-home-uae/id1508719076";
+
+/**
+ * The customer's own account, which lives in Odoo.
+ *
+ * The bar used to carry a basket. There is no basket to carry: the owner's
+ * instruction is that the site does not sell, so the icon beside search is the
+ * way back into an account on the platform that does. Odoo sends an
+ * unauthenticated visitor to its own sign-in and an authenticated one to their
+ * orders, so one href covers both.
+ */
+export const ODOO_ACCOUNT_URL = "https://odoo.thebasebev.com/my";
 
 /**
  * The brand film and the frame that stands until it is played.

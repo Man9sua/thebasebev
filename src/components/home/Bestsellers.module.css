@@ -541,20 +541,15 @@
     max-width: 46ch;
   }
 
-  .dotLabel {
+  /*
+   * Gone below the desktop grid, which is where the row stops being a row of
+   * names. The labels do not fit, and what was left of each button was its
+   * one-pixel rule — five dashes under the arrows, reading as a stray detail
+   * rather than as where the rail is. The arrows beside them already move it,
+   * and the rail is swipeable. The buttons stay in the markup so the slides
+   * keep a named control each.
+   */
+  .dots {
     display: none;
-  }
-
-  .dot {
-    width: 1.75rem;
-  }
-
-  .dotLine {
-    transform: scaleX(0.6);
-    opacity: 0.5;
-  }
-
-  .dotActive .dotLine {
-    opacity: 1;
   }
 }

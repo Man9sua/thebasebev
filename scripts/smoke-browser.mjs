@@ -10,6 +10,17 @@ const artifactRoot = path.resolve(".visual-artifacts");
 const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
 /** The homepage's first section below the hero — what "the page has arrived". */
 const BESTSELLERS = "#bestsellers";
+/**
+ * Where "Buy" leaves for, read out of the source rather than repeated here: it
+ * is per-country now, so a literal would turn every new country into a failing
+ * smoke run.
+ */
+const SHOP_URL = /export const SHOP_URL = "([^"]+)"/
+  .exec(fs.readFileSync("src/lib/site-config.ts", "utf8"))?.[1];
+if (!SHOP_URL) {
+  console.error("Could not read SHOP_URL out of src/lib/site-config.ts");
+  process.exit(1);
+}
 const failures = [];
 const pageErrors = [];
 const hydrationErrors = [];
@@ -375,14 +386,15 @@ try {
   await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
   check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
 
-  // The catalogue sends buying to Odoo; the shelf must point to that shop.
+  // The catalogue sends buying off-site; the shelf must point where the source
+  // says, which is per-country and no longer Odoo — see `SHOP_URL`.
   check(
     (await page.locator("[data-catalog-card] [data-shop-link]").count()) > 0,
     "catalog: no card offers the shop",
   );
   check(
     (await page.locator("[data-catalog-card] [data-shop-link]").first().getAttribute("href")) ===
-      "https://odoo.thebasebev.com/shop",
+      SHOP_URL,
     "catalog: Buy does not point at the shop",
   );
   check(
@@ -438,15 +450,21 @@ try {
     "matcha: the sample modal left the page scroll locked",
   );
 
-  // Product pages collect enquiries; the catalogue sends buying to Odoo.
+  // Product pages collect enquiries; buying happens off-site, and the bar
+  // offers the account on the platform that does it rather than a basket.
   check(
     (await page.locator("[data-cart-add]").count()) === 0,
     "matcha: product page still has an add-to-cart control",
   );
   check(
-    (await page.locator('header a[aria-label^="Cart"]').first().getAttribute("href")) ===
-      "/catalog",
-    "matcha: empty cart does not lead to catalogue",
+    (await page.locator('header a[aria-label^="Cart"]').count()) === 0,
+    "matcha: the bar still carries a cart",
+  );
+  check(
+    (
+      (await page.locator('header a[aria-label="Your account"]').first().getAttribute("href")) ?? ""
+    ).startsWith("https://odoo."),
+    "matcha: the bar's account link does not lead to Odoo",
   );
   await page.getByRole("button", { name: "Request pricing" }).first().click();
   const pricingForm = page.locator("#partner-request-modal-form");

@@ -1,4 +1,22 @@
+import fs from "node:fs";
 import { chromium } from "@playwright/test";
+
+/**
+ * The shop's address, read out of the source rather than repeated here.
+ *
+ * It is not Odoo any more and it will not be one URL for long: the site hands
+ * buying to whichever platform sells the range in the visitor's country. A
+ * literal here would turn every one of those into a failing audit.
+ */
+const SHOP_URL = /export const SHOP_URL = "([^"]+)"/
+  .exec(fs.readFileSync("src/lib/site-config.ts", "utf8"))?.[1];
+if (!SHOP_URL) {
+  console.error("Could not read SHOP_URL out of src/lib/site-config.ts");
+  process.exit(1);
+}
+
+/** The account link has to leave for Odoo and nowhere else. */
+const ODOO_ORIGIN = "https://odoo.";
 
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const chromePath =
@@ -60,26 +78,35 @@ try {
         controls,
         productData,
         legacyCartNodes: document.querySelectorAll('[class*="t706__cartwin"]').length,
+        // The bar carries an account rather than a basket: the owner's
+        // instruction is that this site does not sell, so what has to be there
+        // is the way back into the platform that does.
+        accountControl: document.querySelector('header a[aria-label="Your account"]')?.getAttribute("href") ?? null,
         nativeCartControl: Boolean(document.querySelector('header a[aria-label^="Cart"]')),
       };
     });
 
     console.log(JSON.stringify({ route, ...audit }, null, 2));
 
-    if (!audit.nativeCartControl) failures.push(`${route}: native cart control is unavailable`);
+    if (!audit.accountControl) failures.push(`${route}: the bar offers no account link`);
+    if (audit.accountControl && !audit.accountControl.startsWith(ODOO_ORIGIN)) {
+      failures.push(`${route}: the account link points at ${audit.accountControl}`);
+    }
+    if (audit.nativeCartControl) failures.push(`${route}: the bar still carries a cart`);
     if (audit.legacyCartNodes > 0) failures.push(`${route}: legacy Tilda cart is still mounted`);
     if (route === "/catalog" && audit.catalogCards.length !== 16) {
       failures.push(`/catalog: expected 16 visible catalogue cards, received ${audit.catalogCards.length}`);
     }
 
     if (route === "/catalog") {
-      // The shelf hands buying over to the Odoo shop. What it has to get right
-      // is the destination — a "Buy" that stays on this site now goes nowhere.
+      // The shelf hands buying over to the platform that sells the range. What
+      // it has to get right is the destination — a "Buy" that stays on this
+      // site now goes nowhere.
       const shopLinks = page.locator("[data-shop-link]");
       const shopCount = await shopLinks.count();
       const firstShopHref = shopCount ? await shopLinks.first().getAttribute("href") : null;
       if (shopCount === 0) failures.push("/catalog: no card offers the shop");
-      if (firstShopHref !== "https://odoo.thebasebev.com/shop") {
+      if (firstShopHref !== SHOP_URL) {
         failures.push(`/catalog: Buy points at ${firstShopHref}`);
       }
       if (await page.locator("[data-cart-add]").count()) {
@@ -92,8 +119,6 @@ try {
         failures.push("/matcha: product page still has an add-to-cart control");
       }
 
-      const cartHref = await page.locator('header a[aria-label^="Cart"]').first().getAttribute("href");
-      if (cartHref !== "/catalog") failures.push("/matcha: empty cart does not lead to catalogue");
 
       for (const action of [
         { label: "Request a sample", form: "#sample-request-modal-form", formName: "Free Sample" },

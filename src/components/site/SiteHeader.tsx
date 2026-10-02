@@ -2,11 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { useCart } from "@/components/cart/useCart";
 import { BrandMarkVertical } from "@/components/site/BrandMarkVertical";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
+import { ODOO_ACCOUNT_URL } from "@/lib/site-config";
 import styles from "./SiteHeader.module.css";
 
 /**
@@ -19,11 +19,20 @@ import styles from "./SiteHeader.module.css";
  * other routes retain their surface sampling. The bar stays fixed in place.
  */
 
-function CartIcon() {
+/*
+ * An account, not a basket.
+ *
+ * The bar carried a basket with a count on it, and behind it a native cart and
+ * a checkout. The owner's instruction is that this site does not sell — it
+ * hands the visitor to the platform that does, per country — so the only thing
+ * left for that slot is the way back into an account on that platform. Drawn
+ * in the same line as the search beside it rather than taken from a set.
+ */
+function AccountIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-      <path d="M6 7h12l-1 12H7L6 7Z" strokeLinejoin="round" />
-      <path d="M9.5 9V6.5a2.5 2.5 0 0 1 5 0V9" strokeLinecap="round" />
+      <circle cx="12" cy="8.5" r="3.5" />
+      <path d="M5.5 19.5c0-3.3 2.9-5.5 6.5-5.5s6.5 2.2 6.5 5.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -149,12 +158,6 @@ export function SiteHeader({
   const adaptSurface = !productPage && sampleSurface;
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const cart = useCart();
-  const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0);
-  const cartHref = cart.ready && cartCount > 0 ? "/checkout" : "/catalog";
-  const cartLabel = cartCount
-    ? `Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`
-    : "Cart";
   // Set while a section that declares itself dark sits under the bar.
   const [onDark, setOnDark] = useState(false);
   // The sampled colour of whatever is under the bar, and whether it is dark.
@@ -289,8 +292,6 @@ export function SiteHeader({
         ? surface
         : null;
 
-  // Cart state is native and shared across every route. Empty means catalogue;
-  // a populated cart means the dedicated review/checkout page.
   return (
     <>
       <header
@@ -331,14 +332,17 @@ export function SiteHeader({
             Get your best deal now
           </SiteLink>
 
-          <SiteLink
-            href={cartHref}
+          {/* Off-site, so a plain anchor rather than `SiteLink`, and its own
+              tab: the visitor is partway through reading a specification. */}
+          <a
+            href={ODOO_ACCOUNT_URL}
             className={styles.action}
-            aria-label={cartLabel}
+            aria-label="Your account"
+            target="_blank"
+            rel="noreferrer noopener"
           >
-            <CartIcon />
-            {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
-          </SiteLink>
+            <AccountIcon />
+          </a>
 
           <button
             type="button"
