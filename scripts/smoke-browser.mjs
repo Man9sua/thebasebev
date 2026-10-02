@@ -533,9 +533,17 @@ try {
     });
   }
   await contactForm.evaluate((form) => form.requestSubmit());
-  await page.waitForTimeout(700);
+  // Waited for rather than slept through: the message arrives when the lead
+  // round-trip fails, and against a deployed Worker that is sometimes longer
+  // than a fixed pause. One run in four failed here on a site whose forms had
+  // not been touched.
+  const contactError = contactForm.locator(".js-rule-error-all");
+  await contactError
+    .filter({ hasText: /temporarily unavailable/i })
+    .waitFor({ state: "attached", timeout: 10_000 })
+    .catch(() => {});
   check(
-    /temporarily unavailable/i.test((await contactForm.locator(".js-rule-error-all").textContent()) ?? ""),
+    /temporarily unavailable/i.test((await contactError.textContent()) ?? ""),
     "contacts: unconfigured lead backend did not show an honest error",
   );
   const attribution = await page.evaluate(
