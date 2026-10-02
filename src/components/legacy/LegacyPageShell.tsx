@@ -1,3 +1,4 @@
+import { LegacyHeadAssets } from "@/components/legacy/LegacyHeadAssets";
 import { LegacyCatalogTilt } from "@/components/legacy/LegacyCatalogTilt";
 import type { SitePage } from "@/lib/site-pages";
 import { PRODUCTS } from "@/data/products";
@@ -45,11 +46,7 @@ export function LegacyPageShell({
 
   return (
     <>
-      <div
-        className="legacy-head-assets"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: page.headAssetsHtml }}
-      />
+      <LegacyHeadAssets html={page.headAssetsHtml} />
       {runtimeOnly ? (
         <div
           className={`legacy-document ${styles.shell} ${styles.runtimeOnly}`}

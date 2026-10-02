@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PublicLink as Link } from "@/components/site/PublicLink";
 import styles from "./SitemapPage.module.css";
 
 type SitemapLink = {

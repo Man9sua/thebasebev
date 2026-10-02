@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { PublicLink as Link } from "@/components/site/PublicLink";
 import { useMemo, useState } from "react";
 import { BLOG_POSTS, BLOG_TOPICS } from "@/data/blog";
 import styles from "./BlogPage.module.css";

@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes } from "react";
+import { publicPath } from "@/lib/site-paths";
 
 /**
  * A link to a section of the page it is already on.
@@ -23,5 +24,5 @@ type PageAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
 };
 
 export function PageAnchor({ route, target, ...rest }: PageAnchorProps) {
-  return <a href={`${route}#${target}`} {...rest} />;
+  return <a href={`${publicPath(route)}#${target}`} {...rest} />;
 }

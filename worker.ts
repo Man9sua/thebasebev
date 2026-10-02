@@ -2,6 +2,8 @@
 // @ts-expect-error -- generated module intentionally has no checked-in types.
 import openNextWorker from "./.open-next/worker.js";
 import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
+import publicRoutePaths from "./src/data/public-route-paths.json";
+import { publicPath } from "./src/lib/site-paths";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
@@ -35,24 +37,25 @@ const RETIRED_LEGACY_REDIRECTS = legacyRouteRedirects as ReadonlyArray<{
 }>;
 
 const PERMANENT_REDIRECTS = new Map<string, string>([
-  ...RETIRED_LEGACY_REDIRECTS.map(({ source, destination }) => [source, destination] as const),
-  ["/page65953477.html", "/"],
-  ["/page65953593.html", "/"],
-  ["/raf-cofeee", "/raf-coffee"],
-  ["/raf-cofee", "/raf-coffee"],
-  ["/functional-wellness", "/catalog"],
-  ["/cabinet", "/"],
+  ...publicRoutePaths.map((route) => [route, publicPath(route)] as const),
+  ...RETIRED_LEGACY_REDIRECTS.map(({ source, destination }) => [source, publicPath(destination)] as const),
+  ["/page65953477.html", publicPath("/")],
+  ["/page65953593.html", publicPath("/")],
+  ["/raf-cofeee", publicPath("/raf-coffee")],
+  ["/raf-cofee", publicPath("/raf-coffee")],
+  ["/functional-wellness", publicPath("/catalog")],
+  ["/cabinet", publicPath("/")],
   [
     "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
-    "/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi",
+    publicPath("/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi"),
   ],
   [
     "/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb",
-    "/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush",
+    publicPath("/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush"),
   ],
   [
     "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
-    "/tpost/eljzud0n91-one-sku-two-builds-30-seconds",
+    publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
   ],
 ]);
 
@@ -204,7 +207,7 @@ async function staticFastPath(
   }
 
   const notFoundAsset = await environment.ASSETS.fetch(
-    requestForAsset(request, "/__static_pages/not-found.html"),
+    requestForAsset(request, "/__static_pages/_not-found.html"),
   );
   return new Response(notFoundAsset.body, {
     status: 404,

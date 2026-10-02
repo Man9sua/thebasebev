@@ -8,6 +8,8 @@ const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.js
 const glossaryRoutes = glossaryContent.entries.map((entry) => entry.path);
 const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
 const blogRoutes = blogContent.posts.map((post) => post.path);
+const publicRoutePaths = JSON.parse(fs.readFileSync("src/data/public-route-paths.json", "utf8"));
+const publicPath = (route) => route === "/" ? "/ae" : `/ae${route}`;
 
 function block(source, start, end) {
   const startIndex = source.indexOf(start);
@@ -20,6 +22,10 @@ const friendlyBlock = block(siteSource, "const friendlyRoutes: RouteDefinition[]
 const friendlyRoutes = [...friendlyBlock.matchAll(/\{ route: "([^"]+)", file: "([^"]+)", indexable: (true|false) \}/g)].map(
   (match) => ({ route: match[1], file: match[2], indexable: match[3] === "true" }),
 );
+const expectedPublicPaths = new Set([...friendlyRoutes.map(({ route }) => route), ...glossaryRoutes, ...blogRoutes]);
+if (expectedPublicPaths.size !== publicRoutePaths.length || publicRoutePaths.some((route) => !expectedPublicPaths.has(route))) {
+  throw new Error("Public redirect manifest differs from generated site routes.");
+}
 const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
 const legacyPageRedirects = retiredLegacyRedirects.filter((entry) => entry.source.startsWith("/page"));
 const productAliasRedirects = retiredLegacyRedirects.filter((entry) => entry.source.includes("/tproduct/"));
@@ -27,17 +33,18 @@ const productAliasRedirects = retiredLegacyRedirects.filter((entry) => entry.sou
 // sit on one line, and a redirect this audit cannot see is a redirect nothing
 // checks.
 const configuredRedirectRows = [...nextConfig.matchAll(
-  /\{\s*source:\s*"([^"]+)",\s*destination:\s*"([^"]+)",\s*statusCode:\s*301,?\s*\}/g,
+  /\{\s*source:\s*"([^"]+)",\s*destination:\s*publicPath\("([^"]+)"\),\s*statusCode:\s*301,?\s*\}/g,
 )].map(
-  (match) => ({ route: match[1], destination: match[2] }),
+  (match) => ({ route: match[1], destination: publicPath(match[2]) }),
 );
 const redirectRows = [
-  ...retiredLegacyRedirects.map((entry) => ({ route: entry.source, destination: entry.destination })),
+  ...publicRoutePaths.map((route) => ({ route, destination: publicPath(route) })),
+  ...retiredLegacyRedirects.map((entry) => ({ route: entry.source, destination: publicPath(entry.destination) })),
   ...configuredRedirectRows,
 ];
 const controlledRoutes = [
   ...friendlyRoutes.map((entry) => ({
-    route: entry.route,
+    route: publicPath(entry.route),
     type: entry.indexable ? "public page" : "service/public compatibility page",
     expectedStatus: 200,
     indexable: entry.indexable,
@@ -48,7 +55,7 @@ const controlledRoutes = [
       : `Preserved non-indexable route from ${entry.file}`,
   })),
   ...glossaryRoutes.map((route) => ({
-    route,
+    route: publicPath(route),
     type: "glossary article",
     expectedStatus: 200,
     indexable: true,
@@ -57,7 +64,7 @@ const controlledRoutes = [
     reason: "Published production Glossary article preserved at its canonical path",
   })),
   ...blogRoutes.map((route) => ({
-    route,
+    route: publicPath(route),
     type: "blog article",
     expectedStatus: 200,
     indexable: true,
@@ -150,7 +157,7 @@ if (controlledRoutes.length !== expectedControlledRoutes) {
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
   );
 }
-if (redirectRows.length !== 77) throw new Error(`Expected 77 redirects, received ${redirectRows.length}.`);
+if (redirectRows.length !== 77 + publicRoutePaths.length) throw new Error(`Expected ${77 + publicRoutePaths.length} redirects, received ${redirectRows.length}.`);
 
 /*
  * `worker.ts` restates the redirect table because its static fast path answers
@@ -159,14 +166,14 @@ if (redirectRows.length !== 77) throw new Error(`Expected 77 redirects, received
  * Cloudflare. The duplication is allowed; drifting apart is not.
  */
 const workerSource = fs.readFileSync("worker.ts", "utf8");
-if (!nextConfig.includes("legacy-route-redirects.json") || !workerSource.includes("legacy-route-redirects.json")) {
+if (!["legacy-route-redirects.json", "public-route-paths.json"].every((manifest) => nextConfig.includes(manifest) && workerSource.includes(manifest))) {
   throw new Error("The retired-route redirect manifest must be imported by both Next.js and the static Worker path.");
 }
 const workerRedirectBlock = block(workerSource, "const PERMANENT_REDIRECTS = new Map<string, string>([", "]);" );
 const workerRedirects = new Map(
-  [...workerRedirectBlock.matchAll(/\[\s*"([^"]+)",\s*"([^"]+)",?\s*\]/g)].map((match) => [
+  [...workerRedirectBlock.matchAll(/\[\s*"([^"]+)",\s*publicPath\("([^"]+)"\),?\s*\]/g)].map((match) => [
     match[1],
-    match[2],
+    publicPath(match[2]),
   ]),
 );
 const redirectDrift = [

@@ -1,23 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BrandMarkVertical } from "@/components/site/BrandMarkVertical";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
 import { ODOO_ACCOUNT_URL } from "@/lib/site-config";
 import styles from "./SiteHeader.module.css";
-
-/**
- * Global header — minimal by design: mark on the left, actions on the right,
- * centre deliberately empty. Navigation lives behind the burger.
- *
- * Routes with `overHero` start transparent and turn to paper after the hero.
- * Product routes keep a white plate and dark controls throughout the page.
- * The homepage opts out of surface sampling but keeps its transparent opening;
- * other routes retain their surface sampling. The bar stays fixed in place.
- */
 
 /*
  * An account, not a basket.
@@ -46,294 +36,78 @@ function SearchIcon() {
   );
 }
 
-/** `rgb()` / `rgba()` as computed by the browser, to three channels. */
-/**
- * Any colour a computed style can hand back, in 0–255 channels.
- *
- * Two serialisations reach this, and they do not use the same scale. `rgb()`
- * and `rgba()` count 0–255; `color(srgb 0.96 0.92 0.92)` — which is what a
- * browser returns for `color-mix(in srgb, …)`, and the Bestsellers band on the
- * homepage is exactly that — counts 0–1. Read on the wrong scale, a cream wash
- * arrives as 0.96 of 255, the bar decides the page under it is nearly black,
- * and it inverts itself on the lightest surface on the site.
- *
- * The colourspace keyword is skipped rather than parsed: `rec2020` has digits
- * in its name, so pulling numbers out of the whole string picks up 2020 as a
- * channel. Non-sRGB spaces are read as if they were sRGB, which is wrong by a
- * few percent and irrelevant to a light-or-dark decision.
- */
-const COLOR_FUNCTION = /^color\(\s*[a-z0-9-]+\s+([^)]*)\)/i;
-const RGB_FUNCTION = /^rgba?\(([^)]*)\)/i;
-
-function parseColor(value: string) {
-  const trimmed = value.trim();
-  const modern = trimmed.match(COLOR_FUNCTION);
-  const legacy = modern ? null : trimmed.match(RGB_FUNCTION);
-  const body = modern?.[1] ?? legacy?.[1];
-  if (!body) return null;
-
-  const parts = body.match(/-?\d*\.?\d+(?:e[-+]?\d+)?%?/gi);
-  if (!parts || parts.length < 3) return null;
-
-  const scale = modern ? 255 : 1;
-  const [red, green, blue] = parts.slice(0, 3).map((part) =>
-    part.endsWith("%") ? (Number.parseFloat(part) / 100) * 255 : Number(part) * scale,
-  );
-  const alpha = parts.length > 3 ? Number.parseFloat(parts[3]) : 1;
-
-  return alpha < 0.5 ? null : { red, green, blue };
-}
-
-/** Rec. 709 luma, which is all the bar needs to pick ink or paper. */
-function isDarkColor({ red, green, blue }: { red: number; green: number; blue: number }) {
-  return (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255 < 0.5;
-}
-
-/**
- * What an element actually paints, if anything.
- *
- * `background-color` is the usual answer, but several surfaces here are
- * gradients — the distributors hero, the Blog's own head — and a gradient
- * leaves `background-color` transparent. Computed styles normalise gradient
- * stops to a colour function, so the first stop is readable straight out of the
- * image string, and the first stop is the end of the gradient the bar sits on.
- */
-function paintedColor(style: CSSStyleDeclaration) {
-  const background = parseColor(style.backgroundColor);
-  if (background) return background;
-
-  const image = style.backgroundImage;
-  if (image && image.includes("gradient")) {
-    const stop = image.match(/(?:rgba?|color)\([^)]*\)/i);
-    if (stop) return parseColor(stop[0]);
-  }
-
-  return null;
-}
-
-/**
- * The colour of the page directly under the bar.
- *
- * Read off the document rather than declared per section: every route on this
- * site is some mix of React surfaces and injected export markup, and asking
- * each of them to announce its own paper would mean maintaining that list for
- * ever. A point just below the bar, then up the ancestor chain to the first
- * element that actually paints something — that is what the eye does too.
- *
- * Only a band the width of the page counts. A button, a chip or a card under
- * the sampling point is an object sitting on the surface, not the surface: the
- * first version of this took the black "Request a sample" pill on the homepage
- * and turned the whole bar black for the height of one button.
- */
-function surfaceUnderBar(barHeight: number) {
-  const x = Math.round(window.innerWidth / 2);
-  const y = barHeight + 2;
-  const fullWidth = window.innerWidth * 0.9;
-  let node = document.elementFromPoint(x, y);
-
-  while (node) {
-    if (node.getBoundingClientRect().width >= fullWidth) {
-      const color = paintedColor(getComputedStyle(node));
-      if (color) return color;
-    }
-    node = node.parentElement;
-  }
-
-  return null;
-}
-
 export function SiteHeader({
   overHero = false,
   productPage = false,
-  sampleSurface = true,
 }: {
   overHero?: boolean;
   productPage?: boolean;
-  sampleSurface?: boolean;
 }) {
   const pathname = usePathname();
   const [pastHero, setPastHero] = useState(false);
-  // Derived, not stored: away from the hero the bar is always solid.
-  const solid = productPage || !overHero || pastHero;
-  const adaptSurface = !productPage && sampleSurface;
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuClosing, setMenuClosing] = useState(false);
+  const [menuSettling, setMenuSettling] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  // Set while a section that declares itself dark sits under the bar.
-  const [onDark, setOnDark] = useState(false);
-  // The sampled colour of whatever is under the bar, and whether it is dark.
-  const [surface, setSurface] = useState<string | null>(null);
-  const [surfaceDark, setSurfaceDark] = useState(false);
-  const barRef = useRef<HTMLElement>(null);
+  const solid = productPage || !overHero || pastHero;
+  const menuSurface = menuOpen || menuClosing;
 
-  /**
-   * Solid state is driven by an IntersectionObserver on the hero rather than by
-   * measuring scrollY on every frame. It is cheaper, and it does not depend on
-   * `requestAnimationFrame`, which browsers stop servicing in a background tab —
-   * that left the bar stuck transparent whenever the page was not in front.
-   */
   useEffect(() => {
-    // Only a page that actually renders a hero can be over one.
-    const hero = overHero ? document.querySelector("[data-hero]") : null;
+    if (!overHero) return;
+    const hero = document.querySelector("[data-hero]");
     if (!hero) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => setPastHero(entry.intersectionRatio < 0.14),
       { threshold: [0, 0.14, 0.5, 1] },
     );
-
     observer.observe(hero);
     return () => observer.disconnect();
   }, [overHero, pathname]);
 
-  /**
-   * Surface adaptation, as on mercury.com: a thin observation band the height
-   * of the bar is pinned to the top of the viewport, and any element that
-   * declares `data-surface="dark"` flips the bar to its inverted palette while
-   * it is inside that band. The footer is the dark surface today; marking a
-   * section is all it takes to add another.
-   *
-   * The band is expressed as a bottom `rootMargin` that collapses the root to
-   * the header strip, so this costs one observer and no scroll maths.
-   */
+  const closeMenu = useCallback(() => {
+    setMenuClosing(true);
+    setMenuOpen(false);
+  }, []);
+
   useEffect(() => {
-    if (!adaptSurface) return;
-    const surfaces = Array.from(document.querySelectorAll("[data-surface='dark']"));
-    if (!surfaces.length) return;
+    if (!menuClosing) return;
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 720;
+    const timer = window.setTimeout(() => {
+      setMenuClosing(false);
+      setMenuSettling(true);
+    }, duration);
+    return () => window.clearTimeout(timer);
+  }, [menuClosing]);
 
-    const lit = new Set<Element>();
-    let observer: IntersectionObserver | null = null;
-
-    const build = () => {
-      observer?.disconnect();
-      lit.clear();
-      const height = barRef.current?.offsetHeight ?? 0;
-      const below = Math.max(window.innerHeight - height, 0);
-
-      observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) lit.add(entry.target);
-            else lit.delete(entry.target);
-          }
-          setOnDark(lit.size > 0);
-        },
-        { rootMargin: `0px 0px -${below}px 0px`, threshold: 0 },
-      );
-
-      surfaces.forEach((surface) => observer?.observe(surface));
-    };
-
-    build();
-    window.addEventListener("resize", build);
-    return () => {
-      window.removeEventListener("resize", build);
-      observer?.disconnect();
-    };
-  }, [adaptSurface, pathname]);
-
-  /**
-   * Chameleon: the bar takes the colour of the page it is currently over.
-   *
-   * The plate used to be white on every route, which is right on the paper
-   * pages and wrong everywhere else — a white slab laid across the top of a
-   * beige article or a grey band. Sampling costs one `elementFromPoint` and a
-   * short walk up the tree per animation frame, throttled to one sample per
-   * frame, and the plate's own 620ms colour transition does the rest.
-   *
-   * Skipped while an overlay is open: the menu and the search own the whole
-   * screen, so the bar follows them rather than the page underneath.
-   */
   useEffect(() => {
-    if (!adaptSurface || menuOpen || searchOpen) return;
-
-    let frame = 0;
-
-    const sample = () => {
-      frame = 0;
-      const color = surfaceUnderBar(barRef.current?.offsetHeight ?? 0);
-      if (!color) return;
-      // Rounded because a `color-mix()` surface parses to fractional channels,
-      // and this string ends up in the DOM as an inline custom property.
-      setSurface(
-        `rgb(${Math.round(color.red)}, ${Math.round(color.green)}, ${Math.round(color.blue)})`,
-      );
-      setSurfaceDark(isDarkColor(color));
-    };
-
-    const schedule = () => {
-      if (!frame) frame = window.requestAnimationFrame(sample);
-    };
-
-    sample();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  }, [adaptSurface, menuOpen, pathname, searchOpen]);
-
-  // A section may declare itself dark even when its top strip is not; the
-  // sampled colour catches everything that does not.
-  const dark = adaptSurface && (onDark || surfaceDark);
-
-  /*
-   * Product pages keep their white bar even while an overlay is open.
-   * Elsewhere the menu gives the bar its ink surface, the search panel uses
-   * paper, and the current section supplies the default.
-   */
-  const inverted = !productPage && (menuOpen || (dark && !searchOpen));
-  const plate = productPage
-    ? "#ffffff"
-    : menuOpen
-      ? "var(--tbb-rd-ink)"
-      : adaptSurface && !searchOpen && surface
-        ? surface
-        : null;
+    if (!menuSettling) return;
+    const frame = window.requestAnimationFrame(() => setMenuSettling(false));
+    return () => window.cancelAnimationFrame(frame);
+  }, [menuSettling]);
 
   return (
     <>
       <header
-        ref={barRef}
         className={[
           styles.header,
-          solid || menuOpen || searchOpen ? styles.solid : "",
-          // An open overlay owns the whole screen, so the bar follows it rather
-          // than whatever section happens to be underneath. The menu panel is
-          // ink and the search panel is paper, so the menu is the one that
-          // takes the inverted bar with it.
-          inverted ? styles.inverted : "",
+          solid || menuSurface || searchOpen ? styles.solid : "",
+          menuSurface ? styles.inverted : "",
+          menuSurface || menuSettling ? styles.menuSnap : "",
           menuOpen ? styles.open : "",
         ]
           .filter(Boolean)
           .join(" ")}
-        // Null until the first sample, so the server and the first client
-        // render agree and hydration stays quiet. While the menu is open the
-        // plate is painted to the panel's own ink instead, so the two do not
-        // meet at a seam.
-        style={plate ? ({ "--tbb-header-surface": plate } as CSSProperties) : undefined}
-        data-header-theme={inverted ? "dark" : solid ? "light" : "hero"}
+        data-header-theme={menuSurface ? "dark" : solid ? "light" : "hero"}
       >
-        {/* Original Tilda paths, inlined so the small `the` mark can inherit
-            the animated header colour without recolouring the red block. */}
         <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
-          {/* The Tilda runtime on parity routes re-sets src and adds
-              decoding/fetchpriority on every img it finds, this one included.
-              The rewrite is cosmetic, but React would still read it as a
-              mismatch on a node it owns. */}
           <BrandMarkVertical />
         </SiteLink>
 
         <div className={styles.actions}>
-          {/* The design's own call to action — see `.cta`. It is the one thing
-              the file's header carries that this bar did not. */}
           <SiteLink href="/contacts" className={styles.cta}>
             Get your best deal now
           </SiteLink>
-
-          {/* Off-site, so a plain anchor rather than `SiteLink`, and its own
-              tab: the visitor is partway through reading a specification. */}
           <a
             href={ODOO_ACCOUNT_URL}
             className={styles.action}
@@ -349,6 +123,7 @@ export function SiteHeader({
             className={styles.action}
             onClick={() => {
               setMenuOpen(false);
+              setMenuClosing(false);
               setSearchOpen(true);
             }}
             aria-label="Search"
@@ -362,7 +137,12 @@ export function SiteHeader({
             className={styles.action}
             onClick={() => {
               setSearchOpen(false);
-              setMenuOpen((open) => !open);
+              if (menuOpen) closeMenu();
+              else {
+                setMenuClosing(false);
+                setMenuSettling(false);
+                setMenuOpen(true);
+              }
             }}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
@@ -376,7 +156,7 @@ export function SiteHeader({
         </div>
       </header>
 
-      <SiteMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SiteMenu open={menuOpen} onClose={closeMenu} />
       <SiteSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );

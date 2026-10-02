@@ -31,7 +31,7 @@ try {
   const page = await context.newPage();
 
   for (const route of ["/catalog", "/matcha", "/catalog/tproduct/975474893862-matcha"]) {
-    await page.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
+    await page.goto(`${baseUrl}${route.includes("/tproduct/") ? route : `/ae${route}`}`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(3_500);
 
     const audit = await page.evaluate(() => {

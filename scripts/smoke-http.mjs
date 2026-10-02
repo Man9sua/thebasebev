@@ -9,6 +9,8 @@ const productionTarget = ["thebasebev.com", "www.thebasebev.com"].includes(
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
 const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
+const publicPath = (route) => route === "/" ? "/ae" : `/ae${route}`;
+const publicRoutePaths = JSON.parse(fs.readFileSync("src/data/public-route-paths.json", "utf8"));
 const expectedSitemapUrls = 29 + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
@@ -49,29 +51,30 @@ const publicRoutes = [
   "/retail",
   "/knowledge-recipes",
   "/not-found",
-];
+].map(publicPath);
 
 const redirects = new Map([
-  ...retiredLegacyRedirects.map(({ source, destination }) => [source, destination]),
-  ["/page65953477.html", "/"],
-  ["/page65953593.html", "/"],
-  ["/raf-cofeee", "/raf-coffee"],
-  ["/raf-cofee", "/raf-coffee"],
-  ["/functional-wellness", "/catalog"],
-  ["/cabinet", "/"],
+  ...publicRoutePaths.map((route) => [route, publicPath(route)]),
+  ...retiredLegacyRedirects.map(({ source, destination }) => [source, publicPath(destination)]),
+  ["/page65953477.html", publicPath("/")],
+  ["/page65953593.html", publicPath("/")],
+  ["/raf-cofeee", publicPath("/raf-coffee")],
+  ["/raf-cofee", publicPath("/raf-coffee")],
+  ["/functional-wellness", publicPath("/catalog")],
+  ["/cabinet", publicPath("/")],
   // Blog posts renamed after publication — Tilda resolved both spellings on
   // the post id; every route here is generated, so the old one needs saying.
   [
     "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
-    "/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi",
+    publicPath("/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi"),
   ],
   [
     "/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb",
-    "/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush",
+    publicPath("/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush"),
   ],
   [
     "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
-    "/tpost/eljzud0n91-one-sku-two-builds-30-seconds",
+    publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
   ],
 ]);
 
@@ -83,10 +86,10 @@ for (const route of publicRoutes) {
   if (response.status !== 200) failures.push(`${route}: expected 200, received ${response.status}`);
   if (!/<html[^>]+lang=["']en["']/i.test(html)) failures.push(`${route}: missing static lang=en`);
   if (!/<title[^>]*>[^<]+<\/title>/i.test(html)) failures.push(`${route}: missing title`);
-  if (route !== "/knowledge-recipes" && !/<h1\b/i.test(html)) {
+  if (route !== "/ae/knowledge-recipes" && !/<h1\b/i.test(html)) {
     failures.push(`${route}: missing crawler-visible H1`);
   }
-  if (route === "/" && (workerTarget || productionTarget)) {
+  if (route === "/ae" && (workerTarget || productionTarget)) {
     const expectedHeaders = new Map([
       ["x-content-type-options", "nosniff"],
       ["referrer-policy", "strict-origin-when-cross-origin"],

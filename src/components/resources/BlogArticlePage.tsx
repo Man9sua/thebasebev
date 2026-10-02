@@ -1,5 +1,6 @@
+import { publicUrl } from "@/lib/site-paths";
 import Image from "next/image";
-import Link from "next/link";
+import { PublicLink as Link } from "@/components/site/PublicLink";
 import { Fragment } from "react";
 import { resolveBlogHref, type BlogBlock, type BlogInline, type BlogPost } from "@/data/blog";
 import styles from "./BlogArticlePage.module.css";
@@ -128,7 +129,7 @@ export function BlogArticlePage({
   return (
     <main className={styles.page} data-blog-article>
       <article className={styles.article} itemScope itemType="https://schema.org/BlogPosting">
-        <meta itemProp="mainEntityOfPage" content={post.seo.canonical} />
+        <meta itemProp="mainEntityOfPage" content={publicUrl(post.seo.canonical)} />
         <meta itemProp="author" content="The Base Beverage LLC" />
 
         <nav className={styles.breadcrumbs} aria-label="Breadcrumb">

@@ -6,6 +6,15 @@ const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const publicPath = (route) => route === "/" ? "/ae" : route.startsWith("/ae/") || route === "/ae" ? route : `/ae${route}`;
+const legacyPath = (route) => route === "/ae" ? "/" : route.replace(/^\/ae(?=\/)/, "");
+function publicUrl(value) {
+  try {
+    const url = new URL(value);
+    if (url.origin === productionOrigin) url.pathname = publicPath(url.pathname);
+    return url.toString();
+  } catch { return value; }
+}
 const expectedSitemapRoutes =
   29 + glossaryContent.entries.length + blogContent.posts.length;
 
@@ -89,7 +98,7 @@ function normalizeInternalLinks(html, responseOrigin) {
       const url = new URL(href, responseOrigin);
       if (!["thebasebev.com", "www.thebasebev.com", new URL(targetOrigin).hostname].includes(url.hostname)) continue;
       const pathname = url.pathname !== "/" ? url.pathname.replace(/\/$/, "") : "/";
-      links.add(`${pathname}${url.search}`);
+      links.add(`${responseOrigin === productionOrigin ? publicPath(pathname) : pathname}${url.search}`);
     } catch {
       // Invalid source links are reported by the set difference below only
       // when one side can normalize them.
@@ -186,7 +195,7 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const production = await fetchSnapshot(productionOrigin, route);
+    const production = await fetchSnapshot(productionOrigin, legacyPath(route));
     await delay(500);
     const target = await fetchSnapshot(targetOrigin, route);
     results[index] = { route, production, target };
@@ -256,7 +265,7 @@ for (const { route, production, target } of results) {
   if (production.status !== 200) issues.push(`production status ${production.status}`);
   if (target.status !== 200) issues.push(`target status ${target.status}`);
   for (const field of ["title", "description", "canonical"]) {
-    if (production[field] !== target[field]) issues.push(`${field} mismatch`);
+    if ((field === "canonical" ? publicUrl(production[field]) : production[field]) !== target[field]) issues.push(`${field} mismatch`);
   }
 
   /*
@@ -267,7 +276,7 @@ for (const { route, production, target } of results) {
    * altogether and this is a critical failure again.
    */
   if (production.h1 !== target.h1) {
-    const exempt = H1_NOT_PRESERVED.get(route);
+    const exempt = H1_NOT_PRESERVED.get(legacyPath(route));
     if (exempt && exempt.h1 === production.h1) {
       declared.push(`${route}: ${exempt.reason}`);
     } else if (production.h1 && target.h2.includes(production.h1)) {
@@ -283,7 +292,7 @@ for (const { route, production, target } of results) {
     issues.push("JSON-LD type mismatch");
   }
   for (const field of ["title", "url", "type"]) {
-    if (production.openGraph[field] !== target.openGraph[field]) issues.push(`og:${field} mismatch`);
+    if ((field === "url" ? publicUrl(production.openGraph[field]) : production.openGraph[field]) !== target.openGraph[field]) issues.push(`og:${field} mismatch`);
   }
   if (
     production.openGraph.description &&

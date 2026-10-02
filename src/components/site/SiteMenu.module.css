@@ -1,16 +1,4 @@
-/**
- * The menu panel — the redesign.
- *
- * The shell it sits in (the clipped wipe, the scroll container, the staggered
- * children) is `Overlay.module.css`, shared with the search. Everything here is
- * the menu's own layout and skin: four items in Exo 2 Black caps at −2%, the
- * range beside them in two columns, contacts along the foot, all of it on one
- * 1440 × 900 screen.
- *
- * Colour is the `--tbb-rd-*` block from `design-tokens.css` — the same palette
- * the Distributors, R&D and Contacts redesigns use, so the panel and the pages
- * it opens are the same dark.
- */
+
 
 .layout {
   flex: 1;
@@ -25,13 +13,9 @@
   grid-template-columns: minmax(0, 1fr) 27.5rem;
   column-gap: clamp(2rem, 5.5556vw, 5rem);
   align-items: start;
-  /* The block is the panel's 1fr row, so without this the single stacked row a
-     phone gets would be stretched to the full height and the range card would
-     float in the middle of the screen. */
+
   align-content: start;
 }
-
-/* ---- the four ---- */
 
 .nav {
   display: flex;
@@ -61,12 +45,9 @@
   color: var(--tbb-rd-red);
 }
 
-/* The page you are on, in both levels. */
 .current {
   color: var(--tbb-rd-red);
 }
-
-/* ---- the quieter row, in the foot ---- */
 
 .secondaryLink {
   color: var(--tbb-rd-paper);
@@ -76,20 +57,11 @@
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-/* Paper, not red. Red is what marks the page you are on — see `.current` —
-   and a hover that borrows it says you are already there. */
 .secondaryLink:hover,
 .secondaryLink:focus-visible {
   color: var(--tbb-rd-paper);
 }
 
-/* ---- the range ---- */
-
-/*
- * A `<details>` at every width, open on a desktop and collapsed on a phone —
- * see the note on `productsOpen` in `SiteMenu.tsx`. Wide, the summary is a
- * heading rather than a control, so it loses its marker and its pointer.
- */
 .products {
   position: relative;
   min-width: 0;
@@ -115,14 +87,10 @@
   font-weight: 600;
 }
 
-/* The `+` is the disclosure's own affordance; wide, there is nothing to
-   disclose. */
 .productsMark {
   display: none;
 }
 
-/* The other end of the summary's line. Taken out of the flow rather than put
-   inside the `<summary>`, where a link would also toggle the disclosure. */
 .productsAll {
   position: absolute;
   top: 0.875rem;
@@ -163,8 +131,6 @@
   color: var(--tbb-rd-paper);
 }
 
-/* ---- the foot ---- */
-
 .foot {
   display: flex;
   flex-wrap: wrap;
@@ -174,14 +140,10 @@
   border-top: 1px solid #262626;
 }
 
-/* Desktop puts the call to action in the bar; this is the phone's copy of it. */
 .footCta {
   display: none;
 }
 
-/* The document's outlined `Shop ↗`, and unlike the quote button it is here at
-   every width: the bar has a call to action of its own on a desktop, but
-   nothing anywhere that leaves for the platform the range is sold on. */
 .footShop {
   display: inline-flex;
   align-items: center;
@@ -205,7 +167,8 @@
 
 .footShop:hover,
 .footShop:focus-visible {
-  background: currentColor;
+  background: var(--tbb-rd-paper);
+  border-color: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
 }
 
@@ -269,15 +232,20 @@
   font-size: 0.875rem;
 }
 
-/* ---- the phone ---- */
-
 @media (max-width: 63.9375rem) {
+  .layout {
+    flex: 0 0 auto;
+    min-height: 100%;
+    grid-template-rows: auto auto;
+    align-content: space-between;
+  }
+
   .main {
     grid-template-columns: minmax(0, 1fr);
     row-gap: clamp(1.25rem, 5vw, 2rem);
   }
 
-  /* Collapsed, the range is a card with a control rather than a column. */
+
   .products {
     padding: 0 1.125rem;
     border-radius: 1.125rem;
@@ -307,8 +275,7 @@
     transform: rotate(45deg);
   }
 
-  /* No room for the heading and the link on one line, so it goes back into the
-     flow as a row of its own. */
+
   .productsAll {
     position: static;
     display: block;
@@ -323,8 +290,7 @@
     font-size: 0.9375rem;
   }
 
-  /* Three rows: the call to action across the top, the secondary links, then
-     the number, WhatsApp, the region and the legal pair. */
+
   .foot {
     gap: 0.875rem;
   }
@@ -347,8 +313,7 @@
     text-decoration: none;
   }
 
-  /* Beside the quote button rather than under it: two rows of one pill each
-     is most of a phone's menu foot. */
+
   .footCta {
     flex: 1 1 60%;
   }

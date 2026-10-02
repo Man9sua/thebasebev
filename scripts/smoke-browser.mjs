@@ -73,15 +73,15 @@ try {
   const history = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const historyPage = await history.newPage();
   observe(historyPage, "history");
-  await historyPage.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
-  await historyPage.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
+  await historyPage.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
+  await historyPage.goto(`${baseUrl}/ae/matcha`, { waitUntil: "domcontentloaded" });
   await Promise.all([
-    historyPage.waitForURL(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" }),
+    historyPage.waitForURL(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" }),
     historyPage.evaluate(() => window.history.back()),
   ]);
   check(historyPage.url().endsWith("/catalog"), "navigation: browser Back did not restore catalog");
   await Promise.all([
-    historyPage.waitForURL(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" }),
+    historyPage.waitForURL(`${baseUrl}/ae/matcha`, { waitUntil: "domcontentloaded" }),
     historyPage.evaluate(() => window.history.forward()),
   ]);
   check(historyPage.url().endsWith("/matcha"), "navigation: browser Forward did not restore product route");
@@ -95,7 +95,7 @@ try {
   // The homepage: a photographic hero, then the bestsellers carousel.
   // Navigation and the product grid moved out of the old hover mega-menu into
   // the full-screen menu panel, so they are asserted there rather than on hover.
-  await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
   await page.locator(BESTSELLERS).waitFor();
   // Nothing covers the page any more — the loading screen is gone — so this is
   // just a frame for the hero and the scene controller to settle in before the
@@ -128,7 +128,7 @@ try {
     `home: hero photograph is too short (${Math.round(heroImageBox?.height ?? 0)}px of ${view.height})`,
   );
   check(
-    (await hero.locator("a[href='/catalog']").count()) > 0,
+    (await hero.locator("a[href='/ae/catalog']").count()) > 0,
     "home: hero CTA must point at the catalog",
   );
   // The bar carries the vertical mark — the near-square one the design file
@@ -136,7 +136,7 @@ try {
   // carries its own two colours, so it no longer takes part in the bar's colour
   // interpolation; what it has to be is present, and at the file's own height.
   const headerMark = await page.evaluate(() => {
-    const el = document.querySelector('header a[href="/"] svg[data-brand-mark="vertical"]');
+    const el = document.querySelector('header a[href="/ae"] svg[data-brand-mark="vertical"]');
     return el ? el.getBoundingClientRect().height : 0;
   });
   check(headerMark > 0, "header: stacked BASE mark missing");
@@ -192,8 +192,8 @@ try {
     "reading: expected six cards on the rail",
   );
   check(
-    (await rail.locator("a[href='/wholesale-strategy']").count()) === 1 &&
-      (await rail.locator("a[href^='/tpost/']").count()) === 1,
+    (await rail.locator("a[href='/ae/wholesale-strategy']").count()) === 1 &&
+      (await rail.locator("a[href^='/ae/tpost/']").count()) === 1,
     "reading: the rail lost either its guides or its article",
   );
   check(
@@ -344,7 +344,7 @@ try {
     `header: scrolled state was not applied (${JSON.stringify(headerState)})`,
   );
 
-  await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
   await page.locator("[data-catalog-card]").first().waitFor();
   await page.waitForTimeout(1_200);
   check((await page.locator("[data-catalog-card]").count()) === 16, "catalog: expected 16 product cards");
@@ -402,7 +402,7 @@ try {
     "catalog: the shelf still carries an add-to-cart control",
   );
 
-  await page.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${baseUrl}/ae/matcha`, { waitUntil: "domcontentloaded" });
   await page.locator("h1").first().waitFor();
   await page.waitForTimeout(1_200);
   check(/Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""), "matcha: unexpected H1");
@@ -502,7 +502,7 @@ try {
   });
 
   await page.evaluate((storageKey) => sessionStorage.removeItem(storageKey), firstTouchStorageKey);
-  await page.goto(`${baseUrl}/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+  await page.goto(`${baseUrl}/ae/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
     waitUntil: "domcontentloaded",
   });
   await page.locator(BESTSELLERS).waitFor();
@@ -514,7 +514,7 @@ try {
    * below instead — the landing is still loaded here, because the first touch
    * it records is what the attribution check at the end reads.
    */
-  await page.goto(`${baseUrl}/contacts`, {
+  await page.goto(`${baseUrl}/ae/contacts`, {
     waitUntil: "domcontentloaded",
   });
   const contactForm = page.locator("#form860957415");
@@ -553,7 +553,7 @@ try {
   check(attribution?.utm_source === "chatgpt.com", "contacts: chatgpt.com attribution was not retained");
   check(
     (await page.locator('link[rel="canonical"]').first().getAttribute("href")) ===
-      "https://thebasebev.com/contacts",
+      "https://thebasebev.com/ae/contacts",
     "contacts: canonical was changed after hydration",
   );
 
@@ -563,7 +563,7 @@ try {
   const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
-  await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  await mobilePage.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
   // On a remote Worker the static HTML can arrive before its client chunks.
   // The attribution bridge writes this key from a React effect, giving the
   // smoke test a deterministic hydration signal before it clicks the menu.
@@ -599,7 +599,7 @@ try {
     "mobile: cabinet link leaked into public navigation",
   );
   check(
-    (await mobilePage.locator("#site-menu a[href='/contacts']").count()) >= 1,
+    (await mobilePage.locator("#site-menu a[href='/ae/contacts']").count()) >= 1,
     "mobile: contact link missing from the menu",
   );
   check(
@@ -628,7 +628,7 @@ try {
   const visualPage = await visual.newPage();
   for (const { width, height } of viewports) {
     await visualPage.setViewportSize({ width, height });
-    await visualPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+    await visualPage.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
     await visualPage.locator(BESTSELLERS).waitFor();
     await visualPage.waitForTimeout(3_500);
     check(
@@ -656,7 +656,7 @@ try {
   // which observes a transient browser-default `display: block` that a real
   // painted frame never exposes. Assert once the document and its styles are
   // render-ready instead of racing the stylesheet response.
-  await reducedPage.goto(`${baseUrl}/`, { waitUntil: "load" });
+  await reducedPage.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
   check(
     await reducedPage.locator("section[data-hero] h1").isVisible(),
     "reduced-motion: homepage hero content is not immediately visible",
@@ -670,7 +670,7 @@ try {
   });
   const noScriptPage = await noScript.newPage();
   observe(noScriptPage, "no-script");
-  await noScriptPage.goto(`${baseUrl}/`, { waitUntil: "load" });
+  await noScriptPage.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
   check(
     await noScriptPage.locator("section[data-hero] h1").isVisible(),
     "no-script: homepage hero content is not visible",

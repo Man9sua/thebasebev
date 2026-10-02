@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { publicUrl } from "@/lib/site-paths";
+import { PublicLink as Link } from "@/components/site/PublicLink";
 import { Fragment } from "react";
 import {
   categoryLabel,
@@ -56,7 +57,7 @@ export function GlossaryArticlePage({ entry, relatedEntries }: GlossaryArticlePa
         itemScope
         itemType="https://schema.org/BlogPosting"
       >
-        <meta itemProp="mainEntityOfPage" content={entry.seo.canonical} />
+        <meta itemProp="mainEntityOfPage" content={publicUrl(entry.seo.canonical)} />
         <meta itemProp="author" content="The Base Beverage LLC" />
 
         <nav className={styles.breadcrumbs} aria-label="Breadcrumb">

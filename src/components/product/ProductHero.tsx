@@ -68,7 +68,8 @@ function Seal({ box, mark }: { box: "small" | "wide"; mark: keyof typeof SEALS }
       className={`${styles.seal} ${box === "wide" ? styles.sealWide : styles.sealSmall}`}
       src={seal.src}
       alt={seal.alt}
-      loading="lazy"
+      loading="eager"
+      decoding="sync"
     />
   );
 }
@@ -380,8 +381,8 @@ export function ProductHero({ product }: { product: Product }) {
               /* Both compositions are in the markup and one is hidden, so the
                  set that is not showing is never fetched: a lazy image with no
                  box on the page has nothing to intersect. */
-              loading="lazy"
-              decoding="async"
+              loading="eager"
+              decoding="sync"
               style={style}
             />
           ) : (
@@ -448,7 +449,7 @@ export function ProductHero({ product }: { product: Product }) {
           src={`/images/pack-${product.slug}.webp`}
           alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
           fetchPriority="high"
-          decoding="async"
+          decoding="sync"
         />
 
         {/*
@@ -469,7 +470,7 @@ export function ProductHero({ product }: { product: Product }) {
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={glass.image} alt="" decoding="async" />
+            <img src={glass.image} alt="" loading="eager" decoding="sync" />
           </div>
         )}
       </div>

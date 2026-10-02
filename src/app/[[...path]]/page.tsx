@@ -36,6 +36,7 @@ import {
   type BlogPost,
 } from "@/data/blog";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
+import { publicPath, publicUrl } from "@/lib/site-paths";
 import {
   getSitePage,
   getStaticSiteParams,
@@ -54,7 +55,7 @@ export const dynamicParams = false;
 
 export function generateStaticParams() {
   const articleParams = [...GLOSSARY_ENTRIES, ...BLOG_POSTS].map(({ path }) => ({
-    path: path.replace(/^\//, "").split("/"),
+    path: ["ae", ...path.replace(/^\//, "").split("/")],
   }));
 
   return [...getStaticSiteParams(), ...articleParams];
@@ -63,7 +64,7 @@ export function generateStaticParams() {
 function glossaryMetadata(entry: GlossaryEntry): Metadata {
   const title = entry.seo.title || entry.title;
   const description = entry.seo.description || entry.excerpt || undefined;
-  const canonical = entry.seo.canonical || `${SITE_ORIGIN}${entry.path}`;
+  const canonical = publicUrl(entry.seo.canonical || `${SITE_ORIGIN}${entry.path}`);
 
   return {
     title,
@@ -108,7 +109,7 @@ function glossaryMetadata(entry: GlossaryEntry): Metadata {
 function blogMetadata(post: BlogPost): Metadata {
   const title = post.seo.title || post.title;
   const description = post.seo.description || post.excerpt || undefined;
-  const canonical = post.seo.canonical || `${SITE_ORIGIN}${post.path}`;
+  const canonical = publicUrl(post.seo.canonical || `${SITE_ORIGIN}${post.path}`);
   const image = post.cover ? `${SITE_ORIGIN}${post.cover.src}` : "";
 
   return {
@@ -152,7 +153,7 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   if (!page) return {};
 
   const robots = page.robots.toLowerCase();
-  const canonical = page.canonical || `${SITE_ORIGIN}${route === "/" ? "" : route}`;
+  const canonical = page.canonical || `${SITE_ORIGIN}${publicPath(route)}`;
   const title = page.title || "THE BASE";
   const description = page.description || undefined;
 
@@ -172,7 +173,7 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     },
     openGraph: {
       type: "website",
-      url: page.openGraph.url || canonical,
+      url: publicUrl(page.openGraph.url) || canonical,
       title: page.openGraph.title || title,
       description: page.openGraph.description || description,
       images: page.openGraph.image ? [{ url: page.openGraph.image }] : undefined,

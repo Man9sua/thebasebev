@@ -174,7 +174,7 @@ export function DistributorsPage() {
         figures the other version carried are in the sentence instead, which is
         what that version does with them.
       */}
-      <section className={styles.hero} aria-labelledby="dist-title">
+      <section className={styles.hero} aria-labelledby="dist-title" data-hero>
         {/*
           A plain `img` rather than `next/image`.
 

@@ -7,17 +7,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--tbb-gutter);
-  /* The hero is paper now, not a dark video, so the bar starts in ink and
-     simply stays there. The old scrim existed to keep white icons legible over
-     footage that ran from near-black to bright white. */
+
   color: var(--tbb-on-light);
-  /* Colour only. The bar itself is never transformed — the paper behind it
-     slides in, which is the `::after` below. */
+
   transition: color 620ms var(--tbb-ease);
 }
 
-/* Transparent over the hero: the bar reads as part of the composition rather
-   than as a separate navbar sitting on top of it. */
 .header::before {
   content: "";
   position: absolute;
@@ -32,33 +27,17 @@
   pointer-events: none;
 }
 
-/*
- * The bar's own plate, and the design's: `Rectangle 321`, 1200 x 103, filled
- * #ffffff under a drop shadow of 0/0, blur 8, spread 0 at 6% black. The rule
- * that used to close the bar is gone — the file separates it from the page with
- * the shadow instead.
- */
-/*
- * `--tbb-header-surface` is set inline by the observer in `SiteHeader.tsx` from
- * the colour of the page directly under the bar, so the plate matches the
- * article's beige, a grey band or the dark footer instead of laying white
- * across all three. White is the fallback, which is what it was everywhere
- * before, and what it still is until the first sample lands.
- */
 .header::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--tbb-header-surface, #ffffff);
+  background: #ffffff;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
   transform: translate3d(0, -101%, 0);
-  transition:
-    transform var(--tbb-dur) var(--tbb-ease),
-    background-color 620ms var(--tbb-ease);
+  transition: transform var(--tbb-dur) var(--tbb-ease);
   pointer-events: none;
 }
 
-/* Past the hero the bar becomes paper and the type flips to ink. */
 .solid {
   color: var(--tbb-on-light);
 }
@@ -71,22 +50,12 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Nothing moves the bar any more. It is fixed, and once it has turned to paper
-   it stays put for the rest of the page. */
-
 .inner {
   position: relative;
   z-index: 1;
   display: contents;
 }
 
-/*
- * The block keeps the file's red on every surface; the small `the` is handed
- * the bar's own ink, so it interpolates to paper with the controls when the bar
- * inverts. Left at the file's near-black it was black on black over the brand
- * film and over the menu — and BASE itself is cut out of the block rather than
- * painted, so it takes whatever is behind and needs nothing.
- */
 .logo {
   --tbb-mark-letter: currentColor;
 
@@ -98,25 +67,6 @@
   text-decoration: none;
 }
 
-/*
- * Height-driven, width auto: the mark's aspect ratio is never touched, and it
- * is the same asset at every breakpoint — only the scale changes.
- *
- * Below the design file's own 82.13, which put an 82px drawing in a 103px bar
- * and left the mark reading as the loudest thing on the page. Two thirds of it,
- * in a bar cut down to match: the mark is still the first thing in the corner
- * and the bar is a bar again.
- */
-/*
- * The mark, and its floor is what matters.
- *
- * The bar is 76 tall on the design's frame and 52 at its own minimum, and the
- * mark used to run 52 in the first and 30 in the second — two thirds of the bar
- * on a desktop against half of it on a phone, which is where the owner saw it
- * as small. The floor now holds 36, which is the same two thirds of the
- * narrowest bar the header ever draws, and the ceiling is 56 rather than 52 so
- * the desktop gains the same touch.
- */
 .logo svg {
   display: block;
   height: clamp(2.25rem, 3.6111vw, 3.5rem);
@@ -136,15 +86,6 @@
   gap: clamp(0.35rem, 1.1vw, 0.9rem);
 }
 
-/*
- * The design's call to action: `Frame 156`, 189 x 50, radius 100, filled black,
- * with "Get your best deal now" set in 14 over a 50 line, white, and 10 of
- * padding inside a horizontal Auto Layout.
- *
- * It points at /contacts rather than at a popup: the file gives it no target,
- * and the export's own lead popups only exist on routes served through the
- * legacy shell — this bar is on every route.
- */
 .cta {
   display: inline-flex;
   align-items: center;
@@ -179,8 +120,6 @@
   outline-offset: 3px;
 }
 
-/* Below the design's own frame width the bar has to hold the logo, four
-   controls and this; the controls are the half anyone reaches for. */
 @media (max-width: 1099px) {
   .cta {
     display: none;
@@ -224,25 +163,6 @@
   outline-offset: 2px;
 }
 
-/* Cart count sits on the icon so the bar stays free of text. */
-.count {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.15rem;
-  min-width: 1.05rem;
-  height: 1.05rem;
-  padding: 0 0.25rem;
-  border-radius: 999px;
-  background: var(--tbb-accent);
-  color: #fff;
-  font-size: 0.625rem;
-  line-height: 1.05rem;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* ---- burger ---- */
-
 .burgerBox {
   width: 20px;
   height: 14px;
@@ -271,60 +191,9 @@
   bottom: 0;
 }
 
-/*
- * The bar takes the menu's ink at the click, not behind it.
- *
- * Everything on the bar crossfades as the page scrolls under it: the plate to
- * the colour of the section it is over, the scrim out, the type to ink. Right
- * for scrolling, wrong for an overlay. The panel wipes down in 720ms on a
- * curve that puts it past the bar's own 60 in the first two frames, while the
- * plate was still crossfading to ink over 620ms — so halfway through an open
- * the bar was a grey band with the panel already black behind it, and the edge
- * between the two travelled down beside the wipe as a second line.
- *
- * Only the arrival is held here, and only by taking the crossfades out while
- * the menu is up. Leaving is the rules above, unchanged: `.open` is gone by
- * then, so the bar crossfades back to the page on its own timing while the
- * panel reverses. Earlier attempts to own the exit as well — holding the ink
- * until the wipe had cleared the bar, and swapping the wipe out for a fade —
- * are what the owner sent back.
- */
-.open,
-.open::before,
-.open::after {
-  transition: none;
-}
-
-/*
- * The bar takes the menu's ink in one frame, with the burger, rather than
- * crossfading into it behind the panel.
- *
- * The panel is a clip, not a fade: the band it covers — including the strip
- * behind this bar — is fully ink in the first frame. The bar, meanwhile,
- * crossfades everything it wears as the page scrolls under it: the plate to the
- * colour of whatever section it is over, the scrim out, the type to ink. That
- * is right for scrolling and wrong here, and no choice of duration fixes it:
- * against a panel that is already opaque, a bar that is half way to ink is a
- * grey band with black behind it, and the line between the two travels down
- * beside the wipe. That second line is what the owner keeps seeing.
- *
- * So the crossfades are simply off while the menu is up. This is the whole fix
- * and it is deliberately only half of one: the panel, its timing, and the way
- * the bar comes back when the menu closes are all exactly as they were. Four
- * earlier passes went on to change those too, and the owner sent every one of
- * them back.
- *
- * What it leaves alone, so the next reader does not have to find it again: the
- * close still has the same mismatch in reverse. `.open` is gone by then, so the
- * bar crossfades back over its own 620ms while the panel's wipe retreats over
- * 720 and uncovers the bar last. Fixing that means either holding the bar's ink
- * until the panel has cleared — which leaves a dark bar standing over a page
- * that is already back — or giving the panel a different exit. Neither is wanted
- * yet.
- */
-.open,
-.open::before,
-.open::after {
+.menuSnap,
+.menuSnap::before,
+.menuSnap::after {
   transition: none;
 }
 
@@ -344,6 +213,10 @@
     height: 3.75rem;
   }
 
+  .logo svg {
+    height: 2.75rem;
+  }
+
   .action {
     padding: 0.5rem 0.4rem;
   }
@@ -355,33 +228,20 @@
 
 }
 
-/* Surface adaptation — see the observer in SiteHeader.tsx. Over a section that
-   declares itself dark the bar inverts rather than keeping a paper slab on top
-   of it, which is what makes the header read as part of the page rather than a
-   panel floating above it. */
 .inverted {
   color: var(--tbb-on-dark);
 }
 
-/* The CTA deliberately runs opposite to the header's surface: black on the
-   paper header, then paper with ink type over dark sections and the footer. */
 .inverted .cta {
   background: var(--tbb-paper);
   color: var(--tbb-ink);
 }
 
-/* The paper wash exists to lift dark icons off the hero; on a dark surface it
-   would do the opposite. */
 .inverted::before {
   opacity: 0;
 }
 
-/* The sampled colour still wins here — a dark section is rarely pure ink, and
-   matching it is the whole point. Ink is the fallback. */
 .inverted::after {
-  background: var(--tbb-header-surface, var(--tbb-ink));
+  background: var(--tbb-rd-ink);
   border-bottom-color: rgba(255, 255, 255, 0.14);
 }
-
-/* The mark is red on every surface and takes no part in this — see `.logo`.
-   What interpolates with the bar is the controls beside it. */

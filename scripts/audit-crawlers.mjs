@@ -42,7 +42,7 @@ async function request(pathname, userAgent) {
 
 for (const [name, userAgent] of crawlerAgents) {
   try {
-    const response = await request("/", userAgent);
+    const response = await request("/ae", userAgent);
     const html = await response.text();
     const status = response.status;
     const location = response.headers.get("location") ?? "";
@@ -59,7 +59,7 @@ for (const [name, userAgent] of crawlerAgents) {
       failures.push(`${name}: expected HTTP 200, received ${status} ${location}`.trim());
     }
     if (html.length < 1_000 || !h1) failures.push(`${name}: crawl-critical HTML is unavailable`);
-    if (!/^https:\/\/thebasebev\.com\/?$/i.test(canonical)) {
+    if (!/^https:\/\/thebasebev\.com\/ae\/?$/i.test(canonical)) {
       failures.push(`${name}: unexpected homepage canonical ${canonical || "(missing)"}`);
     }
     if (isPreview && (!/noindex/i.test(xRobots) || !/nofollow/i.test(xRobots))) {

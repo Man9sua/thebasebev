@@ -1,3 +1,4 @@
+import { publicPath, publicUrl, SITE_ORIGIN } from "@/lib/site-paths";
 import fs from "node:fs";
 import path from "node:path";
 import { BLOG_POSTS } from "@/data/blog";
@@ -6,7 +7,7 @@ import legacyImageVariants from "@/data/legacy-image-variants.json";
 import catalogTilesJson from "@/data/catalog-tiles.json";
 import productDetailsJson from "@/data/product-details.json";
 
-export const SITE_ORIGIN = "https://thebasebev.com";
+export { SITE_ORIGIN } from "@/lib/site-paths";
 export const EXPORT_LAST_MODIFIED = new Date("2026-08-20T20:38:39.000Z");
 
 type RouteDefinition = {
@@ -831,10 +832,16 @@ export function withoutLegacyRecords(page: SitePage, recordIds: readonly string[
   };
 }
 
+function localizePageLinks(source: string) {
+  return source.replace(/(<a\b[^>]*\bhref=)(["'])(\/[^"']*)\2/gi, (_, start, quote, href) =>
+    `${start}${quote}${publicPath(href)}${quote}`,
+  );
+}
 const pageCache = new Map<string, SitePage>();
 
 export function normalizeSitePath(parts?: string[]) {
-  return parts?.length ? `/${parts.map(decodeURIComponent).join("/")}` : "/";
+  const routeParts = parts?.[0] === "ae" ? parts.slice(1) : parts;
+  return routeParts?.length ? `/${routeParts.map(decodeURIComponent).join("/")}` : "/";
 }
 
 export function getSitePage(route: string): SitePage | undefined {
@@ -873,6 +880,7 @@ export function getSitePage(route: string): SitePage | undefined {
     (value) => replateCatalogCards(value, definition.file),
     promoteCriticalImages,
     scopeLegacyImagePasses,
+    localizePageLinks,
   ]);
 
   const headAssetsHtml = applyAll(assetsMatch?.[1] ?? "", [
@@ -892,12 +900,13 @@ export function getSitePage(route: string): SitePage | undefined {
     ...definition,
     title: matchFirst(source, /<title[^>]*>([\s\S]*?)<\/title>/i),
     description: meta(source, "description"),
-    canonical:
+    canonical: publicUrl(
       matchFirst(source, /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)/i) ||
-      `${SITE_ORIGIN}${definition.route === "/" ? "" : definition.route}`,
+        `${SITE_ORIGIN}${definition.route === "/" ? "" : definition.route}`,
+    ),
     robots: meta(source, "robots"),
     openGraph: {
-      url: meta(source, "og:url"),
+      url: publicUrl(meta(source, "og:url")),
       title: meta(source, "og:title"),
       description: meta(source, "og:description"),
       type: meta(source, "og:type") || "website",
@@ -916,6 +925,6 @@ export const sitemapRoutes = friendlyRoutes.filter((definition) => definition.in
 
 export function getStaticSiteParams() {
   return [...new Set(routeDefinitions.map((definition) => definition.route))].map((route) => ({
-    path: route === "/" ? [] : route.slice(1).split("/"),
+    path: route === "/" ? ["ae"] : ["ae", ...route.slice(1).split("/")],
   }));
 }

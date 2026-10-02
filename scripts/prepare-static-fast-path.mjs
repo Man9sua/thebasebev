@@ -56,7 +56,7 @@ for (const metadataFile of ["robots.txt.body", "sitemap.xml.body"]) {
   copied.push(destinationName);
 }
 
-for (const required of ["index.html", "index.rsc", "not-found.html", "robots.txt", "sitemap.xml"]) {
+for (const required of ["ae.html", "ae.rsc", "_not-found.html", "robots.txt", "sitemap.xml"]) {
   if (!copied.includes(required)) throw new Error(`Static fast path is missing ${required}.`);
 }
 if (copied.length < 100) {
