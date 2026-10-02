@@ -222,6 +222,43 @@ function removeLegacyAnalyticsRuntime(source: string) {
   );
 }
 
+/**
+ * Exported runtimes whose markup this project no longer serves.
+ *
+ * `stripShellRecords` takes the old header, the old footer nav and the dead
+ * duplicate menus out of every parity body, and there is no Tilda cart left on
+ * the site at all. Their scripts kept loading regardless: six files of
+ * jQuery-era code fetched, parsed and run against markup that is not there.
+ *
+ * Measured on a phone at a quarter of its CPU, `/resources` reached interactive
+ * at 2363ms where the rebuilt homepage takes 239ms, and it was pulling 28
+ * script files to the homepage's 9. Dropping these does not close that gap —
+ * the zero blocks need the rest of the runtime, and closing it means rebuilding
+ * the page — but six requests and six parses that buy nothing is where to
+ * start.
+ *
+ * Each is listed with the markup it drives, and the drop is conditional on that
+ * markup being absent: a route that still carries one of these blocks keeps its
+ * script, so this cannot break a page by being wrong about one.
+ */
+const deadLegacyRuntimes = [
+  { file: "tilda-cart-1.1.min.js", drives: /t706|t-store__|tn-atom__store/ },
+  { file: "tilda-menu-1.0.min.js", drives: /t-menu__|t-menuburger|t228__/ },
+  { file: "tilda-menusub-1.0.min.js", drives: /t-menusub/ },
+  { file: "tilda-menu-widgeticons-1.0.min.js", drives: /t-menuwidgeticons/ },
+  { file: "tilda-widget-positions-1.0.min.js", drives: /t-widget/ },
+  { file: "tilda-skiplink-1.0.min.js", drives: /t-skiplink/ },
+] as const;
+
+function removeDeadLegacyRuntime(source: string, bodyHtml: string) {
+  const dead = deadLegacyRuntimes.filter((runtime) => !runtime.drives.test(bodyHtml));
+  if (dead.length === 0) return source;
+
+  return source.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, (script) =>
+    dead.some((runtime) => script.includes(runtime.file)) ? "" : script,
+  );
+}
+
 function localizeHeroTailwind(source: string) {
   const withLocalStylesheet = source.replace(
     /<script\b[^>]*src=["']https:\/\/cdn\.tailwindcss\.com["'][^>]*>[\s\S]*?<\/script>/gi,
@@ -846,6 +883,9 @@ export function getSitePage(route: string): SitePage | undefined {
     (value) => preserveCatalogPrices(value, definition.file),
     (value) => stabilizeCatalogRuntime(value, definition.file),
     (value) => installCatalogFilterShim(value, definition.file),
+    // Last, and read against the body this page actually serves rather than
+    // the export's: the stripped records are already gone by here.
+    (value) => removeDeadLegacyRuntime(value, bodyHtml),
   ]);
 
   const result: SitePage = {
