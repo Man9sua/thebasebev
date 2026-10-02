@@ -39,9 +39,13 @@ function SearchIcon() {
 export function SiteHeader({
   overHero = false,
   productPage = false,
+  noHeroScrim = false,
+  darkHero = false,
 }: {
   overHero?: boolean;
   productPage?: boolean;
+  noHeroScrim?: boolean;
+  darkHero?: boolean;
 }) {
   const pathname = usePathname();
   const [pastHero, setPastHero] = useState(false);
@@ -50,7 +54,7 @@ export function SiteHeader({
   const [menuSettling, setMenuSettling] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const solid = productPage || !overHero || pastHero;
-  const menuSurface = menuOpen || menuClosing;
+  const menuSurface = menuOpen;
 
   useEffect(() => {
     if (!overHero) return;
@@ -91,9 +95,11 @@ export function SiteHeader({
       <header
         className={[
           styles.header,
+          noHeroScrim ? styles.noHeroScrim : "",
+          darkHero ? styles.darkHero : "",
           solid || menuSurface || searchOpen ? styles.solid : "",
           menuSurface ? styles.inverted : "",
-          menuSurface || menuSettling ? styles.menuSnap : "",
+          menuSurface || menuClosing || menuSettling ? styles.menuSnap : "",
           menuOpen ? styles.open : "",
         ]
           .filter(Boolean)
@@ -156,7 +162,7 @@ export function SiteHeader({
         </div>
       </header>
 
-      <SiteMenu open={menuOpen} onClose={closeMenu} />
+      <SiteMenu open={menuOpen} closing={menuClosing} onClose={closeMenu} />
       <SiteSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );

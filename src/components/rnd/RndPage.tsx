@@ -127,7 +127,7 @@ const PROJECT_TYPES = ["Custom formula", "Private label", "Reformulation"];
 export function RndPage() {
   return (
     <main className={styles.page}>
-      <section className={styles.hero} aria-labelledby="rnd-title">
+      <section className={styles.hero} aria-labelledby="rnd-title" data-hero>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className={styles.heroPhoto}

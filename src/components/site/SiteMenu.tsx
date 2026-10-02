@@ -20,9 +20,11 @@ const WIDE = "(min-width: 64rem)";
 
 export function SiteMenu({
   open,
+  closing,
   onClose,
 }: {
   open: boolean;
+  closing: boolean;
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -47,7 +49,7 @@ export function SiteMenu({
   return (
     <div
       ref={panelRef}
-      className={`${overlay.root} ${overlay.ink} ${open ? overlay.open : ""}`}
+      className={`${overlay.root} ${overlay.ink} ${open ? overlay.open : ""} ${closing ? overlay.closing : ""}`}
       id="site-menu"
       role="dialog"
       aria-modal="true"

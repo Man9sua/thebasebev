@@ -23,6 +23,11 @@
     visibility 0s;
 }
 
+.closing {
+  clip-path: inset(100% 0 0 0);
+  visibility: visible;
+}
+
 .body {
   flex: 1;
   min-height: 0;

@@ -42,8 +42,13 @@
   color: var(--tbb-on-light);
 }
 
-.solid::before {
+.solid::before,
+.noHeroScrim::before {
   opacity: 0;
+}
+
+.darkHero:not(.solid) {
+  color: var(--tbb-on-dark);
 }
 
 .solid::after {

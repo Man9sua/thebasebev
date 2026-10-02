@@ -11,6 +11,16 @@ for (const [label, value] of [["source", sourceOrigin], ["target", targetOrigin]
   }
 }
 
+const publicRoute = (route) => route === "/" ? "/ae" : `/ae${route}`;
+
+const publicCanonical = (canonical) => {
+  if (!canonical) return canonical;
+  const url = new URL(canonical);
+  if (url.origin !== "https://thebasebev.com") return canonical;
+  url.pathname = publicRoute(url.pathname);
+  return url.toString();
+};
+
 const routes = [
   "/", "/main", "/wholesale-strategy", "/contacts", "/about-us", "/resources",
   "/distributors", "/resources/blog", "/private-labeling", "/sitemap",
@@ -226,7 +236,8 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const [source, target] = await Promise.all([inspect(sourceOrigin, route), inspect(targetOrigin, route)]);
+    const [source, target] = await Promise.all([inspect(sourceOrigin, route), inspect(targetOrigin, publicRoute(route))]);
+    const expectedCanonical = publicCanonical(source.canonical);
     const intentionalShellFields = new Set([
       "cabinetLinks",
       "h2",
@@ -239,7 +250,8 @@ async function worker() {
       (key) =>
         JSON.stringify(source[key]) !== JSON.stringify(target[key]) &&
         !intentionalShellFields.has(key) &&
-        !(key === "h1" && preservesIntentionalH1(route, source, target)),
+        !(key === "h1" && preservesIntentionalH1(route, source, target)) &&
+        !(key === "canonical" && target.canonical === expectedCanonical),
     );
     if (differences.length) {
       failures.push(`${route}: ${differences.map((key) => `${key} (${JSON.stringify(source[key])} -> ${JSON.stringify(target[key])})`).join(", ")}`);
@@ -257,9 +269,9 @@ for (const [route, expected] of targetOnlyRedirects) {
   const response = await fetch(`${targetOrigin}${route}`, { redirect: "manual" });
   const location = response.headers.get("location");
   const destination = location ? new URL(location, targetOrigin).pathname : "";
-  if (response.status !== 301 || destination !== expected) {
+  if (response.status !== 301 || destination !== publicRoute(expected)) {
     failures.push(
-      `${route}: target-only redirect expected 301 ${expected}, received ${response.status} ${destination || "<none>"}`,
+      `${route}: target-only redirect expected 301 ${publicRoute(expected)}, received ${response.status} ${destination || "<none>"}`,
     );
   }
 }
@@ -275,7 +287,12 @@ for (const [route, expected] of redirects) {
       };
     }),
   );
-  if (signatures.some((item) => item.status !== 301 || item.destination !== expected) || JSON.stringify(signatures[0]) !== JSON.stringify(signatures[1])) {
+  if (
+    signatures[0].status !== 301 ||
+    signatures[0].destination !== expected ||
+    signatures[1].status !== 301 ||
+    signatures[1].destination !== publicRoute(expected)
+  ) {
     failures.push(`${route}: redirect parity failed (${JSON.stringify(signatures)})`);
   }
 }

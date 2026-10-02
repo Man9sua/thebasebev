@@ -264,6 +264,7 @@ export default async function SiteRoute({ params }: RouteProps) {
     route === "/distributors"
   ) {
     const structuredData = getLegacyStructuredData(page.file);
+    const overHero = route === "/distributors" || route === "/rnd";
     return (
       <div className="tbb">
         {structuredData.map((block, index) => (
@@ -273,7 +274,11 @@ export default async function SiteRoute({ params }: RouteProps) {
             dangerouslySetInnerHTML={{ __html: block }}
           />
         ))}
-        <SiteHeader overHero={route === "/distributors"} />
+        <SiteHeader
+          overHero={overHero}
+          noHeroScrim={overHero}
+          darkHero={route === "/rnd"}
+        />
         {route === "/catalog" ? (
           <CatalogPage weights={catalogWeights()} flavors={catalogFlavors()} />
         ) : route === "/rnd" ? (
