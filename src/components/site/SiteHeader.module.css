@@ -271,6 +271,63 @@
   bottom: 0;
 }
 
+/*
+ * The bar takes the menu's ink at the click, not behind it.
+ *
+ * Everything on the bar crossfades as the page scrolls under it: the plate to
+ * the colour of the section it is over, the scrim out, the type to ink. Right
+ * for scrolling, wrong for an overlay. The panel wipes down in 720ms on a
+ * curve that puts it past the bar's own 60 in the first two frames, while the
+ * plate was still crossfading to ink over 620ms — so halfway through an open
+ * the bar was a grey band with the panel already black behind it, and the edge
+ * between the two travelled down beside the wipe as a second line.
+ *
+ * Only the arrival is held here, and only by taking the crossfades out while
+ * the menu is up. Leaving is the rules above, unchanged: `.open` is gone by
+ * then, so the bar crossfades back to the page on its own timing while the
+ * panel reverses. Earlier attempts to own the exit as well — holding the ink
+ * until the wipe had cleared the bar, and swapping the wipe out for a fade —
+ * are what the owner sent back.
+ */
+.open,
+.open::before,
+.open::after {
+  transition: none;
+}
+
+/*
+ * The bar takes the menu's ink in one frame, with the burger, rather than
+ * crossfading into it behind the panel.
+ *
+ * The panel is a clip, not a fade: the band it covers — including the strip
+ * behind this bar — is fully ink in the first frame. The bar, meanwhile,
+ * crossfades everything it wears as the page scrolls under it: the plate to the
+ * colour of whatever section it is over, the scrim out, the type to ink. That
+ * is right for scrolling and wrong here, and no choice of duration fixes it:
+ * against a panel that is already opaque, a bar that is half way to ink is a
+ * grey band with black behind it, and the line between the two travels down
+ * beside the wipe. That second line is what the owner keeps seeing.
+ *
+ * So the crossfades are simply off while the menu is up. This is the whole fix
+ * and it is deliberately only half of one: the panel, its timing, and the way
+ * the bar comes back when the menu closes are all exactly as they were. Four
+ * earlier passes went on to change those too, and the owner sent every one of
+ * them back.
+ *
+ * What it leaves alone, so the next reader does not have to find it again: the
+ * close still has the same mismatch in reverse. `.open` is gone by then, so the
+ * bar crossfades back over its own 620ms while the panel's wipe retreats over
+ * 720 and uncovers the bar last. Fixing that means either holding the bar's ink
+ * until the panel has cleared — which leaves a dark bar standing over a page
+ * that is already back — or giving the panel a different exit. Neither is wanted
+ * yet.
+ */
+.open,
+.open::before,
+.open::after {
+  transition: none;
+}
+
 .open .burgerBox span:nth-child(1) {
   transform: translate3d(0, 6.25px, 0) rotate(45deg);
 }
