@@ -1,0 +1,135 @@
+/**
+ * FAQ accordion.
+ *
+ * The open/close animation is a grid row going from `0fr` to `1fr`. It is the
+ * one way to transition to a height nobody has measured — `height: auto` is not
+ * an animatable value — without reading the answer's height in script on every
+ * open, which would force a layout each time.
+ */
+
+.list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.item {
+  overflow: clip;
+  border: 1px solid color-mix(in srgb, var(--product-panel, var(--tbb-line)) 20%, var(--tbb-line));
+  border-radius: 14px;
+  background: var(--tbb-paper);
+}
+
+.heading {
+  font: inherit;
+}
+
+.trigger {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: clamp(1.1rem, 2.2vw, 1.6rem) clamp(1rem, 2.4vw, 1.5rem);
+  border: 0;
+  background: none;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: left;
+  color: var(--tbb-ink);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.trigger:active {
+  background: transparent;
+  color: var(--tbb-ink);
+}
+
+/*
+ * The whole of the hover feedback, and deliberately all of it.
+ *
+ * The question used to tint toward the product's colour on hover, which left
+ * one heading on the page reading in a different colour from every other
+ * heading — and on the paler products it read as washed out rather than as
+ * live. The question is now black at rest, on hover and while open, like the
+ * rest of the page's type; the ring around the chevron carries the pointer
+ * instead, and its open state is a neutral fill.
+ *
+ * Nothing in this file names the product's colour any more. The sections around
+ * it still do — see `--tile` in `ProductDetails.module.css` — but those are
+ * panel backgrounds rather than type.
+ */
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  color: var(--tbb-ink);
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.trigger:hover .icon {
+  border-color: var(--tbb-ink);
+}
+
+.icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Filled rather than tinted: this was the last of the product's colour in the
+   FAQ, and one pale mauve or green ring among otherwise neutral type read as a
+   stray rather than as a state. The turn of the chevron says which one is open;
+   the fill only has to say it louder. */
+.icon[data-open="true"] {
+  transform: rotate(180deg);
+  border-color: transparent;
+  background: var(--tbb-paper-warm);
+}
+
+.answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.answer[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+/* The clipping has to sit on the row itself: anything the answer holds — the
+   paragraph's own bottom spacing included — is measured into the row unless
+   this element hides it. */
+.answerInner {
+  overflow: hidden;
+}
+
+.answerBody {
+  max-width: 68ch;
+  padding: 0 clamp(1rem, 2.4vw, 1.5rem) clamp(1.1rem, 2.2vw, 1.6rem);
+  font-size: var(--tbb-text-body);
+  line-height: 1.6;
+  color: var(--tbb-ink-soft);
+}
+
+@media (max-width: 767px) {
+  .trigger {
+    gap: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}

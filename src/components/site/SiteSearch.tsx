@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
-import { SITE_NAV } from "@/lib/site-config";
+import { SITE_NAV, SITE_NAV_SECONDARY } from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
 
@@ -21,22 +21,32 @@ type Hit = {
   name: string;
   kind: string;
   image: string | null;
-  color?: string;
 };
 
-const PAGE_HITS: Hit[] = SITE_NAV.map((item) => ({
+/* Both levels of the menu: the split is a matter of typographic weight in the
+   panel, and search has no use for it — all seven are pages someone may look
+   for by name. */
+const PAGE_HITS: Hit[] = [...SITE_NAV, ...SITE_NAV_SECONDARY].map((item) => ({
   href: item.href,
   name: item.label,
   kind: "Page",
   image: null,
 }));
 
+/**
+ * The pouch on its own, on nothing — not the product's photographed plate.
+ *
+ * The plate was a 44px square holding a full styled shot: six of them at around
+ * 1.1 MB each, fetched on every page of the site because this overlay is
+ * mounted everywhere. That was 6.8 MB of the 14.7 MB a product page weighed,
+ * and none of it was on screen. The cut-out is a twentieth of that, and at this
+ * size a pouch is legible where a plated drink is a smudge.
+ */
 const PRODUCT_HITS: Hit[] = PRODUCTS.map((product) => ({
   href: product.route,
   name: product.name,
   kind: "Product",
-  image: product.image,
-  color: product.backgroundColor,
+  image: `/images/pack-${product.slug}.webp`,
 }));
 
 function score(hit: Hit, query: string, haystack: string): number {
@@ -100,7 +110,7 @@ export function SiteSearch({
       aria-label="Search"
       aria-hidden={!open}
       tabIndex={-1}
-      {...(open ? {} : { inert: "" as unknown as boolean })}
+      inert={!open}
     >
       <div className={styles.body}>
         <div
@@ -136,28 +146,33 @@ export function SiteSearch({
                 className={styles.item}
                 style={{ transitionDelay: open ? `${200 + index * 35}ms` : "0ms" }}
               >
-                <Link href={hit.href} className={styles.result} onClick={close}>
+                <SiteLink
+                  href={hit.href}
+                  className={styles.result}
+                  onClick={close}
+                >
                   <span
-                    className={styles.swatch}
-                    style={{
-                      backgroundColor: hit.color ?? "var(--tbb-sand)",
-                      backgroundImage: hit.image ? `url(${hit.image})` : undefined,
-                    }}
+                    className={hit.image ? styles.pouch : styles.swatch}
+                    style={hit.image ? { backgroundImage: `url(${hit.image})` } : undefined}
                   />
                   <span>
                     <span className={styles.resultName}>{hit.name}</span>
-                    <span className={styles.resultKind}>{hit.kind}</span>
+                    {/* A pouch is already the word "product". The label earns its
+                        place only where the row is something else. */}
+                    {hit.kind !== "Product" && (
+                      <span className={styles.resultKind}>{hit.kind}</span>
+                    )}
                   </span>
-                </Link>
+                </SiteLink>
               </span>
             ))}
           </div>
         ) : (
           <p className={styles.empty}>
             Nothing matches “{query.trim()}”. Try a product name, or{" "}
-            <Link href="/contacts" onClick={close}>
+            <SiteLink href="/contacts" onClick={close}>
               contact us
-            </Link>
+            </SiteLink>
             .
           </p>
         )}

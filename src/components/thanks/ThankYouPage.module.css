@@ -1,0 +1,178 @@
+/**
+ * The confirmation page.
+ *
+ * One centred column on paper, sized by its content rather than by a fixed
+ * artboard — which is what broke the exported version on a phone. Nothing here
+ * is a new colour or a new control: the badge is the mark red, the buttons are
+ * the site's pills, and the three steps are the numbered list `/distributors`
+ * already uses.
+ */
+
+.page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--tbb-header-h) + clamp(2.5rem, 6vw, 5rem)) var(--tbb-gutter)
+    clamp(4rem, 8vw, 7rem);
+  background: var(--tbb-paper-warm);
+  color: var(--tbb-ink);
+}
+
+.panel {
+  width: 100%;
+  max-width: 44rem;
+  padding: clamp(1.75rem, 5vw, 3.5rem);
+  border: 1px solid var(--tbb-line);
+  border-radius: var(--tbb-card-radius);
+  background: var(--tbb-paper);
+  text-align: center;
+}
+
+.badge {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto clamp(1.25rem, 3vw, 1.75rem);
+  place-items: center;
+  border-radius: 999px;
+  background: var(--tbb-accent);
+  color: var(--tbb-white);
+}
+
+.badge svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.title {
+  margin: 0.75rem 0 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  font-weight: 600 !important;
+  letter-spacing: -0.03em;
+  line-height: 1.08 !important;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 34rem;
+  margin: clamp(0.85rem, 2vw, 1.15rem) auto 0 !important;
+  color: var(--tbb-ink-soft);
+  font-size: clamp(0.9375rem, 1.3vw, 1.0625rem);
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+
+/* ---- what happens next ---- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  margin: clamp(2rem, 4.5vw, 3rem) 0 0;
+  padding: clamp(1.75rem, 4vw, 2.5rem) 0 0;
+  border-top: 1px solid var(--tbb-line);
+  list-style: none;
+  text-align: left;
+}
+
+.step {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stepNumber {
+  color: var(--tbb-accent);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: var(--tbb-tracking-label);
+}
+
+.stepTitle {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+}
+
+.stepBody {
+  color: var(--tbb-ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ---- foot ---- */
+
+.foot {
+  margin: clamp(1.75rem, 4vw, 2.5rem) 0 0 !important;
+  color: var(--tbb-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.foot a {
+  color: var(--tbb-ink);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 0, 0, 0.58);
+  text-underline-offset: 0.2em;
+}
+
+.home {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  color: var(--tbb-ink);
+  font-size: var(--tbb-text-label);
+  font-weight: 600;
+  letter-spacing: var(--tbb-tracking-label);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.home:hover {
+  opacity: 0.55;
+}
+
+.foot a:focus-visible,
+.home:focus-visible {
+  outline: 2px solid var(--tbb-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 47.9375rem) {
+  .page {
+    padding-top: calc(var(--tbb-header-h) + 2rem);
+  }
+
+  .panel {
+    padding: 1.5rem 1.25rem 1.75rem;
+  }
+
+  /* Three abreast is three words per line at this width. */
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .actions :global(.tbb-pill) {
+    flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home {
+    transition: none;
+  }
+}

@@ -1,0 +1,895 @@
+/**
+ * R&D — the redesign.
+ *
+ * The same grid and the same type rule as `/distributors`: 144 of vertical
+ * padding, 96 of gutter, a 1248 measure, and every section heading in Exo 2
+ * Black, uppercase, −2% tracking on an 0.86 line. The two pages are one system
+ * and are meant to be read as one.
+ *
+ * The palette is the shared `--tbb-rd-*` block in `design-tokens.css`.
+ *
+ * `!important` where it appears is answering the exported Tilda sheet, which
+ * is global on this route: `html body p { line-height: 1.7 }` and
+ * `html body h1, html body [class*="title"] { font-weight: 300 }` both carry
+ * it, and the second outranks a single class.
+ */
+
+.page {
+  --pad-y: clamp(4rem, 10vw, 9rem);
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+  --radius: clamp(1.25rem, 1.9444vw, 1.75rem);
+
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+  font-family: var(--tbb-font-sans);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+}
+
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 1.9444vw, 1.75rem);
+}
+
+.sectionTitle {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.5rem, 5.5556vw, 5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink);
+  text-wrap: balance;
+}
+
+.sectionLede {
+  margin: 0 !important;
+  max-width: 32rem;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+/* ---- buttons ---- */
+
+.primary,
+.ghost,
+.submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: clamp(3.5rem, 4.1667vw, 3.75rem);
+  padding-inline: clamp(1.5rem, 2.5vw, 2.25rem);
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: var(--tbb-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.primary,
+.submit {
+  background: var(--tbb-rd-red);
+  border-color: var(--tbb-rd-red);
+  color: #fff !important;
+}
+
+.primary:hover,
+.submit:hover {
+  background: var(--tbb-rd-red-dark);
+  border-color: var(--tbb-rd-red-dark);
+  color: #fff !important;
+}
+
+.ghost {
+  border-color: rgba(246, 246, 244, 0.5);
+  color: var(--tbb-rd-paper) !important;
+}
+
+.ghost:hover {
+  border-color: var(--tbb-rd-paper);
+  color: #fff !important;
+}
+
+.primary:focus-visible,
+.ghost:focus-visible,
+.submit:focus-visible,
+.briefAside:focus-visible {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 3px;
+}
+
+/* ---- 1 · hero ---- */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: min(52rem, 100vh);
+  padding: calc(var(--tbb-header-h) + var(--pad-y)) var(--gutter) var(--pad-y);
+  overflow: clip;
+  background: var(--tbb-rd-ink-deep);
+  color: var(--tbb-rd-paper);
+}
+
+.heroPhoto {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 75%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 45% 40%;
+}
+
+/* The copy runs across the left half, so the veil is opaque there and clears
+   by the right edge. The middle stops are heavier than the design document's
+   because its hero is a flat 1440 artboard and this one is fluid: on a wide
+   screen the three terms at the foot reach further right than they do there,
+   and the brightest part of the photograph is exactly where they land. */
+.heroVeil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--tbb-rd-ink-deep) 0%,
+    var(--tbb-rd-ink-deep) 34%,
+    rgba(11, 14, 20, 0.82) 52%,
+    rgba(11, 14, 20, 0.28) 78%,
+    rgba(11, 14, 20, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+}
+
+.heroTitle {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(3rem, 7.2222vw, 6.5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-rd-paper);
+}
+
+.heroLede {
+  margin: clamp(1.25rem, 2.2222vw, 2rem) 0 0 !important;
+  max-width: 33rem;
+  color: var(--tbb-rd-on-ink);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: clamp(1.75rem, 3.3333vw, 3rem);
+}
+
+/* Held to the width of the copy column, so the row never runs out from under
+   the veil and onto the lit half of the photograph. */
+.heroTerms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.25rem, 3.8889vw, 3.5rem);
+  max-width: 46rem;
+  margin: clamp(2.5rem, 5vw, 4.5rem) 0 0;
+}
+
+.heroTerm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.heroTermTitle {
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--tbb-rd-paper);
+}
+
+.heroTermBody {
+  margin: 0;
+  color: var(--tbb-rd-dim);
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+/* ---- 2 · what a formula leaves with ---- */
+
+.value {
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.valueGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.valueCard {
+  display: flex;
+  min-height: 21.25rem;
+  flex-direction: column;
+  gap: 1rem;
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 2.7778vw, 2.5rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-card);
+  color: var(--tbb-rd-ink);
+}
+
+/* The third card is ink: the storage argument is the one a distributor
+   remembers, and the block needs somewhere for the eye to land. */
+.valueCardDark {
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.valueNumber {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tbb-rd-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.valueCardDark .valueNumber {
+  color: var(--tbb-rd-red);
+}
+
+.page .valueTitle {
+  margin: auto 0 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.5rem, 2.7778vw, 2.5rem);
+  font-weight: 900 !important;
+  line-height: 0.92 !important;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.valueBody {
+  margin: 0 !important;
+  min-height: 4.65em;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+.valueCardDark .valueBody {
+  color: var(--tbb-rd-on-ink);
+}
+
+/* ---- 3 · three bases ---- */
+
+/*
+ * One rhythm at a boundary, not two.
+ *
+ * Every section here opens and closes on `--pad-y`, which is 144 at the design
+ * frame, so paper meeting paper left 288 of empty ground between them. Where
+ * the section above ends on type that reads as air; where it ends on the black
+ * band the process section closes with, it reads as a hole, which is what the
+ * owner is pointing at. So the three that follow another paper section open on
+ * nothing and stand on the closing pad of the one above — `bases`, `process`
+ * and `lab` below. `value` keeps its own, because what it follows is the hero.
+ */
+.bases {
+  padding: 0 var(--gutter) var(--pad-y);
+  background: var(--tbb-rd-paper);
+}
+
+.baseGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.25rem, 1.6667vw, 1.5rem);
+}
+
+.base {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.6667vw, 1.5rem);
+}
+
+.baseMedia {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: clamp(1rem, 1.6667vw, 1.5rem);
+  background: var(--tbb-rd-card);
+}
+
+.baseMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The titles line up across the row because the pictures share a ratio — the
+   old block let each photograph set its own height and the three headings
+   landed on three different lines. */
+.page .baseTitle {
+  margin: 0 !important;
+  font-size: clamp(1.3125rem, 1.8056vw, 1.625rem);
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  color: var(--tbb-rd-ink);
+}
+
+.baseBody {
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+/* ---- 4 · process ---- */
+
+.process {
+  padding: 0 var(--gutter) var(--pad-y);
+  background: var(--tbb-rd-paper);
+}
+
+.processGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3.3333vw, 3rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.processStep {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.processNumber {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2rem, 4.4444vw, 4rem);
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--tbb-rd-red);
+  font-variant-numeric: tabular-nums;
+}
+
+.page .processTitle {
+  margin: 0.5rem 0 0 !important;
+  font-size: clamp(1.25rem, 1.6667vw, 1.5rem);
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  color: var(--tbb-rd-ink);
+}
+
+.processBody {
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+/* The commercial terms, said before anyone reaches a call. */
+.paidBanner {
+  display: flex;
+  gap: clamp(1.5rem, 3.3333vw, 3rem);
+  align-items: center;
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 2.7778vw, 2.5rem) clamp(1.5rem, 3.3333vw, 3rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.paidCopy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.paidTitle {
+  font-size: clamp(1.1875rem, 1.6667vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--tbb-rd-paper);
+}
+
+.paidBody {
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(0.875rem, 1.1111vw, 1rem);
+  line-height: 1.5;
+}
+
+/* ---- 5 · the lab ---- */
+
+.lab {
+  padding: 0 var(--gutter) var(--pad-y);
+  background: var(--tbb-rd-paper);
+}
+
+.labInner {
+  display: grid;
+  grid-template-columns: 35rem minmax(0, 1fr);
+  gap: clamp(2rem, 5.5556vw, 5rem);
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+  align-items: stretch;
+}
+
+.labMedia {
+  display: block;
+  min-height: 25rem;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--tbb-rd-card);
+}
+
+.labMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.labCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1.75rem, 3.3333vw, 3rem);
+}
+
+.labFacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.labFact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  padding: clamp(1.125rem, 1.9444vw, 1.75rem);
+  border-radius: clamp(1rem, 1.3889vw, 1.25rem);
+  background: var(--tbb-rd-card);
+}
+
+.labFactValue {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.375rem, 2.2222vw, 2rem);
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink);
+}
+
+.labFactBody {
+  margin: 0;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.8125rem, 1.0417vw, 0.9375rem);
+  line-height: 1.5;
+}
+
+/* ---- 6 · the brief ---- */
+
+/*
+ * The brief, as a panel on the page rather than a band across it.
+ *
+ * Full-bleed ink here ran into the footer's ink: the two read as one black
+ * field with the form card floating in the top of it. A strip of the page's
+ * paper between them did separate the two, but a white line across a dark
+ * close is its own kind of wrong. So the ink takes the shape the page already
+ * uses for ink on paper — `paidBanner`, two sections up — and the paper is
+ * simply the ground it stands on. The footer then arrives as the only
+ * full-width dark thing at the foot of the page, which is what it is
+ * everywhere else.
+ */
+.form {
+  padding: 0 var(--gutter) var(--pad-y);
+  background: var(--tbb-rd-paper);
+}
+
+.formInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 37.5rem;
+  gap: clamp(2rem, 4.4444vw, 4rem);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+  padding: clamp(2rem, 4.4444vw, 4rem) clamp(1.5rem, 3.3333vw, 3rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+  align-items: start;
+}
+
+.formCopy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.2222vw, 2rem);
+}
+
+.form .sectionTitle {
+  color: var(--tbb-rd-paper);
+}
+
+.form .sectionLede {
+  max-width: 29rem;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+}
+
+.briefSteps {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 1.6667vw, 1.5rem);
+  margin: clamp(0.5rem, 1.1111vw, 1rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.briefStep {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 0.25rem 1rem;
+}
+
+.briefNumber {
+  grid-row: span 2;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.5rem, 2.2222vw, 2rem);
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--tbb-rd-red);
+  font-variant-numeric: tabular-nums;
+}
+
+.briefTitle {
+  font-size: clamp(1.0625rem, 1.3889vw, 1.25rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--tbb-rd-paper);
+}
+
+.briefBody {
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(0.875rem, 1.1111vw, 1rem);
+  line-height: 1.5;
+}
+
+.briefAside {
+  width: fit-content;
+  margin-top: clamp(0.5rem, 1.1111vw, 1rem);
+  color: var(--tbb-rd-paper) !important;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.briefAside:hover {
+  color: var(--tbb-rd-red) !important;
+}
+
+/* ---- the form card ---- */
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 1.9444vw, 1.75rem);
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 3.3333vw, 3rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 1.3889vw, 1.25rem);
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 1.3889vw, 1.25rem);
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field > span {
+  color: var(--tbb-rd-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 3.5rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 0.875rem;
+  outline: none;
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-ink);
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.field textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--tbb-rd-placeholder);
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--tbb-rd-ink);
+  background: #fff;
+}
+
+.chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.chips legend {
+  padding: 0;
+  color: var(--tbb-rd-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* The label is the chip and the radio inside it is the control — see the same
+   note on `/distributors`, which carries the identical group. */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding-inline: 1.25rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 999px;
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip:hover {
+  border-color: var(--tbb-rd-ink);
+}
+
+.chip:has(input:checked) {
+  border-color: var(--tbb-rd-ink);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 2px;
+}
+
+.consent {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  color: var(--tbb-rd-body-soft);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.consent input {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.125rem 0 0;
+  accent-color: var(--tbb-rd-ink);
+}
+
+.consent a {
+  color: var(--tbb-rd-ink) !important;
+  text-decoration: underline;
+}
+
+.error {
+  color: var(--tbb-rd-red);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.success {
+  padding: clamp(1rem, 1.6667vw, 1.5rem);
+  border-radius: 0.875rem;
+  background: var(--tbb-rd-card);
+  color: var(--tbb-rd-ink);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ---- narrower than the design's own frame ---- */
+
+@media (max-width: 63.9375rem) {
+  .labInner,
+  .formInner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .labMedia {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+
+  .valueGrid,
+  .baseGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .valueCard {
+    min-height: 0;
+  }
+
+  .page .valueTitle {
+    margin-top: 0.5rem !important;
+  }
+
+  .processGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .heroPhoto {
+    width: 100%;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .hero {
+    min-height: 0;
+    padding-bottom: clamp(3rem, 8vw, 4rem);
+  }
+
+  /* The photograph moves behind the copy, so the veil runs down rather than
+     across. */
+  .heroVeil {
+    background: linear-gradient(
+      180deg,
+      rgba(11, 14, 20, 0.45) 0%,
+      rgba(11, 14, 20, 0.85) 42%,
+      var(--tbb-rd-ink-deep) 100%
+    );
+  }
+
+  .heroPhoto {
+    height: 60%;
+    object-position: 40% 40%;
+  }
+
+  .heroActions .primary,
+  .heroActions .ghost {
+    flex: 1 1 100%;
+  }
+
+  .heroTerms {
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  .processGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The banner stops being a row: the sentence and the button each take the
+     width rather than squeezing each other. */
+  .paidBanner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+  }
+
+  .paidBanner .primary {
+    width: 100%;
+  }
+
+  .labFacts {
+    gap: 0.5rem;
+  }
+
+  .briefStep {
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+  }
+
+  .twoColumns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formCard {
+    padding: 1.5rem 1rem;
+  }
+}

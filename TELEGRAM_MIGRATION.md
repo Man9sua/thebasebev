@@ -1,6 +1,6 @@
 # Telegram lead notifications — migration status
 
-**Status: PENDING CONFIRMATION. Not reproduced in the Next.js pipeline.**
+**Status: NEEDS CREDENTIALS AND BUSINESS CONFIRMATION. Not reproduced in the Next.js pipeline.**
 
 ## Current behaviour
 
@@ -35,6 +35,10 @@ nothing specific to THE BASE.
 Inventing a bot token, guessing a chat id, or wiring a second delivery on
 assumption would create an untested notification path for real B2B leads. That
 is not a decision to make silently.
+
+The 2026-08-24 environment audit also found no `TELEGRAM_BOT_TOKEN`,
+`TELEGRAM_CHAT_ID`, or `TELEGRAM_MESSAGE_THREAD_ID`. Therefore no Telegram test
+message was sent.
 
 ## Decision needed
 

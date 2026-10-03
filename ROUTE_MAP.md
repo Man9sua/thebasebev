@@ -14,14 +14,14 @@ Status meanings:
 | `page62361237.html`, `/` | `/` | PARTIAL | Server-rendered; nine responsive captures plus hero/header/region/mobile-menu browser smoke pass. Exhaustive section/state diffs remain. |
 | `/main` | `/main` | PARTIAL | Registered duplicate compatibility route with canonical `/`; intentionally not redirected yet. |
 | `page147468696.html` | `/wholesale-strategy` | PARTIAL | Indexable content is preserved; page interactions and browser parity remain. |
-| `page62585333.html` | `/contacts` | PARTIAL | Contact content, form interception, validation/error UX, canonical stability, and UTM retention are browser-tested; delivery needs credentials. |
+| `page62585333.html` | `/contacts` | PARTIAL | Native homepage-aligned body and fillable semantic form are browser-tested; canonical JSON-LD and UTM retention are preserved. Upstream delivery still depends on the configured lead integration. |
 | `page62588185.html` | `/about-us` | PARTIAL | Content and exported structured data are preserved; interactive effects need validation/porting. |
 | `page151583806.html` | `/resources` | PARTIAL | Indexable landing content is preserved. |
 | `page65033993.html` | `/distributors` | PARTIAL | B2B content is preserved; lead delivery needs an owned endpoint. |
 | `page151592086.html` | `/resources/blog` | PARTIAL | Indexable listing content is preserved; feed freshness is not guaranteed by the static export. |
 | `page120311356.html` | `/private-labeling` | PARTIAL | Indexable content is preserved; lead flow is incomplete. |
 | `page155556086.html` | `/sitemap` | PARTIAL | Human-readable sitemap page is preserved; links still need built HTTP smoke. |
-| `page151592696.html` | `/resources/glossary` | PARTIAL | Indexable glossary content is preserved. |
+| `page151592696.html` | `/resources/glossary` | DONE | Native searchable 101-term listing; every card links to a statically generated production article path. No Tilda feed/runtime dependency. |
 | `page151679366.html` | `/resources/tools` | PARTIAL | Content is preserved; custom calculators/interactions need explicit ports and tests. |
 | `page155598016.html` | `/rnd` | PARTIAL | Original mixed-language calorie-calculator/H1 mismatch is intentionally preserved. |
 | `page62448803.html` | `/raf-coffee` | PARTIAL | Product-template markup is preserved; tabs/gallery/CTA behavior needs verification. |
@@ -40,18 +40,22 @@ Status meanings:
 | `page62576005.html` | `/garnish` | PARTIAL | Product-template variant is preserved; responsive/browser parity remains. |
 | `page62578053.html` | `/sugar-free` | PARTIAL | Product-template markup is preserved; product-specific visual corrections remain. |
 | `page62581091.html` | `/tea` | PARTIAL | Product-template markup is preserved; product-specific visual corrections remain. |
-| `page114743626.html` | `/catalog` | PARTIAL | Sixteen cards, five filters, all visible prices/request labels, add-to-cart state, and the populated checkout dialog pass browser smoke. Final order delivery remains unverified and the upstream feed is unavailable. |
+| `page114743626.html` | `/catalog` | PARTIAL | Deterministic native 16-card grid, five filters, audited prices, Tea framing and native add-to-cart pass browser smoke. No Tilda Store/cart runtime is mounted on the friendly route. Production payment architecture remains unimplemented. |
 | `page77299576.html` | `/thank-you-order` | PARTIAL | Noindex success page is registered; real order delivery is not connected. |
 | `page68443067.html` | `/terms` | PARTIAL | Noindex legal page is registered; built metadata/status smoke remains. |
 | `page68443503.html` | `/privacy` | PARTIAL | Noindex legal page is registered; built metadata/status smoke remains. |
 | `page77849746.html` | `/thank-you-form` | PARTIAL | Noindex success page is registered; real lead submission is not connected. |
-| `page154764216.html` | `/cabinet` | PARTIAL | Noindex Tilda Members placeholder only; future Partner Hub remains separate. |
+| `page154764216.html` | `/cabinet` → `/` | 301 | Empty noindex Tilda Members placeholder removed from public UI; future Partner Hub remains separate. |
 | `page114837666.html` | `/retail` | PARTIAL | Original noindex,nofollow page is registered. |
 | `page154758576.html` | `/knowledge-recipes` | PARTIAL | Noindex Tilda Members placeholder only; future Partner Hub remains separate. |
 | `page115314536.html` | `/not-found` | DONE | Source route is registered and unknown paths return the branded body with HTTP 404. |
 | `page65943847.html` | `/link` | PARTIAL | Outside sitemap; original crawler handling is documented for verification. |
 
-The 29 canonical indexable friendly routes are the sitemap candidates. Compatibility/noindex routes are intentionally excluded from that count.
+The 29 canonical indexable friendly routes plus 101 audited Glossary articles are sitemap candidates. Compatibility/noindex routes are intentionally excluded.
+
+## Glossary article routes
+
+All 101 production `/tpost/<uid>-<slug>` Glossary URLs are preserved 1:1 as statically generated, indexable pages. The complete title-to-URL audit is maintained in `docs/research/glossary/PRODUCTION_GLOSSARY_INVENTORY.md`; all entries return 200 and retain their production canonical. The one empty production source article (`Matcha`, UID `tfm5mybkl1`) remains a valid 200 route without invented copy.
 
 ## Legacy HTML aliases
 
@@ -87,13 +91,16 @@ The 29 canonical indexable friendly routes are the sitemap candidates. Compatibi
 | Route | HTTP behavior | Indexable | Sitemap | Status / reason |
 | --- | --- | --- | --- | --- |
 | `/robots.txt` | 200 | NO | NO | DONE — crawler policy document |
-| `/sitemap.xml` | 200 | NO | NO | DONE — contains exactly 29 canonical public pages |
+| `/sitemap.xml` | 200 | NO | NO | DONE — contains 29 canonical public pages plus 101 canonical Glossary articles |
 | `/api/health` | 200 JSON, `no-store` | NO | NO | DONE — safe deployment probe returning only `status: ok` |
 | `/api/leads` GET | 405 | NO | NO | DONE — POST-only typed delivery boundary |
-| `/api/leads` POST without credentials | 503 | NO | NO | DONE — explicit blocked integration, never fake success |
+| `/api/leads` POST invalid payload | 400 | NO | NO | DONE — safe validation boundary used by automated smoke |
+| `/api/checkout/stripe` GET | 405 | NO | NO | DONE — POST-only Test Mode checkout POC |
+| `/api/stripe/webhook` GET | 405 | NO | NO | DONE — POST-only signed Test Mode webhook boundary |
+| `/checkout` | 200 when populated; empty cart client-redirects to `/catalog` | NO | NO | DONE — native cart review and Stripe Test Mode handoff; no Tilda cart modal |
 | unknown path | branded 404 | NO | NO | DONE — native not-found boundary |
 
-`ROUTE_INDEXABILITY_AUDIT.md` accounts for all 111 generated/technical routes plus the five redirects and records why each item is or is not indexable.
+`ROUTE_INDEXABILITY_AUDIT.md` accounts for the existing 113 controlled routes plus 101 Glossary article routes and records why each item is or is not indexable.
 
 ## Deployment and integration gates
 
@@ -102,8 +109,8 @@ The 29 canonical indexable friendly routes are the sitemap candidates. Compatibi
 | Local Next route foundation | DONE | App Router registry and server-rendered compatibility document exist. |
 | Clean current-tree Next build | DONE | Production build and HTTP/browser smoke pass. |
 | OpenNext Worker bundle | DONE | OpenNext build completes and generates the Worker output. |
-| Forms/lead delivery | NEEDS CREDENTIALS | Owned endpoint, authentication, recipients, and response contract are unavailable. |
-| Checkout/order delivery | NEEDS CREDENTIALS | Cart state and checkout UI pass browser smoke; a real order was intentionally not submitted, and the owned delivery/payment contract is unavailable. |
-| Cloudflare staging | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed and passes remote HTTP/browser smoke. No production route is configured. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker is deployed, has preview noindex, and has no custom domain. |
+| Forms/lead delivery | STAGING VERIFIED | One controlled Odoo lead confirmed field mapping, request ID and `utm_source=chatgpt.com`; production enablement remains human-controlled. |
+| Checkout/order delivery | TEST MODE ONLY | Native cart review and Stripe Test checkout handoff pass browser smoke. No production order, Odoo write, Live payment or production payment contract is implemented. |
+| Cloudflare staging | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in `mansua`; Error 1027 blocks post-deploy remote checks until the account quota resets. No production route is configured. |
+| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker is deployed, has preview noindex, and has no custom domain. |
 | Production domain/DNS | HUMAN APPROVAL REQUIRED | Explicitly outside preparation scope and intentionally untouched. |

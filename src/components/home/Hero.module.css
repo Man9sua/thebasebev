@@ -1,370 +1,263 @@
+/**
+ * The homepage's first screen — the hero redesign (8a / 8b).
+ *
+ * One photograph full bleed, a white veil across the left two thirds, and the
+ * copy standing on it. Every number below is the document's, expressed against
+ * the frame it draws them in: 1440 x 900 on a desktop, 390 x 844 on a phone.
+ *
+ * Type: Exo 2 Black, uppercase, −2% tracking, 0.86 line height at 120px; the
+ * lede 20 on 1.55; the buttons 14 SemiBold caps at 0.1em. Colour is the
+ * `--tbb-rd-*` block in `design-tokens.css`, the same palette the redesigned
+ * pages use, so the hero and everything below it are one site.
+ */
+
 .hero {
   position: relative;
-  width: 100%;
-  min-height: 100vh;
   min-height: 100svh;
-  display: flex;
+  display: grid;
   align-items: center;
-  padding: calc(var(--tbb-header-h) + clamp(1.5rem, 4vw, 3rem)) 0
-    clamp(2rem, 5vw, 4rem);
   overflow: clip;
-  /* Paper, not the product colour: the field below is a soft wash so the pack
-     shot stays the brightest, most saturated thing in the frame. */
-  background: var(--tbb-paper);
-  isolation: isolate;
+  background: var(--tbb-rd-paper);
+  font-family: var(--tbb-font-sans);
 }
 
-/* A soft paper vignette, not a colour halo: the pack shots are pre-composed
-   cards that carry their own background, so tinting the space around them only
-   muddies the edge. This just lifts the centre of the frame. */
-.wash {
+/* ---- photograph ---- */
+
+.media {
   position: absolute;
-  z-index: -1;
-  left: 50%;
-  top: 50%;
-  width: min(96vw, 78rem);
-  aspect-ratio: 1 / 0.7;
-  transform: translate3d(-50%, -50%, 0);
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    var(--tbb-paper-warm) 0%,
-    rgba(247, 241, 232, 0) 100%
-  );
-  opacity: 0.9;
+  inset: 0;
 }
 
-.inner {
-  position: relative;
-  width: 100%;
-  max-width: var(--tbb-max);
-  margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
-  display: grid;
-  /* Equal outer columns so the product sits on the true centre of the frame. */
-  grid-template-columns: 1fr minmax(0, clamp(19rem, 44vw, 46rem)) 1fr;
-  align-items: center;
-  gap: clamp(1rem, 2.5vw, 3rem);
-}
-
-/* ---- left: editorial copy ---- */
-
-.copy {
-  max-width: 26ch;
-}
-
-.category {
-  display: block;
-  margin-bottom: clamp(0.9rem, 2vw, 1.4rem);
-}
-
-.title {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(2.5rem, 5vw, 5rem);
-  line-height: 0.94;
-  letter-spacing: -0.025em;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.titleProduct {
-  display: block;
-  color: var(--product-accent, var(--tbb-accent));
-  transition: color var(--tbb-dur-slow) var(--tbb-ease-inout);
-}
-
-.description {
-  margin-top: clamp(1rem, 2vw, 1.5rem);
-  color: var(--tbb-ink-soft);
-  max-width: 30ch;
-}
-
-.cta {
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.75rem;
-  background: var(--tbb-ink);
-  color: var(--tbb-paper);
-  text-decoration: none;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  border-radius: 999px;
-  transition:
-    transform var(--tbb-dur-fast) var(--tbb-ease),
-    background var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.cta:hover {
-  transform: translate3d(0, -2px, 0);
-  background: var(--tbb-ink-soft);
-}
-
-.cta svg {
-  width: 14px;
-  height: 14px;
-  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.cta:hover svg {
-  transform: translate3d(4px, 0, 0);
-}
-
-/* ---- centre: the product ---- */
-
-.stage {
-  grid-column: 2;
-  position: relative;
-  aspect-ratio: 1 / 0.95;
-  display: grid;
-  place-items: center;
-}
-
-.slide {
-  grid-area: 1 / 1;
+.photo {
   width: 100%;
   height: 100%;
-  display: grid;
-  place-items: center;
-  opacity: 0;
-  transform: scale(0.96);
-  transition:
-    opacity var(--tbb-dur-slow) var(--tbb-ease),
-    transform var(--tbb-dur-slow) var(--tbb-ease);
+  object-fit: cover;
+  /* The crop is already the design's framing, so there is nothing to hold: the
+     only give is on a frame taller or wider than 1.6, and it is taken evenly. */
+  object-position: 50% 50%;
+}
+
+/*
+ * The veil. Dense to 40% of the width, half gone by 53%, and clear by 66% —
+ * which is where WHERE TASTE BEGINS starts on the wall. It has to be this
+ * strong: the room carries its own lettering (EFFICIENT, COST-EFECTIVE,
+ * AFFORDABLE on the mezzanine) that would otherwise read through the heading.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(246, 246, 244, 0.97) 0%,
+    rgba(246, 246, 244, 0.96) 40%,
+    rgba(246, 246, 244, 0.6) 53%,
+    rgba(246, 246, 244, 0) 66%
+  );
   pointer-events: none;
 }
 
-.slideActive {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
+/* A second, under the bar, so the header's controls have paper to sit on
+   wherever the photograph happens to be bright. */
+.veilTop {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(9rem, 17vw, 15rem);
+  background: linear-gradient(
+    180deg,
+    rgba(246, 246, 244, 0.8),
+    rgba(246, 246, 244, 0)
+  );
+  pointer-events: none;
 }
 
-.shot {
+/* ---- copy ---- */
+
+.inner {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 4px;
-  /* Two shadows: a long cast one for weight, a tight one so the card's edge
-     reads as deliberate against paper rather than as a crop. */
-  filter:
-    drop-shadow(0 52px 72px rgba(26, 19, 17, 0.24))
-    drop-shadow(0 4px 14px rgba(26, 19, 17, 0.13));
+  padding: calc(var(--tbb-header-h) + clamp(2rem, 4vw, 3rem)) clamp(1.25rem, 6.6667vw, 6rem)
+    clamp(2.5rem, 5vw, 4.5rem);
 }
 
-/* ---- right: metadata ---- */
-
-.meta {
-  grid-column: 3;
-  justify-self: end;
+.copy {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: clamp(1.25rem, 3vw, 2.25rem);
-  text-align: right;
+  /* 600 of 1440 — the column the document sets the heading in. */
+  max-width: 41.6667%;
+  min-width: min(100%, 22rem);
 }
 
-.price {
+.title {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
-  font-size: clamp(1.25rem, 1.9vw, 1.75rem);
-  font-weight: 600;
-  line-height: 1;
+  /* 120 at 1440. */
+  font-size: clamp(2.75rem, 8.3333vw, 7.5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink-deep);
 }
 
-.metaBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.badges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-/* Product switcher — numbered, quiet, no dots-and-arrows carousel furniture. */
-.switcher {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  align-items: flex-end;
-}
-
-.step {
-  appearance: none;
-  border: 0;
-  background: none;
-  padding: 0.2rem 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  color: var(--tbb-muted);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  font-variant-numeric: tabular-nums;
-  transition: color var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.stepLine {
+/* One word to a row — see the note in the component for why these are blocks
+   rather than `<br>`. */
+.line {
   display: block;
-  width: 1.5rem;
-  height: 1px;
-  background: currentColor;
-  transform-origin: left center;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
 }
 
-.step:hover {
-  color: var(--tbb-ink);
+.description {
+  /* 32 under the heading, 48 above the buttons — the document's 8px step. */
+  margin: clamp(1.25rem, 2.2222vw, 2rem) 0 clamp(1.75rem, 3.3333vw, 3rem) !important;
+  max-width: 30rem;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-.stepActive {
-  color: var(--tbb-ink);
+/* ---- the two calls to action ---- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.stepActive .stepLine {
-  transform: scaleX(2);
-  background: var(--product-accent, var(--tbb-accent));
+.primary,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: clamp(3.5rem, 4.1667vw, 3.75rem);
+  padding-inline: clamp(1.75rem, 2.5vw, 2.25rem);
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: var(--tbb-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.step:focus-visible {
-  outline: 2px solid var(--tbb-ink);
+/* The one red thing on the screen. The review's note is that the brand's red
+   lived only in the logo while the hero was black and white; one accent per
+   screen, and this is the action the page is for. */
+.primary {
+  background: var(--tbb-rd-red);
+  border-color: var(--tbb-rd-red);
+  color: #fff !important;
+  box-shadow: 0 8px 24px rgba(227, 20, 27, 0.25);
+}
+
+.primary:hover,
+.primary:focus-visible {
+  background: var(--tbb-rd-red-dark);
+  border-color: var(--tbb-rd-red-dark);
+}
+
+.ghost {
+  border-color: var(--tbb-rd-ink);
+  color: var(--tbb-rd-ink) !important;
+}
+
+.ghost:hover,
+.ghost:focus-visible {
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper) !important;
+}
+
+.primary:focus-visible,
+.ghost:focus-visible {
+  outline: 2px solid var(--tbb-rd-ink);
   outline-offset: 3px;
 }
 
-/* ---- entrance ----
-   Staged: wash, then product, then copy, then CTA. Every step is
-   opacity+transform only, and each element is laid out in its final position,
-   so nothing reflows and there is no CLS. */
+/* ---- narrower than the design's own frame ---- */
 
-.enter {
-  opacity: 0;
-  transform: translate3d(0, 30px, 0);
+/* The veil is horizontal, so it can only hold a column that is beside the
+   photograph rather than over it. Below about 1100 there is no room for both,
+   and the copy takes the width. */
+@media (max-width: 68.6875rem) {
+  .copy {
+    max-width: 34rem;
+  }
+
+  /* The copy takes a bigger share of a narrower frame, so the dense part runs
+     further — but it has to be clear again by 76%, which is where the wall
+     lettering starts at this width. Washing that out is the one thing the
+     photograph is here for. */
+  .veil {
+    background: linear-gradient(
+      90deg,
+      rgba(246, 246, 244, 0.97) 0%,
+      rgba(246, 246, 244, 0.94) 55%,
+      rgba(246, 246, 244, 0.5) 64%,
+      rgba(246, 246, 244, 0) 76%
+    );
+  }
 }
 
-.ready .enter {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 1100ms var(--tbb-ease) var(--enter-delay, 0ms),
-    transform 1100ms var(--tbb-ease) var(--enter-delay, 0ms);
-}
-
-.enterProduct {
-  opacity: 0;
-  transform: scale(0.94) translate3d(0, 30px, 0);
-}
-
-.ready .enterProduct {
-  opacity: 1;
-  transform: scale(1) translate3d(0, 0, 0);
-  transition:
-    opacity 1400ms var(--tbb-ease) 120ms,
-    transform 1400ms var(--tbb-ease) 120ms;
-}
-
-.wash {
-  opacity: 0;
-}
-
-.ready .wash {
-  opacity: 0.9;
-  transition: opacity 1200ms var(--tbb-ease);
-}
-
-@media (max-width: 1023px) {
-  /* Rebuilt, not squeezed: product first and still dominant, copy under it,
-     metadata folded into a single row. */
+@media (max-width: 47.9375rem) {
+  /*
+   * On a phone the photograph is a band at the top and the copy stands under
+   * it on paper — the room is landscape, and a veil strong enough to carry
+   * type over the whole of it would have left no photograph at all.
+   */
   .hero {
-    align-items: flex-start;
+    align-items: end;
+  }
+
+  .media {
+    inset: 0 0 auto 0;
+    height: 26.25rem;
+  }
+
+  .veil {
+    inset: 0 0 auto 0;
+    height: 26.25rem;
+    background: linear-gradient(
+      180deg,
+      rgba(246, 246, 244, 0) 55%,
+      var(--tbb-rd-paper) 100%
+    );
+  }
+
+  .veilTop {
+    height: 9.375rem;
+    background: linear-gradient(
+      180deg,
+      rgba(246, 246, 244, 0.9),
+      rgba(246, 246, 244, 0)
+    );
   }
 
   .inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.25rem, 4vw, 2rem);
-    justify-items: center;
-    text-align: center;
-  }
-
-  .stage {
-    grid-column: 1;
-    grid-row: 1;
-    width: min(100%, 26rem);
-    /* Keeps the pack shot the largest thing on a small screen. */
-    aspect-ratio: 1 / 0.9;
+    padding-top: calc(var(--tbb-header-h) + 20rem);
   }
 
   .copy {
-    grid-column: 1;
-    grid-row: 2;
-    max-width: 34ch;
-  }
-
-  .description {
     max-width: none;
+    min-width: 0;
   }
 
-  .meta {
-    grid-column: 1;
-    grid-row: 3;
-    justify-self: center;
-    align-items: center;
-    text-align: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: clamp(1rem, 4vw, 2rem);
+  .title {
+    font-size: clamp(2.75rem, 13.3333vw, 3.5rem);
+    line-height: 0.88 !important;
   }
 
-  .switcher {
-    flex-direction: row;
-    align-items: center;
+  /* Both buttons full width, one under the other. */
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
   }
-
-  .badges {
-    flex-direction: row;
-    gap: 1rem;
-  }
-
-  .wash {
-    width: 118vw;
-    top: 34%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .enter,
-  .enterProduct,
-  .wash {
-    opacity: 1;
-    transform: none;
-  }
-
-  .ready .wash {
-    opacity: 0.9;
-  }
-}
-
-/* Copy swap when the hero product changes — the same small drop the
-   Bestsellers copy uses, so both sections speak one motion language. */
-.swap {
-  transition:
-    opacity var(--tbb-dur) var(--tbb-ease),
-    transform var(--tbb-dur) var(--tbb-ease);
-}
-
-.swapOut {
-  opacity: 0;
-  transform: translate3d(0, 14px, 0);
-}
-
-.titleProduct {
-  transition:
-    opacity 260ms var(--tbb-ease),
-    color var(--tbb-dur-slow) var(--tbb-ease-inout);
 }

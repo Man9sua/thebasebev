@@ -1,135 +1,170 @@
+
+
 .section {
-  background: var(--tbb-paper-warm);
-  padding: var(--tbb-section) 0;
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+
+  background: var(--tbb-rd-paper);
+
+  padding: 0 0 clamp(4rem, 10vw, 9rem);
   overflow: clip;
+  font-family: var(--tbb-font-sans);
+}
+
+.stage {
+  --fade: clamp(3rem, 7vh, 5rem);
+
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.903;
+  overflow: hidden;
+  background: var(--tbb-rd-ink);
+}
+
+.film {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  display: block;
+  width: 100%;
+  height: calc(100% / 0.934);
+  transform: translateY(-50%);
+  object-fit: cover;
+}
+
+.dissolve {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: var(--fade);
+  background: linear-gradient(
+    to bottom,
+    rgba(246, 246, 244, 0) 0%,
+    rgba(246, 246, 244, 0.55) 45%,
+    var(--tbb-rd-paper) 100%
+  );
+  pointer-events: none;
 }
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: var(--tbb-measure);
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: clamp(2rem, 6vw, 6rem);
-  align-items: center;
-}
-
-.copy {
-  max-width: 40ch;
+  padding: clamp(3rem, 8vw, 9rem) var(--gutter) 0;
 }
 
 .title {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  line-height: 1.04;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
+
+  font-size: clamp(2.75rem, 8.3333vw, 7.5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink-deep);
 }
 
 .body {
-  margin-top: clamp(1rem, 2.4vw, 1.75rem);
-  color: var(--tbb-ink-soft);
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) minmax(0, 32.5rem);
+  grid-template-areas: "copy facts" "cta facts";
+  column-gap: clamp(2rem, 6.6667vw, 6rem);
+  row-gap: clamp(1.75rem, 3.3333vw, 3rem);
+  margin-top: clamp(2.5rem, 6.6667vw, 6rem);
 }
 
-.body + .body {
-  margin-top: 0.9rem;
-}
-
-.stats {
-  margin-top: clamp(1.75rem, 4vw, 2.75rem);
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1.5rem, 4vw, 3rem);
-  border-top: 1px solid var(--tbb-line);
-  padding-top: clamp(1rem, 2vw, 1.5rem);
-}
-
-.stat {
+.copy {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  align-items: flex-start;
+  gap: clamp(1.75rem, 3.3333vw, 3rem);
+  max-width: 35rem;
+  grid-area: copy;
 }
 
-.statValue {
-  font-family: var(--tbb-font-display);
-  font-size: clamp(1.5rem, 2.6vw, 2.5rem);
-  font-weight: 600;
-  line-height: 1;
+.para {
+  margin: 0 !important;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+.ctaBlock {
+  grid-area: cta;
 }
 
 .cta {
-  margin-top: clamp(1.75rem, 4vw, 2.5rem);
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  color: var(--tbb-ink);
-  text-decoration: none;
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: clamp(3.5rem, 4.1667vw, 3.75rem);
+  padding-inline: clamp(1.75rem, 2.3611vw, 2.125rem);
+  border-radius: 999px;
+  background: var(--tbb-rd-ink);
+  color: #fff !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
   text-transform: uppercase;
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid currentColor;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.cta:hover {
-  opacity: 0.55;
+.cta:hover,
+.cta:focus-visible {
+  background: var(--tbb-rd-red);
 }
 
-/* Two plates, offset and overlapping — the composition is the point, so they
-   are placed rather than laid out in a row. */
-.plates {
-  position: relative;
-  aspect-ratio: 1 / 0.98;
+.facts {
+  grid-area: facts;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1.5rem, 3.3333vw, 3rem);
+  row-gap: clamp(2rem, 3.8889vw, 3.5rem);
+  align-content: start;
 }
 
-.plate {
-  position: absolute;
-  overflow: hidden;
-  border-radius: 2px;
-  background: var(--tbb-sand);
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
 }
 
-.plateA {
-  left: 0;
-  top: 0;
-  width: 62%;
-  height: 72%;
+.factValue {
+  font-family: var(--tbb-font-display);
+
+  font-size: clamp(2.25rem, 4.4444vw, 4rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink-deep);
 }
 
-.plateB {
-  right: 0;
-  bottom: 0;
-  width: 52%;
-  height: 62%;
-  box-shadow: -18px -18px 48px rgba(26, 19, 17, 0.14);
+.factLabel {
+  color: var(--tbb-rd-muted);
+  font-size: clamp(0.875rem, 1.1111vw, 1rem);
+  line-height: 1.4;
 }
 
-.media {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.05);
-}
-
-/* The parallax wrapper is sized by `inset` alone. Adding height:100% here
-   overrode the bottom edge, leaving a 6% strip of bare plate below the image. */
-.layer {
-  position: absolute;
-  inset: -6% 0;
-}
-
-@media (max-width: 1023px) {
-  .inner {
+@media (max-width: 63.9375rem) {
+  .body {
     grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2rem, 8vw, 3rem);
+    grid-template-areas: "copy" "facts" "cta";
+    row-gap: 4rem;
   }
 
-  .plates {
-    order: -1;
-    aspect-ratio: 1 / 0.72;
-    max-width: 34rem;
+  .copy,
+  .ctaBlock {
+    max-width: none;
+  }
+
+  .cta,
+  .ctaBlock {
+    width: 100%;
   }
 }

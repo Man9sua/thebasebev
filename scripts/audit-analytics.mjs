@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const exportRoot = path.resolve("tilda_export/project12027355");
-const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
+const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
 const reportPath = process.argv[3] ?? "ANALYTICS_AUDIT.md";
 const pageFiles = fs.readdirSync(exportRoot).filter((file) => /^page\d+\.html$/.test(file));
 
