@@ -135,7 +135,7 @@ export const COMPANY = {
   country: "United Arab Emirates",
   phone: "+971 50 989 0429",
   phoneHref: "tel:+971509890429",
-  /* The same number on WhatsApp, which the menu redesign puts beside it.
+  /* The same number on WhatsApp, linked from the footer social row.
      `wa.me/971509890429` is the link the export already carries on 110 of its
      pages, so this publishes a channel the business runs rather than one
      invented to fill a slot in a mockup. */

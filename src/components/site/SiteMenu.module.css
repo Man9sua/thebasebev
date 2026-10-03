@@ -69,6 +69,12 @@
 }
 
 .productsHead {
+  appearance: none;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -77,8 +83,13 @@
   cursor: default;
 }
 
-.productsHead::-webkit-details-marker {
-  display: none;
+.productsHead:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.productsContentInner {
+  min-height: 0;
 }
 
 .productsLabel {
@@ -197,29 +208,6 @@
   color: var(--tbb-rd-paper);
 }
 
-.footPhone {
-  color: var(--tbb-rd-paper);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.footPhone:hover {
-  color: var(--tbb-rd-red);
-}
-
-.footWhatsapp {
-  color: #25d366;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.footWhatsapp:hover {
-  opacity: 0.8;
-}
-
 .footRegion {
   display: inline-flex;
   align-items: center;
@@ -269,10 +257,29 @@
     color: var(--tbb-rd-paper);
     font-size: 1.125rem;
     line-height: 1;
+    transition: transform var(--tbb-dur) var(--tbb-ease);
   }
 
-  .products[open] .productsMark {
+  .productsOpen .productsMark {
     transform: rotate(45deg);
+  }
+
+  .productsContent {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows var(--tbb-dur) var(--tbb-ease),
+      opacity var(--tbb-dur) var(--tbb-ease);
+  }
+
+  .productsOpen .productsContent {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .productsContentInner {
+    overflow: hidden;
   }
 
 
@@ -329,5 +336,12 @@
     flex: 1 1 100%;
     margin-left: 0;
     gap: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .productsContent,
+  .productsMark {
+    transition: none;
   }
 }

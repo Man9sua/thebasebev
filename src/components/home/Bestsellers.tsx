@@ -228,12 +228,7 @@ export function Bestsellers() {
         <div className={styles.copy}>
           <span className={`tbb-label ${styles.eyebrow}`}>Bestsellers</span>
 
-          {/* The affixes are wrapped so the stylesheet can place them: bare text
-              nodes cannot be given an order. The spaces between the three parts
-              stay, so the heading still reads as one string — "Premium <product>
-              Bases" — rather than three fragments glued together. */}
           <h2 className={styles.heading}>
-            <span className={styles.headingAffix}>Premium</span>{" "}
             <span
               className={`${styles.headingProduct} ${styles.swap} ${
                 swapping ? styles.swapOut : ""
@@ -245,32 +240,29 @@ export function Bestsellers() {
                   use of the name — the dots, the CTA, the slide labels — keeps
                   the plain string. */}
               {active.hyphenatedName ?? active.name}
-            </span>{" "}
-            <span className={styles.headingAffix}>Bases</span>
+            </span>
           </h2>
 
           <p className={`${styles.description} ${styles.swap} ${swapping ? styles.swapOut : ""}`}>
             {active.description}
           </p>
 
-          {/* The price moved off the card and into the copy: on a turned card it
-              was unreadable, and the centre one had to carry a row of type that
-              held every shot a line shorter than it needed to be. */}
-          <p className={`${styles.price} ${styles.swap} ${swapping ? styles.swapOut : ""}`}>
-            {active.price ? (
-              <>
-                <span className="tbb-label">From</span>
-                <span className={styles.priceValue}>{active.price}</span>
-              </>
-            ) : (
-              <span className={styles.priceValue}>Price on request</span>
-            )}
-          </p>
-
-          <SiteLink href={active.route} className={styles.cta}>
-            Explore {active.name}
-            <Arrow />
-          </SiteLink>
+          <div className={styles.purchase}>
+            <SiteLink href={active.route} className={styles.cta}>
+              Explore {active.name}
+              <Arrow />
+            </SiteLink>
+            <p className={`${styles.price} ${styles.swap} ${swapping ? styles.swapOut : ""}`}>
+              {active.price ? (
+                <>
+                  <span className="tbb-label">From</span>
+                  <span className={styles.priceValue}>{active.price}</span>
+                </>
+              ) : (
+                <span className={styles.priceValue}>Price on request</span>
+              )}
+            </p>
+          </div>
 
           {/* The same claim the three stacked figures made, as one line. It is
               framing for the range rather than a fact about this slide, so it
@@ -356,9 +348,7 @@ export function Bestsellers() {
                   follow the rest of the site when the design moved on.
                 */}
                   <span className={styles.card}>
-                    {/* The lockup behind, as the key visual draws it: the small
-                        `the` above the left shoulder of a BASE that runs the
-                        width of the card. */}
+                    {/* The small `the` sits above the card's BASE backdrop. */}
                     <span className={styles.cardThe} aria-hidden="true" />
                     <span className={styles.cardMark} aria-hidden="true" />
 

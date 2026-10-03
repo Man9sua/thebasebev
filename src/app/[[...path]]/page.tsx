@@ -277,7 +277,7 @@ export default async function SiteRoute({ params }: RouteProps) {
         <SiteHeader
           overHero={overHero}
           noHeroScrim={overHero}
-          darkHero={route === "/rnd"}
+          darkHero={route === "/rnd" || route === "/distributors"}
         />
         {route === "/catalog" ? (
           <CatalogPage weights={catalogWeights()} flavors={catalogFlavors()} />

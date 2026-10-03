@@ -39,6 +39,15 @@ function SocialIcon({ label }: { label: string }) {
     );
   }
 
+  if (label === "WhatsApp") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.3 11.8a8.3 8.3 0 0 1-12.2 7.3L3.7 20l.9-4.3a8.3 8.3 0 1 1 15.7-3.9Z" />
+        <path d="M8.4 7.8c-.3-.5-.6-.5-.9-.5s-.5 0-.7.3c-.3.3-1 1-.9 2.3.1 1.4 1 2.7 1.2 2.9.2.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.6.5-.2 1.6-.7 1.8-1.4.2-.7.2-1.3 0-1.4-.2-.2-.5-.3-1.1-.6s-1.2-.6-1.4-.7c-.2-.1-.4-.1-.6.2s-.7.8-.9 1-.3.2-.6.1a7.4 7.4 0 0 1-2.2-1.4 8.1 8.1 0 0 1-1.5-1.9c-.2-.3 0-.5.1-.6l.5-.5.3-.5c.1-.2 0-.4 0-.5l-.9-2.1Z" />
+      </svg>
+    );
+  }
+
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M14.5 20v-7h2.4l.4-2.8h-2.8V8.4c0-.8.2-1.4 1.4-1.4h1.5V4.5c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.1H9V13h2.5v7" />
@@ -61,7 +70,7 @@ const COLUMNS = [
  * link columns sit to the right of them rather than around them.
  *
  * Along the bottom: the copyright, then Sitemap, Terms, Privacy, the cookie
- * dialog and the four accounts, all on one line. Social had its own "Follow"
+ * dialog and the social accounts, all on one line. Social had its own "Follow"
  * heading inside the Resources column, which read as a fourth kind of resource.
  *
  * Then the mark, as a watermark: the same lockup the header carries, run to the
@@ -86,7 +95,7 @@ export function SiteFooter() {
             </div>
 
             <p className={styles.statement}>
-              Beverage ingredients for HoReCa, retail and private label. Made in Dubai.
+              Beverage ingredients for HoReCa, retail and private label. Made in UAE.
             </p>
           </div>
 
@@ -118,15 +127,6 @@ export function SiteFooter() {
             <a className={styles.contactLink} href={COMPANY.phoneHref}>
               {COMPANY.phone}
             </a>
-            <a
-              className={styles.link}
-              href={COMPANY.whatsappHref}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              WhatsApp
-            </a>
-
             <span className={styles.social}>
               {SOCIAL_LINKS.map((item) => (
                 <a
@@ -141,6 +141,16 @@ export function SiteFooter() {
                   <span className="tbb-visually-hidden">{item.label}</span>
                 </a>
               ))}
+              <a
+                className={styles.socialLink}
+                href={COMPANY.whatsappHref}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label="WhatsApp"
+              >
+                <SocialIcon label="WhatsApp" />
+                <span className="tbb-visually-hidden">WhatsApp</span>
+              </a>
             </span>
           </div>
         </div>

@@ -6,7 +6,6 @@ import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { publicPath } from "@/lib/site-paths";
 import {
-  COMPANY,
   FOOTER_LINKS,
   SHOP_URL,
   SITE_NAV,
@@ -31,12 +30,15 @@ export function SiteMenu({
   const pathname = usePathname();
   useOverlay(open, onClose, panelRef);
 
-
   const [productsOpen, setProductsOpen] = useState(true);
+  const [wide, setWide] = useState(true);
 
   useEffect(() => {
     const query = window.matchMedia(WIDE);
-    const apply = () => setProductsOpen(query.matches);
+    const apply = () => {
+      setWide(query.matches);
+      setProductsOpen(query.matches);
+    };
 
     apply();
     query.addEventListener("change", apply);
@@ -76,38 +78,52 @@ export function SiteMenu({
               ))}
             </nav>
 
-
-            <details
-              className={`${styles.products} ${overlay.item}`}
+            <div
+              className={`${styles.products} ${overlay.item} ${productsOpen ? styles.productsOpen : ""}`}
               style={{ transitionDelay: open ? `${160 + SITE_NAV.length * 55}ms` : "0ms" }}
-              open={productsOpen}
-              onToggle={(event) => setProductsOpen(event.currentTarget.open)}
             >
-              <summary className={styles.productsHead}>
+              <button
+                type="button"
+                className={styles.productsHead}
+                aria-expanded={wide || productsOpen}
+                aria-controls="site-menu-products"
+                tabIndex={wide ? -1 : 0}
+                onClick={() => {
+                  if (!wide) setProductsOpen((current) => !current);
+                }}
+              >
                 <span className={styles.productsLabel}>Products</span>
                 <span className={styles.productsMark} aria-hidden="true">
                   +
                 </span>
-              </summary>
+              </button>
 
-              <SiteLink href="/catalog" className={styles.productsAll} onClick={onClose}>
-                All
-              </SiteLink>
+              <div
+                id="site-menu-products"
+                className={styles.productsContent}
+                inert={!wide && !productsOpen}
+              >
+                <div className={styles.productsContentInner}>
+                  <SiteLink href="/catalog" className={styles.productsAll} onClick={onClose}>
+                    All
+                  </SiteLink>
 
-              <ul className={styles.productList}>
-                {PRODUCTS.map((product) => (
-                  <li key={product.slug}>
-                    <SiteLink
-                      href={product.route}
-                      className={styles.productLink}
-                      onClick={onClose}
-                    >
-                      {product.name}
-                    </SiteLink>
-                  </li>
-                ))}
-              </ul>
-            </details>
+                  <ul className={styles.productList}>
+                    {PRODUCTS.map((product) => (
+                      <li key={product.slug}>
+                        <SiteLink
+                          href={product.route}
+                          className={styles.productLink}
+                          onClick={onClose}
+                        >
+                          {product.name}
+                        </SiteLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div
@@ -119,7 +135,6 @@ export function SiteMenu({
               Get a quote
             </SiteLink>
 
-
             <a
               className={styles.footShop}
               href={SHOP_URL}
@@ -128,7 +143,6 @@ export function SiteMenu({
             >
               Shop <span aria-hidden="true">↗</span>
             </a>
-
             <div className={styles.footLinks}>
               {SITE_NAV_SECONDARY.map((item) => (
                 <SiteLink
@@ -146,17 +160,6 @@ export function SiteMenu({
             </div>
 
             <div className={styles.footMeta}>
-              <a className={styles.footPhone} href={COMPANY.phoneHref}>
-                {COMPANY.phone}
-              </a>
-              <a
-                className={styles.footWhatsapp}
-                href={COMPANY.whatsappHref}
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                WhatsApp
-              </a>
               <span className={styles.footRegion}>UAE EN</span>
 
               {FOOTER_LINKS.legal.map((item) => (

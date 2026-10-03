@@ -285,6 +285,7 @@
 
 .valueBody {
   margin: 0 !important;
+  min-height: 4.65em;
   color: var(--tbb-rd-body-soft);
   font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
   line-height: 1.55 !important;

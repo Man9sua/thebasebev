@@ -88,55 +88,16 @@
   color: var(--tbb-muted);
 }
 
-/*
- * "Premium <product> Bases" is one string in the markup and stays one string;
- * only the arrangement is visual. The framing words sit together on a quiet
- * line and the product takes the row below on its own, at display size.
- */
 .heading {
   font-family: var(--tbb-font-display);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: clamp(0.6rem, 1.2vw, 1rem);
   text-transform: uppercase;
   margin: 0;
   max-width: 100%;
 }
 
-.headingAffix {
-  order: 1;
-  font-size: clamp(0.65rem, 0.85vw, 0.8rem);
-  line-height: 1;
-  letter-spacing: 0.34em;
-  font-weight: 400;
-  color: var(--tbb-muted);
-}
-
-/* The two affixes are not adjacent — the product sits between them — so this is
-   the closing one by position, not by sibling combinator. */
-.headingAffix:last-child {
-  order: 2;
-}
-
-/* Binds the two framing words into one phrase. Generated content, so it never
-   reaches `textContent`. */
-.headingAffix:last-child::before {
-  content: "·";
-  margin-right: clamp(0.6rem, 1.2vw, 1rem);
-  color: var(--tbb-muted);
-}
-
-/* Full basis forces the break, so the product always lands on its own row
-   however long its name is. `min-width: 0` is what lets that row then be
-   narrower than the word inside it, which is what allows the soft hyphen to be
-   taken instead of the word overhanging the column. */
 .headingProduct {
-  order: 3;
-  flex: 0 0 100%;
-  min-width: 0;
-  padding-top: clamp(0.3rem, 0.8vw, 0.6rem);
-  font-size: clamp(2.6rem, 5.4vw, 5rem);
+  display: block;
+  font-size: clamp(2.4rem, 4.6vw, 4.25rem);
   font-weight: 700;
   line-height: 0.94;
   letter-spacing: -0.03em;
@@ -151,16 +112,16 @@
   color: var(--tbb-ink-soft);
 }
 
-/* Off the card and into the copy: on a turned card it was unreadable, and the
-   centre one had to carry a row of type that held every shot a line shorter. */
-/* Stepped in from the flush-left stack above and below it, so the number reads
-   as a note against the sentence rather than as another line of it. */
-.price {
+.purchase {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  margin-left: clamp(0.75rem, 1.4vw, 1.5rem);
-  padding-top: clamp(0.2rem, 0.6vw, 0.5rem);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.price {
+  display: grid;
+  gap: 0.1rem;
   color: var(--tbb-muted);
 }
 
@@ -319,7 +280,7 @@
 .cardMark {
   position: absolute;
   left: 4%;
-  top: 6%;
+  top: 14%;
   width: 92%;
   aspect-ratio: 1174 / 568;
   background: rgba(255, 255, 255, 0.55);

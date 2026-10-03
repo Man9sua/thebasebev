@@ -19,11 +19,8 @@ const team = [
   ["Sally Bobis", "QA - Research and Development Manager", "team-sally.webp"],
   ["Chippy Prathapan", "Quality Assurance Executive", "team-chippy.webp"],
   ["Chethana Fernando", "Research and Development Executive", "team-chethana.webp"],
-  ["Michael Figueroa", "Digital Marketing Manager", "team-michael.webp"],
   ["Elce Trajano", "Project Manager", "team-elce.webp"],
   ["Gary Porquez", "Beverage Expert", "team-gary.webp"],
-  ["Habeebudheen M A", "Supply Chain Manager", "team-habeebudheen.webp"],
-  ["Waqar Ahmed", "Accountant", "team-waqar.webp"],
   ["Yakovleva Irina", "Strategy Brand Designer", "team-irina.webp"],
 ] as const;
 

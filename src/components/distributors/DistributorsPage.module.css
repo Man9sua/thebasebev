@@ -337,10 +337,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Pushed to the foot of its own space, so the titles sit on one line across a
-   row whatever the length of the sentence under them. */
+/* Reserve space for two title lines and three body lines, keeping headings in
+   each row aligned when descriptions have different lengths. */
 .page .reasonTitle {
   margin: auto 0 0 !important;
+  min-height: 2.2em;
   font-size: clamp(1.25rem, 1.8056vw, 1.625rem);
   font-weight: 800 !important;
   line-height: 1.1 !important;
@@ -350,6 +351,7 @@
 
 .reasonBody {
   margin: 0 !important;
+  min-height: 4.65em;
   color: var(--tbb-rd-body-soft);
   font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
   line-height: 1.55 !important;
