@@ -96,6 +96,7 @@ function attribute(html, tag, attributeName, attributeValue, resultAttribute) {
 
 function textContent(fragment) {
   return fragment
+    .replace(/<!--[\s\S]*?-->/g, " ")
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
     .replace(/<[^>]+>/g, " ")
@@ -120,6 +121,7 @@ const removedShellRecords = new Set([
   "rec860980632",
   "rec859870796",
   "rec2989879303",
+  "rec913700125",
 ]);
 
 function splitShellRecords(inner) {
@@ -222,7 +224,8 @@ const shellObservations = [];
 const intentionalH1Migrations = new Map([
   ["/", ["Premium Cream Latte Bases", "Premium Powder Bases for Your Business"]],
   ["/about-us", ["Who we are", "We Manufacture High-Quality Customizable Premix Powders"]],
-  ["/rnd", ["Узнай свою дневную норму за 30 секунд", "Beverage R&amp;D and product development in Dubai"]],
+  ["/distributors", ["Become a distributor of The Base", "Become a distributor"]],
+  ["/rnd", ["Узнай свою дневную норму за 30 секунд", "Your recipe. Our lab."]],
 ]);
 
 function preservesIntentionalH1(route, source, target) {
