@@ -61,6 +61,8 @@ in `src/lib/lead-forms.ts` — one place, not per form.
 | `utm_*` | `utm_*` | unchanged, all five keys |
 | `consent` | `consent` | `yes` / `no`, omitted when unknown |
 | `order` | `order_json` | JSON string, matching the Tilda order form |
+| server request ID | `request_id` | non-PII correlation ID returned to the browser |
+| receive time | `server_timestamp` | server-side ISO timestamp |
 
 Casing is not cosmetic here: the lowercase set comes from the audited
 `form860957415` ("Contact Us") markup, the capitalised set from the cart and
@@ -114,10 +116,17 @@ Cart forms are deliberately excluded and keep their legacy payment flow.
 
 ## Attribution
 
+The bridge is mounted in the root layout, including the redesigned homepage.
 First touch is captured on the first page of a session and kept in
 `sessionStorage` under `thebase:first-touch-attribution:v1`. A visitor who lands
 on `/matcha?utm_source=chatgpt.com`, browses, and submits from `/contacts` still
 delivers `utm_source=chatgpt.com` plus the original `landing_page`.
+
+The current Odoo automation has no dedicated fields for the complete contract.
+The adapter therefore keeps the flat Tilda keys and appends a deterministic
+`THE BASE ATTRIBUTION` block to the existing message/description channel. This
+preserves request ID, timestamps, form, country, landing/submission pages,
+referrer and all five UTM values without changing production Odoo automation.
 
 `utm_source=chatgpt.com` is a live B2B referral source. Losing it is a business
 regression, and `npm run audit:leads` asserts it end to end.
@@ -185,7 +194,7 @@ contacts the real Worker or Odoo.
 
 ```bash
 LEAD_LIVE_TEST=1 LEAD_LIVE_TEST_EMAIL=<team mailbox> \
-  npm run test:lead-live -- https://the-base-staging.mnsdemo.workers.dev
+  npm run test:lead-live -- https://the-base-staging.mansua.workers.dev
 ```
 
 Sends exactly one real lead through the full pipeline. Opt-in, refuses to run in

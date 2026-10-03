@@ -1,168 +1,297 @@
+/**
+ * Global footer — the redesign.
+ *
+ * Three bands: the statement and the two direct channels beside the three link
+ * columns; one line of legal, cookie and social; and the mark as a watermark
+ * closing the page.
+ */
+
 .footer {
   position: relative;
-  background: var(--tbb-ink);
-  color: var(--tbb-on-dark);
-  padding: var(--tbb-section) 0 0;
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-on-ink);
+  padding: clamp(3rem, 7vw, 6rem) 0 0;
   overflow: clip;
 }
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: var(--tbb-measure);
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
+  padding: 0 clamp(1.25rem, 6.6667vw, 6rem);
 }
 
+/*
+ * The brand column is held to its measure and the three link columns take the
+ * slack, rather than the other way round.
+ *
+ * It used to be `1fr` against three 200s, which on a 1920 page handed the brand
+ * cell 916 and then capped what stands in it at 448 — the empty half of that
+ * cell was the hole in the middle of the footer. Columns that share what is
+ * left spread across the width instead, and the row reads as a row.
+ *
+ * Four of them, because the two ways to reach a person are one of them. Hung
+ * under the statement on the left they left the right of the band empty from
+ * the last link down to the legal line.
+ */
 .top {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 24rem) repeat(4, minmax(0, 1fr));
   gap: clamp(2rem, 5vw, 4rem);
-  padding-bottom: clamp(3rem, 8vw, 6rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
+/* ---- the statement and the two channels ---- */
+
+/* The cap lives on the column now — see `.top`. */
 .brand {
-  max-width: 34ch;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
 }
 
 .statement {
-  font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h3);
-  line-height: 1.25;
-  font-weight: 400;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
-  color: var(--tbb-paper);
+  margin: 0 !important;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  /* Important for the same reason as the wordmark below — Tilda's stylesheets
+     force 1.7 on every `p` of a parity page, which opened this block up by
+     60px there and nowhere else. */
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-.contact {
-  margin-top: clamp(1.25rem, 3vw, 2rem);
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+
+
+/*
+ * The two things someone opens a footer to find, at the size that says so. They
+ * used to be the same 15px as every link beside them, which made the footer a
+ * wall of equal grey.
+ */
+/* Bigger and brighter than the links above them, because they are what someone
+   opens a footer to find — but a column's width now, not a headline's. */
+.contactLink {
+  width: fit-content;
+  color: var(--tbb-rd-paper);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
+
+/* White, not red: on a ground this dark red is the loudest thing on the page,
+   and red is what marks the page you are on rather than what a pointer does. */
+.contactLink:hover,
+.contactLink:focus-visible {
+  color: #fff;
+}
+
+/* ---- the three columns ---- */
 
 .column {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .columnTitle {
-  margin-bottom: 0.35rem;
-  color: rgba(253, 250, 245, 0.5);
+  margin-bottom: 0.5rem;
+  color: var(--tbb-rd-dim);
+  font-size: 0.875rem;
+  font-weight: 400;
 }
 
+/* Shared by the anchors and by the legal row's one button — the reset is what
+   lets `CookieSettingsButton` sit beside Terms and Privacy without looking like
+   a control that wandered in. */
 .link {
-  color: rgba(253, 250, 245, 0.82);
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  color: var(--tbb-rd-on-ink);
   text-decoration: none;
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
+  text-align: left;
   width: fit-content;
-  transition:
-    color var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+  cursor: pointer;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .link:hover,
 .link:focus-visible {
-  color: var(--tbb-paper);
-  transform: translate3d(3px, 0, 0);
+  color: var(--tbb-rd-paper);
 }
 
-.social {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
-}
+/* ---- one line of legal, cookies and accounts ---- */
 
 .legal {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem 2rem;
+  gap: 1rem clamp(1.25rem, 2.5vw, 2rem);
   padding: clamp(1rem, 2vw, 1.5rem) 0;
-  border-top: 1px solid rgba(253, 250, 245, 0.16);
-  color: rgba(253, 250, 245, 0.5);
+  border-top: 1px solid #1e1e1e;
+}
+
+.copyright {
+  color: var(--tbb-rd-muted);
   font-size: 0.8125rem;
 }
 
 .legalLinks {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  margin-left: auto;
 }
 
-/* --- the wordmark --- */
+.legalLinks .link {
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
+}
 
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.socialLink {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid #2c2c2c;
+  border-radius: 50%;
+  color: var(--tbb-rd-on-ink);
+  text-decoration: none;
+  transition:
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.socialLink svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.socialLink:hover,
+.socialLink:focus-visible {
+  border-color: var(--tbb-rd-paper);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+}
+
+/* --- the closing mark --- */
+
+/* At the head of the brand column, not on a band under the page. The drawing
+   is square, so it can never be laid across the foot the way a house wordmark
+   is — and a band holding one square and nothing else is the emptiness this
+   footer kept being asked about. Up here it has three columns beside it. */
 .wordmarkWrap {
-  /* Full-bleed past the page gutter so the word can actually reach the edges. */
-  margin: 0 calc(var(--tbb-gutter) * -1);
-  padding: 0 clamp(0.5rem, 1.5vw, 1.25rem);
-  /* Cropped deliberately: the descender-less caps sit tight to the baseline and
-     the bottom of the word is clipped by the footer edge. */
+  margin-bottom: clamp(0.5rem, 1.5vw, 1.25rem);
   overflow: clip;
-  line-height: 0.78;
-  /* The sizing container for the wordmark below. */
-  container-type: inline-size;
 }
 
+/*
+ * The lockup as a watermark closing the page — `BrandMarkStacked`, the owner's
+ * stacked artwork, in which the letters are cut out of the block rather than
+ * painted on it.
+ *
+ * One grey off the ground, so the ground is what reads as BASE — a watermark
+ * standing behind the footer's own words rather than a second red mark under
+ * the one in the bar.
+ */
 .wordmark {
   display: block;
-  margin: 0;
-  font-family: var(--tbb-font-display);
-  /*
-   * Sized in `cqw`, not `vw`.
-   *
-   * `vw` resolves against the viewport *including* the vertical scrollbar, so
-   * on desktop the word was ~15px wider than the space it had and the final E
-   * ran off the right edge. Mobile has no persistent scrollbar, which is why
-   * the bug only showed on desktop.
-   *
-   * `cqw` resolves against this element's container content box, which excludes
-   * the scrollbar — the word can no longer be wider than the room it has.
-   */
-  font-size: 40cqw;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  text-align: center;
-  white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.92) 0%,
-    rgba(255, 255, 255, 0.55) 62%,
-    rgba(255, 255, 255, 0.18) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
+  width: clamp(10rem, 18vw, 20rem);
+  height: auto;
+  color: #2e2e2e;
   user-select: none;
-  transform: translate3d(0, 6%, 0);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 63.9375rem) {
+  /* The columns drop under the statement rather than beside it. */
   .top {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    row-gap: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .brand {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+}
+
+@media (max-width: 39.9375rem) {
+  /*
+   * The mark closes the footer on a phone instead of heading it — a watermark
+   * is the last thing on a page, not its opening, and here that means below
+   * the legal line as well.
+   *
+   * Getting it there takes three `display: contents`: the mark lives inside the
+   * brand column inside `.top`, and the line it has to fall under is `.legal`,
+   * a sibling of `.top`. Flattening both hands every piece to one grid on
+   * `.inner`, where `order` can put them in any sequence. `.top` loses its own
+   * padding with its box, so the spacing moves onto the pieces.
+   */
+  .inner {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.25rem;
+    row-gap: clamp(2.5rem, 6vw, 4rem);
   }
 
+  .top,
   .brand {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 559px) {
-  .top {
-    grid-template-columns: minmax(0, 1fr);
+    display: contents;
   }
 
-  .brand {
-    grid-column: span 1;
+  .statement {
+    grid-column: 1 / -1;
   }
 
+  /* Stacked, and in the design's own order: the legal links, then the
+     copyright last. The accounts moved up into the Contact column, and the
+     `order: -2` that used to lift them here was pulling them above that
+     column's own heading. */
   .legal {
+    order: 8;
+    grid-column: 1 / -1;
+    margin-top: clamp(1rem, 4vw, 2rem);
     flex-direction: column;
     align-items: flex-start;
   }
 
+  .wordmarkWrap {
+    order: 9;
+    grid-column: 1 / -1;
+    margin: 0 0 clamp(1.5rem, 6vw, 2.5rem);
+  }
+
+  .wordmark {
+    width: clamp(8rem, 40vw, 13rem);
+  }
+
+  /* The contact column takes the width: an email address does not fit in half
+     a phone, and the accounts want one row rather than two. */
+  .column:last-child {
+    grid-column: 1 / -1;
+  }
+
   .legalLinks {
-    gap: 1.25rem;
+    margin-left: 0;
+    order: -1;
   }
 }

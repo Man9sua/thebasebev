@@ -1,22 +1,96 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HOMEPAGE_ENTRIES } from "@/data/posts";
+import { SiteLink } from "@/components/site/SiteLink";
+import { BLOG_POSTS } from "@/data/blog";
 import styles from "./BlogCarousel.module.css";
 
 /**
- * Horizontal editorial rail.
+ * Guides and tools — the redesign's 11a / 11b.
  *
- * Built on a native `overflow-x` scroller with snap points rather than a
- * transform-driven track. Trackpad, touch, keyboard, scrollbar and browser
- * find-on-page all keep working, and — importantly — a vertical wheel over the
- * rail still scrolls the page instead of being captured. `data-native-scroll`
- * additionally tells SmoothScroll to leave this element alone.
+ * A horizontal rail of cards under one display heading, with "All resources"
+ * and a pair of arrows opposite it. Built on a native `overflow-x` scroller
+ * with snap points rather than a transform-driven track, so trackpad, touch,
+ * keyboard, scrollbar and browser find-on-page all keep working — and,
+ * importantly, a vertical wheel over the rail still scrolls the page instead
+ * of being captured.
  *
  * Drag-to-scroll is layered on top for mouse users, and is careful to let a
  * click through when the pointer barely moved.
+ *
+ * **What the rail carries.** The document names five: the wholesale strategy
+ * guide, the R&D page, the cost calculator, private label and the glossary —
+ * four services and tools, and one reference. They are all real routes, and
+ * they are what someone weighing up a supplier opens. The newest article from
+ * the imported blog closes the row, so the rail is not only evergreen pages;
+ * "All resources" is the way to the other forty-five.
+ *
+ * The site review would rather the services were their own block — see its
+ * note about mixing services with content. This follows the document, which
+ * is the newer of the two, and puts them in one rail called what it is.
  */
+
+type Entry = {
+  href: string;
+  category: string;
+  title: string;
+  summary: string;
+  image: string | null;
+};
+
+const GUIDES: Entry[] = [
+  {
+    href: "/wholesale-strategy",
+    category: "Market",
+    title: "Wholesale Strategy and Market Insights",
+    summary:
+      "Wholesale beverage distribution in the GCC: margins, MOQ, supplier checklist and the mistakes that cost money.",
+    image: "/images/tild3935-6337-4533-a633-643534346539__photo-1590497008432-.jpg",
+  },
+  {
+    href: "/rnd",
+    category: "R&D",
+    title: "Beverage R&D and Product Development",
+    summary:
+      "Custom beverage R&D in Dubai: recipe development, flavour matching and pilot batches for HoReCa and private label.",
+    image: "/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg",
+  },
+  {
+    href: "/resources/tools",
+    category: "Tools",
+    title: "HoReCa Cost Calculator",
+    summary:
+      "Estimate ingredient costs, portion pricing and margins for cafés and restaurants.",
+    image: "/images/tild3232-3361-4536-b535-383330393461__photo-1732365898359-.jpg",
+  },
+  {
+    href: "/private-labeling",
+    category: "Service",
+    title: "Private Label & Wholesale Premixes",
+    summary:
+      "Beverage premixes under your own brand: sixteen product lines, custom development and contract manufacturing.",
+    image: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
+  },
+  {
+    href: "/resources/glossary",
+    category: "Reference",
+    title: "Beverage Glossary",
+    summary:
+      "Definitions of key beverage and HoReCa supply terms, from base powders to garnishes.",
+    image: "/images/tild3161-3138-4736-b333-353231303039__photo-1447933601403-.jpg",
+  },
+];
+
+/** The newest article, so the rail is not five evergreen pages on their own. */
+const LATEST: Entry[] = BLOG_POSTS.slice(0, 1).map((post) => ({
+  href: post.path,
+  category: post.topic.label,
+  title: post.title,
+  summary: post.excerpt,
+  image: post.cover?.src ?? null,
+}));
+
+const ENTRIES: Entry[] = [...GUIDES, ...LATEST];
 
 /** Beyond this, a press counts as a drag and the click is suppressed. */
 const DRAG_THRESHOLD_PX = 6;
@@ -154,38 +228,42 @@ export function BlogCarousel() {
   return (
     <section className={styles.section} aria-labelledby="reading-title">
       <div className={styles.head}>
-        <div>
-          <span className="tbb-label">Reading</span>
-          <h2 id="reading-title" className={styles.title}>
-            Guides, tools and market notes
-          </h2>
-        </div>
+        <h2 id="reading-title" className={styles.title}>
+          Guides and tools
+        </h2>
 
         <div className={styles.controls}>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => scrollByCard(-1)}
-            disabled={atStart}
-            aria-label="Scroll left"
-          >
-            <Arrow back />
-          </button>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => scrollByCard(1)}
-            disabled={atEnd}
-            aria-label="Scroll right"
-          >
-            <Arrow />
-          </button>
+          <SiteLink href="/resources" className={styles.all}>
+            All resources
+          </SiteLink>
+          <div className={styles.arrows}>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => scrollByCard(-1)}
+              disabled={atStart}
+              aria-label="Scroll left"
+            >
+              <Arrow back />
+            </button>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => scrollByCard(1)}
+              disabled={atEnd}
+              aria-label="Scroll right"
+            >
+              <Arrow />
+            </button>
+          </div>
         </div>
       </div>
 
       <div
         ref={railRef}
         className={`${styles.rail} ${dragging ? styles.dragging : ""}`}
+        // Marks the rail as its own scroller — it scrolls natively and nothing
+        // else may drive it. `smoke:browser` uses it as the rail's handle.
         data-native-scroll
         // Cards are links, and pressing then moving on a link starts a native
         // link drag, which kills the pointer stream mid-gesture. Suppressing
@@ -197,38 +275,30 @@ export function BlogCarousel() {
         onPointerCancel={endDrag}
         onClickCapture={onClickCapture}
       >
-        {HOMEPAGE_ENTRIES.map((entry) => (
-          <Link key={entry.href} href={entry.href} className={styles.card} data-card>
+        {ENTRIES.map((entry) => (
+          <SiteLink key={entry.href} href={entry.href} className={styles.card} data-card>
             <span className={styles.frame}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className={styles.media}
-                src={entry.image}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-              />
-              <span className={styles.scrim} aria-hidden="true" />
-              <span className={styles.overlay}>
-                <span className={`tbb-label ${styles.category}`}>{entry.category}</span>
-                <span className={styles.cardTitle}>{entry.title}</span>
-              </span>
-            </span>
-
-            <span className={styles.summary}>
-              {entry.summary}
-              {entry.date && (
-                <time className={`tbb-label ${styles.date}`} dateTime={entry.date}>
-                  {new Date(entry.date).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </time>
+              {/* An entry without a picture keeps the frame, which is what holds
+                  the row's rhythm — only the photograph is missing. */}
+              {entry.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className={styles.media}
+                  src={entry.image}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                />
               )}
             </span>
-          </Link>
+
+            <span className={styles.copy}>
+              <span className={styles.category}>{entry.category}</span>
+              <span className={styles.cardTitle}>{entry.title}</span>
+              <span className={styles.summary}>{entry.summary}</span>
+            </span>
+          </SiteLink>
         ))}
       </div>
 

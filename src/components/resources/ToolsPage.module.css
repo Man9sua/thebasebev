@@ -1,0 +1,617 @@
+.page {
+  padding-top: var(--tbb-header-h);
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+  overflow: clip;
+}
+
+.hero {
+  min-height: min(46rem, calc(100svh - var(--tbb-header-h)));
+  display: grid;
+  align-items: end;
+  color: var(--tbb-on-dark);
+  background:
+    radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.13), transparent 30%),
+    var(--tbb-black);
+  padding: clamp(5rem, 11vw, 10rem) var(--tbb-gutter) clamp(3.5rem, 7vw, 6rem);
+}
+
+.heroInner,
+.section {
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin-inline: auto;
+}
+
+.heroInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(18rem, 0.7fr);
+  gap: clamp(3rem, 8vw, 9rem);
+  align-items: end;
+}
+
+.heroCopy {
+  max-width: 65rem;
+}
+
+.eyebrow {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.heroTitle {
+  max-width: 12ch;
+  margin-top: clamp(1rem, 2.2vw, 1.75rem);
+  font-family: var(--tbb-font-display);
+  font-size: clamp(3.1rem, 7.5vw, 8.5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+}
+
+.heroText {
+  max-width: 43rem;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(1rem, 1.35vw, 1.25rem);
+  line-height: 1.5;
+}
+
+.heroIndex {
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.heroIndexItem {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.25rem 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.heroIndexItem:hover,
+.heroIndexItem:focus-visible {
+  opacity: 0.62;
+}
+
+.heroIndexItem > span,
+.heroIndexItem > small {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.heroIndexItem > span {
+  grid-row: span 2;
+}
+
+.heroIndexItem > strong {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.section {
+  padding: var(--tbb-section) var(--tbb-gutter);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+  border-bottom: 1px solid var(--tbb-line);
+}
+
+.sectionTitle {
+  max-width: 15ch;
+  margin-top: 0.75rem;
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h2);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+}
+
+.sectionDescription {
+  max-width: 31rem;
+  color: var(--tbb-ink-soft);
+  line-height: 1.55;
+}
+
+.language {
+  display: inline-flex;
+  padding: 0.25rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+}
+
+.languageButton,
+.languageActive {
+  min-width: 3.25rem;
+  min-height: 2.5rem;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.languageButton {
+  color: var(--tbb-muted);
+  background: transparent;
+}
+
+.languageActive {
+  color: var(--tbb-on-dark);
+  background: var(--tbb-black);
+}
+
+.calculatorGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  padding-top: clamp(2rem, 5vw, 4rem);
+}
+
+.formPanel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 4vw, 4rem);
+}
+
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.fieldset legend {
+  width: 100%;
+  display: flex;
+  gap: 0.85rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--tbb-ink);
+  font-weight: 600;
+}
+
+.fieldset legend span {
+  color: var(--tbb-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1.25rem;
+}
+
+.numberField {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.numberField > span,
+.priceField > span {
+  color: var(--tbb-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.numberField input,
+.priceField input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-bottom: 1px solid var(--tbb-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--tbb-ink);
+  font: inherit;
+  font-size: 1.1rem;
+  padding: 0.7rem 0;
+  outline: none;
+  transition: border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.numberField input:focus,
+.priceField input:focus {
+  border-bottom-color: var(--tbb-ink);
+}
+
+.results {
+  align-self: start;
+  position: sticky;
+  top: calc(var(--tbb-header-h) + 1.5rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 1.5rem;
+  background: var(--tbb-grey-lightest);
+}
+
+.resultsLabel {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.result {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--tbb-line);
+}
+
+.result span {
+  color: var(--tbb-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.result strong {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.resultFeatured {
+  margin-top: 0.75rem;
+  padding: 1.5rem;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--tbb-black);
+  color: var(--tbb-on-dark);
+}
+
+.resultFeatured span {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.resultFeatured strong {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+}
+
+.formula {
+  margin-top: 1rem;
+  color: var(--tbb-muted);
+  font-size: 0.78rem;
+}
+
+.builder {
+  border-top: 1px solid var(--tbb-line);
+  background: var(--tbb-grey-lightest);
+}
+
+.drinkGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: clamp(2rem, 5vw, 4rem);
+}
+
+.drinkCard {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto auto 1fr auto;
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  border: 1px solid var(--tbb-line);
+  border-radius: 1.25rem;
+  background: var(--tbb-paper);
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.drinkCard:hover {
+  transform: translateY(-3px);
+  border-color: var(--tbb-ink);
+}
+
+.drinkCardActive {
+  border-color: var(--tbb-ink);
+  box-shadow: inset 0 0 0 1px var(--tbb-ink);
+}
+
+.drinkSelect {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+  color: var(--tbb-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.drinkSelect input {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--tbb-black);
+}
+
+.drinkIcon {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  font-size: 1.7rem;
+}
+
+.drinkCard h3 {
+  grid-column: 1 / -1;
+  margin-top: 2rem;
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h3);
+  font-weight: 600;
+}
+
+.drinkCard > p {
+  grid-column: 1 / -1;
+  margin-top: 0.65rem;
+  color: var(--tbb-ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.priceField {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 5.5rem;
+  align-items: end;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.priceField input {
+  text-align: end;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 2rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 3.25rem;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.primaryAction {
+  border: 1px solid var(--tbb-black);
+  background: var(--tbb-black);
+  color: var(--tbb-on-dark);
+}
+
+.secondaryAction {
+  border: 1px solid var(--tbb-ink);
+  background: transparent;
+  color: var(--tbb-ink);
+}
+
+.primaryAction:hover,
+.secondaryAction:hover {
+  transform: translateY(-2px);
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible,
+.languageButton:focus-visible,
+.languageActive:focus-visible,
+.heroIndexItem:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.menuPreview {
+  width: min(100%, 58rem);
+  margin: clamp(2rem, 5vw, 4rem) auto 0;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  border: 1px solid var(--tbb-line);
+  border-radius: 1.5rem;
+  background: var(--tbb-paper);
+}
+
+.menuBrand {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid var(--tbb-accent);
+}
+
+.menuBrand strong {
+  color: var(--tbb-accent);
+  font-size: 1.4rem;
+}
+
+.menuBrand span,
+.menuPeriod,
+.menuPreview > small {
+  color: var(--tbb-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.menuPreview > h3 {
+  margin-top: 2rem;
+  text-align: center;
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h2);
+  font-weight: 600;
+}
+
+.menuPeriod {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.menuItems {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.menuItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: start;
+  padding: 1.25rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 0.75rem;
+}
+
+.menuItem h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.menuItem p {
+  margin-top: 0.35rem;
+  color: var(--tbb-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.menuItem > strong {
+  white-space: nowrap;
+}
+
+.menuPreview > small {
+  display: block;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--tbb-line);
+  text-align: center;
+}
+
+@media (max-width: 1023px) {
+  .heroInner,
+  .calculatorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroIndex {
+    max-width: 34rem;
+  }
+
+  .results {
+    position: static;
+  }
+
+  .drinkGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    min-height: auto;
+    padding-top: clamp(5rem, 24vw, 8rem);
+  }
+
+  .heroTitle {
+    font-size: clamp(3rem, 15vw, 5rem);
+  }
+
+  .sectionHead {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .formPanel,
+  .fields,
+  .drinkGrid,
+  .menuItems {
+    grid-template-columns: 1fr;
+  }
+
+  .language {
+    align-self: stretch;
+  }
+
+  .languageButton,
+  .languageActive {
+    flex: 1;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+  }
+
+  .menuBrand,
+  .menuItem {
+    align-items: start;
+  }
+
+  .menuBrand {
+    flex-direction: column;
+  }
+
+  .menuItem {
+    grid-template-columns: auto 1fr;
+  }
+
+  .menuItem > strong {
+    grid-column: 2;
+  }
+}
+
+@media print {
+  .hero,
+  .calculator,
+  .builder > .sectionHead,
+  .drinkGrid,
+  .actions {
+    display: none !important;
+  }
+
+  .page,
+  .builder {
+    padding: 0;
+    background: #fff;
+  }
+
+  .menuPreview {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+  }
+}

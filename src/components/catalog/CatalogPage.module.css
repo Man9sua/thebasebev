@@ -1,0 +1,685 @@
+/**
+ * The shop — the catalogue redesign.
+ *
+ * Paper ground, ink type, and one colour per plate — sixteen pouches each on a
+ * field sampled from its own banner, which is the only colour on the page.
+ * Laid out as four ranges under their own headings rather than one run of
+ * sixteen tiles: the range is the thing being sold, and a flat grid says nowhere
+ * that it is four of them. Sorting, filtering or searching collapses the
+ * sections, because all three are questions about the whole shelf.
+ *
+ * Only the closing banner and the running total are ink, and they are ink
+ * because they are the two things on the page that are not the shelf.
+ *
+ * The rest is built around getting to a product and then ordering more than one
+ * of it: the filter row sticks under the site header, the card turns into a
+ * quantity once it is in the cart, and a running total follows the page down as
+ * soon as there is one.
+ *
+ * Colour is the `--tbb-rd-*` block in `design-tokens.css`, the same palette the
+ * other redesigned pages use. The `!important` here answers the exported Tilda
+ * sheet, which is global on this route: `html body p { line-height: 1.7 }` and
+ * `html body h1, html body [class*="title"] { font-weight: 300 }` both carry it,
+ * and the second outranks a single class.
+ */
+
+.page {
+  --pad-y: clamp(3rem, 6.6667vw, 6rem);
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+
+  min-height: 100vh;
+  padding-bottom: var(--pad-y);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+  font-family: var(--tbb-font-sans);
+}
+
+.intro,
+.barInner,
+.range,
+.close {
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin-inline: auto;
+}
+
+/* ---- the shop front ---- */
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: end;
+  padding: calc(var(--tbb-header-h) + clamp(2.5rem, 5vw, 4.5rem)) var(--gutter)
+    clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.introCopy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.875rem, 1.6667vw, 1.5rem);
+}
+
+.intro .title {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.75rem, 6.6667vw, 6rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink);
+}
+
+/* Wide enough that the two sentences the design writes take one line each —
+   the break between them is in the markup, so a narrower measure breaks them
+   again in the middle. */
+.intro .lede {
+  margin: 0 !important;
+  max-width: 44ch;
+  color: var(--tbb-rd-body);
+  font-size: clamp(0.9375rem, 1.1111vw, 1.0625rem);
+  line-height: 1.55 !important;
+}
+
+/*
+ * Production's h1 for this route, carried as the line under the name. Set at
+ * the smallest type on the page and in dim ink: it is wording the page has to
+ * keep, not a line the shop needs shouted.
+ */
+.intro .headline {
+  margin: 0 !important;
+  max-width: 48ch;
+  color: var(--tbb-rd-muted);
+  font-family: var(--tbb-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+/* ---- search ---- */
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-sizing: border-box;
+  min-height: 3.25rem;
+  padding: 0 1.25rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 999px;
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-muted);
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.search:focus-within {
+  border-color: var(--tbb-rd-ink);
+  background: #fff;
+}
+
+.search svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  appearance: none;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--tbb-rd-ink);
+  font-family: inherit;
+  font-size: 0.9375rem;
+}
+
+.search input::placeholder {
+  color: var(--tbb-rd-placeholder);
+}
+
+.search input::-webkit-search-cancel-button {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* ---- the filter row ---- */
+
+.bar {
+  position: sticky;
+  top: var(--tbb-header-h);
+  z-index: 20;
+  padding-block: 0.75rem;
+  background: color-mix(in srgb, var(--tbb-rd-paper) 92%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.barInner {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
+  padding-inline: var(--gutter);
+}
+
+.filters {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: clamp(0.25rem, 1vw, 0.75rem);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filter,
+.filterActive {
+  appearance: none;
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.6rem 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--tbb-rd-muted);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.filter span,
+.filterActive span {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+.filter:hover,
+.filter:focus-visible {
+  color: var(--tbb-rd-body);
+}
+
+.filterActive {
+  color: var(--tbb-rd-ink);
+}
+
+/* The mark travels to the label that was just picked — see `measureRule`. */
+.rule {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: var(--rule-w, 0);
+  border-radius: 2px;
+  background: var(--tbb-rd-red);
+  transform: translate3d(var(--rule-x, 0), 0, 0);
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    width var(--tbb-dur-fast) var(--tbb-ease);
+  pointer-events: none;
+}
+
+.filter:focus-visible,
+.filterActive:focus-visible {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---- the shelf ---- */
+
+.shelf {
+  padding-top: clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.range {
+  padding-inline: var(--gutter);
+}
+
+.rangeHead {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.range:first-of-type .rangeHead {
+  padding-top: 0;
+}
+
+.rangeName {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.125rem, 1.6667vw, 1.5rem);
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+  color: var(--tbb-rd-ink);
+}
+
+.rangeCount {
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/*
+ * Three across the design's own frame, and more as the window grows rather
+ * than three bigger ones.
+ *
+ * The measure runs to 1920 so a band fills the screen instead of leaving a
+ * third of it empty either side, which is what the owner asked for. A fixed
+ * three columns turns that straight into size: at a 1920 window each tile came
+ * out 557 by 756, half a metre of pack shot. `auto-fill` against a floor keeps
+ * the band full and the tile at the size the design draws it — 397 at the 1440
+ * frame, where the count is still three, and 411 at 1920, where it is four.
+ * `min(100%, …)` is what keeps one card from overflowing a phone.
+ *
+ * The floor is what picks the count, and a column is the only step there is:
+ * at 21rem a 1920 window takes four, at 19rem it takes five and the tile drops
+ * to 323, which the owner read as small. Four it is.
+ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  gap: clamp(1rem, 2.2222vw, 2rem) clamp(1rem, 1.9444vw, 1.75rem);
+}
+
+.empty {
+  padding: clamp(2rem, 5vw, 4rem) var(--gutter);
+  color: var(--tbb-rd-body);
+  font-size: 1rem;
+  line-height: 1.6 !important;
+}
+
+.empty a {
+  color: var(--tbb-rd-ink);
+  text-decoration: underline;
+}
+
+/* ---- the card ---- */
+
+.card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/*
+ * The plate. The colour is in the image — `build-catalog-tiles.mjs` stands each
+ * pouch on a field sampled from that product's own banner — so the frame only
+ * has to hold its shape, which is the 860 x 1075 every tile is built at.
+ */
+.tile {
+  position: relative;
+  aspect-ratio: 860 / 1075;
+  border-radius: clamp(1rem, 1.3889vw, 1.25rem);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--tbb-rd-card);
+}
+
+.tileLink {
+  position: absolute;
+  inset: 0;
+  display: block;
+  text-decoration: none;
+}
+
+.tile :global(img) {
+  object-fit: cover;
+  transition: transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.card:hover .tile :global(img) {
+  transform: scale(1.035);
+}
+
+/*
+ * The design's "BUY ↗" pill, without the arrow: the shop is on this site, so
+ * nothing leaves. Always present rather than revealed on hover — a control that
+ * only exists under a pointer does not exist on a phone at all.
+ */
+.buy {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 2rem;
+  padding-inline: 0.875rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none !important;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.buy:hover,
+.buy:focus-visible {
+  background: var(--tbb-rd-red);
+  color: #fff !important;
+}
+
+.buy:focus-visible {
+  outline: 2px solid var(--tbb-rd-paper);
+  outline-offset: 2px;
+}
+
+.inCart {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 1;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background: var(--tbb-rd-red);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---- the line under the plate ---- */
+
+.info {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.name {
+  margin: 0 !important;
+  min-width: 0;
+  font-family: var(--tbb-font-sans);
+  font-size: clamp(0.9375rem, 1.1111vw, 1.0625rem);
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+.name a {
+  color: var(--tbb-rd-ink);
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.name a:hover,
+.name a:focus-visible {
+  color: var(--tbb-rd-red);
+}
+
+.learn {
+  flex: none;
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.card:hover .learn {
+  color: var(--tbb-rd-ink);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  margin: -0.25rem 0 0 !important;
+  line-height: 1.4 !important;
+}
+
+.weight {
+  color: var(--tbb-rd-muted);
+  font-size: 0.8125rem;
+}
+
+.price {
+  color: var(--tbb-rd-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* ---- what is in the cart, by flavour ---- */
+
+.lines {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.375rem 0.375rem 0.375rem 0.75rem;
+  border-radius: 999px;
+  background: var(--tbb-rd-card);
+}
+
+.lineName {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--tbb-rd-body);
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lineStepper {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.lineQuantity {
+  min-width: 1.25rem;
+  color: var(--tbb-rd-ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.step {
+  appearance: none;
+  width: 1.625rem;
+  height: 1.625rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tbb-rd-ink);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.step:hover:not(:disabled) {
+  background: var(--tbb-rd-red);
+  color: #fff;
+}
+
+.step:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 2px;
+}
+
+/* ---- the close ---- */
+
+.close {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  padding: clamp(1.75rem, 3.3333vw, 3rem);
+  border-radius: clamp(1.25rem, 1.9444vw, 1.75rem);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.closeCopy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.closeTitle {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.125rem, 1.6667vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.25 !important;
+  color: var(--tbb-rd-paper);
+}
+
+.closeText {
+  margin: 0 !important;
+  max-width: 46ch;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.55 !important;
+}
+
+.closeLink {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 3.25rem;
+  padding-inline: clamp(1.5rem, 2.5vw, 2.25rem);
+  border-radius: 999px;
+  background: var(--tbb-rd-red);
+  color: #fff !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.closeLink:hover {
+  background: var(--tbb-rd-red-dark);
+}
+
+/* ---- the running total ---- */
+
+.tray {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 60;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: calc(100vw - 2rem);
+  padding: 0.625rem 0.625rem 0.625rem 1.25rem;
+  border-radius: 999px;
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+}
+
+.trayLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.5rem;
+  padding-inline: 1.125rem;
+  border-radius: 999px;
+  background: var(--tbb-rd-red);
+  color: #fff !important;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.trayLink:hover {
+  background: var(--tbb-rd-red-dark);
+}
+
+/* ---- narrower than the design's own frame ---- */
+
+@media (max-width: 68.6875rem) {
+  /* Two, and two at any width down to a phone: below the floor above, one card
+     per row is a column of 400px pictures. */
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .intro {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .barInner {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile :global(img),
+  .card:hover .tile :global(img) {
+    transition: none;
+    transform: none;
+  }
+}

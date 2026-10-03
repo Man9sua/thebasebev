@@ -1,157 +1,146 @@
+/**
+ * From base to cup — 10a / 10b of the redesign.
+ *
+ * 120 of vertical padding, 96 of gutter, the heading at 80 in a 1fr column
+ * against a 440 sentence, then four 400-tall frames in one row.
+ */
+
 .section {
-  position: relative;
-  background: var(--tbb-paper-warm);
-  padding: var(--tbb-section) 0;
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+
+  background: var(--tbb-rd-paper);
+  padding: clamp(3.5rem, 8.3333vw, 7.5rem) 0;
+  font-family: var(--tbb-font-sans);
   overflow: clip;
 }
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: var(--tbb-measure);
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
 }
 
 .head {
-  max-width: 44ch;
-  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 27.5rem);
+  gap: clamp(1.5rem, 6.6667vw, 6rem);
+  align-items: end;
+  padding-inline: var(--gutter);
 }
 
 .title {
+  margin: 0 !important;
   font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h2);
-  line-height: 1.04;
-  letter-spacing: var(--tbb-tracking-display);
-  font-weight: 600;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
+  /* 80 at 1440. */
+  font-size: clamp(2.25rem, 5.5556vw, 5rem);
+  font-weight: 900 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink-deep);
+  text-wrap: balance;
 }
 
 .lede {
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
-  color: var(--tbb-ink-soft);
-  max-width: 46ch;
+  margin: 0 !important;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-/* Asymmetric across, regular down: each band of tiles sums to twelve columns
-   with an uneven split, and each band gets its own height. Mixing row spans
-   *within* a band instead left holes the grid could not pack around, even with
-   dense flow. */
-.grid {
+/* ---- the four steps ---- */
+
+.steps {
+  list-style: none;
+  margin: clamp(2rem, 5vw, 4.5rem) 0 0;
+  padding-inline: var(--gutter);
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-auto-rows: clamp(3.5rem, 6vw, 6.5rem);
-  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.6667vw, 1.5rem);
 }
 
-.tile {
+.step {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.frame {
   position: relative;
+  display: block;
+  /* 400 tall against a 288 column at 1440 — kept as a ratio so the row holds
+     its proportion at every width instead of four fixed rectangles. */
+  aspect-ratio: 288 / 400;
+  border-radius: clamp(0.875rem, 1.3889vw, 1.25rem);
   overflow: hidden;
-  border-radius: 2px;
-  background: var(--tbb-sand);
+  background: var(--tbb-rd-card);
 }
 
-.media {
-  width: 100%;
-  height: 100%;
+.frame :global(img) {
   object-fit: cover;
-  /* Oversized so the parallax shift never exposes an edge. */
-  transform: scale(1.06);
-  transition: transform var(--tbb-dur-slow) var(--tbb-ease);
-}
-
-.tile:hover .media {
-  transform: scale(1.1);
-}
-
-/* Sized by `inset` alone — it overhangs the tile so the parallax shift never
-   exposes an edge. Do not add height:100%: it would override the bottom edge. */
-.layer {
-  position: absolute;
-  inset: -8% 0;
 }
 
 .caption {
-  position: absolute;
-  left: clamp(0.75rem, 1.4vw, 1.25rem);
-  bottom: clamp(0.6rem, 1.2vw, 1rem);
-  color: var(--tbb-paper);
-  text-shadow: 0 1px 12px rgba(18, 18, 18, 0.5);
-  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
 }
 
-/* --- placements --- */
-
-.a {
-  grid-column: span 5;
-  grid-row: span 5;
-}
-.b {
-  grid-column: span 4;
-  grid-row: span 5;
-}
-.c {
-  grid-column: span 3;
-  grid-row: span 5;
-}
-.d {
-  grid-column: span 4;
-  grid-row: span 3;
-}
-.e {
-  grid-column: span 3;
-  grid-row: span 3;
-}
-.f {
-  grid-column: span 5;
-  grid-row: span 3;
-}
-.g {
-  grid-column: span 4;
-  grid-row: span 4;
-}
-.h {
-  grid-column: span 8;
-  grid-row: span 4;
+.number {
+  color: var(--tbb-rd-dim);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 767px) {
-  /* Mobile keeps the asymmetry but on a 6-column grid, so tiles stay large
-     enough to read instead of shrinking to thumbnails. */
-  .grid {
-    grid-template-columns: repeat(6, 1fr);
-    grid-auto-rows: clamp(3rem, 11vw, 5rem);
+.label {
+  color: var(--tbb-rd-ink);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  font-weight: 600;
+}
+
+@media (max-width: 63.9375rem) {
+  .head {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  /*
+   * A rail rather than a 2 × 2 grid: four frames stacked two-up on a phone are
+   * four small rectangles, and the sequence is the point. Native overflow
+   * scroll with snap points, so the trackpad, the finger, the keyboard and
+   * find-on-page all keep working and a vertical swipe still scrolls the page.
+   */
+  .steps {
+    display: flex;
+    padding-right: 0;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    /* Same reason as the guides rail: the snapport starts at the content. */
+    scroll-padding-left: var(--gutter);
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
   }
 
-  .a {
-    grid-column: span 6;
-    grid-row: span 4;
+  .steps::-webkit-scrollbar {
+    display: none;
   }
-  .b {
-    grid-column: span 3;
-    grid-row: span 3;
+
+  .step {
+    flex: none;
+    width: 17.5rem;
+    scroll-snap-align: start;
   }
-  .c {
-    grid-column: span 3;
-    grid-row: span 3;
-  }
-  .d {
-    grid-column: span 6;
-    grid-row: span 4;
-  }
-  .e {
-    grid-column: span 3;
-    grid-row: span 3;
-  }
-  .f {
-    grid-column: span 3;
-    grid-row: span 3;
-  }
-  .g {
-    grid-column: span 6;
-    grid-row: span 4;
-  }
-  .h {
-    grid-column: span 6;
-    grid-row: span 3;
+
+  /* The last frame gets the gutter back as trailing space, so the rail ends
+     where the text column does. */
+  .step:last-child {
+    margin-right: var(--gutter);
   }
 }

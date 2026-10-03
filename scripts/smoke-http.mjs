@@ -1,9 +1,17 @@
+import fs from "node:fs";
+
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const targetUrl = new URL(baseUrl);
 const workerTarget = targetUrl.hostname.endsWith(".workers.dev");
 const productionTarget = ["thebasebev.com", "www.thebasebev.com"].includes(
   targetUrl.hostname.toLowerCase(),
 );
+const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
+const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
+const publicPath = (route) => route === "/" ? "/ae" : `/ae${route}`;
+const publicRoutePaths = JSON.parse(fs.readFileSync("src/data/public-route-paths.json", "utf8"));
+const expectedSitemapUrls = 29 + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
   "/",
@@ -40,19 +48,34 @@ const publicRoutes = [
   "/terms",
   "/privacy",
   "/thank-you-form",
-  "/cabinet",
   "/retail",
   "/knowledge-recipes",
   "/not-found",
-  "/link",
-];
+].map(publicPath);
 
 const redirects = new Map([
-  ["/page65953477.html", "/"],
-  ["/page65953593.html", "/"],
-  ["/raf-cofeee", "/raf-coffee"],
-  ["/raf-cofee", "/raf-coffee"],
-  ["/functional-wellness", "/catalog"],
+  ...publicRoutePaths.map((route) => [route, publicPath(route)]),
+  ...retiredLegacyRedirects.map(({ source, destination }) => [source, publicPath(destination)]),
+  ["/page65953477.html", publicPath("/")],
+  ["/page65953593.html", publicPath("/")],
+  ["/raf-cofeee", publicPath("/raf-coffee")],
+  ["/raf-cofee", publicPath("/raf-coffee")],
+  ["/functional-wellness", publicPath("/catalog")],
+  ["/cabinet", publicPath("/")],
+  // Blog posts renamed after publication — Tilda resolved both spellings on
+  // the post id; every route here is generated, so the old one needs saying.
+  [
+    "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
+    publicPath("/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi"),
+  ],
+  [
+    "/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb",
+    publicPath("/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush"),
+  ],
+  [
+    "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
+    publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
+  ],
 ]);
 
 const failures = [];
@@ -63,10 +86,10 @@ for (const route of publicRoutes) {
   if (response.status !== 200) failures.push(`${route}: expected 200, received ${response.status}`);
   if (!/<html[^>]+lang=["']en["']/i.test(html)) failures.push(`${route}: missing static lang=en`);
   if (!/<title[^>]*>[^<]+<\/title>/i.test(html)) failures.push(`${route}: missing title`);
-  if (!["/cabinet", "/knowledge-recipes", "/link"].includes(route) && !/<h1\b/i.test(html)) {
+  if (route !== "/ae/knowledge-recipes" && !/<h1\b/i.test(html)) {
     failures.push(`${route}: missing crawler-visible H1`);
   }
-  if (route === "/" && (workerTarget || productionTarget)) {
+  if (route === "/ae" && (workerTarget || productionTarget)) {
     const expectedHeaders = new Map([
       ["x-content-type-options", "nosniff"],
       ["referrer-policy", "strict-origin-when-cross-origin"],
@@ -106,8 +129,8 @@ if (robots.status !== 200 || !robotsText.includes("Allow: /") || !robotsText.inc
 const sitemap = await fetch(`${baseUrl}/sitemap.xml`);
 const sitemapText = await sitemap.text();
 const sitemapUrls = sitemapText.match(/<loc>/g)?.length ?? 0;
-if (sitemap.status !== 200 || sitemapUrls !== 29) {
-  failures.push(`/sitemap.xml: expected 29 URLs, received ${sitemapUrls}`);
+if (sitemap.status !== 200 || sitemapUrls !== expectedSitemapUrls) {
+  failures.push(`/sitemap.xml: expected ${expectedSitemapUrls} URLs, received ${sitemapUrls}`);
 }
 
 const missing = await fetch(`${baseUrl}/this-route-must-not-exist`, { redirect: "manual" });
@@ -129,23 +152,11 @@ if (
 const lead = await fetch(`${baseUrl}/api/leads`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    name: "Smoke Test",
-    email: "smoke@example.com",
-    formName: "Contact Us",
-    consent: true,
-    landingPage: `${baseUrl}/?utm_source=chatgpt.com`,
-    submissionPage: `${baseUrl}/contacts`,
-    referrer: "https://chatgpt.com/",
-    utm_source: "chatgpt.com",
-    utm_medium: null,
-    utm_campaign: null,
-    utm_content: null,
-    utm_term: null,
-    clientTimestamp: new Date().toISOString(),
-  }),
+  // Intentionally invalid: smoke/readiness must never create a CRM record,
+  // even when the target has a real LEAD_API_URL configured.
+  body: JSON.stringify({}),
 });
-if (lead.status !== 503) failures.push(`/api/leads: expected unconfigured 503, received ${lead.status}`);
+if (lead.status !== 400) failures.push(`/api/leads: expected safe validation 400, received ${lead.status}`);
 if ((workerTarget || productionTarget) && !/no-store/i.test(lead.headers.get("cache-control") ?? "")) {
   failures.push("/api/leads: expected no-store response on Worker target");
 }
@@ -154,5 +165,5 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`HTTP smoke passed: ${publicRoutes.length} routes, ${redirects.size} redirects, SEO endpoints, branded 404, deployment headers, health, and lead API guard.`);
+  console.log(`HTTP smoke passed: ${publicRoutes.length} routes, ${redirects.size} redirects, SEO endpoints, branded 404, deployment headers, health, and non-delivering lead API validation.`);
 }

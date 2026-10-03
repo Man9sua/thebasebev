@@ -1,125 +1,175 @@
 "use client";
 
-import Link from "next/link";
-import { useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
-import { COMPANY, FOOTER_LINKS, SITE_NAV } from "@/lib/site-config";
-import { RegionPicker } from "./RegionPicker";
+import { publicPath } from "@/lib/site-paths";
+import {
+  COMPANY,
+  FOOTER_LINKS,
+  SHOP_URL,
+  SITE_NAV,
+  SITE_NAV_SECONDARY,
+} from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
-import styles from "./Overlay.module.css";
+import overlay from "./Overlay.module.css";
+import styles from "./SiteMenu.module.css";
 
-/**
- * Full-screen navigation. Every href is an existing route — the menu exposes
- * the current site, it does not promise pages that do not exist.
- */
+const WIDE = "(min-width: 64rem)";
+
 export function SiteMenu({
   open,
+  closing,
   onClose,
 }: {
   open: boolean;
+  closing: boolean;
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   useOverlay(open, onClose, panelRef);
+
+
+  const [productsOpen, setProductsOpen] = useState(true);
+
+  useEffect(() => {
+    const query = window.matchMedia(WIDE);
+    const apply = () => setProductsOpen(query.matches);
+
+    apply();
+    query.addEventListener("change", apply);
+    return () => query.removeEventListener("change", apply);
+  }, []);
+
+  const navLink = (href: string) =>
+    `${styles.navLink} ${pathname === publicPath(href) ? styles.current : ""}`;
 
   return (
     <div
       ref={panelRef}
-      className={`${styles.root} ${open ? styles.open : ""}`}
+      className={`${overlay.root} ${overlay.ink} ${open ? overlay.open : ""} ${closing ? overlay.closing : ""}`}
       id="site-menu"
       role="dialog"
       aria-modal="true"
       aria-label="Site navigation"
       aria-hidden={!open}
       tabIndex={-1}
-      // Keeps the panel and everything in it out of the tab order and the
-      // accessibility tree while it is clipped away.
-      {...(open ? {} : { inert: "" as unknown as boolean })}
+      inert={!open}
     >
-      <div className={styles.body}>
-        <nav className={styles.nav}>
-          {SITE_NAV.map((item, index) => (
-            <span
-              key={item.href}
-              className={styles.item}
-              style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
-            >
-              <Link href={item.href} className={styles.navLink} onClick={onClose}>
-                {item.label}
-              </Link>
-            </span>
-          ))}
-        </nav>
-
-        {/* The product grid production keeps in a hover mega-menu. Carrying
-            every one of those links here is also what keeps the homepage's
-            internal-link count where the SEO audit expects it. */}
-        <div
-          className={`${styles.products} ${styles.item}`}
-          style={{ transitionDelay: open ? `${120 + SITE_NAV.length * 55}ms` : "0ms" }}
-        >
-          <span className="tbb-label">All products</span>
-          <ul className={styles.productList}>
-            {PRODUCTS.map((product) => (
-              <li key={product.slug}>
-                <Link
-                  href={product.route}
-                  className={styles.productLink}
+      <div className={overlay.body}>
+        <div className={styles.layout}>
+          <div className={styles.main}>
+            <nav className={`${styles.nav} ${overlay.item}`} aria-label="Main">
+              {SITE_NAV.map((item, index) => (
+                <SiteLink
+                  key={item.href}
+                  href={item.href}
+                  className={navLink(item.href)}
+                  style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
+                  aria-current={pathname === publicPath(item.href) ? "page" : undefined}
                   onClick={onClose}
                 >
-                  <span
-                    className={styles.productSwatch}
-                    style={{ background: product.backgroundColor }}
-                    aria-hidden="true"
-                  />
-                  {product.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+                  {item.label}
+                </SiteLink>
+              ))}
+            </nav>
 
-        <div
-          className={`${styles.meta} ${styles.item}`}
-          style={{ transitionDelay: open ? `${160 + SITE_NAV.length * 55}ms` : "0ms" }}
-        >
-          <div className={styles.metaGroup}>
-            <span className="tbb-label">Enquiries</span>
-            <a className={styles.metaLink} href={COMPANY.phoneHref}>
-              {COMPANY.phone}
+
+            <details
+              className={`${styles.products} ${overlay.item}`}
+              style={{ transitionDelay: open ? `${160 + SITE_NAV.length * 55}ms` : "0ms" }}
+              open={productsOpen}
+              onToggle={(event) => setProductsOpen(event.currentTarget.open)}
+            >
+              <summary className={styles.productsHead}>
+                <span className={styles.productsLabel}>Products</span>
+                <span className={styles.productsMark} aria-hidden="true">
+                  +
+                </span>
+              </summary>
+
+              <SiteLink href="/catalog" className={styles.productsAll} onClick={onClose}>
+                All
+              </SiteLink>
+
+              <ul className={styles.productList}>
+                {PRODUCTS.map((product) => (
+                  <li key={product.slug}>
+                    <SiteLink
+                      href={product.route}
+                      className={styles.productLink}
+                      onClick={onClose}
+                    >
+                      {product.name}
+                    </SiteLink>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </div>
+
+          <div
+            className={`${styles.foot} ${overlay.item}`}
+            style={{ transitionDelay: open ? `${200 + SITE_NAV.length * 55}ms` : "0ms" }}
+          >
+
+            <SiteLink href="/contacts" className={styles.footCta} onClick={onClose}>
+              Get a quote
+            </SiteLink>
+
+
+            <a
+              className={styles.footShop}
+              href={SHOP_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Shop <span aria-hidden="true">↗</span>
             </a>
-            <span className={styles.metaLink}>
-              {COMPANY.city}, {COMPANY.country}
-            </span>
-          </div>
 
-          <div className={styles.metaGroup}>
-            <span className="tbb-label">Account</span>
-            <Link className={styles.metaLink} href="/cabinet" onClick={onClose}>
-              Cabinet
-            </Link>
-            <Link className={styles.metaLink} href="/contacts" onClick={onClose}>
-              Contact us
-            </Link>
-          </div>
+            <div className={styles.footLinks}>
+              {SITE_NAV_SECONDARY.map((item) => (
+                <SiteLink
+                  key={item.href}
+                  href={item.href}
+                  className={`${styles.secondaryLink} ${
+                    pathname === publicPath(item.href) ? styles.current : ""
+                  }`}
+                  aria-current={pathname === publicPath(item.href) ? "page" : undefined}
+                  onClick={onClose}
+                >
+                  {item.label}
+                </SiteLink>
+              ))}
+            </div>
 
-          <div className={`${styles.metaGroup} ${styles.metaRegion}`}>
-            <span className="tbb-label">Region</span>
-            <RegionPicker compact />
-          </div>
-
-          <div className={styles.metaGroup}>
-            <span className="tbb-label">Legal</span>
-            {FOOTER_LINKS.legal.map((item) => (
-              <Link
-                key={item.href}
-                className={styles.metaLink}
-                href={item.href}
-                onClick={onClose}
+            <div className={styles.footMeta}>
+              <a className={styles.footPhone} href={COMPANY.phoneHref}>
+                {COMPANY.phone}
+              </a>
+              <a
+                className={styles.footWhatsapp}
+                href={COMPANY.whatsappHref}
+                target="_blank"
+                rel="noreferrer noopener"
               >
-                {item.label}
-              </Link>
-            ))}
+                WhatsApp
+              </a>
+              <span className={styles.footRegion}>UAE EN</span>
+
+              {FOOTER_LINKS.legal.map((item) => (
+                <SiteLink
+                  key={item.href}
+                  href={item.href}
+                  className={styles.footLegal}
+                  onClick={onClose}
+                >
+                  {item.label}
+                </SiteLink>
+              ))}
+            </div>
           </div>
         </div>
       </div>

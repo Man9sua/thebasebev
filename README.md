@@ -4,9 +4,14 @@ This repository is the first-stage migration of [thebasebev.com](https://thebase
 
 ## Current stage
 
-The app uses a server-rendered compatibility layer: a catch-all App Router page maps known production and legacy URLs to the corresponding exported HTML, extracts page metadata, and emits the exported body on the server. This keeps meaningful content available in the initial HTML while the Tilda blocks are replaced section by section.
+The redesigned homepage is implemented as React components. The remaining site
+uses a server-rendered compatibility layer: a catch-all App Router page maps
+known production and legacy URLs to the corresponding exported HTML, extracts
+page metadata, and emits the exported body on the server. This keeps meaningful
+content available in the initial HTML while Tilda blocks are replaced section by
+section.
 
-This is not yet a Tilda-free implementation. The compatibility document executes the retained export scripts in the initial server response, and the critical homepage/header/catalog/cart/product-order/form paths are covered by browser smoke tests. Those tests are evidence for the audited paths, not a claim that every legacy popup, calculator, or product interaction has already been ported. A typed lead bridge/API boundary replaces opaque Tilda submission for allowlisted lead forms, but lead and order delivery still need owned credentials/contracts.
+This is not yet a Tilda-free implementation. The compatibility document executes the retained export scripts in the initial server response, and the critical homepage/header/catalog/cart/product-order/form paths are covered by browser smoke tests. Those tests are evidence for the audited paths, not a claim that every legacy popup, calculator, or product interaction has already been ported. A typed lead bridge/API boundary replaces opaque Tilda submission for allowlisted lead forms. Staging lead delivery has one controlled Odoo proof; order delivery remains outside the migration contract.
 
 ## Stack
 
@@ -16,6 +21,7 @@ This is not yet a Tilda-free implementation. The compatibility document executes
 - Global/exported CSS during the compatibility phase
 - OpenNext for Cloudflare
 - Cloudflare Workers staging and isolated production-preview environments
+- Dedicated Cloudflare account `mansua`; personal account `indukok667` is excluded
 
 ## Requirements
 
@@ -39,6 +45,8 @@ Run checks sequentially on Windows/OneDrive to avoid concurrent `.next` file loc
 ```powershell
 npm.cmd run typecheck
 npm.cmd run lint
+npm.cmd run audit:leads
+npm.cmd run test:stripe
 npm.cmd run build
 npm.cmd run check:assets
 ```
@@ -77,8 +85,9 @@ npm.cmd run preview
 Deploy only the configured staging Worker:
 
 ```powershell
-npx.cmd wrangler whoami
-npx.cmd wrangler login
+npx.cmd wrangler auth create mansua
+npx.cmd wrangler auth activate mansua .
+npx.cmd wrangler whoami --json
 npm.cmd run deploy:staging
 ```
 
@@ -90,29 +99,34 @@ npm.cmd run deploy:production-preview
 
 This command targets `the-base-production` on `workers.dev` only. It does not attach `thebasebev.com`.
 
-The configured staging Worker name is `the-base-staging`. The repository does not configure the production domain and this workflow must not be used to change `thebasebev.com`, its DNS, or the existing Tilda project. The current `workers.dev` deployment has passed both HTTP and browser smoke; future deployments should repeat those checks before handoff.
+The configured staging Worker name is `the-base-staging`. The repository does not configure the production domain and this workflow must not be used to change `thebasebev.com`, its DNS, or the existing Tilda project. Version `daa6c072-728d-4c24-9e96-7856b048b41f` was deployed on 2026-08-24. Post-deploy smoke is temporarily blocked by Cloudflare Error 1027 because account `mansua` exhausted its Free daily Worker request quota; repeat the remote suite after the 00:00 UTC reset.
 
 Current verified staging deployment:
 
 ```text
-https://the-base-staging.mnsdemo.workers.dev
+https://the-base-staging.mansua.workers.dev
 ```
 
 Current verified production preview:
 
 ```text
-https://the-base-production.mnsdemo.workers.dev
+https://the-base-production.mansua.workers.dev
 ```
 
-The OpenNext configuration uses its read-only Workers Static Assets incremental cache for the SSG pages. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
+The OpenNext configuration uses its read-only Workers Static Assets incremental cache for the SSG pages. The Cloudflare build also prepares a generated static-document fast path so the public site stays below the target account's Workers Free CPU limit; dynamic APIs remain in OpenNext. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
 
 Run the complete sequential verification against a deployed target with:
 
 ```powershell
-npm.cmd run audit:production-readiness -- https://the-base-production.mnsdemo.workers.dev
+npm.cmd run audit:production-readiness -- https://the-base-production.mansua.workers.dev
+npm.cmd run audit:cloudflare-parity
 ```
 
 Individual remote audits are available as `audit:crawlers`, `audit:seo-parity`, `audit:routes`, and `audit:analytics`. They are diagnostic only and do not bypass Cloudflare controls or submit real leads/orders.
+
+`smoke:http` submits only an invalid lead payload, and `smoke:browser` mocks the
+lead endpoint. The full readiness orchestrator therefore cannot create a CRM
+lead. The opt-in `test:lead-live` command is the only intentional delivery path.
 
 ## Environment and integrations
 
@@ -127,7 +141,7 @@ ODOO_URL=
 ODOO_API_KEY=
 ```
 
-Do not commit real secrets. `.env.example` documents the intended boundary. The local `/api/leads` route validates a typed payload and forwards it to `LEAD_API_URL` with `LEAD_API_KEY`; without those values it intentionally returns a service-unavailable response and does not pretend a lead was delivered.
+Do not commit real secrets. `.env.example` documents the intended boundary. The local `/api/leads` route validates a typed payload and forwards it to server-only `LEAD_API_URL`; `LEAD_API_KEY` is optional for the current upstream. Staging stores the endpoint as a Worker secret. Without an endpoint it intentionally returns a service-unavailable response and does not pretend a lead was delivered.
 
 The export contained overlapping GA/GTM runtimes. They are removed from compatibility HTML. The controlled analytics component runs only on the exact production hostname, gives a confirmed GTM container precedence, and uses direct GA only when GTM is absent. Preview traffic therefore does not pollute the historical properties.
 
@@ -184,6 +198,9 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 - [Generated route/indexability report](./ROUTE_INDEXABILITY_AUDIT.md)
 - [Generated SEO comparison report](./SEO_PARITY_REPORT.md)
 - [Generated analytics audit](./ANALYTICS_AUDIT.md)
+- [Prelaunch merge matrix](./PRELAUNCH_MERGE_MATRIX.md)
+- [Prelaunch QA record](./MANUAL_QA.md)
+- [Stripe Test Mode POC](./STRIPE_TEST_POC.md)
 
 ## Delivery status
 
@@ -195,11 +212,11 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 | SEO parity | DONE | Production build and HTTP smoke verify 39 routes, five exact 301 redirects, canonical sitemap/robots, branded 404, and server HTML. |
 | Visual parity of Next.js output | PARTIAL | Nine target widths are captured and representative layouts were reviewed; exhaustive page-by-page pixel diffs remain. |
 | Interactive parity | PARTIAL | Hero, header/menu/region, mobile menu, catalogue filters/prices, add-to-cart, checkout dialog, product-order popup, and honest form failure UX pass browser smoke; remaining legacy surfaces still need route-level tests/React extraction. |
-| Lead delivery and attribution | NEEDS CREDENTIALS | Typed bridge and API route exist; endpoint/authentication, destination ownership, and end-to-end verification are required. |
+| Lead delivery and attribution | STAGING VERIFIED | Typed bridge/API exist; one controlled Odoo lead preserved request ID and full first-touch attribution. Production enablement remains human-controlled. |
 | Checkout/order delivery | NEEDS CREDENTIALS | Cart state/UI are verified without submitting a real order; owned receiver/payment contracts are required. |
 | Dynamic recipes/catalog feed | BLOCKED | Upstream feed data is not contained in the export. |
 | OpenNext Worker bundle | DONE | `npm run cf:build` completes locally; Windows emits the upstream WSL recommendation. |
-| Cloudflare staging deployment | DONE | `the-base-staging.mnsdemo.workers.dev` is deployed; remote HTTP and browser smoke pass. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mnsdemo.workers.dev` Worker exists with preview noindex and no custom domain. |
-| GitHub CI | DONE | Pull requests and shared-branch pushes run install/typecheck/lint/build/assets/audit checks; CI has no deployment job. Branch protection remains a GitHub-admin setting to confirm. |
+| Cloudflare staging deployment | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in `mansua`; post-deploy remote smoke is blocked by account-wide Error 1027 until the Free quota resets. |
+| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker exists in `mansua` with preview noindex and no custom domain. |
+| GitHub CI/CD | DONE | Pull requests and shared-branch pushes run verification only. A separate manual workflow can deploy `workers.dev` previews only after enforcing the `mansua` account ID; GitHub environment credentials still need owner configuration. |
 | Production cutover | HUMAN APPROVAL REQUIRED | Runbooks are prepared; domain, DNS, Tilda, and Search Console remain untouched. |

@@ -1,0 +1,435 @@
+/**
+ * The Blog shelf.
+ *
+ * Deliberately the Glossary's surface: same paper, same bordered control
+ * panel, same uppercase meta and same card border, so the two Resources
+ * shelves read as one system. The differences are the ones a post needs — a
+ * 16:10 cover, a lead card that spans the grid, and three columns instead of
+ * two, because thirty cards in two columns is a very long page.
+ *
+ * `!important` on the card headings and copy for the reason the picker carries
+ * it: `design-tokens` zeroes `p`/heading margins for redesigned surfaces with
+ * two-selector rules that beat a single class here.
+ */
+
+.page {
+  min-height: 100vh;
+  padding-top: var(--tbb-header-h);
+  overflow: clip;
+  background: #fbf8f3;
+  color: var(--tbb-ink);
+}
+
+.hero {
+  padding: clamp(5rem, 10vw, 9rem) var(--tbb-gutter) clamp(3.5rem, 7vw, 6rem);
+  border-bottom: 1px solid var(--tbb-line);
+  background:
+    radial-gradient(circle at 78% 18%, rgba(255, 0, 0, 0.08), transparent 27%),
+    var(--tbb-grey-lightest);
+}
+
+.heroInner,
+.content {
+  width: 100%;
+  max-width: var(--tbb-measure-wide);
+  margin-inline: auto;
+}
+
+.hero h1 {
+  max-width: 12ch;
+  margin-top: 1rem;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(3.4rem, 9vw, 8.5rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+}
+
+.hero p {
+  max-width: 42rem;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  color: var(--tbb-ink-soft);
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1.5;
+}
+
+.content {
+  padding: clamp(3rem, 7vw, 6rem) var(--tbb-gutter) var(--tbb-section);
+}
+
+/* ---- controls ---- */
+
+.controls {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--tbb-line);
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.search {
+  position: relative;
+  display: block;
+}
+
+.search svg {
+  position: absolute;
+  inset-inline-start: 1.1rem;
+  top: 50%;
+  width: 1.1rem;
+  height: 1.1rem;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: var(--tbb-muted);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.search input {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.8rem 1.25rem 0.8rem 3.15rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  outline: none;
+  background: var(--tbb-grey-lightest);
+  color: var(--tbb-ink);
+  font: inherit;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.search input:focus {
+  border-color: var(--tbb-ink);
+  background: var(--tbb-paper);
+}
+
+.filterGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter,
+.filterActive {
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tbb-ink);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.filterActive {
+  border-color: var(--tbb-black);
+  background: var(--tbb-black);
+  color: var(--tbb-on-dark);
+}
+
+.filter:hover {
+  border-color: var(--tbb-ink);
+}
+
+.filter:focus-visible,
+.filterActive:focus-visible,
+.resultBar button:focus-visible,
+.lead:focus-visible,
+.post:focus-visible {
+  outline: 2px solid var(--tbb-accent);
+  outline-offset: 3px;
+}
+
+.resultBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(2rem, 4vw, 3rem) 0 1.25rem;
+  color: var(--tbb-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.resultBar button {
+  padding: 0 0 0.2rem;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: var(--tbb-ink);
+  font: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+/* ---- cards ---- */
+
+.lead,
+.post {
+  display: grid;
+  min-width: 0;
+  border: 1px solid var(--tbb-line);
+  background: rgba(255, 255, 255, 0.64);
+  color: inherit !important;
+  text-decoration: none !important;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.lead:hover,
+.post:hover {
+  border-color: rgba(0, 0, 0, 0.34);
+  background: var(--tbb-paper);
+  color: inherit !important;
+  text-decoration: none !important;
+  transform: translateY(-3px);
+}
+
+/* The lead runs as a spread: picture on the left, copy on the right. */
+.lead {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: stretch;
+  margin-bottom: clamp(0.75rem, 1.6vw, 1.5rem);
+}
+
+.leadArt,
+.art {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: var(--tbb-grey-lightest);
+}
+
+/* The cover is what sizes the lead row. Left to its own height it came out
+   near 800px against 350 of copy, which put the call to action half a screen
+   under the sentence it belongs to. */
+.leadArt,
+.art {
+  aspect-ratio: 16 / 10;
+}
+
+.leadArt img,
+.art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--tbb-ease);
+}
+
+.lead:hover .leadArt img,
+.post:hover .art img {
+  transform: scale(1.035);
+}
+
+.leadCopy,
+.postBody {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+/* Centred rather than pinned: the copy is the shorter half of the spread, and
+   hanging it from the top left it floating over an empty lower half. */
+.leadCopy {
+  justify-content: center;
+  padding: clamp(1.75rem, 3.4vw, 3rem);
+}
+
+.leadCopy .readMore {
+  margin-top: 0;
+  padding-top: clamp(1.25rem, 2.4vw, 1.75rem);
+}
+
+/* The cover keeps its ratio, so the copy is what takes up the slack when a
+   card is shorter than its row — without this the spare height opened as a gap
+   between the picture and the text instead. */
+.post {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.postBody {
+  padding: clamp(1.35rem, 2.2vw, 1.75rem);
+}
+
+.postMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--tbb-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lead h2,
+.post h2 {
+  margin: clamp(1rem, 2vw, 1.5rem) 0 0 !important;
+  font-family: var(--tbb-font-display);
+  font-weight: 600 !important;
+  letter-spacing: -0.025em;
+  line-height: 1.08 !important;
+}
+
+.lead h2 {
+  font-size: clamp(1.7rem, 3vw, 2.75rem);
+}
+
+.post h2 {
+  font-size: clamp(1.25rem, 1.7vw, 1.5rem);
+}
+
+.excerpt {
+  display: block;
+  margin-top: 0.9rem;
+  color: var(--tbb-ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+/* Pinned to the foot so a two-line title and a four-line title still line
+   their call to action up across a row. */
+.readMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: clamp(1.25rem, 2.4vw, 2rem);
+  color: var(--tbb-accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.readMore span {
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.lead:hover .readMore span,
+.post:hover .readMore span {
+  transform: translateX(3px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+}
+
+.empty {
+  padding: clamp(4rem, 10vw, 8rem) 1rem;
+  border-top: 1px solid var(--tbb-ink);
+  text-align: center;
+}
+
+.empty strong {
+  font-family: var(--tbb-font-display);
+  font-size: var(--tbb-text-h3);
+}
+
+.empty p {
+  margin-top: 0.75rem;
+  color: var(--tbb-muted);
+}
+
+@media (max-width: 74.9375rem) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .hero {
+    padding-top: clamp(4.5rem, 22vw, 7rem);
+  }
+
+  .hero h1 {
+    font-size: clamp(3.2rem, 17vw, 5rem);
+  }
+
+  .controls {
+    padding: 1rem;
+  }
+
+  /* One swipeable row rather than four stacked lines of chips. */
+  .filterGroup {
+    flex-wrap: nowrap;
+    padding-bottom: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filterGroup::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter,
+  .filterActive {
+    flex: 0 0 auto;
+  }
+
+  /* The lead loses its spread and becomes the first card of the column. */
+  .lead {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .leadCopy {
+    padding: 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .postBody {
+    padding: 1.35rem;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .content {
+    padding-inline: 1rem;
+  }
+
+  .postMeta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lead,
+  .post,
+  .leadArt img,
+  .art img,
+  .readMore span {
+    transition: none;
+  }
+
+  .lead:hover,
+  .post:hover,
+  .lead:hover .leadArt img,
+  .post:hover .art img,
+  .lead:hover .readMore span,
+  .post:hover .readMore span {
+    transform: none;
+  }
+}

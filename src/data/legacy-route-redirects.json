@@ -1,0 +1,274 @@
+[
+    {
+        "source":  "/link",
+        "destination":  "/"
+    },
+    {
+        "source":  "/page114743626.html",
+        "destination":  "/catalog"
+    },
+    {
+        "source":  "/page114837666.html",
+        "destination":  "/retail"
+    },
+    {
+        "source":  "/page115314536.html",
+        "destination":  "/not-found"
+    },
+    {
+        "source":  "/page120311356.html",
+        "destination":  "/private-labeling"
+    },
+    {
+        "source":  "/page147468696.html",
+        "destination":  "/wholesale-strategy"
+    },
+    {
+        "source":  "/page151583806.html",
+        "destination":  "/resources"
+    },
+    {
+        "source":  "/page151592086.html",
+        "destination":  "/resources/blog"
+    },
+    {
+        "source":  "/page151592696.html",
+        "destination":  "/resources/glossary"
+    },
+    {
+        "source":  "/page151679366.html",
+        "destination":  "/resources/tools"
+    },
+    {
+        "source":  "/page154758576.html",
+        "destination":  "/knowledge-recipes"
+    },
+    {
+        "source":  "/page154764216.html",
+        "destination":  "/"
+    },
+    {
+        "source":  "/page154766476.html",
+        "destination":  "/catalog"
+    },
+    {
+        "source":  "/page155556086.html",
+        "destination":  "/sitemap"
+    },
+    {
+        "source":  "/page155598016.html",
+        "destination":  "/rnd"
+    },
+    {
+        "source":  "/page62361237.html",
+        "destination":  "/"
+    },
+    {
+        "source":  "/page62362389.html",
+        "destination":  "/"
+    },
+    {
+        "source":  "/page62447481.html",
+        "destination":  "/"
+    },
+    {
+        "source":  "/page62448803.html",
+        "destination":  "/raf-coffee"
+    },
+    {
+        "source":  "/page62494049.html",
+        "destination":  "/cream-latte"
+    },
+    {
+        "source":  "/page62497031.html",
+        "destination":  "/chai-latte"
+    },
+    {
+        "source":  "/page62508381.html",
+        "destination":  "/milkshake"
+    },
+    {
+        "source":  "/page62510271.html",
+        "destination":  "/frappe"
+    },
+    {
+        "source":  "/page62515411.html",
+        "destination":  "/iced-tea"
+    },
+    {
+        "source":  "/page62539863.html",
+        "destination":  "/cordial"
+    },
+    {
+        "source":  "/page62541199.html",
+        "destination":  "/topping"
+    },
+    {
+        "source":  "/page62544887.html",
+        "destination":  "/matcha"
+    },
+    {
+        "source":  "/page62565397.html",
+        "destination":  "/chocolate"
+    },
+    {
+        "source":  "/page62566191.html",
+        "destination":  "/sugar-syrup"
+    },
+    {
+        "source":  "/page62573319.html",
+        "destination":  "/vending"
+    },
+    {
+        "source":  "/page62574449.html",
+        "destination":  "/jam"
+    },
+    {
+        "source":  "/page62576005.html",
+        "destination":  "/garnish"
+    },
+    {
+        "source":  "/page62578053.html",
+        "destination":  "/sugar-free"
+    },
+    {
+        "source":  "/page62581091.html",
+        "destination":  "/tea"
+    },
+    {
+        "source":  "/page62585333.html",
+        "destination":  "/contacts"
+    },
+    {
+        "source":  "/page62588185.html",
+        "destination":  "/about-us"
+    },
+    {
+        "source":  "/page65033993.html",
+        "destination":  "/distributors"
+    },
+    {
+        "source":  "/page65943847.html",
+        "destination":  "/"
+    },
+    {
+        "source":  "/page68443067.html",
+        "destination":  "/terms"
+    },
+    {
+        "source":  "/page68443503.html",
+        "destination":  "/privacy"
+    },
+    {
+        "source":  "/page77299576.html",
+        "destination":  "/thank-you-order"
+    },
+    {
+        "source":  "/page77849746.html",
+        "destination":  "/thank-you-form"
+    },
+    {
+        "source":  "/catalog/tproduct/194500823312-sugar-free",
+        "destination":  "/sugar-free"
+    },
+    {
+        "source":  "/tproduct/194500823312-sugar-free",
+        "destination":  "/sugar-free"
+    },
+    {
+        "source":  "/catalog/tproduct/207187094752-frappe",
+        "destination":  "/frappe"
+    },
+    {
+        "source":  "/tproduct/207187094752-frappe",
+        "destination":  "/frappe"
+    },
+    {
+        "source":  "/catalog/tproduct/293702296702-iced-tea",
+        "destination":  "/iced-tea"
+    },
+    {
+        "source":  "/tproduct/293702296702-iced-tea",
+        "destination":  "/iced-tea"
+    },
+    {
+        "source":  "/catalog/tproduct/296069682122-chocolate",
+        "destination":  "/chocolate"
+    },
+    {
+        "source":  "/tproduct/296069682122-chocolate",
+        "destination":  "/chocolate"
+    },
+    {
+        "source":  "/catalog/tproduct/316933484392-garnish",
+        "destination":  "/garnish"
+    },
+    {
+        "source":  "/tproduct/316933484392-garnish",
+        "destination":  "/garnish"
+    },
+    {
+        "source":  "/catalog/tproduct/324849428612-jam",
+        "destination":  "/jam"
+    },
+    {
+        "source":  "/tproduct/324849428612-jam",
+        "destination":  "/jam"
+    },
+    {
+        "source":  "/catalog/tproduct/389328196132-milkshake",
+        "destination":  "/milkshake"
+    },
+    {
+        "source":  "/tproduct/389328196132-milkshake",
+        "destination":  "/milkshake"
+    },
+    {
+        "source":  "/catalog/tproduct/466013811412-raf",
+        "destination":  "/raf-coffee"
+    },
+    {
+        "source":  "/tproduct/466013811412-raf",
+        "destination":  "/raf-coffee"
+    },
+    {
+        "source":  "/catalog/tproduct/778280145182-cordial",
+        "destination":  "/cordial"
+    },
+    {
+        "source":  "/tproduct/778280145182-cordial",
+        "destination":  "/cordial"
+    },
+    {
+        "source":  "/catalog/tproduct/781170478702-cream-latte",
+        "destination":  "/cream-latte"
+    },
+    {
+        "source":  "/tproduct/781170478702-cream-latte",
+        "destination":  "/cream-latte"
+    },
+    {
+        "source":  "/catalog/tproduct/827401503212-chai-latte",
+        "destination":  "/chai-latte"
+    },
+    {
+        "source":  "/tproduct/827401503212-chai-latte",
+        "destination":  "/chai-latte"
+    },
+    {
+        "source":  "/catalog/tproduct/888812727292-sugar-syrop",
+        "destination":  "/sugar-syrup"
+    },
+    {
+        "source":  "/tproduct/888812727292-sugar-syrop",
+        "destination":  "/sugar-syrup"
+    },
+    {
+        "source":  "/catalog/tproduct/975474893862-matcha",
+        "destination":  "/matcha"
+    },
+    {
+        "source":  "/tproduct/975474893862-matcha",
+        "destination":  "/matcha"
+    }
+]

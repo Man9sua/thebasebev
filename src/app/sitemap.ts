@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
+import { BLOG_POSTS } from "@/data/blog";
+import { GLOSSARY_ENTRIES } from "@/data/glossary";
 import { SITE_ORIGIN, sitemapRoutes } from "@/lib/site-pages";
+import { publicPath } from "@/lib/site-paths";
 
 const auditedLastModified = {
   "/": "2026-08-20T20:38:39+00:00",
@@ -38,7 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     throw new Error(`Expected 29 audited sitemap routes, received ${sitemapRoutes.length}.`);
   }
 
-  return sitemapRoutes.map(({ route }) => {
+  const publicPages = sitemapRoutes.map(({ route }) => {
     const lastModified = auditedLastModified[route as keyof typeof auditedLastModified];
 
     if (!lastModified) {
@@ -46,8 +49,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
 
     return {
-      url: `${SITE_ORIGIN}${route === "/" ? "/" : route}`,
+      url: `${SITE_ORIGIN}${publicPath(route)}`,
       lastModified,
     };
   });
+
+  const glossaryArticles = GLOSSARY_ENTRIES.map((entry) => ({
+    url: `${SITE_ORIGIN}${publicPath(entry.path)}`,
+    lastModified: `${entry.published}T00:00:00.000Z`,
+  }));
+
+  const blogArticles = BLOG_POSTS.map((post) => ({
+    url: `${SITE_ORIGIN}${publicPath(post.path)}`,
+    lastModified: `${post.published}T00:00:00.000Z`,
+  }));
+
+  return [...publicPages, ...glossaryArticles, ...blogArticles];
 }

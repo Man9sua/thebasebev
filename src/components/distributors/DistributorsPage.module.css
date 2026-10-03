@@ -1,0 +1,1150 @@
+/**
+ * Become a distributor — the redesign.
+ *
+ * Seven blocks, alternating paper and ink, on the 1440 × 96 grid the design
+ * document draws: 144 of vertical padding, 96 of gutter, a 1248 measure. The
+ * numbers below are that grid expressed fluidly, so the same proportions hold
+ * from 320 up rather than snapping at breakpoints.
+ *
+ * Type: Exo 2 Black, uppercase, −2% tracking, 0.86 line height for every
+ * section heading. That one rule is what makes the page read as one page.
+ *
+ * Colour comes from the `--tbb-rd-*` block in `design-tokens.css` — see the
+ * note there about why this palette is warmer than the rest of the site's.
+ *
+ * `!important` where it appears is answering the exported Tilda sheet, which
+ * is global on this route: `html body p { line-height: 1.7 }` and
+ * `html body h1, html body [class*="title"] { font-weight: 300 }` both carry
+ * it, and the second outranks a single class.
+ */
+
+.page {
+  --pad-y: clamp(4rem, 10vw, 9rem);
+  --gutter: clamp(1.25rem, 6.6667vw, 6rem);
+  --radius: clamp(1.25rem, 1.9444vw, 1.75rem);
+
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+  font-family: var(--tbb-font-sans);
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+}
+
+/* One rule for every heading on the page. */
+.sectionTitle {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.5rem, 5.5556vw, 5rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--tbb-rd-ink);
+  text-wrap: balance;
+}
+
+.sectionLede {
+  margin: 0 !important;
+  max-width: 32rem;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+/* ---- buttons ---- */
+
+.primary,
+.ghost,
+.outline,
+.submit,
+.tierCta,
+.tierCtaFeatured,
+.rangeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: clamp(3.5rem, 4.1667vw, 3.75rem);
+  padding-inline: clamp(1.5rem, 2.5vw, 2.25rem);
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: var(--tbb-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.primary,
+.submit,
+.tierCtaFeatured {
+  background: var(--tbb-rd-red);
+  border-color: var(--tbb-rd-red);
+  color: #fff !important;
+}
+
+.primary:hover,
+.submit:hover,
+.tierCtaFeatured:hover {
+  background: var(--tbb-rd-red-dark);
+  border-color: var(--tbb-rd-red-dark);
+  color: #fff !important;
+}
+
+/* On ink: a hairline in paper at half strength, solid on hover. */
+.ghost {
+  border-color: rgba(246, 246, 244, 0.5);
+  color: var(--tbb-rd-paper) !important;
+}
+
+.ghost:hover {
+  border-color: var(--tbb-rd-paper);
+  color: #fff !important;
+}
+
+/* On paper: an ink hairline that fills in. */
+.outline,
+.tierCta,
+.rangeButton {
+  border-color: var(--tbb-rd-ink);
+  color: var(--tbb-rd-ink) !important;
+}
+
+.outline:hover,
+.tierCta:hover,
+.rangeButton:hover {
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper) !important;
+}
+
+.primary:focus-visible,
+.ghost:focus-visible,
+.outline:focus-visible,
+.submit:focus-visible,
+.tierCta:focus-visible,
+.tierCtaFeatured:focus-visible,
+.rangeButton:focus-visible,
+.rangeCard:focus-visible,
+.rangeLink:focus-visible,
+.faqLink:focus-visible,
+.faqQuestion:focus-visible,
+.formPhone:focus-visible,
+.formCall:focus-visible {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 3px;
+}
+
+/* ---- 1 · hero ---- */
+
+/*
+ * The truck, as a frame from a commercial: movement, a night road, headlights.
+ * The copy sits on a dark wash at the foot so it never crosses the cab or the
+ * lettering on the trailer.
+ */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: min(56.25rem, 100vh);
+  padding: calc(var(--tbb-header-h) + var(--pad-y)) var(--gutter) clamp(3rem, 5vw, 4.5rem);
+  overflow: clip;
+  background: var(--tbb-rd-ink-deep);
+  color: var(--tbb-rd-paper);
+}
+
+.heroFrame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.heroPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The cab sits left of centre and the sky carries the top third; holding the
+     frame a little above centre keeps the tractor unit in shot as the hero
+     gets shorter. */
+  object-position: 50% 42%;
+}
+
+/*
+ * Clear over the top half, then down to the ground colour — the design's own
+ * 420-of-900 wash, written as percentages so it holds at any hero height.
+ */
+.heroVeil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 14, 20, 0) 47%,
+    rgba(11, 14, 20, 0.85) 73%,
+    var(--tbb-rd-ink-deep) 100%
+  );
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.2222vw, 2rem);
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+  /* The heading below is measured against this box — see the note there. */
+  container-type: inline-size;
+}
+
+/*
+ * One line, the full width of the measure.
+ *
+ * Sized in `cqw` for the same reason the reasons block is: "BECOME A
+ * DISTRIBUTOR" draws 11.56x its font size, so 8.4cqw fills the measure to
+ * about 97% at every width and never wraps or overflows. At 1440 that is
+ * 105px against the document's 108.
+ */
+.heroTitle {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2.5rem, 8.6cqw, 7rem);
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--tbb-rd-paper);
+}
+
+/* Sentence left, buttons right, both sitting on the same baseline. */
+.heroFoot {
+  display: flex;
+  gap: clamp(1.5rem, 3.3333vw, 3rem);
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.heroLede {
+  margin: 0 !important;
+  max-width: 32.5rem;
+  color: var(--tbb-rd-on-ink);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* ---- 2 · built for distribution ---- */
+
+.reasons {
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.reasonsInner {
+  display: grid;
+  /* The design's own split, 560 against 624 at 1440. */
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(2rem, 4.4444vw, 4rem);
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* The offer stays on screen for the length of the scroll past the cards. */
+.reasonsAside {
+  position: sticky;
+  top: calc(var(--tbb-header-h) + 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 3.3333vw, 3rem);
+  /* The heading below is sized against this column — see the note there. */
+  container-type: inline-size;
+}
+
+/*
+ * The one heading on the page that shares its row with something else, sized
+ * against its own column instead of the viewport.
+ *
+ * "DISTRIBUTION" is twelve characters of Exo 2 Black. At the viewport's 80px
+ * it draws 541px wide and the column holding it was 474 — so the word ran out
+ * of its track, across the 64px gap, and touched the first card. Every desktop
+ * width was over by 48 to 68px, because both numbers scale together and the
+ * word scales faster.
+ *
+ * `cqw` breaks that tie: the measured word is 6.76x the font size, so 14cqw
+ * keeps it at about 95% of whatever the column happens to be, at every width,
+ * and lands on 76px at 1440 — four off the design's 80, which is invisible
+ * next to a heading that used to collide.
+ */
+.reasonsAside .sectionTitle {
+  font-size: clamp(2.5rem, 14cqw, 5rem);
+}
+
+.reasonsActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.reasonGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reason {
+  display: flex;
+  min-height: 16.25rem;
+  flex-direction: column;
+  gap: 0.875rem;
+  box-sizing: border-box;
+  padding: clamp(1.25rem, 2.2222vw, 2rem);
+  border-radius: clamp(1rem, 1.6667vw, 1.5rem);
+  background: var(--tbb-rd-card);
+}
+
+.reasonNumber {
+  color: var(--tbb-rd-dim);
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pushed to the foot of its own space, so the titles sit on one line across a
+   row whatever the length of the sentence under them. */
+.page .reasonTitle {
+  margin: auto 0 0 !important;
+  font-size: clamp(1.25rem, 1.8056vw, 1.625rem);
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  color: var(--tbb-rd-ink);
+  text-wrap: balance;
+}
+
+.reasonBody {
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+/* ---- 3 · four steps ---- */
+
+.steps {
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.steps .inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5.5556vw, 5rem);
+}
+
+.stepGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3.3333vw, 3rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stepNumber {
+  font-family: var(--tbb-font-display);
+  font-size: clamp(2rem, 4.4444vw, 4rem);
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--tbb-rd-red);
+  font-variant-numeric: tabular-nums;
+}
+
+.page .stepTitle {
+  margin: 0.5rem 0 0 !important;
+  font-size: clamp(1.25rem, 1.6667vw, 1.5rem);
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  color: var(--tbb-rd-ink);
+}
+
+.stepBody {
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+/* ---- 4 · tiers ---- */
+
+.tiers {
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.tiers .inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.tiersHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 21.25rem;
+  gap: clamp(1.5rem, 4.4444vw, 4rem);
+  align-items: end;
+}
+
+.tierGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.tier {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.2222vw, 2rem);
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 2.7778vw, 2.5rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-card);
+  color: var(--tbb-rd-ink);
+}
+
+.tierFeatured {
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.tierHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.tierEyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tbb-rd-muted);
+}
+
+.tierFeatured .tierEyebrow {
+  color: var(--tbb-rd-red);
+}
+
+.page .tierName {
+  margin: 0 !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.75rem, 3.0556vw, 2.75rem);
+  font-weight: 900 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.tierEntry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.tierEntryLabel {
+  font-size: 0.875rem;
+  color: var(--tbb-rd-muted);
+}
+
+.tierFeatured .tierEntryLabel {
+  color: var(--tbb-rd-dim);
+}
+
+.tierEntryValue {
+  font-size: clamp(1.125rem, 1.5278vw, 1.375rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: inherit;
+}
+
+.tierItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tierItems li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  color: var(--tbb-rd-body);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.4;
+}
+
+.tierFeatured .tierItems li {
+  color: var(--tbb-rd-on-ink);
+}
+
+/* A square, not a disc: the document's own bullet. */
+.tierItems li span {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--tbb-rd-ink);
+  transform: translateY(-3px);
+}
+
+.tierFeatured .tierItems li span {
+  background: var(--tbb-rd-red);
+}
+
+.tierCta,
+.tierCtaFeatured {
+  margin-top: auto;
+}
+
+/* ---- 5 · the range ---- */
+
+.range {
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.range .inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.rangeHead {
+  display: flex;
+  gap: clamp(1.5rem, 3.3333vw, 3rem);
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.rangeLink {
+  flex: none;
+  padding-bottom: 0.375rem;
+  color: var(--tbb-rd-ink) !important;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.rangeLink:hover {
+  color: var(--tbb-rd-red) !important;
+}
+
+/* Three across the design's own frame and more as the window grows — the same
+   reasoning, and the same floor, as the catalogue's grid: a fixed three columns
+   in a band that runs to 1920 is three 557-wide cards. */
+.rangeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  column-gap: clamp(0.625rem, 1.6667vw, 1.5rem);
+  row-gap: clamp(1.75rem, 3.8889vw, 3.5rem);
+}
+
+.rangeCard {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.3889vw, 1.25rem);
+  color: var(--tbb-rd-ink) !important;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.rangeCard:hover {
+  color: var(--tbb-rd-red) !important;
+}
+
+.rangeMedia {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: clamp(1rem, 1.6667vw, 1.5rem);
+  background: var(--tbb-rd-card);
+}
+
+.rangeMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--tbb-ease);
+}
+
+.rangeCard:hover .rangeMedia img {
+  transform: scale(1.04);
+}
+
+.rangeCategory {
+  color: var(--tbb-rd-muted);
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+.rangeName {
+  font-size: clamp(1.0625rem, 1.6667vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+/* The link above the grid is the desktop's; the button under it is the
+   phone's, where there is no room beside the heading. */
+.rangeButton {
+  display: none;
+}
+
+/* ---- 6 · questions ---- */
+
+.faq {
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-paper);
+}
+
+.faqInner {
+  display: grid;
+  grid-template-columns: 27.5rem minmax(0, 1fr);
+  gap: clamp(2rem, 6.6667vw, 6rem);
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+  align-items: start;
+}
+
+.faqCopy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 1.9444vw, 1.75rem);
+}
+
+.faqLink {
+  width: fit-content;
+  color: var(--tbb-rd-ink) !important;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.faqLink:hover {
+  color: var(--tbb-rd-red) !important;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.faqItem {
+  padding-inline: clamp(1.25rem, 1.9444vw, 1.75rem);
+  border-radius: clamp(1rem, 1.3889vw, 1.25rem);
+  background: var(--tbb-rd-card);
+}
+
+.faqQuestion {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: clamp(1.25rem, 1.9444vw, 1.75rem);
+  list-style: none;
+  cursor: pointer;
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--tbb-rd-ink);
+}
+
+.faqQuestion::-webkit-details-marker {
+  display: none;
+}
+
+/* Two strokes rather than a glyph, so the "+" can rotate into an "×". */
+.faqMark {
+  position: relative;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--tbb-rd-paper);
+  transition: transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.faqMark::before,
+.faqMark::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.75rem;
+  height: 1.5px;
+  background: var(--tbb-rd-ink);
+  transform: translate(-50%, -50%);
+}
+
+.faqMark::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.faqItem[open] .faqMark {
+  transform: rotate(45deg);
+}
+
+.faqAnswer {
+  margin: 0 !important;
+  padding: 0 clamp(1.5rem, 3.3333vw, 3rem) clamp(1.25rem, 1.9444vw, 1.75rem) 0;
+  color: var(--tbb-rd-body-soft);
+  font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
+/* ---- 7 · the form ---- */
+
+.form {
+  padding: var(--pad-y) var(--gutter);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.formInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 37.5rem;
+  gap: clamp(2rem, 4.4444vw, 4rem);
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+  align-items: start;
+}
+
+.formCopy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.2222vw, 2rem);
+}
+
+.form .sectionTitle {
+  color: var(--tbb-rd-paper);
+}
+
+.form .sectionLede {
+  max-width: 29rem;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+}
+
+.formDirect {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: clamp(0.75rem, 1.6667vw, 1.5rem);
+}
+
+.formDirectLabel {
+  color: var(--tbb-rd-dim);
+  font-size: 0.875rem;
+}
+
+.formPhone {
+  width: fit-content;
+  color: var(--tbb-rd-paper) !important;
+  font-size: clamp(1.375rem, 1.9444vw, 1.75rem);
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.formCall {
+  width: fit-content;
+  margin-top: 0.375rem;
+  color: var(--tbb-rd-paper) !important;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.formPhone:hover,
+.formCall:hover {
+  color: var(--tbb-rd-red) !important;
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 1.9444vw, 1.75rem);
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 3.3333vw, 3rem);
+  border-radius: var(--radius);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 1.3889vw, 1.25rem);
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 1.3889vw, 1.25rem);
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field > span {
+  color: var(--tbb-rd-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 3.5rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 0.875rem;
+  outline: none;
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-ink);
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.field textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--tbb-rd-placeholder);
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--tbb-rd-ink);
+  background: #fff;
+}
+
+/* ---- the tier chips ---- */
+
+.chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.chips legend {
+  padding: 0;
+  color: var(--tbb-rd-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/*
+ * The label is the chip and the radio inside it is the control, so the whole
+ * chip is the hit area and the keyboard still gets a radio group. The input is
+ * taken out of the paint rather than out of the tree — `display: none` would
+ * take it off the arrow keys with it.
+ */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding-inline: 1.25rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 999px;
+  background: var(--tbb-rd-field);
+  color: var(--tbb-rd-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip:hover {
+  border-color: var(--tbb-rd-ink);
+}
+
+.chip:has(input:checked) {
+  border-color: var(--tbb-rd-ink);
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-rd-paper);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 2px;
+}
+
+/* ---- consent, errors, success ---- */
+
+.consent {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  color: var(--tbb-rd-body-soft);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.consent input {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.125rem 0 0;
+  accent-color: var(--tbb-rd-ink);
+}
+
+.consent a {
+  color: var(--tbb-rd-ink) !important;
+  text-decoration: underline;
+}
+
+.error {
+  color: var(--tbb-rd-red);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.success {
+  padding: clamp(1rem, 1.6667vw, 1.5rem);
+  border-radius: 0.875rem;
+  background: var(--tbb-rd-card);
+  color: var(--tbb-rd-ink);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ---- narrower than the design's own frame ---- */
+
+/*
+ * The reasons block stacks earlier than the rest.
+ *
+ * Below about 1200 the two columns leave the cards around 220px each — two
+ * words to a line inside a 32px inset — while the sticky aside has nothing to
+ * stick to on a screen barely taller than it is. Stacked, the heading takes a
+ * full line and the six cards keep the page's width.
+ */
+@media (max-width: 74.9375rem) {
+  .reasonsInner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reasonsAside {
+    position: static;
+  }
+
+  /* Full width now, so it goes back to the page's own heading scale. */
+  .reasonsAside .sectionTitle {
+    font-size: clamp(2.5rem, 5.5556vw, 5rem);
+  }
+}
+
+@media (max-width: 63.9375rem) {
+  .faqInner,
+  .formInner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tiersHead {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .stepGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tierGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The one the document says to lead with on a narrow screen. */
+  .tierFeatured {
+    order: -1;
+  }
+
+  /* No room beside the sentence for two buttons. */
+  .heroFoot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  /*
+   * On a phone the truck is a band at the top rather than the ground under
+   * everything: the frame is landscape, and covering a tall screen with it
+   * would crop the trailer down to a strip of paintwork.
+   */
+  .hero {
+    min-height: 0;
+    padding-top: calc(var(--tbb-header-h) + 15rem);
+    padding-bottom: clamp(2.25rem, 8vw, 3rem);
+  }
+
+  .heroFrame {
+    inset: 0 0 auto 0;
+    height: 26rem;
+  }
+
+  /* The band is nearly square against a landscape photo, so `cover` crops the
+     sides. Held right of centre, which is where the cab and the branded
+     trailer both are. */
+  .heroPhoto {
+    object-position: 56% 50%;
+  }
+
+  .heroVeil {
+    background: linear-gradient(
+      180deg,
+      rgba(11, 14, 20, 0) 22%,
+      rgba(11, 14, 20, 0.85) 48%,
+      var(--tbb-rd-ink-deep) 62%
+    );
+  }
+
+  /* Two lines at this width, so the one-line rule above is lifted. 13vw
+     leaves "DISTRIBUTOR" a few pixels short of the gutter; 13.5 put it flush
+     against it. */
+  .heroTitle {
+    font-size: clamp(2.75rem, 13vw, 3.75rem);
+    white-space: normal;
+  }
+
+  .heroActions .primary,
+  .heroActions .ghost,
+  .reasonsActions .primary,
+  .reasonsActions .outline {
+    flex: 1 1 100%;
+  }
+
+  .reasonGrid,
+  .stepGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reason {
+    min-height: 0;
+  }
+
+  .page .reasonTitle {
+    margin-top: 0.5rem !important;
+  }
+
+  .rangeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The heading takes the whole line, so the link moves under the grid. */
+  .rangeLink {
+    display: none;
+  }
+
+  .rangeButton {
+    display: inline-flex;
+    width: 100%;
+  }
+
+  .twoColumns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formCard {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rangeMedia img,
+  .faqMark {
+    transition: none;
+  }
+
+  .rangeCard:hover .rangeMedia img {
+    transform: none;
+  }
+}
