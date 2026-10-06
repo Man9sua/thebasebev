@@ -86,4 +86,31 @@
 - Отправка sitemap в Google Search Console/Bing, управление Google Business Profile и изменение данных в кабинетах не выполняются через staging. Verification tags уже присутствуют в проекте.
 - Аудиосообщения не имеют текстовой расшифровки и не интерпретировались предположительно; реализованы подтверждённые текстовые требования и связанные макеты.
 
-Проверки и фактический результат push/deploy сообщаются отдельно после их выполнения. Production этой задачей не публикуется.
+## Фактическая публикация и проверки
+
+- Код опубликован в GitHub: ветка `possible_change`, коммиты `e6c88a2` и `02510c5`.
+- Развёрнут только `the-base-staging` в аккаунте `mansua` / `678720af4dded7d23aad4a859b6e5f3a`; профиль и account ID проверены Wrangler перед каждым deploy.
+- Проверенная версия staging: `195fe9ea-e669-41e2-b354-e3f400161453`, код `02510c5`, адрес https://the-base-staging.mansua.workers.dev .
+- Production, DNS, GoDaddy и Tilda этой задачей не публиковались и не изменялись.
+
+| Проверка | Фактический результат |
+| --- | --- |
+| TypeScript / ESLint | PASS |
+| Lead contract audit | PASS, 47 проверок |
+| Stripe / structured data / consent settings | PASS, 21 / 2 / 4 теста |
+| Next.js / OpenNext / Static Assets fast path | PASS, 186 generated pages, 917 документов fast path |
+| Local assets | PASS, 563 используемых файла |
+| Staging HTTP | PASS, 49 маршрутов и 257 redirects |
+| Staging commerce | PASS, 22 категории; заказ не отправлялся |
+| Staging browser smoke | PASS, desktop/mobile и 13 размеров viewport |
+| Staging SEO UI smoke | PASS, 249 проверок; cookies settings на desktop/mobile и scroll/submit при 390×450 |
+| Staging route indexability | PASS, 188 controlled routes, 257 redirects, 172 sitemap URLs |
+| Staging SEO parity | PASS, 172 canonical routes, 0 critical failures; 146 объявленных изменений страницы/schema и 175 необязательных наблюдений link/alt перечислены в `SEO_PARITY_REPORT.md` |
+| Staging crawlers | PASS, 9 user agents × 13 страниц и 3 static assets; transport `noindex, nofollow`, production canonicals |
+| Guide PDF | PASS, HTTP 200, правильный MIME, 6 страниц, 4 054 383 bytes, опубликованный SHA256 совпадает с файлом; PDF/CSS/image получают preview `X-Robots-Tag` |
+| npm audit | FAIL: 15 существующих уязвимостей — 1 critical, 12 high, 2 moderate; зависимости и lockfile этой веткой не изменены |
+| Cloudflare rollback/reference parity | FAIL: старый `mnsdemo` reference отличается заголовками, содержимым Resources и числом JSON-LD блоков от согласованной новой версии; reference не изменялся |
+
+Заявки в браузерных проверках замокированы; реальные заявки и заказы не создавались. Нативный Safari на физическом iPhone и доставку реальной заявки в CRM эта проверка не подтверждает.
+
+`whatsappchat/` исключён из Git; browser artifacts, `output/` и посторонние локальные правки не включены в push. PR в `develop` автоматически создать не удалось: автоматическая проверка разрешений отклонила способ получения авторизации GitHub. Ветка опубликована; готовый переход для PR: https://github.com/Man9sua/thebasebev/compare/develop...possible_change?expand=1 .

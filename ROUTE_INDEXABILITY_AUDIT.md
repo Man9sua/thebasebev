@@ -1,20 +1,21 @@
 # Route indexability audit
 
-Generated: 2026-10-06T17:52:06.466Z
+Generated: 2026-10-06T20:53:26.566Z
 
-Target: `http://localhost:3200`
+Target: `https://the-base-staging.mansua.workers.dev`
 
 ## Accounting
 
 - Friendly routes: 37 (29 canonical/indexable + 8 excluded).
+- Native public routes: 12 (canonical/indexable and included in the sitemap).
 - Retired `pageNNNN.html` aliases served as permanent redirects: 41.
 - Retired Tilda product aliases served as permanent redirects: 26.
 - Technical/metadata/API routes: 8.
-- **Controlled route total: 176.**
-- Permanent redirects (not generated pages): 245.
-- Sitemap members: 165.
+- **Controlled route total: 188.**
+- Permanent redirects (not generated pages): 257.
+- Sitemap members: 172.
 
-The 176 controlled routes are the pages and endpoints that remain in the application. The 245 historic aliases preserve existing inbound links without generating static HTML/RSC payloads; they must not enter the sitemap.
+The 188 controlled routes are the pages and endpoints that remain in the application. The 257 historic aliases preserve existing inbound links without generating static HTML/RSC payloads; they must not enter the sitemap.
 
 ## Generated and technical routes
 
@@ -57,6 +58,18 @@ The 176 controlled routes are the pages and endpoints that remain in the applica
 | `/ae/retail` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page114837666.html |
 | `/ae/knowledge-recipes` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page154758576.html |
 | `/ae/not-found` | service/public compatibility page | 200 | NO | YES | NO | Preserved non-indexable route from page115314536.html |
+| `/ae/electrolyte` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/find-your-distributor` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/careers` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/request-samples` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/certificates` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/faq` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/cookie-policy` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/puree` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/sauce` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/colour-collection` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/add-ons` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
+| `/ae/at-home` | native public page | 200 | YES | YES | YES | Native page registered for public generation after the Tilda export |
 | `/ae/tpost/u0e5dx7os1-crossover-drink` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
 | `/ae/tpost/4v84szhll1-trade-marketing` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
 | `/ae/tpost/ihnuib79b1-franchise-uniformity` | glossary article | 200 | YES | YES | YES | Published production Glossary article preserved at its canonical path |
@@ -202,14 +215,23 @@ The 176 controlled routes are the pages and endpoints that remain in the applica
 | Route | Status | Actual destination | Expected destination | Result |
 | --- | ---: | --- | --- | --- |
 | `/` | 301 | `/ae` | `/ae` | PASS |
+| `/add-ons` | 301 | `/ae/add-ons` | `/ae/add-ons` | PASS |
 | `/about-us` | 301 | `/ae/about-us` | `/ae/about-us` | PASS |
+| `/at-home` | 301 | `/ae/at-home` | `/ae/at-home` | PASS |
+| `/careers` | 301 | `/ae/careers` | `/ae/careers` | PASS |
 | `/catalog` | 301 | `/ae/catalog` | `/ae/catalog` | PASS |
+| `/certificates` | 301 | `/ae/certificates` | `/ae/certificates` | PASS |
 | `/chai-latte` | 301 | `/ae/chai-latte` | `/ae/chai-latte` | PASS |
 | `/chocolate` | 301 | `/ae/chocolate` | `/ae/chocolate` | PASS |
+| `/colour-collection` | 301 | `/ae/colour-collection` | `/ae/colour-collection` | PASS |
 | `/contacts` | 301 | `/ae/contacts` | `/ae/contacts` | PASS |
+| `/cookie-policy` | 301 | `/ae/cookie-policy` | `/ae/cookie-policy` | PASS |
 | `/cordial` | 301 | `/ae/cordial` | `/ae/cordial` | PASS |
 | `/cream-latte` | 301 | `/ae/cream-latte` | `/ae/cream-latte` | PASS |
 | `/distributors` | 301 | `/ae/distributors` | `/ae/distributors` | PASS |
+| `/electrolyte` | 301 | `/ae/electrolyte` | `/ae/electrolyte` | PASS |
+| `/faq` | 301 | `/ae/faq` | `/ae/faq` | PASS |
+| `/find-your-distributor` | 301 | `/ae/find-your-distributor` | `/ae/find-your-distributor` | PASS |
 | `/frappe` | 301 | `/ae/frappe` | `/ae/frappe` | PASS |
 | `/garnish` | 301 | `/ae/garnish` | `/ae/garnish` | PASS |
 | `/iced-tea` | 301 | `/ae/iced-tea` | `/ae/iced-tea` | PASS |
@@ -220,14 +242,17 @@ The 176 controlled routes are the pages and endpoints that remain in the applica
 | `/milkshake` | 301 | `/ae/milkshake` | `/ae/milkshake` | PASS |
 | `/not-found` | 301 | `/ae/not-found` | `/ae/not-found` | PASS |
 | `/privacy` | 301 | `/ae/privacy` | `/ae/privacy` | PASS |
+| `/puree` | 301 | `/ae/puree` | `/ae/puree` | PASS |
 | `/private-labeling` | 301 | `/ae/private-labeling` | `/ae/private-labeling` | PASS |
 | `/raf-coffee` | 301 | `/ae/raf-coffee` | `/ae/raf-coffee` | PASS |
+| `/request-samples` | 301 | `/ae/request-samples` | `/ae/request-samples` | PASS |
 | `/resources` | 301 | `/ae/resources` | `/ae/resources` | PASS |
 | `/resources/blog` | 301 | `/ae/resources/blog` | `/ae/resources/blog` | PASS |
 | `/resources/glossary` | 301 | `/ae/resources/glossary` | `/ae/resources/glossary` | PASS |
 | `/resources/tools` | 301 | `/ae/resources/tools` | `/ae/resources/tools` | PASS |
 | `/retail` | 301 | `/ae/retail` | `/ae/retail` | PASS |
 | `/rnd` | 301 | `/ae/rnd` | `/ae/rnd` | PASS |
+| `/sauce` | 301 | `/ae/sauce` | `/ae/sauce` | PASS |
 | `/sitemap` | 301 | `/ae/sitemap` | `/ae/sitemap` | PASS |
 | `/sugar-free` | 301 | `/ae/sugar-free` | `/ae/sugar-free` | PASS |
 | `/sugar-syrup` | 301 | `/ae/sugar-syrup` | `/ae/sugar-syrup` | PASS |
