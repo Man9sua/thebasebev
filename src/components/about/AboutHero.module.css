@@ -1,0 +1,130 @@
+/* Design: About Us · block 1 · 1a desktop 1440 / 1b mobile 390. */
+
+.hero {
+  background: var(--about-bg);
+  color: var(--about-ink);
+  /* The design puts the h1 184px from the top of the page (112px header +
+     72px); the bar here is fixed, so the offset lives on the section. */
+  padding-top: min(184px, 12.778vw);
+}
+
+.inner {
+  max-width: var(--about-max);
+  margin: 0 auto;
+}
+
+.intro {
+  padding: 0 var(--about-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.title {
+  font-weight: 900;
+  font-size: min(128px, 8.889vw);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--about-ink);
+}
+
+.lead {
+  max-width: 600px;
+  font-size: 20px;
+  line-height: 1.55;
+  color: var(--about-body);
+  text-wrap: pretty;
+}
+
+.media {
+  padding: min(64px, 4.444vw) min(64px, 4.444vw) 0;
+}
+
+.photo {
+  width: 100%;
+  height: min(720px, 50vw);
+  object-fit: cover;
+  object-position: 50% 0%;
+  border-radius: 32px;
+}
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: min(96px, 6.667vw) var(--about-pad) var(--about-section-gap);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: min(48px, 3.333vw);
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.featureTitle {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.featureText {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--about-muted);
+  text-wrap: pretty;
+}
+
+@media (max-width: 1023px) {
+  .hero {
+    /* 80px header + 32px in the design. */
+    padding-top: 112px;
+  }
+
+  .intro {
+    gap: 20px;
+  }
+
+  .title {
+    font-size: clamp(40px, 12.821vw, 96px);
+    white-space: normal;
+  }
+
+  .lead {
+    font-size: 16px;
+  }
+
+  .media {
+    padding: 32px clamp(12px, 3.077vw, 32px) 0;
+  }
+
+  .photo {
+    height: clamp(280px, 71.795vw, 520px);
+    object-position: 42% 40%;
+    border-radius: 22px;
+  }
+
+  .features {
+    padding: 40px var(--about-pad) 48px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 28px;
+  }
+
+  .feature {
+    gap: 6px;
+  }
+
+  .featureTitle {
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  .featureText {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}

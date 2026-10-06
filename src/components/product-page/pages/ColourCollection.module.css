@@ -1,0 +1,223 @@
+/* Colour collection: the tin plates, the numbered steps and the recipes. */
+
+/* The tin is drawn smaller than a pouch: 440 of the card's 560. */
+.hero > :last-child {
+  height: calc(560 * var(--u));
+}
+
+.hero > :last-child img {
+  height: calc(440 * var(--u));
+}
+
+.colours {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.colour {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(20 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(18 * var(--u));
+}
+
+.plate {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: calc(18 * var(--u));
+  background: var(--pp-bg);
+}
+
+.plate img {
+  position: absolute;
+  inset: 6%;
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+  padding: 0 calc(8 * var(--u)) calc(8 * var(--u));
+  font-size: calc(15 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-muted);
+}
+
+.copy b {
+  color: var(--pp-ink);
+}
+
+.name {
+  font-size: calc(24 * var(--u));
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--pp-ink);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.step {
+  background: #fff;
+  border-radius: calc(22 * var(--u));
+  padding: calc(32 * var(--u)) calc(28 * var(--u));
+  min-height: calc(200 * var(--u));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--u));
+}
+
+.stepN {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--pp-muted);
+}
+
+.stepValue {
+  margin-top: auto;
+  font-weight: 900;
+  font-size: calc(40 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.stepText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.45;
+  color: var(--pp-muted);
+}
+
+.stepDark {
+  background: var(--pp-ink);
+  color: var(--pp-paper);
+}
+
+.stepDark .stepN,
+.stepDark .stepText {
+  color: var(--pp-on-ink);
+}
+
+.recipes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.recipe {
+  background: #fff;
+  border-radius: calc(22 * var(--u));
+  padding: calc(28 * var(--u)) calc(24 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.dot {
+  width: calc(14 * var(--u));
+  height: calc(14 * var(--u));
+  border-radius: 50%;
+}
+
+.recipeName {
+  font-size: calc(20 * var(--u));
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.recipeText {
+  font-size: calc(15 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-muted);
+}
+
+@media (max-width: 1023px) {
+  .hero > :last-child {
+    height: 300px;
+  }
+
+  .hero > :last-child img {
+    height: 240px;
+  }
+
+  .colours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .colour {
+    border-radius: 18px;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .plate {
+    border-radius: 14px;
+  }
+
+  .copy {
+    gap: 6px;
+    padding: 0 4px 4px;
+    font-size: 13px;
+  }
+
+  .name {
+    font-size: 18px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .step {
+    min-height: 0;
+    border-radius: 16px;
+    padding: 18px 20px;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .stepValue {
+    margin-top: 0;
+    min-width: 84px;
+    font-size: 22px;
+  }
+
+  .stepText {
+    font-size: 14px;
+  }
+
+  .recipes {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .recipe {
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .recipeName {
+    font-size: 16px;
+  }
+
+  .recipeText {
+    font-size: 14px;
+  }
+}

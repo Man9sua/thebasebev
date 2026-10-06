@@ -1,0 +1,319 @@
+/* At home: the shelf of retail pouches. Units as ProductPage.module.css. */
+
+.hero {
+  padding: calc(48 * var(--u)) var(--pp-inline) calc(96 * var(--u));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(600 * var(--u));
+  gap: calc(48 * var(--u));
+  align-items: center;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(28 * var(--u));
+}
+
+.hero .heroTitle {
+  font-size: calc(88 * var(--u));
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(12 * var(--u));
+}
+
+.plate {
+  aspect-ratio: 4 / 5;
+  border-radius: calc(22 * var(--u));
+  background: #fff;
+  overflow: hidden;
+}
+
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.plateEmpty {
+  background: color-mix(in srgb, #6b4a3a 10%, #fff);
+}
+
+/* ---- shelf index ---- */
+
+.chips {
+  padding: 0 var(--pp-inline) calc(48 * var(--u));
+  display: flex;
+  gap: calc(8 * var(--u));
+  flex-wrap: wrap;
+}
+
+.chip,
+.chipActive {
+  flex: none;
+  white-space: nowrap;
+  height: calc(48 * var(--u));
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 0 calc(20 * var(--u));
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  text-decoration: none;
+  background: #fff;
+  color: var(--pp-ink);
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.chipActive,
+.chip:hover {
+  background: var(--pp-ink);
+  color: #fff;
+}
+
+/* ---- shelves ---- */
+
+.shelf {
+  padding: calc(48 * var(--u)) var(--pp-inline) calc(72 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(32 * var(--u));
+  scroll-margin-top: var(--tbb-header-h);
+}
+
+.shelfHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: calc(24 * var(--u));
+}
+
+.shelf .shelfTitle {
+  font-size: calc(56 * var(--u));
+}
+
+.shelfNote {
+  font-size: calc(16 * var(--u));
+  font-weight: 600;
+  color: var(--pp-muted);
+}
+
+.pouches {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: calc(16 * var(--u));
+}
+
+.pouch {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--u));
+}
+
+.pouchCopy {
+  padding: 0 calc(4 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(4 * var(--u));
+}
+
+.pouchName {
+  font-size: calc(19 * var(--u));
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.pouchText {
+  font-size: calc(14 * var(--u));
+  line-height: 1.4;
+  color: var(--pp-muted);
+}
+
+.pouchCode {
+  font-size: calc(12 * var(--u));
+  color: #8a867f;
+}
+
+/* ---- a shelf by the till ---- */
+
+.till {
+  padding: calc(48 * var(--u)) var(--pp-inline) calc(96 * var(--u));
+}
+
+.tillInner {
+  background: var(--pp-ink);
+  border-radius: calc(32 * var(--u));
+  padding: calc(64 * var(--u));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: calc(64 * var(--u));
+  align-items: center;
+}
+
+.tillCopy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(24 * var(--u));
+}
+
+.till .tillTitle {
+  font-size: calc(56 * var(--u));
+  line-height: 0.92;
+  color: var(--pp-paper);
+}
+
+.tillButton {
+  width: 100%;
+}
+
+.tillCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.tillCard {
+  background: #1c1c1c;
+  border-radius: calc(20 * var(--u));
+  padding: calc(28 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.tillCardTitle {
+  font-size: calc(20 * var(--u));
+  font-weight: 800;
+  color: var(--pp-paper);
+}
+
+.tillCardText {
+  font-size: calc(15 * var(--u));
+  line-height: 1.55;
+  color: var(--pp-on-ink);
+}
+
+@media (max-width: 1023px) {
+  .hero {
+    padding: 8px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .heroGrid {
+    order: -1;
+    gap: 8px;
+  }
+
+  .heroCopy {
+    gap: 16px;
+  }
+
+  .hero .heroTitle {
+    font-size: 40px;
+  }
+
+  .plate {
+    border-radius: 18px;
+  }
+
+  .chips {
+    padding: 0 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip,
+  .chipActive {
+    height: 40px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+
+  .shelf {
+    padding: 32px 20px 16px;
+    gap: 14px;
+  }
+
+  .shelfHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .shelf .shelfTitle {
+    font-size: 30px;
+  }
+
+  .shelfNote {
+    font-size: 13px;
+  }
+
+  .pouches {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 8px;
+  }
+
+  .pouch {
+    gap: 10px;
+  }
+
+  .pouchName {
+    font-size: 15px;
+  }
+
+  .pouchText {
+    font-size: 12px;
+  }
+
+  .till {
+    padding: 32px 12px 12px;
+  }
+
+  .tillInner {
+    border-radius: 22px;
+    padding: 28px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .till .tillTitle {
+    font-size: 30px;
+  }
+
+  .tillCards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tillCard {
+    background: none;
+    padding: 0;
+    gap: 4px;
+  }
+
+  .tillCardTitle {
+    font-size: 16px;
+  }
+
+  .tillCardText {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}

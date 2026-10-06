@@ -9,17 +9,17 @@ export const CATALOG_GROUPS = [
   {
     id: "coffee",
     label: "Coffee & Specialty",
-    slugs: ["raf-coffee", "chai-latte", "matcha", "chocolate", "cream-latte"],
+    slugs: ["raf-coffee", "chai-latte", "matcha", "chocolate", "cream-latte", "colour-collection"],
   },
   {
     id: "bar",
     label: "Bar & Ingredients",
-    slugs: ["topping", "garnish", "jam", "sugar-syrup"],
+    slugs: ["topping", "garnish", "jam", "sugar-syrup", "puree", "sauce"],
   },
   {
     id: "business",
     label: "Business & Innovation",
-    slugs: ["tea", "sugar-free", "vending"],
+    slugs: ["tea", "sugar-free", "vending", "add-ons", "at-home"],
   },
 ] as const;
 

@@ -212,7 +212,7 @@ const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
-const expectedSitemapRoutes = 29 + glossaryRoutes.length + blogRoutes.length;
+const expectedSitemapRoutes = 29 /* audited */ + 5 /* native ranges */ + glossaryRoutes.length + blogRoutes.length;
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== expectedSitemapRoutes) {
   throw new Error(
     `Expected HTTP 200 with ${expectedSitemapRoutes} target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,

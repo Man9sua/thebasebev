@@ -51,10 +51,39 @@
   padding-block-start: clamp(1.5rem, 3vw, 2.75rem);
 }
 
-.primaryGrid {
+.primaryGrid,
+.pairGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+.pairGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.count {
+  color: var(--tbb-muted);
+  font-weight: 500;
+}
+
+.legend {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  color: var(--tbb-muted);
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+}
+
+.dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #e11b22;
 }
 
 .card {
@@ -93,7 +122,7 @@
 
 .legal > .linkList {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   column-gap: clamp(1.25rem, 2.5vw, 2.5rem);
 }
 
@@ -137,6 +166,16 @@
 .catalogLink:focus-visible {
   outline: 2px solid var(--tbb-accent);
   outline-offset: 3px;
+}
+
+/* A page the plan calls for that is not built yet: text, not a link. */
+.planned,
+.planned:hover {
+  justify-content: space-between;
+  padding-inline: 0;
+  background: none;
+  color: var(--tbb-muted) !important;
+  cursor: default;
 }
 
 .products {
@@ -186,6 +225,10 @@
 }
 
 @media (max-width: 64rem) {
+  .primaryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .productGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 2rem;
@@ -222,6 +265,7 @@
   }
 
   .primaryGrid,
+  .pairGrid,
   .productGrid,
   .legal > .linkList {
     grid-template-columns: minmax(0, 1fr);

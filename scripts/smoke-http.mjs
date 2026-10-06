@@ -11,7 +11,7 @@ const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "ut
 const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
 const publicPath = (route) => route === "/" ? "/ae" : `/ae${route}`;
 const publicRoutePaths = JSON.parse(fs.readFileSync("src/data/public-route-paths.json", "utf8"));
-const expectedSitemapUrls = 29 + glossaryContent.entries.length + blogContent.posts.length;
+const expectedSitemapUrls = 29 /* audited */ + 5 /* native ranges */ + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
   "/",

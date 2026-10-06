@@ -1,0 +1,263 @@
+/*
+ * Cordial: what its mock does differently from the matcha baseline.
+ * Desktop values are mock px × --u, the phone (≤1023px) is plain px.
+ */
+
+/* ---- 03 menu: the kit band is the 13th cell of the tile grid ---- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.grid .tilesInner {
+  display: contents;
+}
+
+.grid .kitCell {
+  grid-column: span 3;
+  border-radius: calc(20 * var(--u));
+}
+
+/* ---- 05 flavours: large cards with a line of description ---- */
+
+.flavoursSection {
+  gap: calc(40 * var(--u));
+}
+
+/* The mock's title row shrink-wraps the heading. */
+.flavoursSection > h2 {
+  align-self: flex-start;
+}
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour {
+  border-radius: calc(24 * var(--u));
+  padding: calc(36 * var(--u));
+  min-height: calc(260 * var(--u));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: calc(8 * var(--u));
+}
+
+.flavourName {
+  font-weight: 900;
+  font-size: calc(40 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.flavourText {
+  font-size: calc(17 * var(--u));
+  line-height: 1.2;
+  color: #1e2633;
+}
+
+.own {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(36 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+}
+
+.ownTitle {
+  font-weight: 900;
+  font-size: calc(32 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ownText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+  color: #55524c;
+}
+
+/* ---- 05b sweet and sour mix: black formula band ---- */
+
+.mix {
+  padding: calc(16 * var(--u)) var(--pp-inline) 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mixBand {
+  background: var(--pp-ink);
+  border-radius: calc(28 * var(--u));
+  padding: calc(56 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(40 * var(--u));
+}
+
+.mixHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(480 * var(--u));
+  gap: calc(64 * var(--u));
+  align-items: end;
+}
+
+.mix .mixTitle {
+  font-size: calc(56 * var(--u));
+  color: #f6f6f4;
+}
+
+.mix .mixText {
+  font-size: calc(18 * var(--u));
+  color: #c9c6c0;
+  text-wrap: pretty;
+}
+
+.formula {
+  display: flex;
+  gap: calc(10 * var(--u));
+}
+
+.part {
+  flex: 1;
+  min-width: 0;
+  background: #1c1c1c;
+  border-radius: calc(20 * var(--u));
+  padding: calc(28 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+}
+
+.partBase {
+  background: var(--pp-red);
+}
+
+.partLabel {
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  line-height: normal;
+  color: #b5b1aa;
+}
+
+.partBase .partLabel {
+  color: #fff;
+}
+
+.partValue {
+  font-weight: 900;
+  font-size: calc(36 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+  color: #f6f6f4;
+  white-space: nowrap;
+}
+
+.plus {
+  flex: none;
+  align-self: center;
+  font-size: calc(32 * var(--u));
+  font-weight: 900;
+  line-height: normal;
+  color: #f6f6f4;
+}
+
+/* ================= mobile (390 design) ================= */
+
+@media (max-width: 1023px) {
+  .grid {
+    display: contents;
+  }
+
+  .grid .tilesInner {
+    display: flex;
+  }
+
+  .grid .kitCell {
+    padding-inline: 20px;
+    border-radius: 0;
+  }
+
+  .flavoursSection {
+    gap: 20px;
+  }
+
+  .flavoursSection > h2 {
+    align-self: stretch;
+  }
+
+  .flavours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flavour {
+    border-radius: 18px;
+    padding: 18px;
+    min-height: 140px;
+    gap: 4px;
+  }
+
+  .flavourName {
+    font-size: 20px;
+    line-height: 1.05;
+  }
+
+  .flavourText {
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  /* On the phone the band is a card under the flavours, then the R&D link. */
+  .mix {
+    padding: 20px 20px 0;
+    gap: 20px;
+  }
+
+  .mixBand {
+    border-radius: 20px;
+    padding: 24px 18px;
+    gap: 14px;
+  }
+
+  .mixHead {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .mix .mixTitle {
+    font-size: 26px;
+    line-height: 0.95;
+  }
+
+  .mix .mixText {
+    font-size: 14px;
+    line-height: 1.5 !important;
+  }
+
+  .formula {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .part {
+    padding: 16px;
+  }
+
+  .partLabel {
+    font-size: 13px;
+  }
+
+  .partValue {
+    font-size: 22px;
+  }
+}

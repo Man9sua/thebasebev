@@ -62,5 +62,25 @@
   "vending": {
     "image": "/images/tile-vending.webp",
     "source": "frame-wash"
+  },
+  "puree": {
+    "image": "/images/tile-puree.webp",
+    "source": "illustration"
+  },
+  "sauce": {
+    "image": "/images/tile-sauce.webp",
+    "source": "illustration"
+  },
+  "colour-collection": {
+    "image": "/images/tile-colour-collection.webp",
+    "source": "illustration"
+  },
+  "add-ons": {
+    "image": "/images/tile-add-ons.webp",
+    "source": "illustration"
+  },
+  "at-home": {
+    "image": "/images/tile-at-home.webp",
+    "source": "illustration"
   }
 }

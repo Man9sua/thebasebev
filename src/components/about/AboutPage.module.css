@@ -1,7 +1,29 @@
 .page {
+  /* The three redesigned blocks (AboutHero, AboutQuality, AboutLocation) are
+     drawn at 1440 desktop / 390 mobile on the warm "rd" paper. Their values
+     scale with the viewport between 1024 and 1440; mobile values are the
+     390 design. */
+  --about-bg: var(--tbb-rd-paper);
+  --about-ink: var(--tbb-rd-ink);
+  --about-body: var(--tbb-rd-body);
+  --about-muted: #55524c;
+  --about-card: var(--tbb-rd-card);
+  --about-accent: var(--tbb-rd-red);
+  --about-map-fill: #e5e3df;
+  --about-max: 1440px;
+  --about-pad: min(96px, 6.667vw);
+  --about-section-gap: min(144px, 10vw);
+
   overflow-x: clip;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
+}
+
+@media (max-width: 1023px) {
+  .page {
+    --about-pad: clamp(20px, 5.128vw, 48px);
+    --about-section-gap: 72px;
+  }
 }
 
 .container {
@@ -12,66 +34,6 @@
 .sectionMark {
   width: 65.74px;
   height: auto;
-}
-
-.hero {
-  padding: 89px 0 134px;
-  background: #fff;
-}
-
-.hero h1 {
-  width: min(675px, 58vw);
-  margin-top: 0 !important;
-  font-family: var(--tbb-font-display);
-  font-size: 48px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.33;
-}
-
-.heroImage {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1280 / 680;
-  margin-top: 60px;
-  overflow: hidden;
-  border-radius: 32px;
-  background: var(--tbb-grey-lightest);
-}
-
-.heroImage img {
-  object-fit: cover;
-  object-position: center 43%;
-}
-
-.benefitGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
-  margin-top: 60px;
-}
-
-.benefitCard {
-  display: flex;
-  min-height: 240px;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 32px;
-  border-radius: 32px;
-  background: #fafafa;
-}
-
-.benefitCard img {
-  width: 64px;
-  height: 64px;
-}
-
-.benefitCard p {
-  max-width: 230px;
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  line-height: 1.35 !important;
 }
 
 .teamSection {
@@ -85,7 +47,6 @@
 }
 
 .teamSection h2,
-.place h2,
 .faq h2 {
   width: min-content;
   margin-top: 0 !important;
@@ -141,134 +102,6 @@
   color: rgba(255, 255, 255, 0.62);
   font-size: 14px;
   line-height: 1.4 !important;
-}
-
-.place {
-  padding: 95px 0 80px;
-  background: #fff;
-}
-
-.placeLayout {
-  display: grid;
-  grid-template-columns: 628px minmax(0, 1fr);
-  gap: 100px;
-  margin-top: 60px;
-  align-items: start;
-}
-
-.processCopy {
-  grid-column: 2;
-  padding-top: 78px;
-}
-
-.processCopy h3 {
-  max-width: 430px;
-  font-family: var(--tbb-font-display);
-  font-size: 36px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.22;
-}
-
-.processCopy ol {
-  display: grid;
-  gap: 18px;
-  margin: 32px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.processCopy li {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 14px;
-  align-items: start;
-}
-
-.processCopy li > span {
-  display: grid;
-  width: 24px;
-  height: 24px;
-  place-items: center;
-  border: 1px solid var(--tbb-ink);
-  border-radius: 50%;
-  font-size: 12px;
-}
-
-.processCopy li p {
-  max-width: 490px;
-  font-size: 18px;
-  line-height: 1.4 !important;
-}
-
-.placeMosaic {
-  position: relative;
-  grid-row: 1;
-  width: 628px;
-  height: 560px;
-}
-
-.mosaicPhoto,
-.statCard {
-  position: absolute;
-  width: 302px;
-  overflow: hidden;
-  border-radius: 32px;
-}
-
-.mosaicPhoto {
-  height: 331px;
-  background: var(--tbb-grey-lightest);
-}
-
-.mosaicPhoto img {
-  object-fit: cover;
-}
-
-.mosaicPhotoOne {
-  inset: 0 auto auto 0;
-}
-
-.mosaicPhotoTwo {
-  inset: 229px 0 auto auto;
-}
-
-.statCard {
-  display: flex;
-  height: 205px;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 30px;
-}
-
-.capacity {
-  inset: 0 0 auto auto;
-  background: #efe5d9;
-}
-
-.quality {
-  inset: 355px auto auto 0;
-  background: #d9e5dc;
-}
-
-.statCard strong {
-  font-family: var(--tbb-font-display);
-  font-size: 48px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
-}
-
-.quality strong {
-  max-width: 8ch;
-  font-size: 32px;
-}
-
-.statCard span {
-  color: var(--tbb-ink-soft);
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .stories {
@@ -640,45 +473,13 @@
     width: min(100% - 96px, 1280px);
   }
 
-  .benefitGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .teamGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .placeLayout,
   .storyInner {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 48px;
-  }
-
-  .placeMosaic {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 628 / 560;
-  }
-
-  .mosaicPhoto,
-  .statCard {
-    width: 48.09%;
-  }
-
-  .mosaicPhoto {
-    height: 59.11%;
-  }
-
-  .mosaicPhotoTwo {
-    top: 40.89%;
-  }
-
-  .statCard {
-    height: 36.61%;
-  }
-
-  .quality {
-    top: 63.39%;
   }
 
   .faqList {
@@ -695,50 +496,11 @@
     width: 35.52px;
   }
 
-  .hero {
-    padding: calc(3.75rem + 26px) 0 60px;
-  }
-
-  .hero h1 {
-    width: 100%;
-    font-size: 32px;
-    letter-spacing: -0.035em;
-    line-height: 1.25;
-  }
-
-  .heroImage {
-    aspect-ratio: 312 / 243;
-    margin-top: 20px;
-    border-radius: 16px;
-  }
-
-  .heroImage img {
-    object-position: center center;
-  }
-
-  .benefitGrid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    margin-top: 20px;
-  }
-
-  .benefitCard {
-    min-height: 212px;
-    padding: 32px;
-    border-radius: 24px;
-  }
-
-  .benefitCard p {
-    max-width: 245px;
-    font-size: 20px;
-  }
-
   .teamSection {
     padding: 54px 0 60px;
   }
 
   .teamSection h2,
-  .place h2,
   .faq h2 {
     font-size: 32px;
     line-height: 1.2;
@@ -774,68 +536,6 @@
     margin-top: 8px !important;
     font-size: 14px;
     line-height: 1.28 !important;
-  }
-
-  .place {
-    padding: 54px 0 60px;
-  }
-
-  .placeLayout {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin-top: 32px;
-  }
-
-  .processCopy {
-    order: 1;
-    padding-top: 0;
-  }
-
-  .processCopy h3 {
-    max-width: 100%;
-    font-size: 28px;
-    line-height: 1.22;
-  }
-
-  .processCopy ol {
-    gap: 16px;
-    margin-top: 28px;
-  }
-
-  .processCopy li {
-    gap: 12px;
-  }
-
-  .processCopy li p {
-    font-size: 16px;
-  }
-
-  .placeMosaic {
-    order: 2;
-    width: 100%;
-    aspect-ratio: 312 / 278;
-  }
-
-  .mosaicPhoto,
-  .statCard {
-    border-radius: 16px;
-  }
-
-  .statCard {
-    padding: 16px;
-  }
-
-  .statCard strong {
-    font-size: clamp(30px, 10vw, 40px);
-  }
-
-  .quality strong {
-    font-size: clamp(21px, 6vw, 28px);
-  }
-
-  .statCard span {
-    font-size: 9px;
   }
 
   .story,
@@ -1012,13 +712,7 @@
     width: calc(100% - 32px);
   }
 
-  .hero {
-    padding-top: 22px;
-  }
-
-  .hero h1,
   .teamSection h2,
-  .place h2,
   .faq h2,
   .careersCopy h2,
   .partnerCopy h2,

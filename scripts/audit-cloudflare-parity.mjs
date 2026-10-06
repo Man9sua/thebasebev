@@ -223,7 +223,7 @@ const failures = [];
 const shellObservations = [];
 const intentionalH1Migrations = new Map([
   ["/", ["Premium Cream Latte Bases", "Premium Powder Bases for Your Business"]],
-  ["/about-us", ["Who we are", "We Manufacture High-Quality Customizable Premix Powders"]],
+  ["/about-us", ["Who we are", "Ingredients for HoReCa"]],
   ["/distributors", ["Become a distributor of The Base", "Become a distributor"]],
   ["/rnd", ["Узнай свою дневную норму за 30 секунд", "Your recipe. Our lab."]],
 ]);

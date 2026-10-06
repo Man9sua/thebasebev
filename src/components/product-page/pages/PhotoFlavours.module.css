@@ -1,0 +1,62 @@
+/* Flavour cards with a serve photo — see PhotoFlavours.tsx. */
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour,
+.own {
+  background: #fff;
+  border-radius: calc(20 * var(--u));
+  padding: calc(20 * var(--u)) calc(20 * var(--u)) calc(22 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--u));
+}
+
+.flavour img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  display: block;
+}
+
+.name {
+  font-weight: 900;
+  font-size: calc(22 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--pp-ink);
+}
+
+.own {
+  justify-content: space-between;
+}
+
+.ownName {
+  font-weight: 900;
+  font-size: calc(24 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1023px) {
+  .flavours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flavour {
+    border-radius: 16px;
+    padding: 12px 12px 14px;
+    gap: 10px;
+  }
+
+  .name {
+    font-size: 15px;
+    line-height: 1.05;
+  }
+}

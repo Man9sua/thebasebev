@@ -809,6 +809,8 @@ export type SitePage = RouteDefinition & {
   };
   bodyHtml: string;
   headAssetsHtml: string;
+  /** Served by React alone: there is no exported document behind it. */
+  native?: boolean;
   /**
    * Whether the shared React header/footer should render around this document.
    * False only for the two standalone header/footer aliases, which are the
@@ -844,7 +846,75 @@ export function normalizeSitePath(parts?: string[]) {
   return routeParts?.length ? `/${routeParts.map(decodeURIComponent).join("/")}` : "/";
 }
 
+/**
+ * Routes with no Tilda page at all: product ranges added after the export.
+ *
+ * They are kept apart from `friendlyRoutes` on purpose. That list is the
+ * migration's parity contract — the sitemap, its audited lastmods and the
+ * route audits all count it against production — and production has never
+ * served these URLs. They are indexable on the real hostname like any other
+ * product page, and listed in the sitemap after the audited routes.
+ */
+type NativeRoute = { route: string; title: string; description: string };
+
+const NATIVE_ROUTES: NativeRoute[] = [
+  {
+    route: "/puree",
+    title: "Fruit Purées for Cafés, Bars & HoReCa | The Base",
+    description:
+      "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts. Real fruit texture, ready to pour. Private label available.",
+  },
+  {
+    route: "/sauce",
+    title: "Caramel & Chocolate Sauces for Coffee and Desserts | The Base",
+    description:
+      "Caramel, chocolate and white chocolate sauces in 1.89 L squeeze bottles for coffee, cold drinks and desserts. Private label available.",
+  },
+  {
+    route: "/colour-collection",
+    title: "Colour Collection: Natural Colour Powders for Drinks | The Base",
+    description:
+      "Five natural colour powders for beverage menus: matcha, hojicha, butterfly pea, dragon fruit and ube. One ingredient in every tin, nothing added.",
+  },
+  {
+    route: "/add-ons",
+    title: "Functional Add-ons for Café Drinks | The Base",
+    description:
+      "Seven pre-dosed functional sticks for drinks already on your menu: hydration, focus, recovery and calm. One stick per drink, no new recipes.",
+  },
+  {
+    route: "/at-home",
+    title: "Café Drinks at Home: 150 g Retail Pouches | The Base",
+    description:
+      "The same café recipes in 150 g pouches: matcha, chocolate, iced tea, chai, milkshake and cola. Buy online or stock them by your till.",
+  },
+];
+
+const nativeByPath = new Map(NATIVE_ROUTES.map((definition) => [definition.route, definition]));
+
+function nativePage({ route, title, description }: NativeRoute): SitePage {
+  const canonical = publicUrl(`${SITE_ORIGIN}${route}`);
+  return {
+    route,
+    file: "",
+    indexable: true,
+    title,
+    description,
+    canonical,
+    robots: "",
+    // The catalogue plate: the product on its own colour, as on the shelf.
+    openGraph: { url: canonical, title, description, type: "website", image: `${SITE_ORIGIN}/images/tile-${route.slice(1)}.webp` },
+    bodyHtml: "",
+    headAssetsHtml: "",
+    native: true,
+    usesSharedShell: true,
+  };
+}
+
 export function getSitePage(route: string): SitePage | undefined {
+  const native = nativeByPath.get(route);
+  if (native) return nativePage(native);
+
   const definition = routeByPath.get(route);
   if (!definition) return undefined;
 
@@ -923,8 +993,11 @@ export function getSitePage(route: string): SitePage | undefined {
 
 export const sitemapRoutes = friendlyRoutes.filter((definition) => definition.indexable);
 
+/** The native routes, listed in the sitemap after the audited ones. */
+export const nativeSitemapRoutes = NATIVE_ROUTES.map((definition) => definition.route);
+
 export function getStaticSiteParams() {
-  return [...new Set(routeDefinitions.map((definition) => definition.route))].map((route) => ({
+  return [...new Set([...routeDefinitions, ...NATIVE_ROUTES].map((definition) => definition.route))].map((route) => ({
     path: route === "/" ? ["ae"] : ["ae", ...route.slice(1).split("/")],
   }));
 }

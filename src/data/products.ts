@@ -274,6 +274,67 @@ export const PRODUCTS: Product[] = [
     price: null,
     backgroundColor: "#583d35",
   },
+  /*
+   * New ranges, with no Tilda page behind them: their routes are served by
+   * React alone (see `NATIVE_ROUTES` in `site-pages.ts`). The headline repeats
+   * the name, so no ranking sentence is drawn under it — there is none to keep.
+   * Colours are the catalogue plate's own wash (`tile-<slug>.webp`).
+   */
+  {
+    slug: "puree",
+    route: "/puree",
+    name: "Purées",
+    headline: "Purées",
+    description:
+      "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts. Real fruit texture, ready to pour.",
+    image: "/images/pack-puree.webp",
+    price: null,
+    backgroundColor: "#edb48c",
+  },
+  {
+    slug: "sauce",
+    route: "/sauce",
+    name: "Sauces",
+    headline: "Sauces",
+    description:
+      "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts.",
+    image: "/images/pack-sauce.webp",
+    price: null,
+    backgroundColor: "#d3a877",
+  },
+  {
+    slug: "colour-collection",
+    route: "/colour-collection",
+    name: "Colour Collection",
+    headline: "Colour Collection",
+    description:
+      "Five natural powders for beverage menus. One ingredient in every tin, nothing added.",
+    image: "/images/pack-colour-collection.webp",
+    price: null,
+    backgroundColor: "#afbaeb",
+  },
+  {
+    slug: "add-ons",
+    route: "/add-ons",
+    name: "Functional Add-ons",
+    headline: "Functional Add-ons",
+    description:
+      "Seven pre-dosed sticks that turn drinks already on your menu into functional ones.",
+    image: "/images/pack-add-ons.webp",
+    price: null,
+    backgroundColor: "#c9c0e6",
+  },
+  {
+    slug: "at-home",
+    route: "/at-home",
+    name: "At Home",
+    headline: "At Home",
+    description:
+      "The same café recipes in 150 g pouches, for guests to make the drink at home.",
+    image: "/images/pack-at-home.webp",
+    price: null,
+    backgroundColor: "#e5c3aa",
+  },
 ];
 
 /**

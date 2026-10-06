@@ -1,0 +1,197 @@
+/**
+ * The country selector beside search — see `CountrySelect.tsx`.
+ *
+ * The trigger wears the bar's own `.action` class, passed in from the header,
+ * so it moves, focuses and recolours with the icons beside it; what is here is
+ * only what text needs that an icon does not. Its line box is the icons' size
+ * (20px, 19px on a phone), which is what makes it exactly as tall as they are.
+ *
+ * The list is always mounted and animated the way `SortMenu`'s is: opacity, a
+ * few pixels of travel, and `visibility` stepped so a closed list is off the
+ * pointer and out of the tab order. It is paper and ink whatever the bar is
+ * doing — over a dark hero or under the open menu the bar's colour is white,
+ * and a white list on white paper would not be a list.
+ */
+
+.root {
+  position: relative;
+  display: flex;
+  flex: none;
+}
+
+.trigger {
+  gap: 0.35rem;
+  font-family: var(--tbb-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 20px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Two classes, to outrank the bar's `.action svg`, which would otherwise draw
+   the chevron at icon size. */
+.trigger .chevron {
+  display: block;
+  flex: none;
+  width: 10px;
+  height: 7px;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.trigger[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.list {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  width: min(16rem, calc(100vw - 2 * var(--tbb-gutter)));
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  border: 1px solid var(--tbb-line);
+  border-radius: 0.75rem;
+  background: var(--tbb-paper);
+  color: var(--tbb-ink);
+  box-shadow: 0 18px 40px rgba(26, 19, 17, 0.16);
+  font-family: var(--tbb-font-sans);
+  text-align: left;
+  text-transform: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.35rem);
+  transition:
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    visibility 0s linear var(--tbb-dur-fast);
+}
+
+.list:focus-visible {
+  outline: none;
+}
+
+.list[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    visibility 0s;
+}
+
+.option {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0.62rem 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--tbb-ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  cursor: pointer;
+  /* Each row arrives just after the one above it. */
+  opacity: 0;
+  transform: translateY(-0.25rem);
+  transition:
+    opacity var(--tbb-dur-fast) var(--tbb-ease),
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.list[data-open="true"] .option {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: calc(var(--row) * 30ms);
+}
+
+/* While the list has keyboard focus the active row needs a visible marker;
+   the hover wash alone is about 1.1:1 against the panel. */
+.list:focus-visible .option[data-active="true"] {
+  box-shadow: inset 0 0 0 2px var(--tbb-ink);
+}
+
+.option[data-active="true"] {
+  background: var(--tbb-paper-warm);
+}
+
+/* Listed, reachable, not choosable: the row is there to say the market is
+   coming, so it reads as quieter rather than as broken. */
+.option[aria-disabled="true"] {
+  color: var(--tbb-muted);
+  cursor: default;
+}
+
+.optionCode {
+  flex: none;
+  min-width: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.optionName {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.option[aria-selected="true"] .optionName {
+  font-weight: 600;
+}
+
+.status {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  color: var(--tbb-muted);
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.option[aria-selected="true"] .status {
+  color: var(--tbb-ink);
+}
+
+.status svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 767px) {
+  .trigger {
+    line-height: 19px;
+  }
+
+  /* The trigger sits well in from the edge — search and the burger are to its
+     right — so a list hung from it would run off the left of a 320px screen.
+     Released here, the list hangs from the actions row instead, whose right
+     edge is the page gutter: at most the viewport less both gutters wide, it
+     cannot cross either side. */
+  .root {
+    position: static;
+  }
+}
+
+/* No transition at all, not a near-zero one: a transitioned `visibility`
+   is still hidden at the instant the list opens, so focus() would miss it
+   and the keyboard could not reach the options. */
+@media (prefers-reduced-motion: reduce) {
+  .trigger .chevron,
+  .list,
+  .list .option {
+    transition: none !important;
+  }
+}

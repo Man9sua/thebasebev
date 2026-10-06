@@ -1,0 +1,979 @@
+/*
+ * Product pages, redesign (desktop 1440 / mobile 390 mocks).
+ *
+ * Desktop values are written in mock pixels times `--u`, which is 1px at a
+ * 1440 viewport and shrinks with it below that, so every page keeps the mock's
+ * proportions down to the 1024 breakpoint. Wider than 1440 the content stays
+ * 1248px wide and centred while bands stay full-bleed (see `--pp-inline`).
+ * At ≤1023px the mobile design takes over in plain px.
+ *
+ * `.tbb h1, h2, h3, p, figure { margin: 0 }` (0,1,1) beats single-class
+ * margins, so spacing here is done with gap/padding, never margin.
+ */
+
+.page {
+  --u: min(1px, 0.069444vw);
+  --pp-inline: max(calc(96 * var(--u)), calc((100% - 1248px) / 2));
+  --pp-ink: var(--tbb-rd-ink);
+  --pp-muted: #55524c;
+  --pp-red: var(--tbb-rd-red);
+  --pp-red-dark: var(--tbb-rd-red-dark);
+  --pp-paper: #f6f6f4;
+  --pp-on-ink: var(--tbb-rd-on-ink);
+  --pp-chip: var(--tbb-rd-card);
+  --pp-line: #eeeae3;
+
+  /* Per page: set on the root by each product. */
+  --pp-bg: #f6f4f0;
+  --pp-hero-bg: transparent;
+  --pp-hero-title: var(--pp-ink);
+  --pp-hero-lead: var(--tbb-rd-body);
+
+  padding-top: var(--tbb-header-h);
+  background: var(--pp-bg);
+  color: var(--pp-ink);
+  overflow-x: clip;
+}
+
+/* ---- visibility helpers: one DOM, two copies where the mock differs.
+   Each is only ever hidden, never given a display, so a hidden-elsewhere
+   button keeps its own flex layout. ---- */
+
+@media (min-width: 1024px) {
+  .mobileOnly {
+    display: none !important;
+  }
+}
+
+/* ---- shared type ----
+   The export's custom.css still loads on product pages and forces
+   `font-weight: 300 !important` and a letter-spacing onto every h1–h3 and
+   any class containing "title"; the headings here answer with !important. */
+
+.title {
+  font-weight: 900 !important;
+  font-size: calc(72 * var(--u));
+  line-height: 0.9;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--pp-ink);
+  text-wrap: balance;
+}
+
+.side {
+  font-size: calc(18 * var(--u));
+  line-height: 1.55;
+  color: var(--pp-muted);
+}
+
+/* ---- buttons ---- */
+
+.button {
+  flex: none;
+  height: calc(60 * var(--u));
+  min-height: 48px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 calc(32 * var(--u));
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--pp-ink);
+  outline-offset: 3px;
+}
+
+.red {
+  background: var(--pp-red);
+  color: #fff;
+}
+
+.red:hover {
+  background: var(--pp-red-dark);
+  color: #fff;
+}
+
+.outline {
+  background: transparent;
+  border: 1.5px solid var(--pp-ink);
+  color: var(--pp-ink);
+}
+
+.outline:hover {
+  background: var(--pp-ink);
+  color: #fff;
+}
+
+.textLink {
+  font-size: calc(15 * var(--u));
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+}
+
+.textLink:hover {
+  color: var(--pp-red);
+}
+
+/* ---- sections ---- */
+
+.section {
+  padding: calc(120 * var(--u)) var(--pp-inline) 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(48 * var(--u));
+}
+
+.sectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: calc(48 * var(--u));
+}
+
+.sectionHead .side {
+  max-width: calc(420 * var(--u));
+}
+
+/* ---- 01 hero ---- */
+
+.hero {
+  background: var(--pp-hero-bg);
+  padding: calc(72 * var(--u)) var(--pp-inline);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(560 * var(--u));
+  gap: calc(64 * var(--u));
+  align-items: center;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(32 * var(--u));
+}
+
+/* "Catalogue / Matcha": the trail `BreadcrumbList` describes, kept small and
+   pulled in towards the title it belongs to. */
+.crumbs {
+  margin-bottom: calc(-16 * var(--u));
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--pp-hero-lead);
+  opacity: 0.72;
+}
+
+.crumbs a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  text-decoration: underline;
+}
+
+.heroTitle {
+  font-weight: 900 !important;
+  font-size: calc(136 * var(--u));
+  line-height: 0.9;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+  color: var(--pp-hero-title);
+  text-wrap: balance;
+}
+
+/* Production's ranking sentence, kept a level down under the name. */
+.heroHeadline {
+  margin-top: calc(-16 * var(--u));
+  font-size: calc(16 * var(--u));
+  font-weight: 600 !important;
+  line-height: 1.4;
+  letter-spacing: 0.01em !important;
+  color: var(--pp-hero-lead);
+  opacity: 0.78;
+  max-width: calc(520 * var(--u));
+}
+
+.heroLead {
+  font-size: calc(22 * var(--u));
+  line-height: 1.55;
+  color: var(--pp-hero-lead);
+  max-width: calc(520 * var(--u));
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  gap: calc(12 * var(--u));
+}
+
+.heroMedia {
+  height: calc(640 * var(--u));
+  border-radius: calc(32 * var(--u));
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroMedia img {
+  height: calc(600 * var(--u));
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* ---- 02 stats ---- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: calc(16 * var(--u));
+}
+
+.stat {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(36 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.statValue {
+  font-weight: 900;
+  font-size: calc(52 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.statLabel {
+  font-size: calc(17 * var(--u));
+  line-height: normal;
+  color: var(--pp-muted);
+}
+
+/* ---- 03 menu ---- */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.tile {
+  background: #fff;
+  border-radius: calc(20 * var(--u));
+  overflow: hidden;
+  aspect-ratio: var(--ratio, 2 / 3);
+}
+
+.tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kit {
+  background: var(--pp-ink);
+  border-radius: calc(24 * var(--u));
+  padding: calc(40 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(40 * var(--u));
+  color: var(--pp-paper);
+}
+
+.kitCopy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.kitTitle {
+  font-weight: 900;
+  font-size: calc(32 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.kitText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-on-ink);
+}
+
+.kit .button {
+  height: calc(56 * var(--u));
+}
+
+/* ---- 04 prepare ---- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.step {
+  background: #fff;
+  color: var(--pp-ink);
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.stepLabel {
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  line-height: normal;
+  color: var(--pp-muted);
+}
+
+.stepValue {
+  font-weight: 900;
+  font-size: calc(40 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.stepDark {
+  background: var(--pp-ink);
+  color: var(--pp-paper);
+}
+
+.stepDark .stepLabel {
+  color: var(--pp-on-ink);
+}
+
+/* ---- 05 flavours ---- */
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour {
+  border-radius: calc(24 * var(--u));
+  padding: calc(28 * var(--u));
+  min-height: calc(150 * var(--u));
+  display: flex;
+  align-items: flex-end;
+}
+
+.flavourName {
+  font-weight: 900;
+  font-size: calc(28 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ownFlavour {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(28 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(12 * var(--u));
+}
+
+.ownFlavourTitle {
+  font-weight: 900;
+  font-size: calc(24 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ---- 06 inside the pack ---- */
+
+.inside {
+  gap: calc(40 * var(--u));
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--pp-chip);
+  border-radius: 26px;
+  padding: 4px;
+}
+
+.tab {
+  appearance: none;
+  border: 0;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--pp-muted);
+  cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+  background: #fff;
+  color: var(--pp-ink);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--pp-ink);
+  outline-offset: 2px;
+}
+
+.insideGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: calc(16 * var(--u));
+}
+
+.nutrition {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(40 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+}
+
+.nutritionHead {
+  line-height: normal;
+  display: flex;
+  justify-content: space-between;
+  font-size: calc(15 * var(--u));
+  color: var(--pp-muted);
+  padding-bottom: calc(12 * var(--u));
+}
+
+.nutritionRow {
+  display: grid;
+  grid-template-columns: 1fr calc(140 * var(--u)) calc(80 * var(--u));
+  padding: calc(12 * var(--u)) 0;
+  font-size: calc(17 * var(--u));
+  line-height: normal;
+  border-top: 1px solid var(--pp-line);
+}
+
+.nutritionRow > :first-child {
+  font-weight: 600;
+}
+
+.nutritionRow > :last-child {
+  text-align: right;
+  color: var(--pp-muted);
+}
+
+.nutritionNote {
+  font-size: calc(14 * var(--u));
+  line-height: normal;
+  color: var(--pp-muted);
+  padding-top: calc(12 * var(--u));
+}
+
+.insideSide {
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--u));
+}
+
+.info {
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+}
+
+.infoTitle {
+  font-size: calc(18 * var(--u));
+  font-weight: 800;
+  line-height: normal;
+}
+
+.infoText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+}
+
+.infoMobile {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.shelf {
+  flex: 1;
+  background: var(--pp-ink);
+  color: var(--pp-paper);
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--u));
+}
+
+.shelfValue {
+  font-weight: 900;
+  font-size: calc(40 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.shelfText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.55;
+  color: var(--pp-on-ink);
+}
+
+.shelfCerts {
+  margin-top: auto !important;
+  font-size: calc(14 * var(--u));
+  line-height: 1.4;
+  color: var(--pp-on-ink);
+}
+
+.shelf .textLink {
+  color: var(--pp-paper);
+}
+
+/* ---- 07 FAQ ---- */
+
+.faq {
+  padding: calc(120 * var(--u)) var(--pp-inline) calc(144 * var(--u));
+  display: grid;
+  grid-template-columns: calc(420 * var(--u)) minmax(0, 1fr);
+  gap: calc(96 * var(--u));
+  align-items: start;
+}
+
+.faqAside {
+  display: flex;
+  flex-direction: column;
+  gap: calc(28 * var(--u));
+}
+
+.faqActions {
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.faqActions .button {
+  width: 100%;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.faqItem {
+  background: #fff;
+  border-radius: calc(20 * var(--u));
+  padding: 0 calc(28 * var(--u));
+}
+
+.faqQuestion {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc(16 * var(--u));
+  padding: calc(26 * var(--u)) 0;
+  font-size: calc(20 * var(--u));
+  font-weight: 700;
+  line-height: normal;
+}
+
+.faqQuestion::-webkit-details-marker {
+  display: none;
+}
+
+.faqQuestion:focus-visible {
+  outline: 2px solid var(--pp-ink);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.faqPlus {
+  flex: none;
+  width: calc(32 * var(--u));
+  height: calc(32 * var(--u));
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 50%;
+  background: var(--pp-chip);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(18 * var(--u));
+  font-weight: 400;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.faqItem[open] .faqPlus {
+  transform: rotate(45deg);
+}
+
+.faqAnswer {
+  padding: 0 calc(48 * var(--u)) calc(26 * var(--u)) 0;
+  font-size: calc(17 * var(--u));
+  line-height: 1.55;
+  color: var(--pp-muted);
+}
+
+/* ---- answers to the export's custom.css (see "shared type") ----
+   `html body [class*="title"]` (0,1,2) outranks a lone .title, and
+   `html body p { line-height: 1.7 !important }` reaches every paragraph;
+   every paragraph in these mocks is set at 1.55. */
+
+.page .title {
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.page p {
+  line-height: 1.55 !important;
+}
+
+/* ================= mobile (390 design) ================= */
+
+@media (max-width: 1023px) {
+  .page {
+    /* Phone values are written out below; anything left on the desktop
+       scale at least stays at its mock size instead of shrinking with vw. */
+    --u: 1px;
+    --pp-inline: 20px;
+    padding-top: 60px;
+  }
+
+  .desktopOnly {
+    display: none !important;
+  }
+
+  .title {
+    font-size: 36px;
+  }
+
+  .side {
+    font-size: 14px;
+  }
+
+  .button {
+    height: 56px;
+    width: 100%;
+    padding: 0 24px;
+    font-size: 14px;
+  }
+
+  .textLink {
+    font-size: 15px;
+  }
+
+  .section {
+    padding-top: 56px;
+    gap: 20px;
+  }
+
+  .sectionHead {
+    display: block;
+  }
+
+  .hero {
+    padding: 24px 12px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  .heroMedia {
+    order: -1;
+    height: 360px;
+    border-radius: 22px;
+  }
+
+  .heroMedia img {
+    height: 340px;
+  }
+
+  .heroCopy {
+    padding: 0 8px;
+    gap: 16px;
+  }
+
+  .heroTitle {
+    font-size: 60px;
+  }
+
+  .heroHeadline {
+    margin-top: -6px;
+    font-size: 13px;
+  }
+
+  .crumbs {
+    margin-bottom: -6px;
+    font-size: 13px;
+  }
+
+  .heroLead {
+    font-size: 16px;
+  }
+
+  .heroActions {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat {
+    border-radius: 18px;
+    padding: 18px;
+    gap: 6px;
+  }
+
+  .statValue {
+    font-size: 22px;
+    line-height: 1.05;
+  }
+
+  .statLabel {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* The menu photos scroll sideways on a phone, flush to the right edge. */
+  .menu {
+    padding-inline: 0;
+  }
+
+  .menu > .sectionHead,
+  .menu > .kit {
+    padding-inline: 20px;
+  }
+
+  .tiles {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 20px;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 20px;
+    scrollbar-width: none;
+  }
+
+  .tiles::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tile {
+    flex: none;
+    width: 150px;
+    height: 225px;
+    aspect-ratio: auto;
+    border-radius: 16px;
+    scroll-snap-align: start;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .step {
+    border-radius: 16px;
+    padding: 16px 20px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stepLabel {
+    font-size: 15px;
+    color: inherit;
+  }
+
+  .stepDark .stepLabel {
+    color: inherit;
+  }
+
+  .stepValue {
+    font-size: 22px;
+    line-height: normal;
+  }
+
+  .flavours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flavour {
+    border-radius: 16px;
+    padding: 14px;
+    min-height: 80px;
+  }
+
+  .flavourName {
+    font-size: 16px;
+    line-height: 1.05;
+  }
+
+  .inside {
+    gap: 16px;
+  }
+
+  .insideGrid,
+  .insideSide {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .nutrition {
+    border-radius: 18px;
+    padding: 20px;
+    gap: 0;
+  }
+
+  .nutritionHead {
+    font-size: 13px;
+    padding-bottom: 8px;
+  }
+
+  .nutritionRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 15px;
+  }
+
+  .nutritionRow > :last-child {
+    display: none;
+  }
+
+  .info,
+  .shelf {
+    border-radius: 18px;
+    padding: 18px;
+  }
+
+  .shelf {
+    padding: 20px;
+    gap: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .shelfValue {
+    font-size: 20px;
+    line-height: 1.5;
+    text-transform: none;
+  }
+
+  .shelfText {
+    font-size: 14px;
+    line-height: 1.5;
+    color: inherit;
+  }
+
+  /* The phone keeps only the download, as an outline button. */
+  .kit {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .kitCopy {
+    display: none;
+  }
+
+  .kit .button {
+    height: 56px;
+    background: transparent;
+    border: 1.5px solid var(--pp-ink);
+    color: var(--pp-ink);
+  }
+
+  .faq {
+    padding: 56px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .faqAside {
+    display: contents;
+  }
+
+  .faqList {
+    display: contents;
+  }
+
+  .faqMore {
+    display: none;
+  }
+
+  .faqItem {
+    border-radius: 16px;
+    padding: 0 18px;
+  }
+
+  .faqQuestion {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 0;
+    font-size: 16px;
+  }
+
+  .faqPlus {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    background: none;
+    font-size: 16px;
+  }
+
+  .faqAnswer {
+    padding: 0 0 18px;
+    font-size: 14px;
+  }
+
+  .faqMobileCta {
+    order: 99;
+  }
+}

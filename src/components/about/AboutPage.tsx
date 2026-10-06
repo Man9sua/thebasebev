@@ -1,19 +1,9 @@
 import Image from "next/image";
+import { AboutHero } from "@/components/about/AboutHero";
+import { AboutLocation } from "@/components/about/AboutLocation";
+import { AboutQuality } from "@/components/about/AboutQuality";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./AboutPage.module.css";
-
-const benefits = [
-  { icon: "/images/about/icon-laboratory.svg", text: "Own laboratory and production" },
-  {
-    icon: "/images/about/icon-deadlines.svg",
-    text: "The deadlines and volumes are discussed individually",
-  },
-  { icon: "/images/about/icon-implementation.svg", text: "The implementation in 14 days" },
-  {
-    icon: "/images/about/icon-certified.svg",
-    text: "Certified production according to HACCP & Halal",
-  },
-] as const;
 
 const team = [
   ["Sally Bobis", "QA - Research and Development Manager", "team-sally.webp"],
@@ -24,20 +14,7 @@ const team = [
   ["Yakovleva Irina", "Strategy Brand Designer", "team-irina.webp"],
 ] as const;
 
-const processes = [
-  "Incoming raw material inspection",
-  "Finished product verification to ensure compliance with the approved reference",
-  "Manufacturing process control",
-  "Packaging inspection at the stage of transportation boxing",
-] as const;
-
 const stories = [
-  {
-    title: "Where innovation meets accuracy",
-    body: "Our state-of-the-art lab upholds global safety and quality standards, creating dependable solutions with attention to detail.",
-    image: "/images/tild6538-3662-4761-b964-396465626431__mask_group.png",
-    alt: "THE BASE product development laboratory",
-  },
   {
     title: "Our Laboratory",
     body: "The Base products comply with all necessary standards and safety requirements. Their high quality is ensured by the finest raw materials from the world’s leading manufacturers and is confirmed by the relevant certifications.",
@@ -99,34 +76,6 @@ function SectionMark() {
   );
 }
 
-function AboutHero() {
-  return (
-    <section className={styles.hero} aria-labelledby="about-title">
-      <div className={styles.container}>
-        <SectionMark />
-        <h1 id="about-title">We Manufacture High-Quality Customizable Premix Powders</h1>
-        <div className={styles.heroImage}>
-          <Image
-            src="/images/about/team-hero.webp"
-            alt="THE BASE team at the Dubai production facility"
-            fill
-            priority
-            sizes="(max-width: 767px) calc(100vw - 48px), min(1280px, calc(100vw - 160px))"
-          />
-        </div>
-        <div className={styles.benefitGrid}>
-          {benefits.map((benefit) => (
-            <article className={styles.benefitCard} key={benefit.text}>
-              <Image src={benefit.icon} width={64} height={64} alt="" aria-hidden="true" />
-              <p>{benefit.text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function AboutTeam() {
   return (
     <section className={styles.teamSection} aria-labelledby="team-title" data-surface="dark">
@@ -158,76 +107,38 @@ function AboutTeam() {
 function AboutFacility() {
   return (
     <>
-      <section className={styles.place} aria-labelledby="place-title">
-        <div className={styles.container}>
-          <SectionMark />
-          <h2 id="place-title">Our Place</h2>
-          <div className={styles.placeLayout}>
-            <div className={styles.processCopy}>
-              <h3>The production process integrates four stages of quality control:</h3>
-              <ol>
-                {processes.map((process) => (
-                  <li key={process}>
-                    <span aria-hidden="true">✓</span>
-                    <p>{process}</p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className={styles.placeMosaic} aria-label="THE BASE production facility">
-              <div className={`${styles.mosaicPhoto} ${styles.mosaicPhotoOne}`}>
-                <Image
-                  src="/images/tild6264-6235-4534-b439-356134656163__mask_group-1_1.jpg"
-                  alt="Production at THE BASE facility"
-                  fill
-                  sizes="(max-width: 767px) 152px, 302px"
-                />
-              </div>
-              <div className={`${styles.statCard} ${styles.capacity}`}>
-                <strong>25k+</strong>
-                <span>Daily Production</span>
-              </div>
-              <div className={`${styles.statCard} ${styles.quality}`}>
-                <strong>Quality Full Team</strong>
-                <span>Talented and Experienced</span>
-              </div>
-              <div className={`${styles.mosaicPhoto} ${styles.mosaicPhotoTwo}`}>
-                <Image
-                  src="/images/tild6663-3864-4961-b139-316164363938__mask_group_1.jpg"
-                  alt="THE BASE finished-product packaging"
-                  fill
-                  sizes="(max-width: 767px) 152px, 302px"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AboutQuality />
 
+      {/* The map block takes the first story slot, so the stories keep the
+          backgrounds (odd children warm) and sides they had beside it. */}
       <div className={styles.stories}>
-        {stories.map((story, index) => (
-          <section
-            className={`${styles.story} ${index % 2 === 1 ? styles.storyReverse : ""}`}
-            key={story.title}
-            aria-labelledby={`story-${index}`}
-          >
-            <div className={styles.storyInner}>
-              <div className={styles.storyCopy}>
-                <h2 id={`story-${index}`}>{story.title}</h2>
-                <p>{story.body}</p>
+        <AboutLocation />
+        {stories.map((story, index) => {
+          const position = index + 1;
+          return (
+            <section
+              className={`${styles.story} ${position % 2 === 1 ? styles.storyReverse : ""}`}
+              key={story.title}
+              aria-labelledby={`story-${position}`}
+            >
+              <div className={styles.storyInner}>
+                <div className={styles.storyCopy}>
+                  <h2 id={`story-${position}`}>{story.title}</h2>
+                  <p>{story.body}</p>
+                </div>
+                <div className={styles.storyImage}>
+                  <Image
+                    src={story.image}
+                    alt={story.alt}
+                    fill
+                    sizes="(max-width: 767px) calc(100vw - 48px), 50vw"
+                  />
+                  {position === 1 && <span className={styles.labAccent} aria-hidden="true" />}
+                </div>
               </div>
-              <div className={styles.storyImage}>
-                <Image
-                  src={story.image}
-                  alt={story.alt}
-                  fill
-                  sizes="(max-width: 767px) calc(100vw - 48px), 50vw"
-                />
-                {index === 1 && <span className={styles.labAccent} aria-hidden="true" />}
-              </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
       </div>
     </>
   );

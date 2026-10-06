@@ -1,0 +1,235 @@
+/*
+ * Hot chocolate: what its mock does differently from the matcha baseline.
+ * Desktop values are mock px × --u, the phone (≤1023px) is plain px.
+ */
+
+/* ---- 01 hero: dark band, 104px light title, light outline button ---- */
+
+.hero h1 {
+  font-size: calc(104 * var(--u));
+}
+
+.hero a[href*="distributors"] {
+  border-color: #f6f6f4;
+  color: #f6f6f4;
+}
+
+.hero a[href*="distributors"]:hover {
+  background: #f6f6f4;
+  color: #4e3630;
+}
+
+/* ---- 03 menu: title (+ kit card) column beside three 260px tiles ---- */
+
+.menu {
+  padding: calc(120 * var(--u)) var(--pp-inline) 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(3, calc(260 * var(--u)));
+  gap: calc(16 * var(--u));
+  align-items: stretch;
+}
+
+.menuHead {
+  display: flex;
+  flex-direction: column;
+  gap: calc(28 * var(--u));
+  justify-content: space-between;
+  padding-right: calc(24 * var(--u));
+}
+
+.menu .menuTitle {
+  font-size: calc(64 * var(--u));
+}
+
+.kit {
+  background: var(--pp-ink);
+  border-radius: calc(24 * var(--u));
+  padding: calc(28 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--u));
+  color: var(--pp-paper);
+}
+
+.kitTitle {
+  font-weight: 900;
+  font-size: calc(24 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.kitText {
+  font-size: calc(14 * var(--u));
+  line-height: 1.5;
+  color: #c9c6c0;
+}
+
+.menu .kitButton {
+  width: 100%;
+  height: calc(48 * var(--u));
+  border-radius: calc(24 * var(--u));
+  font-size: calc(13 * var(--u));
+}
+
+.tile {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+}
+
+.tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tiles {
+  display: contents;
+}
+
+/* ---- 05 three chocolates: large dark cards + own-flavour card ---- */
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour {
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  min-height: calc(260 * var(--u));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: calc(8 * var(--u));
+}
+
+.flavourName {
+  font-weight: 900;
+  font-size: calc(32 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+  color: #f6f1ec;
+}
+
+.flavourText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.2;
+  color: #f0e4dc;
+}
+
+.own {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+}
+
+.ownTitle {
+  font-weight: 900;
+  font-size: calc(28 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ownText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+  color: #55524c;
+}
+
+/* ================= mobile (390 design) ================= */
+
+@media (max-width: 1023px) {
+  .hero h1 {
+    font-size: 52px;
+  }
+
+  .stats > div > span:first-child {
+    font-size: 20px;
+  }
+
+  .menu {
+    padding: 56px 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .menuHead {
+    display: contents;
+  }
+
+  .menu .menuTitle {
+    font-size: 36px;
+  }
+
+  .kit {
+    order: 2;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .kitTitle,
+  .kitText {
+    display: none;
+  }
+
+  .menu .kitButton {
+    height: 56px;
+    border-radius: 999px;
+    font-size: 14px;
+    background: transparent;
+    border: 1.5px solid var(--pp-ink);
+    color: var(--pp-ink);
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .tile {
+    border-radius: 14px;
+  }
+
+  .flavoursSection {
+    gap: 12px;
+  }
+
+  .flavours {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .flavour {
+    border-radius: 18px;
+    padding: 20px;
+    min-height: 0;
+    gap: 4px;
+  }
+
+  .flavourName {
+    font-size: 20px;
+    line-height: normal;
+  }
+
+  .flavourText {
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  .ownLink {
+    margin-top: 8px;
+  }
+}

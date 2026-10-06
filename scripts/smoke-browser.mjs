@@ -304,12 +304,71 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
-  // The region control the bar used to carry is gone — the owner asked for it
-  // off, and the design's header does not have one. Asserted rather than merely
-  // dropped, so it cannot come back unnoticed.
+  // The region picker the bar used to carry stays gone: it offered five regions
+  // and did nothing with the choice. Asserted rather than merely dropped, so it
+  // cannot come back unnoticed.
   check(
     (await page.locator("header button[aria-label^='Region:']").count()) === 0,
-    "header: the region picker is back in the bar",
+    "header: the old region picker is back in the bar",
+  );
+  // What sits beside search instead is the country selector, and it only offers
+  // what exists: the UAE is live and current, every other market is listed as
+  // coming and disabled, and nothing in it links anywhere — `/sa`, `/kz` and the
+  // rest are 404s.
+  const country = page.locator("header button[aria-label^='Country:']");
+  check((await country.count()) === 1, "header: the country selector is missing from the bar");
+  if ((await country.count()) === 1) {
+    await country.click();
+    await page.waitForTimeout(450);
+    const countryList = await country.evaluate((button) => {
+      const list = document.getElementById(button.getAttribute("aria-controls") ?? "");
+      if (!list) return null;
+      const options = [...list.querySelectorAll("[role='option']")];
+      return {
+        expanded: button.getAttribute("aria-expanded") === "true",
+        visible: getComputedStyle(list).visibility === "visible",
+        options: options.length,
+        selected: options
+          .filter((option) => option.getAttribute("aria-selected") === "true")
+          .map((option) => option.textContent ?? ""),
+        enabled: options.filter((option) => option.getAttribute("aria-disabled") !== "true").length,
+        soonOnDisabled: options
+          .filter((option) => option.getAttribute("aria-disabled") === "true")
+          .every((option) => /soon/i.test(option.textContent ?? "")),
+        links: list.querySelectorAll("a[href]").length,
+      };
+    });
+    check(
+      !!countryList && countryList.expanded && countryList.visible,
+      "header: the country list did not open",
+    );
+    check(
+      !!countryList &&
+        countryList.selected.length === 1 &&
+        countryList.selected[0].includes("United Arab Emirates"),
+      "header: the country list does not mark the UAE as current",
+    );
+    check(
+      !!countryList && countryList.options > 1 && countryList.enabled === 1,
+      "header: a country other than the UAE is choosable",
+    );
+    check(!!countryList?.soonOnDisabled, "header: a disabled country is not marked as coming");
+    check(countryList?.links === 0, "header: the country list links somewhere");
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(450);
+    check(
+      (await country.getAttribute("aria-expanded")) === "false" &&
+        (await country.evaluate((button) => document.activeElement === button)),
+      "header: Escape did not close the country list and return focus to it",
+    );
+  }
+  check(
+    (await page.evaluate(() =>
+      [...document.querySelectorAll("a[href]")].filter((a) =>
+        /^\/(?:sa|kz|ru|uk)(?:[/?#]|$)/.test(a.getAttribute("href") ?? ""),
+      ).length,
+    )) === 0,
+    "home: the page links to a market that has no routes",
   );
 
   // Everything the old mega-menu linked to now lives in the menu panel.
@@ -347,8 +406,8 @@ try {
   await page.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
   await page.locator("[data-catalog-card]").first().waitFor();
   await page.waitForTimeout(1_200);
-  check((await page.locator("[data-catalog-card]").count()) === 16, "catalog: expected 16 product cards");
-  check((await page.locator("[data-catalog-price]").count()) === 16, "catalog: expected a price or request label on every card");
+  check((await page.locator("[data-catalog-card]").count()) === 21, "catalog: expected 21 product cards");
+  check((await page.locator("[data-catalog-price]").count()) === 21, "catalog: expected a price or request label on every card");
   const catalogPrices = await page.locator("[data-catalog-card]").evaluateAll((cards) =>
     Object.fromEntries(
       cards.map((card) => [
@@ -466,23 +525,17 @@ try {
     ).startsWith("https://odoo."),
     "matcha: the bar's account link does not lead to Odoo",
   );
-  await page.getByRole("button", { name: "Request pricing" }).first().click();
-  const pricingForm = page.locator("#partner-request-modal-form");
-  await pricingForm.waitFor({ state: "visible" });
+  // The product-page redesign drops "Request pricing" (prices and the pricing
+  // form are gone from the mocks) for "Find your distributor", a plain link.
+  // The sample request above stays the page's lead form.
   check(
-    (await pricingForm.locator('input[name="tildaspec-formname"]').inputValue()) ===
-      "Partner with Us",
-    "matcha: pricing modal carries an unexpected lead form name",
+    (await page.getByRole("button", { name: "Request pricing" }).count()) === 0,
+    "matcha: the redesigned page still offers the removed pricing form",
   );
   check(
-    (await pricingForm.locator('input[name="product"]').inputValue()) === "Matcha",
-    "matcha: pricing modal lost product context",
-  );
-  await page.keyboard.press("Escape");
-  await pricingForm.waitFor({ state: "detached" });
-  check(
-    (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
-    "matcha: pricing modal left the page scroll locked",
+    (await page.getByRole("link", { name: "Find your distributor" }).first().getAttribute("href")) ===
+      "/ae/distributors",
+    "matcha: Find your distributor does not lead to the distributors page",
   );
   // Browser smoke must be safe against a credentialed staging environment.
   // Mock only the same-origin lead boundary so the UX and attribution path are
@@ -604,7 +657,13 @@ try {
   );
   check(
     (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 0,
-    "mobile: the region picker is back in the menu",
+    "mobile: the old region picker is back in the menu",
+  );
+  // The country selector stays in the bar at every width rather than moving
+  // into the menu the way the old picker did.
+  check(
+    await mobilePage.locator("header button[aria-label^='Country:']").isVisible(),
+    "mobile: the country selector is missing from the bar",
   );
   await mobile.close();
   console.log("Browser smoke phase passed: mobile interactions");
@@ -641,6 +700,30 @@ try {
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
       fullPage: false,
     });
+    // The country list opens from the right of the bar with search and the
+    // burger still to its right, so a narrow screen is where it would run off
+    // the left edge. Opened at every width, after the capture so the
+    // screenshot is of the page at rest.
+    const countryTrigger = visualPage.locator("header button[aria-label^='Country:']");
+    await countryTrigger.click();
+    await visualPage.waitForTimeout(450);
+    const countryPanel = await countryTrigger.evaluate((button) => {
+      const list = document.getElementById(button.getAttribute("aria-controls") ?? "");
+      if (!list) return null;
+      const box = list.getBoundingClientRect();
+      return {
+        open: button.getAttribute("aria-expanded") === "true",
+        left: box.left,
+        right: box.right,
+        cw: document.documentElement.clientWidth,
+      };
+    });
+    check(!!countryPanel?.open, `header: the country list did not open at ${width}x${height}`);
+    check(
+      !!countryPanel && countryPanel.left >= -1 && countryPanel.right <= countryPanel.cw + 1,
+      `header: the country list leaves the viewport at ${width}x${height} (${Math.round(countryPanel?.left ?? 0)}..${Math.round(countryPanel?.right ?? 0)} of ${countryPanel?.cw})`,
+    );
+    await visualPage.keyboard.press("Escape");
   }
   await visual.close();
   console.log("Browser smoke phase passed: responsive captures");
@@ -690,6 +773,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, country selector, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

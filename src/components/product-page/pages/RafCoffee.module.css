@@ -1,0 +1,15 @@
+/* Raf coffee: the few places its mock differs from the matcha baseline. */
+
+/* Flavour cards stand 170 tall (baseline 150). */
+@media (min-width: 1024px) {
+  .flavours > div {
+    min-height: calc(170 * var(--u));
+  }
+}
+
+@media (max-width: 1023px) {
+  /* The phone title is 56px (baseline 60). */
+  .hero h1 {
+    font-size: 56px;
+  }
+}

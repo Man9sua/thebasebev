@@ -235,9 +235,9 @@ const H1_NOT_PRESERVED = new Map([
     {
       h1: "Who we are",
       reason:
-        'h1 is the About redesign\'s "We Manufacture High-Quality Customizable ' +
-        'Premix Powders"; production\'s "Who we are" names nothing the page is ' +
-        "found for, and the new line carries the manufacturing wording instead. " +
+        'h1 is the About redesign\'s "Ingredients for HoReCa"; production\'s ' +
+        '"Who we are" names nothing the page is found for, and the new line ' +
+        "names the category and the audience instead. " +
         "Declared rather than kept as an h2: the redesign has no such heading, " +
         "and a hidden one would be an exemption dressed up as markup",
     },

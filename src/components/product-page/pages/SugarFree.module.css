@@ -1,0 +1,144 @@
+/*
+ * Sugar free: what it does beyond the jam generation (see Jam.module.css) —
+ * a hero without a band and with a 600px collage of three sachets, a service
+ * section that sits closer to it, and white flavour cards with sachet photos.
+ */
+
+@media (min-width: 1024px) {
+  .hero.hero {
+    grid-template-columns: minmax(0, 1fr) calc(600 * var(--u));
+  }
+
+  .closer.closer {
+    padding-top: calc(72 * var(--u));
+  }
+
+  .prep.prep p {
+    max-width: calc(400 * var(--u));
+  }
+}
+
+/* ---------------- hero collage ---------------- */
+
+.collage.collage {
+  display: block;
+  position: relative;
+  height: calc(620 * var(--u));
+}
+
+.collage.collage img {
+  position: absolute;
+  width: calc(330 * var(--u));
+  height: auto;
+  max-width: none;
+  display: block;
+}
+
+.collage.collage img:nth-child(1) {
+  left: calc(40 * var(--u));
+  top: calc(50 * var(--u));
+  transform: rotate(-8deg);
+}
+
+.collage.collage img:nth-child(2) {
+  right: calc(30 * var(--u));
+  top: calc(170 * var(--u));
+  transform: rotate(6deg);
+}
+
+.collage.collage img:nth-child(3) {
+  left: calc(110 * var(--u));
+  bottom: calc(40 * var(--u));
+  transform: rotate(-2deg);
+}
+
+/* ---------------- ten flavours ---------------- */
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour {
+  background: #fff;
+  border-radius: calc(20 * var(--u));
+  padding: calc(20 * var(--u)) calc(20 * var(--u)) calc(22 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--u));
+}
+
+.flavour img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 715 / 600;
+  object-fit: contain;
+  display: block;
+}
+
+.flavourName {
+  font-weight: 900;
+  font-size: calc(22 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--pp-ink);
+}
+
+.prepNote {
+  font-size: 14px;
+  line-height: normal;
+  color: var(--pp-muted);
+}
+
+/* ================= mobile (390 design) ================= */
+
+@media (max-width: 1023px) {
+  .hero.hero {
+    padding-bottom: 0;
+  }
+
+  /* the phone stacks the two buttons closer than the shared hero does */
+  .hero > div:first-child > div:last-child {
+    gap: 8px;
+  }
+
+  .collage.collage {
+    height: 300px;
+  }
+
+  .collage.collage img {
+    width: 190px;
+  }
+
+  .collage.collage img:nth-child(1) {
+    left: 10px;
+    top: 24px;
+  }
+
+  .collage.collage img:nth-child(2) {
+    right: 6px;
+    top: 70px;
+  }
+
+  .collage.collage img:nth-child(3) {
+    left: 60px;
+    bottom: 16px;
+  }
+
+  .flavours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flavour {
+    border-radius: 16px;
+    padding: 12px 12px 14px;
+    gap: 10px;
+  }
+
+  .flavourName {
+    font-size: 15px;
+    line-height: 1.05;
+  }
+}

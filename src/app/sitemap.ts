@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/data/blog";
 import { GLOSSARY_ENTRIES } from "@/data/glossary";
-import { SITE_ORIGIN, sitemapRoutes } from "@/lib/site-pages";
+import { nativeSitemapRoutes, SITE_ORIGIN, sitemapRoutes } from "@/lib/site-pages";
 import { publicPath } from "@/lib/site-paths";
 
 const auditedLastModified = {
@@ -36,6 +36,8 @@ const auditedLastModified = {
   "/catalog": "2026-08-20T14:19:28+00:00",
 } as const;
 
+const NATIVE_LAST_MODIFIED = "2026-10-06T00:00:00+00:00";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   if (sitemapRoutes.length !== 29) {
     throw new Error(`Expected 29 audited sitemap routes, received ${sitemapRoutes.length}.`);
@@ -54,6 +56,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
+  // Ranges added after the export, served by React alone; dated by their launch.
+  const nativePages = nativeSitemapRoutes.map((route) => ({
+    url: `${SITE_ORIGIN}${publicPath(route)}`,
+    lastModified: NATIVE_LAST_MODIFIED,
+  }));
+
   const glossaryArticles = GLOSSARY_ENTRIES.map((entry) => ({
     url: `${SITE_ORIGIN}${publicPath(entry.path)}`,
     lastModified: `${entry.published}T00:00:00.000Z`,
@@ -64,5 +72,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: `${post.published}T00:00:00.000Z`,
   }));
 
-  return [...publicPages, ...glossaryArticles, ...blogArticles];
+  return [...publicPages, ...nativePages, ...glossaryArticles, ...blogArticles];
 }

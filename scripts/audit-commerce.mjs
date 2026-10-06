@@ -94,8 +94,8 @@ try {
     }
     if (audit.nativeCartControl) failures.push(`${route}: the bar still carries a cart`);
     if (audit.legacyCartNodes > 0) failures.push(`${route}: legacy Tilda cart is still mounted`);
-    if (route === "/catalog" && audit.catalogCards.length !== 16) {
-      failures.push(`/catalog: expected 16 visible catalogue cards, received ${audit.catalogCards.length}`);
+    if (route === "/catalog" && audit.catalogCards.length !== 21) {
+      failures.push(`/catalog: expected 21 visible catalogue cards, received ${audit.catalogCards.length}`);
     }
 
     if (route === "/catalog") {
@@ -120,9 +120,10 @@ try {
       }
 
 
+      // The redesigned product page carries one lead form, the sample; its
+      // second action is the distributor finder, a plain link.
       for (const action of [
         { label: "Request a sample", form: "#sample-request-modal-form", formName: "Free Sample" },
-        { label: "Request pricing", form: "#partner-request-modal-form", formName: "Partner with Us" },
       ]) {
         await page.getByRole("button", { name: action.label }).first().click();
         const form = page.locator(action.form);
@@ -134,6 +135,11 @@ try {
         }
         await page.keyboard.press("Escape");
         await form.waitFor({ state: "detached" });
+      }
+
+      const distributorHref = await page.getByRole("link", { name: "Find your distributor" }).first().getAttribute("href");
+      if (distributorHref !== "/ae/distributors") {
+        failures.push("/matcha: Find your distributor points at " + distributorHref);
       }
     }
   }

@@ -15,6 +15,7 @@ import { GlossaryPage } from "@/components/resources/GlossaryPage";
 import { ToolsPage } from "@/components/resources/ToolsPage";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { ProductHero } from "@/components/product/ProductHero";
+import { PRODUCT_PAGE_ASSETS, PRODUCT_PAGES } from "@/components/product-page/registry";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { PageIntro } from "@/components/site/PageIntro";
 import { PageOffers } from "@/components/site/PageOffers";
@@ -35,7 +36,9 @@ import {
   getRelatedBlogPosts,
   type BlogPost,
 } from "@/data/blog";
+import catalogTiles from "@/data/catalog-tiles.json";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
+import { breadcrumbList, productSchema, type Crumb } from "@/lib/structured-data";
 import { publicPath, publicUrl } from "@/lib/site-paths";
 import {
   getSitePage,
@@ -45,6 +48,7 @@ import {
   withoutLegacyRecords,
   catalogWeights,
   catalogFlavors,
+  productDetails,
 } from "@/lib/site-pages";
 
 type RouteProps = {
@@ -199,7 +203,90 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   };
 }
 
+/** Short names for the trail; anything not listed falls back to its title. */
+const CRUMB_NAMES: Record<string, string> = {
+  "/catalog": "Catalogue",
+  "/about-us": "About Us",
+  "/contacts": "Contacts",
+  "/distributors": "Distributors",
+  "/rnd": "R&D",
+  "/private-labeling": "Private Labeling",
+  "/wholesale-strategy": "Wholesale Strategy",
+  "/resources": "Resources",
+  "/resources/blog": "Blog",
+  "/resources/glossary": "Glossary",
+  "/resources/tools": "Tools",
+  "/sitemap": "Sitemap",
+  "/privacy": "Privacy Policy",
+  "/terms": "Terms & Conditions",
+  "/knowledge-recipes": "Recipe Base",
+};
+
+const HOME: Crumb = { name: "Home", path: "/" };
+
+function crumbName(route: string) {
+  return CRUMB_NAMES[route] ?? getSitePage(route)?.title.split(" | ")[0] ?? route;
+}
+
+/** Where a route sits, for `BreadcrumbList`. The home page has no trail. */
+function breadcrumbsFor(route: string): Crumb[] | null {
+  if (route === "/") return null;
+
+  const entry = findGlossaryEntryByPath(route) ?? findBlogPostByPath(route);
+  if (entry) {
+    const index = findGlossaryEntryByPath(route) ? "/resources/glossary" : "/resources/blog";
+    return [
+      HOME,
+      { name: crumbName("/resources"), path: "/resources" },
+      { name: crumbName(index), path: index },
+      { name: entry.title, path: route },
+    ];
+  }
+
+  const product = getProduct(route.slice(1));
+  if (product) {
+    return [HOME, { name: crumbName("/catalog"), path: "/catalog" }, { name: product.name, path: route }];
+  }
+
+  if (!getSitePage(route)) return null;
+  const parent = route.startsWith("/resources/") ? [{ name: crumbName("/resources"), path: "/resources" }] : [];
+  return [HOME, ...parent, { name: crumbName(route), path: route }];
+}
+
+/** The product's own schema block, on pages that render the redesigned body. */
+function productStructuredData(route: string) {
+  const product = getProduct(route.slice(1));
+  if (!product || !PRODUCT_PAGES[product.slug]) return null;
+  return productSchema({
+    name: product.name,
+    description: getSitePage(route)?.description || product.description,
+    path: product.route,
+    image: (catalogTiles as Record<string, { image: string }>)[product.slug]?.image ?? `/images/pack-${product.slug}.webp`,
+    price: product.price,
+  });
+}
+
+/**
+ * Every route, with the two schema blocks React owns on top of whatever the
+ * page itself carries: its `BreadcrumbList`, and on a product its `Product`.
+ */
 export default async function SiteRoute({ params }: RouteProps) {
+  const route = normalizeSitePath((await params).path);
+  const crumbs = breadcrumbsFor(route);
+  const product = productStructuredData(route);
+
+  return (
+    <>
+      {crumbs && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbList(crumbs) }} />
+      )}
+      {product && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: product }} />}
+      <RouteBody params={params} />
+    </>
+  );
+}
+
+async function RouteBody({ params }: RouteProps) {
   const route = normalizeSitePath((await params).path);
   const glossaryEntry = findGlossaryEntryByPath(route);
 
@@ -378,6 +465,17 @@ export default async function SiteRoute({ params }: RouteProps) {
   const intro = getPageIntro(route);
   const offers = getPageOffers(route);
 
+  // Products with a redesigned page (components/product-page) render it in
+  // place of the hero and details above. The sentence production ranks on
+  // stays on the page as a small h2 under the name.
+  const RedesignedProduct = product ? PRODUCT_PAGES[product.slug] : undefined;
+  const productHeadline = product
+    ? (() => {
+        const headline = productDetails[product.slug]?.h1 ?? product.headline;
+        return headline !== product.name ? headline : undefined;
+      })()
+    : undefined;
+
   // Everything else: one shared header and footer, with the old Tilda chrome
   // already removed from the markup server-side.
   return (
@@ -385,9 +483,22 @@ export default async function SiteRoute({ params }: RouteProps) {
       <SiteHeader overHero={route === "/private-labeling"} productPage={Boolean(product)} />
       {intro && <PageIntro intro={intro} />}
       {offers && <PageOffers offers={offers} />}
-      {product && <ProductHero product={product} />}
-      {product && <ProductDetails product={product} />}
-      <LegacyPageShell page={page} opensPage={!intro && !product} />
+      {RedesignedProduct && product ? (
+        <RedesignedProduct
+          product={product}
+          headline={productHeadline}
+          assets={PRODUCT_PAGE_ASSETS[product.slug] ?? {}}
+        />
+      ) : (
+        product && (
+          <>
+            <ProductHero product={product} />
+            <ProductDetails product={product} />
+          </>
+        )
+      )}
+      {/* A native route has no export behind it, so nothing to carry over. */}
+      {!page.native && <LegacyPageShell page={page} opensPage={!intro && !product} />}
       <SiteFooter />
     </div>
   );
