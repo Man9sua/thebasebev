@@ -1,0 +1,97 @@
+/**
+ * Services row.
+ *
+ * The catalogue card's composition, at four across: a photograph with no frame
+ * of its own, then type on the page. Nothing here draws a panel, a border or a
+ * corner radius — the picture is the only shape on the row.
+ */
+
+.section {
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(3rem, 7vw, 6rem);
+  background: var(--tbb-paper);
+}
+
+/* The four rows — picture, title, entry price, description — are declared here,
+   on the row itself, and each service opts into them with `subgrid`. That is
+   what puts the price of a one-line service on the same line as the price of a
+   three-line one: the alignment is the grid's, not a height anybody has to
+   keep up to date. Stretching the title inside each card instead only lines
+   things up if every card happens to be the same height, which is the thing
+   being fixed. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: auto auto auto auto;
+  gap: clamp(1rem, 2vw, 2rem);
+  width: 100%;
+  max-width: var(--tbb-max);
+  margin: 0 auto;
+  padding: 0 var(--tbb-gutter);
+  list-style: none;
+}
+
+.offer {
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  row-gap: 0.5rem;
+}
+
+.media {
+  /* The source plates are 300x180. Held to their own ratio so none of the four
+     is cropped harder than its neighbour. */
+  aspect-ratio: 5 / 3;
+  overflow: hidden;
+  margin-bottom: clamp(0.6rem, 1.2vw, 1rem);
+  background: var(--tbb-paper-warm);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.title {
+  align-self: start;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--tbb-ink);
+}
+
+.from {
+  font-size: var(--tbb-text-label);
+  font-weight: 500;
+  letter-spacing: var(--tbb-tracking-label);
+  text-transform: uppercase;
+  color: var(--tbb-ink);
+}
+
+.body {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--tbb-muted);
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: auto;
+    row-gap: clamp(2rem, 4vw, 3rem);
+  }
+}
+
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* One per row: there is nothing left to line up with, so the services stop
+     sharing the row's tracks and each closes up around its own copy. */
+  .offer {
+    grid-row: auto;
+    grid-template-rows: auto auto auto auto;
+  }
+}

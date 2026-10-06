@@ -1,0 +1,557 @@
+/*
+ * Jam, and the parts of its design generation that Sugar free and Tea share
+ * (small service cards, tall prepare cards, the R&D band, the simplified
+ * "Inside the pack", the plain FAQ and the closing "Try it on your menu" band).
+ *
+ * Desktop values are mock px × `--u`, like the shared module. Where a rule has
+ * to beat a single shared class it doubles its own class, so the result does
+ * not depend on stylesheet order. Class names avoid "title": the export's
+ * custom.css restyles any class containing it.
+ */
+
+/* ---------------- hero ---------------- */
+
+@media (min-width: 1024px) {
+  .hero h1 {
+    font-size: calc(var(--hero-size, 200) * var(--u));
+  }
+
+  .hero a,
+  .hero button {
+    padding: 0 calc(30 * var(--u));
+  }
+}
+
+/* A light outline button on a dark hero or band. */
+.darkActions a {
+  border-color: #f6f6f4;
+  color: #f6f6f4;
+}
+
+.darkActions a:hover {
+  background: #f6f6f4;
+  color: var(--pp-ink);
+}
+
+/* The photo fills its card instead of sitting inside it. */
+.fill.fill img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 70%;
+  display: block;
+}
+
+/* ---------------- sections ---------------- */
+
+@media (min-width: 1024px) {
+  .gap40.gap40 {
+    gap: calc(40 * var(--u));
+  }
+}
+
+/* ---------------- made for service: six small cards ---------------- */
+
+.miniStats > div {
+  border-radius: calc(24 * var(--u));
+  padding: calc(28 * var(--u));
+  gap: calc(8 * var(--u));
+  min-height: calc(150 * var(--u));
+  box-sizing: border-box;
+  justify-content: flex-end;
+}
+
+.miniStats > div > span:first-child {
+  font-size: calc(var(--mini-value, 28) * var(--u));
+  line-height: 1;
+  color: var(--pp-ink);
+}
+
+.miniStats > div > span:last-child {
+  font-size: calc(15 * var(--u));
+  line-height: 1.4;
+}
+
+/* ---------------- how to prepare: tall cards ---------------- */
+
+.tallSteps > div {
+  min-height: calc(180 * var(--u));
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.tallSteps > div > span:first-child {
+  font-size: calc(16 * var(--u));
+}
+
+.tallSteps > div > span:last-child {
+  font-size: calc(36 * var(--u));
+  white-space: normal;
+}
+
+/* ---------------- six flavours ---------------- */
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour {
+  border-radius: calc(24 * var(--u));
+  padding: calc(28 * var(--u));
+  min-height: calc(200 * var(--u));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(12 * var(--u));
+}
+
+.badge {
+  align-self: flex-start;
+  background: var(--pp-ink);
+  color: #fff;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.flavourName {
+  font-weight: 900;
+  font-size: calc(28 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--pp-ink);
+}
+
+/* ---------------- R&D band ---------------- */
+
+.band {
+  background: var(--pp-ink);
+  border-radius: calc(24 * var(--u));
+  padding: calc(36 * var(--u)) calc(40 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(40 * var(--u));
+  color: #f6f6f4;
+}
+
+.bandCopy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+}
+
+.bandName {
+  font-weight: 900;
+  font-size: calc(32 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.bandText {
+  font-size: calc(17 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-on-ink);
+}
+
+.bandLink {
+  font-size: calc(15 * var(--u));
+  font-weight: 700;
+  /* the mock's arrow falls back to a taller system face */
+  line-height: 1.34;
+  color: #f6f6f4;
+  text-decoration: none;
+}
+
+.bandLink:hover {
+  color: var(--pp-red);
+}
+
+/* ---------------- inside the pack, simplified ---------------- */
+
+.caption {
+  font-size: calc(16 * var(--u));
+  line-height: normal;
+  color: var(--pp-muted);
+}
+
+.facts {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(24 * var(--u)) calc(40 * var(--u));
+}
+
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: calc(12 * var(--u)) 0;
+  font-size: calc(17 * var(--u));
+  line-height: normal;
+}
+
+.fact + .fact {
+  border-top: 1px solid #eceae5;
+}
+
+.fact > :first-child {
+  color: var(--pp-muted);
+}
+
+.fact > :last-child {
+  font-weight: 700;
+  color: var(--pp-ink);
+}
+
+.sideCol {
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--u));
+}
+
+.note {
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+}
+
+.noteHead {
+  font-size: calc(18 * var(--u));
+  font-weight: 800;
+  line-height: normal;
+}
+
+.noteText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+}
+
+.shelf {
+  flex: 1;
+  background: var(--pp-ink);
+  color: #f6f6f4;
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--u));
+}
+
+.shelfValue {
+  font-weight: 900;
+  font-size: calc(40 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.shelfText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.55;
+  color: var(--pp-on-ink);
+}
+
+/* ---------------- questions, plain ---------------- */
+
+.faq {
+  padding: calc(120 * var(--u)) var(--pp-inline) 0;
+  display: grid;
+  grid-template-columns: calc(420 * var(--u)) minmax(0, 1fr);
+  gap: calc(96 * var(--u));
+  align-items: start;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.faqItem {
+  background: #fff;
+  border-radius: calc(20 * var(--u));
+  padding: 0 calc(28 * var(--u));
+}
+
+.faqQ {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: calc(28 * var(--u)) 0;
+  font-size: calc(20 * var(--u));
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--pp-ink);
+}
+
+.faqQ::-webkit-details-marker {
+  display: none;
+}
+
+.faqQ:focus-visible {
+  outline: 2px solid var(--pp-ink);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.plus {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: var(--pp-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 500;
+  transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.faqItem[open] .plus {
+  transform: rotate(45deg);
+}
+
+.faqItem .faqA {
+  padding: 0 40px calc(28 * var(--u)) 0;
+  font-size: calc(17 * var(--u));
+  color: var(--pp-muted);
+  text-wrap: pretty;
+}
+
+/* ---------------- try it on your menu ---------------- */
+
+.try {
+  padding: calc(120 * var(--u)) var(--pp-inline);
+}
+
+.tryCard {
+  background: var(--try-bg, #3a0a0e);
+  border-radius: calc(32 * var(--u));
+  padding: calc(64 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(48 * var(--u));
+}
+
+.tryCopy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--u));
+}
+
+.tryCard .tryHead {
+  font-size: calc(64 * var(--u));
+  color: #f6f6f4;
+}
+
+.trySub {
+  font-size: calc(18 * var(--u));
+  line-height: normal;
+  color: var(--try-sub, #e6cfcf);
+}
+
+.tryActions {
+  display: flex;
+  gap: calc(12 * var(--u));
+}
+
+.tryActions a,
+.tryActions button {
+  padding: 0 calc(30 * var(--u));
+}
+
+/* ================= mobile (390 design) ================= */
+
+@media (max-width: 1023px) {
+  .hero h1 {
+    font-size: var(--hero-m, 80px);
+  }
+
+  .fill.fill {
+    height: 340px;
+  }
+
+  .miniStats > div {
+    border-radius: 16px;
+    padding: 18px;
+    gap: 6px;
+    min-height: 0;
+  }
+
+  .miniStats > div > span:first-child {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .miniStats > div > span:last-child {
+    font-size: 13px;
+  }
+
+  .tallSteps > div {
+    min-height: 0;
+    gap: 12px;
+  }
+
+  .tallSteps > div > span:first-child {
+    font-size: 15px;
+  }
+
+  .tallSteps > div > span:last-child {
+    font-size: var(--step-m, 20px);
+    line-height: normal;
+    text-align: right;
+  }
+
+  .flavours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flavour {
+    border-radius: 16px;
+    padding: 16px;
+    min-height: 120px;
+  }
+
+  .badge {
+    font-size: 11px;
+  }
+
+  .flavourName {
+    font-size: 17px;
+  }
+
+  .band {
+    border-radius: 18px;
+    padding: 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .bandCopy {
+    display: contents;
+  }
+
+  .bandName {
+    font-size: 20px;
+    line-height: normal;
+  }
+
+  .bandText {
+    font-size: 14px;
+  }
+
+  .bandLink {
+    font-size: 14px;
+  }
+
+  .inside {
+    gap: 16px;
+  }
+
+  .caption {
+    font-size: 14px;
+  }
+
+  .facts {
+    border-radius: 18px;
+    padding: 8px 20px;
+  }
+
+  .fact {
+    padding: 10px 0;
+    font-size: 15px;
+  }
+
+  .note {
+    border-radius: 18px;
+    padding: 20px;
+    gap: 4px;
+  }
+
+  .noteHead {
+    font-size: 16px;
+  }
+
+  .noteText {
+    font-size: 14px;
+    line-height: normal;
+  }
+
+  .shelf {
+    border-radius: 18px;
+    padding: 20px;
+    gap: 8px;
+  }
+
+  .shelfValue {
+    font-size: 26px;
+    line-height: normal;
+  }
+
+  .shelfText {
+    font-size: 14px;
+  }
+
+  .faq {
+    padding: 56px 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .faqList {
+    gap: 8px;
+  }
+
+  .faqItem {
+    border-radius: 20px;
+    padding: 0 18px;
+  }
+
+  .faqQ {
+    padding: 18px 0;
+    font-size: 16px;
+  }
+
+  .faqItem .faqA {
+    padding-bottom: 18px;
+    font-size: 13px;
+  }
+
+  .try {
+    padding: 40px 12px 12px;
+  }
+
+  .tryCard {
+    border-radius: 22px;
+    padding: 28px 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .tryCopy,
+  .tryActions {
+    display: contents;
+  }
+
+  .tryCard .tryHead {
+    font-size: 36px;
+  }
+}

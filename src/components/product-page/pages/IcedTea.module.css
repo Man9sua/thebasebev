@@ -1,0 +1,116 @@
+/* Iced tea: the places its mock differs from the matcha baseline. */
+
+/* ---- 03 menu: the marketing kit is the 10th cell of the photo grid ---- */
+
+.kitCell {
+  background: var(--pp-ink);
+  border-radius: calc(20 * var(--u));
+  padding: calc(28 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--pp-paper);
+}
+
+.kitCellTitle {
+  font-weight: 900;
+  font-size: calc(28 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.kitCellText {
+  font-size: calc(15 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-on-ink);
+}
+
+.kitCell .kitCellButton {
+  height: calc(48 * var(--u));
+  min-height: 0;
+  padding: 0;
+  font-size: calc(13 * var(--u));
+}
+
+/* ---- 05 flavours: five columns of tall cards with a line of copy ---- */
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour {
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  min-height: calc(240 * var(--u));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: calc(8 * var(--u));
+}
+
+.flavourName {
+  font-weight: 900;
+  font-size: calc(34 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.flavourText {
+  font-size: calc(16 * var(--u));
+  line-height: normal;
+  color: #2e2a1e;
+}
+
+.own {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+}
+
+.ownTitle {
+  font-weight: 900;
+  font-size: calc(28 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ownText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-muted);
+}
+
+@media (max-width: 1023px) {
+  /* Prepare values are 24px on the phone (baseline 22). */
+  .steps span + span {
+    font-size: 24px;
+  }
+
+  .flavours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flavour {
+    border-radius: 18px;
+    padding: 18px;
+    min-height: 120px;
+    gap: 4px;
+  }
+
+  .flavourName {
+    font-size: 22px;
+    line-height: normal;
+  }
+
+  .flavourText {
+    font-size: 13px;
+  }
+}

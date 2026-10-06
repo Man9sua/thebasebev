@@ -1,0 +1,143 @@
+/*
+ * Tea: a near-black hero with a 160px name, smaller stat values, and "Three
+ * teas" as white cards with pack cut-outs (rows with thumbnails on a phone).
+ * The "Your own blend" band and the light outline button come from Jam.module.css.
+ */
+
+@media (min-width: 1024px) {
+  .hero h1 {
+    font-size: calc(160 * var(--u));
+  }
+
+  .stats > div > span:first-child {
+    font-size: calc(44 * var(--u));
+    white-space: nowrap;
+  }
+}
+
+.small {
+  font-size: calc(28 * var(--u));
+}
+
+/* ---------------- three teas ---------------- */
+
+/* The phone lists the band with the teas, 8px apart. */
+.teaList {
+  display: contents;
+}
+
+.teas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.tea {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.teaImage {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.teaImage img {
+  flex: none;
+  width: 118%;
+  max-width: none;
+  height: auto;
+  display: block;
+}
+
+.teaCopy {
+  padding: calc(8 * var(--u)) calc(32 * var(--u)) calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+}
+
+.teaName {
+  font-weight: 900;
+  font-size: calc(36 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--pp-ink);
+}
+
+.teaText {
+  font-size: calc(17 * var(--u));
+  line-height: normal;
+  color: var(--pp-muted);
+}
+
+/* ================= mobile (390 design) ================= */
+
+@media (max-width: 1023px) {
+  .hero h1 {
+    font-size: 72px;
+  }
+
+  .stats > div > span:first-child {
+    font-size: 20px;
+  }
+
+  .steps > div > span:last-child,
+  .small {
+    font-size: 20px;
+  }
+
+  .gap16.gap16 {
+    gap: 16px;
+  }
+
+  .teaList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .teas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tea {
+    border-radius: 18px;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .teaImage {
+    flex: none;
+    width: 130px;
+    height: 104px;
+    aspect-ratio: auto;
+  }
+
+  .teaImage img {
+    width: 150px;
+  }
+
+  .teaCopy {
+    padding: 16px 16px 16px 0;
+    gap: 4px;
+  }
+
+  .teaName {
+    font-size: 22px;
+  }
+
+  .teaText {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+}

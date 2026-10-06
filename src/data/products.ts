@@ -4,7 +4,7 @@
  * Routes and copy come from the existing product pages, so every card links to
  * a URL that already ranks. Never rename a `route` — it is live.
  *
- * `backgroundColor` drives the Bestsellers colour field and the catalog cards.
+ * `backgroundColor` drives the Bestsellers colour field and the product page's.
  * Most values were sampled from that product's own pack shot, so the artwork
  * blends into the field with no visible edge. Three are hand-set because the
  * product's largest artwork is a dark banner rather than a coloured pack shot;
@@ -26,6 +26,17 @@ export type Product = {
   route: string;
   /** Short display name for cards and the carousel. */
   name: string;
+  /**
+   * `name` with soft hyphens (U+00AD) marking where it may break when it is set
+   * at display size. Only needed for single words long enough to outrun their
+   * column — anything with a space in it already has somewhere to break.
+   *
+   * Set explicitly rather than left to `hyphens: auto`, which needs a
+   * hyphenation dictionary the browser may simply not have: Chromium ships them
+   * as a downloadable component, and without one the property does nothing at
+   * all. A soft hyphen needs no dictionary.
+   */
+  hyphenatedName?: string;
   /** The product page's H1, reused so wording stays consistent across the site. */
   headline: string;
   description: string;
@@ -87,6 +98,7 @@ export const PRODUCTS: Product[] = [
     slug: "milkshake",
     route: "/milkshake",
     name: "Milkshake",
+    hyphenatedName: "Milk\u00ADshake",
     headline: "Milkshake Base Powder — Thick, Creamy & Easy to Blend",
     description:
       "Milkshake base powder for cafés and HoReCa: thick, creamy texture from a single scoop, no dairy prep and no waste.",
@@ -229,7 +241,10 @@ export const PRODUCTS: Product[] = [
   {
     slug: "garnish",
     route: "/garnish",
-    name: "Garnishes",
+    /* The design names it in the singular and so does the pouch, where
+       GARNISH is printed across the front. The plural is production's own
+       heading, which stays whole one level down as `headline`. */
+    name: "Garnish",
     headline: "Professional Garnishes for Beverages and Desserts",
     description:
       "Garnishes built for service speed — consistent size, colour and shelf life across every cover.",
@@ -259,23 +274,75 @@ export const PRODUCTS: Product[] = [
     price: null,
     backgroundColor: "#583d35",
   },
+  /*
+   * New ranges, with no Tilda page behind them: their routes are served by
+   * React alone (see `NATIVE_ROUTES` in `site-pages.ts`). The headline repeats
+   * the name, so no ranking sentence is drawn under it — there is none to keep.
+   * Colours are the catalogue plate's own wash (`tile-<slug>.webp`).
+   */
+  {
+    slug: "puree",
+    route: "/puree",
+    name: "Purées",
+    headline: "Purées",
+    description:
+      "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts. Real fruit texture, ready to pour.",
+    image: "/images/pack-puree.webp",
+    price: null,
+    backgroundColor: "#edb48c",
+  },
+  {
+    slug: "sauce",
+    route: "/sauce",
+    name: "Sauces",
+    headline: "Sauces",
+    description:
+      "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts.",
+    image: "/images/pack-sauce.webp",
+    price: null,
+    backgroundColor: "#d3a877",
+  },
+  {
+    slug: "colour-collection",
+    route: "/colour-collection",
+    name: "Colour Collection",
+    headline: "Colour Collection",
+    description:
+      "Five natural powders for beverage menus. One ingredient in every tin, nothing added.",
+    image: "/images/pack-colour-collection.webp",
+    price: null,
+    backgroundColor: "#afbaeb",
+  },
+  {
+    slug: "add-ons",
+    route: "/add-ons",
+    name: "Functional Add-ons",
+    headline: "Functional Add-ons",
+    description:
+      "Seven pre-dosed sticks that turn drinks already on your menu into functional ones.",
+    image: "/images/pack-add-ons.webp",
+    price: null,
+    backgroundColor: "#c9c0e6",
+  },
+  {
+    slug: "at-home",
+    route: "/at-home",
+    name: "At Home",
+    headline: "At Home",
+    description:
+      "The same café recipes in 150 g pouches, for guests to make the drink at home.",
+    image: "/images/pack-at-home.webp",
+    price: null,
+    backgroundColor: "#e5c3aa",
+  },
 ];
-
-/**
- * Shown in the hero, in order.
- *
- * cream-latte is first on purpose: production's homepage h1 is
- * "Premium / Cream Latte / Bases", and the hero carries that h1, so the
- * server-rendered wording has to match.
- */
-export const HERO_SLUGS = ["cream-latte", "matcha", "chocolate"] as const;
 
 /**
  * Featured in the Bestsellers carousel, in order.
  *
  * Same five products, in the same order, as the hero slider running on
- * production today — the redesign changes how they are presented, not which
- * products the homepage promotes.
+ * production today — the homepage changes how they are presented, not which
+ * products it promotes.
  */
 export const BESTSELLER_SLUGS = [
   "cream-latte",

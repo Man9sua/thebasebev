@@ -1,0 +1,171 @@
+/* Chai latte: the places its mock differs from the matcha baseline. */
+
+/* ---- 03 menu: title and kit card in the first column, two photos beside ---- */
+
+section.menu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(340 * var(--u)) calc(340 * var(--u));
+  gap: calc(16 * var(--u));
+  align-items: stretch;
+}
+
+.menuLead {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(28 * var(--u));
+  padding-right: calc(32 * var(--u));
+}
+
+.tile {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+}
+
+.tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kitCard {
+  background: var(--pp-ink);
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--u));
+  color: var(--pp-paper);
+}
+
+.kitCardTitle {
+  font-weight: 900;
+  font-size: calc(28 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.kitCardText {
+  font-size: calc(15 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-on-ink);
+}
+
+.kitCard .kitCardButton {
+  height: calc(48 * var(--u));
+  min-height: 0;
+  padding: 0;
+  font-size: calc(13 * var(--u));
+}
+
+/* ---- 05 flavours: three columns of tall cards with a line of copy ---- */
+
+.flavours {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(12 * var(--u));
+}
+
+.flavour {
+  border-radius: calc(24 * var(--u));
+  padding: calc(36 * var(--u));
+  min-height: calc(260 * var(--u));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: calc(8 * var(--u));
+}
+
+.flavourName {
+  font-weight: 900;
+  font-size: calc(44 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.flavourText {
+  font-size: calc(17 * var(--u));
+  line-height: normal;
+  color: #2e241e;
+}
+
+.own {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(36 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+}
+
+.ownTitle {
+  font-weight: 900;
+  font-size: calc(32 * var(--u));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ownText {
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-muted);
+}
+
+@media (min-width: 1024px) {
+  /* "Creamy" is set at 28px beside the 40px values. */
+  .steps > div:nth-child(4) > span:last-child {
+    font-size: calc(28 * var(--u));
+  }
+}
+
+@media (max-width: 1023px) {
+  /* The phone title is 56px (baseline 60). */
+  .hero h1 {
+    font-size: 56px;
+  }
+
+  /* Both photos sit in a two-column grid under the title; no scroller. */
+  section.menu {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 8px;
+    row-gap: 20px;
+  }
+
+  .menuLead {
+    display: contents;
+  }
+
+  .menuLead > h2,
+  .menuKit {
+    grid-column: 1 / -1;
+  }
+
+  .tile {
+    border-radius: 16px;
+  }
+
+  .flavours {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flavour {
+    border-radius: 18px;
+    padding: 18px;
+    min-height: 140px;
+    gap: 4px;
+  }
+
+  .flavourName {
+    font-size: 24px;
+    line-height: normal;
+  }
+
+  .flavourText {
+    font-size: 13px;
+  }
+}

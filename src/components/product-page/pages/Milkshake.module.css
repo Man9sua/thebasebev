@@ -1,0 +1,33 @@
+/*
+ * Milkshake, Frappe and Cream Latte: built on the matcha baseline without a
+ * mock of their own. Desktop values are px × --u, the phone (≤1023px) plain px.
+ */
+
+/* ---- 01 hero: "MILKSHAKE" is nine wide letters; at matcha's 136px it would
+   overrun the copy column, so it steps down to the chocolate page's 104px. ---- */
+
+.longTitle h1 {
+  font-size: calc(104 * var(--u));
+}
+
+@media (max-width: 1023px) {
+  .longTitle h1 {
+    font-size: 52px;
+  }
+}
+
+/* ---- 06 inside the pack, without a nutrition table: the side cards on one row ---- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: calc(16 * var(--u));
+}
+
+@media (max-width: 1023px) {
+  .facts {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}

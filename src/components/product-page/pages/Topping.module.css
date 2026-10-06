@@ -1,0 +1,126 @@
+/*
+ * Toppings: what its mock does differently from the matcha baseline.
+ * Desktop values are mock px × --u, the phone (≤1023px) is plain px.
+ */
+
+.hero h1 {
+  font-size: calc(124 * var(--u));
+}
+
+/* ---- 02 stats: 44px values on one line ---- */
+
+.stats > div > span:first-child {
+  font-size: calc(44 * var(--u));
+  white-space: nowrap;
+}
+
+/* ---- 04 prepare: the longer whisk time is set smaller ---- */
+
+.whisk {
+  font-size: calc(32 * var(--u));
+}
+
+/* ---- 05 flavours: taller cards, 1.05 names (the own card keeps its own) ---- */
+
+.flavours > div {
+  min-height: calc(220 * var(--u));
+}
+
+.flavours > div[style] > span {
+  line-height: 1.05;
+}
+
+/* ---- 06 inside: serve-kcal card, tighter allergens card, plain shelf ---- */
+
+.kcal {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(32 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+}
+
+.kcalLabel {
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  line-height: normal;
+  color: var(--pp-muted);
+}
+
+.kcalValue {
+  font-weight: 900;
+  font-size: calc(56 * var(--u));
+  line-height: 1;
+}
+
+.kcalText {
+  font-size: calc(15 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-muted);
+}
+
+/* section > grid > side column > allergens card */
+.inside > div:last-child > div:last-child > div:nth-child(2) {
+  padding: calc(28 * var(--u));
+  gap: calc(6 * var(--u));
+}
+
+.shelf {
+  gap: calc(12 * var(--u));
+}
+
+.shelf a {
+  margin-top: auto;
+}
+
+/* ================= mobile (390 design) ================= */
+
+@media (max-width: 1023px) {
+  .hero h1 {
+    font-size: 60px;
+  }
+
+  .stats > div > span:first-child {
+    font-size: 20px;
+    white-space: normal;
+  }
+
+  .whisk {
+    font-size: inherit;
+  }
+
+  .flavours > div {
+    min-height: 96px;
+  }
+
+  /* The phone shows the serve-kcal card above the table. */
+  .inside > div:last-child > div:last-child {
+    display: contents;
+  }
+
+  .kcal {
+    order: -1;
+    border-radius: 18px;
+    padding: 20px;
+    gap: 4px;
+  }
+
+  .kcalLabel {
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .kcalValue {
+    font-size: 36px;
+    line-height: 48px;
+  }
+
+  .shelf {
+    gap: 0;
+  }
+
+  .inside > div:last-child > div:last-child > div:nth-child(2) {
+    padding: 18px;
+  }
+}

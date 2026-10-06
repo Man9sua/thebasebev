@@ -1,0 +1,214 @@
+/* Functional add-ons: the stick cards and the menu map. */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(16 * var(--u));
+}
+
+.card {
+  background: #fff;
+  border-radius: calc(24 * var(--u));
+  padding: calc(28 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(18 * var(--u));
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.swatch {
+  flex: none;
+  width: calc(56 * var(--u));
+  height: calc(56 * var(--u));
+  border-radius: calc(16 * var(--u));
+}
+
+.stick {
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+  color: var(--pp-muted);
+}
+
+.cardName {
+  display: flex;
+  flex-direction: column;
+  gap: calc(4 * var(--u));
+}
+
+.name {
+  font-size: calc(26 * var(--u));
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.use {
+  font-size: calc(16 * var(--u));
+  font-weight: 600;
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+  font-size: calc(15 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-muted);
+}
+
+.facts b {
+  font-weight: 600;
+  color: var(--pp-ink);
+}
+
+.own {
+  background: var(--pp-ink);
+  border-radius: calc(24 * var(--u));
+  padding: calc(28 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(24 * var(--u));
+}
+
+.ownTitle {
+  font-size: calc(26 * var(--u));
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--pp-paper);
+}
+
+.ownText {
+  font-size: calc(15 * var(--u));
+  line-height: 1.5;
+  color: var(--pp-on-ink);
+}
+
+.ownLink {
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  color: var(--pp-paper);
+  text-decoration: none;
+}
+
+.ownLink:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* The mock sets the map's note under its heading, not beside it. */
+.mapSection > :first-child {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(20 * var(--u));
+}
+
+.mapSection > :first-child > p {
+  max-width: calc(620 * var(--u));
+  color: #3a3835;
+}
+
+.map {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+}
+
+.row {
+  background: #fff;
+  border-radius: calc(18 * var(--u));
+  padding: calc(22 * var(--u)) calc(32 * var(--u));
+  display: grid;
+  grid-template-columns: calc(260 * var(--u)) minmax(0, 1fr) calc(380 * var(--u));
+  gap: calc(32 * var(--u));
+  align-items: center;
+}
+
+.drink {
+  font-size: calc(20 * var(--u));
+  font-weight: 800;
+}
+
+.serves {
+  font-size: calc(16 * var(--u));
+  color: var(--pp-muted);
+}
+
+.add {
+  font-size: calc(16 * var(--u));
+  font-weight: 700;
+}
+
+@media (max-width: 1023px) {
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .card {
+    border-radius: 18px;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 14px;
+    row-gap: 4px;
+    align-items: start;
+  }
+
+  .cardHead {
+    grid-row: span 2;
+  }
+
+  .swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .name {
+    font-size: 18px;
+  }
+
+  .use {
+    font-size: 14px;
+  }
+
+  .factsLine {
+    grid-column: 2;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--pp-muted);
+  }
+
+  .map {
+    gap: 8px;
+  }
+
+  .row {
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .drink {
+    font-size: 16px;
+  }
+
+  .serves {
+    font-size: 13px;
+  }
+
+  .add {
+    font-size: 14px;
+  }
+}
