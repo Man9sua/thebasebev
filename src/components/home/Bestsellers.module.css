@@ -83,11 +83,6 @@
   row-gap: clamp(0.9rem, 1.8vw, 1.35rem);
 }
 
-.eyebrow {
-  display: block;
-  color: var(--tbb-muted);
-}
-
 .heading {
   font-family: var(--tbb-font-display);
   text-transform: uppercase;
@@ -173,30 +168,6 @@
 
 .cta:hover svg {
   transform: translate3d(4px, 0, 0);
-}
-
-/* The three stacked figures — 600+, HALAL, HACCP — as one line. They frame the
-   range rather than describe the slide, so they close the column instead of
-   sitting in the middle of it competing with the product's own name. */
-/* `balance` used to break it mid-claim — HALAL on one line and CERTIFIED on
-   the next, which reads as two things rather than one. The claims are held
-   together in the markup instead and the line breaks between them. */
-.proof {
-  padding-top: clamp(0.3rem, 1vw, 0.8rem);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--tbb-muted);
-}
-
-.proof b {
-  font-weight: inherit;
-  white-space: nowrap;
-}
-
-.proof span {
-  padding: 0 0.35rem;
-  opacity: 0.6;
 }
 
 /* ---- the rail ---- */

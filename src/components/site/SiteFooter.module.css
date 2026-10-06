@@ -186,6 +186,11 @@
   stroke-linejoin: round;
 }
 
+.socialLink .whatsappIcon {
+  fill: currentColor;
+  stroke: none;
+}
+
 .socialLink:hover,
 .socialLink:focus-visible {
   border-color: var(--tbb-rd-paper);

@@ -16,7 +16,7 @@ function publicUrl(value) {
   } catch { return value; }
 }
 const expectedSitemapRoutes =
-  29 + glossaryContent.entries.length + blogContent.posts.length;
+  34 + glossaryContent.entries.length + blogContent.posts.length;
 
 /*
  * Numeric character references are decoded generically rather than one by one.
@@ -195,7 +195,7 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const production = await fetchSnapshot(productionOrigin, legacyPath(route));
+    const production = await fetchSnapshot(productionOrigin, route);
     await delay(500);
     const target = await fetchSnapshot(targetOrigin, route);
     results[index] = { route, production, target };

@@ -226,8 +226,6 @@ export function Bestsellers() {
     >
       <div className={styles.inner}>
         <div className={styles.copy}>
-          <span className={`tbb-label ${styles.eyebrow}`}>Bestsellers</span>
-
           <h2 className={styles.heading}>
             <span
               className={`${styles.headingProduct} ${styles.swap} ${
@@ -264,16 +262,6 @@ export function Bestsellers() {
             </p>
           </div>
 
-          {/* The same claim the three stacked figures made, as one line. It is
-              framing for the range rather than a fact about this slide, so it
-              sits under the call to action and does not change with it. */}
-          <p className={styles.proof}>
-            {/* Each claim held together, so a line can only break between them —
-                see `.proof`. */}
-            <b>600+ flavours</b> <span aria-hidden="true">·</span>{" "}
-            <b>HALAL certified</b> <span aria-hidden="true">·</span>{" "}
-            <b>HACCP food safety</b>
-          </p>
         </div>
 
         <div className={styles.showcase}>

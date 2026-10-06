@@ -25,3 +25,13 @@ body > .t-zoomer__wrapper,
 .legacy-document {
   display: contents;
 }
+
+/* Exported Tilda CSS adds underlines to every hovered link, including native pages. */
+a:hover {
+  text-decoration-line: none !important;
+}
+
+.tbh-nav a:hover::after,
+.tbh-nav__btn:hover::after {
+  right: 100% !important;
+}

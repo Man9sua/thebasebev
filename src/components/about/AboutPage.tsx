@@ -5,15 +5,6 @@ import { AboutQuality } from "@/components/about/AboutQuality";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./AboutPage.module.css";
 
-const team = [
-  ["Sally Bobis", "QA - Research and Development Manager", "team-sally.webp"],
-  ["Chippy Prathapan", "Quality Assurance Executive", "team-chippy.webp"],
-  ["Chethana Fernando", "Research and Development Executive", "team-chethana.webp"],
-  ["Elce Trajano", "Project Manager", "team-elce.webp"],
-  ["Gary Porquez", "Beverage Expert", "team-gary.webp"],
-  ["Yakovleva Irina", "Strategy Brand Designer", "team-irina.webp"],
-] as const;
-
 const stories = [
   {
     title: "Our Laboratory",
@@ -76,34 +67,6 @@ function SectionMark() {
   );
 }
 
-function AboutTeam() {
-  return (
-    <section className={styles.teamSection} aria-labelledby="team-title" data-surface="dark">
-      <div className={styles.container}>
-        <SectionMark />
-        <h2 id="team-title">Team of Professional</h2>
-        <div className={styles.teamGrid}>
-          {team.map(([name, role, image]) => (
-            <article className={styles.teamCard} key={name}>
-              <div className={styles.portrait}>
-                <Image
-                  src={`/images/about/${image}`}
-                  className={image === "team-irina.webp" ? styles.portraitCrop : undefined}
-                  alt={`${name}, ${role}`}
-                  fill
-                  sizes="(max-width: 767px) 132px, (max-width: 1100px) 28vw, 242px"
-                />
-              </div>
-              <h3>{name}</h3>
-              <p>{role}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function AboutFacility() {
   return (
     <>
@@ -133,7 +96,6 @@ function AboutFacility() {
                     fill
                     sizes="(max-width: 767px) calc(100vw - 48px), 50vw"
                   />
-                  {position === 1 && <span className={styles.labAccent} aria-hidden="true" />}
                 </div>
               </div>
             </section>
@@ -250,7 +212,6 @@ export function AboutPage() {
   return (
     <main className={styles.page}>
       <AboutHero />
-      <AboutTeam />
       <AboutFacility />
       <Careers />
       <AboutEngage />
