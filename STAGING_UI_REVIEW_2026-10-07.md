@@ -39,6 +39,9 @@ Branch: `possible_change`. Deployment target: THE BASE staging in `mansua`.
    were removed. Article metadata and return links follow the heading instead.
    Functional field labels, product information and counters remain; SEO
    BreadcrumbList schema and production canonicals are preserved.
+10. Following the owner's additional message, the hamburger menu's `UAE EN`
+    chip is replaced by a working `Find your distributor` button. The header
+    retains the restored country selector.
 
 ## Source handling
 
@@ -69,6 +72,35 @@ the last Contact/Resources/404 weight corrections and navigation from legacy.
 `npm audit` still reports 15 existing vulnerabilities (1 critical, 12 high,
 2 moderate); dependencies and the lockfile were not changed by this task.
 
-Publication and remote audit results are recorded after deployment. Browser
-form checks mock lead delivery; they do not create real leads or orders. Browser
-emulation does not prove behavior on a physical iPhone's Safari.
+## First staging verification
+
+Code `17bf8d5` was deployed as version
+`a5c23d78-5b00-4831-80ba-e1c8ec4de0cb`. HTTP (49 routes, 257 redirects), crawlers
+(9 user agents × 13 pages and 3 assets), route/indexability (188 routes,
+172 sitemap URLs) and SEO parity (172 canonicals, zero critical failures) passed.
+Six computed-font scenarios confirmed the final Contact/Resources/404 roles,
+the sample modal and actual navigation from a retained recipe page to Home.
+
+The first commerce navigation aborted; its targeted rerun passed all 22 product
+categories without submitting an order. Initial UI runs recorded a Contacts
+failure-message timeout and an early Private Label format selection mismatch.
+Three fresh mocked Contacts runs passed; the original timeout was not reproduced.
+Smoke scripts now wait for the existing lead bridge readiness signal before
+interacting with the forms, and wait for the selected format to reach the brief.
+The SEO UI rerun passed 287 checks. These test changes do not alter form delivery.
+
+Comparison with the older `mnsdemo` rollback/reference remains failed because of
+existing H1/content/JSON-LD differences; it reported no status/canonical/redirect
+mismatch. That reference Worker was not changed.
+
+The menu follow-up requires a final staging publication and transport/browser
+verification. Browser form checks mock lead delivery; they do not create real
+leads or orders. Browser emulation does not prove behavior on physical iPhone
+Safari. The retained recipe page exposes Next CSS chunks rather than a separate
+`custom.css` link; its navigation test verifies the actual font result, without
+claiming to exercise a separately loaded legacy stylesheet.
+
+The code branch is pushed. PR creation through browser automation failed with
+a Windows sandbox ACL error; the earlier credential-based API route was also
+rejected by automatic approval review. No credential extraction was retried.
+Ready PR link: https://github.com/Man9sua/thebasebev/compare/develop...possible_change?expand=1 .

@@ -210,7 +210,7 @@
   color: var(--tbb-rd-paper);
 }
 
-.footRegion {
+.footFinder {
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;
@@ -219,15 +219,17 @@
   border: 1px solid #333;
   border-radius: 999px;
   color: var(--tbb-rd-on-ink);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
+  font-weight: var(--tbb-font-weight-button);
   text-decoration: none;
   transition:
     border-color var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.footRegion:hover,
-.footRegion:focus-visible {
+.footFinder:hover,
+.footFinder:focus-visible {
   border-color: var(--tbb-rd-paper);
   color: var(--tbb-rd-paper);
 }

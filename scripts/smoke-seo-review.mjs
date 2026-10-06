@@ -98,7 +98,13 @@ async function runViewport(label, viewport) {
   const banner = page.getByRole("region", { name: "Cookies", exact: true });
   if (await banner.count()) await banner.getByRole("button", { name: "Reject", exact: true }).click();
 
+  async function waitForLeadBridge(form) {
+    // The bridge adds this readonly spam field when it arms the form handlers.
+    await form.locator('input[name="company_website"][readonly]').waitFor({ state: "attached" });
+  }
+
   async function completeIdentity(form) {
+    await waitForLeadBridge(form);
     await form.locator('input[name="name"]').fill("SEO Review");
     await form.locator('input[name="email"]').fill("seo-review@example.com");
     await form.locator('input[name="Phone"]').fill("+971500000000");
@@ -144,8 +150,10 @@ async function runViewport(label, viewport) {
 
   await caseOf("private-label", async () => {
     await visit("/private-labeling");
-    await page.locator("#private-label-formats").getByRole("link").filter({ has: page.getByRole("heading", { name: "Custom product development" }) }).click();
     const form = page.locator("#form1855232921");
+    await waitForLeadBridge(form);
+    await page.locator("#private-label-formats").getByRole("link").filter({ has: page.getByRole("heading", { name: "Custom product development" }) }).click();
+    await page.waitForFunction(() => document.querySelector('#form1855232921 select[name="product"]')?.value === "Custom product development");
     check(await form.locator('select[name="product"]').inputValue() === "Custom product development", `${label} private label: chosen format fills brief`);
     await completeIdentity(form);
     await form.locator('input[name="company"]').fill("THE BASE QA");

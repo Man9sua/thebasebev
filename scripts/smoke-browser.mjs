@@ -672,6 +672,8 @@ try {
   });
   const contactForm = page.locator("#form860957415");
   await contactForm.waitFor();
+  // LeadAttributionBridge adds this readonly field when it arms the native form.
+  await contactForm.locator('input[name="company_website"][readonly]').waitFor({ state: "attached" });
   await contactForm.locator('input[name="name"]').fill("Browser Smoke");
   await contactForm.locator('input[name="company"]').fill("THE BASE QA");
   await contactForm.locator('input[name="email"]').fill("smoke@example.com");
@@ -685,7 +687,9 @@ try {
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
+  const contactResponse = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/leads");
   await contactForm.evaluate((form) => form.requestSubmit());
+  await contactResponse;
   // Waited for rather than slept through: the message arrives when the lead
   // round-trip fails, and against a deployed Worker that is sometimes longer
   // than a fixed pause. One run in four failed here on a site whose forms had
@@ -767,8 +771,8 @@ try {
     "mobile: country selector is missing",
   );
   check(
-    await mobileMenu.getByText("UAE EN", { exact: true }).isVisible(),
-    "mobile: menu lacks the current market label",
+    await mobileMenu.getByRole("link", { name: "Find your distributor", exact: true }).isVisible(),
+    "mobile: menu lacks the distributor finder button",
   );
   await checkDistributorFinder(mobilePage, "mobile", "Kyrgyzstan", "KG");
   await mobile.close();
