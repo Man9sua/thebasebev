@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { Breadcrumbs, DistributorLink, FlavourEnquiryLink, Responsive, SampleButton, cx, productPageStyles as styles } from "./blocks";
+import { DistributorLink, FlavourEnquiryLink, Responsive, SampleButton, cx, productPageStyles as styles } from "./blocks";
 import fb from "./familyB.module.css";
 
 /**
@@ -68,7 +68,6 @@ export function FamilyHero({
       }
     >
       <div className={fb.heroCopy}>
-        <Breadcrumbs current={productName} />
         <h1 id="product-title" className={cx(styles.heroTitle, fb.heroName)}>
           {title}
         </h1>

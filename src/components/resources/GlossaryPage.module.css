@@ -24,9 +24,9 @@
 .hero h1 {
   max-width: 12ch;
   margin-top: 1rem;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(3.4rem, 9vw, 8.5rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.055em;
   line-height: 0.88;
 }
@@ -108,7 +108,7 @@
   color: var(--tbb-ink);
   font: inherit;
   font-size: 0.68rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -116,6 +116,7 @@
     background var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease),
     border-color var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
 }
 
 .filter,
@@ -197,6 +198,8 @@
   letter-spacing: inherit;
   text-transform: inherit;
   cursor: pointer;
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
 }
 
 .grid {
@@ -249,9 +252,9 @@
 }
 
 .term h2 {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.6rem, 2.5vw, 2.5rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-subheading);
   letter-spacing: -0.025em;
   line-height: 1;
 }
@@ -299,7 +302,7 @@
 }
 
 .empty strong {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: var(--tbb-text-h3);
 }
 

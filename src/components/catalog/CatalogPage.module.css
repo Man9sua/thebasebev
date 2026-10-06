@@ -31,7 +31,7 @@
   padding-bottom: var(--pad-y);
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 }
 
 .intro,
@@ -62,9 +62,9 @@
 
 .intro .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2.75rem, 6.6667vw, 6rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em !important;
   text-transform: uppercase;
@@ -175,9 +175,9 @@
   border: 0;
   background: none;
   color: var(--tbb-rd-muted);
-  font-family: inherit;
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   white-space: nowrap;
   cursor: pointer;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
@@ -246,7 +246,7 @@
 
 .rangeName {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.125rem, 1.6667vw, 1.5rem);
   font-weight: 800 !important;
   line-height: 1.2 !important;
@@ -354,9 +354,9 @@
   border-radius: 999px;
   background: var(--tbb-rd-ink);
   color: var(--tbb-rd-paper);
-  font-family: inherit;
+  font-family: var(--tbb-font-button);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.04em;
   text-decoration: none !important;
   white-space: nowrap;
@@ -404,7 +404,7 @@
 .name {
   margin: 0 !important;
   min-width: 0;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: clamp(0.9375rem, 1.1111vw, 1.0625rem);
   font-weight: 700 !important;
   line-height: 1.25 !important;
@@ -558,7 +558,7 @@
 
 .closeTitle {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.125rem, 1.6667vw, 1.5rem);
   font-weight: 800;
   line-height: 1.25 !important;

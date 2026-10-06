@@ -7,7 +7,7 @@
 .formats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(12 * var(--u)); }
 .format { background: #fff; border-radius: calc(22 * var(--u)); padding: calc(32 * var(--u)); display: flex; flex-direction: column; gap: calc(12 * var(--u)); }
 .label { font-size: calc(15 * var(--u)); font-weight: 600; color: var(--pp-muted); }
-.formatName { font-size: calc(36 * var(--u)); line-height: 1; text-transform: uppercase; font-weight: 900; }
+.formatName { font-size: calc(36 * var(--u)); line-height: 1; text-transform: uppercase; font-weight: var(--tbb-font-weight-heading); }
 .text { display: block; font-size: calc(16 * var(--u)); line-height: 1.55; color: var(--pp-muted); }
 .bulk { background: var(--pp-ink); color: var(--pp-paper); }
 .bulk .label, .bulk .text { color: #c9c6c0; }

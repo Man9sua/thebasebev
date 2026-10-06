@@ -96,7 +96,7 @@
 
 .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.25rem, 5vw, 1.625rem);
   font-weight: 500 !important;
   line-height: 1.1 !important;
@@ -314,7 +314,7 @@
   border-radius: 999px;
   background: var(--tbb-ink);
   color: var(--tbb-on-dark);
-  font: 600 0.6875rem / 1 var(--tbb-font-sans);
+  font: var(--tbb-font-weight-button) 0.6875rem / 1 var(--tbb-font-button);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   cursor: pointer;

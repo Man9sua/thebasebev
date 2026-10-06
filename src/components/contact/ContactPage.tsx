@@ -35,33 +35,25 @@ import styles from "./ContactPage.module.css";
  * kinds of lead.
  */
 
-/**
- * The department mailboxes. `short` is the label the card falls back to on a
- * phone, where four cards become a 2 × 2 grid of tiles — the full label and the
- * address do not fit, and the accessible name on the link carries both anyway.
- */
+/** Department labels and email addresses stay visible at every viewport. */
 const CHANNELS = [
   {
     label: "General enquiries",
-    short: "General",
     value: COMPANY.email,
     href: COMPANY.emailHref,
   },
   {
     label: "New wholesale accounts",
-    short: "Wholesale",
     value: "sales@thebasebev.com",
     href: "mailto:sales@thebasebev.com",
   },
   {
     label: "Retail and HoReCa orders",
-    short: "Orders",
     value: "retail@thebasebev.com",
     href: "mailto:retail@thebasebev.com",
   },
   {
     label: "Existing orders and logistics",
-    short: "Logistics",
     value: "supply@thebasebev.com",
     href: "mailto:supply@thebasebev.com",
   },
@@ -117,7 +109,6 @@ export function ContactPage() {
                 aria-label={`${channel.label}: ${channel.value}`}
               >
                 <span className={styles.channelLabel}>{channel.label}</span>
-                <span className={styles.channelShort}>{channel.short}</span>
                 <span className={styles.channelValue}>{channel.value}</span>
               </a>
             ))}

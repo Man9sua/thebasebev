@@ -25,7 +25,7 @@
 
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 }
 
 .inner {
@@ -37,9 +37,9 @@
 /* One rule for every heading on the page. */
 .sectionTitle {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2.5rem, 5.5556vw, 5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -73,9 +73,9 @@
   padding-inline: clamp(1.5rem, 2.5vw, 2.25rem);
   border: 1.5px solid transparent;
   border-radius: 999px;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-align: center;
@@ -222,9 +222,9 @@
  */
 .heroTitle {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2.5rem, 8.6cqw, 7rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -387,9 +387,9 @@
 }
 
 .stepNumber {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2rem, 4.4444vw, 4rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   color: var(--tbb-rd-red);
   font-variant-numeric: tabular-nums;
@@ -453,27 +453,11 @@
   color: var(--tbb-rd-paper);
 }
 
-.tierHead {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-}
-
-.tierEyebrow {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--tbb-rd-muted);
-}
-
-.tierFeatured .tierEyebrow {
-  color: var(--tbb-rd-red);
-}
-
 .page .tierName {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.75rem, 3.0556vw, 2.75rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.9 !important;
   letter-spacing: -0.01em;
   text-transform: uppercase;

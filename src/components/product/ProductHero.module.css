@@ -570,7 +570,7 @@ span.sceneLayer {
  * these as words, not as a shout.
  */
 .copy .title {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: calc(48 * var(--u));
   font-weight: 700 !important;
   line-height: 1.383;
@@ -591,7 +591,7 @@ span.sceneLayer {
  */
 .copy .headline {
   margin-top: calc(-6.5 * var(--u));
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: calc(13.5 * var(--u));
   font-weight: 500 !important;
   line-height: 1.45 !important;
@@ -606,7 +606,7 @@ span.sceneLayer {
 
 .copy .tagline {
   margin-top: calc(-6.5 * var(--u));
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: calc(14 * var(--u));
   font-weight: 400 !important;
   line-height: calc(41.09 * var(--u)) !important;
@@ -641,7 +641,7 @@ span.sceneLayer {
 }
 
 .copy .marginTitle {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: calc(18 * var(--u));
   font-weight: 700 !important;
   line-height: calc(22 * var(--u));
@@ -700,7 +700,7 @@ span.sceneLayer {
   height: calc(42 * var(--u));
   border-radius: calc(6 * var(--u));
   background: var(--tbb-paper);
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: calc(16 * var(--u));
   font-weight: 700 !important;
   line-height: calc(22 * var(--u)) !important;

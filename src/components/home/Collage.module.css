@@ -10,7 +10,7 @@
 
   background: var(--tbb-rd-paper);
   padding: clamp(3.5rem, 8.3333vw, 7.5rem) 0;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   overflow: clip;
 }
 
@@ -30,10 +30,10 @@
 
 .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   /* 80 at 1440. */
   font-size: clamp(2.25rem, 5.5556vw, 5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.9 !important;
   letter-spacing: -0.02em !important;
   text-transform: uppercase;

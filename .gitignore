@@ -46,3 +46,5 @@ assets/home-hero/*
 
 # Private source material supplied for this review.
 whatsappchat/
+/addphotos/
+/output/photo-review/

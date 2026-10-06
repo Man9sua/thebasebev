@@ -56,7 +56,6 @@ export function BlogPage() {
     <main className={styles.page} data-blog-page>
       <section className={styles.hero} aria-labelledby="blog-title">
         <div className={styles.heroInner}>
-          <span className="tbb-label">Resources / {BLOG_POSTS.length} articles</span>
           <h1 id="blog-title">Blog</h1>
           <p>
             Practical guidance on beverage bases and B2B supply for cafés, restaurants and

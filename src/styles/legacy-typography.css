@@ -1,0 +1,39 @@
+/** Typography bridge for retained Tilda records, not native page layouts.
+ * Exported CSS names literal font families and can reset controls to Arial.
+ * Scope every override to legacy records/popups and keep their dimensions.
+ */
+.legacy-document {
+  font-family: var(--tbb-font-body);
+  font-weight: var(--tbb-font-weight-body);
+  --t-headline-font: var(--tbb-font-heading);
+  --t-text-font: var(--tbb-font-body);
+}
+
+html body .legacy-document :where(.t-text, .t-descr, .t-redactor__text, .tn-atom),
+html body :where(.t706__cartwin, .t-store__prod-popup, .t-popup),
+html body :where(.t706__cartwin, .t-store__prod-popup, .t-popup) :where(p, span, div, a, label):not([class*="icon"]) {
+  font-family: var(--tbb-font-body) !important;
+}
+
+html body .legacy-document :where(.t-title, .t-heading),
+html body .legacy-document :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--tbb-font-heading) !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
+}
+
+html body .legacy-document :where(.t-name, .t-store__card__title),
+html body :where(.t706__product-title, .t706__cartwin-heading, .t-store__prod-popup__name) {
+  font-family: var(--tbb-font-heading) !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
+}
+
+html body .legacy-document :where(.t-btn, .t-btntext, .t-submit, .t-btnflex, .t-store__btn, .t-inputbutton),
+html body :where(.t706__cartwin, .t-store__prod-popup, .t-popup) :where(button, .t-btn, .t-submit) {
+  font-family: var(--tbb-font-button) !important;
+  font-weight: var(--tbb-font-weight-button) !important;
+}
+
+html body .legacy-document :where(input, select, textarea, .t-input, .t-select, .t-input-error, .t-form__successbox, .t-form__errorbox-text),
+html body :where(.t706__cartwin, .t-store__prod-popup, .t-popup) :where(input, select, textarea) {
+  font-family: var(--tbb-font-body) !important;
+}

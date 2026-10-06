@@ -12,28 +12,10 @@
   max-width: var(--tbb-measure-wide);
   margin-inline: auto;
 }
-
-.breadcrumbs {
-  display: flex;
-  min-width: 0;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  color: var(--tbb-muted);
-  font-size: var(--tbb-text-label);
-  letter-spacing: 0.08em;
-  line-height: 1.5;
-  text-transform: uppercase;
-}
-
-.breadcrumbs a,
 .backLink,
 .bottomBackLink {
   color: inherit !important;
   text-decoration: none !important;
-}
-
-.breadcrumbs a:hover {
-  color: var(--tbb-ink) !important;
 }
 
 .backLink,
@@ -60,6 +42,7 @@
 }
 
 .meta {
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem 1.5rem;
@@ -71,11 +54,11 @@
 
 .header h1 {
   max-width: 12ch;
-  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  margin-top: 0;
   overflow-wrap: anywhere;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(3.25rem, 8vw, 8rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.055em;
   line-height: 0.9;
 }
@@ -143,9 +126,9 @@
 
 .relatedHeading h2 {
   margin-top: 0.75rem;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.7rem, 2.8vw, 2.75rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.03em;
   line-height: 1;
 }
@@ -184,8 +167,6 @@
 .bottomBackLink:hover {
   opacity: 0.55;
 }
-
-.breadcrumbs a:focus-visible,
 .backLink:focus-visible,
 .bottomBackLink:focus-visible,
 .body a:focus-visible,
@@ -198,10 +179,6 @@
   .page {
     padding-top: calc(var(--tbb-header-h) + 2rem);
     padding-inline: 1.25rem;
-  }
-
-  .breadcrumbs {
-    display: none;
   }
 
   .backLink {

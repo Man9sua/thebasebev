@@ -4,13 +4,8 @@ import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY } from "@/lib/site-config";
 import styles from "./SupportPages.module.css";
 
-function Breadcrumb({ title }: { title: string }) {
-  return <nav className={styles.breadcrumbs} aria-label="Breadcrumb"><SiteLink href="/">Home</SiteLink> / {title}</nav>;
-}
-
 export function RequestSamplesPage() {
   return <main className={styles.page}>
-    <Breadcrumb title="Request samples" />
     <h1>Try it on your menu.</h1>
     <p className={styles.intro}>Tell us what you serve and which THE BASE products you would like to test. Our team will confirm suitable samples and delivery arrangements.</p>
     <div className={styles.links}>
@@ -28,7 +23,6 @@ const QUALITY_ITEMS = [
 
 export function CertificatesPage() {
   return <main className={styles.page}>
-    <Breadcrumb title="Certificates" />
     <h1>Quality, documented.</h1>
     <p className={styles.intro}>The right documentation for your product, your business and your market. Contact THE BASE for current certificates and product specifications.</p>
     <div className={styles.cards}>{QUALITY_ITEMS.map(({ title, text }) => <section key={title} className={styles.card}><h2>{title}</h2><p>{text}</p></section>)}</div>
@@ -38,7 +32,6 @@ export function CertificatesPage() {
 
 export function CookiePolicyPage() {
   return <main className={styles.page}>
-    <Breadcrumb title="Cookie policy" />
     <h1>Cookie policy.</h1>
     <div className={styles.copy}>
       <p>This page describes storage used by the THE BASE website. Your browser can also control or remove cookies and website data.</p>

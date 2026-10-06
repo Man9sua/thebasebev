@@ -1,8 +1,32 @@
+import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
+import { PUBLIC_PREFIX, publicPath } from "@/lib/site-paths";
+
 /**
  * Configuration for the redesigned surfaces.
  *
  * Everything here is meant to be edited without touching a component.
  */
+
+export type Market = {
+  code: string;
+  name: string;
+  label: string;
+  language: string;
+  href: string;
+};
+
+/** UAE serves the current site; the remaining countries open their distributor details. */
+export const MARKETS: readonly Market[] = DISTRIBUTOR_MARKETS.map((market) => ({
+  code: market.code,
+  name: market.code === "AE" ? "United Arab Emirates" : market.name,
+  label: market.code === "AE" ? "UAE" : market.code,
+  language: "EN",
+  href: market.code === "AE"
+    ? PUBLIC_PREFIX
+    : publicPath(`/find-your-distributor?market=${market.code}`),
+}));
+
+export const CURRENT_MARKET = MARKETS.find((market) => market.code === "AE")!;
 
 /**
  * The brand film. It is not the hero — the hero is a photograph — and it plays

@@ -1,11 +1,13 @@
 .page { background: #f6f6f4; color: #0e0e0e; }
 .inner { width: min(1248px,100%); margin-inline: auto; }
 .hero { padding: calc(var(--tbb-header-h) + 64px) clamp(20px,6.667vw,96px) 96px; }
-.hero h1 { margin: 0; font-family: var(--tbb-font-display); font-size: clamp(64px,10vw,144px); font-weight: 900; line-height: .86; letter-spacing: -.035em; text-transform: uppercase; }
+.hero h1 { margin: 0; font-family: var(--tbb-font-heading); font-size: clamp(64px,10vw,144px); font-weight: var(--tbb-font-weight-heading); line-height: .86; letter-spacing: -.035em; text-transform: uppercase; }
 .hero h1 span { color: #e3141b; }
 .lead { max-width: 650px; margin-top: 32px; font-size: 20px; line-height: 1.55; color: #3a3835; }
 .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
-.primary,.secondary { display: inline-flex; min-height: 56px; align-items: center; justify-content: center; padding: 16px 30px; border-radius: 999px; font: inherit; font-size: 14px; font-weight: 600; letter-spacing: .08em; line-height: 1.35; text-transform: uppercase; text-decoration: none; cursor: pointer; }
+.primary,.secondary { display: inline-flex; min-height: 56px; align-items: center; justify-content: center; padding: 16px 30px; border-radius: 999px; font: inherit; font-size: 14px; font-weight: var(--tbb-font-weight-button); letter-spacing: .08em; line-height: 1.35; text-transform: uppercase; text-decoration: none; cursor: pointer;
+  font-family: var(--tbb-font-button);
+}
 .primary { border: 1px solid #e3141b; background: #e3141b; color: #fff !important; }
 .primary:hover { background: #c20f15; border-color: #c20f15; }
 .secondary { border: 1px solid #0e0e0e; color: #0e0e0e !important; }
@@ -15,11 +17,11 @@
 .facts p { margin-top: 12px; color: #55524c; font-size: 17px; line-height: 1.55; }
 .formats { padding: 144px clamp(20px,6.667vw,96px); }
 .formatsIntro { display: flex; justify-content: space-between; gap: 48px; align-items: flex-end; margin-bottom: 64px; }
-.formats h2,.brief h2 { margin: 0; font-family: var(--tbb-font-display); font-size: clamp(48px,6.15vw,88px); font-weight: 900; line-height: .88; letter-spacing: -.03em; text-transform: uppercase; }
+.formats h2,.brief h2 { margin: 0; font-family: var(--tbb-font-heading); font-size: clamp(48px,6.15vw,88px); font-weight: var(--tbb-font-weight-heading); line-height: .88; letter-spacing: -.03em; text-transform: uppercase; }
 .grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
 .card { display: grid; grid-template-rows: 1fr auto auto; min-height: 300px; gap: 22px; padding: 44px 48px; border-radius: 28px; background: #ece9e3; color: #0e0e0e !important; text-decoration: none; }
 .card:hover { background: #e3e0d9; }
-.card h3 { margin: 0; font-family: var(--tbb-font-display); font-size: clamp(32px,3.05vw,44px); font-weight: 900; line-height: .94; letter-spacing: -.02em; text-transform: uppercase; }
+.card h3 { margin: 0; font-family: var(--tbb-font-heading); font-size: clamp(32px,3.05vw,44px); font-weight: var(--tbb-font-weight-heading); line-height: .94; letter-spacing: -.02em; text-transform: uppercase; }
 .card p { margin: 0; color: #55524c; font-size: 17px; line-height: 1.55; }
 .card .condition { color: #0e0e0e; font-size: 20px; font-weight: 500; font-style: italic; }
 .mobileQuote { display: none; }

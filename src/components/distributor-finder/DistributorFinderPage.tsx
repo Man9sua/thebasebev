@@ -34,12 +34,6 @@ export function DistributorFinderPage() {
   return (
     <main className={styles.page}>
       <div className={styles.inner}>
-        <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-          <SiteLink href="/">Home</SiteLink>
-          <span aria-hidden="true"> / </span>
-          <span aria-current="page">Find your distributor</span>
-        </nav>
-
         <div className={styles.intro}>
           <h1 className={styles.title}>Find your<br />distributor</h1>
           <p className={styles.lede}>
@@ -92,12 +86,9 @@ export function DistributorFinderPage() {
 
           <section className={styles.partner} id="distributor-details" aria-labelledby="distributor-partner-name">
             <div className={styles.partnerHeading}>
-              <div>
-                <p className={styles.partnerEyebrow}>{uae ? "Official partner in UAE" : `Distribution in ${selected.name}`}</p>
-                <h2 id="distributor-partner-name" className={styles.partnerTitle}>
-                  {uae ? "The Base Beverage" : "Partner details coming soon"}
-                </h2>
-              </div>
+              <h2 id="distributor-partner-name" className={styles.partnerTitle}>
+                {uae ? "The Base Beverage" : "Partner details coming soon"}
+              </h2>
               <span className={styles.languages}>{selected.languages}</span>
             </div>
             <dl className={styles.details}>

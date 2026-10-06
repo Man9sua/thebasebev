@@ -47,9 +47,9 @@
 
 .title {
   margin: 0.75rem 0 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.75rem, 5vw, 2.75rem);
-  font-weight: 600 !important;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.03em;
   line-height: 1.08 !important;
   text-wrap: balance;

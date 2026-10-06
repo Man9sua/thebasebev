@@ -65,7 +65,7 @@
   top: 80.63%;
   right: 6%;
   margin: 0;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.125rem, 11.1cqw, 1.875rem);
   font-weight: 700;
   line-height: 1.2;

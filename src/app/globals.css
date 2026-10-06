@@ -1,6 +1,7 @@
 @import "../styles/design-tokens.css";
 @import "../styles/legacy-catalog.css";
 @import "../styles/legacy-repairs.css";
+@import "../styles/legacy-typography.css";
 
 html,
 body {
@@ -10,6 +11,21 @@ body {
 
 body.t-body {
   padding: 0;
+  font-family: var(--tbb-font-body);
+  font-weight: var(--tbb-font-weight-body);
+}
+
+/* Native controls otherwise use the browser's Arial/system font. Preserve
+   their component sizes, weights and line heights while sharing the family. */
+button {
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
 /* Tilda's zoom runtime can leave fixed controls mounted after client
@@ -34,4 +50,11 @@ a:hover {
 .tbh-nav a:hover::after,
 .tbh-nav__btn:hover::after {
   right: 100% !important;
+}
+
+/* Keep touch feedback in the component; Safari's tap overlay flashes behind logos. */
+a,
+button,
+summary {
+  -webkit-tap-highlight-color: transparent !important;
 }

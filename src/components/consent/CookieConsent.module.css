@@ -26,7 +26,7 @@
   border-radius: 1.5rem;
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   /* Rises once, a second after load — see REVEAL_DELAY. */
   opacity: 0;
@@ -48,7 +48,7 @@
 }
 
 .title {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: 1.25rem;
   font-weight: 800;
   line-height: 1.2;
@@ -84,9 +84,9 @@
   padding-inline: 1rem;
   border: 1.5px solid var(--tbb-rd-ink);
   border-radius: 999px;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-transform: uppercase;
@@ -124,9 +124,9 @@
   background: none;
   padding: 0;
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   text-align: center;
   cursor: pointer;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
@@ -162,7 +162,7 @@
   border-radius: 1.75rem;
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
@@ -179,7 +179,7 @@
 
 .dialogTitle {
   margin: 0;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: 1.5rem;
   font-weight: 800;
   line-height: 1.2;

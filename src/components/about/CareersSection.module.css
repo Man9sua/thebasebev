@@ -1,7 +1,7 @@
 .section { padding: clamp(72px,10vw,144px) clamp(20px,6.667vw,96px); background: #0e0e0e; color: #f6f6f4; }
 .standalone { padding-top: calc(var(--tbb-header-h) + 72px); }
 .inner { display: grid; max-width: 1248px; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; margin-inline: auto; }
-.copy h1,.copy h2 { margin: 0; font-family: var(--tbb-font-display); font-size: clamp(54px,7.4vw,106px); line-height: .88; font-weight: 900; letter-spacing: -.035em; text-transform: uppercase; }
+.copy h1,.copy h2 { margin: 0; font-family: var(--tbb-font-heading); font-size: clamp(54px,7.4vw,106px); line-height: .88; font-weight: var(--tbb-font-weight-heading); letter-spacing: -.035em; text-transform: uppercase; }
 .copy p { margin-top: 36px; color: #aaa8a2; font-size: 19px; line-height: 1.6; }
 .copy a { display: inline-block; margin-top: 40px; color: #f6f6f4; font-weight: 600; text-decoration: none; }
 .form { padding: 48px; border-radius: 30px; background: #f6f6f4; color: #0e0e0e; }
@@ -26,7 +26,9 @@
 .agreement input { flex-shrink: 0; accent-color: #e3141b; }
 .cvNote { margin: 0; color: #55524c; font-size: 12px; line-height: 1.5; }
 .upload:focus-within .uploadButton { outline: 2px solid #e3141b; outline-offset: 2px; }
-.submit { min-height: 58px; border: 0; border-radius: 999px; background: #e3141b; color: #fff; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.submit { min-height: 58px; border: 0; border-radius: 999px; background: #e3141b; color: #fff; font: inherit; font-size: 13px; font-weight: var(--tbb-font-weight-button); letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+  font-family: var(--tbb-font-button);
+}
 .submit:hover { background: #bc1016; }
 .error { color: #bb1720; font-size: 14px; }
 .success { color: #0e0e0e; font-size: 18px; line-height: 1.55; }

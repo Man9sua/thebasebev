@@ -79,9 +79,9 @@
 
 .title {
   margin-top: 0.8rem !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2.5rem, 5vw, 5rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.045em;
   line-height: 0.95;
 }
@@ -107,9 +107,9 @@
 
 .sectionHead h2,
 .summaryTitle {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.45rem, 2vw, 2rem);
-  font-weight: 500;
+  font-weight: var(--tbb-font-weight-subheading);
 }
 
 .step {
@@ -136,7 +136,7 @@
   border-radius: 0.65rem;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
-  font: 400 1rem / 1.25 var(--tbb-font-sans);
+  font: 400 1rem / 1.25 var(--tbb-font-body);
   text-transform: none;
 }
 
@@ -171,7 +171,7 @@
   border-radius: 999px;
   background: var(--tbb-ink);
   color: var(--tbb-on-dark);
-  font: 500 0.75rem / 1 var(--tbb-font-sans);
+  font: var(--tbb-font-weight-button) 0.75rem / 1 var(--tbb-font-button);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   cursor: pointer;
@@ -301,7 +301,7 @@
   border-bottom: 1px solid transparent;
   background: transparent;
   color: var(--tbb-muted);
-  font: 400 0.72rem / 1.2 var(--tbb-font-sans);
+  font: 400 0.72rem / 1.2 var(--tbb-font-body);
   cursor: pointer;
 }
 
@@ -345,13 +345,13 @@
   gap: 1rem;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   text-align: center;
 }
 
 .redirectMark {
   color: var(--tbb-accent);
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: 1.5rem;
   font-weight: 700;
 }

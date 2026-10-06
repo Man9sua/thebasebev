@@ -84,7 +84,7 @@
 }
 
 .heading {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   text-transform: uppercase;
   margin: 0;
   max-width: 100%;
@@ -121,7 +121,7 @@
 }
 
 .priceValue {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.35rem, 2vw, 1.75rem);
   font-weight: 600;
   letter-spacing: var(--tbb-tracking-display);
@@ -149,11 +149,12 @@
   text-decoration: none;
   border-radius: 999px;
   font-size: var(--tbb-text-label);
-  font-weight: 500;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   white-space: nowrap;
   transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
 }
 
 .cta:hover {
@@ -425,6 +426,8 @@
   text-transform: uppercase;
   white-space: nowrap;
   transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
 }
 
 .dotLine {

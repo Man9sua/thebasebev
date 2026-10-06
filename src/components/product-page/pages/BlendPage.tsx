@@ -82,15 +82,15 @@ const flavours: Record<Blend, string[]> = {
   frappe: ["Coffee", "Salted Caramel", "Vanilla"],
 };
 
+const menuPhotos: Record<Blend, ReturnType<typeof productImage>[]> = {
+  milkshake: Array.from({ length: 8 }, (_, i) => productImage("milkshake", `menu-${i + 1}`, [320, 640])),
+  frappe: Array.from({ length: 5 }, (_, i) => productImage("frappe", `menu-${i + 1}`, [320, 480])),
+};
+
 function BlendHero({ kind, product, assets }: ProductPageProps & { kind: Blend }) {
   const milkshake = kind === "milkshake";
   return (
     <section className={local.hero} aria-labelledby="product-title">
-      <nav className={local.crumbs} aria-label="Breadcrumb">
-        <SiteLink href="/catalog">Catalogue</SiteLink><span aria-hidden="true"> / </span>
-        <SiteLink href="/catalog#cold">Cold and refreshing</SiteLink><span aria-hidden="true"> / </span>
-        <span aria-current="page">{product.name}</span>
-      </nav>
       <div className={local.heroGrid}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img {...productImage(kind, "design-hero", [600, milkshake ? 672 : 822])} sizes="(max-width: 1023px) 350px, 520px" alt={`the Base ${product.name}, 500 g pouch`} fetchPriority="high" className={local.heroPhoto} />
@@ -160,11 +160,9 @@ function MenuGallery({ kind, assets }: { kind: Blend; assets: ProductPageProps["
   return (
     <Section className={cx(local.band, local.menu)} title={<>Ready for<br />your menu</>} label="Ready for your menu" side={milkshake ? "Eight serves from our lab, all made with the same base." : undefined}>
       <div className={cx(local.gallery, milkshake && local.galleryMilkshake)}>
-        {Array.from({ length: milkshake ? 8 : 5 }, (_, i) => milkshake
-          ? <div key={i} className={local.photoSlot} aria-hidden="true" />
-          : <div key={i} className={local.menuPhoto}>
+        {menuPhotos[kind].map(photo => <div key={photo.src} className={local.menuPhoto}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img {...productImage(kind, `menu-${i + 1}`, [320, 480])} sizes="(max-width: 1023px) 45vw, 240px" alt="Frappe made with the Base" loading="lazy" decoding="async" />
+            <img {...photo} sizes="(max-width: 1023px) 45vw, 240px" alt={`${milkshake ? "Milkshake" : "Frappe"} made with the Base`} loading="lazy" decoding="async" />
           </div>)}
       </div>
       {assets.marketingKit && <a className={cx(styles.button, styles.red)} href={assets.marketingKit} download>Download marketing kit</a>}

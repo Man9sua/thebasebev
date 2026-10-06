@@ -3,7 +3,7 @@
   padding: 28px clamp(20px, 5vw, 72px);
   background: #f5f1eb;
   color: #1a1311;
-  font-family: "Exo 2", Arial, sans-serif;
+  font-family: var(--tbb-font-body);
 }
 
 .logo {
@@ -50,6 +50,8 @@
 
 .content h1 {
   margin: 0;
+  font-family: var(--tbb-font-heading);
+  font-weight: var(--tbb-font-weight-heading);
   font-size: clamp(48px, 9vw, 112px);
   line-height: 0.92;
   text-transform: uppercase;
@@ -67,7 +69,8 @@
   background: #1a1311;
   color: #fff;
   font-size: 12px;
-  font-weight: 700;
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.12em;
   text-decoration: none;
   text-transform: uppercase;

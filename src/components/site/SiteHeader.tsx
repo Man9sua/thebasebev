@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { BrandMarkVertical } from "@/components/site/BrandMarkVertical";
+import { CountrySelect } from "@/components/site/CountrySelect";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
@@ -124,9 +125,7 @@ export function SiteHeader({
             <AccountIcon />
           </a>
 
-          <SiteLink href="/find-your-distributor" className={styles.distributor}>
-            Find your distributor
-          </SiteLink>
+          <CountrySelect triggerClassName={styles.action} overlayOpen={menuOpen || searchOpen} />
 
           <button
             type="button"

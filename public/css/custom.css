@@ -13,7 +13,7 @@ border: 1px solid #e5e5e5 !important;
 border-radius: 0px !important;
 padding: 24px 32px !important;
 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-font-family: var(--tbb-font-exo, "Exo 2"), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+font-family:var(--tbb-font-body)!important;
 position: fixed !important;
 bottom: 32px !important;
 right: 32px !important;
@@ -401,7 +401,7 @@ background:transparent !important;
 color:#FF5A5A !important;
 border:1px solid rgba(255,0,0,.32) !important;
 border-radius:3px !important;
-font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace !important;
+font-family:var(--tbb-font-body) !important;
 font-size:9px !important;
 font-weight:500 !important;
 letter-spacing:.1em !important;
@@ -976,7 +976,7 @@ html body #rec909008440 #form909008440 button[type="submit"]{
 background-color:#FFFFFF !important;
 background-image:none !important;
 color:#000000 !important;
-font-weight:700 !important;
+font-weight:var(--tbb-font-weight-button)!important;
 border:1px solid #FFFFFF !important;
 border-radius:100px !important;
 padding:18px 40px !important;
@@ -1151,7 +1151,7 @@ background-image:none !important;
 color:#000000 !important;
 border:1px solid #FFFFFF !important;
 border-radius:100px !important;
-font-weight:700 !important;
+font-weight:var(--tbb-font-weight-button)!important;
 transition:transform .25s ease, box-shadow .25s ease !important;
 }
 html body #rec913700125 .t-btn:hover{
@@ -1225,23 +1225,21 @@ html body .t-feed__post-popup__text a{transition:none !important;}
 --tb-grey:#9A8F86;
 }
 
-html body *:not(i):not([class*="icon"]){
-font-family:'Exo 2', -apple-system, sans-serif !important;
-}
 
-html body h1, html body h2, html body h3,
-html body [class*="title"], html body [class*="heading"],
-html body [class*="number"], html body [class*="percent"],
-html body .bwho-stat-num{
-font-weight:300 !important;
+
+html body .legacy-document h1, html body .legacy-document h2, html body .legacy-document h3,
+html body .legacy-document [class*="title"], html body .legacy-document [class*="heading"],
+html body .legacy-document [class*="number"], html body .legacy-document [class*="percent"],
+html body .legacy-document .bwho-stat-num{
+font-weight:var(--tbb-font-weight-heading) !important;
 letter-spacing:-0.02em !important;
 }
 html body p, html body [class*="descr"]{
 font-weight:400 !important;
 line-height:1.7 !important;
 }
-html body .t-btn, html body [class*="btn"]{
-font-weight:500 !important;
+html body .legacy-document .t-btn, html body .legacy-document [class*="btn"]{
+font-weight:var(--tbb-font-weight-button) !important;
 letter-spacing:.06em !important;
 border-radius:4px !important;
 }
@@ -1758,16 +1756,16 @@ mix-blend-mode:normal !important;
 #allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec2503542591 .t396__artboard{background:#fff!important}
 #allrecords:not(.avx1):not(.avx2) .bwho-wrap{background:#151516!important}
 #allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .bchm-wrap *,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap *,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap *,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap *,#allrecords:not(.avx1):not(.avx2) .bwho-wrap,#allrecords:not(.avx1):not(.avx2) .bwho-wrap *,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap *{
-font-family:'Jost','Exo 2',sans-serif!important}
+font-family:var(--tbb-font-body)!important}
 #allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap{color:#5A5B5F!important}
 #allrecords:not(.avx1):not(.avx2) .bben-card-text,#allrecords:not(.avx1):not(.avx2) .bpro-text,#allrecords:not(.avx1):not(.avx2) .bcta-text,#allrecords:not(.avx1):not(.avx2) .catg-sub,#allrecords:not(.avx1):not(.avx2) .bchm-card-text{
 font-weight:300!important;color:#5A5B5F!important;line-height:1.65!important}
 #allrecords:not(.avx1):not(.avx2) .catg-main-heading,#allrecords:not(.avx1):not(.avx2) .bben-title{
-font-family:'Source Serif 4',Georgia,serif!important;font-weight:400!important;font-size:38px!important;
+font-family:var(--tbb-font-heading)!important;font-weight:var(--tbb-font-weight-heading)!important;font-size:38px!important;
 text-translate:0 0!important;letter-spacing:0!important;color:#323338!important;
 text-align:center!important;margin:0 auto 46px!important;display:block!important;width:100%!important}
 #allrecords:not(.avx1):not(.avx2) .bpro-title,#allrecords:not(.avx1):not(.avx2) .bwho-title,#allrecords:not(.avx1):not(.avx2) .bcta-title,#allrecords:not(.avx1):not(.avx2) .bben-card-title,#allrecords:not(.avx1):not(.avx2) .bwho-card-title,#allrecords:not(.avx1):not(.avx2) .bchm-card-title{
-font-family:'Source Serif 4',Georgia,serif!important;text-translate:0 0!important;letter-spacing:0!important}
+font-family:var(--tbb-font-heading)!important;text-translate:0 0!important;letter-spacing:0!important}
 #allrecords:not(.avx1):not(.avx2) .bpro-title,#allrecords:not(.avx1):not(.avx2) .bcta-title{font-size:30px!important;font-weight:400!important;color:#323338!important;line-height:1.2!important}
 #allrecords:not(.avx1):not(.avx2) .bwho-title{font-size:38px!important;font-weight:400!important;color:#F2F2F2!important;line-height:1.2!important}
 #allrecords:not(.avx1):not(.avx2) .bben-card-title,#allrecords:not(.avx1):not(.avx2) .bchm-card-title{font-weight:500!important;color:#323338!important}
@@ -1806,15 +1804,15 @@ box-shadow:none!important;display:inline-block!important}
 
 /* ================= /AVANTCHA LAYER ================= */
 
-#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-name,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .t-uptitle,#allrecords:not(.avx1):not(.avx2) .t-btntext,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-input,#allrecords:not(.avx1):not(.avx2) .t-redactor__text,#allrecords:not(.avx1):not(.avx2) .t-store__card__title,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name,#allrecords:not(.avx1):not(.avx2) .tn-atom,#allrecords:not(.avx1):not(.avx2) .bchf-wrap,#allrecords:not(.avx1):not(.avx2) .bchf-wrap *,#allrecords:not(.avx1):not(.avx2) .tbh-nav a,#allrecords:not(.avx1):not(.avx2) .tbh-nav__btn,#allrecords:not(.avx1):not(.avx2) .tbh-mega__t,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) h4,#allrecords:not(.avx1):not(.avx2) h5,#allrecords:not(.avx1):not(.avx2) p,#allrecords:not(.avx1):not(.avx2) li{font-family:'Jost','Exo 2',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-name,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .t-uptitle,#allrecords:not(.avx1):not(.avx2) .t-btntext,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-input,#allrecords:not(.avx1):not(.avx2) .t-redactor__text,#allrecords:not(.avx1):not(.avx2) .t-store__card__title,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name,#allrecords:not(.avx1):not(.avx2) .tn-atom,#allrecords:not(.avx1):not(.avx2) .bchf-wrap,#allrecords:not(.avx1):not(.avx2) .bchf-wrap *,#allrecords:not(.avx1):not(.avx2) .tbh-nav a,#allrecords:not(.avx1):not(.avx2) .tbh-nav__btn,#allrecords:not(.avx1):not(.avx2) .tbh-mega__t,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) h4,#allrecords:not(.avx1):not(.avx2) h5,#allrecords:not(.avx1):not(.avx2) p,#allrecords:not(.avx1):not(.avx2) li{font-family:var(--tbb-font-body)!important}
 #allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .bchf-heading,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name{
-font-family:'Source Serif 4',Georgia,serif!important;font-weight:400!important;
+font-family:var(--tbb-font-heading)!important;font-weight:var(--tbb-font-weight-heading)!important;
 text-translate:0 0!important;letter-spacing:0!important}
 #allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr{font-weight:300!important}
 #allrecords:not(.avx1):not(.avx2) a.tn-atom,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-store__card__btn,#allrecords:not(.avx1):not(.avx2) .t-store__btn,#allrecords:not(.avx1):not(.avx2) .bchf-pill,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) .t-inputbutton,#allrecords:not(.avx1):not(.avx2) .t1281__wrapper,#allrecords:not(.avx1):not(.avx2) .t1281__item,#allrecords:not(.avx1):not(.avx2) .t1281__slider{border-radius:0!important}
 #allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-store__btn,#allrecords:not(.avx1):not(.avx2) .t-inputbutton{
 background-color:#151516!important;color:#E9E9E9!important;border:1px solid #151516!important;
-font-size:12px!important;font-weight:400!important;letter-spacing:.1em!important;
+font-size:12px!important;font-weight:var(--tbb-font-weight-button)!important;letter-spacing:.1em!important;
 text-transform:uppercase!important;box-shadow:none!important}
 #allrecords:not(.avx1):not(.avx2) .t1281__title,#allrecords:not(.avx1):not(.avx2) .t1281__title-text{font-size:12px!important;letter-spacing:.08em!important;text-transform:uppercase!important}
 
@@ -1822,7 +1820,7 @@ text-transform:uppercase!important;box-shadow:none!important}
 #allrecords:not(.avx1):not(.avx2) .bchf-heading{font-size:19px!important;color:#F2F2F2!important}
 #allrecords:not(.avx1):not(.avx2) .bchf-links a,#allrecords:not(.avx1):not(.avx2) .bchf-pill,#allrecords:not(.avx1):not(.avx2) .bchf-contact-row{font-weight:300!important;letter-spacing:.01em!important}
 
-#allrecords #rec2772565803,#allrecords #rec2772565803 *{font-family:'Exo 2',sans-serif!important}
+#allrecords #rec2772565803,#allrecords #rec2772565803 *{font-family:var(--tbb-font-body)!important}
 /* ============ /AVANTCHA LAYER 2 ============ */
 
 /* ============ AVANTCHA LAYER 3 — фон страницы, футер, тикер ============ */
@@ -2119,10 +2117,10 @@ html body .bfaq-btn:focus{box-shadow:none!important;outline-color:transparent!im
 
 /* ============ AVANTCHA LAYER 28 — оформление корзины Tilda (.t706) ============ */
 
-#allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{border-radius:0!important;padding:36px 34px 34px!important;font-family:'Jost',sans-serif!important}
-#allrecords:not(.avx1):not(.avx2) .t706__cartwin-heading{font-family:'Source Serif 4',Georgia,serif!important;font-size:26px!important;font-weight:500!important;color:#151516!important;letter-spacing:0!important;margin-bottom:22px!important}
-#allrecords:not(.avx1):not(.avx2) .t706__product-title{font-family:'Jost',sans-serif!important;font-size:15px!important;font-weight:500!important;color:#151516!important}
-#allrecords:not(.avx1):not(.avx2) .t706__product-title__option{font-family:'Jost',sans-serif!important;font-size:12px!important;color:#8A8A8A!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{border-radius:0!important;padding:36px 34px 34px!important;font-family:var(--tbb-font-body)!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-heading{font-family:var(--tbb-font-heading)!important;font-size:26px!important;font-weight:var(--tbb-font-weight-subheading)!important;color:#151516!important;letter-spacing:0!important;margin-bottom:22px!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-title{font-family:var(--tbb-font-body)!important;font-size:15px!important;font-weight:500!important;color:#151516!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-title__option{font-family:var(--tbb-font-body)!important;font-size:12px!important;color:#8A8A8A!important}
 #allrecords:not(.avx1):not(.avx2) .t706__product{border-bottom:1px solid #ECECEC!important;padding:16px 0!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-prodamount,
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-prodamount-price,
@@ -2132,44 +2130,18 @@ html body .bfaq-btn:focus{box-shadow:none!important;outline-color:transparent!im
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount,
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount-info{font-size:18px!important;font-weight:600!important;color:#151516!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-input,
-#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-inputtext{border:1px solid #DCDCDC!important;border-radius:0!important;height:46px!important;font-size:14px!important;font-family:'Jost',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-inputtext{border:1px solid #DCDCDC!important;border-radius:0!important;height:46px!important;font-size:14px!important;font-family:var(--tbb-font-body)!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-input-title{font-size:12px!important;color:#5A5B5F!important;letter-spacing:.04em!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-submit{background:#151516!important;color:#fff!important;border:0!important;border-radius:0!important;
-height:52px!important;font-size:13px!important;letter-spacing:.12em!important;text-transform:uppercase!important;font-weight:500!important}
+height:52px!important;font-size:13px!important;letter-spacing:.12em!important;text-transform:uppercase!important;font-weight:var(--tbb-font-weight-button)!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close{opacity:.5!important}
 #allrecords:not(.avx1):not(.avx2) .t706__product-del{color:#9A9A9A!important}
 /* ============ /AVANTCHA LAYER 28 ============ */
 
-/* ============ AVANTCHA LAYER 29 — one face across the site ============ */
-/*
- * Exo 2, not Roboto. This block is `!important` at a specificity no module
- * class can answer, so whatever it names is what the whole site renders in —
- * the exported Tilda records and every React surface served inside the legacy
- * shell alike. It was naming Roboto, which is why the product pages, About, the
- * header and the footer were all in it while the homepage was in the brand
- * face: the homepage is the one page that does not go through this shell.
- *
- * `--tbb-font-exo` is next/font's variable and is declared on <html>, so it is
- * in scope here; the literal is the fallback for anything served without it.
- */
 
-html body *:not([class*="t-icon"]):not([class*="icon"]):not(i):not(.t-store__card__mark),
-html body,
-html body h1, html body h2, html body h3, html body h4, html body p, html body a,
-html body .t-title, html body .t-heading, html body .t-name, html body .t-text, html body .t-descr,
-html body .t-btn, html body .t-submit, html body .t-input, html body .tn-atom,
-html body #rec2772565803, html body #rec2772565803 *,
-html body .t706__cartwin, html body .t706__cartwin *,
-html body .tbh-nav a, html body .bchf-wrap, html body .bchf-wrap *,
-html body .catg-name, html body .catg-price, html body .bfaq-wrap *{
-font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important}
-
-html body .t706__cartwin-heading,
-html body h1, html body h2{letter-spacing:0!important}
-/* ============ /AVANTCHA LAYER 29 ============ */
 
 #allrecords:not(.avx1):not(.avx2) *:not([class*="t-icon"]):not([class*="icon"]):not(i),
-#allrecords:not(.avx1):not(.avx2){font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important}
+#allrecords:not(.avx1):not(.avx2){font-family:var(--tbb-font-body)!important}
 
 #allrecords #rec2544308101,
 #allrecords #rec2544308101 .t396__artboard{background-color:#000!important;height:auto!important;min-height:0!important;overflow:visible!important}
@@ -2763,7 +2735,7 @@ html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount-wrap{padd
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount{font-size:22px!important;font-weight:700!important;color:#1a1311!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=text],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=email],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=tel],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea{border-radius:12px!important;border:1px solid rgba(26,19,17,.14)!important;padding:14px 16px!important;font-size:15px!important;transition:border-color .2s,box-shadow .2s!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input:focus,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea:focus{border-color:#2b2320!important;box-shadow:0 0 0 3px rgba(43,35,32,.08)!important;outline:none!important}
-html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit{border-radius:999px!important;height:54px!important;font-size:12.5px!important;font-weight:600!important;letter-spacing:1.2px!important;transition:transform .2s,box-shadow .2s!important;box-shadow:0 2px 6px rgba(26,19,17,.12),0 10px 26px rgba(26,19,17,.16)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit{border-radius:999px!important;height:54px!important;font-size:12.5px!important;font-weight:var(--tbb-font-weight-button)!important;letter-spacing:1.2px!important;transition:transform .2s,box-shadow .2s!important;box-shadow:0 2px 6px rgba(26,19,17,.12),0 10px 26px rgba(26,19,17,.16)!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit:hover{transform:translateY(-1px)!important;box-shadow:0 4px 10px rgba(26,19,17,.14),0 16px 34px rgba(26,19,17,.22)!important}
 
 @media (min-width:901px){
@@ -2776,15 +2748,15 @@ html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg g,html body
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card{will-change:auto!important}
 
-html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text *{font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important;-moz-osx-font-smoothing:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text *{font-family:var(--tbb-font-body)!important;-webkit-font-smoothing:auto!important;-moz-osx-font-smoothing:auto!important}
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{color:#6f6862!important}
 /* ============ /AVANTCHA LAYER 77 ============ */
 
 /* ============ AVANTCHA LAYER 78: блок преимуществ (40/50/60/100%) ============ */
-html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card *{font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card *{font-family:var(--tbb-font-body)!important;-webkit-font-smoothing:auto!important}
 
-html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-number.bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-percent.bchm-percent{font-family:var(--tbb-font-exo,'Exo 2'),-apple-system,Arial,sans-serif!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-number.bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-percent.bchm-percent{font-family:var(--tbb-font-body)!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-number{font-weight:300!important;letter-spacing:-1.5px!important;line-height:1!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-percent{font-weight:300!important;color:#b4a99e!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-eyebrow{font-size:10px!important;letter-spacing:1.6px!important;color:#a79c90!important;margin-bottom:4px!important}

@@ -156,7 +156,7 @@ export function SiteFooter() {
 
         <div className={styles.legal}>
           <span className={styles.copyright}>
-            © {year} {COMPANY.legalName} · {COMPANY.city}, {COMPANY.country}
+            © {year} {COMPANY.legalName} {COMPANY.city}, {COMPANY.country}
           </span>
 
           <span className={styles.legalLinks}>

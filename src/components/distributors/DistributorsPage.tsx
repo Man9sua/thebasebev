@@ -88,7 +88,6 @@ const STEPS = [
 
 const TIERS = [
   {
-    eyebrow: "Entry level",
     name: "Starter",
     entryLabel: "Minimum order",
     entryValue: "MOQ 500 kg",
@@ -97,7 +96,6 @@ const TIERS = [
     items: ["Wholesale pricing", "Digital brochures", "Sample kit", "Email support"],
   },
   {
-    eyebrow: "Most chosen",
     name: "Regional",
     entryLabel: "Minimum order",
     entryValue: "On volume plan",
@@ -111,7 +109,6 @@ const TIERS = [
     ],
   },
   {
-    eyebrow: "Exclusive territory",
     name: "Strategic",
     entryLabel: "Requirement",
     entryValue: "Your own sales department",
@@ -316,10 +313,7 @@ export function DistributorsPage() {
                 key={tier.name}
                 className={`${styles.tier} ${tier.featured ? styles.tierFeatured : ""}`}
               >
-                <div className={styles.tierHead}>
-                  <span className={styles.tierEyebrow}>{tier.eyebrow}</span>
-                  <h3 className={styles.tierName}>{tier.name}</h3>
-                </div>
+                <h3 className={styles.tierName}>{tier.name}</h3>
 
                 <div className={styles.tierEntry}>
                   <span className={styles.tierEntryLabel}>{tier.entryLabel}</span>

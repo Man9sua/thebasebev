@@ -3,6 +3,7 @@ import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { SiteLink } from "@/components/site/SiteLink";
 import { faqPage } from "@/lib/structured-data";
 import { NutritionTabs, type NutritionSet } from "./NutritionTabs";
+import { AnimatedDetails } from "./AnimatedDetails";
 import styles from "./ProductPage.module.css";
 
 /**
@@ -86,17 +87,6 @@ export function Section({
   );
 }
 
-/** "Catalogue / <product>", over the hero title. `BreadcrumbList` mirrors it. */
-export function Breadcrumbs({ current, className }: { current: ReactNode; className?: string }) {
-  return (
-    <nav className={cx(styles.crumbs, className)} aria-label="Breadcrumb">
-      <SiteLink href="/catalog">Catalogue</SiteLink>
-      <span aria-hidden="true"> / </span>
-      <span aria-current="page">{current}</span>
-    </nav>
-  );
-}
-
 export function Hero({
   productName,
   title,
@@ -115,7 +105,6 @@ export function Hero({
   return (
     <section className={cx(styles.hero, className)} style={style} aria-labelledby="product-title">
       <div className={styles.heroCopy}>
-        <Breadcrumbs current={productName} />
         <h1 id="product-title" className={styles.heroTitle}>
           {title}
         </h1>
@@ -391,15 +380,15 @@ export function Faq({
       </div>
       <div className={styles.faqList}>
         {items.map((item, i) => (
-          <details key={i} className={cx(styles.faqItem, i >= mobileLimit && styles.faqMore)} open={initiallyOpen && i === 0}>
-            <summary className={styles.faqQuestion}>
-              {item.q}
-              <span className={styles.faqPlus} aria-hidden="true">
-                +
-              </span>
-            </summary>
+          <AnimatedDetails
+            key={i}
+            className={cx(styles.faqItem, i >= mobileLimit && styles.faqMore)}
+            summaryClassName={styles.faqQuestion}
+            initiallyOpen={initiallyOpen && i === 0}
+            summary={<>{item.q}<span className={styles.faqPlus} aria-hidden="true">+</span></>}
+          >
             <p className={styles.faqAnswer}>{item.a}</p>
-          </details>
+          </AnimatedDetails>
         ))}
       </div>
       {sample && <SampleButton productName={productName} className={cx(styles.mobileOnly, styles.faqMobileCta)} />}

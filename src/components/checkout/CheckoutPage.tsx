@@ -105,7 +105,6 @@ export function CheckoutPage() {
       <main className={styles.layout}>
         <form className={styles.form} onSubmit={submit}>
           <div className={styles.formInner}>
-            <p className={styles.eyebrow}>Secure checkout</p>
             <h1 className={styles.title}>Complete your order</h1>
             <p className={styles.intro}>
               Review your THE BASE products here. Card and delivery details are entered on

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SHOP_URL } from "@/lib/site-config";
-import { Breadcrumbs, DistributorLink, Faq, cx, productImage, productPageStyles as styles } from "../blocks";
+import { DistributorLink, Faq, cx, productImage, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { AtHomeChips } from "./AtHomeChips";
 import local from "./AtHome.module.css";
@@ -82,7 +82,6 @@ export function AtHomePage({ product }: ProductPageProps) {
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <section className={local.hero} aria-labelledby="product-title">
         <div className={local.heroCopy}>
-          <Breadcrumbs current="At home" />
           <h1 id="product-title" className={cx(styles.heroTitle, local.heroTitle)}>
             Crafted for cafés,
             <br /> now at home

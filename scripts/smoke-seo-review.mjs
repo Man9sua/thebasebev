@@ -170,6 +170,14 @@ async function runViewport(label, viewport) {
       for (const title of ["Made for service", "How to prepare", `${count} flavours`, "Ready for your menu", "Inside the pack"]) {
         check(await page.getByRole("heading", { name: title, exact: true }).isVisible(), `${label} ${slug}: ${title} visible`);
       }
+      const menuPhotos = page.locator('section[aria-label="Ready for your menu"] img');
+      check(await menuPhotos.count() === (slug === "milkshake" ? 8 : 5), `${label} ${slug}: complete menu photo gallery`);
+      for (const photo of await menuPhotos.all()) {
+        await photo.scrollIntoViewIfNeeded();
+        await photo.evaluate((image) => image.decode());
+        check(await photo.evaluate((image) => image.naturalWidth > 0), `${label} ${slug}: menu photo loads`);
+      }
+      check(await page.locator('main nav[aria-label="Breadcrumb"]').count() === 0, `${label} ${slug}: no overline breadcrumbs`);
       const nutrition = page.locator("section").filter({ has: page.getByRole("heading", { name: "Inside the pack", exact: true }) });
       check(await nutrition.getByRole("tablist").count() === 0, `${label} ${slug}: no unsupported nutrition variants`);
       const table = nutrition.locator("[class*='nutritionFullMobile']");
@@ -182,6 +190,12 @@ async function runViewport(label, viewport) {
       check(await details.evaluateAll((nodes) => nodes.every((node) => !node.open)), `${label} ${slug}: FAQ starts collapsed`);
       await details.first().locator("summary").click();
       check(await details.first().locator("p").isVisible(), `${label} ${slug}: FAQ opens`);
+      await details.first().locator("summary").click();
+      await page.waitForFunction(() => {
+        const answer = document.querySelector("section[aria-labelledby='product-faq-title'] details");
+        return answer && !answer.open && !answer.style.height && !answer.style.overflow;
+      });
+      check(await details.first().getAttribute("data-expanded") === "false", `${label} ${slug}: FAQ closes and releases animation styles`);
       const cta = page.getByRole("link", { name: "Develop a flavour", exact: true });
       check(await cta.getAttribute("href") === "/ae/rnd#rnd-form", `${label} ${slug}: R&D CTA reaches real brief`);
       await cta.click();

@@ -21,7 +21,7 @@
 
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 }
 
 .inner {
@@ -41,9 +41,9 @@
 
 .sectionTitle {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2.5rem, 5.5556vw, 5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -73,9 +73,9 @@
   padding-inline: clamp(1.5rem, 2.5vw, 2.25rem);
   border: 1.5px solid transparent;
   border-radius: 999px;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-align: center;
@@ -172,9 +172,9 @@
 
 .heroTitle {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(3rem, 7.2222vw, 6.5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -275,9 +275,9 @@
 
 .page .valueTitle {
   margin: auto 0 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.5rem, 2.7778vw, 2.5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.92 !important;
   text-transform: uppercase;
   color: inherit;
@@ -383,9 +383,9 @@
 }
 
 .processNumber {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2rem, 4.4444vw, 4rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   color: var(--tbb-rd-red);
   font-variant-numeric: tabular-nums;
@@ -496,9 +496,9 @@
 }
 
 .labFactValue {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.375rem, 2.2222vw, 2rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   text-transform: uppercase;
   color: var(--tbb-rd-ink);
@@ -578,9 +578,9 @@
 
 .briefNumber {
   grid-row: span 2;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.5rem, 2.2222vw, 2rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   color: var(--tbb-rd-red);
   font-variant-numeric: tabular-nums;

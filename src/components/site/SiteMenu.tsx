@@ -6,6 +6,7 @@ import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { publicPath } from "@/lib/site-paths";
 import {
+  CURRENT_MARKET,
   FOOTER_LINKS,
   SHOP_URL,
   SITE_NAV,
@@ -160,13 +161,9 @@ export function SiteMenu({
             </div>
 
             <div className={styles.footMeta}>
-              <SiteLink
-                href="/find-your-distributor"
-                className={styles.footRegion}
-                onClick={onClose}
-              >
-                Find your distributor
-              </SiteLink>
+              <span className={styles.footRegion}>
+                {`${CURRENT_MARKET.label} ${CURRENT_MARKET.language}`}
+              </span>
 
               {FOOTER_LINKS.legal.map((item) => (
                 <SiteLink

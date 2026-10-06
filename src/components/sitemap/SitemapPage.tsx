@@ -58,7 +58,7 @@ const LEGAL_LINKS: readonly SitemapLink[] = [
 ];
 
 const PRODUCT_SECTIONS: readonly SitemapSection[] = CATALOG_GROUPS.map((group) => ({
-  title: group.label,
+  title: group.id === "bar" ? "Bar ingredients" : group.id === "business" ? "Bisuness lines" : group.label,
   links: CATALOG_PRODUCTS.filter((product) => product.categoryId === group.id).map((product) => ({
     href: product.route,
     label: product.name,
@@ -124,7 +124,7 @@ export function SitemapPage() {
               {DISTRIBUTOR_MARKETS.map((market) => (
                 <li key={market.code}>
                   <Link className={styles.marketLink} href={`/find-your-distributor?market=${market.code}`} prefetch={false}>
-                    <span>{market.name}</span><span className={styles.marketCode}>{market.code}</span>
+                    <span>{market.name}</span><span className={styles.marketCode}>/{market.code.toLowerCase()}/</span>
                   </Link>
                 </li>
               ))}

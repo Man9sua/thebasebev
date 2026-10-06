@@ -64,6 +64,45 @@ function observe(page, label) {
   });
 }
 
+async function checkCountrySelector(page, label) {
+  await page.goto(`${baseUrl}/ae/?utm_source=chatgpt.com&utm_campaign=country-selector`, { waitUntil: "domcontentloaded" });
+  const trigger = page.locator("header button[aria-label^='Country:']");
+  const list = page.getByRole("listbox", { name: "Country", exact: true });
+  async function openList() {
+    for (let attempt = 0; attempt < 6 && (await trigger.getAttribute("aria-expanded")) !== "true"; attempt += 1) {
+      await trigger.click();
+      await page.waitForTimeout(200);
+    }
+    await list.waitFor({ state: "visible" });
+  }
+  await openList();
+  check((await list.getByRole("option").count()) === 17, `${label}: country selector does not list the confirmed markets`);
+  await list.press("End");
+  const last = list.getByRole("option").last();
+  check((await last.getAttribute("data-active")) === "true", `${label}: country selector End key did not reach the last market`);
+  const lastBox = await last.boundingBox();
+  check(!!lastBox && lastBox.y >= 0 && lastBox.y + lastBox.height <= page.viewportSize().height, `${label}: last country option is clipped`);
+  await list.press("Home");
+  await list.press("Enter");
+  check((await trigger.getAttribute("aria-expanded")) === "false", `${label}: choosing the current country did not close the list`);
+  check(await trigger.evaluate((button) => document.activeElement === button), `${label}: country selector did not return keyboard focus`);
+  await trigger.click();
+  await list.press("ArrowDown");
+  await list.press("ArrowDown");
+  await Promise.all([
+    page.waitForURL((url) => url.pathname === "/ae/find-your-distributor" && url.searchParams.get("market") === "QA", { waitUntil: "domcontentloaded" }),
+    list.press("Enter"),
+  ]);
+  const destination = new URL(page.url());
+  check(destination.searchParams.get("utm_source") === "chatgpt.com" && destination.searchParams.get("utm_campaign") === "country-selector", `${label}: country selection lost campaign parameters`);
+  await page.locator('button[aria-controls="distributor-details"][aria-pressed="true"]').filter({ hasText: "Qatar" }).waitFor();
+  await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
+  await page.locator(BESTSELLERS).waitFor();
+  await openList();
+  await list.press("Escape");
+  check((await trigger.getAttribute("aria-expanded")) === "false", `${label}: country selector Escape did not close the list`);
+}
+
 async function checkDistributorFinder(page, label, countryName, countryCode) {
   let capturedLead;
   await page.route("**/api/leads", async (route) => {
@@ -92,7 +131,7 @@ async function checkDistributorFinder(page, label, countryName, countryCode) {
     `${label}: UAE contact phone missing`,
   );
   await page.goto(`${baseUrl}/ae/find-your-distributor?market=${countryCode}`, { waitUntil: "domcontentloaded" });
-  await details.getByText(`Distribution in ${countryName}`, { exact: true }).waitFor();
+  await details.getByRole("heading", { name: "Partner details coming soon", exact: true }).waitFor();
   check(
     (await countries.filter({ hasText: countryName }).getAttribute("aria-pressed")) === "true",
     `${label}: market query did not preselect its country`,
@@ -101,7 +140,9 @@ async function checkDistributorFinder(page, label, countryName, countryCode) {
   await search.fill(countryName);
   check((await countries.count()) === 1, `${label}: country search did not narrow the list`);
   await countries.first().click();
-  await details.getByText(`Distribution in ${countryName}`, { exact: true }).waitFor();
+  await details.getByRole("heading", { name: "Partner details coming soon", exact: true }).waitFor();
+  check((await page.getByRole("navigation", { name: "Breadcrumb", exact: true }).count()) === 0, `${label}: finder breadcrumb row is still visible`);
+  check((await details.getByText(/Official partner|Distribution in /).count()) === 0, `${label}: finder partner eyebrow is still present`);
   check(
     (await details.locator('a[href^="tel:"], a[href^="mailto:"]').count()) === 0,
     `${label}: pending market exposes unconfirmed contact details`,
@@ -115,7 +156,12 @@ async function checkDistributorFinder(page, label, countryName, countryCode) {
   check(await page.getByRole("status").isVisible(), `${label}: no-result search has no feedback`);
   await search.fill("");
   check((await countries.count()) === 17, `${label}: clearing country search did not restore the list`);
-  await details.getByRole("button", { name: "Request samples", exact: true }).click();
+  const sampleButton = details.getByRole("button", { name: "Request samples", exact: true });
+  check(await sampleButton.evaluate((button) => {
+    const styles = getComputedStyle(button);
+    return styles.backgroundColor === "rgba(0, 0, 0, 0)" && styles.color !== getComputedStyle(button.closest("section")).backgroundColor;
+  }), `${label}: Request samples text is unreadable against its background`);
+  await sampleButton.click();
   const form = page.locator("#sample-request-modal-form");
   await form.waitFor({ state: "visible" });
   check(
@@ -389,21 +435,21 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
-  // The region picker the bar used to carry stays gone: it offered five regions
-  // and did nothing with the choice. Asserted rather than merely dropped, so it
-  // cannot come back unnoticed.
+  // Country selection must reach existing destinations and retain campaign data.
   check(
     (await page.locator("header button[aria-label^='Region:']").count()) === 0,
     "header: the old region picker is back in the bar",
   );
   check(
-    (await page.locator("header button[aria-label^='Country:']").count()) === 0,
-    "header: removed country selector is still present",
+    await page.locator("header button[aria-label^='Country:']").isVisible(),
+    "header: country selector is missing",
   );
   check(
-    await page.locator('header a[href="/ae/find-your-distributor"]').isVisible(),
-    "header: Find your distributor link is missing",
+    (await page.locator('header a[href="/ae/find-your-distributor"]').count()) === 0,
+    "header: country selector was not restored in place of the finder button",
   );
+
+  await checkCountrySelector(page, "desktop");
   check(
     (await page.evaluate(() =>
       [...document.querySelectorAll("a[href]")].filter((a) =>
@@ -680,6 +726,7 @@ try {
     (storageKey) => sessionStorage.getItem(storageKey) !== null,
     firstTouchStorageKey,
   );
+  await checkCountrySelector(mobilePage, "mobile");
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
   // The button ships in the server HTML, so it is clickable well before React
@@ -716,12 +763,12 @@ try {
     "mobile: the old region picker is back in the menu",
   );
   check(
-    (await mobilePage.locator("header button[aria-label^='Country:']").count()) === 0,
-    "mobile: removed country selector is still present",
+    await mobilePage.locator("header button[aria-label^='Country:']").isVisible(),
+    "mobile: country selector is missing",
   );
   check(
-    await mobileMenu.getByRole("link", { name: "Find your distributor", exact: true }).isVisible(),
-    "mobile: menu lacks the distributor finder link",
+    await mobileMenu.getByText("UAE EN", { exact: true }).isVisible(),
+    "mobile: menu lacks the current market label",
   );
   await checkDistributorFinder(mobilePage, "mobile", "Kyrgyzstan", "KG");
   await mobile.close();
@@ -759,10 +806,10 @@ try {
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
       fullPage: false,
     });
-    const finderLink = visualPage.locator('header a[href="/ae/find-your-distributor"]');
+    const countrySelector = visualPage.locator("header button[aria-label^='Country:']");
     check(
-      (await finderLink.isVisible()) === (width >= 768),
-      `header: distributor finder visibility is wrong at ${width}x${height}`,
+      await countrySelector.isVisible(),
+      `header: country selector is missing at ${width}x${height}`,
     );
   }
   await visual.close();

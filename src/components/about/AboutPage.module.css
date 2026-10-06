@@ -15,8 +15,8 @@
 }
 .section { padding: clamp(72px, 10vw, 144px) var(--about-pad); }
 .inner { position: relative; z-index: 1; width: min(100%, 1248px); margin-inline: auto; }
-.section h2 { margin: 0; font-family: var(--tbb-font-display); font-weight: 900; font-size: clamp(54px, 7.1vw, 104px); line-height: .9; letter-spacing: -.035em; text-transform: uppercase; }
-.section h3 { margin: 0; font-family: var(--tbb-font-display); font-size: clamp(25px, 2.5vw, 36px); font-weight: 900; line-height: 1; text-transform: uppercase; }
+.section h2 { margin: 0; font-family: var(--tbb-font-heading); font-weight: var(--tbb-font-weight-heading); font-size: clamp(54px, 7.1vw, 104px); line-height: .9; letter-spacing: -.035em; text-transform: uppercase; }
+.section h3 { margin: 0; font-family: var(--tbb-font-heading); font-size: clamp(25px, 2.5vw, 36px); font-weight: var(--tbb-font-weight-heading); line-height: 1; text-transform: uppercase; }
 .section p { color: #aaa8a2; font-size: 18px; line-height: 1.55; }
 .lab { background: #0e0e0e; color: #f6f6f4; }
 .labIntro { display: grid; grid-template-columns: 1.4fr .8fr; gap: 80px; align-items: end; }

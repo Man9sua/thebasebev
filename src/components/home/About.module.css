@@ -7,7 +7,7 @@
 
   padding: 0 0 clamp(4rem, 10vw, 9rem);
   overflow: clip;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 }
 
 .stage {
@@ -53,10 +53,10 @@
 
 .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
 
   font-size: clamp(2.75rem, 8.3333vw, 7.5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em !important;
   text-transform: uppercase;
@@ -105,13 +105,14 @@
   background: var(--tbb-rd-ink);
   color: #fff !important;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-transform: uppercase;
   text-decoration: none !important;
   white-space: nowrap;
   transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
 }
 
 .cta:hover,
@@ -135,10 +136,10 @@
 }
 
 .factValue {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
 
   font-size: clamp(2.25rem, 4.4444vw, 4rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   letter-spacing: -0.02em;
   text-transform: uppercase;

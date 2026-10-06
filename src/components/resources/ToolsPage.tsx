@@ -172,7 +172,6 @@ export function ToolsPage() {
       <section className={styles.hero} aria-labelledby="tools-title">
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
-            <span className={`tbb-label ${styles.eyebrow}`}>B2B menu planning</span>
             <h1 id="tools-title" className={styles.heroTitle}>
               Tools for Menu Planning
             </h1>
@@ -210,7 +209,6 @@ export function ToolsPage() {
       >
         <div className={styles.sectionHead}>
           <div>
-            <span className="tbb-label">Tool 01</span>
             <h2 id="calculator-title" className={styles.sectionTitle}>
               Cost &amp; margin calculator
             </h2>
@@ -261,7 +259,6 @@ export function ToolsPage() {
       <section id="menu-builder" className={`${styles.section} ${styles.builder}`} aria-labelledby="builder-title">
         <div className={styles.sectionHead}>
           <div>
-            <span className="tbb-label">Tool 02</span>
             <h2 id="builder-title" className={styles.sectionTitle}>
               Seasonal Menu Builder
             </h2>

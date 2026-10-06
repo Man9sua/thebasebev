@@ -113,7 +113,7 @@
 }
 
 .statValue {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(var(--fb-stat) * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -154,7 +154,7 @@
 
 .stepName {
   margin-top: auto;
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(var(--fb-step) * var(--u));
   line-height: 1;
   text-transform: uppercase;
