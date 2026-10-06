@@ -82,23 +82,6 @@
   line-height: 1.55 !important;
 }
 
-/*
- * Production's h1 for this route, carried as the line under the name. Set at
- * the smallest type on the page and in dim ink: it is wording the page has to
- * keep, not a line the shop needs shouted.
- */
-.intro .headline {
-  margin: 0 !important;
-  max-width: 48ch;
-  color: var(--tbb-rd-muted);
-  font-family: var(--tbb-font-sans);
-  font-size: 0.8125rem;
-  font-weight: 500 !important;
-  line-height: 1.45 !important;
-  letter-spacing: 0 !important;
-  text-transform: none;
-}
-
 /* ---- search ---- */
 
 .search {

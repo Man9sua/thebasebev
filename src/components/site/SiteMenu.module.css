@@ -218,6 +218,16 @@
   border-radius: 999px;
   color: var(--tbb-rd-on-ink);
   font-size: 0.875rem;
+  text-decoration: none;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.footRegion:hover,
+.footRegion:focus-visible {
+  border-color: var(--tbb-rd-paper);
+  color: var(--tbb-rd-paper);
 }
 
 @media (max-width: 63.9375rem) {

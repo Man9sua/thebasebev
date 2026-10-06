@@ -19,7 +19,7 @@ export const CATALOG_GROUPS = [
   {
     id: "business",
     label: "Business & Innovation",
-    slugs: ["tea", "sugar-free", "vending", "add-ons", "at-home"],
+    slugs: ["tea", "sugar-free", "vending", "add-ons", "electrolyte", "at-home"],
   },
 ] as const;
 

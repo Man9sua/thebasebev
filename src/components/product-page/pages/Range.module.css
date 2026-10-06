@@ -9,6 +9,14 @@
   font-size: calc(var(--range-hero, 136) * var(--u));
 }
 
+.photoPlaceholder {
+  width: 100%;
+  height: calc(560 * var(--u));
+  border: calc(1.5 * var(--u)) dashed #c9c4ba;
+  border-radius: calc(32 * var(--u));
+  background: #ece8e2;
+}
+
 /* ---- six figures in one row ----
    The shared stats are three to a row at 52px; six to a row the mocks set
    them at 28px on a tighter card. Children are the shared stat / value /
@@ -89,17 +97,12 @@
 .bottlePlate {
   height: calc(300 * var(--u));
   border-radius: calc(20 * var(--u));
-  background: color-mix(in srgb, var(--plate) 26%, #fff);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  background: var(--plate);
   overflow: hidden;
 }
 
-.bottlePlate img {
-  height: 88%;
-  width: auto;
-  transform: translateY(4%);
+.bottlesSingle .bottlePlate {
+  height: calc(360 * var(--u));
 }
 
 .bottleCopy {
@@ -185,6 +188,11 @@
 }
 
 @media (max-width: 1023px) {
+  .photoPlaceholder {
+    height: 280px;
+    border-width: 1.5px;
+    border-radius: 24px;
+  }
   .stats6 {
     gap: 8px;
   }
@@ -243,7 +251,7 @@
   }
 
   .bottlePlate {
-    height: 140px;
+    height: 130px;
     border-radius: 12px;
   }
 
@@ -273,7 +281,7 @@
   }
 
   .bottlesSingle .bottlePlate {
-    height: 220px;
+    height: 210px;
     border-radius: 16px;
   }
 

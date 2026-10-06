@@ -2,16 +2,20 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import Link from "next/link";
+import { SiteLink } from "@/components/site/SiteLink";
 import { useOverlay } from "@/components/site/useOverlay";
 import styles from "./SampleRequestModal.module.css";
 
 export function SampleRequestModal({
   className,
   productName,
+  country = "AE",
+  label = "Request a sample",
 }: {
   className?: string;
   productName?: string;
+  country?: string;
+  label?: string;
 }) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -76,7 +80,7 @@ export function SampleRequestModal({
                 className={`js-form-proccess ${styles.form}`}
               >
                 <input type="hidden" name="tildaspec-formname" defaultValue="Free Sample" />
-                <input type="hidden" name="country" defaultValue="KZ" />
+                <input type="hidden" name="country" value={country} />
                 {productName && (
                   <input type="hidden" name="product" value={productName} />
                 )}
@@ -106,13 +110,12 @@ export function SampleRequestModal({
                     />
                   </label>
 
-                  <label className={`${styles.field} ${styles.phoneField}`}>
+                  <label className={styles.field}>
                     <span className={styles.srOnly}>Phone number</span>
-                    <span className={styles.flag} aria-hidden="true" />
                     <input
                       type="tel"
                       name="Phone"
-                      placeholder="+7 (000) 000-00-00"
+                      placeholder="Phone number with country code"
                       autoComplete="tel"
                       inputMode="tel"
                       required
@@ -130,7 +133,7 @@ export function SampleRequestModal({
                     <span className={styles.checkbox} aria-hidden="true" />
                     <span>
                       I agree to the processing of my personal data in accordance
-                      with the <Link href="/privacy">Privacy Policy</Link>.
+                      with the <SiteLink href="/privacy">Privacy Policy</SiteLink>.
                     </span>
                   </label>
 
@@ -168,7 +171,7 @@ export function SampleRequestModal({
         className={`${className ?? ""} ${styles.trigger}`.trim()}
         onClick={() => setOpen(true)}
       >
-        Request a sample
+        {label}
       </button>
       {modal}
     </>

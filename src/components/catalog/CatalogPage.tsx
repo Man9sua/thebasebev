@@ -17,35 +17,7 @@ import { cartLineKey, setCartItemQuantity, type CartItem } from "@/lib/cart-stor
 import { SHOP_URL } from "@/lib/site-config";
 import styles from "./CatalogPage.module.css";
 
-/**
- * The shop, rebuilt to the catalogue redesign.
- *
- * What the design changes, and what it deliberately does not:
- *
- * - **Paper, and the plates are the only colour on it.** Sixteen pouches, each
- *   on a field sampled from its own banner, against a page that does nothing.
- *   The closing banner and the running total are ink, because they are the two
- *   things here that are not the shelf.
- * - **The card is a tile and a line.** The plate carries the pouch and a "Buy"
- *   pill in its corner; the name, the pouch size, the price and "Learn more"
- *   sit under it on the dark. The name used to be printed inside the frame,
- *   over the foot of a drink, where it competed with the packaging — which
- *   already says what the product is.
- * - **The plate is the pouch again, on its own colour.** It was the made drink
- *   in a glass on one wash shared by all sixteen, normalised from the homepage
- *   design file. `catalog-tiles.json` has carried a pouch per product on a
- *   colour sampled from its own banner since before that, and the Distributors
- *   range strip already stands on them; this is the shop standing on them too.
- *   The shop sells the pouch — the drink is what the product page is for.
- * - **A search field.** Sixteen products is three screens, and someone who
- *   came for matcha should not have to find it.
- *
- * Price, the four range filters and the sort menu stay, and so does the cart:
- * the design draws "BUY ↗" as though the shop were on another platform, and it
- * is not — this site holds the catalogue, the flavour picker and the Stripe
- * checkout. So the pill adds to the cart and carries no arrow, because an arrow
- * promises to leave and nothing leaves.
- */
+/** Searchable product ranges, with the current shop and cart connections. */
 
 type Filter = "all" | CatalogGroupId;
 type Sort = "featured" | "price-asc" | "price-desc" | "name";
@@ -62,7 +34,8 @@ const SHELF_NAMES: Partial<Record<string, string>> = {
   "sugar-syrup": "Syrup",
 };
 
-const tiles = catalogTiles as Record<string, { image: string }>;
+const tiles = catalogTiles as Record<string, { image: string; source: string }>;
+const AWAITING_PRODUCT_PHOTOS = new Set(["puree", "sauce", "add-ons", "electrolyte"]);
 
 const SORTS: readonly { id: Sort; label: string }[] = [
   { id: "featured", label: "Featured" },
@@ -136,6 +109,8 @@ function ProductCard({
   const sellable = Boolean(getCheckoutProductId(product.slug)) && flavors.length > 0;
   const name = shelfName(product);
   const quantity = lines.reduce((total, line) => total + line.quantity, 0);
+  const image = AWAITING_PRODUCT_PHOTOS.has(product.slug) ? null :
+    tiles[product.slug]?.source === "illustration" ? product.image : tiles[product.slug]?.image;
 
   return (
     <article
@@ -155,18 +130,18 @@ function ProductCard({
           tabIndex={-1}
           aria-hidden="true"
         >
-          <Image
-            src={tiles[product.slug]?.image ?? `/images/pack-${product.slug}.webp`}
+          {image && <Image
+            src={image}
             alt=""
             fill
             sizes="(max-width: 639px) 46vw, (max-width: 1099px) 31vw, 25vw"
             loading={eager ? "eager" : "lazy"}
             priority={eager}
-          />
+          />}
         </SiteLink>
 
         {/*
-         * Buying happens in the Odoo shop. The shelf hands the visitor over
+         * Buying uses the configured external shop. The shelf hands the visitor over
          * rather than filling a cart here; the product's own page still carries
          * "Add to cart" for the native cart and the Stripe checkout behind it.
          *
@@ -386,18 +361,10 @@ export function CatalogPage({
             Catalogue
           </h1>
           <p className={styles.lede}>
-            {CATALOG_PRODUCTS.length} categories for cafés, restaurants and hotels.
+            {CATALOG_PRODUCTS.length} product ranges for cafés, restaurants and hotels.
             <br />
             Wholesale and private label supply from Dubai.
           </p>
-          {/*
-            Production's own h1 for this route, a level down — the wording the
-            page ranks on, kept on the page rather than dropped when the shelf
-            took its own name. `audit:seo-parity` checks it is still here.
-          */}
-          <h2 className={styles.headline}>
-            Beverage Base Premixes — Wholesale Catalogue
-          </h2>
         </div>
 
         <label className={styles.search}>
@@ -490,6 +457,7 @@ export function CatalogPage({
             return (
               <section
                 key={group.id}
+                id={group.id}
                 className={styles.range}
                 aria-label={group.label}
               >

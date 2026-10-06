@@ -66,7 +66,7 @@ const faq = [
   },
 ];
 
-export function MatchaPage({ product, headline, assets }: ProductPageProps) {
+export function MatchaPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1002]);
   const serves = Array.from({ length: 10 }, (_, i) => ({
     ...productImage(SLUG, `serve-${i + 1}`, [640, 1000]),
@@ -87,7 +87,6 @@ export function MatchaPage({ product, headline, assets }: ProductPageProps) {
       <Hero
         productName={product.name}
         title="Matcha"
-        headline={headline}
         lead={{
           desktop:
             "Matcha latte for cafés and franchises. Natural matcha with added vitamins: steam with milk and serve in 30 seconds, no whisk needed.",

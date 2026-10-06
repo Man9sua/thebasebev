@@ -1,8 +1,10 @@
 import fs from "node:fs";
+import { readNativeRoutes } from "./native-routes.mjs";
 
 const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
 const reportPath = process.argv[3] ?? "ROUTE_INDEXABILITY_AUDIT.md";
 const siteSource = fs.readFileSync("src/lib/site-pages.ts", "utf8");
+const nativeRoutes = readNativeRoutes(siteSource);
 const nextConfig = fs.readFileSync("next.config.ts", "utf8");
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const glossaryRoutes = glossaryContent.entries.map((entry) => entry.path);
@@ -53,6 +55,15 @@ const controlledRoutes = [
     reason: entry.indexable
       ? `Canonical production page from ${entry.file}`
       : `Preserved non-indexable route from ${entry.file}`,
+  })),
+  ...nativeRoutes.map((route) => ({
+    route: publicPath(route),
+    type: "native public page",
+    expectedStatus: 200,
+    indexable: true,
+    canonical: true,
+    sitemap: true,
+    reason: "Native page registered for public generation after the Tilda export",
   })),
   ...glossaryRoutes.map((route) => ({
     route: publicPath(route),
@@ -151,7 +162,7 @@ if (friendlyRoutes.length !== 37 || legacyPageRedirects.length !== 41 || product
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, legacyPages=${legacyPageRedirects.length}, productAliases=${productAliasRedirects.length}.`,
   );
 }
-const expectedControlledRoutes = 45 + glossaryRoutes.length + blogRoutes.length;
+const expectedControlledRoutes = 45 + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (controlledRoutes.length !== expectedControlledRoutes) {
   throw new Error(
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
@@ -212,7 +223,7 @@ const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
-const expectedSitemapRoutes = 29 /* audited */ + 5 /* native ranges */ + glossaryRoutes.length + blogRoutes.length;
+const expectedSitemapRoutes = 29 /* audited */ + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== expectedSitemapRoutes) {
   throw new Error(
     `Expected HTTP 200 with ${expectedSitemapRoutes} target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,
@@ -304,6 +315,7 @@ Target: \`${targetOrigin}\`
 ## Accounting
 
 - Friendly routes: ${friendlyRoutes.length} (${friendlyRoutes.filter((route) => route.indexable).length} canonical/indexable + ${friendlyRoutes.filter((route) => !route.indexable).length} excluded).
+- Native public routes: ${nativeRoutes.length} (canonical/indexable and included in the sitemap).
 - Retired \`pageNNNN.html\` aliases served as permanent redirects: ${legacyPageRedirects.length}.
 - Retired Tilda product aliases served as permanent redirects: ${productAliasRedirects.length}.
 - Technical/metadata/API routes: 8.

@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { cx, productImage, productPageStyles as styles } from "../blocks";
+import { cx, productPageStyles as styles } from "../blocks";
 import local from "./Range.module.css";
 
 /**
@@ -15,6 +15,10 @@ export function heroSize(desktop: number, mobile: number) {
 }
 
 export const rangeHeroClass = local.hero;
+
+export function RangePhotoPlaceholder() {
+  return <div className={local.photoPlaceholder} aria-hidden="true" />;
+}
 
 /* ---------------- three ways to use it ---------------- */
 
@@ -42,18 +46,12 @@ export type Bottle = {
   /** "950 ml · PR-001-C950" */
   code: string;
   color: string;
-  /** `flavour-<image>-{240,400}.webp` */
-  image: string;
 };
 
 export function BottleCards({
-  slug,
-  kind,
   items,
   single = false,
 }: {
-  slug: string;
-  kind: string;
   items: readonly Bottle[];
   /** One card to a row on a phone, larger — for a range of three. */
   single?: boolean;
@@ -62,16 +60,7 @@ export function BottleCards({
     <div className={cx(local.bottles, single && local.bottlesSingle)}>
       {items.map((item) => (
         <div key={item.name} className={local.bottle}>
-          <div className={local.bottlePlate} style={{ "--plate": item.color } as CSSProperties}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              {...productImage(slug, `flavour-${item.image}`, [240, 400])}
-              sizes="(max-width: 1023px) 60px, 110px"
-              alt={`${item.name} ${kind} bottle`}
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
+          <div className={local.bottlePlate} style={{ "--plate": item.color } as CSSProperties} aria-hidden="true" />
           <div className={local.bottleCopy}>
             <span className={local.bottleName}>{item.name}</span>
             <span className={local.bottleText}>{item.text}</span>

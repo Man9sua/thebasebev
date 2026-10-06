@@ -57,7 +57,7 @@ const faq = [
   { q: "Where can I buy it in my country?", a: "Through our distributors. Find yours on the Distributors page." },
 ];
 
-export function CreamLattePage({ product, headline, assets }: ProductPageProps) {
+export function CreamLattePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
 
   return (
@@ -74,7 +74,6 @@ export function CreamLattePage({ product, headline, assets }: ProductPageProps) 
       <Hero
         productName={product.name}
         title="Cream Latte"
-        headline={headline}
         lead={{
           desktop:
             "Cream latte base for cafés and HoReCa. A rich, creamy latte without fresh cream: mix with milk, froth and add espresso.",

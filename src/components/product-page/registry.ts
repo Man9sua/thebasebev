@@ -6,6 +6,7 @@ import { ChocolatePage } from "./pages/Chocolate";
 import { ColourCollectionPage } from "./pages/ColourCollection";
 import { CordialPage } from "./pages/Cordial";
 import { CreamLattePage } from "./pages/CreamLatte";
+import { ElectrolytePage } from "./pages/Electrolyte";
 import { FrappePage } from "./pages/Frappe";
 import { GarnishPage } from "./pages/Garnish";
 import { IcedTeaPage } from "./pages/IcedTea";
@@ -34,6 +35,7 @@ export const PRODUCT_PAGES: Record<string, ComponentType<ProductPageProps>> = {
   "colour-collection": ColourCollectionPage,
   "cordial": CordialPage,
   "cream-latte": CreamLattePage,
+  "electrolyte": ElectrolytePage,
   "frappe": FrappePage,
   "garnish": GarnishPage,
   "iced-tea": IcedTeaPage,

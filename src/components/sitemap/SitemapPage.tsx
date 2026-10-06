@@ -1,80 +1,61 @@
 import { PublicLink as Link } from "@/components/site/PublicLink";
 import { CATALOG_GROUPS, CATALOG_PRODUCTS } from "@/data/catalog";
-import { MARKETS, SHOP_URL } from "@/lib/site-config";
+import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
+import { SHOP_URL } from "@/lib/site-config";
 import styles from "./SitemapPage.module.css";
 
-/**
- * Every page of the site, by what it is for.
- *
- * Products and markets are read from the catalogue and the market list, so
- * this page cannot fall behind either. An entry without an `href` is a page
- * the site plan calls for that does not exist yet: it is drawn with the red
- * dot, as plain text, so the index never links to a 404.
- */
-
-type SitemapLink = {
-  label: string;
-  href?: string;
-  /** Leaves this site (the shop), so a plain anchor rather than a route. */
-  external?: boolean;
-};
-
-type SitemapSection = {
-  title: string;
-  links: readonly SitemapLink[];
-};
+type SitemapLink = { label: string; href: string; external?: boolean };
+type SitemapSection = { title: string; links: readonly SitemapLink[] };
 
 const SECTIONS: readonly SitemapSection[] = [
   {
     title: "Company",
     links: [
       { href: "/", label: "Home" },
-      { href: "/about-us", label: "About Us" },
+      { href: "/about-us", label: "About us" },
+      { href: "/careers", label: "Careers" },
       { href: "/contacts", label: "Contacts" },
-      { label: "Careers" },
     ],
   },
   {
     title: "Work with us",
     links: [
       { href: "/distributors", label: "Distributors" },
-      { href: "/private-labeling", label: "Private Labeling" },
+      { href: "/private-labeling", label: "Private label" },
       { href: "/rnd", label: "R&D" },
-      { href: "/wholesale-strategy", label: "Wholesale Strategy" },
-      { label: "Request samples" },
-      { href: SHOP_URL, label: "Shop", external: true },
+      { href: "/request-samples", label: "Request samples" },
+      { href: "/contacts", label: "Get a quote" },
+      { href: "/find-your-distributor", label: "Find your distributor" },
+      { href: "/wholesale-strategy", label: "Wholesale strategy" },
     ],
   },
   {
     title: "Quality",
-    links: [{ label: "Certificates" }, { label: "FAQ" }],
+    links: [
+      { href: "/about-us#quality-control", label: "Quality control" },
+      { href: "/certificates", label: "Certificates: HACCP and Halal" },
+      { href: "/about-us#laboratory", label: "Our lab" },
+      { href: "/about-us#manufacturing", label: "Our factory" },
+    ],
   },
   {
     title: "Resources",
     links: [
-      { href: "/resources", label: "Resources Hub" },
+      { href: "/resources", label: "Resources hub" },
       { href: "/resources/blog", label: "Blog" },
       { href: "/resources/glossary", label: "Glossary" },
-      { href: "/resources/tools", label: "HoReCa Cost Calculator & Tools" },
-      { href: "/knowledge-recipes", label: "Recipe Base" },
+      { href: "/resources/tools", label: "Cost calculator and tools" },
+      { href: "/knowledge-recipes", label: "Recipe base" },
+      { href: "/faq", label: "FAQ" },
     ],
   },
 ];
 
-const LEGAL_SECTION: SitemapSection = {
-  title: "Legal",
-  links: [
-    { href: "/privacy", label: "Privacy Policy" },
-    { href: "/terms", label: "Terms & Conditions" },
-    { label: "Cookie Policy" },
-  ],
-};
-
-/** The live market links home; the rest are drawn as planned. */
-const MARKET_LINKS: readonly SitemapLink[] = MARKETS.map((market) => ({
-  label: `${market.name} · ${market.language}`,
-  href: market.live ? "/" : undefined,
-}));
+const LEGAL_LINKS: readonly SitemapLink[] = [
+  { href: "/privacy", label: "Privacy policy" },
+  { href: "/terms", label: "Terms and conditions" },
+  { href: "/cookie-policy", label: "Cookie policy" },
+];
 
 const PRODUCT_SECTIONS: readonly SitemapSection[] = CATALOG_GROUPS.map((group) => ({
   title: group.label,
@@ -89,39 +70,16 @@ function SitemapLinkList({ links }: { links: readonly SitemapLink[] }) {
     <ul className={styles.linkList}>
       {links.map((link) => (
         <li key={link.label}>
-          {!link.href ? (
-            <span className={`${styles.link} ${styles.planned}`}>
-              <span>{link.label}</span>
-              <span className={styles.dot} aria-hidden="true" />
-              <span className="tbb-visually-hidden"> (coming soon)</span>
-            </span>
-          ) : link.external ? (
+          {link.external ? (
             <a className={styles.link} href={link.href} target="_blank" rel="noopener">
-              <span>{link.label}</span>
-              <span aria-hidden="true">↗</span>
+              {link.label} <span aria-hidden="true">&#8599;</span>
             </a>
           ) : (
-            <Link className={styles.link} href={link.href} prefetch={false}>
-              <span>{link.label}</span>
-            </Link>
+            <Link className={styles.link} href={link.href} prefetch={false}>{link.label}</Link>
           )}
         </li>
       ))}
     </ul>
-  );
-}
-
-function SectionHeading({ number, title, count }: { number: number; title: string; count?: number }) {
-  return (
-    <div className={styles.sectionHeading}>
-      <span className={styles.sectionNumber} aria-hidden="true">
-        {String(number).padStart(2, "0")}
-      </span>
-      <h2>
-        {title}
-        {count !== undefined && <span className={styles.count}> {count}</span>}
-      </h2>
-    </div>
   );
 }
 
@@ -130,65 +88,49 @@ export function SitemapPage() {
     <main className={styles.page}>
       <div className={styles.container}>
         <header className={styles.intro}>
-          <p className={styles.eyebrow}>Index & Navigation</p>
-          <h1 className={styles.title}>Sitemap</h1>
-          <p className={styles.lede}>
-            Browse all main pages, resources and product categories.
-          </p>
+          <h1>Sitemap</h1>
+          <p>Every page of the Base: company, services, {CATALOG_PRODUCTS.length} product categories, quality, resources and our {DISTRIBUTOR_MARKETS.length} markets.</p>
         </header>
-
         <nav className={styles.sitemap} aria-label="Website sitemap">
           <div className={styles.primaryGrid}>
-            {SECTIONS.slice(0, 3).map((section, index) => (
-              <section className={styles.card} key={section.title}>
-                <SectionHeading number={index + 1} title={section.title} />
+            {SECTIONS.map((section) => (
+              <section key={section.title}>
+                <h2>{section.title}</h2>
                 <SitemapLinkList links={section.links} />
               </section>
             ))}
           </div>
-
-          <section className={`${styles.card} ${styles.products}`}>
-            <div className={styles.sectionHeading}>
-              <span className={styles.sectionNumber} aria-hidden="true">
-                04
-              </span>
-              <h2>
-                Products <span className={styles.count}>{CATALOG_PRODUCTS.length}</span>
-              </h2>
-              <Link className={styles.catalogLink} href="/catalog" prefetch={false}>
-                All Products
-              </Link>
-            </div>
-
+          <section className={styles.products}>
+            <header className={styles.sectionHeading}>
+              <h2>Products <span aria-hidden="true">&#183;</span> {CATALOG_PRODUCTS.length} <span className={styles.desktopOnly}>categories</span></h2>
+              <Link className={styles.catalogLink} href="/catalog" prefetch={false}>Catalogue <span aria-hidden="true">&#8594;</span></Link>
+            </header>
             <div className={styles.productGrid}>
               {PRODUCT_SECTIONS.map((section) => (
-                <section className={styles.productGroup} key={section.title}>
+                <section key={section.title}>
                   <h3>{section.title}</h3>
                   <SitemapLinkList links={section.links} />
                 </section>
               ))}
             </div>
+            <a className={styles.shopLink} href={SHOP_URL} target="_blank" rel="noopener">Online shop for cafés and home <span aria-hidden="true">&#8599;</span></a>
           </section>
-
-          <div className={styles.pairGrid}>
-            <section className={styles.card}>
-              <SectionHeading number={5} title={SECTIONS[3].title} />
-              <SitemapLinkList links={SECTIONS[3].links} />
-            </section>
-            <section className={styles.card}>
-              <SectionHeading number={6} title="Markets" count={MARKETS.length} />
-              <SitemapLinkList links={MARKET_LINKS} />
-            </section>
-          </div>
-
-          <section className={`${styles.card} ${styles.legal}`}>
-            <SectionHeading number={7} title={LEGAL_SECTION.title} />
-            <SitemapLinkList links={LEGAL_SECTION.links} />
+          <section className={styles.markets}>
+            <header className={styles.sectionHeading}>
+              <h2>Markets <span aria-hidden="true">&#183;</span> {DISTRIBUTOR_MARKETS.length} <span className={styles.desktopOnly}>countries</span></h2>
+              <p>Select a market to find your distributor.</p>
+            </header>
+            <ul className={styles.marketGrid}>
+              {DISTRIBUTOR_MARKETS.map((market) => (
+                <li key={market.code}>
+                  <Link className={styles.marketLink} href={`/find-your-distributor?market=${market.code}`} prefetch={false}>
+                    <span>{market.name}</span><span className={styles.marketCode}>{market.code}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
-
-          <p className={styles.legend}>
-            <span className={styles.dot} aria-hidden="true" /> Coming soon
-          </p>
+          <div className={styles.legal}><SitemapLinkList links={LEGAL_LINKS} /></div>
         </nav>
       </div>
     </main>

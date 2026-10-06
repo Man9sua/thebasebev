@@ -171,7 +171,7 @@ const faq: Question[] = [
   { q: "Can you develop a flavour only for us?", a: "Yes. Our R&D lab develops flavours for your menu or your own label." },
 ];
 
-export function JamPage({ product, headline }: ProductPageProps) {
+export function JamPage({ product }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 800]);
   const serves = [
     { ...hero, alt: "Fruit tea made with the Jam base" },
@@ -195,7 +195,6 @@ export function JamPage({ product, headline }: ProductPageProps) {
         mediaClassName={s.fill}
         productName={product.name}
         title="Jam"
-        headline={headline}
         lead={{
           desktop:
             "A dry fruit tea base with real fruit juice and black tea. Add hot water and serve, then finish with fresh fruit or herbs for your own signature tea.",

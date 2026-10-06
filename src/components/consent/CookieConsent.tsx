@@ -132,7 +132,7 @@ export function CookieConsent() {
             <span className={styles.title}>Cookies</span>
             <p className={styles.text}>
               We use cookies to run the site and, with your consent, to measure traffic.{" "}
-              <SiteLink href="/privacy" className={styles.policy}>
+              <SiteLink href="/cookie-policy" className={styles.policy}>
                 Cookie policy
               </SiteLink>
             </p>

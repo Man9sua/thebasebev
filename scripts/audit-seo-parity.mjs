@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { readNativeRoutes } from "./native-routes.mjs";
 
 const productionOrigin = "https://thebasebev.com";
 const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
@@ -16,7 +17,8 @@ function publicUrl(value) {
   } catch { return value; }
 }
 const expectedSitemapRoutes =
-  34 + glossaryContent.entries.length + blogContent.posts.length;
+  29 + readNativeRoutes().length + glossaryContent.entries.length + blogContent.posts.length;
+const addedRoutes = new Set(["/electrolyte", "/find-your-distributor", "/careers", "/request-samples", "/certificates", "/faq", "/cookie-policy"]);
 
 /*
  * Numeric character references are decoded generically rather than one by one.
@@ -195,7 +197,7 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const production = await fetchSnapshot(productionOrigin, route);
+    const production = addedRoutes.has(legacyPath(route)) ? null : await fetchSnapshot(productionOrigin, route);
     await delay(500);
     const target = await fetchSnapshot(targetOrigin, route);
     results[index] = { route, production, target };
@@ -211,6 +213,16 @@ await Promise.all(Array.from({ length: 1 }, () => worker()));
  * route comes back under the ordinary rule instead of staying quietly exempt.
  */
 const H1_NOT_PRESERVED = new Map([
+  ["/private-labeling", {
+    h1: "Wholesale and Private Labeling",
+    target: "Your brand. Our craft.",
+    reason: "Latest supplied private-label design uses Your brand. Our craft.; title, description and canonical are preserved",
+  }],
+  ["/resources", {
+    h1: "Resources for HORECA Professionals",
+    target: "Resources",
+    reason: "Supplied Resources hub uses the shorter Resources heading; existing article URLs and metadata are preserved",
+  }],
   [
     "/rnd",
     {
@@ -262,6 +274,19 @@ const rows = [];
 
 for (const { route, production, target } of results) {
   const issues = [];
+  if (!production) {
+    if (target.status !== 200) issues.push(`target status ${target.status}`);
+    if (!target.title || !target.description || !target.h1) issues.push("missing new-page metadata or h1");
+    if (target.canonical !== `${productionOrigin}${route}`) issues.push("new-page canonical mismatch");
+    if (/noindex/i.test(target.robots)) issues.push("public page has meta noindex");
+    if (previewTarget && !/noindex/i.test(target.xRobots)) issues.push("preview transport lacks noindex");
+    if (!target.jsonLdTypes.includes("BreadcrumbList") || !target.jsonLdTypes.includes("Organization")) issues.push("missing new-page structured data");
+    if (target.alt.missing) issues.push("missing image alt");
+    if (issues.length) criticalFailures.push(`${route}: ${issues.join(", ")}`);
+    declared.push(`${route}: new page supplied for this SEO review; not yet published in production`);
+    rows.push(`| \`${route}\` | new | ${target.status} | ${issues.length ? "FAIL" : "PASS"} | —/${target.links.length} | ${target.alt.total}/${target.alt.missing}/${target.alt.empty} | ${issues.join("; ") || "New-page SEO checks pass"} |`);
+    continue;
+  }
   if (production.status !== 200) issues.push(`production status ${production.status}`);
   if (target.status !== 200) issues.push(`target status ${target.status}`);
   for (const field of ["title", "description", "canonical"]) {
@@ -277,7 +302,7 @@ for (const { route, production, target } of results) {
    */
   if (production.h1 !== target.h1) {
     const exempt = H1_NOT_PRESERVED.get(legacyPath(route));
-    if (exempt && exempt.h1 === production.h1) {
+    if (exempt && exempt.h1 === production.h1 && (!exempt.target || exempt.target === target.h1)) {
       declared.push(`${route}: ${exempt.reason}`);
     } else if (production.h1 && target.h2.includes(production.h1)) {
       declared.push(`${route}: h1 is now "${target.h1}"; production wording kept as h2`);
@@ -288,8 +313,11 @@ for (const { route, production, target } of results) {
   if (normalizeRobots(production.robots) !== normalizeRobots(target.robots)) {
     issues.push("robots/indexability mismatch");
   }
-  if (JSON.stringify(production.jsonLdTypes) !== JSON.stringify(target.jsonLdTypes)) {
-    issues.push("JSON-LD type mismatch");
+  const droppedTypes = production.jsonLdTypes.filter((type) => !target.jsonLdTypes.includes(type));
+  if (droppedTypes.length) {
+    issues.push(`JSON-LD types missing: ${droppedTypes.join(", ")}`);
+  } else if (JSON.stringify(production.jsonLdTypes) !== JSON.stringify(target.jsonLdTypes)) {
+    declared.push(`${route}: added schema types ${target.jsonLdTypes.filter((type) => !production.jsonLdTypes.includes(type)).join(", ")}`);
   }
   for (const field of ["title", "url", "type"]) {
     if ((field === "url" ? publicUrl(production.openGraph[field]) : production.openGraph[field]) !== target.openGraph[field]) issues.push(`og:${field} mismatch`);
@@ -340,7 +368,7 @@ Generated: ${new Date().toISOString()}
 - Target: \`${targetOrigin}\`
 - Canonical public routes: ${routes.length}
 - Critical failures: ${criticalFailures.length}
-- Declared h1 changes: ${declared.length}
+- Declared page/schema changes: ${declared.length}
 - Non-blocking link/alt observations: ${warnings.length}
 - Preview transport noindex expected: ${previewTarget ? "yes" : "no"}
 
@@ -354,13 +382,12 @@ ${rows.join("\n")}
 
 ${criticalFailures.length ? criticalFailures.map((item) => `- ${item}`).join("\n") : "- None."}
 
-## Declared h1 changes
+## Declared page/schema changes
 
-Product pages lead with the product's name and carry production's wording as
-the h2 under it; the check still fails if that wording leaves the page. Two
-routes are exempt outright and are listed with their reason -- see
-\`H1_NOT_PRESERVED\` in this script. Each exemption names production's exact
-h1, so a change on production ends the exemption rather than hiding behind it.
+Existing routes retain strict metadata, canonical and indexability comparison.
+H1 exceptions name the exact production text; new routes are checked independently
+because this branch publishes them only to staging. Added structured-data types
+are recorded; removal of any production schema type remains a failure.
 
 ${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 

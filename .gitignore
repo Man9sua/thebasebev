@@ -43,3 +43,6 @@ assets/design-scenes/*
 # `build-home-hero.mjs` is what turns it into the served crops.
 assets/home-hero/*
 !assets/home-hero/README.md
+
+# Private source material supplied for this review.
+whatsappchat/

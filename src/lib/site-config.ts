@@ -4,8 +4,6 @@
  * Everything here is meant to be edited without touching a component.
  */
 
-import { PUBLIC_PREFIX } from "@/lib/site-paths";
-
 /**
  * The brand film. It is not the hero — the hero is a photograph — and it plays
  * inside the homepage's About frame, lazily and muted: see `BrandFilm`.
@@ -39,56 +37,6 @@ export const SHOP_URL = "https://apps.apple.com/ae/app/bidfood-home-uae/id150871
  * orders, so one href covers both.
  */
 export const ODOO_ACCOUNT_URL = "https://odoo.thebasebev.com/my";
-
-/**
- * The countries the header's selector lists — see `CountrySelect`.
- *
- * One of them is live today. The UAE is the only market with routes of its own
- * (`/ae`, see `site-paths`); the rest are where the business is going, shown so
- * the visitor knows they are coming and disabled until they do. They carry no
- * prefix on purpose: `/sa`, `/kz` and the others are 404s, and a country with
- * no prefix cannot be turned into a link to one. When a market gets routes,
- * give it its prefix and flip `live` — the selector needs nothing else.
- *
- * Codes only, no flags: emoji flags are regional-indicator pairs that Windows
- * has no glyphs for, so every browser there draws the two letters instead.
- */
-type MarketBase = {
-  /** Shown in the bar and in the list. */
-  code: string;
-  name: string;
-  /** The short form the menu's chip prints beside the language. */
-  label: string;
-  language: string;
-};
-
-export type Market =
-  | (MarketBase & { live: true; prefix: `/${string}` })
-  | (MarketBase & { live: false; prefix?: never });
-
-export type LiveMarket = Extract<Market, { live: true }>;
-
-export const MARKETS: readonly Market[] = [
-  { code: "AE", name: "United Arab Emirates", label: "UAE", language: "EN", prefix: "/ae", live: true },
-  { code: "SA", name: "Saudi Arabia", label: "KSA", language: "EN", live: false },
-  { code: "KZ", name: "Kazakhstan", label: "KZ", language: "RU", live: false },
-  { code: "RU", name: "Russia", label: "RU", language: "RU", live: false },
-  { code: "UK", name: "United Kingdom", label: "UK", language: "EN", live: false },
-];
-
-/**
- * The market this build serves, read off the prefix every route is published
- * under rather than written down a second time. A prefix with no live market
- * behind it fails the build here instead of shipping a bar that names the
- * wrong country.
- */
-export const CURRENT_MARKET: LiveMarket = (() => {
-  const market = MARKETS.find(
-    (candidate): candidate is LiveMarket => candidate.live && candidate.prefix === PUBLIC_PREFIX,
-  );
-  if (!market) throw new Error(`site-config: no live market for the prefix ${PUBLIC_PREFIX}`);
-  return market;
-})();
 
 /**
  * The brand film and the frame that stands until it is played.

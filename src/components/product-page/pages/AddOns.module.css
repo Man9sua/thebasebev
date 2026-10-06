@@ -46,11 +46,6 @@
   line-height: 1.1;
 }
 
-.use {
-  font-size: calc(16 * var(--u));
-  font-weight: 600;
-}
-
 .facts {
   display: flex;
   flex-direction: column;
@@ -174,10 +169,6 @@
 
   .name {
     font-size: 18px;
-  }
-
-  .use {
-    font-size: 14px;
   }
 
   .factsLine {

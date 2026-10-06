@@ -1,7 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { SiteLink } from "@/components/site/SiteLink";
-import { popupAnchorProps } from "@/lib/legacy-popups";
 import { faqPage } from "@/lib/structured-data";
 import { NutritionTabs, type NutritionSet } from "./NutritionTabs";
 import styles from "./ProductPage.module.css";
@@ -47,18 +46,18 @@ export function SampleButton({ productName, className }: { productName: string; 
 
 export function DistributorLink({ className, children = "Find your distributor" }: { className?: string; children?: ReactNode }) {
   return (
-    <SiteLink href="/distributors" className={cx(styles.button, styles.outline, className)}>
+    <SiteLink href="/find-your-distributor" className={cx(styles.button, styles.outline, className)}>
       {children}
     </SiteLink>
   );
 }
 
-/** Opens the export's custom-flavour lead form (still served on product pages). */
+/** Open the R&D brief, rather than the legacy custom-flavour popup. */
 export function FlavourEnquiryLink({ className, children = "Talk to R&D →" }: { className?: string; children?: ReactNode }) {
   return (
-    <a href="#flavor" className={className ?? styles.textLink} {...popupAnchorProps("#flavor")}>
+    <SiteLink href="/rnd#rnd-form" className={className ?? styles.textLink}>
       {children}
-    </a>
+    </SiteLink>
   );
 }
 
@@ -101,7 +100,6 @@ export function Breadcrumbs({ current, className }: { current: ReactNode; classN
 export function Hero({
   productName,
   title,
-  headline,
   lead,
   image,
   className,
@@ -110,8 +108,6 @@ export function Hero({
 }: WithClass & {
   productName: string;
   title: ReactNode;
-  /** Production's ranking sentence: kept as a small h2 under the name. */
-  headline?: string;
   lead: { desktop: ReactNode; mobile?: ReactNode };
   image: ReactNode;
   mediaClassName?: string;
@@ -123,7 +119,6 @@ export function Hero({
         <h1 id="product-title" className={styles.heroTitle}>
           {title}
         </h1>
-        {headline && <h2 className={styles.heroHeadline}>{headline}</h2>}
         <p className={styles.heroLead}>
           <Responsive {...lead} />
         </p>
@@ -328,14 +323,18 @@ export function Inside({
   side,
   className,
   title = "Inside the pack",
+  tableTitle,
+  fullMobile,
 }: {
   sets: NutritionSet[];
   side: ReactNode;
   className?: string;
   title?: ReactNode;
+  tableTitle?: string;
+  fullMobile?: boolean;
 }) {
   return (
-    <NutritionTabs title={title} sets={sets} side={side} className={className} />
+    <NutritionTabs title={title} sets={sets} side={side} className={className} tableTitle={tableTitle} fullMobile={fullMobile} />
   );
 }
 
@@ -352,6 +351,8 @@ export function Faq({
   sample = true,
   className,
   title = "Questions",
+  initiallyOpen = true,
+  mobileDistributor = false,
 }: {
   productName: string;
   items: Question[];
@@ -363,6 +364,8 @@ export function Faq({
   sample?: boolean;
   className?: string;
   title?: ReactNode;
+  initiallyOpen?: boolean;
+  mobileDistributor?: boolean;
 }) {
   return (
     <section className={cx(styles.faq, className)} aria-labelledby="product-faq-title">
@@ -388,7 +391,7 @@ export function Faq({
       </div>
       <div className={styles.faqList}>
         {items.map((item, i) => (
-          <details key={i} className={cx(styles.faqItem, i >= mobileLimit && styles.faqMore)} open={i === 0}>
+          <details key={i} className={cx(styles.faqItem, i >= mobileLimit && styles.faqMore)} open={initiallyOpen && i === 0}>
             <summary className={styles.faqQuestion}>
               {item.q}
               <span className={styles.faqPlus} aria-hidden="true">
@@ -400,6 +403,7 @@ export function Faq({
         ))}
       </div>
       {sample && <SampleButton productName={productName} className={cx(styles.mobileOnly, styles.faqMobileCta)} />}
+      {distributor && mobileDistributor && <DistributorLink className={cx(styles.mobileOnly, styles.faqMobileCta)} />}
     </section>
   );
 }

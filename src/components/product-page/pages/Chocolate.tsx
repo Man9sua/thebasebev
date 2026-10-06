@@ -72,7 +72,7 @@ const faq = [
   },
 ];
 
-export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
+export function ChocolatePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     { ...hero, alt: "Hot chocolate serve" },
@@ -96,7 +96,6 @@ export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
         className={local.hero}
         productName={product.name}
         title="Hot chocolate"
-        headline={headline}
         lead={{
           desktop:
             "Rich, creamy hot chocolate for cafés, hotels and vending. Steam with milk and serve in 40 seconds, hot or iced.",

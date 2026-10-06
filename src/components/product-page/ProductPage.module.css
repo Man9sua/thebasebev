@@ -198,17 +198,6 @@
   text-wrap: balance;
 }
 
-/* Production's ranking sentence, kept a level down under the name. */
-.heroHeadline {
-  margin-top: calc(-16 * var(--u));
-  font-size: calc(16 * var(--u));
-  font-weight: 600 !important;
-  line-height: 1.4;
-  letter-spacing: 0.01em !important;
-  color: var(--pp-hero-lead);
-  opacity: 0.78;
-  max-width: calc(520 * var(--u));
-}
 
 .heroLead {
   font-size: calc(22 * var(--u));
@@ -734,10 +723,6 @@
     font-size: 60px;
   }
 
-  .heroHeadline {
-    margin-top: -6px;
-    font-size: 13px;
-  }
 
   .crumbs {
     margin-bottom: -6px;
@@ -975,5 +960,75 @@
 
   .faqMobileCta {
     order: 99;
+  }
+}
+.nutritionTableTitle {
+  margin: 0 !important;
+  font-size: calc(28 * var(--u));
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+  text-transform: uppercase;
+}
+
+.nutritionFullMobile {
+  gap: 0;
+  border-radius: calc(28 * var(--u));
+  padding: calc(36 * var(--u)) calc(40 * var(--u));
+}
+
+.nutritionFullMobile .nutritionHead {
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: calc(8 * var(--u));
+  padding-bottom: calc(16 * var(--u));
+  border-bottom: 2px solid var(--pp-ink);
+  font-size: calc(13 * var(--u));
+}
+
+.nutritionFullMobile .nutritionRow {
+  grid-template-columns: minmax(0, 1fr) calc(90 * var(--u)) calc(70 * var(--u));
+  gap: calc(12 * var(--u));
+  align-items: baseline;
+  padding-block: calc(var(--nutrition-row-pad, 12) * var(--u));
+  font-size: calc(16 * var(--u));
+}
+
+.nutritionFullMobile .nutritionRow > :nth-child(2) {
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+@media (max-width: 1023px) {
+  .nutritionFullMobile {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .nutritionFullMobile .nutritionHead {
+    gap: 8px;
+    padding-bottom: 12px;
+    font-size: 11px;
+  }
+  .nutritionFullMobile .nutritionRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 70px 36px;
+    gap: 8px;
+    font-size: 13px;
+    padding-block: 10px;
+  }
+
+  .nutritionFullMobile .nutritionRow > :last-child {
+    display: block;
+  }
+
+  .nutritionTableTitle {
+    font-size: 22px;
+  }
+
+  .nutritionFullMobile .nutritionNote {
+    font-size: 11px;
+    line-height: 1.4;
   }
 }

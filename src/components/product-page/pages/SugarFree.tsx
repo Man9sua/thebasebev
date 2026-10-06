@@ -76,7 +76,7 @@ const faq: Question[] = [
   },
 ];
 
-export function SugarFreePage({ product, headline }: ProductPageProps) {
+export function SugarFreePage({ product }: ProductPageProps) {
   return (
     <main
       className={styles.page}
@@ -100,7 +100,6 @@ export function SugarFreePage({ product, headline }: ProductPageProps) {
             <br className={styles.desktopOnly} /> free
           </>
         }
-        headline={headline}
         lead={{
           desktop:
             "Ten flavours in single 1 g sachets. Add one to milk, coffee or tea for a flavoured drink with 0 g sugar and 1 kcal per serve.",

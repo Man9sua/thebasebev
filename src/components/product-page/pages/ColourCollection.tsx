@@ -12,12 +12,14 @@ import local from "./ColourCollection.module.css";
 
 const SLUG = "colour-collection";
 
-const colours = [
+type Colour = { name: string; tin: string; text: string; taste?: string; best?: string };
+
+const colours: readonly Colour[] = [
   { name: "Matcha", tin: "matcha", text: "Stone-ground Japanese green tea.", taste: "Grassy, umami, gentle bitterness.", best: "Lattes, iced matcha, lemonade." },
-  { name: "Hojicha", tin: "hojicha", text: "Roasted Japanese green tea.", taste: "Roasted, caramel, nutty, low bitterness.", best: "Hot lattes, affogato, the evening menu." },
-  { name: "Butterfly Pea", tin: "butterfly-pea", text: "Blue flower extract. Turns violet with citrus.", taste: "Neutral, lightly floral.", best: "Lemonades, mocktails, blue lattes." },
-  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract.", taste: "Mild, fresh, lightly sweet.", best: "Pink lattes, smoothies, cocktails." },
-  { name: "Ube", tin: "ube", text: "Purple yam from the Philippines.", taste: "Vanilla-like, nutty, sweet and earthy.", best: "Lattes, frappes, desserts." },
+  { name: "Hojicha", tin: "hojicha", text: "Roasted Japanese green tea." },
+  { name: "Butterfly Pea", tin: "butterfly-pea", text: "Blue flower extract. Turns violet with citrus." },
+  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract." },
+  { name: "Ube", tin: "ube", text: "Purple yam from the Philippines." },
 ];
 
 const steps = [
@@ -39,14 +41,14 @@ const faq = [
   { q: "What is in the tin?", a: "One ingredient: the plant or fruit powder itself. No sugar, colours or flavourings added." },
   { q: "Does the colour hold in milk and over ice?", a: "Yes. The colour holds in milk, water and over ice. Butterfly Pea turns violet when citrus is added." },
   { q: "How many drinks does one tin make?", a: "50 drinks at 2 g per serving from a 100 g tin." },
-  { q: "How do I store an opened tin?", a: "Close the lid tightly and keep it dry, away from light, below 25°C." },
+  { q: "How do I store an opened tin?", a: "Follow the storage instructions on your tin. Our team can provide the specification sheet for your chosen powder." },
   {
     q: "Can you build a colour menu with us?",
     a: "Yes. Our lab in Dubai develops signature drinks with the collection for your menu and trains your baristas.",
   },
 ];
 
-export function ColourCollectionPage({ product, headline }: ProductPageProps) {
+export function ColourCollectionPage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#ECE8E2", "--pp-chip": "#ECE8E2", "--stat": 34 } as CSSProperties}>
       <Hero
@@ -59,7 +61,6 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
             <br /> collection
           </>
         }
-        headline={headline}
         lead={{
           desktop: "Five natural powders for beverage menus. One ingredient in every tin, nothing added. Colour, naturally.",
           mobile: "Five natural powders for beverage menus. One ingredient, nothing added.",
@@ -107,12 +108,12 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
               <div className={local.copy}>
                 <span className={local.name}>{colour.name}</span>
                 <span>{colour.text}</span>
-                <span>
+                {colour.taste && <span>
                   <b>Taste.</b> {colour.taste}
-                </span>
-                <span>
+                </span>}
+                {colour.best && <span>
                   <b>Best in.</b> {colour.best}
-                </span>
+                </span>}
               </div>
             </div>
           ))}
@@ -121,7 +122,7 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
           title="Your own colour menu"
           text="Signature drinks with the collection, developed by our lab in Dubai."
           action={
-            <SiteLink href="/rnd" className={cx(styles.button, styles.red)}>
+            <SiteLink href="/rnd#rnd-form" className={cx(styles.button, styles.red)}>
               Talk to R&amp;D
             </SiteLink>
           }
@@ -157,9 +158,10 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
           items={[
             { title: "One ingredient", text: "The plant or fruit powder itself. No sugar, colours or flavourings added." },
             { title: "Certification", text: "Made at our own factory in the UAE. HACCP and ISO 22000." },
-            { title: "Storage", text: "Lid closed tightly, dry, away from light, below 25°C." },
+            { title: "Storage", text: "Request the specification sheet for your chosen powder from our team." },
           ]}
         />
+        <SiteLink href="/contacts" className={styles.textLink}>Request a specification sheet →</SiteLink>
       </Section>
 
       <Faq productName={product.name} items={faq} line={null} distributor={false} />

@@ -70,14 +70,14 @@ const faq = [
     q: "How do I make it at home?",
     a: "Each pouch has the recipe on the back and a QR code with video instructions. Most drinks need only milk or water.",
   },
-  { q: "Can my café sell these?", a: "Yes. Order through your local the Base distributor; the display kit comes with the first order." },
+  { q: "Can my café sell these?", a: "Yes. Order through your local the Base distributor." },
   { q: "Where can I buy online?", a: "In the the Base online shop." },
 ];
 
 const pouchName = (image: string) =>
   shelves.flatMap((shelf) => shelf.pouches).find((pouch) => pouch.image === image)?.name ?? "";
 
-export function AtHomePage({ product, headline }: ProductPageProps) {
+export function AtHomePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <section className={local.hero} aria-labelledby="product-title">
@@ -87,7 +87,6 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
             Crafted for cafés,
             <br /> now at home
           </h1>
-          {headline && <h2 className={styles.heroHeadline}>{headline}</h2>}
           <p className={styles.heroLead}>
             <span className={styles.desktopOnly}>
               The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in
@@ -164,7 +163,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
               A shelf by
               <br /> the till
             </h2>
-            <SiteLink href="/distributors" className={cx(styles.button, styles.red, local.tillButton, styles.desktopOnly)}>
+            <SiteLink href="/find-your-distributor" className={cx(styles.button, styles.red, local.tillButton, styles.desktopOnly)}>
               Stock it in your café
             </SiteLink>
           </div>
@@ -172,7 +171,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
             {[
               { title: "For guests", text: "Take the café drink home. One pouch makes 5–10 drinks." },
               { title: "For your café", text: "A shelf next to the till. No extra staff, extra revenue per guest." },
-              { title: "Display kit", text: "Shelf stand and price cards come with the first order." },
+              { title: "Wholesale enquiries", text: "Contact your distributor for stocking options." },
             ].map((card) => (
               <div key={card.title} className={local.tillCard}>
                 <span className={local.tillCardTitle}>{card.title}</span>
@@ -180,7 +179,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
               </div>
             ))}
           </div>
-          <SiteLink href="/distributors" className={cx(styles.button, styles.red, local.tillButton, styles.mobileOnly)}>
+          <SiteLink href="/find-your-distributor" className={cx(styles.button, styles.red, local.tillButton, styles.mobileOnly)}>
             Stock it in your café
           </SiteLink>
         </div>

@@ -31,7 +31,6 @@ export function FamilyPage({ tint, children }: { tint: string; children: ReactNo
 export function FamilyHero({
   productName,
   title,
-  headline,
   lead,
   image,
   media,
@@ -40,8 +39,6 @@ export function FamilyHero({
 }: {
   productName: string;
   title: ReactNode;
-  /** Production's ranking sentence, kept as a small h2 under the name. */
-  headline?: string;
   lead: { desktop: ReactNode; mobile?: ReactNode };
   image: ReactNode;
   /**
@@ -75,7 +72,6 @@ export function FamilyHero({
         <h1 id="product-title" className={cx(styles.heroTitle, fb.heroName)}>
           {title}
         </h1>
-        {headline && <h2 className={styles.heroHeadline}>{headline}</h2>}
         <p className={fb.heroLead}>
           <Responsive {...lead} />
         </p>

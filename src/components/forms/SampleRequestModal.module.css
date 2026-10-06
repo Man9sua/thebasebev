@@ -17,7 +17,7 @@
   padding: 16px;
   overflow: hidden;
   overscroll-behavior: none;
-  touch-action: none;
+  touch-action: pan-y;
   background: rgb(31 21 12 / 38%);
   backdrop-filter: blur(5px);
   animation: backdropIn 220ms ease-out both;
@@ -28,7 +28,10 @@
   position: relative;
   width: min(100%, 440px);
   max-height: calc(100dvh - 32px);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   border-radius: 24px;
   padding: 62px 30px 28px;
   color: #151515;
@@ -154,42 +157,6 @@
 .field input::placeholder {
   color: #aaa7a3;
   opacity: 1;
-}
-
-.phoneField {
-  position: relative;
-}
-
-.phoneField input {
-  padding-left: 50px;
-}
-
-.flag {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 16px;
-  width: 18px;
-  height: 12px;
-  border-radius: 1px;
-  background: #08a8bf;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 7%);
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.flag::before {
-  position: absolute;
-  top: 4px;
-  left: 7px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #f5cf36;
-  box-shadow:
-    -5px 0 0 -1px #f5cf36,
-    5px 0 0 -1px #f5cf36;
-  content: "";
 }
 
 .agreement {

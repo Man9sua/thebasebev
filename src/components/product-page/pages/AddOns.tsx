@@ -1,27 +1,25 @@
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { Faq, Hero, Section, Stats, cx, productImage, productPageStyles as styles } from "../blocks";
+import { Faq, Hero, Section, Stats, cx, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
 import local from "./AddOns.module.css";
 
 /**
  * Functional add-ons ("Add-ons Product Page Redesign", desktop 1440 / mobile
- * 390). The sticks are illustrations until the pack shots arrive. The custom
+ * 390). The mock reserves a photo slot until approved pack shots arrive. The custom
  * blend card goes to the R&D page, which carries its own lead form: this
  * route has no exported page and so none of the export's popups.
  */
 
-const SLUG = "add-ons";
-
 const addOns = [
-  { name: "Electrolyte", use: "Hydration and recovery", color: "#E9A1A8", stick: "5 g", dose: "Sodium 1000 mg, potassium 200 mg, magnesium 60 mg", taste: "Moderate, raspberry salt", best: "Smoothies, iced espresso, cold brew" },
-  { name: "Prebiotic fiber", use: "Gut health", color: "#D9CBA8", stick: "5 g", dose: "4000 mg fiber", taste: "Neutral", best: "Smoothies, blended drinks" },
-  { name: "Immunity", use: "Immune support", color: "#F2C14E", stick: "1 g", dose: "500 mg", taste: "Light sourness", best: "Fruit smoothies, protein shakes" },
-  { name: "Glycine", use: "Relaxation and sleep", color: "#B9B3D6", stick: "5 g", dose: "3000 mg", taste: "Slightly sweet", best: "Chamomile tea, hot chocolate, coffee-free coolers" },
-  { name: "Magnesium", use: "Stress support", color: "#A9C7D9", stick: "1 g", dose: "300 mg", taste: "Low", best: "Hot chocolate, matcha latte, mocha" },
-  { name: "Collagen", use: "Skin, hair, nails", color: "#EBC9B8", stick: "5 g", dose: "4000 mg", taste: "Very low", best: "Latte, cappuccino, flat white, matcha latte" },
-  { name: "Creatine", use: "Strength and focus", color: "#BFD6B4", stick: "5 g", dose: "4000 mg", taste: "Almost none", best: "Protein shakes, espresso shakers, coffee coolers" },
+  { name: "Electrolyte", color: "#E9A1A8", stick: "5 g", dose: "Sodium 1000 mg, potassium 200 mg, magnesium 60 mg", taste: "Moderate, raspberry salt", best: "Smoothies, iced espresso, cold brew" },
+  { name: "Prebiotic fiber", color: "#D9CBA8", stick: "5 g", dose: "4000 mg fiber", taste: "Neutral", best: "Smoothies, blended drinks" },
+  { name: "Immunity", color: "#F2C14E", stick: "1 g", dose: "500 mg", taste: "Light sourness", best: "Fruit smoothies, protein shakes" },
+  { name: "Glycine", color: "#B9B3D6", stick: "5 g", dose: "3000 mg", taste: "Slightly sweet", best: "Chamomile tea, hot chocolate, coffee-free coolers" },
+  { name: "Magnesium", color: "#A9C7D9", stick: "1 g", dose: "300 mg", taste: "Low", best: "Hot chocolate, matcha latte, mocha" },
+  { name: "Collagen", color: "#EBC9B8", stick: "5 g", dose: "4000 mg", taste: "Very low", best: "Latte, cappuccino, flat white, matcha latte" },
+  { name: "Creatine", color: "#BFD6B4", stick: "5 g", dose: "4000 mg", taste: "Almost none", best: "Protein shakes, espresso shakers, coffee coolers" },
 ];
 
 const menuMap = [
@@ -45,7 +43,7 @@ const faq = [
   { q: "Can we sell it under our brand?", a: "Yes. Sticks are available as private label." },
 ];
 
-export function AddOnsPage({ product, headline }: ProductPageProps) {
+export function AddOnsPage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <Hero
@@ -58,16 +56,12 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
             <br /> add-ons
           </>
         }
-        headline={headline}
         lead={{
           desktop:
-            "Seven pre-dosed sticks that turn drinks already on your menu into functional ones: hydration, focus, recovery, calm. One stick per drink, no new recipes.",
+            "Seven pre-dosed sticks for drinks already on your menu. One stick per drink, no new recipes.",
           mobile: "Seven pre-dosed sticks for drinks already on your menu. One stick per drink, no new recipes.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...productImage(SLUG, "hero", [600, 1000])} sizes="(max-width: 1023px) 340px, 560px" alt="Seven functional add-on sticks" fetchPriority="high" />
-        }
+        image={<RangePhotoPlaceholder />}
       />
 
       <Section title="Made for service" label="Made for service">
@@ -94,8 +88,9 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
                 <span className={cx(local.stick, styles.desktopOnly)}>{item.stick} stick</span>
               </div>
               <div className={local.cardName}>
-                <span className={local.name}>{item.name}</span>
-                <span className={local.use}>{item.use}</span>
+                {item.name === "Electrolyte" ? (
+                  <SiteLink href="/electrolyte" className={local.name}>{item.name}</SiteLink>
+                ) : <span className={local.name}>{item.name}</span>}
               </div>
               <div className={cx(local.facts, styles.desktopOnly)}>
                 <span>
@@ -116,7 +111,7 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
           <div className={cx(local.own, styles.desktopOnly)}>
             <span className={local.ownTitle}>Your own functional line</span>
             <span className={local.ownText}>We develop a custom blend and pack it under your brand.</span>
-            <SiteLink href="/rnd" className={local.ownLink}>
+            <SiteLink href="/rnd#rnd-form" className={local.ownLink}>
               Talk to R&amp;D →
             </SiteLink>
           </div>
@@ -150,7 +145,7 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
         />
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} />
+      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} initiallyOpen={false} />
     </main>
   );
 }

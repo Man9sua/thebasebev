@@ -64,6 +64,91 @@ function observe(page, label) {
   });
 }
 
+async function checkDistributorFinder(page, label, countryName, countryCode) {
+  let capturedLead;
+  await page.route("**/api/leads", async (route) => {
+    capturedLead = route.request().postDataJSON();
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: false,
+        error: "lead_backend_unavailable",
+        message: "Lead delivery is temporarily unavailable. Please contact us directly.",
+        requestId: "finder-smoke-mocked",
+      }),
+    });
+  });
+  await page.goto(`${baseUrl}/ae/find-your-distributor?market=AE`, { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(
+    (storageKey) => sessionStorage.getItem(storageKey) !== null,
+    firstTouchStorageKey,
+  );
+  const countries = page.locator('button[aria-controls="distributor-details"]');
+  check((await countries.count()) === 17, `${label}: finder does not list all 17 markets`);
+  const details = page.locator("#distributor-details");
+  check(
+    (await details.locator('a[href="tel:+971509890429"]').count()) === 1,
+    `${label}: UAE contact phone missing`,
+  );
+  await page.goto(`${baseUrl}/ae/find-your-distributor?market=${countryCode}`, { waitUntil: "domcontentloaded" });
+  await details.getByText(`Distribution in ${countryName}`, { exact: true }).waitFor();
+  check(
+    (await countries.filter({ hasText: countryName }).getAttribute("aria-pressed")) === "true",
+    `${label}: market query did not preselect its country`,
+  );
+  const search = page.getByRole("searchbox", { name: "Search country" });
+  await search.fill(countryName);
+  check((await countries.count()) === 1, `${label}: country search did not narrow the list`);
+  await countries.first().click();
+  await details.getByText(`Distribution in ${countryName}`, { exact: true }).waitFor();
+  check(
+    (await details.locator('a[href^="tel:"], a[href^="mailto:"]').count()) === 0,
+    `${label}: pending market exposes unconfirmed contact details`,
+  );
+  check(
+    ((await details.getByRole("link", { name: "WhatsApp UAE team" }).getAttribute("href")) ?? "")
+      .startsWith("https://wa.me/971509890429?text="),
+    `${label}: pending market does not offer the confirmed UAE contact fallback`,
+  );
+  await search.fill("No such country");
+  check(await page.getByRole("status").isVisible(), `${label}: no-result search has no feedback`);
+  await search.fill("");
+  check((await countries.count()) === 17, `${label}: clearing country search did not restore the list`);
+  await details.getByRole("button", { name: "Request samples", exact: true }).click();
+  const form = page.locator("#sample-request-modal-form");
+  await form.waitFor({ state: "visible" });
+  check(
+    (await form.locator('input[name="country"]').inputValue()) === countryCode,
+    `${label}: sample form lost the selected market`,
+  );
+  await form.locator('input[name="name"]').fill("Browser Smoke");
+  await form.locator('input[name="email"]').fill("smoke@example.com");
+  await form.locator('input[name="Phone"]').fill("+971500000000");
+  await form.locator('input[name="privacy-consent"]').evaluate((input) => {
+    input.checked = true;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  const request = page.waitForRequest((candidate) => new URL(candidate.url()).pathname === "/api/leads");
+  await form.evaluate((element) => element.requestSubmit());
+  await request;
+  await form.locator(".js-rule-error-all").filter({ hasText: /temporarily unavailable/i }).waitFor();
+  check(
+    capturedLead?.country === countryCode && capturedLead?.formType === "sample",
+    `${label}: submitted sample lead lost its market or form type`,
+  );
+  check(
+    await form.locator(".js-successbox").isHidden(),
+    `${label}: failed delivery displayed a false success`,
+  );
+  await page.keyboard.press("Escape");
+  check((await page.locator("#sample-request-modal-form").count()) === 0, `${label}: finder sample form did not close`);
+  check(
+    await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
+    `${label}: finder has horizontal overflow`,
+  );
+}
+
 const browser = await chromium.launch({
   executablePath: chromePath,
   headless: true,
@@ -311,57 +396,14 @@ try {
     (await page.locator("header button[aria-label^='Region:']").count()) === 0,
     "header: the old region picker is back in the bar",
   );
-  // What sits beside search instead is the country selector, and it only offers
-  // what exists: the UAE is live and current, every other market is listed as
-  // coming and disabled, and nothing in it links anywhere — `/sa`, `/kz` and the
-  // rest are 404s.
-  const country = page.locator("header button[aria-label^='Country:']");
-  check((await country.count()) === 1, "header: the country selector is missing from the bar");
-  if ((await country.count()) === 1) {
-    await country.click();
-    await page.waitForTimeout(450);
-    const countryList = await country.evaluate((button) => {
-      const list = document.getElementById(button.getAttribute("aria-controls") ?? "");
-      if (!list) return null;
-      const options = [...list.querySelectorAll("[role='option']")];
-      return {
-        expanded: button.getAttribute("aria-expanded") === "true",
-        visible: getComputedStyle(list).visibility === "visible",
-        options: options.length,
-        selected: options
-          .filter((option) => option.getAttribute("aria-selected") === "true")
-          .map((option) => option.textContent ?? ""),
-        enabled: options.filter((option) => option.getAttribute("aria-disabled") !== "true").length,
-        soonOnDisabled: options
-          .filter((option) => option.getAttribute("aria-disabled") === "true")
-          .every((option) => /soon/i.test(option.textContent ?? "")),
-        links: list.querySelectorAll("a[href]").length,
-      };
-    });
-    check(
-      !!countryList && countryList.expanded && countryList.visible,
-      "header: the country list did not open",
-    );
-    check(
-      !!countryList &&
-        countryList.selected.length === 1 &&
-        countryList.selected[0].includes("United Arab Emirates"),
-      "header: the country list does not mark the UAE as current",
-    );
-    check(
-      !!countryList && countryList.options > 1 && countryList.enabled === 1,
-      "header: a country other than the UAE is choosable",
-    );
-    check(!!countryList?.soonOnDisabled, "header: a disabled country is not marked as coming");
-    check(countryList?.links === 0, "header: the country list links somewhere");
-    await page.keyboard.press("Escape");
-    await page.waitForTimeout(450);
-    check(
-      (await country.getAttribute("aria-expanded")) === "false" &&
-        (await country.evaluate((button) => document.activeElement === button)),
-      "header: Escape did not close the country list and return focus to it",
-    );
-  }
+  check(
+    (await page.locator("header button[aria-label^='Country:']").count()) === 0,
+    "header: removed country selector is still present",
+  );
+  check(
+    await page.locator('header a[href="/ae/find-your-distributor"]').isVisible(),
+    "header: Find your distributor link is missing",
+  );
   check(
     (await page.evaluate(() =>
       [...document.querySelectorAll("a[href]")].filter((a) =>
@@ -406,8 +448,14 @@ try {
   await page.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
   await page.locator("[data-catalog-card]").first().waitFor();
   await page.waitForTimeout(1_200);
-  check((await page.locator("[data-catalog-card]").count()) === 21, "catalog: expected 21 product cards");
-  check((await page.locator("[data-catalog-price]").count()) === 21, "catalog: expected a price or request label on every card");
+  check((await page.locator("[data-catalog-card]").count()) === 22, "catalog: expected 22 product cards");
+  check((await page.locator("[data-catalog-price]").count()) === 22, "catalog: expected a price or request label on every card");
+  for (const slug of ["puree", "sauce", "add-ons", "electrolyte"]) {
+    check(
+      (await page.locator(`[data-catalog-card][data-product-slug="${slug}"] img`).count()) === 0,
+      `catalog: ${slug} shows an unconfirmed product image`,
+    );
+  }
   const catalogPrices = await page.locator("[data-catalog-card]").evaluateAll((cards) =>
     Object.fromEntries(
       cards.map((card) => [
@@ -433,6 +481,7 @@ try {
     Tea: "Price on request",
     "Sugar Free": "14.22 AED",
     Vending: "Price on request",
+    Electrolyte: "Price on request",
   };
   for (const [name, expectedPrice] of Object.entries(expectedCatalogPrices)) {
     check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
@@ -465,7 +514,12 @@ try {
   await page.locator("h1").first().waitFor();
   await page.waitForTimeout(1_200);
   check(/Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""), "matcha: unexpected H1");
-  check((await page.locator("img").count()) > 10, "matcha: expected product imagery");
+  const productImage = page.locator("main img").first();
+  check(await productImage.isVisible(), "matcha: supplied product hero image is not visible");
+  check(
+    await productImage.evaluate((image) => image.complete && image.naturalWidth > 0),
+    "matcha: supplied product hero image failed to load",
+  );
   const hiddenProductContent = await page.locator("main .t-animate").evaluateAll((elements) =>
     elements.filter((element) => {
       const rect = element.getBoundingClientRect();
@@ -534,8 +588,8 @@ try {
   );
   check(
     (await page.getByRole("link", { name: "Find your distributor" }).first().getAttribute("href")) ===
-      "/ae/distributors",
-    "matcha: Find your distributor does not lead to the distributors page",
+      "/ae/find-your-distributor",
+    "matcha: Find your distributor does not lead to the finder page",
   );
   // Browser smoke must be safe against a credentialed staging environment.
   // Mock only the same-origin lead boundary so the UX and attribution path are
@@ -610,6 +664,8 @@ try {
     "contacts: canonical was changed after hydration",
   );
 
+  await checkDistributorFinder(page, "desktop", "Saudi Arabia", "SA");
+
   await desktop.close();
   console.log("Browser smoke phase passed: desktop interactions");
 
@@ -659,12 +715,15 @@ try {
     (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 0,
     "mobile: the old region picker is back in the menu",
   );
-  // The country selector stays in the bar at every width rather than moving
-  // into the menu the way the old picker did.
   check(
-    await mobilePage.locator("header button[aria-label^='Country:']").isVisible(),
-    "mobile: the country selector is missing from the bar",
+    (await mobilePage.locator("header button[aria-label^='Country:']").count()) === 0,
+    "mobile: removed country selector is still present",
   );
+  check(
+    await mobileMenu.getByRole("link", { name: "Find your distributor", exact: true }).isVisible(),
+    "mobile: menu lacks the distributor finder link",
+  );
+  await checkDistributorFinder(mobilePage, "mobile", "Kyrgyzstan", "KG");
   await mobile.close();
   console.log("Browser smoke phase passed: mobile interactions");
 
@@ -700,30 +759,11 @@ try {
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
       fullPage: false,
     });
-    // The country list opens from the right of the bar with search and the
-    // burger still to its right, so a narrow screen is where it would run off
-    // the left edge. Opened at every width, after the capture so the
-    // screenshot is of the page at rest.
-    const countryTrigger = visualPage.locator("header button[aria-label^='Country:']");
-    await countryTrigger.click();
-    await visualPage.waitForTimeout(450);
-    const countryPanel = await countryTrigger.evaluate((button) => {
-      const list = document.getElementById(button.getAttribute("aria-controls") ?? "");
-      if (!list) return null;
-      const box = list.getBoundingClientRect();
-      return {
-        open: button.getAttribute("aria-expanded") === "true",
-        left: box.left,
-        right: box.right,
-        cw: document.documentElement.clientWidth,
-      };
-    });
-    check(!!countryPanel?.open, `header: the country list did not open at ${width}x${height}`);
+    const finderLink = visualPage.locator('header a[href="/ae/find-your-distributor"]');
     check(
-      !!countryPanel && countryPanel.left >= -1 && countryPanel.right <= countryPanel.cw + 1,
-      `header: the country list leaves the viewport at ${width}x${height} (${Math.round(countryPanel?.left ?? 0)}..${Math.round(countryPanel?.right ?? 0)} of ${countryPanel?.cw})`,
+      (await finderLink.isVisible()) === (width >= 768),
+      `header: distributor finder visibility is wrong at ${width}x${height}`,
     );
-    await visualPage.keyboard.press("Escape");
   }
   await visual.close();
   console.log("Browser smoke phase passed: responsive captures");
@@ -773,6 +813,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, country selector, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, distributor finder, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

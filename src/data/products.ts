@@ -287,7 +287,7 @@ export const PRODUCTS: Product[] = [
     headline: "Purées",
     description:
       "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts. Real fruit texture, ready to pour.",
-    image: "/images/pack-puree.webp",
+    image: null,
     price: null,
     backgroundColor: "#edb48c",
   },
@@ -298,7 +298,7 @@ export const PRODUCTS: Product[] = [
     headline: "Sauces",
     description:
       "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts.",
-    image: "/images/pack-sauce.webp",
+    image: null,
     price: null,
     backgroundColor: "#d3a877",
   },
@@ -309,7 +309,7 @@ export const PRODUCTS: Product[] = [
     headline: "Colour Collection",
     description:
       "Five natural powders for beverage menus. One ingredient in every tin, nothing added.",
-    image: "/images/pack-colour-collection.webp",
+    image: "/images/products/colour-collection/tin-butterfly-pea-560.webp",
     price: null,
     backgroundColor: "#afbaeb",
   },
@@ -320,9 +320,19 @@ export const PRODUCTS: Product[] = [
     headline: "Functional Add-ons",
     description:
       "Seven pre-dosed sticks that turn drinks already on your menu into functional ones.",
-    image: "/images/pack-add-ons.webp",
+    image: null,
     price: null,
     backgroundColor: "#c9c0e6",
+  },
+  {
+    slug: "electrolyte",
+    route: "/electrolyte",
+    name: "Electrolyte",
+    headline: "Electrolyte",
+    description: "Electrolyte powder drink in five flavours, no added sugar. Sticks, bar packs and 25 kg bulk.",
+    image: null,
+    price: null,
+    backgroundColor: "#F6F4F0",
   },
   {
     slug: "at-home",
@@ -331,7 +341,7 @@ export const PRODUCTS: Product[] = [
     headline: "At Home",
     description:
       "The same café recipes in 150 g pouches, for guests to make the drink at home.",
-    image: "/images/pack-at-home.webp",
+    image: "/images/products/at-home/matcha-blue-600.webp",
     price: null,
     backgroundColor: "#e5c3aa",
   },

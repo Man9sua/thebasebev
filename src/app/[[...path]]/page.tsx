@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/about/AboutPage";
+import { AboutFaq } from "@/components/about/AboutFaq";
+import { CareersSection } from "@/components/about/CareersSection";
+import { ABOUT_FAQS } from "@/components/about/about-faqs";
+import { DistributorFinderPage } from "@/components/distributor-finder/DistributorFinderPage";
+import { PrivateLabelPage } from "@/components/private-label/PrivateLabelPage";
+import { ResourcesPage } from "@/components/resources/ResourcesPage";
+import { CertificatesPage, CookiePolicyPage, RequestSamplesPage } from "@/components/site/SupportPages";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { DistributorsPage } from "@/components/distributors/DistributorsPage";
 import { RndPage } from "@/components/rnd/RndPage";
@@ -37,8 +44,10 @@ import {
   type BlogPost,
 } from "@/data/blog";
 import catalogTiles from "@/data/catalog-tiles.json";
-import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
-import { breadcrumbList, productSchema, type Crumb } from "@/lib/structured-data";
+import { getLegacyStructuredData, getOrganizationStructuredData } from "@/lib/legacy-structured-data";
+import { breadcrumbList, faqPage, productSchema, type Crumb } from "@/lib/structured-data";
+import fs from "node:fs";
+import path from "node:path";
 import { publicPath, publicUrl } from "@/lib/site-paths";
 import {
   getSitePage,
@@ -48,7 +57,6 @@ import {
   withoutLegacyRecords,
   catalogWeights,
   catalogFlavors,
-  productDetails,
 } from "@/lib/site-pages";
 
 type RouteProps = {
@@ -185,12 +193,9 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     twitter: {
       card: "summary_large_image",
       site: "@thebasebev",
-      title: "Dry Beverage Premix Manufacturer | Global HoReCa Supply",
-      description:
-        "The Base Beverage manufactures dry beverage bases and instant premixes in Dubai, UAE. 600+ flavours, private label and custom R&D for HoReCa, retail and distributors.",
-      images: [
-        `${SITE_ORIGIN}/images/tild3435-6364-4232-a539-303363373037__frame_1413375666_1.jpg`,
-      ],
+      title,
+      description,
+      images: page.openGraph.image ? [page.openGraph.image] : undefined,
     },
     authors: [{ name: "The Base Beverage LLC" }],
     other: {
@@ -257,11 +262,13 @@ function breadcrumbsFor(route: string): Crumb[] | null {
 function productStructuredData(route: string) {
   const product = getProduct(route.slice(1));
   if (!product || !PRODUCT_PAGES[product.slug]) return null;
+  const tile = (catalogTiles as Record<string, { image?: string; source?: string }>)[product.slug];
+  const image = tile?.source === "illustration" ? product.image : tile?.image ?? product.image;
   return productSchema({
     name: product.name,
     description: getSitePage(route)?.description || product.description,
     path: product.route,
-    image: (catalogTiles as Record<string, { image: string }>)[product.slug]?.image ?? `/images/pack-${product.slug}.webp`,
+    image: image && fs.existsSync(path.join(process.cwd(), "public", image)) ? image : undefined,
     price: product.price,
   });
 }
@@ -274,9 +281,11 @@ export default async function SiteRoute({ params }: RouteProps) {
   const route = normalizeSitePath((await params).path);
   const crumbs = breadcrumbsFor(route);
   const product = productStructuredData(route);
+  const needsOrganization = getSitePage(route)?.native || findBlogPostByPath(route) || findGlossaryEntryByPath(route);
 
   return (
     <>
+      {needsOrganization && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: getOrganizationStructuredData() }} />}
       {crumbs && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbList(crumbs) }} />
       )}
@@ -320,6 +329,27 @@ async function RouteBody({ params }: RouteProps) {
   // `generateMetadata` above is shared, so every route keeps its existing
   // title, description and canonical whichever branch renders it.
   if (route === "/") return <HomePage />;
+
+  if (route === "/private-labeling" || route === "/resources") {
+    const structuredData = getLegacyStructuredData(page.file);
+    return <div className="tbb">
+      {structuredData.map((block, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: block }} />)}
+      <SiteHeader />
+      {route === "/private-labeling" ? <PrivateLabelPage /> : <ResourcesPage />}
+      <SiteFooter />
+    </div>;
+  }
+
+  const supportPage = route === "/find-your-distributor" ? <DistributorFinderPage />
+    : route === "/careers" ? <main><CareersSection standalone /></main>
+    : route === "/request-samples" ? <RequestSamplesPage />
+    : route === "/certificates" ? <CertificatesPage />
+    : route === "/faq" ? <main><AboutFaq standalone /></main>
+    : route === "/cookie-policy" ? <CookiePolicyPage /> : null;
+  if (supportPage) return <div className="tbb">
+    {route === "/faq" && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqPage(ABOUT_FAQS.map(({ question, answer }) => ({ q: question, a: answer }))) }} />}
+    <SiteHeader />{supportPage}<SiteFooter />
+  </div>;
 
   if (route === "/about-us") {
     const structuredData = getLegacyStructuredData(page.file);
@@ -434,15 +464,13 @@ async function RouteBody({ params }: RouteProps) {
   }
 
   if (route === "/sitemap") {
-    const runtimePage = withoutLegacyRecords(page, [
-      "rec2493125951",
-      "rec2503542591",
-    ]);
     return (
       <div className="tbb">
+        {getLegacyStructuredData(page.file).map((json, index) => (
+          <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />
+        ))}
         <SiteHeader />
         <SitemapPage />
-        <LegacyPageShell page={runtimePage} runtimeOnly />
         <SiteFooter />
       </div>
     );
@@ -465,16 +493,8 @@ async function RouteBody({ params }: RouteProps) {
   const intro = getPageIntro(route);
   const offers = getPageOffers(route);
 
-  // Products with a redesigned page (components/product-page) render it in
-  // place of the hero and details above. The sentence production ranks on
-  // stays on the page as a small h2 under the name.
+  // Redesigned products own the visible hero copy; SEO metadata stays above.
   const RedesignedProduct = product ? PRODUCT_PAGES[product.slug] : undefined;
-  const productHeadline = product
-    ? (() => {
-        const headline = productDetails[product.slug]?.h1 ?? product.headline;
-        return headline !== product.name ? headline : undefined;
-      })()
-    : undefined;
 
   // Everything else: one shared header and footer, with the old Tilda chrome
   // already removed from the markup server-side.
@@ -486,7 +506,6 @@ async function RouteBody({ params }: RouteProps) {
       {RedesignedProduct && product ? (
         <RedesignedProduct
           product={product}
-          headline={productHeadline}
           assets={PRODUCT_PAGE_ASSETS[product.slug] ?? {}}
         />
       ) : (

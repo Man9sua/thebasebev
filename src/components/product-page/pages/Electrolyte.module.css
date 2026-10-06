@@ -1,0 +1,28 @@
+.flavours { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: calc(16 * var(--u)); }
+.flavour { background: #fff; border-radius: calc(24 * var(--u)); padding: calc(14 * var(--u)); display: flex; flex-direction: column; gap: calc(16 * var(--u)); }
+.photo { height: calc(260 * var(--u)); border-radius: calc(16 * var(--u)); }
+.copy { padding: 0 calc(8 * var(--u)) calc(8 * var(--u)); display: flex; flex-direction: column; gap: calc(6 * var(--u)); }
+.name { font-size: calc(22 * var(--u)); font-weight: 800; }
+.code { font-size: calc(13 * var(--u)); color: #8a867f; }
+.formats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(12 * var(--u)); }
+.format { background: #fff; border-radius: calc(22 * var(--u)); padding: calc(32 * var(--u)); display: flex; flex-direction: column; gap: calc(12 * var(--u)); }
+.label { font-size: calc(15 * var(--u)); font-weight: 600; color: var(--pp-muted); }
+.formatName { font-size: calc(36 * var(--u)); line-height: 1; text-transform: uppercase; font-weight: 900; }
+.text { display: block; font-size: calc(16 * var(--u)); line-height: 1.55; color: var(--pp-muted); }
+.bulk { background: var(--pp-ink); color: var(--pp-paper); }
+.bulk .label, .bulk .text { color: #c9c6c0; }
+.privateLabel { display: flex; justify-content: space-between; align-items: center; gap: calc(32 * var(--u)); margin-top: calc(48 * var(--u)); padding: calc(32 * var(--u)) calc(40 * var(--u)); border-radius: calc(22 * var(--u)); background: #fff; }
+.privateTitle { display: block; margin-bottom: calc(6 * var(--u)); font-size: calc(24 * var(--u)); font-weight: 800; }
+@media (max-width: 1023px) {
+  .flavours { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .flavour { border-radius: 18px; padding: 8px; gap: 10px; }
+  .photo { height: 130px; border-radius: 12px; }
+  .copy { padding: 0 6px 6px; gap: 0; }
+  .name { font-size: 17px; }
+  .formats { grid-template-columns: 1fr; gap: 8px; }
+  .format { border-radius: 18px; padding: 20px; gap: 4px; }
+  .formatName { font-size: 22px; }
+  .text { font-size: 14px; line-height: 1.5; }
+  .privateLabel { flex-direction: column; align-items: stretch; gap: 12px; margin-top: 8px; padding: 20px; border-radius: 18px; }
+  .privateTitle { font-size: 18px; margin: 0; }
+}

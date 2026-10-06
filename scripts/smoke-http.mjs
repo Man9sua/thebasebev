@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { readNativeRoutes } from "./native-routes.mjs";
 
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const targetUrl = new URL(baseUrl);
@@ -11,7 +12,8 @@ const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "ut
 const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
 const publicPath = (route) => route === "/" ? "/ae" : `/ae${route}`;
 const publicRoutePaths = JSON.parse(fs.readFileSync("src/data/public-route-paths.json", "utf8"));
-const expectedSitemapUrls = 29 /* audited */ + 5 /* native ranges */ + glossaryContent.entries.length + blogContent.posts.length;
+const nativeRoutes = readNativeRoutes();
+const expectedSitemapUrls = 29 /* audited */ + nativeRoutes.length + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
   "/",
@@ -51,6 +53,7 @@ const publicRoutes = [
   "/retail",
   "/knowledge-recipes",
   "/not-found",
+  ...nativeRoutes,
 ].map(publicPath);
 
 const redirects = new Map([

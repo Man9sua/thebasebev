@@ -20,7 +20,7 @@ import styles from "./DistributorsPage.module.css";
  * - **The hero** loses the "WHOLESALE PARTNERSHIP" eyebrow and the run-on
  *   "600+ flavours · 16 product lines · …" strip. The three facts it kept are
  *   set as figures instead, and "16 product lines" is dropped because it
- *   contradicts the twenty categories the same page sells.
+ *   contradicts the full catalogue the same page sells.
  * - **Built for distribution** is one block where the source had two. The four
  *   reasons the old page carried and the two from the Figma file's "Why
  *   Distributors Choose THE BASE" are the same argument told twice; they are
@@ -35,10 +35,10 @@ import styles from "./DistributorsPage.module.css";
  *
  * Several figures in here are the document's and are marked in the report as
  * needing the owner's confirmation: the 40% margin, the 500 kg MOQ, the one
- * business day reply and the twenty categories.
+ * business day reply and the full catalogue.
  */
 
-const tiles = catalogTiles as Record<string, { image: string }>;
+const tiles = catalogTiles as Record<string, { image: string; source: string }>;
 
 const REASONS = [
   {
@@ -129,6 +129,14 @@ const TIERS = [
 
 /** The six the document shows, in the order it shows them. */
 const STRIP_SLUGS = ["milkshake", "raf-coffee", "iced-tea", "matcha", "cordial", "chocolate"];
+const STRIP_PRODUCTS = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((product) => product.slug === slug))
+  .filter((product) => product !== undefined)
+  .map((product) => ({
+    ...product,
+    rangeImage: tiles[product.slug]?.source === "illustration"
+      ? product.image
+      : tiles[product.slug]?.image ?? product.image,
+  }));
 
 /**
  * The tier chips on the form, in the ladder's own order. Regional is the one
@@ -162,10 +170,6 @@ const FAQ = [
 ];
 
 export function DistributorsPage() {
-  const strip = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((p) => p.slug === slug)).filter(
-    (product) => product !== undefined,
-  );
-
   return (
     <main className={styles.page}>
       {/*
@@ -207,7 +211,7 @@ export function DistributorsPage() {
 
           <div className={styles.heroFoot}>
             <p className={styles.heroLede}>
-              Twenty categories from our own plant in the UAE, 18 months shelf life, no
+              {CATALOG_PRODUCTS.length} categories from our own plant in the UAE, 18 months shelf life, no
               refrigeration. Built to move across 26 markets.
             </p>
             <div className={styles.heroActions}>
@@ -356,21 +360,21 @@ export function DistributorsPage() {
               you will carry
             </h2>
             <SiteLink href="/catalog" className={styles.rangeLink}>
-              See all 20 categories <span aria-hidden="true">→</span>
+              See all {CATALOG_PRODUCTS.length} categories <span aria-hidden="true">→</span>
             </SiteLink>
           </div>
 
           <div className={styles.rangeGrid}>
-            {strip.map((product) => (
+            {STRIP_PRODUCTS.map((product) => (
               <SiteLink key={product.slug} className={styles.rangeCard} href={product.route}>
                 <span className={styles.rangeMedia}>
-                  <Image
-                    src={tiles[product.slug]?.image ?? `/images/pack-${product.slug}.webp`}
+                  {product.rangeImage && <Image
+                    src={product.rangeImage}
                     alt={`${product.name} beverage base by THE BASE`}
                     fill
                     sizes="(max-width: 47.9375rem) 46vw, (max-width: 63.9375rem) 31vw, 25vw"
                     loading="lazy"
-                  />
+                  />}
                 </span>
                 <span className={styles.rangeCategory}>{product.categoryLabel}</span>
                 <span className={styles.rangeName}>{product.name}</span>
@@ -379,7 +383,7 @@ export function DistributorsPage() {
           </div>
 
           <SiteLink href="/catalog" className={styles.rangeButton}>
-            See all 20 categories
+            See all {CATALOG_PRODUCTS.length} categories
           </SiteLink>
         </div>
       </section>

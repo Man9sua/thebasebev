@@ -39,7 +39,7 @@ const faq = [
   },
 ];
 
-export function GarnishPage({ product, headline }: ProductPageProps) {
+export function GarnishPage({ product }: ProductPageProps) {
   const cubes = productImage(SLUG, "hero", [320, 491]);
 
   return (
@@ -47,7 +47,6 @@ export function GarnishPage({ product, headline }: ProductPageProps) {
       <FamilyHero
         productName={product.name}
         title="Garnish"
-        headline={headline}
         top={40}
         lead={{
           desktop:
