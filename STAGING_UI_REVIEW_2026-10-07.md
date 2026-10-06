@@ -66,7 +66,7 @@ activation and reduced motion; tap highlights on the logo/summary are transparen
 
 Font QA confirmed the self-hosted family and native/modal role samples. Two
 larger QA capture scripts aborted because of their selectors; they are not
-counted as full successful matrices. The final staging check must also confirm
+counted as full successful matrices. Six successful staging scenarios confirmed
 the last Contact/Resources/404 weight corrections and navigation from legacy.
 
 `npm audit` still reports 15 existing vulnerabilities (1 critical, 12 high,
@@ -93,8 +93,8 @@ Comparison with the older `mnsdemo` rollback/reference remains failed because of
 existing H1/content/JSON-LD differences; it reported no status/canonical/redirect
 mismatch. That reference Worker was not changed.
 
-The menu follow-up requires a final staging publication and transport/browser
-verification. Browser form checks mock lead delivery; they do not create real
+The menu follow-up was published and passed transport/browser verification.
+Browser form checks mock lead delivery; they do not create real
 leads or orders. Browser emulation does not prove behavior on physical iPhone
 Safari. The retained recipe page exposes Next CSS chunks rather than a separate
 `custom.css` link; its navigation test verifies the actual font result, without
@@ -104,3 +104,26 @@ The code branch is pushed. PR creation through browser automation failed with
 a Windows sandbox ACL error; the earlier credential-based API route was also
 rejected by automatic approval review. No credential extraction was retried.
 Ready PR link: https://github.com/Man9sua/thebasebev/compare/develop...possible_change?expand=1 .
+
+## Final staging publication
+
+Runtime code `5a521bb` was deployed successfully to
+https://the-base-staging.mansua.workers.dev as version
+`117b00d1-af0d-4937-b7f3-492514db4f99`. Wrangler selected `mansua`, account
+`678720af4dded7d23aad4a859b6e5f3a`, before deployment. This release was deployed
+only to staging.
+
+The final build passed and retained 186 generated pages and 917 Static Assets
+document variants. TypeScript, lint (without warnings), lead contract (47),
+Stripe tests (21) and referenced assets (563) were rechecked successfully against
+the final code. Required post-deploy HTTP, browser and crawler checks all passed.
+Browser smoke specifically confirmed the restored hamburger Finder shortcut,
+country selection, UTM retention, honest mocked delivery errors, 13 viewport
+sizes, reduced motion, no-JS rendering and clean hydration.
+
+Staging's transport headers remain `noindex, nofollow`; canonicals still point to
+`https://thebasebev.com`. Final route/indexability checks passed for 188 routes,
+257 redirects and 172 sitemap URLs. Final SEO parity passed for 172 canonical
+pages with zero critical failures, 146 declared changes and 175 nonblocking
+link/alt observations. Existing dependency vulnerabilities and the
+older reference comparison failure described above remain recorded failures.
