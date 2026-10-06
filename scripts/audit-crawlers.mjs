@@ -24,16 +24,18 @@ const isPreview =
 const failures = [];
 const rows = [];
 const crawlerRoutes = ["/ae", ...readNativeRoutes().map((route) => `/ae${route}`)];
+const crawlerAssets = ["/files/barista-guide.pdf", "/images/products/milkshake/design-hero-600.webp", "/css/tbs-tailwind.css"];
 
 function extract(html, expression) {
   return (html.match(expression)?.[1] ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-async function request(pathname, userAgent) {
+async function request(pathname, userAgent, method = "GET") {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
   try {
     return await fetch(new URL(pathname, baseUrl), {
+      method,
       redirect: "manual",
       headers: { "User-Agent": userAgent, Accept: "text/html,*/*" },
       signal: controller.signal,
@@ -79,6 +81,22 @@ for (const [name, userAgent] of crawlerAgents) {
       rows.push({ name, route, status: "ERR", redirect: "-", xRobots: "-", canonical: "-", h1: false });
     }
   }
+  for (const asset of crawlerAssets) {
+    try {
+      const response = await request(asset, userAgent, "HEAD");
+      const xRobots = response.headers.get("x-robots-tag") ?? "";
+      if (response.status !== 200) failures.push(`${name} ${asset}: expected HTTP 200, received ${response.status}`);
+      if (isPreview && (!/noindex/i.test(xRobots) || !/nofollow/i.test(xRobots))) {
+        failures.push(`${name} ${asset}: preview asset lacks X-Robots-Tag noindex, nofollow`);
+      }
+      if (!isPreview && /noindex|nofollow/i.test(xRobots)) {
+        failures.push(`${name} ${asset}: production asset has unexpected X-Robots-Tag ${xRobots}`);
+      }
+      rows.push({ name, route: asset, status: response.status, redirect: "-", xRobots: xRobots || "-", canonical: "asset", h1: "-" });
+    } catch (error) {
+      failures.push(`${name} ${asset}: request failed (${error.message})`);
+    }
+  }
   try {
     const robotsResponse = await request("/robots.txt", userAgent);
     const robots = await robotsResponse.text();
@@ -101,6 +119,6 @@ if (failures.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Crawler audit passed for ${crawlerAgents.length} user agents across ${crawlerRoutes.length} pages at ${baseUrl.origin}; preview noindex=${isPreview}.`,
+    `Crawler audit passed for ${crawlerAgents.length} user agents across ${crawlerRoutes.length} pages and ${crawlerAssets.length} assets at ${baseUrl.origin}; preview noindex=${isPreview}.`,
   );
 }

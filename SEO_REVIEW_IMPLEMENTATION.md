@@ -60,6 +60,7 @@
 - HTML sitemap пересобран по структуре Company / Work with us / Quality / Resources / Products / Markets / Legal. В нём 22 продукта и 17 ссылок на рынки в Finder, без несуществующих локализаций.
 - XML sitemap содержит 172 канонических страницы, английские self-reference и x-default alternates. Даты существенных изменений обновлены; даты статей сохранены.
 - Сохраняются старые маршруты и redirects. Для новых unprefixed адресов добавлены переходы на `/ae/...`.
+- Исправлены отсутствовавшие перенаправления `/puree`, `/sauce`, `/colour-collection`, `/add-ons`, `/at-home`: вместо 404 они ведут на действующие `/ae/...` страницы.
 
 ## SEO и обработка данных
 
@@ -71,7 +72,9 @@
 - Старые FAQ JSON-LD у заменённых product страниц удалены: schema формируется из реально отображаемых вопросов.
 - Сохранены BreadcrumbList, Article, Product, FAQPage, first-touch UTM, landing/current page и referrer. Браузерные проверки форм используют mock и не создают настоящих заявок.
 - Расширены route/HTTP/crawler/commerce/browser audits на новые страницы и Finder; добавлены тесты корректности structured data и отдельный SEO UI smoke.
+- Cookie settings сохраняет ранний запрос до готовности компонента; открытие, повторное открытие и отписка проверяются отдельными тестами. Выбор согласия, cookies и аналитика не менялись.
 - `whatsappchat/` добавлен в `.gitignore`; исходная переписка и её папка не входят в коммит.
+- У PDF и остальных static assets на `workers.dev` добавлен транспортный `noindex, nofollow` через hostname rule `_headers`; правило не совпадает с production hostname. Документация: https://developers.cloudflare.com/workers/static-assets/headers/ .
 
 ## Уже выполнено до этой ветки
 

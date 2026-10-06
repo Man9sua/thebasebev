@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test:stripe": "tsx --test tests/stripe-checkout.test.ts",
     "test:seo-structured-data": "tsx --test tests/seo-structured-data.test.ts",
+    "test:consent-settings": "tsx --test tests/consent-settings.test.ts",
     "verify:stripe-auth": "node scripts/verify-stripe-test-auth.mjs",
     "smoke:http": "node scripts/smoke-http.mjs",
     "smoke:browser": "node scripts/smoke-browser.mjs",

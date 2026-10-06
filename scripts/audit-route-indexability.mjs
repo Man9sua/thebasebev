@@ -24,7 +24,7 @@ const friendlyBlock = block(siteSource, "const friendlyRoutes: RouteDefinition[]
 const friendlyRoutes = [...friendlyBlock.matchAll(/\{ route: "([^"]+)", file: "([^"]+)", indexable: (true|false) \}/g)].map(
   (match) => ({ route: match[1], file: match[2], indexable: match[3] === "true" }),
 );
-const expectedPublicPaths = new Set([...friendlyRoutes.map(({ route }) => route), ...glossaryRoutes, ...blogRoutes]);
+const expectedPublicPaths = new Set([...friendlyRoutes.map(({ route }) => route), ...nativeRoutes, ...glossaryRoutes, ...blogRoutes]);
 if (expectedPublicPaths.size !== publicRoutePaths.length || publicRoutePaths.some((route) => !expectedPublicPaths.has(route))) {
   throw new Error("Public redirect manifest differs from generated site routes.");
 }
