@@ -292,7 +292,7 @@
 
 .empty a {
   color: var(--tbb-rd-ink);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* ---- the card ---- */

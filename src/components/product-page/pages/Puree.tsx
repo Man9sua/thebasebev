@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { BottleCards, RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
@@ -19,8 +18,8 @@ const flavours = [
 ] as const;
 
 const faq = [
-  { q: "Where can I find ingredients and nutrition?", a: "Request the specification sheet for your chosen flavour from our team." },
-  { q: "How do I store an opened bottle?", a: "Follow the storage instructions on your bottle. Our team can provide the specification sheet for your chosen flavour." },
+  { q: "Is there real fruit inside?", a: "Yes. The purée is made from fruit pulp, so it keeps natural texture and colour in the drink." },
+  { q: "How do I store an opened bottle?", a: "Close the cap and keep it in the fridge after opening." },
   { q: "Can you make a purée under our brand?", a: "Yes. Private label and custom flavours are available through our R&D team." },
   { q: "Where can I buy it?", a: "Through your local the Base distributor. Request a sample and we will connect you." },
 ];
@@ -34,7 +33,7 @@ export function PureePage({ product }: ProductPageProps) {
         productName={product.name}
         title="Purées"
         lead={{
-          desktop: "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts. Ready to pour.",
+          desktop: "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts. Real fruit texture, ready to pour.",
           mobile: "Six fruit purées for smoothies, lemonades, cocktails and desserts.",
         }}
         image={<RangePhotoPlaceholder />}
@@ -47,7 +46,7 @@ export function PureePage({ product }: ProductPageProps) {
           items={[
             { value: "950 ml", label: "Bottle" },
             { value: "6", label: "Flavours" },
-            { value: "Spec sheet", label: "Ingredients and nutrition on request" },
+            { value: "Real fruit", label: "Fruit pulp and natural colour" },
             { value: "Cold drinks", label: "Smoothies, lemonades, cocktails" },
             { value: "Shake", label: "Shake well before use" },
             { value: "Your label", label: "Private label available" },
@@ -62,15 +61,14 @@ export function PureePage({ product }: ProductPageProps) {
       <Section title="Three ways to use it" label="Three ways to use it">
         <UseCards
           items={[
-            { label: "Smoothie", value: "Blend", text: "Blend with ice and milk or yogurt" },
-            { label: "Lemonade or iced tea", value: "Pour", text: "Pour into the glass, add ice and top up" },
+            { label: "Smoothie", value: "30 ml", text: "Blend with ice and milk or yogurt" },
+            { label: "Lemonade or iced tea", value: "20–30 ml", text: "Pour into the glass, add ice and top up" },
             { label: "Dessert", value: "Topping", text: "Over ice cream, cheesecake and waffles" },
           ]}
         />
-        <SiteLink href="/contacts" className={styles.textLink}>Request recipes and specifications →</SiteLink>
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} initiallyOpen={false} />
+      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />
     </main>
   );
 }

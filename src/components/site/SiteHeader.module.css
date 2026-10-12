@@ -70,9 +70,18 @@
   align-items: center;
   color: inherit;
   text-decoration: none;
+  /* Static under a finger: no tap flash, no long-press link preview (which
+     iOS draws as a zoomed copy of the page), no text selection or drag. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: manipulation;
 }
 
 .logo svg {
+  pointer-events: none;
   display: block;
   height: clamp(2.25rem, 3.6111vw, 3.5rem);
   width: auto;

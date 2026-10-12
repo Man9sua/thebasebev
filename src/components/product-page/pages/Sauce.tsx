@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { BottleCards, RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
@@ -17,7 +16,7 @@ const flavours = [
 
 const faq = [
   { q: "Can I use it in cold drinks?", a: "Yes. The sauce mixes into cold milk and blends evenly in frappes and milkshakes." },
-  { q: "How do I store it?", a: "Follow the storage instructions on your bottle. Our team can provide the specification sheet for your chosen flavour." },
+  { q: "Do I need to refrigerate it?", a: "Not before opening. After opening, close the cap and keep it away from heat and sunlight." },
   { q: "Can you make a sauce under our brand?", a: "Yes. Private label and custom flavours are available through our R&D team." },
   { q: "Where can I buy it?", a: "Through your local the Base distributor. Request a sample and we will connect you." },
 ];
@@ -46,8 +45,8 @@ export function SaucePage({ product }: ProductPageProps) {
             { value: "1.89 L", label: "Squeeze bottle" },
             { value: "3", label: "Flavours" },
             { value: "Hot and cold", label: "Dissolves in both" },
-            { value: "Drizzle", label: "Coffee, cold drinks and desserts" },
-            { value: "Spec sheet", label: "Storage instructions on request" },
+            { value: "Drizzle", label: "Holds its line on foam and glass" },
+            { value: "Room temp", label: "No fridge before opening" },
             { value: "Your label", label: "Private label available" },
           ]}
         />
@@ -60,15 +59,14 @@ export function SaucePage({ product }: ProductPageProps) {
       <Section title="Three ways to use it" label="Three ways to use it">
         <UseCards
           items={[
-            { label: "Flavour", value: "Pump", text: "Pump into the cup before espresso or milk" },
+            { label: "Flavour", value: "15–20 ml", text: "Pump into the cup before espresso or milk" },
             { label: "Garnish", value: "Drizzle", text: "Line the glass or finish on top of foam" },
             { label: "Dessert", value: "Topping", text: "Over ice cream, waffles and cakes" },
           ]}
         />
-        <SiteLink href="/contacts" className={styles.textLink}>Request recipes and specifications →</SiteLink>
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} initiallyOpen={false} />
+      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />
     </main>
   );
 }

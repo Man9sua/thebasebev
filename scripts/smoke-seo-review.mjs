@@ -108,12 +108,20 @@ async function runViewport(label, viewport) {
     await form.locator('input[name="name"]').fill("SEO Review");
     await form.locator('input[name="email"]').fill("seo-review@example.com");
     await form.locator('input[name="Phone"]').fill("+971500000000");
+    // The sample drawer asks for company and city and has no consent box (its
+    // footer states the terms); the other forms keep a required checkbox.
+    for (const [name, value] of [["company", "SEO Review LLC"], ["city", "Dubai"]]) {
+      const field = form.locator(`input[name="${name}"]`);
+      if (await field.count()) await field.fill(value);
+    }
     const consent = form.locator('input[name="privacy-consent"]');
-    check(await consent.getAttribute("required") !== null, `${label}: privacy consent is required`);
-    await consent.evaluate((input) => {
-      input.checked = true;
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-    });
+    if (await consent.count()) {
+      check(await consent.getAttribute("required") !== null, `${label}: privacy consent is required`);
+      await consent.evaluate((input) => {
+        input.checked = true;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    }
   }
 
   async function failedSubmit(form, route) {
@@ -175,16 +183,15 @@ async function runViewport(label, viewport) {
   for (const [slug, count, sourceFlavour, calories] of [["milkshake", 9, "Vanilla", "123"], ["frappe", 3, "Salted Caramel", "143"]]) {
     await caseOf(slug, async () => {
       await visit(`/${slug}`);
-      for (const title of ["Made for service", "How to prepare", `${count} flavours`, "Ready for your menu", "Inside the pack"]) {
+      for (const title of ["Made for service", "How to prepare", `${count} flavours`, "Inside the pack"]) {
         check(await page.getByRole("heading", { name: title, exact: true }).isVisible(), `${label} ${slug}: ${title} visible`);
       }
-      const menuPhotos = page.locator('section[aria-label="Ready for your menu"] img');
-      check(await menuPhotos.count() === (slug === "milkshake" ? 8 : 5), `${label} ${slug}: complete menu photo gallery`);
-      for (const photo of await menuPhotos.all()) {
-        await photo.scrollIntoViewIfNeeded();
-        await photo.evaluate((image) => image.decode());
-        check(await photo.evaluate((image) => image.naturalWidth > 0), `${label} ${slug}: menu photo loads`);
-      }
+      // Only the supplied hero photographs stay; the owner withdrew the menu
+      // gallery built from the other supplied photos.
+      check(await page.locator('section[aria-label="Ready for your menu"]').count() === 0, `${label} ${slug}: no menu photo gallery`);
+      const hero = page.locator("main section").first().locator("img").first();
+      await hero.evaluate((image) => image.decode());
+      check((await hero.getAttribute("src"))?.includes(`/products/${slug}/hero-`), `${label} ${slug}: supplied hero photograph`);
       check(await page.locator('main nav[aria-label="Breadcrumb"]').count() === 0, `${label} ${slug}: no overline breadcrumbs`);
       const nutrition = page.locator("section").filter({ has: page.getByRole("heading", { name: "Inside the pack", exact: true }) });
       check(await nutrition.getByRole("tablist").count() === 0, `${label} ${slug}: no unsupported nutrition variants`);
@@ -266,22 +273,25 @@ async function runShortViewport() {
     const banner = page.getByRole("region", { name: "Cookies", exact: true });
     if (await banner.count()) await banner.getByRole("button", { name: "Reject", exact: true }).click();
     await page.locator("main").getByRole("button", { name: "Request samples", exact: true }).click();
-    const panel = page.getByRole("dialog", { name: /Try Before You Buy/ });
+    const panel = page.getByRole("dialog", { name: /Request a sample/ });
     await panel.waitFor();
-    const metrics = await panel.evaluate((element) => ({
+    // The drawer slides in; until it lands, the pointer is over the scrim.
+    await panel.evaluate((element) => Promise.all(element.getAnimations().map((animation) => animation.finished)));
+    // The drawer scrolls its fields and keeps the send button in a fixed foot.
+    const scroller = panel.locator("form .t-form__inputsbox > div").first();
+    const metrics = await scroller.evaluate((element) => ({
       clientHeight: element.clientHeight,
       scrollHeight: element.scrollHeight,
       overflowY: getComputedStyle(element).overflowY,
-      touchAction: getComputedStyle(element).touchAction,
       overscroll: getComputedStyle(element).overscrollBehaviorY,
     }));
     check(metrics.scrollHeight > metrics.clientHeight, "short viewport: sample form exceeds available height");
-    check(metrics.overflowY === "auto" && metrics.touchAction === "pan-y" && metrics.overscroll === "contain", "short viewport: modal allows contained vertical scrolling");
-    await page.mouse.move(195, 225);
+    check(metrics.overflowY === "auto" && metrics.overscroll === "contain", "short viewport: drawer allows contained vertical scrolling");
+    await page.mouse.move(195, 200);
     await page.mouse.wheel(0, 900);
-    await page.waitForFunction(() => document.querySelector("#sample-request-modal-form")?.closest('[role="dialog"]')?.scrollTop > 0);
-    check(await panel.evaluate((element) => element.scrollTop > 0), "short viewport: user wheel scroll moves the modal");
-    const submit = panel.getByRole("button", { name: "Send Me a Sample", exact: true });
+    await page.waitForFunction(() => (document.querySelector("#sample-request-modal-form .t-form__inputsbox > div")?.scrollTop ?? 0) > 0);
+    check(await scroller.evaluate((element) => element.scrollTop > 0), "short viewport: user wheel scroll moves the drawer");
+    const submit = panel.getByRole("button", { name: "Send request", exact: true });
     const visible = await submit.evaluate((element) => {
       const button = element.getBoundingClientRect();
       const modal = element.closest('[role="dialog"]').getBoundingClientRect();

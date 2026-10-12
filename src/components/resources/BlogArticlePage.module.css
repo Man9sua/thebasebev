@@ -157,11 +157,9 @@
 
 .body a {
   color: var(--tbb-ink) !important;
-  text-decoration: underline;
+  text-decoration: none;
   text-decoration-color: rgba(255, 0, 0, 0.58);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  transition: text-decoration-color var(--tbb-dur-fast) var(--tbb-ease);
+  text-decoration-thickness: 1px;  transition: text-decoration-color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .body a:hover {

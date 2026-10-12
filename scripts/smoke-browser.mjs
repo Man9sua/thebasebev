@@ -171,10 +171,8 @@ async function checkDistributorFinder(page, label, countryName, countryCode) {
   await form.locator('input[name="name"]').fill("Browser Smoke");
   await form.locator('input[name="email"]').fill("smoke@example.com");
   await form.locator('input[name="Phone"]').fill("+971500000000");
-  await form.locator('input[name="privacy-consent"]').evaluate((input) => {
-    input.checked = true;
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-  });
+  await form.locator('input[name="company"]').fill("Browser Smoke LLC");
+  await form.locator('input[name="city"]').fill("Dubai");
   const request = page.waitForRequest((candidate) => new URL(candidate.url()).pathname === "/api/leads");
   await form.evaluate((element) => element.requestSubmit());
   await request;

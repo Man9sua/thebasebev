@@ -415,7 +415,6 @@ export function Bestsellers() {
                   aria-current={slide === index}
                 >
                   <span className={styles.dotLabel}>{product.name}</span>
-                  <span className={styles.dotLine} aria-hidden="true" />
                 </button>
               ))}
             </div>

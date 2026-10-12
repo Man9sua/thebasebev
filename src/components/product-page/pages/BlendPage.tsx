@@ -82,18 +82,13 @@ const flavours: Record<Blend, string[]> = {
   frappe: ["Coffee", "Salted Caramel", "Vanilla"],
 };
 
-const menuPhotos: Record<Blend, ReturnType<typeof productImage>[]> = {
-  milkshake: Array.from({ length: 8 }, (_, i) => productImage("milkshake", `menu-${i + 1}`, [320, 640])),
-  frappe: Array.from({ length: 5 }, (_, i) => productImage("frappe", `menu-${i + 1}`, [320, 480])),
-};
-
 function BlendHero({ kind, product, assets }: ProductPageProps & { kind: Blend }) {
   const milkshake = kind === "milkshake";
   return (
     <section className={local.hero} aria-labelledby="product-title">
       <div className={local.heroGrid}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img {...productImage(kind, "design-hero", [600, milkshake ? 672 : 822])} sizes="(max-width: 1023px) 350px, 520px" alt={`the Base ${product.name}, 500 g pouch`} fetchPriority="high" className={local.heroPhoto} />
+        <img {...productImage(kind, "hero", [600, 1000])} sizes="(max-width: 1023px) 350px, 520px" alt={`${product.name} made with the Base`} fetchPriority="high" className={local.heroPhoto} />
         <div className={local.heroCopy}>
           <h1 id="product-title" className={local.heroName}>{product.name}</h1>
           <p className={local.lead}>
@@ -155,23 +150,8 @@ function FlavourRange({ kind }: { kind: Blend }) {
   );
 }
 
-function MenuGallery({ kind, assets }: { kind: Blend; assets: ProductPageProps["assets"] }) {
-  const milkshake = kind === "milkshake";
-  return (
-    <Section className={cx(local.band, local.menu)} title={<>Ready for<br />your menu</>} label="Ready for your menu" side={milkshake ? "Eight serves from our lab, all made with the same base." : undefined}>
-      <div className={cx(local.gallery, milkshake && local.galleryMilkshake)}>
-        {menuPhotos[kind].map(photo => <div key={photo.src} className={local.menuPhoto}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img {...photo} sizes="(max-width: 1023px) 45vw, 240px" alt={`${milkshake ? "Milkshake" : "Frappe"} made with the Base`} loading="lazy" decoding="async" />
-          </div>)}
-      </div>
-      {assets.marketingKit && <a className={cx(styles.button, styles.red)} href={assets.marketingKit} download>Download marketing kit</a>}
-    </Section>
-  );
-}
-
 export function BlendPage(props: ProductPageProps & { kind: Blend }) {
-  const { kind, product, assets } = props;
+  const { kind, product } = props;
   const milkshake = kind === "milkshake";
   return (
     <main className={cx(styles.page, local.page, !milkshake && local.frappe)} style={{ "--pp-bg": "#F6F6F4", "--blend-tint": milkshake ? "#F3E4E7" : "#EBDCCB" } as CSSProperties}>
@@ -186,10 +166,8 @@ export function BlendPage(props: ProductPageProps & { kind: Blend }) {
           { value: "Room temp", label: "Compact, easy to store" },
         ]} />
       </Section>
-      {milkshake && <MenuGallery kind={kind} assets={assets} />}
       <Prepare kind={kind} />
       <FlavourRange kind={kind} />
-      {!milkshake && <MenuGallery kind={kind} assets={assets} />}
       <Inside className={cx(local.band, local.pack)} sets={nutrition[kind]} tableTitle="Nutrition facts" fullMobile side={<>
         {!milkshake && <div className={local.allergens}><strong>Allergens</strong><p>Contains milk protein (sodium caseinate).</p></div>}
         <div className={local.storage}>

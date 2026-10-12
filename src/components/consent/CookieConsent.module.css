@@ -63,7 +63,7 @@
 
 .policy {
   color: var(--tbb-rd-ink);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* ---- the two buttons, deliberately the same size ---- */
