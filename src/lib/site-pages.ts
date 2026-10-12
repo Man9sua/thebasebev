@@ -1,5 +1,6 @@
 import { publicPath, publicUrl, SITE_ORIGIN } from "@/lib/site-paths";
 import fs from "node:fs";
+import { rewriteLegacyStructuredData } from "@/lib/legacy-structured-data";
 import path from "node:path";
 import { BLOG_POSTS } from "@/data/blog";
 import { getProduct } from "@/data/products";
@@ -847,17 +848,20 @@ export function normalizeSitePath(parts?: string[]) {
 }
 
 /**
- * Routes with no Tilda page at all: product ranges added after the export.
- *
- * They are kept apart from `friendlyRoutes` on purpose. That list is the
- * migration's parity contract — the sitemap, its audited lastmods and the
- * route audits all count it against production — and production has never
- * served these URLs. They are indexable on the real hostname like any other
- * product page, and listed in the sitemap after the audited routes.
+ * Native product and business pages with no Tilda export. Existing migration
+ * routes stay in `friendlyRoutes`; all native pages have production canonicals
+ * and enter the sitemap, with preview indexing blocked by the Worker.
  */
 type NativeRoute = { route: string; title: string; description: string };
 
 const NATIVE_ROUTES: NativeRoute[] = [
+  { route: "/electrolyte", title: "Electrolyte Drink Mix for HoReCa & Retail | The Base", description: "Electrolyte drink mixes for hydration menus, hospitality and retail. Explore the range and request specifications or samples from THE BASE in UAE." },
+  { route: "/find-your-distributor", title: "Find Your Distributor | The Base", description: "Find THE BASE beverage supply contacts across 17 markets. Contact our UAE team, request samples or enquire about distribution in your country." },
+  { route: "/careers", title: "Careers at THE BASE | UAE Beverage Manufacturing", description: "Join THE BASE in UAE. Tell us about your experience in production, quality, logistics, sales, marketing or beverage development." },
+  { route: "/request-samples", title: "Request Beverage Samples | The Base UAE", description: "Request THE BASE beverage samples for your café, bar or hospitality business. Share your menu requirements with our UAE team." },
+  { route: "/certificates", title: "Quality & Certificates | The Base", description: "Learn about THE BASE quality standards, HACCP and Halal documentation. Request product-specific certificates and specifications from our team." },
+  { route: "/faq", title: "Frequently Asked Questions | The Base", description: "Answers about THE BASE beverage production, private label, custom R&D, samples, storage and distribution." },
+  { route: "/cookie-policy", title: "Cookie Policy | The Base", description: "How THE BASE uses necessary storage, analytics and marketing consent. Manage your cookie preferences at any time." },
   {
     route: "/puree",
     title: "Fruit Purées for Cafés, Bars & HoReCa | The Base",
@@ -894,6 +898,7 @@ const nativeByPath = new Map(NATIVE_ROUTES.map((definition) => [definition.route
 
 function nativePage({ route, title, description }: NativeRoute): SitePage {
   const canonical = publicUrl(`${SITE_ORIGIN}${route}`);
+  const image = getProduct(route.slice(1))?.image ?? "/images/tild3435-6364-4232-a539-303363373037__frame_1413375666_1.jpg";
   return {
     route,
     file: "",
@@ -902,8 +907,7 @@ function nativePage({ route, title, description }: NativeRoute): SitePage {
     description,
     canonical,
     robots: "",
-    // The catalogue plate: the product on its own colour, as on the shelf.
-    openGraph: { url: canonical, title, description, type: "website", image: `${SITE_ORIGIN}/images/tile-${route.slice(1)}.webp` },
+    openGraph: { url: canonical, title, description, type: "website", image: `${SITE_ORIGIN}${image}` },
     bodyHtml: "",
     headAssetsHtml: "",
     native: true,
@@ -951,6 +955,7 @@ export function getSitePage(route: string): SitePage | undefined {
     promoteCriticalImages,
     scopeLegacyImagePasses,
     localizePageLinks,
+    (value) => rewriteLegacyStructuredData(value, Boolean(getProduct(route.slice(1)))),
   ]);
 
   const headAssetsHtml = applyAll(assetsMatch?.[1] ?? "", [

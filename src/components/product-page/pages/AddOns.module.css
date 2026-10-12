@@ -97,7 +97,7 @@
 
 .ownLink:hover {
   color: #fff;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* The mock sets the map's note under its heading, not beside it. */

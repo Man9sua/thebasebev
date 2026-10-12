@@ -64,7 +64,7 @@
 }
 
 .teaName {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(36 * var(--u));
   line-height: 1;
   text-transform: uppercase;

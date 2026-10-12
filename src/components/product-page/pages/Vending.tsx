@@ -36,7 +36,7 @@ const faq = [
   },
 ];
 
-export function VendingPage({ product, headline }: ProductPageProps) {
+export function VendingPage({ product }: ProductPageProps) {
   const machine = productImage(SLUG, "hero", [600, 750]);
 
   return (
@@ -44,7 +44,6 @@ export function VendingPage({ product, headline }: ProductPageProps) {
       <FamilyHero
         productName={product.name}
         title="Vending"
-        headline={headline}
         lead={{
           desktop:
             "Drink powders for automatic machines. Free-flowing in the hopper, dissolves in hot water, the same cup from every unit without staff on site.",

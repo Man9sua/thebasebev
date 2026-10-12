@@ -38,9 +38,9 @@
 .hero h1 {
   max-width: 12ch;
   margin-top: 1rem;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(3.4rem, 9vw, 8.5rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.055em;
   line-height: 0.88;
 }
@@ -121,7 +121,7 @@
   color: var(--tbb-ink);
   font: inherit;
   font-size: 0.68rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -129,6 +129,7 @@
     background var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease),
     border-color var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
 }
 
 .filterActive {
@@ -173,6 +174,8 @@
   letter-spacing: inherit;
   text-transform: inherit;
   cursor: pointer;
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
 }
 
 /* ---- cards ---- */
@@ -281,8 +284,8 @@
 .lead h2,
 .post h2 {
   margin: clamp(1rem, 2vw, 1.5rem) 0 0 !important;
-  font-family: var(--tbb-font-display);
-  font-weight: 600 !important;
+  font-family: var(--tbb-font-heading);
+  font-weight: var(--tbb-font-weight-subheading);
   letter-spacing: -0.025em;
   line-height: 1.08 !important;
 }
@@ -340,7 +343,7 @@
 }
 
 .empty strong {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: var(--tbb-text-h3);
 }
 

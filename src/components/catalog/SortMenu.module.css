@@ -40,7 +40,7 @@
   border-radius: 0;
   background: transparent;
   color: var(--tbb-ink);
-  font: 500 var(--tbb-text-label) / 1 var(--tbb-font-sans);
+  font: var(--tbb-font-weight-button) var(--tbb-text-label) / 1 var(--tbb-font-button);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   white-space: nowrap;

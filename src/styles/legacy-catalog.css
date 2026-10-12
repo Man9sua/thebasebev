@@ -43,7 +43,7 @@
  * not fight over is written normally. */
 
 .legacy-document .catg-wrap {
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 
   /* The block's own variables, remapped so anything not restated below still
      lands in the site palette rather than in its Roboto/grey one. */
@@ -67,7 +67,7 @@
 .legacy-document .catg-wrap h3,
 .legacy-document .catg-wrap button,
 .legacy-document .catg-wrap a {
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 }
 
 /* ---- one grid, not four ----
@@ -129,12 +129,12 @@
 
 .legacy-document .catg-inner::before {
   color: var(--tbb-muted) !important;
-  font-family: var(--tbb-font-sans) !important;
+  font-family: var(--tbb-font-body) !important;
   letter-spacing: var(--tbb-tracking-label) !important;
 }
 
 html body .legacy-document #allrecords .catg-wrap .catg-inner .catg-h1 {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: var(--tbb-text-h2);
   font-weight: 700;
   line-height: var(--tbb-leading-tight);
@@ -308,7 +308,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   grid-column: 1 / -1;
   grid-row: 4;
   padding-top: 0.35rem;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: 0.625rem;
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
@@ -322,7 +322,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
 html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-card .catg-name {
   grid-column: 1;
   grid-row: 2;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: clamp(0.875rem, 1.05vw, 1rem);
   font-weight: 500;
   letter-spacing: 0.09em;
@@ -337,7 +337,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   grid-row: 2;
   padding-left: 0.75rem;
   justify-self: end;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: clamp(0.875rem, 1.05vw, 1rem);
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -359,7 +359,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   grid-column: 1 / -1;
   grid-row: 3;
   padding-top: 0.4rem;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: 0.8125rem;
   font-weight: 400;
   letter-spacing: 0;
@@ -398,7 +398,7 @@ html body .legacy-document #allrecords .catg-wrap .catg-group .catg-grid .catg-c
   background: transparent !important;
   box-shadow: none !important;
   color: var(--tbb-ink) !important;
-  font-family: var(--tbb-font-sans) !important;
+  font-family: var(--tbb-font-body) !important;
   font-size: 0.625rem !important;
   font-weight: 500 !important;
   letter-spacing: var(--tbb-tracking-label) !important;
