@@ -20,7 +20,7 @@ export const SAMPLE_FLAVOURS: Readonly<Record<string, readonly string[]>> = {
   jam: ["Strawberry Watermelon", "Lemon Ginger Honey", "Pomegranate Rose", "Mango Passion Fruit", "Sea Buckthorn Orange", "Apple Cinnamon Cardamom"],
   "sugar-free": ["Amaretto", "Cherry", "Mango", "Mint", "Black Currant", "Coconut", "Melon", "Peach", "Raspberry", "Hazelnut"],
   "sugar-syrup": ["Vanilla", "Salted Caramel", "Hazelnut", "Raspberry", "Mango", "Blueberry"],
-  garnish: ["Banana Cubes", "Dragon Fruit Cubes", "Kiwi Cubes", "Mango Cubes", "Blueberry Cubes", "Cherry Cubes", "Raspberry Cubes"],
+  garnish: ["Strawberry Cubes", "Banana Cubes", "Dragon Fruit Cubes", "Kiwi Cubes", "Mango Cubes", "Blueberry Cubes", "Cherry Cubes", "Raspberry Cubes"],
   vending: ["Chocolate", "Chocolate No Added Sugar", "Karak", "Matcha", "Banana Ice Cream Salted Caramel"],
   puree: ["Raspberry", "Peach", "Strawberry", "Blueberry", "Passion fruit", "Mango"],
   sauce: ["Caramel", "Chocolate", "White chocolate"],
