@@ -37,6 +37,7 @@ type Entry = {
   title: string;
   summary: string;
   image: string | null;
+  imageAlt?: string;
 };
 
 const GUIDES: Entry[] = [
@@ -62,7 +63,8 @@ const GUIDES: Entry[] = [
     title: "HoReCa Cost Calculator",
     summary:
       "Estimate ingredient costs, portion pricing and margins for cafés and restaurants.",
-    image: null,
+    image: "/images/blog/tild3033-6163-4366-b233-623166643334__468dc009fff526f3ac11.webp",
+    imageAlt: "Barista working at a point-of-sale terminal in a café",
   },
   {
     href: "/private-labeling",
@@ -279,14 +281,12 @@ export function BlogCarousel() {
         {ENTRIES.map((entry) => (
           <SiteLink key={entry.href} href={entry.href} className={styles.card} data-card>
             <span className={styles.frame}>
-              {/* An entry without a picture keeps the frame, which is what holds
-                  the row's rhythm — only the photograph is missing. */}
               {entry.image && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   className={styles.media}
                   src={entry.image}
-                  alt=""
+                  alt={entry.imageAlt ?? ""}
                   loading="lazy"
                   decoding="async"
                   draggable={false}

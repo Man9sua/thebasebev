@@ -162,7 +162,7 @@
   .body {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "copy" "facts" "cta";
-    row-gap: 4rem;
+    row-gap: 3rem;
   }
 
   .copy,
@@ -173,5 +173,11 @@
   .cta,
   .ctaBlock {
     width: 100%;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .section {
+    --gutter: 1.25rem;
   }
 }

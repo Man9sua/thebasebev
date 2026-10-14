@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { PageAnchor } from "@/components/site/PageAnchor";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./RndPage.module.css";
@@ -33,8 +34,8 @@ import styles from "./RndPage.module.css";
  * The form keeps its id and its `tildaspec-formname`, so leads from here reach
  * the sales team under the name `LEGACY_FORM_NAMES` already routes them by.
  *
- * The lab's photography stays pending, as in the document. Stock photography
- * of a microscope or water-bottling line cannot represent this company's lab.
+ * The supplied branded laboratory renders fill the image slots. Their alt
+ * text identifies them as artwork rather than verified production photography.
  */
 
 /** The three conditions under the hero's buttons. */
@@ -127,6 +128,14 @@ export function RndPage() {
   return (
     <main className={styles.page}>
       <section className={styles.hero} aria-labelledby="rnd-title" data-hero>
+        <Image
+          className={styles.heroMedia}
+          src="/images/tild3637-3037-4530-b561-386139383037__mask_group.png"
+          alt="THE BASE branded laboratory interior render, where taste begins"
+          fill
+          sizes="100vw"
+          preload
+        />
         <div className={styles.heroInner}>
           <h1 id="rnd-title" className={styles.heroTitle}>
             Your recipe.
@@ -270,7 +279,12 @@ export function RndPage() {
       <section className={styles.lab} aria-labelledby="rnd-lab">
         <div className={styles.labInner}>
           <span className={styles.labMedia}>
-            Laboratory photograph
+            <Image
+              src="/images/tild6261-3964-4535-b037-643166626332__rectangle_1134_1.jpg"
+              alt="THE BASE branded laboratory room render with tasting workstations"
+              fill
+              sizes="(max-width: 63.9375rem) 92vw, 35rem"
+            />
           </span>
 
           <div className={styles.labCopy}>

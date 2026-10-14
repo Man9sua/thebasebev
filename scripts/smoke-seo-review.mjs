@@ -244,26 +244,80 @@ async function runViewport(label, viewport) {
     const copy = await about.innerText();
     check(/22\s+product categories/i.test(copy), `${label} home: category count follows the current catalog`);
     check(!/Twenty categories/i.test(copy), `${label} home: stale category count removed`);
-    for (const [name, scope] of [["manufacturer", about], ["footer", page.locator("footer")]]) {
-      const marks = scope.getByRole("list", { name: "Quality certifications" }).locator("img");
-      check(await marks.count() === 3, `${label} ${name}: all three approved certification marks`);
-      await marks.first().scrollIntoViewIfNeeded();
-      check(await marks.evaluateAll(async (images) => {
-        await Promise.all(images.map((image) => image.decode()));
-        return images.every((image) => image.naturalWidth > 0 && image.alt.trim());
-      }), `${label} ${name}: original certification marks load`);
-      await page.waitForFunction((section) => {
-        let node = document.querySelector(section);
-        while (node) {
-          if (Number(getComputedStyle(node).opacity) < 1) return false;
-          node = node.parentElement;
-        }
-        return true;
-      }, name === "manufacturer" ? "#about ul[aria-label='Quality certifications']" : "footer ul[aria-label='Quality certifications']");
-      await scope.getByRole("list", { name: "Quality certifications" }).screenshot({ path: path.join(artifactRoot, `${label}-${name}-certifications.png`) });
+    check(await page.locator("footer").getByRole("list", { name: "Quality certifications" }).count() === 0, `${label} footer: certification marks removed`);
+    const markList = about.getByRole("list", { name: "Quality certifications" });
+    const marks = markList.locator("img");
+    check(await marks.count() === 3, `${label} manufacturer: all three approved certification marks`);
+    await marks.first().scrollIntoViewIfNeeded();
+    check(await marks.evaluateAll(async (images) => {
+      await Promise.all(images.map((image) => image.decode()));
+      return images.every((image) => image.naturalWidth > 0 && image.alt.trim() && getComputedStyle(image).objectFit === "contain");
+    }), `${label} manufacturer: complete certification marks load`);
+    check(await marks.evaluateAll((images) => {
+      const names = ["halal", "haccp", "iso-22000"];
+      return images.every((image, index) => {
+        const url = new URL(image.getAttribute("src"), location.href);
+        const source = url.searchParams.get("url") ?? url.pathname;
+        return source.endsWith(`/images/certifications/${names[index]}.jpg`);
+      });
+    }), `${label} manufacturer: original JPEGs in Halal, HACCP, ISO 22000 order`);
+    check(await markList.locator("li").evaluateAll((cards) => {
+      if (cards.length !== 3) return false;
+      const boxes = cards.map((card) => card.getBoundingClientRect());
+      return boxes.every((box) => Math.abs(box.y - boxes[0].y) < 2)
+        && boxes[0].width < boxes[1].width
+        && boxes[0].width < boxes[2].width
+        && cards.every((card) => getComputedStyle(card).backgroundColor === "rgb(255, 255, 255)");
+    }), `${label} manufacturer: one white-tile row with a narrower Halal mark`);
+    await page.waitForFunction(() => {
+      let node = document.querySelector("#about ul[aria-label='Quality certifications']");
+      while (node) {
+        if (Number(getComputedStyle(node).opacity) < 1) return false;
+        node = node.parentElement;
+      }
+      return true;
+    });
+    const positions = await about.evaluate((section) => {
+      const box = (selector) => {
+        const { x, y, width, height } = section.querySelector(selector).getBoundingClientRect();
+        return { x, y, width, height, right: x + width, bottom: y + height };
+      };
+      return {
+        copy: box("[data-manufacturer-copy]"),
+        facts: box("[data-manufacturer-facts]"),
+        marks: box("ul[aria-label='Quality certifications']"),
+        cta: box("a[href='/ae/about-us']"),
+      };
+    });
+    check(positions.marks.y >= positions.facts.bottom, `${label} manufacturer: certification row follows the stats`);
+    if (viewport.width < 1024) {
+      check(positions.facts.y >= positions.copy.bottom && positions.cta.y >= positions.marks.bottom, `${label} manufacturer: mobile copy, stats, marks, CTA order`);
+      check(Math.abs(positions.cta.width - positions.copy.width) < 2, `${label} manufacturer: mobile CTA fills the column`);
+      check(positions.cta.y - positions.marks.bottom >= 46, `${label} manufacturer: mobile CTA has the requested separation`);
+    } else {
+      check(positions.facts.x >= positions.copy.right && Math.abs(positions.marks.x - positions.facts.x) < 2, `${label} manufacturer: desktop marks stay below the right stats column`);
     }
+    await markList.screenshot({ path: path.join(artifactRoot, `${label}-manufacturer-certifications.png`) });
+    await about.locator(":scope > div").filter({ has: page.locator("#about-title") }).screenshot({ path: path.join(artifactRoot, `${label}-manufacturer-reference.png`) });
     const heroSample = page.locator("main").getByRole("link", { name: "Request samples", exact: true }).first();
     check(await heroSample.getAttribute("href") === "/ae/request-samples", `${label} home: sample CTA opens the sample destination`);
+  });
+
+  await caseOf("missing-visuals", async () => {
+    for (const [route, names] of [
+      ["", ["THE BASE branded shipping carton artwork", "Barista working at a point-of-sale terminal in a café"]],
+      ["/rnd", ["THE BASE branded laboratory interior render, where taste begins", "THE BASE branded laboratory room render with tasting workstations"]],
+    ]) {
+      await visit(route);
+      for (const name of names) {
+        const visual = page.getByRole("img", { name, exact: true });
+        await visual.scrollIntoViewIfNeeded();
+        check(await visual.evaluate(async (image) => {
+          await image.decode();
+          return image.complete && image.naturalWidth > 0;
+        }), `${label} ${route || "/"}: requested visual loads — ${name}`);
+      }
+    }
   });
 
   await caseOf("sample-flavour-validation", async () => {

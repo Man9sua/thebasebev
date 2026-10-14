@@ -1,5 +1,4 @@
 import { CookieSettingsButton } from "@/components/consent/CookieSettingsButton";
-import { CertificationMarks } from "@/components/quality/CertificationMarks";
 import { BrandMarkStacked } from "@/components/site/BrandMarkStacked";
 import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY, FOOTER_LINKS, SOCIAL_LINKS } from "@/lib/site-config";
@@ -153,10 +152,6 @@ export function SiteFooter() {
               </a>
             </span>
           </div>
-        </div>
-
-        <div className={styles.certifications}>
-          <CertificationMarks tone="dark" />
         </div>
 
         <div className={styles.legal}>

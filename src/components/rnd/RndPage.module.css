@@ -142,6 +142,24 @@
   margin: 0 auto;
 }
 
+.heroMedia {
+  object-fit: cover;
+  object-position: right center;
+}
+
+.hero::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    rgba(10, 12, 14, 0.94),
+    rgba(10, 12, 14, 0.82) 45%,
+    rgba(10, 12, 14, 0.35)
+  );
+  pointer-events: none;
+}
+
 .heroTitle {
   margin: 0 !important;
   font-family: var(--tbb-font-heading);
@@ -430,16 +448,17 @@
 }
 
 .labMedia {
-  display: grid;
-  place-items: center;
+  position: relative;
+  display: block;
   min-height: 25rem;
-  padding: 1.5rem;
-  box-sizing: border-box;
   overflow: hidden;
   border-radius: var(--radius);
   background: var(--tbb-rd-card);
-  color: var(--tbb-rd-body);
-  text-align: center;
+}
+
+.labMedia img {
+  object-fit: cover;
+  object-position: center;
 }
 
 .labCopy {
@@ -801,6 +820,11 @@
     min-height: 0;
     padding-bottom: clamp(3rem, 8vw, 4rem);
   }
+
+  .hero::after {
+    background: rgba(10, 12, 14, 0.78);
+  }
+
   .heroActions .primary,
   .heroActions .ghost {
     flex: 1 1 100%;

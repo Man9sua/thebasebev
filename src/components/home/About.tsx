@@ -29,7 +29,7 @@ export function About() {
 
         <div className={styles.body}>
           <Reveal className={styles.copy} delay={60}>
-            <p className={styles.para}>
+            <p className={styles.para} data-manufacturer-copy>
               {PRODUCTS.length} categories, from bases and purées to sauces, for every drink on your
               menu, from one partner. Our R&amp;D team and plant in Dubai turn your idea
               into a finished product, under our name or yours, with the same taste in
@@ -38,7 +38,7 @@ export function About() {
           </Reveal>
 
           <Reveal className={styles.factsBlock} delay={120}>
-            <div className={styles.facts}>
+            <div className={styles.facts} data-manufacturer-facts>
               {FACTS.map((fact) => (
                 <span key={fact.label} className={styles.fact}>
                   <span className={styles.factValue}>{fact.value}</span>

@@ -15,19 +15,13 @@ import styles from "./Collage.module.css";
  * captioned, so the order it was making an argument in was legible to nobody.
  * Four steps, all four named.
  *
- * The photographs are the ones already in `public/images`, and the ones the
- * document itself names for the first and third frames. Two notes worth
- * keeping:
- *
- * - **Production stays a plain placeholder**, as the document draws it,
- *   until a verified photograph of THE BASE's own plant is available.
- * - **The rest of the eight** — the microscope, the syrup swirl, the container
- *   port and the toast — are out, not deleted. They are stock, and the review's
- *   note is that the homepage should be showing this company's own rooms.
+ * Production uses the supplied branded carton artwork. A photograph of the
+ * plant's production line has not been provided; the artwork does not claim
+ * to show one.
  */
 
 type Step = {
-  src: string | null;
+  src: string;
   alt: string;
   label: string;
 };
@@ -39,8 +33,8 @@ const STEPS: Step[] = [
     label: "Formulation",
   },
   {
-    src: null,
-    alt: "",
+    src: "/images/tild6663-3864-4961-b139-316164363938__mask_group_1.jpg",
+    alt: "THE BASE branded shipping carton artwork",
     label: "Production",
   },
   {
@@ -78,17 +72,13 @@ export function Collage() {
           {STEPS.map((step, index) => (
             <li key={step.label} className={styles.step}>
               <span className={styles.frame}>
-                {step.src ? (
-                  <Image
-                    src={step.src}
-                    alt={step.alt}
-                    fill
-                    sizes="(max-width: 47.9375rem) 17.5rem, 23vw"
-                    loading="lazy"
-                  />
-                ) : (
-                  <span className={styles.placeholder}>{step.label} photograph</span>
-                )}
+                <Image
+                  src={step.src}
+                  alt={step.alt}
+                  fill
+                  sizes="(max-width: 47.9375rem) 17.5rem, 23vw"
+                  loading="lazy"
+                />
               </span>
               <span className={styles.caption}>
                 <span className={styles.number}>{String(index + 1).padStart(2, "0")}</span>
