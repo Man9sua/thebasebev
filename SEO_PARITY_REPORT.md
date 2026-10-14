@@ -1,13 +1,13 @@
 # SEO parity report
 
-Generated: 2026-10-06T22:48:26.069Z
+Generated: 2026-10-14T18:39:51.969Z
 
 - Production: `https://thebasebev.com`
 - Target: `https://the-base-staging.mansua.workers.dev`
 - Canonical public routes: 172
 - Critical failures: 0
 - Declared page/schema changes: 146
-- Non-blocking link/alt observations: 175
+- Non-blocking link/alt observations: 176
 - Preview transport noindex expected: yes
 
 The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.dev` preview. Page-level metadata and canonical URLs must still match production and remain oriented to `https://thebasebev.com`.
@@ -27,10 +27,10 @@ The target is allowed to return `X-Robots-Tag: noindex, nofollow` on a `workers.
 | `/ae/resources/tools` | 200 | 200 | PASS | 36/39 | 12/0/5 | Critical fields match |
 | `/ae/rnd` | 200 | 200 | PASS | 36/39 | 5/0/0 | Critical fields match |
 | `/ae/raf-coffee` | 200 | 200 | PASS | 36/39 | 20/0/4 | Critical fields match |
-| `/ae/cream-latte` | 200 | 200 | PASS | 36/39 | 19/0/4 | Critical fields match |
+| `/ae/cream-latte` | 200 | 200 | PASS | 36/39 | 10/0/4 | Critical fields match |
 | `/ae/chai-latte` | 200 | 200 | PASS | 36/39 | 12/0/4 | Critical fields match |
-| `/ae/milkshake` | 200 | 200 | PASS | 36/39 | 18/0/4 | Critical fields match |
-| `/ae/frappe` | 200 | 200 | PASS | 36/39 | 15/0/4 | Critical fields match |
+| `/ae/milkshake` | 200 | 200 | PASS | 36/39 | 10/0/4 | Critical fields match |
+| `/ae/frappe` | 200 | 200 | PASS | 36/39 | 10/0/4 | Critical fields match |
 | `/ae/iced-tea` | 200 | 200 | PASS | 36/39 | 19/0/4 | Critical fields match |
 | `/ae/cordial` | 200 | 200 | PASS | 36/39 | 22/0/4 | Critical fields match |
 | `/ae/topping` | 200 | 200 | PASS | 36/39 | 16/0/4 | Critical fields match |
@@ -365,11 +365,12 @@ are recorded; removal of any production schema type remains a failure.
 - /ae/rnd: internal links differ (-0/+3)
 - /ae/raf-coffee: internal links differ (-0/+3)
 - /ae/cream-latte: internal links differ (-0/+3)
+- /ae/cream-latte: image alt stats differ ({"total":19,"missing":0,"empty":4} vs {"total":10,"missing":0,"empty":4})
 - /ae/chai-latte: internal links differ (-0/+3)
 - /ae/milkshake: internal links differ (-0/+3)
-- /ae/milkshake: image alt stats differ ({"total":25,"missing":0,"empty":4} vs {"total":18,"missing":0,"empty":4})
+- /ae/milkshake: image alt stats differ ({"total":25,"missing":0,"empty":4} vs {"total":10,"missing":0,"empty":4})
 - /ae/frappe: internal links differ (-0/+3)
-- /ae/frappe: image alt stats differ ({"total":18,"missing":0,"empty":4} vs {"total":15,"missing":0,"empty":4})
+- /ae/frappe: image alt stats differ ({"total":18,"missing":0,"empty":4} vs {"total":10,"missing":0,"empty":4})
 - /ae/iced-tea: internal links differ (-0/+3)
 - /ae/cordial: internal links differ (-0/+3)
 - /ae/topping: internal links differ (-0/+3)
