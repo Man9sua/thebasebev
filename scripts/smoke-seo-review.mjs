@@ -93,6 +93,16 @@ async function runViewport(label, viewport) {
     }
   }
 
+  async function checkFont(locator, weight, role) {
+    await page.evaluate(async () => { await document.fonts.ready; });
+    const font = await locator.evaluate((element) => ({
+      family: getComputedStyle(element).fontFamily,
+      weight: getComputedStyle(element).fontWeight,
+    }));
+    check(font.family.includes("Exo 2") && font.weight === String(weight), `${label} ${role}: Exo 2 weight ${weight}`);
+    check(await page.evaluate(() => Array.from(document.fonts).some((face) => face.family.replace(/["']/g, "") === "Exo 2" && face.status === "loaded")), `${label} ${role}: self-hosted Exo 2 is loaded`);
+  }
+
   const landingPath = "/careers?utm_source=chatgpt.com&utm_campaign=seo-review";
   await visit(landingPath);
   const banner = page.getByRole("region", { name: "Cookies", exact: true });
@@ -287,6 +297,7 @@ async function runViewport(label, viewport) {
     await accepted;
     await form.locator(".js-successbox").waitFor({ state: "visible" });
     check(await form.getByRole("heading", { name: /Request.*received/ }).isVisible(), `${label} samples: confirmed mocked delivery shows the confirmation`);
+    check(await form.getByText(/THE BASE team will contact you/).isVisible(), `${label} samples: confirmation does not promise an unverified local team`);
     await page.keyboard.press("Escape");
   });
 
@@ -294,6 +305,8 @@ async function runViewport(label, viewport) {
     await caseOf(`${slug}-faq`, async () => {
       await visit(`/${slug}`);
       const details = page.locator("section[aria-labelledby='product-faq-title'] details");
+      await checkFont(details.first().locator("summary"), 600, `${slug} FAQ control`);
+      if (slug === "jam") await checkFont(page.locator("main").getByText("Strawberry Watermelon", { exact: true }).first(), 700, "Jam flavour name");
       const visible = await details.evaluateAll((nodes) => nodes.map((node) => ({
         question: node.querySelector("summary")?.textContent?.replace(/\+\s*$/, "") ?? "",
         answer: node.querySelector("p")?.textContent ?? "",
@@ -309,6 +322,13 @@ async function runViewport(label, viewport) {
         return answer && !answer.open && !answer.style.height && !answer.style.overflow;
       });
       check(await details.nth(1).getAttribute("data-expanded") === "false", `${label} ${slug}: animated FAQ closes`);
+    });
+  }
+
+  for (const [route, title] of [["/about-us", "Develop"], ["/rnd", "Cost per cup"], ["/distributors", "Regional"]]) {
+    await caseOf(`typography-${route.slice(1)}`, async () => {
+      await visit(route);
+      await checkFont(page.locator("main").getByRole("heading", { name: title, exact: true }).first(), 700, `${route} card heading`);
     });
   }
 

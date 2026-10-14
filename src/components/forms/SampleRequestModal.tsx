@@ -154,7 +154,6 @@ function SampleDrawer({
     .join("\n");
 
   const firstName = fields.name.trim().split(/\s+/)[0];
-  const team = fields.countryName.trim() || marketName(country) || "your country";
 
   return (
     <div className={styles.backdrop}>
@@ -315,7 +314,7 @@ function SampleDrawer({
                   <br /> received
                 </h2>
                 <p className={styles.thanks}>
-                  Thank you{firstName ? `, ${firstName}` : ""}. Our team in {team} will contact you on WhatsApp within
+                  Thank you{firstName ? `, ${firstName}` : ""}. THE BASE team will contact you on WhatsApp within
                   one business day to confirm the address.
                 </p>
                 {picked.length > 0 && (

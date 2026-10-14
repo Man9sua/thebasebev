@@ -249,7 +249,7 @@
   margin: auto 0 0 !important;
   font-family: var(--tbb-font-heading);
   font-size: clamp(1.5rem, 2.7778vw, 2.5rem);
-  font-weight: var(--tbb-font-weight-heading) !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 0.92 !important;
   text-transform: uppercase;
   color: inherit;

@@ -78,7 +78,7 @@
 }
 
 .flavourName {
-  font-weight: var(--tbb-font-weight-heading);
+  font-weight: var(--tbb-font-weight-subheading);
   font-size: calc(22 * var(--u));
   line-height: 1;
   text-transform: uppercase;

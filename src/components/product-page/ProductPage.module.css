@@ -120,7 +120,7 @@
 
 .textLink {
   font-size: calc(15 * var(--u));
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-button);
   color: inherit;
   text-decoration: none;
 }
@@ -275,7 +275,7 @@
 }
 
 .kitTitle {
-  font-weight: var(--tbb-font-weight-heading);
+  font-weight: var(--tbb-font-weight-subheading);
   font-size: calc(32 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -350,7 +350,7 @@
 }
 
 .flavourName {
-  font-weight: var(--tbb-font-weight-heading);
+  font-weight: var(--tbb-font-weight-subheading);
   font-size: calc(28 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -367,7 +367,7 @@
 }
 
 .ownFlavourTitle {
-  font-weight: var(--tbb-font-weight-heading);
+  font-weight: var(--tbb-font-weight-subheading);
   font-size: calc(24 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -939,7 +939,7 @@
 .nutritionTableTitle {
   margin: 0 !important;
   font-size: calc(28 * var(--u));
-  font-weight: var(--tbb-font-weight-heading) !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 1.1 !important;
   letter-spacing: 0 !important;
   text-transform: uppercase;
