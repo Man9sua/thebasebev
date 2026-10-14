@@ -60,29 +60,21 @@ export function GlossaryArticlePage({ entry, relatedEntries }: GlossaryArticlePa
         <meta itemProp="mainEntityOfPage" content={publicUrl(entry.seo.canonical)} />
         <meta itemProp="author" content="The Base Beverage LLC" />
 
-        <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-          <Link href="/resources">Resources</Link>
-          <span aria-hidden="true">/</span>
-          <Link href="/resources/glossary">Glossary</Link>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{entry.title}</span>
-        </nav>
-
-        <Link className={styles.backLink} href="/resources/glossary">
-          <span aria-hidden="true">←</span>
-          Back to Glossary
-        </Link>
-
         <header className={styles.header}>
+          <h1 itemProp="headline">{entry.title}</h1>
           <div className={styles.meta}>
             <span>{categoryLabel(entry.category)}</span>
             <time itemProp="datePublished" dateTime={entry.published}>
               {displayDate(entry.published)}
             </time>
           </div>
-          <h1 itemProp="headline">{entry.title}</h1>
           {entry.excerpt && <p itemProp="description">{entry.excerpt}</p>}
         </header>
+
+        <Link className={styles.backLink} href="/resources/glossary">
+          <span aria-hidden="true">←</span>
+          Back to Glossary
+        </Link>
 
         <div className={styles.body} itemProp="articleBody" data-glossary-article-body>
           {entry.contentStatus === "empty-production-source" ? (

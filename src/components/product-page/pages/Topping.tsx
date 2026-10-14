@@ -72,7 +72,7 @@ const faq = [
   },
 ];
 
-export function ToppingPage({ product, headline, assets }: ProductPageProps) {
+export function ToppingPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     { ...hero, alt: "Topping serve" },
@@ -97,7 +97,6 @@ export function ToppingPage({ product, headline, assets }: ProductPageProps) {
         className={local.hero}
         productName={product.name}
         title="Toppings"
-        headline={headline}
         lead={{
           desktop:
             "Whipped toppings and cheese foam without fresh cream. Whisk the base with milk and you have 450 g of stable topping in a minute.",

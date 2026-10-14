@@ -35,11 +35,15 @@ export function NutritionTabs({
   sets,
   side,
   className,
+  tableTitle,
+  fullMobile = false,
 }: {
   title: ReactNode;
   sets: NutritionSet[];
   side: ReactNode;
   className?: string;
+  tableTitle?: string;
+  fullMobile?: boolean;
 }) {
   const [active, setActive] = useState(0);
   const id = useId();
@@ -82,15 +86,16 @@ export function NutritionTabs({
       <div className={styles.insideGrid}>
         {set && (
           <div
-            className={styles.nutrition}
+            className={[styles.nutrition, fullMobile && styles.nutritionFullMobile].filter(Boolean).join(" ")}
             id={`${id}-panel`}
             role={sets.length > 1 ? "tabpanel" : undefined}
             aria-labelledby={sets.length > 1 ? `${id}-tab-${active}` : undefined}
           >
             <div className={styles.nutritionHead}>
-              <span className={styles.desktopOnly}>{set.caption}</span>
+              {tableTitle && <h3 className={styles.nutritionTableTitle}>{tableTitle}</h3>}
+              <span className={styles.desktopOnly}>{set.caption.startsWith(set.name) ? set.caption : `${set.name} · ${set.caption}`}</span>
               <span className={styles.mobileOnly}>{set.mobileCaption}</span>
-              <span className={styles.desktopOnly}>% Daily value</span>
+              {!tableTitle && <span className={styles.desktopOnly}>% Daily value</span>}
             </div>
             {set.rows.map((row) => (
               <div key={row.label} className={[styles.nutritionRow, row.desktopOnly && styles.desktopOnly].filter(Boolean).join(" ")}>
@@ -99,7 +104,7 @@ export function NutritionTabs({
                 <span>{row.dv ?? ""}</span>
               </div>
             ))}
-            {set.note && <span className={`${styles.nutritionNote} ${styles.desktopOnly}`}>{set.note}</span>}
+            {set.note && <span className={[styles.nutritionNote, !fullMobile && styles.desktopOnly].filter(Boolean).join(" ")}>{set.note}</span>}
           </div>
         )}
         <div className={styles.insideSide}>{side}</div>

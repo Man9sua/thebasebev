@@ -83,13 +83,8 @@
   row-gap: clamp(0.9rem, 1.8vw, 1.35rem);
 }
 
-.eyebrow {
-  display: block;
-  color: var(--tbb-muted);
-}
-
 .heading {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   text-transform: uppercase;
   margin: 0;
   max-width: 100%;
@@ -126,7 +121,7 @@
 }
 
 .priceValue {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.35rem, 2vw, 1.75rem);
   font-weight: 600;
   letter-spacing: var(--tbb-tracking-display);
@@ -154,11 +149,12 @@
   text-decoration: none;
   border-radius: 999px;
   font-size: var(--tbb-text-label);
-  font-weight: 500;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   white-space: nowrap;
   transition: transform var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
 }
 
 .cta:hover {
@@ -173,30 +169,6 @@
 
 .cta:hover svg {
   transform: translate3d(4px, 0, 0);
-}
-
-/* The three stacked figures — 600+, HALAL, HACCP — as one line. They frame the
-   range rather than describe the slide, so they close the column instead of
-   sitting in the middle of it competing with the product's own name. */
-/* `balance` used to break it mid-claim — HALAL on one line and CERTIFIED on
-   the next, which reads as two things rather than one. The claims are held
-   together in the markup instead and the line breaks between them. */
-.proof {
-  padding-top: clamp(0.3rem, 1vw, 0.8rem);
-  font-size: var(--tbb-text-label);
-  letter-spacing: var(--tbb-tracking-label);
-  text-transform: uppercase;
-  color: var(--tbb-muted);
-}
-
-.proof b {
-  font-weight: inherit;
-  white-space: nowrap;
-}
-
-.proof span {
-  padding: 0 0.35rem;
-  opacity: 0.6;
 }
 
 /* ---- the rail ---- */
@@ -428,8 +400,9 @@
   outline-offset: 3px;
 }
 
-/* A row of names with the active one underlined, rather than a stack of labels
-   with a growing rule. Reading across matches the way the rail itself moves. */
+/* A row of names with the active one at full strength, rather than a stack of
+   labels with a growing rule. Reading across matches the way the rail itself
+   moves. No underline: the site carries none. */
 .dots {
   display: flex;
   flex-wrap: wrap;
@@ -454,16 +427,8 @@
   text-transform: uppercase;
   white-space: nowrap;
   transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
-}
-
-.dotLine {
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
 }
 
 .dot:hover,
@@ -471,9 +436,7 @@
   opacity: 1;
 }
 
-.dotActive .dotLine {
-  transform: scaleX(1);
-}
+
 
 @media (max-width: 1023px) {
   /* Below the desktop grid the composition is rebuilt, not squeezed: the rail

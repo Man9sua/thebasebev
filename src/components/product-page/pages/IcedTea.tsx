@@ -76,7 +76,7 @@ const faq = [
   },
 ];
 
-export function IcedTeaPage({ product, headline, assets }: ProductPageProps) {
+export function IcedTeaPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   // The first menu photo is the hero shot.
   const serves = [hero, ...Array.from({ length: 8 }, (_, i) => productImage(SLUG, `serve-${i + 2}`, [640, 1000]))];
@@ -95,7 +95,6 @@ export function IcedTeaPage({ product, headline, assets }: ProductPageProps) {
       <Hero
         productName={product.name}
         title="Iced tea"
-        headline={headline}
         lead={{
           desktop:
             "Iced tea base for cafés. No brewing and no batch waste: add water and ice, and the cup is ready in 30 seconds.",

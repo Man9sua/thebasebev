@@ -6,8 +6,8 @@
  * (#d8cfc2) are the most-used colours in `public/css/custom.css`. The logo red
  * is a mark colour — used for accents, never for large fields.
  *
- * Legacy Tilda pages do not read these tokens; they are scoped to `.tbb`
- * surfaces so the parity pages are untouched.
+ * Native surfaces and the legacy typography bridge share the font roles.
+ * Layout and colour tokens remain scoped to the surfaces that use them.
  */
 
 :root {
@@ -64,12 +64,22 @@
   /* The product card, from the design's own 270x413 frame. */
   --tbb-card-radius: 20px;
 
-  /* ---- type ----
-   * The Guidebook supersedes the earlier Alexandra request: p.16 names Exo 2
-   * as the brand face, so display and body share it and differ only by weight.
+  /* ---- type: the homepage is the site-wide reference ----
+   * One self-hosted Exo 2 family, with roles distinguished by weight.
+   * Keep these roles in native components and retained Tilda records alike.
+   * See TYPOGRAPHY_CONTRACT.md before changing the type system.
    */
-  --tbb-font-sans: var(--tbb-font-exo, "Exo 2"), "Helvetica Neue", Arial, sans-serif;
-  --tbb-font-display: var(--tbb-font-exo, "Exo 2"), "Helvetica Neue", Arial, sans-serif;
+  --tbb-font-family: var(--tbb-font-exo, "Exo 2"), "Helvetica Neue", Arial, sans-serif;
+  --tbb-font-body: var(--tbb-font-family);
+  --tbb-font-heading: var(--tbb-font-family);
+  --tbb-font-button: var(--tbb-font-family);
+  --tbb-font-weight-body: 400;
+  --tbb-font-weight-heading: 900;
+  --tbb-font-weight-subheading: 700;
+  --tbb-font-weight-button: 600;
+  /* Compatibility for retained CSS while new rules use the named roles. */
+  --tbb-font-sans: var(--tbb-font-body);
+  --tbb-font-display: var(--tbb-font-heading);
   /* Guidebook p.18: packaging names and slogans only. Not licensed here yet —
      falls back to the brand face until the file is supplied. */
   --tbb-font-slogan: "Big Noodle Titling", var(--tbb-font-exo, "Exo 2"), sans-serif;
@@ -119,8 +129,8 @@
 
   /* ---- motion ----
    * Long durations and a soft ease are the whole character of this design.
-   * Everything animated uses transform/opacity only, so it stays on the
-   * compositor and never triggers layout.
+   * Most motion uses transform/opacity. FAQ panels also animate their measured
+   * height so answers open and close without jumps.
    */
   --tbb-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --tbb-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
@@ -200,7 +210,7 @@ html {
 
 /* Shared surface reset for redesigned sections. */
 .tbb {
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   font-size: var(--tbb-text-body);
   line-height: var(--tbb-leading-body);
   color: var(--tbb-ink);
@@ -239,11 +249,11 @@ html {
 }
 
 .tbb-display {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: var(--tbb-text-display);
   line-height: var(--tbb-leading-tight);
   letter-spacing: var(--tbb-tracking-display);
-  font-weight: 500;
+  font-weight: var(--tbb-font-weight-heading);
 }
 
 /**
@@ -264,9 +274,9 @@ html {
   border-radius: 100px;
   background: transparent;
   color: var(--tbb-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-button);
   line-height: 1.15;
   text-align: center;
   text-decoration: none;

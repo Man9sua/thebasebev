@@ -49,7 +49,7 @@
 }
 
 .flavourName {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(40 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -72,7 +72,7 @@
 }
 
 .ownTitle {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(32 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -151,7 +151,7 @@
 }
 
 .partValue {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(36 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -163,7 +163,7 @@
   flex: none;
   align-self: center;
   font-size: calc(32 * var(--u));
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: normal;
   color: #f6f6f4;
 }

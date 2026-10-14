@@ -132,20 +132,8 @@ export function BlogArticlePage({
         <meta itemProp="mainEntityOfPage" content={publicUrl(post.seo.canonical)} />
         <meta itemProp="author" content="The Base Beverage LLC" />
 
-        <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-          <Link href="/resources">Resources</Link>
-          <span aria-hidden="true">/</span>
-          <Link href="/resources/blog">Blog</Link>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{post.title}</span>
-        </nav>
-
-        <Link className={styles.backLink} href="/resources/blog">
-          <span aria-hidden="true">←</span>
-          Back to Blog
-        </Link>
-
         <header className={styles.header}>
+          <h1 itemProp="headline">{post.title}</h1>
           <div className={styles.meta}>
             <span>{post.topic.label}</span>
             <time itemProp="datePublished" dateTime={post.published}>
@@ -153,13 +141,17 @@ export function BlogArticlePage({
             </time>
             <span>{post.readingMinutes} min read</span>
           </div>
-          <h1 itemProp="headline">{post.title}</h1>
           {post.excerpt && (
             <p className={styles.standfirst} itemProp="description">
               {post.excerpt}
             </p>
           )}
         </header>
+
+        <Link className={styles.backLink} href="/resources/blog">
+          <span aria-hidden="true">←</span>
+          Back to Blog
+        </Link>
 
         {post.cover && (
           <div className={styles.cover}>

@@ -30,7 +30,7 @@ try {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await context.newPage();
 
-  for (const route of ["/catalog", "/matcha", "/catalog/tproduct/975474893862-matcha"]) {
+  for (const route of ["/catalog", "/matcha", "/electrolyte", "/find-your-distributor", "/catalog/tproduct/975474893862-matcha"]) {
     await page.goto(`${baseUrl}${route.includes("/tproduct/") ? route : `/ae${route}`}`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(3_500);
 
@@ -94,8 +94,8 @@ try {
     }
     if (audit.nativeCartControl) failures.push(`${route}: the bar still carries a cart`);
     if (audit.legacyCartNodes > 0) failures.push(`${route}: legacy Tilda cart is still mounted`);
-    if (route === "/catalog" && audit.catalogCards.length !== 21) {
-      failures.push(`/catalog: expected 21 visible catalogue cards, received ${audit.catalogCards.length}`);
+    if (route === "/catalog" && audit.catalogCards.length !== 22) {
+      failures.push(`/catalog: expected 22 visible catalogue cards, received ${audit.catalogCards.length}`);
     }
 
     if (route === "/catalog") {
@@ -138,7 +138,7 @@ try {
       }
 
       const distributorHref = await page.getByRole("link", { name: "Find your distributor" }).first().getAttribute("href");
-      if (distributorHref !== "/ae/distributors") {
+      if (distributorHref !== "/ae/find-your-distributor") {
         failures.push("/matcha: Find your distributor points at " + distributorHref);
       }
     }

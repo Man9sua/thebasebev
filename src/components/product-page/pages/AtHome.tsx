@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SHOP_URL } from "@/lib/site-config";
-import { Breadcrumbs, DistributorLink, Faq, cx, productImage, productPageStyles as styles } from "../blocks";
+import { DistributorLink, Faq, cx, productImage, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { AtHomeChips } from "./AtHomeChips";
 import local from "./AtHome.module.css";
@@ -77,17 +77,18 @@ const faq = [
 const pouchName = (image: string) =>
   shelves.flatMap((shelf) => shelf.pouches).find((pouch) => pouch.image === image)?.name ?? "";
 
-export function AtHomePage({ product, headline }: ProductPageProps) {
+export function AtHomePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <section className={local.hero} aria-labelledby="product-title">
         <div className={local.heroCopy}>
-          <Breadcrumbs current="At home" />
+          <p className={cx(local.crumbs, styles.desktopOnly)}>
+            <SiteLink href="/catalog">Catalogue</SiteLink> / At home
+          </p>
           <h1 id="product-title" className={cx(styles.heroTitle, local.heroTitle)}>
             Crafted for cafés,
             <br /> now at home
           </h1>
-          {headline && <h2 className={styles.heroHeadline}>{headline}</h2>}
           <p className={styles.heroLead}>
             <span className={styles.desktopOnly}>
               The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in
@@ -164,7 +165,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
               A shelf by
               <br /> the till
             </h2>
-            <SiteLink href="/distributors" className={cx(styles.button, styles.red, local.tillButton, styles.desktopOnly)}>
+            <SiteLink href="/find-your-distributor" className={cx(styles.button, styles.red, local.tillButton, styles.desktopOnly)}>
               Stock it in your café
             </SiteLink>
           </div>
@@ -180,7 +181,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
               </div>
             ))}
           </div>
-          <SiteLink href="/distributors" className={cx(styles.button, styles.red, local.tillButton, styles.mobileOnly)}>
+          <SiteLink href="/find-your-distributor" className={cx(styles.button, styles.red, local.tillButton, styles.mobileOnly)}>
             Stock it in your café
           </SiteLink>
         </div>

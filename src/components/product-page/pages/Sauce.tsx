@@ -1,19 +1,17 @@
 import type { CSSProperties } from "react";
-import { Faq, Hero, Section, Stats, productImage, productPageStyles as styles } from "../blocks";
+import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { BottleCards, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { BottleCards, RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
 
 /**
  * Sauces ("Sauces Product Page Redesign", desktop 1440 / mobile 390). Like the
- * purées, the bottles are illustrations until the pack shots arrive.
+ * purées, the mock reserves neutral photo slots until approved pack shots arrive.
  */
 
-const SLUG = "sauce";
-
 const flavours = [
-  { name: "Caramel", text: "Buttery, rounded caramel. Lattes, frappes, milkshakes and desserts.", code: "1.89 L · SA-001-C950", color: "#C8873A", image: "caramel" },
-  { name: "Chocolate", text: "Deep cocoa with a clean finish. Mochas, hot chocolate, ice cream.", code: "1.89 L · SA-002-C950", color: "#4A2A22", image: "chocolate" },
-  { name: "White chocolate", text: "Creamy and mild. White mochas, matcha drinks, cold foam.", code: "1.89 L · SA-003-C950", color: "#D9C6A6", image: "white-chocolate" },
+  { name: "Caramel", text: "Buttery, rounded caramel. Lattes, frappes, milkshakes and desserts.", code: "1.89 L · SA-001-C950", color: "#C98A3E" },
+  { name: "Chocolate", text: "Deep cocoa with a clean finish. Mochas, hot chocolate, ice cream.", code: "1.89 L · SA-002-C950", color: "#4A2A20" },
+  { name: "White chocolate", text: "Creamy and mild. White mochas, matcha drinks, cold foam.", code: "1.89 L · SA-003-C950", color: "#EADBC4" },
 ] as const;
 
 const faq = [
@@ -23,7 +21,7 @@ const faq = [
   { q: "Where can I buy it?", a: "Through your local the Base distributor. Request a sample and we will connect you." },
 ];
 
-export function SaucePage({ product, headline }: ProductPageProps) {
+export function SaucePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <Hero
@@ -31,16 +29,12 @@ export function SaucePage({ product, headline }: ProductPageProps) {
         style={heroSize(120, 56)}
         productName={product.name}
         title="Sauces"
-        headline={headline}
         lead={{
           desktop:
             "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts. One bottle flavours the cup and finishes the glass.",
           mobile: "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...productImage(SLUG, "hero", [600, 1000])} sizes="(max-width: 1023px) 340px, 560px" alt="Caramel, chocolate and white chocolate sauce bottles" fetchPriority="high" />
-        }
+        image={<RangePhotoPlaceholder />}
       />
 
       <Section title="Made for service" label="Made for service">
@@ -59,7 +53,7 @@ export function SaucePage({ product, headline }: ProductPageProps) {
       </Section>
 
       <Section title="Three flavours" label="Flavours">
-        <BottleCards slug={SLUG} kind="sauce" items={flavours} single />
+        <BottleCards items={flavours} single />
       </Section>
 
       <Section title="Three ways to use it" label="Three ways to use it">
@@ -72,7 +66,7 @@ export function SaucePage({ product, headline }: ProductPageProps) {
         />
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} />
+      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />
     </main>
   );
 }

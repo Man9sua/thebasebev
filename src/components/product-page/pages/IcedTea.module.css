@@ -13,7 +13,7 @@
 }
 
 .kitCellTitle {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(28 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -52,7 +52,7 @@
 }
 
 .flavourName {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(34 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -75,7 +75,7 @@
 }
 
 .ownTitle {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(28 * var(--u));
   line-height: 1;
   text-transform: uppercase;

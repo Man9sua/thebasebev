@@ -31,7 +31,7 @@
 
 .title {
   grid-area: title;
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: min(64px, 4.444vw);
   line-height: 0.86;
   letter-spacing: -0.02em;

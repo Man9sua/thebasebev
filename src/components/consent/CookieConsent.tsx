@@ -5,11 +5,11 @@ import { SiteLink } from "@/components/site/SiteLink";
 import {
   CONSENT_DENIED,
   CONSENT_GRANTED,
-  CONSENT_REQUESTED,
   type Consent,
   consentSnapshot,
   serverConsentSnapshot,
   subscribeConsent,
+  subscribeConsentSettings,
   writeConsent,
 } from "@/lib/consent";
 import styles from "./CookieConsent.module.css";
@@ -89,10 +89,7 @@ export function CookieConsent() {
   }, []);
 
   /** The footer's "Cookie settings" link, and anything else that asks. */
-  useEffect(() => {
-    window.addEventListener(CONSENT_REQUESTED, openSettings);
-    return () => window.removeEventListener(CONSENT_REQUESTED, openSettings);
-  }, [openSettings]);
+  useEffect(() => subscribeConsentSettings(openSettings), [openSettings]);
 
   const store = useCallback((next: Consent) => {
     writeConsent(next);
@@ -132,7 +129,7 @@ export function CookieConsent() {
             <span className={styles.title}>Cookies</span>
             <p className={styles.text}>
               We use cookies to run the site and, with your consent, to measure traffic.{" "}
-              <SiteLink href="/privacy" className={styles.policy}>
+              <SiteLink href="/cookie-policy" className={styles.policy}>
                 Cookie policy
               </SiteLink>
             </p>

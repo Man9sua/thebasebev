@@ -41,7 +41,7 @@ section.menu {
 }
 
 .kitCardTitle {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(28 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -80,7 +80,7 @@ section.menu {
 }
 
 .flavourName {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(44 * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -103,7 +103,7 @@ section.menu {
 }
 
 .ownTitle {
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   font-size: calc(32 * var(--u));
   line-height: 1;
   text-transform: uppercase;

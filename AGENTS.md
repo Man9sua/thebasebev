@@ -29,6 +29,16 @@ The migration must preserve SEO, organic Google traffic, AI/Search referrals, ex
 - Do not intentionally block Googlebot, Bingbot, Applebot, OAI-SearchBot, ChatGPT-User, PerplexityBot/Perplexity-User, or Claude search/user crawlers.
 - Do not activate all exported analytics IDs. `GTM` is authoritative when configured; direct GA is only a fallback.
 
+## Typography rules
+
+- The main page is the typography reference for every page and future edit.
+- Follow `TYPOGRAPHY_CONTRACT.md` and the shared font roles in
+  `src/styles/design-tokens.css`: Exo 2; display headings 900, smaller headings
+  700, body 400 and CTA/control labels 600. Preserve responsive sizes and semantic
+  roles unless the user requests a design change.
+- Do not introduce page-specific font stacks or universal font overrides that
+  affect logos, icons, emoji flags or native pages through legacy CSS.
+
 ## Lead pipeline rules
 
 - All public forms MUST submit to `/api/leads`. No other client-facing lead endpoint.

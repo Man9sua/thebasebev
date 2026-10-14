@@ -1,18 +1,16 @@
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { Faq, Hero, Section, Stats, cx, productImage, productPageStyles as styles } from "../blocks";
+import { Faq, Hero, Section, Stats, cx, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
 import local from "./AddOns.module.css";
 
 /**
  * Functional add-ons ("Add-ons Product Page Redesign", desktop 1440 / mobile
- * 390). The sticks are illustrations until the pack shots arrive. The custom
+ * 390). The mock reserves a photo slot until approved pack shots arrive. The custom
  * blend card goes to the R&D page, which carries its own lead form: this
  * route has no exported page and so none of the export's popups.
  */
-
-const SLUG = "add-ons";
 
 const addOns = [
   { name: "Electrolyte", use: "Hydration and recovery", color: "#E9A1A8", stick: "5 g", dose: "Sodium 1000 mg, potassium 200 mg, magnesium 60 mg", taste: "Moderate, raspberry salt", best: "Smoothies, iced espresso, cold brew" },
@@ -45,7 +43,7 @@ const faq = [
   { q: "Can we sell it under our brand?", a: "Yes. Sticks are available as private label." },
 ];
 
-export function AddOnsPage({ product, headline }: ProductPageProps) {
+export function AddOnsPage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <Hero
@@ -58,16 +56,12 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
             <br /> add-ons
           </>
         }
-        headline={headline}
         lead={{
           desktop:
             "Seven pre-dosed sticks that turn drinks already on your menu into functional ones: hydration, focus, recovery, calm. One stick per drink, no new recipes.",
           mobile: "Seven pre-dosed sticks for drinks already on your menu. One stick per drink, no new recipes.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...productImage(SLUG, "hero", [600, 1000])} sizes="(max-width: 1023px) 340px, 560px" alt="Seven functional add-on sticks" fetchPriority="high" />
-        }
+        image={<RangePhotoPlaceholder />}
       />
 
       <Section title="Made for service" label="Made for service">
@@ -94,7 +88,9 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
                 <span className={cx(local.stick, styles.desktopOnly)}>{item.stick} stick</span>
               </div>
               <div className={local.cardName}>
-                <span className={local.name}>{item.name}</span>
+                {item.name === "Electrolyte" ? (
+                  <SiteLink href="/electrolyte" className={local.name}>{item.name}</SiteLink>
+                ) : <span className={local.name}>{item.name}</span>}
                 <span className={local.use}>{item.use}</span>
               </div>
               <div className={cx(local.facts, styles.desktopOnly)}>
@@ -116,7 +112,7 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
           <div className={cx(local.own, styles.desktopOnly)}>
             <span className={local.ownTitle}>Your own functional line</span>
             <span className={local.ownText}>We develop a custom blend and pack it under your brand.</span>
-            <SiteLink href="/rnd" className={local.ownLink}>
+            <SiteLink href="/rnd#rnd-form" className={local.ownLink}>
               Talk to R&amp;D →
             </SiteLink>
           </div>
@@ -150,7 +146,7 @@ export function AddOnsPage({ product, headline }: ProductPageProps) {
         />
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} />
+      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />
     </main>
   );
 }
