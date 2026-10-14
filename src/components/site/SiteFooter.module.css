@@ -135,6 +135,10 @@
 
 /* ---- one line of legal, cookies and accounts ---- */
 
+.certifications {
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
 .legal {
   display: flex;
   flex-wrap: wrap;
@@ -284,6 +288,12 @@
     margin-top: clamp(1rem, 4vw, 2rem);
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .certifications {
+    order: 7;
+    grid-column: 1 / -1;
+    padding-bottom: 0;
   }
 
   .wordmarkWrap {

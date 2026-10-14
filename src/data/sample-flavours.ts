@@ -17,7 +17,7 @@ export const SAMPLE_FLAVOURS: Readonly<Record<string, readonly string[]>> = {
   "cream-latte": ["Birds Dream", "Blueberry", "Cheesy Cream", "Citrus Sundae", "Tropical Berry", "Salty Caramel Sunset", "Golden Caramel Banana", "Vanilla Sky", "Nutty Pistachio"],
   tea: ["Black", "Green", "Jasmine"],
   topping: ["Classic Cheese Cream", "Coffee Crème", "Cherry", "Hibiscus"],
-  jam: ["Strawberry Watermelon", "Lemon Ginger Honey", "Pomegranate Rose", "Mango Passion Fruit", "Sea Buckthorn Orange", "Apple Cinnamon Cardamom"],
+  jam: ["Strawberry Watermelon"],
   "sugar-free": ["Amaretto", "Cherry", "Mango", "Mint", "Black Currant", "Coconut", "Melon", "Peach", "Raspberry", "Hazelnut"],
   "sugar-syrup": ["Vanilla", "Salted Caramel", "Hazelnut", "Raspberry", "Mango", "Blueberry"],
   garnish: ["Strawberry Cubes", "Banana Cubes", "Dragon Fruit Cubes", "Kiwi Cubes", "Mango Cubes", "Blueberry Cubes", "Cherry Cubes", "Raspberry Cubes"],

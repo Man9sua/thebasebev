@@ -89,7 +89,7 @@
   white-space: normal;
 }
 
-/* ---------------- six flavours ---------------- */
+/* ---------------- flavours ---------------- */
 
 .flavours {
   display: grid;
@@ -104,21 +104,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: calc(12 * var(--u));
-}
-
-.badge {
-  align-self: flex-start;
-  background: var(--pp-ink);
-  color: #fff;
-  border-radius: 12px;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .flavourName {
@@ -226,7 +213,7 @@
 
 .noteHead {
   font-size: calc(18 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: normal;
 }
 
@@ -319,7 +306,7 @@
   transition: transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.faqItem[open] .plus {
+.faqItem[data-expanded="true"] .plus {
   transform: rotate(45deg);
 }
 
@@ -424,10 +411,6 @@
     border-radius: 16px;
     padding: 16px;
     min-height: 120px;
-  }
-
-  .badge {
-    font-size: 11px;
   }
 
   .flavourName {

@@ -82,6 +82,17 @@
   object-fit: cover;
 }
 
+.placeholder {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  color: var(--tbb-rd-body);
+  font-size: 1rem;
+  text-align: center;
+}
+
 .caption {
   display: flex;
   align-items: baseline;

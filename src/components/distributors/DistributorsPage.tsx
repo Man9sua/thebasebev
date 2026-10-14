@@ -115,7 +115,7 @@ const TIERS = [
     featured: false,
     cta: "Apply for exclusivity",
     items: [
-      "Exclusive rights in your region",
+      "Territory rights by agreement",
       "Best wholesale pricing",
       "Priority production slots",
       "Co-branded marketing",
@@ -150,7 +150,7 @@ const FAQ = [
   },
   {
     q: "Do you offer exclusive territory rights?",
-    a: "Yes, on the Strategic tier. It requires your own sales department and gives you exclusive rights in your region.",
+    a: "Territory rights may be agreed on the Strategic tier after a pilot. We agree the territory, channels and product lines, alongside sales commitments and regular performance reviews.",
   },
   {
     q: "Which documents come with a shipment?",

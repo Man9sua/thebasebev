@@ -343,7 +343,7 @@
   margin: auto 0 0 !important;
   min-height: 2.2em;
   font-size: clamp(1.25rem, 1.8056vw, 1.625rem);
-  font-weight: 800 !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 1.1 !important;
   color: var(--tbb-rd-ink);
   text-wrap: balance;
@@ -398,7 +398,7 @@
 .page .stepTitle {
   margin: 0.5rem 0 0 !important;
   font-size: clamp(1.25rem, 1.6667vw, 1.5rem);
-  font-weight: 800 !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 1.15 !important;
   color: var(--tbb-rd-ink);
 }
@@ -481,7 +481,7 @@
 
 .tierEntryValue {
   font-size: clamp(1.125rem, 1.5278vw, 1.375rem);
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
   color: inherit;
 }
@@ -612,7 +612,7 @@
 
 .rangeName {
   font-size: clamp(1.0625rem, 1.6667vw, 1.5rem);
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.15;
 }
 

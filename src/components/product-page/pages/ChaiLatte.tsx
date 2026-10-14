@@ -6,6 +6,7 @@ import {
   Info,
   Inside,
   Kit,
+  MarketingKitAction,
   Section,
   Shelf,
   Stats,
@@ -131,15 +132,11 @@ export function ChaiLattePage({ product, assets }: ProductPageProps) {
             Ready for
             <br /> your menu
           </h2>
-          {assets.marketingKit && (
-            <div className={cx(local.kitCard, styles.desktopOnly)}>
-              <span className={local.kitCardTitle}>Marketing kit</span>
-              <span className={local.kitCardText}>{KIT_TEXT}</span>
-              <a href={assets.marketingKit} className={cx(styles.button, styles.red, local.kitCardButton)} download>
-                Download kit
-              </a>
-            </div>
-          )}
+          <div className={cx(local.kitCard, styles.desktopOnly)}>
+            <span className={local.kitCardTitle}>Marketing kit</span>
+            <span className={local.kitCardText}>{KIT_TEXT}</span>
+            <MarketingKitAction href={assets.marketingKit} className={local.kitCardButton} />
+          </div>
         </div>
         {serves.map((tile, i) => (
           <div key={i} className={local.tile}>

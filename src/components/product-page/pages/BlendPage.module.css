@@ -37,6 +37,14 @@
 .own > div { display: flex; flex-direction: column; gap: calc(16 * var(--u)); }
 .own strong { font-size: calc(44 * var(--u)); font-weight: var(--tbb-font-weight-heading); line-height: .9; text-transform: uppercase; }
 .own p { font-size: calc(17 * var(--u)); color: #b5b1aa; }
+.menu { background: #fff; }
+.gallery { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: calc(8 * var(--u)); }
+.galleryMilkshake { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: calc(8 * var(--u)); row-gap: calc(24 * var(--u)); }
+.menuPhoto { aspect-ratio: 2 / 3; }
+.menuPhoto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.menuAction { align-self: flex-start; }
+.menuKit { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: calc(48 * var(--u)); padding: calc(44 * var(--u)) calc(48 * var(--u)); border-radius: calc(28 * var(--u)); }
+.menuKit > :first-child { display: contents; }
 .pack { background: #f6f6f4; --nutrition-aside: 440; }
 .pack > :last-child { grid-template-columns: minmax(0,1fr) calc(var(--nutrition-aside) * var(--u)); }
 .storage { flex: 1; display: flex; flex-direction: column; gap: calc(32 * var(--u)); padding: calc(40 * var(--u)); background: #0e0e0e; border-radius: calc(28 * var(--u)); color: #f6f6f4; }
@@ -51,6 +59,7 @@
 .frappe .band { padding-top: calc(120 * var(--u)); padding-bottom: 0; }
 .frappe .band h2, .frappe .faq h2 { font-size: calc(72 * var(--u)); }
 .frappe .flavourBand, .frappe .pack { padding-bottom: calc(144 * var(--u)); }
+.frappe .menu { padding-top: calc(144 * var(--u)); padding-bottom: calc(96 * var(--u)); gap: calc(48 * var(--u)); }
 .frappe .faq { padding-block: calc(120 * var(--u)); }
 .frappe .pack { --nutrition-aside: 520; --nutrition-row-pad: 10; }
 .frappe .pack > :last-child { align-items: start; }
@@ -103,6 +112,12 @@
   .own, .frappeFlavours .own { padding: 24px; border-radius: 20px; gap: 24px; }
   .own strong, .frappeFlavours .own strong { font-size: 30px; }
   .own p { font-size: 15px; }
+  .gallery, .galleryMilkshake { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .menu.band { padding-inline: 12px; }
+  .frappe .menu { padding-top: 56px; padding-bottom: 40px; gap: 20px; }
+  .menuAction { align-self: stretch; }
+  .menuKit { display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding: 28px 20px; border-radius: 22px; }
+  .menuKit > :first-child { display: flex; gap: 16px; }
   .pack > :last-child { flex-direction: column-reverse; }
   .frappe .pack > :last-child { align-items: stretch; }
   .storage { padding: 24px; gap: 24px; border-radius: 20px; }

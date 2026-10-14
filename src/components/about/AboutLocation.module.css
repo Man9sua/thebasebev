@@ -72,7 +72,7 @@
 
 .placeCity {
   font-size: 26px;
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.15;
   color: var(--about-ink);
 }
@@ -111,7 +111,7 @@
   background: var(--about-bg);
   box-shadow: 0 2px 10px rgba(14, 14, 14, 0.1);
   font-size: 16px;
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-button);
   color: var(--about-ink);
   white-space: nowrap;
   /* It sits over Google's layer thumbnail, as designed, so it takes the

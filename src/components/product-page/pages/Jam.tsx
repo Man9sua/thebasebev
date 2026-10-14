@@ -1,6 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
+import { AnimatedDetails } from "../AnimatedDetails";
 import {
   DistributorLink,
+  FaqSchema,
   FlavourEnquiryLink,
   Hero,
   SampleButton,
@@ -19,7 +21,7 @@ import s from "./Jam.module.css";
 /**
  * Jam ("Jam · страница продукта целиком", desktop 1440 / mobile 390).
  * A newer design generation than matcha: six small service cards, tall
- * prepare cards, colour flavour cards with "New" badges, a simplified
+ * prepare cards, colour flavour cards, a simplified
  * "Inside the pack", a plain FAQ and a closing "Try it on your menu" band.
  * Sugar free shares that generation, so its pieces are exported from here.
  */
@@ -30,7 +32,7 @@ export { s as jamStyles };
 
 /* ---------------- shared pieces of this generation ---------------- */
 
-/** The black "Your own flavour / blend" band under a flavour grid; opens the custom-flavour form. */
+/** The black "Your own flavour / blend" band links to the R&D brief. */
 export function RndBand({ name, text }: { name: ReactNode; text: ReactNode }) {
   return (
     <div className={s.band}>
@@ -97,20 +99,17 @@ export function ShelfCard({ value = "18 months", text, mobileText }: { value?: R
 export function PlainFaq({ items }: { items: Question[] }) {
   return (
     <section className={s.faq} aria-labelledby="product-faq-title">
+      <FaqSchema items={items} />
       <h2 id="product-faq-title" className={styles.title}>
         Questions
       </h2>
       <div className={s.faqList}>
         {items.map((item, i) => (
-          <details key={i} className={s.faqItem} open={i === 0}>
-            <summary className={s.faqQ}>
-              {item.q}
-              <span className={s.plus} aria-hidden="true">
-                +
-              </span>
-            </summary>
+          <AnimatedDetails key={i} className={s.faqItem} summaryClassName={s.faqQ} initiallyOpen={i === 0}
+            summary={<>{item.q}<span className={s.plus} aria-hidden="true">+</span></>}
+          >
             <p className={s.faqA}>{item.a}</p>
-          </details>
+          </AnimatedDetails>
         ))}
       </div>
     </section>
@@ -141,11 +140,6 @@ export function TryBand({ productName, text, style }: { productName: string; tex
 
 const flavours = [
   { name: "Strawberry Watermelon", color: "#E8B4B0" },
-  { name: "Lemon Ginger Honey", color: "#F1DE9A", isNew: true },
-  { name: "Pomegranate Rose", color: "#E7A6B0", isNew: true },
-  { name: "Mango Passion Fruit", color: "#F6C98A", isNew: true },
-  { name: "Sea Buckthorn Orange", color: "#F3B680", isNew: true },
-  { name: "Apple Cinnamon Cardamom", color: "#D9DCA2", isNew: true },
 ];
 
 const facts: Fact[] = [
@@ -241,11 +235,10 @@ export function JamPage({ product }: ProductPageProps) {
         />
       </Section>
 
-      <Section className={s.gap40} title="Six flavours" label="Flavours">
+      <Section className={s.gap40} title="Flavour" label="Flavours">
         <div className={s.flavours}>
           {flavours.map((flavour) => (
             <div key={flavour.name} className={s.flavour} style={{ background: flavour.color }}>
-              {flavour.isNew ? <span className={s.badge}>New</span> : <span />}
               <span className={s.flavourName}>{flavour.name}</span>
             </div>
           ))}
@@ -255,7 +248,7 @@ export function JamPage({ product }: ProductPageProps) {
 
       <SimpleInside
         caption="Per 15 g serve · Strawberry Watermelon"
-        mobileCaption="Per 15 g serve"
+        mobileCaption="Strawberry Watermelon · per 15 g serve"
         facts={facts}
         side={
           <ShelfCard

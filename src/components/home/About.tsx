@@ -1,13 +1,13 @@
 import { BrandFilm } from "@/components/home/BrandFilm";
 import { Reveal } from "@/components/motion/Reveal";
+import { CertificationMarks } from "@/components/quality/CertificationMarks";
 import { SiteLink } from "@/components/site/SiteLink";
+import { PRODUCTS } from "@/data/products";
 import styles from "./About.module.css";
 
 const FACTS = [
-  { value: "20", label: "product categories" },
+  { value: String(PRODUCTS.length), label: "product categories" },
   { value: "26", label: "markets" },
-  { value: "Halal", label: "certified" },
-  { value: "HACCP", label: "audited" },
 ] as const;
 
 export function About() {
@@ -30,20 +30,23 @@ export function About() {
         <div className={styles.body}>
           <Reveal className={styles.copy} delay={60}>
             <p className={styles.para}>
-              Twenty categories, from bases and purées to sauces, for every drink on your
+              {PRODUCTS.length} categories, from bases and purées to sauces, for every drink on your
               menu, from one partner. Our R&amp;D team and plant in Dubai turn your idea
               into a finished product, under our name or yours, with the same taste in
               every outlet.
             </p>
           </Reveal>
 
-          <Reveal className={styles.facts} delay={120}>
-            {FACTS.map((fact) => (
-              <span key={fact.label} className={styles.fact}>
-                <span className={styles.factValue}>{fact.value}</span>
-                <span className={styles.factLabel}>{fact.label}</span>
-              </span>
-            ))}
+          <Reveal className={styles.factsBlock} delay={120}>
+            <div className={styles.facts}>
+              {FACTS.map((fact) => (
+                <span key={fact.label} className={styles.fact}>
+                  <span className={styles.factValue}>{fact.value}</span>
+                  <span className={styles.factLabel}>{fact.label}</span>
+                </span>
+              ))}
+            </div>
+            <CertificationMarks />
           </Reveal>
 
           <Reveal className={styles.ctaBlock} delay={180}>

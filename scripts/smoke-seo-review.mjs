@@ -124,7 +124,7 @@ async function runViewport(label, viewport) {
     }
   }
 
-  async function failedSubmit(form, route) {
+  async function failedSubmit(form, route, expectedConsent = true) {
     const count = leads.length;
     const response = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/leads");
     await form.evaluate((element) => element.requestSubmit());
@@ -133,7 +133,7 @@ async function runViewport(label, viewport) {
     check(leads.length === count + 1, `${label} ${route}: one mocked lead request`);
     check(!(await form.locator(".js-successbox").isVisible()), `${label} ${route}: failed delivery does not show success`);
     const lead = leads.at(-1);
-    check(lead?.consent === true, `${label} ${route}: consent is included`);
+    check(lead?.consent === expectedConsent, `${label} ${route}: consent follows the form contract`);
     check(lead?.utm_source === "chatgpt.com" && lead?.utm_campaign === "seo-review", `${label} ${route}: first-touch campaign retained`);
     check(lead?.landingPage === `${baseUrl}/ae${landingPath}`, `${label} ${route}: first-touch landing retained`);
     check(typeof lead?.referrer === "string", `${label} ${route}: referrer field retained`);
@@ -186,9 +186,18 @@ async function runViewport(label, viewport) {
       for (const title of ["Made for service", "How to prepare", `${count} flavours`, "Inside the pack"]) {
         check(await page.getByRole("heading", { name: title, exact: true }).isVisible(), `${label} ${slug}: ${title} visible`);
       }
-      // Only the supplied hero photographs stay; the owner withdrew the menu
-      // gallery built from the other supplied photos.
-      check(await page.locator('section[aria-label="Ready for your menu"]').count() === 0, `${label} ${slug}: no menu photo gallery`);
+      // The photo-removal message concerns the Purée bottle mockup. The latest
+      // Milkshake/Frappe HTML still includes these supplied menu photographs.
+      const gallery = page.locator('section[aria-label="Ready for your menu"]');
+      const shots = gallery.locator("img");
+      const expectedShots = slug === "milkshake" ? 8 : 5;
+      check(await shots.count() === expectedShots, `${label} ${slug}: all ${expectedShots} supplied menu photographs`);
+      await gallery.scrollIntoViewIfNeeded();
+      check(await shots.evaluateAll(async (images) => {
+        await Promise.all(images.map((image) => image.decode()));
+        return images.every((image) => image.naturalWidth > 0 && image.alt.trim());
+      }), `${label} ${slug}: menu photographs load and have alternative text`);
+      check(await page.getByRole("link", { name: "Request marketing kit", exact: true }).getAttribute("href") === "/ae/contacts", `${label} ${slug}: marketing kit request has a real destination`);
       const hero = page.locator("main section").first().locator("img").first();
       await hero.evaluate((image) => image.decode());
       check((await hero.getAttribute("src"))?.includes(`/products/${slug}/hero-`), `${label} ${slug}: supplied hero photograph`);
@@ -216,6 +225,90 @@ async function runViewport(label, viewport) {
       await cta.click();
       await page.locator("#rnd-form #form861442702").waitFor();
       check(page.url().endsWith("/ae/rnd#rnd-form"), `${label} ${slug}: R&D destination and anchor load`);
+    });
+  }
+
+  await caseOf("latest-home-and-footer", async () => {
+    await visit("");
+    const about = page.locator("#about");
+    const copy = await about.innerText();
+    check(/22\s+product categories/i.test(copy), `${label} home: category count follows the current catalog`);
+    check(!/Twenty categories/i.test(copy), `${label} home: stale category count removed`);
+    for (const [name, scope] of [["manufacturer", about], ["footer", page.locator("footer")]]) {
+      const marks = scope.getByRole("list", { name: "Quality certifications" }).locator("img");
+      check(await marks.count() === 3, `${label} ${name}: all three approved certification marks`);
+      await marks.first().scrollIntoViewIfNeeded();
+      check(await marks.evaluateAll(async (images) => {
+        await Promise.all(images.map((image) => image.decode()));
+        return images.every((image) => image.naturalWidth > 0 && image.alt.trim());
+      }), `${label} ${name}: original certification marks load`);
+      await page.waitForFunction((section) => {
+        let node = document.querySelector(section);
+        while (node) {
+          if (Number(getComputedStyle(node).opacity) < 1) return false;
+          node = node.parentElement;
+        }
+        return true;
+      }, name === "manufacturer" ? "#about ul[aria-label='Quality certifications']" : "footer ul[aria-label='Quality certifications']");
+      await scope.getByRole("list", { name: "Quality certifications" }).screenshot({ path: path.join(artifactRoot, `${label}-${name}-certifications.png`) });
+    }
+    const heroSample = page.locator("main").getByRole("link", { name: "Request samples", exact: true }).first();
+    check(await heroSample.getAttribute("href") === "/ae/request-samples", `${label} home: sample CTA opens the sample destination`);
+  });
+
+  await caseOf("sample-flavour-validation", async () => {
+    await visit("/milkshake");
+    await page.getByRole("button", { name: "Request a sample", exact: true }).first().click();
+    const form = page.locator("#sample-request-modal-form");
+    await completeIdentity(form);
+    const flavours = form.getByRole("group", { name: /Flavours/ }).getByRole("checkbox");
+    check(await flavours.count() === 9, `${label} samples: all confirmed Milkshake flavours selectable`);
+    await flavours.first().uncheck();
+    const requests = leads.length;
+    await form.getByRole("button", { name: "Send request", exact: true }).click();
+    await form.getByRole("alert").filter({ hasText: "Choose at least one flavour." }).waitFor();
+    check(leads.length === requests, `${label} samples: zero flavours cannot send a lead`);
+    await form.evaluate((element) => element.requestSubmit());
+    check(leads.length === requests, `${label} samples: programmatic submit also respects the minimum`);
+    for (let i = 0; i < 3; i++) await flavours.nth(i).check();
+    check(await flavours.nth(3).isDisabled(), `${label} samples: a fourth flavour is disabled`);
+    await flavours.nth(2).uncheck();
+    check(await flavours.nth(3).isEnabled(), `${label} samples: removing a flavour re-enables other choices`);
+    await flavours.nth(2).check();
+    const lead = await failedSubmit(form, "/milkshake", null);
+    check(lead?.formType === "sample" && /Flavours:/.test(lead?.message ?? ""), `${label} samples: selected flavours preserve the sample lead contract`);
+    check(await form.getByRole("link", { name: "Privacy Policy", exact: true }).getAttribute("href") === "/ae/privacy", `${label} samples: working Privacy Policy link`);
+    await context.route("**/api/leads", async (route) => {
+      leads.push(route.request().postDataJSON());
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, requestId: "sample-review-mocked" }) });
+    }, { times: 1 });
+    const accepted = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/leads");
+    await form.getByRole("button", { name: "Send request", exact: true }).click();
+    await accepted;
+    await form.locator(".js-successbox").waitFor({ state: "visible" });
+    check(await form.getByRole("heading", { name: /Request.*received/ }).isVisible(), `${label} samples: confirmed mocked delivery shows the confirmation`);
+    await page.keyboard.press("Escape");
+  });
+
+  for (const slug of ["jam", "sugar-free"]) {
+    await caseOf(`${slug}-faq`, async () => {
+      await visit(`/${slug}`);
+      const details = page.locator("section[aria-labelledby='product-faq-title'] details");
+      const visible = await details.evaluateAll((nodes) => nodes.map((node) => ({
+        question: node.querySelector("summary")?.textContent?.replace(/\+\s*$/, "") ?? "",
+        answer: node.querySelector("p")?.textContent ?? "",
+      })));
+      const faq = (await structuredData(page)).find((entry) => hasType(entry, "FAQPage"));
+      check(visible.length > 0 && faq?.mainEntity?.length === visible.length, `${label} ${slug}: all visible questions have FAQ schema`);
+      check(visible.every((item, index) => normalize(item.question) === normalize(faq?.mainEntity?.[index]?.name ?? "") && normalize(item.answer) === normalize(faq?.mainEntity?.[index]?.acceptedAnswer?.text ?? "")), `${label} ${slug}: FAQ schema text matches visible answers`);
+      await details.nth(1).locator("summary").click();
+      check(await details.nth(1).locator("p").isVisible(), `${label} ${slug}: animated FAQ opens`);
+      await details.nth(1).locator("summary").click();
+      await page.waitForFunction(() => {
+        const answer = document.querySelectorAll("section[aria-labelledby='product-faq-title'] details")[1];
+        return answer && !answer.open && !answer.style.height && !answer.style.overflow;
+      });
+      check(await details.nth(1).getAttribute("data-expanded") === "false", `${label} ${slug}: animated FAQ closes`);
     });
   }
 

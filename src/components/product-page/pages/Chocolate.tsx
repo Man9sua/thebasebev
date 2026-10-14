@@ -5,6 +5,7 @@ import {
   Hero,
   Info,
   Inside,
+  MarketingKitAction,
   Section,
   Shelf,
   Stats,
@@ -127,16 +128,11 @@ export function ChocolatePage({ product, assets }: ProductPageProps) {
             Ready for
             <br /> your menu
           </h2>
-          {assets.marketingKit && (
-            <div className={local.kit}>
-              <span className={local.kitTitle}>Marketing kit</span>
-              <span className={local.kitText}>Menu photos, delivery-app formats, descriptions in English and Arabic.</span>
-              <a href={assets.marketingKit} className={cx(styles.button, styles.red, local.kitButton)} download>
-                <span className={styles.desktopOnly}>Download kit</span>
-                <span className={styles.mobileOnly}>Download marketing kit</span>
-              </a>
-            </div>
-          )}
+          <div className={local.kit}>
+            <span className={local.kitTitle}>Marketing kit</span>
+            <span className={local.kitText}>Menu photos, delivery-app formats, descriptions in English and Arabic.</span>
+            <MarketingKitAction href={assets.marketingKit} className={local.kitButton} />
+          </div>
         </div>
         <div className={local.tiles}>
           {serves.map((tile, i) => (

@@ -13,13 +13,13 @@ import local from "./AddOns.module.css";
  */
 
 const addOns = [
-  { name: "Electrolyte", use: "Hydration and recovery", color: "#E9A1A8", stick: "5 g", dose: "Sodium 1000 mg, potassium 200 mg, magnesium 60 mg", taste: "Moderate, raspberry salt", best: "Smoothies, iced espresso, cold brew" },
-  { name: "Prebiotic fiber", use: "Gut health", color: "#D9CBA8", stick: "5 g", dose: "4000 mg fiber", taste: "Neutral", best: "Smoothies, blended drinks" },
-  { name: "Immunity", use: "Immune support", color: "#F2C14E", stick: "1 g", dose: "500 mg", taste: "Light sourness", best: "Fruit smoothies, protein shakes" },
-  { name: "Glycine", use: "Relaxation and sleep", color: "#B9B3D6", stick: "5 g", dose: "3000 mg", taste: "Slightly sweet", best: "Chamomile tea, hot chocolate, coffee-free coolers" },
-  { name: "Magnesium", use: "Stress support", color: "#A9C7D9", stick: "1 g", dose: "300 mg", taste: "Low", best: "Hot chocolate, matcha latte, mocha" },
-  { name: "Collagen", use: "Skin, hair, nails", color: "#EBC9B8", stick: "5 g", dose: "4000 mg", taste: "Very low", best: "Latte, cappuccino, flat white, matcha latte" },
-  { name: "Creatine", use: "Strength and focus", color: "#BFD6B4", stick: "5 g", dose: "4000 mg", taste: "Almost none", best: "Protein shakes, espresso shakers, coffee coolers" },
+  { name: "Electrolyte", color: "#E9A1A8", stick: "5 g", dose: "Sodium 1000 mg, potassium 200 mg, magnesium 60 mg", taste: "Moderate, raspberry salt", best: "Smoothies, iced espresso, cold brew" },
+  { name: "Prebiotic fiber", color: "#D9CBA8", stick: "5 g", dose: "4000 mg fiber", taste: "Neutral", best: "Smoothies, blended drinks" },
+  { name: "Immunity", color: "#F2C14E", stick: "1 g", dose: "500 mg", taste: "Light sourness", best: "Fruit smoothies, protein shakes" },
+  { name: "Glycine", color: "#B9B3D6", stick: "5 g", dose: "3000 mg", taste: "Slightly sweet", best: "Chamomile tea, hot chocolate, coffee-free coolers" },
+  { name: "Magnesium", color: "#A9C7D9", stick: "1 g", dose: "300 mg", taste: "Low", best: "Hot chocolate, matcha latte, mocha" },
+  { name: "Collagen", color: "#EBC9B8", stick: "5 g", dose: "4000 mg", taste: "Very low", best: "Latte, cappuccino, flat white, matcha latte" },
+  { name: "Creatine", color: "#BFD6B4", stick: "5 g", dose: "4000 mg", taste: "Almost none", best: "Protein shakes, espresso shakers, coffee coolers" },
 ];
 
 const menuMap = [
@@ -58,7 +58,7 @@ export function AddOnsPage({ product }: ProductPageProps) {
         }
         lead={{
           desktop:
-            "Seven pre-dosed sticks that turn drinks already on your menu into functional ones: hydration, focus, recovery, calm. One stick per drink, no new recipes.",
+            "Seven pre-dosed sticks for drinks already on your menu. One stick per drink, no new recipes.",
           mobile: "Seven pre-dosed sticks for drinks already on your menu. One stick per drink, no new recipes.",
         }}
         image={<RangePhotoPlaceholder />}
@@ -91,7 +91,6 @@ export function AddOnsPage({ product }: ProductPageProps) {
                 {item.name === "Electrolyte" ? (
                   <SiteLink href="/electrolyte" className={local.name}>{item.name}</SiteLink>
                 ) : <span className={local.name}>{item.name}</span>}
-                <span className={local.use}>{item.use}</span>
               </div>
               <div className={cx(local.facts, styles.desktopOnly)}>
                 <span>
@@ -117,6 +116,7 @@ export function AddOnsPage({ product }: ProductPageProps) {
             </SiteLink>
           </div>
         </div>
+        <SiteLink href="/contacts" className={styles.textLink}>Request ingredients, allergens and product specifications →</SiteLink>
       </Section>
 
       <Section

@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { BottleCards, RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
@@ -16,7 +17,7 @@ const flavours = [
 
 const faq = [
   { q: "Can I use it in cold drinks?", a: "Yes. The sauce mixes into cold milk and blends evenly in frappes and milkshakes." },
-  { q: "Do I need to refrigerate it?", a: "Not before opening. After opening, close the cap and keep it away from heat and sunlight." },
+  { q: "Do I need to refrigerate it?", a: "Follow the storage instructions on your bottle. Request your flavour’s product specification for storage before and after opening." },
   { q: "Can you make a sauce under our brand?", a: "Yes. Private label and custom flavours are available through our R&D team." },
   { q: "Where can I buy it?", a: "Through your local the Base distributor. Request a sample and we will connect you." },
 ];
@@ -45,8 +46,8 @@ export function SaucePage({ product }: ProductPageProps) {
             { value: "1.89 L", label: "Squeeze bottle" },
             { value: "3", label: "Flavours" },
             { value: "Hot and cold", label: "Dissolves in both" },
-            { value: "Drizzle", label: "Holds its line on foam and glass" },
-            { value: "Room temp", label: "No fridge before opening" },
+            { value: "Drizzle", label: "Coffee and dessert finishing" },
+            { value: "Storage", label: "See product specification" },
             { value: "Your label", label: "Private label available" },
           ]}
         />
@@ -59,11 +60,12 @@ export function SaucePage({ product }: ProductPageProps) {
       <Section title="Three ways to use it" label="Three ways to use it">
         <UseCards
           items={[
-            { label: "Flavour", value: "15–20 ml", text: "Pump into the cup before espresso or milk" },
+            { label: "Flavour", value: "To recipe", text: "Ask for your flavour’s recommended dose" },
             { label: "Garnish", value: "Drizzle", text: "Line the glass or finish on top of foam" },
             { label: "Dessert", value: "Topping", text: "Over ice cream, waffles and cakes" },
           ]}
         />
+        <SiteLink href="/contacts" className={styles.textLink}>Request ingredients, storage and dosage specifications →</SiteLink>
       </Section>
 
       <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />

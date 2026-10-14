@@ -24,7 +24,11 @@ const isPreview =
 const failures = [];
 const rows = [];
 const crawlerRoutes = ["/ae", ...readNativeRoutes().map((route) => `/ae${route}`)];
-const crawlerAssets = ["/files/barista-guide.pdf", "/images/products/milkshake/hero-600.webp", "/css/tbs-tailwind.css"];
+const crawlerAssets = [
+  "/files/barista-guide.pdf", "/images/products/milkshake/hero-600.webp", "/css/tbs-tailwind.css",
+  "/images/products/milkshake/menu-1-640.webp", "/images/products/frappe/menu-1-480.webp",
+  "/images/certifications/haccp.jpg", "/images/certifications/iso-22000.jpg", "/images/certifications/halal.jpg",
+];
 
 function extract(html, expression) {
   return (html.match(expression)?.[1] ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { createPortal } from "react-dom";
 import { useOverlay } from "@/components/site/useOverlay";
+import { SiteLink } from "@/components/site/SiteLink";
 import { sampleFlavoursFor } from "@/data/sample-flavours";
 import { MARKETS } from "@/lib/site-config";
 import styles from "./SampleRequestModal.module.css";
@@ -99,6 +100,7 @@ function SampleDrawer({
   const closeRef = useRef<HTMLButtonElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const [picked, setPicked] = useState<string[]>(flavours.slice(0, 1));
+  const [flavourError, setFlavourError] = useState(false);
   const [business, setBusiness] = useState<string>(BUSINESSES[0]);
   const [fields, setFields] = useState<Fields>({
     name: "",
@@ -125,7 +127,8 @@ function SampleDrawer({
     return () => observer.disconnect();
   }, []);
 
-  const toggle = (flavour: string) =>
+  const toggle = (flavour: string) => {
+    setFlavourError(false);
     setPicked((current) =>
       current.includes(flavour)
         ? current.filter((item) => item !== flavour)
@@ -133,6 +136,7 @@ function SampleDrawer({
           ? current
           : [...current, flavour],
     );
+  };
 
   const update = (key: keyof Fields) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { value } = event.currentTarget;
@@ -200,23 +204,41 @@ function SampleDrawer({
                     </span>
                   </legend>
                   <div className={styles.chips}>
-                    {flavours.map((flavour) => {
+                    {flavours.map((flavour, index) => {
                       const on = picked.includes(flavour);
                       const full = !on && picked.length >= MAX_FLAVOURS;
                       return (
-                        <button
+                        <label
                           key={flavour}
-                          type="button"
                           className={on ? styles.chipOn : styles.chip}
-                          aria-pressed={on}
-                          aria-disabled={full || undefined}
-                          onClick={() => toggle(flavour)}
+                          data-disabled={full || undefined}
                         >
+                          <input
+                            className={styles.flavourInput}
+                            type="checkbox"
+                            checked={on}
+                            disabled={full}
+                            required={index === 0 && picked.length === 0}
+                            aria-invalid={flavourError || undefined}
+                            aria-describedby={flavourError ? "sample-flavour-error" : undefined}
+                            onChange={() => toggle(flavour)}
+                            onInvalid={(event) => {
+                              event.preventDefault();
+                              setFlavourError(true);
+                              event.currentTarget.closest("fieldset")?.scrollIntoView({ block: "nearest" });
+                              event.currentTarget.focus({ preventScroll: true });
+                            }}
+                          />
                           {flavour}
-                        </button>
+                        </label>
                       );
                     })}
                   </div>
+                  {flavourError && (
+                    <p id="sample-flavour-error" className={styles.error} role="alert">
+                      Choose at least one flavour.
+                    </p>
+                  )}
                 </fieldset>
               )}
 
@@ -276,7 +298,8 @@ function SampleDrawer({
                 Send request
               </button>
               <span className={styles.legal}>
-                By sending you agree to the Privacy Policy. We only use your details to arrange the sample.
+                By sending you agree to the <SiteLink href="/privacy">Privacy Policy</SiteLink>.
+                We only use your details to arrange the sample.
               </span>
             </div>
           </div>

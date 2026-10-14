@@ -16,7 +16,7 @@ const colours = [
   { name: "Matcha", tin: "matcha", text: "Stone-ground Japanese green tea.", taste: "Grassy, umami, gentle bitterness.", best: "Lattes, iced matcha, lemonade." },
   { name: "Hojicha", tin: "hojicha", text: "Roasted Japanese green tea.", taste: "Roasted, caramel, nutty, low bitterness.", best: "Hot lattes, affogato, the evening menu." },
   { name: "Butterfly Pea", tin: "butterfly-pea", text: "Blue flower extract. Turns violet with citrus.", taste: "Neutral, lightly floral.", best: "Lemonades, mocktails, blue lattes." },
-  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract.", taste: "Mild, fresh, lightly sweet.", best: "Pink lattes, smoothies, cocktails." },
+  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract.", taste: "Mild, fresh, lightly sweet.", best: "Pink lattes, smoothies, iced tea." },
   { name: "Ube", tin: "ube", text: "Purple yam from the Philippines.", taste: "Vanilla-like, nutty, sweet and earthy.", best: "Lattes, frappes, desserts." },
 ];
 

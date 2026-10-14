@@ -166,7 +166,6 @@
 .resultBar button {
   padding: 0 0 0.2rem;
   border: 0;
-  border-bottom: 1px solid currentColor;
   background: transparent;
   color: var(--tbb-ink);
   font: inherit;

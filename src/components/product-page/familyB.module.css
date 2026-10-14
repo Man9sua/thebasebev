@@ -236,7 +236,7 @@
 
 .bandHead {
   font-size: calc(28 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: normal;
   color: var(--fb-paper);
 }
@@ -287,7 +287,7 @@
 
 .panelHead {
   font-size: calc(22 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: normal;
   margin-bottom: calc(12 * var(--u));
 }

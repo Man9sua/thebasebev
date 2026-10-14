@@ -16,5 +16,7 @@ export default defineConfig([
     "node_modules/**",
     "public/**",
     "tilda_export/**",
+    "output/whatsapp-review-20261015/**",
+    "output/whatsapp-media-review-20261015/**",
   ]),
 ]);

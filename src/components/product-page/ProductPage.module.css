@@ -479,7 +479,7 @@
 
 .infoTitle {
   font-size: calc(18 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: normal;
 }
 

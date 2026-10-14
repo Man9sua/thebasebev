@@ -114,7 +114,7 @@
 
 .bottleName {
   font-size: calc(28 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.1;
 }
 
@@ -149,7 +149,7 @@
 
 .bandTitle {
   font-size: calc(28 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   color: var(--pp-paper);
 }
 
@@ -178,7 +178,7 @@
 
 .noteTitle {
   font-size: calc(22 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
 }
 
 .noteText {

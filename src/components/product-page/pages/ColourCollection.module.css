@@ -55,7 +55,7 @@
 
 .name {
   font-size: calc(24 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.15;
   color: var(--pp-ink);
 }
@@ -130,7 +130,7 @@
 
 .recipeName {
   font-size: calc(20 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
 }
 

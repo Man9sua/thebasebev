@@ -49,23 +49,18 @@
 }
 
 .all {
-  padding-bottom: 2px;
-  border-bottom: 1px solid var(--tbb-rd-ink);
   color: var(--tbb-rd-ink);
   font-size: 0.9375rem;
   font-weight: var(--tbb-font-weight-button);
   text-decoration: none;
   white-space: nowrap;
-  transition:
-    color var(--tbb-dur-fast) var(--tbb-ease),
-    border-color var(--tbb-dur-fast) var(--tbb-ease);
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
   font-family: var(--tbb-font-button);
 }
 
 .all:hover,
 .all:focus-visible {
   color: var(--tbb-rd-red);
-  border-bottom-color: var(--tbb-rd-red);
 }
 
 .arrows {

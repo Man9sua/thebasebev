@@ -248,7 +248,7 @@
   margin: 0 !important;
   font-family: var(--tbb-font-heading);
   font-size: clamp(1.125rem, 1.6667vw, 1.5rem);
-  font-weight: 800 !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 1.2 !important;
   letter-spacing: 0 !important;
   text-transform: none;
@@ -560,7 +560,7 @@
   margin: 0 !important;
   font-family: var(--tbb-font-heading);
   font-size: clamp(1.125rem, 1.6667vw, 1.5rem);
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.25 !important;
   color: var(--tbb-rd-paper);
 }

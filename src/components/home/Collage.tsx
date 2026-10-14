@@ -19,18 +19,15 @@ import styles from "./Collage.module.css";
  * document itself names for the first and third frames. Two notes worth
  * keeping:
  *
- * - **Production is a placeholder and the document says so** — it draws a grey
- *   panel reading "нужно реальное фото производства the Base". The bottling
- *   line below is the nearest thing in the pool, and it is wrong in the way
- *   the site review flags: it is a liquids line, and this company sells dry
- *   powder. It needs a photograph of THE BASE's own plant.
+ * - **Production stays a plain placeholder**, as the document draws it,
+ *   until a verified photograph of THE BASE's own plant is available.
  * - **The rest of the eight** — the microscope, the syrup swirl, the container
  *   port and the toast — are out, not deleted. They are stock, and the review's
  *   note is that the homepage should be showing this company's own rooms.
  */
 
 type Step = {
-  src: string;
+  src: string | null;
   alt: string;
   label: string;
 };
@@ -42,8 +39,8 @@ const STEPS: Step[] = [
     label: "Formulation",
   },
   {
-    src: "/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg",
-    alt: "Beverage production line",
+    src: null,
+    alt: "",
     label: "Production",
   },
   {
@@ -81,13 +78,17 @@ export function Collage() {
           {STEPS.map((step, index) => (
             <li key={step.label} className={styles.step}>
               <span className={styles.frame}>
-                <Image
-                  src={step.src}
-                  alt={step.alt}
-                  fill
-                  sizes="(max-width: 47.9375rem) 17.5rem, 23vw"
-                  loading="lazy"
-                />
+                {step.src ? (
+                  <Image
+                    src={step.src}
+                    alt={step.alt}
+                    fill
+                    sizes="(max-width: 47.9375rem) 17.5rem, 23vw"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className={styles.placeholder}>{step.label} photograph</span>
+                )}
               </span>
               <span className={styles.caption}>
                 <span className={styles.number}>{String(index + 1).padStart(2, "0")}</span>

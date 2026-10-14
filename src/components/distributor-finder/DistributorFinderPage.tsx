@@ -37,8 +37,9 @@ export function DistributorFinderPage() {
         <div className={styles.intro}>
           <h1 className={styles.title}>Find your<br />distributor</h1>
           <p className={styles.lede}>
-            The Base is supplied through one official partner in each of 17 markets.
-            Choose your country to get local prices, stock, delivery and samples.
+            Choose from {DISTRIBUTOR_MARKETS.length} markets to ask about local prices, stock,
+            delivery and samples. We publish partner details as they are confirmed;
+            the UAE team can help where local details are pending.
           </p>
         </div>
 
@@ -81,7 +82,7 @@ export function DistributorFinderPage() {
                 </div>
               );
             })}
-            {!filtered.length && <p className={styles.noResults} role="status">No partner in this country yet. Contact the UAE team below.</p>}
+            {!filtered.length && <p className={styles.noResults} role="status">No matching market. Contact the UAE team below.</p>}
           </div>
 
           <section className={styles.partner} id="distributor-details" aria-labelledby="distributor-partner-name">
@@ -89,7 +90,7 @@ export function DistributorFinderPage() {
               <h2 id="distributor-partner-name" className={styles.partnerTitle}>
                 {uae ? "The Base Beverage" : "Partner details coming soon"}
               </h2>
-              <span className={styles.languages}>{selected.languages}</span>
+              <span className={styles.languages}>{uae ? selected.languages : "Partner languages pending"}</span>
             </div>
             <dl className={styles.details}>
               <div><dt>Address</dt><dd>{uae ? "Showroom, Dubai, UAE" : "Details pending"}</dd></div>
@@ -131,7 +132,7 @@ export function DistributorFinderPage() {
           </section>
           <section className={styles.supportCard} aria-labelledby="finder-apply">
             <h2 id="finder-apply">Become a distributor</h2>
-            <p>We are opening new markets. Exclusive territory on the Strategic tier.</p>
+            <p>Discuss a partnership for your market. Territory rights depend on agreed scope, sales commitments and performance review.</p>
             <SiteLink href="/distributors#distributor-form" className={`${styles.button} ${styles.apply}`}>Apply for distribution</SiteLink>
           </section>
         </div>

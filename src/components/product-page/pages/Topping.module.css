@@ -30,9 +30,9 @@
   line-height: 1.05;
 }
 
-/* ---- 06 inside: serve-kcal card, tighter allergens card, plain shelf ---- */
+/* ---- 06 inside: prepared-serving card, tighter allergens card, plain shelf ---- */
 
-.kcal {
+.prepared {
   background: #fff;
   border-radius: calc(24 * var(--u));
   padding: calc(32 * var(--u));
@@ -41,20 +41,20 @@
   gap: calc(10 * var(--u));
 }
 
-.kcalLabel {
+.preparedLabel {
   font-size: calc(15 * var(--u));
   font-weight: 600;
   line-height: normal;
   color: var(--pp-muted);
 }
 
-.kcalValue {
+.preparedValue {
   font-weight: var(--tbb-font-weight-heading);
   font-size: calc(56 * var(--u));
   line-height: 1;
 }
 
-.kcalText {
+.preparedText {
   font-size: calc(15 * var(--u));
   line-height: 1.5;
   color: var(--pp-muted);
@@ -94,24 +94,24 @@
     min-height: 96px;
   }
 
-  /* The phone shows the serve-kcal card above the table. */
+  /* The phone shows the prepared-serving card above the table. */
   .inside > div:last-child > div:last-child {
     display: contents;
   }
 
-  .kcal {
+  .prepared {
     order: -1;
     border-radius: 18px;
     padding: 20px;
     gap: 4px;
   }
 
-  .kcalLabel {
+  .preparedLabel {
     font-size: 13px;
     font-weight: 400;
   }
 
-  .kcalValue {
+  .preparedValue {
     font-size: 36px;
     line-height: 48px;
   }

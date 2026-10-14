@@ -96,6 +96,8 @@
 .close:focus-visible,
 .chip:focus-visible,
 .chipOn:focus-visible,
+.chip:focus-within,
+.chipOn:focus-within,
 .submit:focus-visible,
 .back:focus-visible {
   outline: 2px solid #0e0e0e;
@@ -195,6 +197,9 @@
 
 .chip,
 .chipOn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   height: 44px;
   box-sizing: border-box;
   padding: 0 16px;
@@ -215,9 +220,19 @@
   color: #fff;
 }
 
-.chip[aria-disabled="true"] {
+.chip[data-disabled="true"] {
   opacity: 0.4;
   cursor: default;
+}
+
+.flavourInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  opacity: 0;
 }
 
 .fields {
@@ -321,6 +336,16 @@
   font-size: 13px;
   line-height: 1.5;
   color: #8a867f;
+}
+
+.legal a {
+  color: #55524c;
+  text-decoration: none;
+}
+
+.legal a:focus-visible {
+  outline: 2px solid #0e0e0e;
+  outline-offset: 3px;
 }
 
 /* ---- the confirmation, in place of the form ---- */

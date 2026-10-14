@@ -13,7 +13,7 @@
 .secondary { border: 1px solid #0e0e0e; color: #0e0e0e !important; }
 .primary:focus-visible,.secondary:focus-visible,.card:focus-visible { outline: 2px solid #e3141b; outline-offset: 4px; }
 .facts { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 40px; margin-top: 88px; }
-.facts h2 { margin: 0; font-size: 25px; font-weight: 800; line-height: 1.2; }
+.facts h2 { margin: 0; font-size: 25px; font-weight: var(--tbb-font-weight-subheading); line-height: 1.2; }
 .facts p { margin-top: 12px; color: #55524c; font-size: 17px; line-height: 1.55; }
 .formats { padding: 144px clamp(20px,6.667vw,96px); }
 .formatsIntro { display: flex; justify-content: space-between; gap: 48px; align-items: flex-end; margin-bottom: 64px; }

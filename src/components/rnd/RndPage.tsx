@@ -33,9 +33,8 @@ import styles from "./RndPage.module.css";
  * The form keeps its id and its `tildaspec-formname`, so leads from here reach
  * the sales team under the name `LEGACY_FORM_NAMES` already routes them by.
  *
- * The photography is the page's own, still stock and still flagged by the
- * document as needing a real shoot of the Dubai lab. It is kept rather than
- * removed so the layout can be judged with pictures in it.
+ * The lab's photography stays pending, as in the document. Stock photography
+ * of a microscope or water-bottling line cannot represent this company's lab.
  */
 
 /** The three conditions under the hero's buttons. */
@@ -128,15 +127,6 @@ export function RndPage() {
   return (
     <main className={styles.page}>
       <section className={styles.hero} aria-labelledby="rnd-title" data-hero>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className={styles.heroPhoto}
-          src="/images/tild3065-6636-4439-a430-386130353062__photo-1630959305790-.jpg"
-          alt="Technician at a microscope in THE BASE laboratory"
-          fetchPriority="high"
-        />
-        <span className={styles.heroVeil} aria-hidden="true" />
-
         <div className={styles.heroInner}>
           <h1 id="rnd-title" className={styles.heroTitle}>
             Your recipe.
@@ -280,16 +270,7 @@ export function RndPage() {
       <section className={styles.lab} aria-labelledby="rnd-lab">
         <div className={styles.labInner}>
           <span className={styles.labMedia}>
-            {/* Stock, and flagged as such in the design document: a bottling
-                line is the wrong picture for a powder plant. Kept until the
-                real shoot of the Dubai lab exists. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg"
-              alt="THE BASE production facility in Dubai"
-              loading="lazy"
-              decoding="async"
-            />
+            Laboratory photograph
           </span>
 
           <div className={styles.labCopy}>
@@ -344,7 +325,7 @@ export function RndPage() {
               existing range rather than a development project — which is the
               distinction the old page collapsed.
             */}
-            <SiteLink href="/contacts" className={styles.briefAside}>
+            <SiteLink href="/request-samples" className={styles.briefAside}>
               Only need samples of our existing range? Request a sample box{" "}
               <span aria-hidden="true">→</span>
             </SiteLink>

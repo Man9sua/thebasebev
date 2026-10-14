@@ -82,13 +82,12 @@ export function Hero() {
           </h1>
 
           <p className={styles.description}>
-            THE BASE crafts dry beverage bases in the UAE for cafés, bars, franchises and
-            private label. One full-cycle partner behind the bar, from the recipe to the
-            cup.
+            The ingredients behind the bar of cafés, restaurants and franchises in 26
+            markets. Twenty years of HoReCa expertise, made in our own plant in the UAE.
           </p>
 
           <div className={styles.actions}>
-            <SiteLink href="/contacts" className={styles.primary}>
+            <SiteLink href="/request-samples" className={styles.primary}>
               Request samples
             </SiteLink>
             <SiteLink href="/catalog" className={styles.ghost}>

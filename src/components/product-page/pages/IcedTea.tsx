@@ -5,6 +5,7 @@ import {
   Hero,
   Inside,
   Kit,
+  MarketingKitAction,
   Section,
   Shelf,
   Stats,
@@ -144,15 +145,11 @@ export function IcedTeaPage({ product, assets }: ProductPageProps) {
               />
             </div>
           ))}
-          {assets.marketingKit && (
-            <div className={cx(local.kitCell, styles.desktopOnly)}>
-              <span className={local.kitCellTitle}>Marketing kit</span>
-              <span className={local.kitCellText}>{KIT_TEXT}</span>
-              <a href={assets.marketingKit} className={cx(styles.button, styles.red, local.kitCellButton)} download>
-                Download kit
-              </a>
-            </div>
-          )}
+          <div className={cx(local.kitCell, styles.desktopOnly)}>
+            <span className={local.kitCellTitle}>Marketing kit</span>
+            <span className={local.kitCellText}>{KIT_TEXT}</span>
+            <MarketingKitAction href={assets.marketingKit} className={local.kitCellButton} />
+          </div>
         </div>
         <Kit href={assets.marketingKit} className={styles.mobileOnly} text={KIT_TEXT} />
       </Section>

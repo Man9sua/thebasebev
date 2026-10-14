@@ -162,21 +162,27 @@ export function Tiles({ items, columns = 5, sizes, className }: { items: Tile[];
   );
 }
 
-/**
- * The marketing-kit band. Rendered only when a real file is configured — the
- * mocks draw it, but a "Download" that leads nowhere is worse than none.
- */
+/** A real download when supplied; otherwise a request to the team. */
+export function MarketingKitAction({ href, className }: { href?: string; className?: string }) {
+  const actionClass = cx(styles.button, styles.red, className);
+  return href ? (
+    <a href={href} className={actionClass} download>
+      <Responsive desktop="Download kit" mobile="Download marketing kit" />
+    </a>
+  ) : (
+    <SiteLink href="/contacts" className={actionClass}>Request marketing kit</SiteLink>
+  );
+}
+
+/** Preserve the mock's marketing-kit band without promising an absent file. */
 export function Kit({ href, title = "Marketing kit", text, className }: { href?: string; title?: ReactNode; text: ReactNode; className?: string }) {
-  if (!href) return null;
   return (
     <div className={cx(styles.kit, className)}>
       <div className={styles.kitCopy}>
         <span className={styles.kitTitle}>{title}</span>
         <span className={styles.kitText}>{text}</span>
       </div>
-      <a href={href} className={cx(styles.button, styles.red)} download>
-        <Responsive desktop="Download kit" mobile="Download marketing kit" />
-      </a>
+      <MarketingKitAction href={href} />
     </div>
   );
 }
@@ -331,6 +337,12 @@ export function Inside({
 
 export type Question = { q: ReactNode; a: ReactNode };
 
+/** Keep structured answers identical to the visible FAQ. */
+export function FaqSchema({ items }: { items: Question[] }) {
+  if (!items.every((item) => typeof item.q === "string" && typeof item.a === "string")) return null;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqPage(items as { q: string; a: string }[]) }} />;
+}
+
 export function Faq({
   productName,
   items,
@@ -358,14 +370,7 @@ export function Faq({
 }) {
   return (
     <section className={cx(styles.faq, className)} aria-labelledby="product-faq-title">
-      {/* FAQPage, when every question and answer is plain text — the same
-          words the page shows, so the markup never claims what is not there. */}
-      {items.every((item) => typeof item.q === "string" && typeof item.a === "string") && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: faqPage(items as { q: string; a: string }[]) }}
-        />
-      )}
+      <FaqSchema items={items} />
       <div className={styles.faqAside}>
         <h2 id="product-faq-title" className={styles.title}>
           {title}
