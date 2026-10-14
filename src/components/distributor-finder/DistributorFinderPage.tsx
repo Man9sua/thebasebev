@@ -37,8 +37,8 @@ export function DistributorFinderPage() {
         <div className={styles.intro}>
           <h1 className={styles.title}>Find your<br />distributor</h1>
           <p className={styles.lede}>
+            The Base is supplied through one official partner in each of 17 markets.
             Choose your country to get local prices, stock, delivery and samples.
-            We are building our partner network across 17 markets.
           </p>
         </div>
 

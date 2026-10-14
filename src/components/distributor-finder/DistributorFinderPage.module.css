@@ -26,8 +26,9 @@
   text-transform: uppercase;
 }
 
+/* Padding, not margin: `.tbb p { margin: 0 }` outranks a single class. */
 .lede {
-  margin: 1.25rem 0 0;
+  padding-top: 1.5rem;
   font-size: clamp(1rem, 1.6vw, 1.25rem);
   line-height: 1.55;
   color: #3a3835;

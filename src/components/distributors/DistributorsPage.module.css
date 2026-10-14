@@ -966,7 +966,7 @@
 
 .consent a {
   color: var(--tbb-rd-ink) !important;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .error {

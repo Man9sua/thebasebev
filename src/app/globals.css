@@ -42,8 +42,12 @@ body > .t-zoomer__wrapper,
   display: contents;
 }
 
-/* Exported Tilda CSS adds underlines to every hovered link, including native pages. */
-a:hover {
+/* No underlined links anywhere on the site, at rest or hovered: the exported
+   Tilda CSS adds them to every link, native pages included. */
+a,
+a:hover,
+a:focus,
+a:focus-visible {
   text-decoration-line: none !important;
 }
 

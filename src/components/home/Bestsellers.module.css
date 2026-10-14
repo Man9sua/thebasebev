@@ -400,8 +400,9 @@
   outline-offset: 3px;
 }
 
-/* A row of names with the active one underlined, rather than a stack of labels
-   with a growing rule. Reading across matches the way the rail itself moves. */
+/* A row of names with the active one at full strength, rather than a stack of
+   labels with a growing rule. Reading across matches the way the rail itself
+   moves. No underline: the site carries none. */
 .dots {
   display: flex;
   flex-wrap: wrap;
@@ -430,24 +431,12 @@
   font-weight: var(--tbb-font-weight-button);
 }
 
-.dotLine {
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform var(--tbb-dur) var(--tbb-ease);
-}
-
 .dot:hover,
 .dotActive {
   opacity: 1;
 }
 
-.dotActive .dotLine {
-  transform: scaleX(1);
-}
+
 
 @media (max-width: 1023px) {
   /* Below the desktop grid the composition is rebuilt, not squeezed: the rail

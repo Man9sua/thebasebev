@@ -94,7 +94,7 @@
 }
 
 .productsLabel {
-  color: var(--tbb-rd-muted);
+  color: #8a8a8a;
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -131,7 +131,7 @@
 .productLink {
   display: block;
   padding: 0.4375rem 0;
-  color: var(--tbb-rd-on-ink);
+  color: #c8c8c8;
   font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
@@ -200,7 +200,7 @@
 }
 
 .footLegal {
-  color: var(--tbb-rd-muted);
+  color: #8a8a8a;
   font-size: 0.875rem;
   text-decoration: none;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
@@ -218,7 +218,7 @@
   padding-inline: 0.875rem;
   border: 1px solid #333;
   border-radius: 999px;
-  color: var(--tbb-rd-on-ink);
+  color: #c8c8c8;
   font-family: var(--tbb-font-button);
   font-size: 0.875rem;
   font-weight: var(--tbb-font-weight-button);

@@ -70,7 +70,7 @@ const faq = [
     q: "How do I make it at home?",
     a: "Each pouch has the recipe on the back and a QR code with video instructions. Most drinks need only milk or water.",
   },
-  { q: "Can my café sell these?", a: "Yes. Order through your local the Base distributor." },
+  { q: "Can my café sell these?", a: "Yes. Order through your local the Base distributor; the display kit comes with the first order." },
   { q: "Where can I buy online?", a: "In the the Base online shop." },
 ];
 
@@ -82,6 +82,9 @@ export function AtHomePage({ product }: ProductPageProps) {
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <section className={local.hero} aria-labelledby="product-title">
         <div className={local.heroCopy}>
+          <p className={cx(local.crumbs, styles.desktopOnly)}>
+            <SiteLink href="/catalog">Catalogue</SiteLink> / At home
+          </p>
           <h1 id="product-title" className={cx(styles.heroTitle, local.heroTitle)}>
             Crafted for cafés,
             <br /> now at home
@@ -170,7 +173,7 @@ export function AtHomePage({ product }: ProductPageProps) {
             {[
               { title: "For guests", text: "Take the café drink home. One pouch makes 5–10 drinks." },
               { title: "For your café", text: "A shelf next to the till. No extra staff, extra revenue per guest." },
-              { title: "Wholesale enquiries", text: "Contact your distributor for stocking options." },
+              { title: "Display kit", text: "Shelf stand and price cards come with the first order." },
             ].map((card) => (
               <div key={card.title} className={local.tillCard}>
                 <span className={local.tillCardTitle}>{card.title}</span>

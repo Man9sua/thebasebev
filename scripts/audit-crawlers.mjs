@@ -24,7 +24,7 @@ const isPreview =
 const failures = [];
 const rows = [];
 const crawlerRoutes = ["/ae", ...readNativeRoutes().map((route) => `/ae${route}`)];
-const crawlerAssets = ["/files/barista-guide.pdf", "/images/products/milkshake/design-hero-600.webp", "/css/tbs-tailwind.css"];
+const crawlerAssets = ["/files/barista-guide.pdf", "/images/products/milkshake/hero-600.webp", "/css/tbs-tailwind.css"];
 
 function extract(html, expression) {
   return (html.match(expression)?.[1] ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
