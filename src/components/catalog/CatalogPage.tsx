@@ -130,7 +130,7 @@ function ProductCard({
           </SiteLink>
         ) : (
           <a className={styles.buy} data-shop-link href={SHOP_URL}>
-            Buy <span aria-hidden="true">↗</span>
+            Buy
             <span className="tbb-visually-hidden"> {name} in the shop</span>
           </a>
         )}

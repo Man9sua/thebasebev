@@ -56,9 +56,11 @@ a:focus-visible {
   right: 100% !important;
 }
 
-/* Keep touch feedback in the component; Safari's tap overlay flashes behind logos. */
+/* Components supply pressed/selected feedback; Safari's tap overlay flashes
+   rectangular backgrounds behind links and form chips. */
 a,
 button,
-summary {
+summary,
+form label {
   -webkit-tap-highlight-color: transparent !important;
 }
