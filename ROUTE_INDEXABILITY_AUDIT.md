@@ -1,6 +1,6 @@
 # Route indexability audit
 
-Generated: 2026-10-15T08:33:44.831Z
+Generated: 2026-10-15T10:43:54.502Z
 
 Target: `https://the-base-staging.mansua.workers.dev`
 

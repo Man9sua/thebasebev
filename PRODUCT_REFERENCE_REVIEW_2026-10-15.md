@@ -2,7 +2,13 @@
 
 ## Состояние релиза
 
-Изменения подготовлены в рабочей ветке. Локальные проверки, browser smoke и 380 проверок интерфейса завершены. Новый staging deploy и GitHub CI **PENDING**; результаты опубликованной версии будут записаны ниже.
+Изменения опубликованы в staging. Локальные проверки, browser smoke и 380 проверок интерфейса завершены. Финальные удаленные результаты приведены ниже.
+
+- Приложение: `68ad02e5d72dd1cef9f4ccc86ddbcfea1842b540`, PR [№15 в develop](https://github.com/Man9sua/thebasebev/pull/15).
+- Staging: https://the-base-staging.mansua.workers.dev.
+- Worker: `6a2aa281-272f-4306-8443-4a4824e7d8a7`; account `mansua` / `678720af4dded7d23aad4a859b6e5f3a` проверен перед деплоем.
+- CI приложения: [run 51 — SUCCESS](https://github.com/Man9sua/thebasebev/actions/runs/38721367046).
+- Финальные изменения отчетов/QA не меняют опубликованный код приложения.
 
 Этот отчет дополняет `WHATSAPP_REQUIREMENTS_REVIEW_2026-10-15.md` и сохраняет историю предыдущего этапа отдельно.
 
@@ -65,10 +71,23 @@
 | Локальный `smoke:browser` | **PASS — 13 viewport и взаимодействия** |
 | Локальный `smoke:seo-review` | **PASS — 380 проверок** |
 | Локальный `audit:country-routing` | **PASS — 70 GET, 17 стран** |
-| `npm run cf:build` | **PENDING** |
-| `smoke:product-reference`, `smoke:country-reference`, browser smoke | **PENDING** |
-| Deploy в `the-base-staging.mansua.workers.dev` | **PENDING** |
-| Remote HTTP / commerce / routes / SEO / crawlers / Cloudflare parity | **PENDING** |
-| GitHub CI на итоговом коммите | **PENDING** |
+| `npm run cf:build` внутри `deploy:staging` | **PASS — 917 документов Static Assets** |
+| Staging `smoke:product-reference` | **PASS — 1082/1082**, 22 страницы × desktop/mobile, 30 screenshots, 0 внешних шрифтов/Google stylesheet запросов |
+| Staging `smoke:country-reference` | **PASS — 284/284**, 17 стран на desktop/mobile, Back/Forward, ссылки, поля страны и mocked success redirects |
+| Deploy в `the-base-staging.mansua.workers.dev` | **PASS**, версия Worker указана выше |
+| Staging HTTP smoke | **PASS — 49 маршрутов, 257 redirect** |
+| Staging browser / commerce | **PASS — 13 viewport и взаимодействия; заказ не отправлялся** |
+| Staging routes | **PASS — 188 маршрутов, 172 sitemap URL** |
+| Staging production SEO parity | **PASS — 172 canonical URL, 0 critical**; 148 объявленных изменений и 177 некритичных наблюдений сохранены в отчете |
+| Staging crawlers | **PASS — 9 user agents, 13 страниц, 8 assets** |
+| Staging SEO/UI | **PASS — 426 проверок**, формы mocked |
+| Staging country HTTP | **PASS — 440/440**, 70 GET и 17 стран; HTML hash соответствует AE, canonical и robots проверены |
+| Worker tail / стабильность | **PASS — 67/67 outcome ok, 0 exceptions, max наблюдаемый CPU 1 ms**; 10 повторных QA/KW запросов — 200 |
+| Legacy Cloudflare parity со старым `mnsdemo` | **FAIL — 37 маршрутов**, H1 / JSON-LD / legacy content отличаются; checker и исходный Worker не изменялись для обхода проверки |
+| GitHub CI приложения | **PASS — run 51** |
 
-После деплоя необходимо записать фактические SHA/Worker version и результаты remote-проверок. Для staging должны подтвердиться transport `X-Robots-Tag: noindex, nofollow` и production canonicals. DNS, Tilda и production-домен в этот пакет не входят.
+Staging сохраняет transport `X-Robots-Tag: noindex, nofollow` и production canonicals. DNS, Tilda и production-домен не изменялись.
+
+Первый production SEO parity запуск прервался на сетевом `ECONNRESET`. Повтор завершил все 172 маршрута; в QA добавлен ограниченный retry только этой ошибки соединения в пределах прежних пяти попыток. Все проверки SEO сохранены. Новые browser audits отдельно ждут видимый H1 после перехода; navigation имеет стандартный лимит 30 s, DOM/control assertions остаются 12 s.
+
+Повторные новые browser audits завершены полностью: 1082/1082 product и 284/284 country checks. Зафиксированы 108 self-hosted font requests и 0 внешних font/Google stylesheet запросов. Сохранены и просмотрены 30 блоковых screenshots и полные первые шесть карточек каталога: 1248×1098 desktop (3×2) и 350×788 mobile (2×3). Сетевая диагностика и первоначальные неудачные QA-попытки сохранены локально; в итоговый PASS включен полный повтор. Настоящие leads/orders не отправлялись.

@@ -49,6 +49,8 @@ async function run(label, viewport) {
   await context.addCookies([{ name: "tbb-consent", value: encodeURIComponent(JSON.stringify({ analytics: false, marketing: false })), url: baseUrl }]);
   const page = await context.newPage();
   page.setDefaultTimeout(12_000);
+  // Network load uses Playwright's usual budget; DOM/control assertions stay at 12 s.
+  page.setDefaultNavigationTimeout(30_000);
   page.on("pageerror", (error) => failures.push(`${label}: JavaScript ${error.message}`));
 
   async function country(code) {

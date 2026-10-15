@@ -84,6 +84,7 @@ async function screenshot(locator, name) {
 
 async function typography(page, slug, label) {
   const main = page.locator("main").filter({ has: page.locator("h1") }).first();
+  await main.locator("h1").first().waitFor({ state: "visible" });
   await font(main.locator("h1").first(), 900, `${label} ${slug} heading`, { uppercase: true });
   await font(await firstPainted(main.locator("h2")), 900, `${label} ${slug} section`, { uppercase: true });
   await font(await firstPainted(main.locator("p")), [400, 500], `${label} ${slug} body`);
@@ -279,6 +280,8 @@ async function run(label, viewport) {
     (route) => route.fulfill({ status: 204, body: "" }));
   const page = await context.newPage();
   page.setDefaultTimeout(12_000);
+  // Network load uses Playwright's usual budget; DOM/control assertions stay at 12 s.
+  page.setDefaultNavigationTimeout(30_000);
   page.on("pageerror", (error) => failures.push(`${label}: JavaScript ${error.message}`));
   const externalFonts = new Set();
   const loadedLocalFonts = new Set();

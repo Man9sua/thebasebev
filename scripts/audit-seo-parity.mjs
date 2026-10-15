@@ -132,7 +132,15 @@ const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
 
 async function fetchWithRetry(url, options = {}) {
   for (let attempt = 1; attempt <= 5; attempt += 1) {
-    const response = await fetch(url, options);
+    let response;
+    try {
+      response = await fetch(url, options);
+    } catch (error) {
+      if (error?.cause?.code !== "ECONNRESET" || attempt === 5) throw error;
+      console.warn(`Retrying connection reset (${attempt}/5): ${url}`);
+      await delay(attempt * 1_000);
+      continue;
+    }
     const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
     if (!retryable || attempt === 5) return response;
     await response.arrayBuffer();
