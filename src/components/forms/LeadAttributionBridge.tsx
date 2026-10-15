@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { getFirstTouchAttribution } from "@/components/forms/first-touch";
+import { countryCodeFromPath, countryPath } from "@/lib/country-paths";
 import {
   LEGACY_FORM_NAMES,
   resolveLeadFormType,
@@ -252,7 +253,17 @@ function completeLegacySuccess(form: HTMLFormElement) {
       ?.dataset.fieldFormmsgurlValue;
 
   if (successUrl) {
-    window.setTimeout(() => window.location.assign(successUrl), 500);
+    let destination = successUrl;
+    try {
+      const url = new URL(successUrl, window.location.href);
+      if (url.origin === window.location.origin
+        || url.origin === "https://thebasebev.com" || url.origin === "https://www.thebasebev.com") {
+        destination = countryPath(`${url.pathname}${url.search}${url.hash}`, countryCodeFromPath(window.location.pathname));
+      }
+    } catch {
+      // Preserve the existing destination if an exported form supplies an unusual URL.
+    }
+    window.setTimeout(() => window.location.assign(destination), 500);
     return;
   }
 

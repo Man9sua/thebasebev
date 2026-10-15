@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { publicPath } from "@/lib/site-paths";
+import { toDefaultCountryPath } from "@/lib/country-paths";
 import {
-  CURRENT_MARKET,
   FOOTER_LINKS,
   SHOP_URL,
   SITE_NAV,
@@ -28,7 +28,7 @@ export function SiteMenu({
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const pathname = toDefaultCountryPath(usePathname()).replace(/\/+$/, "");
   useOverlay(open, onClose, panelRef);
 
   const [productsOpen, setProductsOpen] = useState(true);
@@ -161,11 +161,13 @@ export function SiteMenu({
             </div>
 
             <div className={styles.footMeta}>
-              {/* The market this build serves, read from the same entry as the
-                  bar's country selector so the two cannot disagree. */}
-              <span className={styles.footRegion}>
-                {`${CURRENT_MARKET.label} ${CURRENT_MARKET.language}`}
-              </span>
+              <SiteLink
+                href="/find-your-distributor"
+                className={styles.footFinder}
+                onClick={onClose}
+              >
+                Find your distributor
+              </SiteLink>
 
               {FOOTER_LINKS.legal.map((item) => (
                 <SiteLink

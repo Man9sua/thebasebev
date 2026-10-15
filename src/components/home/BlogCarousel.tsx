@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { BLOG_POSTS } from "@/data/blog";
+import { PRODUCTS } from "@/data/products";
 import styles from "./BlogCarousel.module.css";
 
 /**
@@ -36,6 +37,7 @@ type Entry = {
   title: string;
   summary: string;
   image: string | null;
+  imageAlt?: string;
 };
 
 const GUIDES: Entry[] = [
@@ -53,7 +55,7 @@ const GUIDES: Entry[] = [
     title: "Beverage R&D and Product Development",
     summary:
       "Custom beverage R&D in Dubai: recipe development, flavour matching and pilot batches for HoReCa and private label.",
-    image: "/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg",
+    image: "/images/about/showroom-1312.webp",
   },
   {
     href: "/resources/tools",
@@ -61,14 +63,15 @@ const GUIDES: Entry[] = [
     title: "HoReCa Cost Calculator",
     summary:
       "Estimate ingredient costs, portion pricing and margins for cafés and restaurants.",
-    image: "/images/tild3232-3361-4536-b535-383330393461__photo-1732365898359-.jpg",
+    image: "/images/blog/tild3033-6163-4366-b233-623166643334__468dc009fff526f3ac11.webp",
+    imageAlt: "Barista working at a point-of-sale terminal in a café",
   },
   {
     href: "/private-labeling",
     category: "Service",
     title: "Private Label & Wholesale Premixes",
     summary:
-      "Beverage premixes under your own brand: sixteen product lines, custom development and contract manufacturing.",
+      `Beverage premixes under your own brand: ${PRODUCTS.length} product lines, custom development and contract manufacturing.`,
     image: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
   },
   {
@@ -278,14 +281,12 @@ export function BlogCarousel() {
         {ENTRIES.map((entry) => (
           <SiteLink key={entry.href} href={entry.href} className={styles.card} data-card>
             <span className={styles.frame}>
-              {/* An entry without a picture keeps the frame, which is what holds
-                  the row's rhythm — only the photograph is missing. */}
               {entry.image && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   className={styles.media}
                   src={entry.image}
-                  alt=""
+                  alt={entry.imageAlt ?? ""}
                   loading="lazy"
                   decoding="async"
                   draggable={false}

@@ -34,18 +34,15 @@
   max-width: 65rem;
 }
 
-.eyebrow {
-  color: rgba(255, 255, 255, 0.58);
-}
-
 .heroTitle {
   max-width: 12ch;
   margin-top: clamp(1rem, 2.2vw, 1.75rem);
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(3.1rem, 7.5vw, 8.5rem);
-  font-weight: 500;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.045em;
   line-height: 0.9;
+  text-transform: uppercase;
 }
 
 .heroText {
@@ -109,11 +106,12 @@
 .sectionTitle {
   max-width: 15ch;
   margin-top: 0.75rem;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: var(--tbb-text-h2);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.03em;
   line-height: 0.98;
+  text-transform: uppercase;
 }
 
 .sectionDescription {
@@ -139,6 +137,8 @@
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   cursor: pointer;
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
 }
 
 .languageButton {
@@ -260,7 +260,7 @@
 }
 
 .result strong {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.35rem, 2vw, 2rem);
   font-weight: 600;
   white-space: nowrap;
@@ -352,9 +352,9 @@
 .drinkCard h3 {
   grid-column: 1 / -1;
   margin-top: 2rem;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: var(--tbb-text-h3);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-subheading);
 }
 
 .drinkCard > p {
@@ -393,14 +393,15 @@
   border-radius: 999px;
   font: inherit;
   font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-weight: var(--tbb-font-weight-button);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
   transition:
     transform var(--tbb-dur-fast) var(--tbb-ease),
     background var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
 }
 
 .primaryAction {
@@ -464,9 +465,9 @@
 .menuPreview > h3 {
   margin-top: 2rem;
   text-align: center;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: var(--tbb-text-h2);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-subheading);
 }
 
 .menuPeriod {

@@ -46,10 +46,11 @@ Run checks sequentially on Windows/OneDrive to avoid concurrent `.next` file loc
 npm.cmd run typecheck
 npm.cmd run lint
 npm.cmd run audit:leads
-npm.cmd run test:stripe
 npm.cmd run build
 npm.cmd run check:assets
 ```
+
+Stripe is no longer used. Stripe-specific checks are optional and excluded from normal CI and the default readiness audit.
 
 Against a running production build, the local smoke commands are:
 

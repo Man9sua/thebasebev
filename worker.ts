@@ -4,6 +4,7 @@ import openNextWorker from "./.open-next/worker.js";
 import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
 import publicRoutePaths from "./src/data/public-route-paths.json";
 import { publicPath } from "./src/lib/site-paths";
+import { toDefaultCountryPath } from "./src/lib/country-paths";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
@@ -161,6 +162,9 @@ async function staticFastPath(
 
   if (pathname.startsWith("/api/")) return null;
 
+  // Country aliases use the same prebuilt documents; no new SSR or duplicated assets.
+  const documentPathname = toDefaultCountryPath(pathname);
+
   /**
    * The router's own request for a page.
    *
@@ -180,7 +184,7 @@ async function staticFastPath(
     const segment = request.headers.get("Next-Router-Segment-Prefetch");
     if (segment && (!segment.startsWith("/") || segment.includes(".."))) return null;
 
-    const base = staticPageAssetPath(pathname).replace(/\.html$/, "");
+    const base = staticPageAssetPath(documentPathname).replace(/\.html$/, "");
     const payload = await environment.ASSETS.fetch(
       requestForAsset(request, segment ? `${base}.segments${segment}.segment.rsc` : `${base}.rsc`),
     );
@@ -196,7 +200,7 @@ async function staticFastPath(
   }
 
   const pageAsset = await environment.ASSETS.fetch(
-    requestForAsset(request, staticPageAssetPath(pathname)),
+    requestForAsset(request, staticPageAssetPath(documentPathname)),
   );
   if (pageAsset.status !== 404) {
     const status = pathname === "/_not-found" ? 404 : pageAsset.status;

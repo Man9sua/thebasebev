@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { PageAnchor } from "@/components/site/PageAnchor";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./RndPage.module.css";
@@ -33,9 +34,8 @@ import styles from "./RndPage.module.css";
  * The form keeps its id and its `tildaspec-formname`, so leads from here reach
  * the sales team under the name `LEGACY_FORM_NAMES` already routes them by.
  *
- * The photography is the page's own, still stock and still flagged by the
- * document as needing a real shoot of the Dubai lab. It is kept rather than
- * removed so the layout can be judged with pictures in it.
+ * The hero retains the reference microscope photograph. The supplied branded
+ * laboratory render fills the lab block; its alt text identifies it as artwork.
  */
 
 /** The three conditions under the hero's buttons. */
@@ -128,15 +128,15 @@ export function RndPage() {
   return (
     <main className={styles.page}>
       <section className={styles.hero} aria-labelledby="rnd-title" data-hero>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className={styles.heroPhoto}
+        <Image
+          className={styles.heroMedia}
           src="/images/tild3065-6636-4439-a430-386130353062__photo-1630959305790-.jpg"
-          alt="Technician at a microscope in THE BASE laboratory"
-          fetchPriority="high"
+          alt="Laboratory technician examining a sample through a microscope"
+          width={1680}
+          height={1092}
+          sizes="(max-width: 1023px) 100vw, 75vw"
+          preload
         />
-        <span className={styles.heroVeil} aria-hidden="true" />
-
         <div className={styles.heroInner}>
           <h1 id="rnd-title" className={styles.heroTitle}>
             Your recipe.
@@ -280,15 +280,11 @@ export function RndPage() {
       <section className={styles.lab} aria-labelledby="rnd-lab">
         <div className={styles.labInner}>
           <span className={styles.labMedia}>
-            {/* Stock, and flagged as such in the design document: a bottling
-                line is the wrong picture for a powder plant. Kept until the
-                real shoot of the Dubai lab exists. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg"
-              alt="THE BASE production facility in Dubai"
-              loading="lazy"
-              decoding="async"
+            <Image
+              src="/images/tild6261-3964-4535-b037-643166626332__rectangle_1134_1.jpg"
+              alt="THE BASE branded laboratory room render with tasting workstations"
+              fill
+              sizes="(max-width: 63.9375rem) 92vw, 35rem"
             />
           </span>
 
@@ -344,7 +340,7 @@ export function RndPage() {
               existing range rather than a development project — which is the
               distinction the old page collapsed.
             */}
-            <SiteLink href="/contacts" className={styles.briefAside}>
+            <SiteLink href="/request-samples" className={styles.briefAside}>
               Only need samples of our existing range? Request a sample box{" "}
               <span aria-hidden="true">→</span>
             </SiteLink>

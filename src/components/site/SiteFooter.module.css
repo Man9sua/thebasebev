@@ -7,9 +7,16 @@
  */
 
 .footer {
+  /* Neutral greys on the ink. The shared warm greys read as red or yellow at
+     this size against black, so the footer keeps its own. */
+  --footer-text: #c8c8c8;
+  --footer-soft: #b4b4b4;
+  --footer-dim: #8f8f8f;
+  --footer-muted: #8a8a8a;
+
   position: relative;
   background: var(--tbb-rd-ink);
-  color: var(--tbb-rd-on-ink);
+  color: var(--footer-text);
   padding: clamp(3rem, 7vw, 6rem) 0 0;
   overflow: clip;
 }
@@ -52,7 +59,7 @@
 
 .statement {
   margin: 0 !important;
-  color: var(--tbb-rd-on-ink-soft);
+  color: var(--footer-soft);
   font-size: clamp(1rem, 1.25vw, 1.125rem);
   /* Important for the same reason as the wordmark below — Tilda's stylesheets
      force 1.7 on every `p` of a parity page, which opened this block up by
@@ -98,7 +105,7 @@
 
 .columnTitle {
   margin-bottom: 0.5rem;
-  color: var(--tbb-rd-dim);
+  color: var(--footer-dim);
   font-size: 0.875rem;
   font-weight: 400;
 }
@@ -112,7 +119,7 @@
   border: 0;
   background: none;
   font-family: inherit;
-  color: var(--tbb-rd-on-ink);
+  color: var(--footer-text);
   text-decoration: none;
   font-size: 1.0625rem;
   text-align: left;
@@ -138,7 +145,7 @@
 }
 
 .copyright {
-  color: var(--tbb-rd-muted);
+  color: var(--footer-muted);
   font-size: 0.8125rem;
 }
 
@@ -150,7 +157,7 @@
 }
 
 .legalLinks .link {
-  color: var(--tbb-rd-muted);
+  color: var(--footer-muted);
   font-size: 0.8125rem;
 }
 
@@ -168,7 +175,7 @@
   place-items: center;
   border: 1px solid #2c2c2c;
   border-radius: 50%;
-  color: var(--tbb-rd-on-ink);
+  color: var(--footer-text);
   text-decoration: none;
   transition:
     color var(--tbb-dur-fast) var(--tbb-ease),
@@ -184,6 +191,11 @@
   stroke-width: 1.55;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.socialLink .whatsappIcon {
+  fill: currentColor;
+  stroke: none;
 }
 
 .socialLink:hover,

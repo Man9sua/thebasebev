@@ -1,6 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
+import { AnimatedDetails } from "../AnimatedDetails";
 import {
   DistributorLink,
+  FaqSchema,
   FlavourEnquiryLink,
   Hero,
   SampleButton,
@@ -30,7 +32,7 @@ export { s as jamStyles };
 
 /* ---------------- shared pieces of this generation ---------------- */
 
-/** The black "Your own flavour / blend" band under a flavour grid; opens the custom-flavour form. */
+/** The black "Your own flavour / blend" band links to the R&D brief. */
 export function RndBand({ name, text }: { name: ReactNode; text: ReactNode }) {
   return (
     <div className={s.band}>
@@ -97,20 +99,17 @@ export function ShelfCard({ value = "18 months", text, mobileText }: { value?: R
 export function PlainFaq({ items }: { items: Question[] }) {
   return (
     <section className={s.faq} aria-labelledby="product-faq-title">
+      <FaqSchema items={items} />
       <h2 id="product-faq-title" className={styles.title}>
         Questions
       </h2>
       <div className={s.faqList}>
         {items.map((item, i) => (
-          <details key={i} className={s.faqItem} open={i === 0}>
-            <summary className={s.faqQ}>
-              {item.q}
-              <span className={s.plus} aria-hidden="true">
-                +
-              </span>
-            </summary>
+          <AnimatedDetails key={i} className={s.faqItem} summaryClassName={s.faqQ} initiallyOpen={i === 0}
+            summary={<>{item.q}<span className={s.plus} aria-hidden="true">+</span></>}
+          >
             <p className={s.faqA}>{item.a}</p>
-          </details>
+          </AnimatedDetails>
         ))}
       </div>
     </section>
@@ -171,7 +170,7 @@ const faq: Question[] = [
   { q: "Can you develop a flavour only for us?", a: "Yes. Our R&D lab develops flavours for your menu or your own label." },
 ];
 
-export function JamPage({ product, headline }: ProductPageProps) {
+export function JamPage({ product }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 800]);
   const serves = [
     { ...hero, alt: "Fruit tea made with the Jam base" },
@@ -195,7 +194,6 @@ export function JamPage({ product, headline }: ProductPageProps) {
         mediaClassName={s.fill}
         productName={product.name}
         title="Jam"
-        headline={headline}
         lead={{
           desktop:
             "A dry fruit tea base with real fruit juice and black tea. Add hot water and serve, then finish with fresh fruit or herbs for your own signature tea.",
@@ -246,7 +244,7 @@ export function JamPage({ product, headline }: ProductPageProps) {
         <div className={s.flavours}>
           {flavours.map((flavour) => (
             <div key={flavour.name} className={s.flavour} style={{ background: flavour.color }}>
-              {flavour.isNew ? <span className={s.badge}>New</span> : <span />}
+              {flavour.isNew && <span className={s.badge}>New</span>}
               <span className={s.flavourName}>{flavour.name}</span>
             </div>
           ))}
@@ -255,7 +253,7 @@ export function JamPage({ product, headline }: ProductPageProps) {
       </Section>
 
       <SimpleInside
-        caption="Per 15 g serve · Strawberry Watermelon"
+        caption="Per 15 g serve"
         mobileCaption="Per 15 g serve"
         facts={facts}
         side={
