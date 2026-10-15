@@ -401,7 +401,7 @@ async function runViewport(label, viewport) {
     await accepted;
     await form.locator(".js-successbox").waitFor({ state: "visible" });
     check(await form.getByRole("heading", { name: /Request.*received/ }).isVisible(), `${label} samples: confirmed mocked delivery shows the confirmation`);
-    check(await form.getByText(/THE BASE team will contact you/).isVisible(), `${label} samples: confirmation does not promise an unverified local team`);
+    check(await form.getByText(/The Base team will contact you/).isVisible(), `${label} samples: confirmation does not promise an unverified local team`);
     await page.keyboard.press("Escape");
   });
 
