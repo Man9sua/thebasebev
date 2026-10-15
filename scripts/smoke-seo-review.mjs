@@ -73,7 +73,9 @@ async function runViewport(label, viewport) {
   });
 
   async function visit(route) {
-    const response = await page.goto(`${baseUrl}/ae${route}`, { waitUntil: "domcontentloaded" });
+    // Static preview HTML can arrive before its deferred client scripts. Wait
+    // for those scripts before exercising React controls after a hard navigation.
+    const response = await page.goto(`${baseUrl}/ae${route}`, { waitUntil: "load" });
     await page.locator("main h1").first().waitFor();
     check(response?.status() === 200, `${label} ${route}: HTTP 200`);
     if (preview) {
@@ -484,7 +486,7 @@ async function runShortViewport() {
   const page = await context.newPage();
   page.setDefaultTimeout(12_000);
   try {
-    await page.goto(`${baseUrl}/ae/request-samples`, { waitUntil: "domcontentloaded" });
+    await page.goto(`${baseUrl}/ae/request-samples`, { waitUntil: "load" });
     const banner = page.getByRole("region", { name: "Cookies", exact: true });
     if (await banner.count()) await banner.getByRole("button", { name: "Reject", exact: true }).click();
     await page.locator("main").getByRole("button", { name: "Request samples", exact: true }).click();
