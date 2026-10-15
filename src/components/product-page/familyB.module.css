@@ -154,7 +154,7 @@
 
 .stepName {
   margin-top: auto;
-  font-weight: var(--tbb-font-weight-heading);
+  font-weight: var(--tbb-font-weight-subheading);
   font-size: calc(var(--fb-step) * var(--u));
   line-height: 1;
   text-transform: uppercase;
@@ -212,7 +212,7 @@
 
 .flavourName {
   font-size: calc(var(--fb-name) * var(--u));
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: var(--fb-name-lh);
 }
 

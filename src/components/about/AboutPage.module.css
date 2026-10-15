@@ -27,7 +27,7 @@
 .lab .checks > div { padding-top: 26px; border-top: 1px solid #292929; }
 .checks p { margin-top: 14px; }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 28px; margin-top: 56px; }
-.primaryButton { display: inline-flex; min-height: 56px; align-items: center; justify-content: center; padding: 16px 32px; border-radius: 999px; background: #e3141b; color: #fff !important; font-size: 13px; font-weight: 600; letter-spacing: .08em; line-height: 1.35; text-align: center; text-transform: uppercase; text-decoration: none; }
+.primaryButton { display: inline-flex; min-height: 56px; align-items: center; justify-content: center; padding: 16px 32px; border-radius: 999px; background: #e3141b; color: #fff !important; font-size: 13px; font-weight: var(--tbb-font-weight-button); letter-spacing: .1em; line-height: 1.35; text-align: center; text-transform: uppercase; text-decoration: none; }
 .textLink { color: inherit !important; font-size: 14px; font-weight: 600; text-decoration: none; }
 .primaryButton:hover { background: #bc1016; }
 .primaryButton:focus-visible,.textLink:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }

@@ -1,8 +1,8 @@
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { Faq, Hero, Section, cx, productPageStyles as styles } from "../blocks";
+import { Faq, Hero, Section, Stats, cx, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { RangePhotoPlaceholder, heroSize, rangeHeroClass } from "./Range";
+import { RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
 import local from "./Electrolyte.module.css";
 
 const flavours = [
@@ -18,6 +18,21 @@ const formats = [
   { label: "Bar format", name: "500 g pack", text: "For drink stations and juice bars. Dose with a scoop." },
   { label: "Bar format", name: "1 kg pack", text: "For high-volume outlets and chains." },
   { label: "Wholesale", name: "25 kg bulk", text: "For manufacturers and repackers. MOQ 500 kg." },
+] as const;
+
+const stickStats = [
+  { value: "1000 mg", label: "Sodium per stick" },
+  { value: "200 mg", label: "Potassium" },
+  { value: "60 mg", label: "Magnesium" },
+  { value: "0 g", label: "Added sugar" },
+  { value: "5", label: "Flavours" },
+  { value: "Cold", label: "Water, juice, iced coffee" },
+];
+
+const preparation = [
+  { label: "Dissolve", value: "5 g", text: "One stick into 300–500 ml of cold water or juice" },
+  { label: "Stir or shake", value: "Until clear", text: "Before adding ice" },
+  { label: "Add to menu", value: "Cold drinks", text: "Lemonades, smoothies, iced espresso" },
 ] as const;
 
 const faq = [
@@ -42,9 +57,8 @@ export function ElectrolytePage({ product }: ProductPageProps) {
         }}
         image={<RangePhotoPlaceholder />}
       />
-      <Section title="Product specifications" label="Product specifications">
-        <p className={local.text}>Ask our team for ingredients, nutrition and preparation instructions for your chosen flavour.</p>
-        <SiteLink href="/contacts" className={styles.textLink}>Request a specification sheet →</SiteLink>
+      <Section title="In every stick" label="In every stick">
+        <Stats className={cx(rangeStyles.stats6, local.stickStats)} columns={6} items={stickStats} />
       </Section>
       <Section title="Five flavours" label="Flavours">
         <div className={local.flavours}>
@@ -76,6 +90,9 @@ export function ElectrolytePage({ product }: ProductPageProps) {
           </div>
           <SiteLink href="/rnd#rnd-form" className={cx(styles.button, styles.outline)}>Talk to R&amp;D</SiteLink>
         </div>
+      </Section>
+      <Section title="How to prepare" label="How to prepare">
+        <UseCards items={preparation} />
       </Section>
       <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />
     </main>

@@ -169,8 +169,8 @@ export function SugarFreePage({ product }: ProductPageProps) {
       </Section>
 
       <SimpleInside
-        caption="Cherry · per 1 g sachet"
-        mobileCaption="Cherry · per 1 g sachet"
+        caption="Per 1 g sachet"
+        mobileCaption="Per 1 g sachet"
         facts={facts}
         side={
           <div className={j.sideCol}>

@@ -108,7 +108,7 @@ export function VendingPage({ product }: ProductPageProps) {
       </FamilySection>
 
       <FamilyInside
-        caption={{ desktop: "Chocolate, per serving 20 g", mobile: "Chocolate, per 20 g" }}
+        caption={{ desktop: "Per serving 20 g", mobile: "Per 20 g" }}
         rows={[
           { label: "Calories", value: "72 kcal" },
           { label: "Total fat", value: "0.4 g" },

@@ -4,7 +4,7 @@
 .header h1 { grid-column: 1 / -1; margin: 0; font-family: var(--tbb-font-heading); font-size: clamp(64px,9vw,128px); font-weight: var(--tbb-font-weight-heading); line-height: .86; letter-spacing: -.035em; text-transform: uppercase; }
 .header p { max-width: 560px; color: #3a3835; font-size: 19px; line-height: 1.55; }
 .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-.tabs a { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border-radius: 999px; background: #ece9e3; color: #0e0e0e; font-size: 14px; font-weight: 600; text-decoration: none; }
+.tabs a { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border-radius: 999px; background: #ece9e3; color: #0e0e0e; font-size: 14px; font-family: var(--tbb-font-button); font-weight: var(--tbb-font-weight-button); letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
 .tabs a[aria-current] { background: #0e0e0e; color: #fff; }
 .tabs a:hover { background: #dedbd4; }
 .tabs a[aria-current]:hover { background: #333; }

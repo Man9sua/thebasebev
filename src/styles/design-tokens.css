@@ -74,8 +74,9 @@
   --tbb-font-heading: var(--tbb-font-family);
   --tbb-font-button: var(--tbb-font-family);
   --tbb-font-weight-body: 400;
+  --tbb-font-weight-medium: 500;
   --tbb-font-weight-heading: 900;
-  --tbb-font-weight-subheading: 700;
+  --tbb-font-weight-subheading: 800;
   --tbb-font-weight-button: 600;
   /* Compatibility for retained CSS while new rules use the named roles. */
   --tbb-font-sans: var(--tbb-font-body);
@@ -277,6 +278,8 @@ html {
   font-family: var(--tbb-font-button);
   font-size: 0.875rem;
   font-weight: var(--tbb-font-weight-button);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   line-height: 1.15;
   text-align: center;
   text-decoration: none;

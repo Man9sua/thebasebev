@@ -136,10 +136,10 @@ export function CookieConsent() {
           </div>
 
           <div className={styles.buttons}>
-            <button type="button" className={styles.accept} onClick={() => store(CONSENT_GRANTED)}>
+            <button type="button" className={styles.primaryAction} onClick={() => store(CONSENT_GRANTED)}>
               Accept all
             </button>
-            <button type="button" className={styles.reject} onClick={() => store(CONSENT_DENIED)}>
+            <button type="button" className={styles.secondaryAction} onClick={() => store(CONSENT_DENIED)}>
               Reject
             </button>
           </div>
@@ -215,12 +215,12 @@ export function CookieConsent() {
             </div>
 
             <div className={styles.dialogButtons}>
-              <button type="button" className={styles.accept} onClick={() => store(draft)}>
+              <button type="button" className={styles.primaryAction} onClick={() => store(draft)}>
                 Save choices
               </button>
               <button
                 type="button"
-                className={styles.reject}
+                className={styles.secondaryAction}
                 onClick={() => store(CONSENT_GRANTED)}
               >
                 Accept all

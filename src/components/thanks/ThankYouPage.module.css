@@ -50,6 +50,7 @@
   font-family: var(--tbb-font-heading);
   font-size: clamp(1.75rem, 5vw, 2.75rem);
   font-weight: var(--tbb-font-weight-heading);
+  text-transform: uppercase;
   letter-spacing: -0.03em;
   line-height: 1.08 !important;
   text-wrap: balance;
@@ -99,7 +100,7 @@
 }
 
 .stepTitle {
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-subheading);
   font-size: 0.9375rem;
   line-height: 1.3;
 }
@@ -133,7 +134,7 @@
   color: var(--tbb-ink);
   font-size: var(--tbb-text-label);
   font-weight: 600;
-  letter-spacing: var(--tbb-tracking-label);
+  letter-spacing: 0.1em;
   text-decoration: none;
   text-transform: uppercase;
   transition: opacity var(--tbb-dur-fast) var(--tbb-ease);

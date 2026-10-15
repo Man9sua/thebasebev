@@ -32,6 +32,7 @@ jobs:
       - run: npm run lint
       - run: npm run audit:leads
       - run: npm run test:stripe
+      - run: npm run test:country-routing
       - run: npm run build
       - run: npm run check:assets
       - run: npm audit --audit-level=high

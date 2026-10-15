@@ -34,7 +34,8 @@ The migration must preserve SEO, organic Google traffic, AI/Search referrals, ex
 - The main page is the typography reference for every page and future edit.
 - Follow `TYPOGRAPHY_CONTRACT.md` and the shared font roles in
   `src/styles/design-tokens.css`: Exo 2; display headings 900, smaller headings
-  700, body 400 and CTA/control labels 600. Preserve responsive sizes and semantic
+  800, body 400/500 and CTA/control labels 600. Headings are uppercase; CTA
+  labels are uppercase with 0.1em tracking. Preserve responsive sizes and semantic
   roles unless the user requests a design change.
 - Do not introduce page-specific font stacks or universal font overrides that
   affect logos, icons, emoji flags or native pages through legacy CSS.

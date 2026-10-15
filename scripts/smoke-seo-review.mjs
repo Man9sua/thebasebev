@@ -209,7 +209,7 @@ async function runViewport(label, viewport) {
         await Promise.all(images.map((image) => image.decode()));
         return images.every((image) => image.naturalWidth > 0 && image.alt.trim());
       }), `${label} ${slug}: menu photographs load and have alternative text`);
-      check(await page.getByRole("link", { name: "Request marketing kit", exact: true }).getAttribute("href") === "/ae/contacts", `${label} ${slug}: marketing kit request has a real destination`);
+      check(await page.getByRole("link", { name: "Request", exact: true }).getAttribute("href") === "/ae/contacts", `${label} ${slug}: marketing kit request has a real destination`);
       const hero = page.locator("main section").first().locator("img").first();
       await hero.evaluate((image) => image.decode());
       const heroName = slug === "milkshake" ? "hero-pouch" : "hero-pack-glass";
@@ -226,7 +226,7 @@ async function runViewport(label, viewport) {
         const recipeLink = recipe.getByRole("link");
         check(await recipeLink.getAttribute("href") === "/ae/knowledge-recipes", `${label} milkshake: recipe link has a real destination`);
         check(await range.getByText("Each one built on the same base, so texture and foam stay the same.", { exact: true }).isVisible(), `${label} milkshake: flavour introduction visible`);
-        check(await recipe.locator("ol h3").evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).fontWeight === "900")), `${label} milkshake: recipe step labels match the supplied display style`);
+        check(await recipe.locator("ol h3").evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).fontWeight === "800")), `${label} milkshake: recipe step labels use the shared subheading role`);
         if (viewport.width < 1024) {
           check(await page.locator("main section").first().locator("dl").evaluate((list) => {
             const rows = [...list.children].map((row) => ({ row: row.getBoundingClientRect(), label: row.firstElementChild.getBoundingClientRect(), value: row.lastElementChild.getBoundingClientRect() }));
@@ -252,7 +252,7 @@ async function runViewport(label, viewport) {
       check(await nutrition.getByRole("tablist").count() === 0, `${label} ${slug}: no unsupported nutrition variants`);
       const table = nutrition.locator("[class*='nutritionFullMobile']");
       check(await table.count() === 1 && await table.isVisible(), `${label} ${slug}: single source nutrition table visible`);
-      check(slug === "milkshake" ? !(await table.innerText()).includes(sourceFlavour) : (await table.innerText()).includes(sourceFlavour), `${label} ${slug}: owner-approved nutrition caption`);
+      check(!(await table.innerText()).includes(sourceFlavour), `${label} ${slug}: serving caption omits the flavour label`);
       check((await table.innerText()).includes(calories), `${label} ${slug}: source calories retained`);
       const details = page.locator("section[aria-labelledby='product-faq-title'] details");
       check(await details.count() === 9, `${label} ${slug}: all nine FAQ entries retained`);
@@ -409,8 +409,8 @@ async function runViewport(label, viewport) {
     await caseOf(`${slug}-faq`, async () => {
       await visit(`/${slug}`);
       const details = page.locator("section[aria-labelledby='product-faq-title'] details");
-      await checkFont(details.first().locator("summary"), 600, `${slug} FAQ control`);
-      if (slug === "jam") await checkFont(page.locator("main").getByText("Strawberry Watermelon", { exact: true }).first(), 700, "Jam flavour name");
+      await checkFont(details.first().locator("summary"), 800, `${slug} FAQ question`);
+      if (slug === "jam") await checkFont(page.locator("main").getByText("Strawberry Watermelon", { exact: true }).first(), 800, "Jam flavour name");
       const visible = await details.evaluateAll((nodes) => nodes.map((node) => ({
         question: node.querySelector("summary")?.textContent?.replace(/\+\s*$/, "") ?? "",
         answer: node.querySelector("p")?.textContent ?? "",
@@ -432,7 +432,7 @@ async function runViewport(label, viewport) {
   for (const [route, title] of [["/about-us", "Develop"], ["/rnd", "Cost per cup"], ["/distributors", "Regional"]]) {
     await caseOf(`typography-${route.slice(1)}`, async () => {
       await visit(route);
-      await checkFont(page.locator("main").getByRole("heading", { name: title, exact: true }).first(), 700, `${route} card heading`);
+      await checkFont(page.locator("main").getByRole("heading", { name: title, exact: true }).first(), 800, `${route} card heading`);
     });
   }
 

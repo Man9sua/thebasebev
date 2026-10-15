@@ -29,6 +29,7 @@
   font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.055em;
   line-height: 0.88;
+  text-transform: uppercase;
 }
 
 .hero p {

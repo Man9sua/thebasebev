@@ -90,12 +90,12 @@ async function checkCountrySelector(page, label) {
   await list.press("ArrowDown");
   await list.press("ArrowDown");
   await Promise.all([
-    page.waitForURL((url) => url.pathname === "/ae/find-your-distributor" && url.searchParams.get("market") === "QA", { waitUntil: "domcontentloaded" }),
+    page.waitForURL((url) => /^\/qa\/?$/.test(url.pathname), { waitUntil: "load" }),
     list.press("Enter"),
   ]);
   const destination = new URL(page.url());
   check(destination.searchParams.get("utm_source") === "chatgpt.com" && destination.searchParams.get("utm_campaign") === "country-selector", `${label}: country selection lost campaign parameters`);
-  await page.locator('button[aria-controls="distributor-details"][aria-pressed="true"]').filter({ hasText: "Qatar" }).waitFor();
+  await page.locator('header button[aria-label="Country: QA, Qatar. Change country"]').waitFor();
   await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
   await page.locator(BESTSELLERS).waitFor();
   await openList();
@@ -493,7 +493,7 @@ try {
   await page.locator("[data-catalog-card]").first().waitFor();
   await page.waitForTimeout(1_200);
   check((await page.locator("[data-catalog-card]").count()) === 22, "catalog: expected 22 product cards");
-  check((await page.locator("[data-catalog-price]").count()) === 22, "catalog: expected a price or request label on every card");
+  check((await page.locator("[data-catalog-card][data-catalog-price]").count()) === 22, "catalog: every card retains its price metadata");
   for (const slug of ["puree", "sauce", "add-ons", "electrolyte"]) {
     check(
       (await page.locator(`[data-catalog-card][data-product-slug="${slug}"] img`).count()) === 0,
@@ -504,7 +504,7 @@ try {
     Object.fromEntries(
       cards.map((card) => [
         card.querySelector("[data-catalog-name]")?.textContent?.trim() ?? "",
-        card.querySelector("[data-catalog-price]")?.textContent?.trim() ?? "",
+        card.getAttribute("data-catalog-price") ?? "",
       ]),
     ),
   );
@@ -530,13 +530,20 @@ try {
   for (const [name, expectedPrice] of Object.entries(expectedCatalogPrices)) {
     check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
   }
-  check((await page.locator("[data-catalog-filters] button").count()) === 5, "catalog: expected All plus four filters");
+  check((await page.locator("[data-catalog-filters], [data-catalog-sort]").count()) === 0, "catalog: removed filter and sort controls remain");
+  check(JSON.stringify(await page.locator("[data-catalog-card]").evaluateAll((cards) => cards.slice(0, 6).map((card) => card.getAttribute("data-product-slug")))) === JSON.stringify(["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"]), "catalog: featured order differs from the approved reference");
   check(
     !(await page.locator("#rec2839951603 .js-store-grid-cont-preloader").isVisible()),
     "catalog: hidden Tilda store preloader leaked into the public grid",
   );
-  await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
-  check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
+  const catalogSearch = page.getByRole("searchbox", { name: "Search products" });
+  await catalogSearch.fill("matcha");
+  check((await page.locator("[data-catalog-card]").count()) === 1, "catalog: search did not find Matcha");
+  await catalogSearch.fill("no-such-product");
+  check((await page.locator("[data-catalog-card]").count()) === 0, "catalog: no-match search returned cards");
+  check(await page.getByText(/Nothing matches/).isVisible(), "catalog: no-match explanation is missing");
+  await catalogSearch.fill("");
+  check((await page.locator("[data-catalog-card]").count()) === 22, "catalog: clearing search did not restore all ranges");
 
   // The catalogue sends buying off-site; the shelf must point where the source
   // says, which is per-country and no longer Odoo — see `SHOP_URL`.

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { publicPath } from "@/lib/site-paths";
+import { toDefaultCountryPath } from "@/lib/country-paths";
 import {
   FOOTER_LINKS,
   SHOP_URL,
@@ -27,7 +28,7 @@ export function SiteMenu({
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const pathname = toDefaultCountryPath(usePathname()).replace(/\/+$/, "");
   useOverlay(open, onClose, panelRef);
 
   const [productsOpen, setProductsOpen] = useState(true);

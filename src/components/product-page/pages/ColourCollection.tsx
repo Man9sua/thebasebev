@@ -161,7 +161,7 @@ export function ColourCollectionPage({ product }: ProductPageProps) {
         />
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} />
+      <Faq className={local.faq} productName={product.name} items={faq} line={null} distributor={false} />
     </main>
   );
 }

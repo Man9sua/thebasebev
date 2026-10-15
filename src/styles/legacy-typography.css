@@ -16,12 +16,13 @@ html body :where(.t706__cartwin, .t-store__prod-popup, .t-popup) :where(p, span,
 }
 
 html body .legacy-document :where(.t-title, .t-heading),
-html body .legacy-document :where(h1, h2, h3, h4, h5, h6) {
+html body .legacy-document :where(h1, h2) {
   font-family: var(--tbb-font-heading) !important;
   font-weight: var(--tbb-font-weight-heading) !important;
+  text-transform: uppercase;
 }
 
-html body .legacy-document :where(.t-name, .t-store__card__title),
+html body .legacy-document :where(h3, h4, h5, h6, .t-name, .t-store__card__title),
 html body :where(.t706__product-title, .t706__cartwin-heading, .t-store__prod-popup__name) {
   font-family: var(--tbb-font-heading) !important;
   font-weight: var(--tbb-font-weight-subheading) !important;
@@ -31,6 +32,8 @@ html body .legacy-document :where(.t-btn, .t-btntext, .t-submit, .t-btnflex, .t-
 html body :where(.t706__cartwin, .t-store__prod-popup, .t-popup) :where(button, .t-btn, .t-submit) {
   font-family: var(--tbb-font-button) !important;
   font-weight: var(--tbb-font-weight-button) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
 }
 
 html body .legacy-document :where(input, select, textarea, .t-input, .t-select, .t-input-error, .t-form__successbox, .t-form__errorbox-text),

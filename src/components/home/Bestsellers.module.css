@@ -93,7 +93,7 @@
 .headingProduct {
   display: block;
   font-size: clamp(2.4rem, 4.6vw, 4.25rem);
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 0.94;
   letter-spacing: -0.03em;
   color: var(--tbb-ink);
@@ -150,7 +150,7 @@
   border-radius: 999px;
   font-size: var(--tbb-text-label);
   font-weight: var(--tbb-font-weight-button);
-  letter-spacing: var(--tbb-tracking-label);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   white-space: nowrap;
   transition: transform var(--tbb-dur-fast) var(--tbb-ease);

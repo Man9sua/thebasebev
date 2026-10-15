@@ -38,7 +38,7 @@ const frappeFaq = [
 // must not inherit these numbers, so there are no placeholder nutrition tabs.
 const nutrition: Record<Blend, NutritionSet[]> = {
   milkshake: [{
-    name: "Vanilla", showName: false, caption: "per 30 g serving · 17 per pack",
+    name: "Vanilla", caption: "per 30 g serving · 17 per pack",
     mobileCaption: "per 30 g · 17 per pack",
     rows: [
       { label: "Calories", value: "123" },

@@ -9,12 +9,12 @@
   font-size: calc(104 * var(--u));
 }
 
-.hero a[href*="distributors"] {
+.hero a[href*="/find-your-distributor"] {
   border-color: #f6f6f4;
   color: #f6f6f4;
 }
 
-.hero a[href*="distributors"]:hover {
+.hero a[href*="/find-your-distributor"]:hover {
   background: #f6f6f4;
   color: #4e3630;
 }

@@ -224,6 +224,14 @@ function removeLegacyAnalyticsRuntime(source: string) {
   );
 }
 
+/** The root layout self-hosts Exo 2; exported font links would load duplicate faces. */
+function removeLegacyFontLinks(source: string) {
+  return source.replace(/<link\b[^>]*>/gi, (tag) => {
+    const href = tag.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2] ?? "";
+    return /^(?:https?:)?\/\/fonts\.(?:googleapis|gstatic)\.com(?:\/|$)/i.test(href) ? "" : tag;
+  });
+}
+
 /**
  * Exported runtimes whose markup this project no longer serves.
  *
@@ -466,7 +474,7 @@ function dropRecord(source: string, recordId: string) {
 /**
  * Tilda template debris, by exported page.
  *
- * Three of the parity pages were built on stock Tilda themes and were still
+ * Four of the parity pages were built on stock Tilda themes and were still
  * carrying pieces of the theme rather than pieces of the site. None of it is
  * content anybody wrote for THE BASE, and two of the entries were actively
  * damaging:
@@ -489,6 +497,9 @@ function dropRecord(source: string, recordId: string) {
  * followed by two blocks that are empty in the export. Its opening block is
  * dropped too and reappears as `PageIntro`, because the theme set both headings
  * in a serif no other page on this site uses.
+ *
+ * `/garnish` ended with the theme's sample paragraph about visual aids in
+ * speeches, unrelated to the product, after its FAQ.
  *
  * Everything here is a removal from the served markup only. The export on disk
  * is the parity reference and stays as exported.
@@ -515,6 +526,8 @@ const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
     "rec1937217991", // empty in the export
     "rec2360860451", // empty in the export
   ],
+  // /garnish
+  "page62576005.html": ["rec2489072221"], // theme placeholder about visual aids
 };
 
 function dropTemplateDebris(source: string, file: string) {
@@ -962,6 +975,7 @@ export function getSitePage(route: string): SitePage | undefined {
     (value) => removeInlineScriptContaining(value, "__tbCanonInit"),
     (value) => removeInlineScriptContaining(value, "/api/tildafeed"),
     removeLegacyAnalyticsRuntime,
+    removeLegacyFontLinks,
     useResizedLegacyImages,
     (value) => preserveCatalogPrices(value, definition.file),
     (value) => stabilizeCatalogRuntime(value, definition.file),

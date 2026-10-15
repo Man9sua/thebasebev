@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "reac
 import { createPortal } from "react-dom";
 import { useOverlay } from "@/components/site/useOverlay";
 import { SiteLink } from "@/components/site/SiteLink";
+import { useCountryCode } from "@/components/site/useCountryCode";
 import { sampleFlavoursFor } from "@/data/sample-flavours";
 import { MARKETS } from "@/lib/site-config";
 import styles from "./SampleRequestModal.module.css";
@@ -59,7 +60,7 @@ function marketName(code: string) {
 export function SampleRequestModal({
   className,
   productName,
-  country = "AE",
+  country,
   label = "Request a sample",
 }: {
   className?: string;
@@ -67,6 +68,7 @@ export function SampleRequestModal({
   country?: string;
   label?: string;
 }) {
+  const currentCountry = useCountryCode();
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
 
@@ -80,7 +82,7 @@ export function SampleRequestModal({
         {label}
       </button>
       {open && typeof document !== "undefined"
-        ? createPortal(<SampleDrawer productName={productName} country={country} onClose={close} />, document.body)
+        ? createPortal(<SampleDrawer productName={productName} country={country ?? currentCountry} onClose={close} />, document.body)
         : null}
     </>
   );

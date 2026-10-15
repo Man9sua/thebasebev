@@ -21,7 +21,7 @@ import local from "./Topping.module.css";
 
 /**
  * Toppings ("Topping · страница продукта", desktop 1440 / mobile 390).
- * Matcha's shape, with dry-base nutrition and a prepared-serving enquiry.
+ * Matcha's shape, with dry-base nutrition and the prepared-serving card.
  */
 
 const SLUG = "topping";
@@ -30,7 +30,7 @@ const nutrition: NutritionSet[] = [
   {
     name: "Classic Cheese Cream",
     caption: "Per 100 g of dry base",
-    mobileCaption: "Classic Cheese Cream · per 100 g dry base",
+    mobileCaption: "Per 100 g of dry base",
     rows: [
       { label: "Calories", value: "525 kcal" },
       { label: "Total fat", value: "34.7 g", dv: "49.6%" },
@@ -42,7 +42,7 @@ const nutrition: NutritionSet[] = [
       { label: "Added sugar", value: "14.6 g", dv: "29.2%" },
       { label: "Protein", value: "3 g", dv: "6%", desktopOnly: true },
     ],
-    note: "Dry powder, before whipping. Prepared-serving nutrition depends on milk and the final portion.",
+    note: "Dry powder, before whipping. 100 g of base makes 450 g of topping.",
   },
 ];
 
@@ -171,11 +171,11 @@ export function ToppingPage({ product, assets }: ProductPageProps) {
           <>
             <div className={local.prepared}>
               <span className={local.preparedLabel}>
-                Prepared serving
+                One 50 g serve of whipped topping
               </span>
-              <span className={local.preparedValue}>By recipe</span>
+              <span className={local.preparedValue}>≈ 72 kcal</span>
               <span className={local.preparedText}>
-                Nutrition depends on the milk and final portion. Request your flavour’s prepared-serving specification.
+                Made with whole milk. About 58 kcal from the base, 14 kcal from the milk.
               </span>
             </div>
             <Info

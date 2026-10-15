@@ -73,6 +73,7 @@
   font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.035em;
   line-height: 1.04 !important;
+  text-transform: uppercase;
 }
 
 .standfirst {
@@ -216,6 +217,7 @@
   font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.03em;
   line-height: 1 !important;
+  text-transform: uppercase;
 }
 
 .relatedGrid {

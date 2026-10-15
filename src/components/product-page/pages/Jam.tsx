@@ -21,7 +21,7 @@ import s from "./Jam.module.css";
 /**
  * Jam ("Jam · страница продукта целиком", desktop 1440 / mobile 390).
  * A newer design generation than matcha: six small service cards, tall
- * prepare cards, colour flavour cards, a simplified
+ * prepare cards, colour flavour cards with "New" badges, a simplified
  * "Inside the pack", a plain FAQ and a closing "Try it on your menu" band.
  * Sugar free shares that generation, so its pieces are exported from here.
  */
@@ -140,6 +140,11 @@ export function TryBand({ productName, text, style }: { productName: string; tex
 
 const flavours = [
   { name: "Strawberry Watermelon", color: "#E8B4B0" },
+  { name: "Lemon Ginger Honey", color: "#F1DE9A", isNew: true },
+  { name: "Pomegranate Rose", color: "#E7A6B0", isNew: true },
+  { name: "Mango Passion Fruit", color: "#F6C98A", isNew: true },
+  { name: "Sea Buckthorn Orange", color: "#F3B680", isNew: true },
+  { name: "Apple Cinnamon Cardamom", color: "#D9DCA2", isNew: true },
 ];
 
 const facts: Fact[] = [
@@ -235,10 +240,11 @@ export function JamPage({ product }: ProductPageProps) {
         />
       </Section>
 
-      <Section className={s.gap40} title="Flavour" label="Flavours">
+      <Section className={s.gap40} title="Six flavours" label="Flavours">
         <div className={s.flavours}>
           {flavours.map((flavour) => (
             <div key={flavour.name} className={s.flavour} style={{ background: flavour.color }}>
+              {flavour.isNew && <span className={s.badge}>New</span>}
               <span className={s.flavourName}>{flavour.name}</span>
             </div>
           ))}
@@ -247,8 +253,8 @@ export function JamPage({ product }: ProductPageProps) {
       </Section>
 
       <SimpleInside
-        caption="Per 15 g serve · Strawberry Watermelon"
-        mobileCaption="Strawberry Watermelon · per 15 g serve"
+        caption="Per 15 g serve"
+        mobileCaption="Per 15 g serve"
         facts={facts}
         side={
           <ShelfCard

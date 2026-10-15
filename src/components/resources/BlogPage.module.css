@@ -43,6 +43,7 @@
   font-weight: var(--tbb-font-weight-heading);
   letter-spacing: -0.055em;
   line-height: 0.88;
+  text-transform: uppercase;
 }
 
 .hero p {
@@ -315,7 +316,7 @@
   padding-top: clamp(1.25rem, 2.4vw, 2rem);
   color: var(--tbb-accent);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }

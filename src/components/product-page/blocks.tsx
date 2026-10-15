@@ -170,7 +170,7 @@ export function MarketingKitAction({ href, className }: { href?: string; classNa
       <Responsive desktop="Download kit" mobile="Download marketing kit" />
     </a>
   ) : (
-    <SiteLink href="/contacts" className={actionClass}>Request marketing kit</SiteLink>
+    <SiteLink href="/contacts" className={actionClass}>Request</SiteLink>
   );
 }
 

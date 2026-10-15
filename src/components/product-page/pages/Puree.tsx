@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { BottleCards, RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
@@ -47,7 +46,7 @@ export function PureePage({ product }: ProductPageProps) {
           items={[
             { value: "950 ml", label: "Bottle" },
             { value: "6", label: "Flavours" },
-            { value: "Ingredients", label: "See flavour specification" },
+            { value: "Real fruit", label: "Fruit pulp and natural colour" },
             { value: "Cold drinks", label: "Smoothies, lemonades, cocktails" },
             { value: "Shake", label: "Shake well before use" },
             { value: "Your label", label: "Private label available" },
@@ -62,12 +61,11 @@ export function PureePage({ product }: ProductPageProps) {
       <Section title="Three ways to use it" label="Three ways to use it">
         <UseCards
           items={[
-            { label: "Smoothie", value: "To recipe", text: "Ask for your flavour’s recommended dose" },
-            { label: "Lemonade or iced tea", value: "To recipe", text: "Ask for your flavour’s recommended dose" },
+            { label: "Smoothie", value: "30 ml", text: "Blend with ice and milk or yogurt" },
+            { label: "Lemonade or iced tea", value: "20–30 ml", text: "Pour into the glass, add ice and top up" },
             { label: "Dessert", value: "Topping", text: "Over ice cream, cheesecake and waffles" },
           ]}
         />
-        <SiteLink href="/contacts" className={styles.textLink}>Request ingredients, storage and dosage specifications →</SiteLink>
       </Section>
 
       <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />

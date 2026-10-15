@@ -125,7 +125,7 @@ export function SugarSyrupPage({ product }: ProductPageProps) {
       </FamilySection>
 
       <FamilyInside
-        caption={{ desktop: "Blueberry · per serving, 5 g" }}
+        caption={{ desktop: "Per serving, 5 g" }}
         rows={[
           { label: "Calories", value: "17 kcal" },
           { label: "Total fat", value: "0 g" },

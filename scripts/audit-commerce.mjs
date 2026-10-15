@@ -72,7 +72,7 @@ try {
         bodyClasses: document.body.className,
         catalogCards: [...document.querySelectorAll("[data-catalog-card]")].map((element) => ({
           name: element.querySelector("[data-catalog-name]")?.textContent?.trim() ?? null,
-          price: element.querySelector("[data-catalog-price]")?.textContent?.trim() ?? null,
+          price: element.getAttribute("data-catalog-price"),
           href: element instanceof HTMLAnchorElement ? element.getAttribute("href") : null,
         })),
         controls,

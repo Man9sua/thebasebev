@@ -5,6 +5,7 @@ import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { SiteLink } from "@/components/site/SiteLink";
 import { DISTRIBUTOR_GROUPS, DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
 import { COMPANY, SHOP_URL } from "@/lib/site-config";
+import { countryCodeFromPath } from "@/lib/country-paths";
 import styles from "./DistributorFinderPage.module.css";
 
 function subscribeMarket(change: () => void) {
@@ -14,7 +15,7 @@ function subscribeMarket(change: () => void) {
 
 function requestedMarket() {
   const code = new URLSearchParams(window.location.search).get("market")?.toUpperCase();
-  return DISTRIBUTOR_MARKETS.find((market) => market.code === code)?.code ?? "AE";
+  return DISTRIBUTOR_MARKETS.find((market) => market.code === code)?.code ?? countryCodeFromPath(window.location.pathname);
 }
 
 const defaultMarket = () => "AE";

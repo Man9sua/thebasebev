@@ -88,9 +88,7 @@ export function AddOnsPage({ product }: ProductPageProps) {
                 <span className={cx(local.stick, styles.desktopOnly)}>{item.stick} stick</span>
               </div>
               <div className={local.cardName}>
-                {item.name === "Electrolyte" ? (
-                  <SiteLink href="/electrolyte" className={local.name}>{item.name}</SiteLink>
-                ) : <span className={local.name}>{item.name}</span>}
+                <span className={local.name}>{item.name}</span>
               </div>
               <div className={cx(local.facts, styles.desktopOnly)}>
                 <span>

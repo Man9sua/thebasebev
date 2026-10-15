@@ -2,19 +2,11 @@
 
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { CURRENT_MARKET, MARKETS, type Market } from "@/lib/site-config";
+import { switchCountryPath } from "@/lib/country-paths";
+import { useCountryCode } from "./useCountryCode";
 import styles from "./CountrySelect.module.css";
 
 const CURRENT_MARKET_INDEX = Math.max(0, MARKETS.findIndex((market) => market.code === CURRENT_MARKET.code));
-
-/** Keep campaign parameters while the destination selects the requested market. */
-function marketHref(market: Market, search: string) {
-  const destination = new URL(market.href, window.location.origin);
-  const params = new URLSearchParams(search);
-  params.delete("market");
-  destination.searchParams.forEach((value, name) => params.set(name, value));
-  const query = params.toString();
-  return `${destination.pathname}${query ? `?${query}` : ""}`;
-}
 
 function CheckIcon() {
   return (
@@ -32,6 +24,9 @@ export function CountrySelect({
   triggerClassName?: string;
   overlayOpen?: boolean;
 }) {
+  const countryCode = useCountryCode();
+  const currentMarket = MARKETS.find((market) => market.code === countryCode) ?? CURRENT_MARKET;
+  const currentMarketIndex = MARKETS.indexOf(currentMarket);
   const id = useId();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(CURRENT_MARKET_INDEX);
@@ -51,9 +46,9 @@ export function CountrySelect({
   }, []);
 
   const openList = useCallback(() => {
-    setActive(CURRENT_MARKET_INDEX);
+    setActive(currentMarketIndex);
     setOpen(true);
-  }, []);
+  }, [currentMarketIndex]);
 
   useEffect(() => {
     if (open) list.current?.focus();
@@ -80,12 +75,15 @@ export function CountrySelect({
   }, [open]);
 
   const choose = (market: Market) => {
-    if (market.code === CURRENT_MARKET.code) {
+    if (market.code === currentMarket.code) {
       close(true);
       return;
     }
     setOpen(false);
-    window.location.assign(marketHref(market, window.location.search));
+    window.location.assign(switchCountryPath(
+      `${window.location.pathname}${window.location.search}${window.location.hash}`,
+      market.code,
+    ));
   };
 
   const onListKeyDown = (event: KeyboardEvent) => {
@@ -130,7 +128,7 @@ export function CountrySelect({
         ref={button}
         type="button"
         className={`${triggerClassName} ${styles.trigger}`.trim()}
-        aria-label={`Country: ${CURRENT_MARKET.code}, ${CURRENT_MARKET.name}. Change country`}
+        aria-label={`Country: ${currentMarket.code}, ${currentMarket.name}. Change country`}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={`${id}-list`}
@@ -142,7 +140,7 @@ export function CountrySelect({
           }
         }}
       >
-        <span>{CURRENT_MARKET.code}</span>
+        <span>{currentMarket.code}</span>
         <svg className={styles.chevron} viewBox="0 0 12 8" aria-hidden="true">
           <path d="M1 1.5 6 6.5 11 1.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
         </svg>
@@ -160,7 +158,7 @@ export function CountrySelect({
         onKeyDown={onListKeyDown}
       >
         {MARKETS.map((market, index) => {
-          const current = market.code === CURRENT_MARKET.code;
+          const current = market.code === currentMarket.code;
           return (
             <li
               key={market.code}

@@ -1,5 +1,5 @@
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
-import { PUBLIC_PREFIX, publicPath } from "@/lib/site-paths";
+import { countryPath } from "@/lib/country-paths";
 
 /**
  * Configuration for the redesigned surfaces.
@@ -15,15 +15,13 @@ export type Market = {
   href: string;
 };
 
-/** UAE serves the current site; the remaining countries open their distributor details. */
+/** Country paths share the English site until approved local content is supplied. */
 export const MARKETS: readonly Market[] = DISTRIBUTOR_MARKETS.map((market) => ({
   code: market.code,
   name: market.code === "AE" ? "United Arab Emirates" : market.name,
   label: market.code === "AE" ? "UAE" : market.code,
   language: "EN",
-  href: market.code === "AE"
-    ? PUBLIC_PREFIX
-    : publicPath(`/find-your-distributor?market=${market.code}`),
+  href: countryPath("/", market.code),
 }));
 
 export const CURRENT_MARKET = MARKETS.find((market) => market.code === "AE")!;

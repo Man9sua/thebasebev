@@ -311,7 +311,7 @@
 
 .stepLabel {
   font-size: calc(15 * var(--u));
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: normal;
   color: var(--pp-muted);
 }
@@ -575,7 +575,7 @@
   gap: calc(16 * var(--u));
   padding: calc(26 * var(--u)) 0;
   font-size: calc(20 * var(--u));
-  font-weight: var(--tbb-font-weight-button);
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: normal;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;

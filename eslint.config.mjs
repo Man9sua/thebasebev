@@ -18,5 +18,6 @@ export default defineConfig([
     "tilda_export/**",
     "output/whatsapp-review-20261015/**",
     "output/whatsapp-media-review-20261015/**",
+    "output/product-reference-20261015/**",
   ]),
 ]);

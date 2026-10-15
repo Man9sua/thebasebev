@@ -53,7 +53,7 @@
 .secondaryLink {
   color: var(--tbb-rd-paper);
   font-size: clamp(0.9375rem, 1.1111vw, 1rem);
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-button);
   text-decoration: none;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }

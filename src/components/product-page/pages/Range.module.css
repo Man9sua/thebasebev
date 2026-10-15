@@ -60,7 +60,7 @@
 
 .useLabel {
   font-size: calc(15 * var(--u));
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-subheading);
   color: var(--pp-muted);
 }
 

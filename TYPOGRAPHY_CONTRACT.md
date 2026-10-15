@@ -15,20 +15,28 @@ Arial/Helvetica are last-resort fallbacks, never a component's first choice.
 | Role | Family token | Weight token | Reference |
 | --- | --- | --- | --- |
 | Main and section headings | `--tbb-font-heading` | `--tbb-font-weight-heading` = 900 | Home hero and section titles |
-| Smaller card/product names and article subheads | `--tbb-font-heading` | `--tbb-font-weight-subheading` = 700 | Home product names |
-| Body copy and form inputs | `--tbb-font-body` | `--tbb-font-weight-body` = 400 | Home introductory and product copy |
-| CTA buttons, filters and accordion controls | `--tbb-font-button` | `--tbb-font-weight-button` = 600 | Home Request samples / Explore the shop |
+| Smaller card/product names and article subheads | `--tbb-font-heading` | `--tbb-font-weight-subheading` = 800 | Card and product names |
+| Body copy and form inputs | `--tbb-font-body` | `--tbb-font-weight-body` = 400 | Introductory and product copy |
+| CTA buttons and functional controls | `--tbb-font-button` | `--tbb-font-weight-button` = 600 | Home Request samples / Explore the shop |
+| Medium body emphasis | `--tbb-font-body` | `--tbb-font-weight-medium` = 500 | Supporting copy |
 
 All three family roles resolve to the same Exo 2 stack. Existing `--tbb-font-sans`
 and `--tbb-font-display` aliases remain for compatibility. Prices, statistics and
-functional metadata can keep their existing emphasis (for example 600 or 700);
-they do not become large display headings just because their element is a label.
+functional metadata can keep their existing emphasis; they do not become large
+display headings just because their element is a label.
 
 ## Applying the roles
 
+The owner's final instruction on 15 October 2026 applies to every page:
+main and section headings use Exo 2 Black (900), uppercase; subheadings, card
+names and FAQ questions use ExtraBold (800). Buttons use SemiBold (600),
+uppercase with 0.1em tracking. Body copy uses Regular (400) or Medium (500).
+Numerical display statistics retain their display role. Card names keep their
+reference casing.
+
 - Use the named family and weight tokens in the owning CSS module. Do not add
   Roboto, Jost, Montserrat, Georgia or a system font as a page-specific substitute.
-- Preserve the component's responsive sizes, line height, letter spacing, casing,
+- Preserve the component's responsive sizes, line height,
   content hierarchy and heading tags unless a design change explicitly requests
   different values. The font contract does not flatten all text to one size.
 - Native controls inherit the shared family; a CTA or interactive text control

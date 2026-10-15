@@ -15,15 +15,19 @@ export type NutritionRow = {
 export type NutritionSet = {
   /** Flavour the label was read from, e.g. "Mango Coconut". */
   name: string;
-  /** Keep the source flavour internal when the approved caption omits it. */
-  showName?: boolean;
   /** "Per serving 20 g" on the desktop table head. */
   caption: string;
-  /** The phone's head line, e.g. "Mango Coconut · per serving 20 g". */
+  /** The phone's shorter serving caption. */
   mobileCaption: string;
   rows: NutritionRow[];
   note?: string;
 };
+
+function servingCaption(caption: string, flavour: string) {
+  const sourceName = flavour.toLowerCase();
+  return caption.split("·").map((part) => part.trim())
+    .filter((part) => part && part.toLowerCase() !== sourceName).join(" · ");
+}
 
 /**
  * "Inside the pack": the nutrition table beside the side cards.
@@ -95,8 +99,8 @@ export function NutritionTabs({
           >
             <div className={styles.nutritionHead}>
               {tableTitle && <h3 className={styles.nutritionTableTitle}>{tableTitle}</h3>}
-              <span className={styles.desktopOnly}>{set.showName === false || set.caption.startsWith(set.name) ? set.caption : `${set.name} · ${set.caption}`}</span>
-              <span className={styles.mobileOnly}>{set.mobileCaption}</span>
+              <span className={styles.desktopOnly}>{servingCaption(set.caption, set.name)}</span>
+              <span className={styles.mobileOnly}>{servingCaption(set.mobileCaption, set.name)}</span>
               {!tableTitle && <span className={styles.desktopOnly}>% Daily value</span>}
             </div>
             {set.rows.map((row) => (
