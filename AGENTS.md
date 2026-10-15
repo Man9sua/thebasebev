@@ -64,7 +64,6 @@ After substantial changes run, at minimum:
 npm run typecheck
 npm run lint
 npm run audit:leads
-npm run test:stripe
 npm run build
 npm run cf:build
 npm run check:assets
@@ -77,6 +76,8 @@ npm run audit:crawlers -- <target-url>
 npm run audit:cloudflare-parity
 npm audit
 ```
+
+Stripe is no longer used. Stripe-specific checks are optional and excluded from normal CI and the default readiness audit.
 
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 
