@@ -34,8 +34,8 @@ import styles from "./RndPage.module.css";
  * The form keeps its id and its `tildaspec-formname`, so leads from here reach
  * the sales team under the name `LEGACY_FORM_NAMES` already routes them by.
  *
- * The supplied branded laboratory renders fill the image slots. Their alt
- * text identifies them as artwork rather than verified production photography.
+ * The hero retains the reference microscope photograph. The supplied branded
+ * laboratory render fills the lab block; its alt text identifies it as artwork.
  */
 
 /** The three conditions under the hero's buttons. */
@@ -130,10 +130,11 @@ export function RndPage() {
       <section className={styles.hero} aria-labelledby="rnd-title" data-hero>
         <Image
           className={styles.heroMedia}
-          src="/images/tild3637-3037-4530-b561-386139383037__mask_group.png"
-          alt="THE BASE branded laboratory interior render, where taste begins"
-          fill
-          sizes="100vw"
+          src="/images/tild3065-6636-4439-a430-386130353062__photo-1630959305790-.jpg"
+          alt="Laboratory technician examining a sample through a microscope"
+          width={1680}
+          height={1092}
+          sizes="(max-width: 1023px) 100vw, 75vw"
           preload
         />
         <div className={styles.heroInner}>

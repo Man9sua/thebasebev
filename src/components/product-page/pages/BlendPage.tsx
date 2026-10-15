@@ -38,8 +38,8 @@ const frappeFaq = [
 // must not inherit these numbers, so there are no placeholder nutrition tabs.
 const nutrition: Record<Blend, NutritionSet[]> = {
   milkshake: [{
-    name: "Vanilla", caption: "Vanilla · per 30 g serving · 17 per pack",
-    mobileCaption: "Vanilla · per 30 g · 17 per pack",
+    name: "Vanilla", showName: false, caption: "per 30 g serving · 17 per pack",
+    mobileCaption: "per 30 g · 17 per pack",
     rows: [
       { label: "Calories", value: "123" },
       { label: "Total fat", value: "3.5 g", dv: "4.5%" },
@@ -87,13 +87,18 @@ const menuPhotos: Record<Blend, ReturnType<typeof productImage>[]> = {
   frappe: Array.from({ length: 5 }, (_, i) => productImage("frappe", `menu-${i + 1}`, [320, 480])),
 };
 
+const heroMedia = {
+  milkshake: { ...productImage("milkshake", "hero-pouch", [400, 672]), width: 672, height: 780, alt: "Milkshake 500 g doypack" },
+  frappe: { ...productImage("frappe", "hero-pack-glass", [600, 822]), width: 822, height: 963, alt: "Frappe doypack with prepared drink" },
+};
+
 function BlendHero({ kind, product, assets }: ProductPageProps & { kind: Blend }) {
   const milkshake = kind === "milkshake";
   return (
     <section className={local.hero} aria-labelledby="product-title">
       <div className={local.heroGrid}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img {...productImage(kind, "hero", [600, 1000])} sizes="(max-width: 1023px) 350px, 520px" alt={`${product.name} made with the Base`} fetchPriority="high" className={local.heroPhoto} />
+        <img {...heroMedia[kind]} alt={heroMedia[kind].alt} sizes="(max-width: 1023px) calc(100vw - 40px), (max-width: 1440px) 36.12vw, 520px" fetchPriority="high" className={local.heroPhoto} />
         <div className={local.heroCopy}>
           <h1 id="product-title" className={local.heroName}>{product.name}</h1>
           <p className={local.lead}>
@@ -114,31 +119,69 @@ function BlendHero({ kind, product, assets }: ProductPageProps & { kind: Blend }
   );
 }
 
-function Prepare({ kind }: { kind: Blend }) {
-  const milkshake = kind === "milkshake";
-  const steps = [
-    { label: "Milk", value: "200 ml", note: "Any fat content or plant-based" },
-    { label: "the Base", value: milkshake ? "30 g" : "35 g", note: "One scoop" },
-    ...(!milkshake ? [{ label: "Espresso", value: "30 ml", note: "One shot" }] : []),
-    { label: "Ice", value: milkshake ? "100 g" : "150 g", note: "Cubes" },
-    { label: "Blend 30 seconds", value: milkshake ? "12 oz cup" : "16 oz cup", note: milkshake ? "Smooth, thick, foam that holds" : "Smooth and well combined" },
-  ];
+const milkshakeRecipe = [
+  { ingredient: "the Base Milkshake", amount: "30 g" },
+  { ingredient: "Dairy or plant-based milk", amount: "200 ml" },
+  { ingredient: "Ice cubes", amount: "100 ml" },
+  { ingredient: "Your syrup or topping", amount: "To taste" },
+];
+
+const milkshakeMethod = [
+  { label: "Add", text: "Base, milk and ice into the blender jug." },
+  { label: "Blend", text: "30 seconds until thick and smooth." },
+  { label: "Finish", text: "Top with syrup, cream or a topping and serve." },
+];
+
+const frappeMethod = [
+  { label: "Milk", value: "200 ml", note: "Any fat content or plant-based" },
+  { label: "the Base", value: "35 g", note: "One scoop" },
+  { label: "Espresso", value: "30 ml", note: "One shot" },
+  { label: "Ice", value: "150 g", note: "Cubes" },
+  { label: "Blend 30 seconds", value: "16 oz cup", note: "Smooth and well combined" },
+];
+
+function MilkshakeRecipe() {
   return (
-    <Section className={local.band} title={milkshake ? <>How to<br />prepare</> : "How to prepare"} label="How to prepare" side={milkshake ? "Three ingredients, one blender, 30 seconds. The same cup from every barista." : undefined}>
-      <div className={cx(local.formula, !milkshake && local.frappeFormula)}>
-        {steps.map((step, i) => <div key={step.label} className={local.formulaPart}>
-          {i > 0 && <span className={local.operator} aria-hidden="true">{i === steps.length - 1 ? "=" : "+"}</span>}
-          <div className={cx(local.ingredient, i === steps.length - 1 && local.result)}>
+    <section className={cx(styles.section, local.band, local.recipe)} aria-labelledby="milkshake-recipe-title">
+      <div className={local.recipeIntro}>
+        <h2 id="milkshake-recipe-title" className={styles.title}>One cup,<br className={styles.desktopOnly} /> one recipe</h2>
+        <p>The same milkshake from every barista, in every outlet.</p>
+      </div>
+      <div className={local.recipeCard}>
+        <div className={local.recipeIngredients}>
+          <p className={local.recipeYield}>For one 12 oz cup</p>
+          <dl>{milkshakeRecipe.map(({ ingredient, amount }) => <div key={ingredient}>
+            <dt>{ingredient}</dt><dd>{amount}</dd>
+          </div>)}</dl>
+        </div>
+        <SiteLink href="/knowledge-recipes" className={local.recipeLink}>
+          <span className={styles.desktopOnly}>More recipes in Recipe base →</span>
+          <span className={styles.mobileOnly}>More recipes →</span>
+        </SiteLink>
+      </div>
+      <ol className={local.recipeMethod}>{milkshakeMethod.map(({ label, text }) => <li key={label}>
+        <h3>{label}</h3><p>{text}</p>
+      </li>)}</ol>
+    </section>
+  );
+}
+
+function PrepareFrappe() {
+  return (
+    <Section className={local.band} title="How to prepare" label="How to prepare">
+      <div className={cx(local.formula, local.frappeFormula)}>
+        {frappeMethod.map((step, i) => <div key={step.label} className={local.formulaPart}>
+          {i > 0 && <span className={local.operator} aria-hidden="true">{i === frappeMethod.length - 1 ? "=" : "+"}</span>}
+          <div className={cx(local.ingredient, i === frappeMethod.length - 1 && local.result)}>
             <span>{step.label}</span><strong>{step.value}</strong><span>{step.note}</span>
           </div>
         </div>)}
       </div>
-      {milkshake ? <div className={local.finish}><strong>Finish</strong><p>Top with whipped cream, your syrup or a topping. The base holds the foam, so the decoration stays on top.</p></div>
-        : <div className={local.cafeFinish}><strong>Finish like a café</strong>
-          <div><b>Flavour</b><p>Purée or syrup to taste, 20–25 ml</p></div>
-          <div><b>Walls</b><p>Coat the inside of the cup with caramel or chocolate topping</p></div>
-          <div><b>Top</b><p>Topping, cheese foam or cold foam</p></div>
-        </div>}
+      <div className={local.cafeFinish}><strong>Finish like a café</strong>
+        <div><b>Flavour</b><p>Purée or syrup to taste, 20–25 ml</p></div>
+        <div><b>Walls</b><p>Coat the inside of the cup with caramel or chocolate topping</p></div>
+        <div><b>Top</b><p>Topping, cheese foam or cold foam</p></div>
+      </div>
     </Section>
   );
 }
@@ -146,10 +189,11 @@ function Prepare({ kind }: { kind: Blend }) {
 function FlavourRange({ kind }: { kind: Blend }) {
   const milkshake = kind === "milkshake";
   return (
-    <Section className={cx(local.band, local.flavourBand)} title={`${flavours[kind].length} flavours`} label="Flavours" side={milkshake ? "Each one built on the same base, so texture and foam stay the same across the range." : undefined}>
+    <Section className={cx(local.band, local.flavourBand, milkshake && local.milkshakeFlavours)} title={`${flavours[kind].length} flavours`} label="Flavours">
+      {milkshake && <p className={local.flavourIntro}>Each one built on the same base, so texture and foam stay the same.</p>}
       <div className={cx(local.flavourLayout, !milkshake && local.frappeFlavours)}>
         <div className={local.flavours}>{flavours[kind].map(name => <div className={local.flavour} key={name}>{name}</div>)}</div>
-        <div className={local.own}><div><strong>Your own flavour</strong>{milkshake && <p>Our lab develops a flavour for your menu or your brand, on the same base.</p>}</div><FlavourEnquiryLink className={cx(styles.button, styles.red)}>Develop a flavour</FlavourEnquiryLink></div>
+        <div className={local.own}><div><strong>Your own flavour</strong>{milkshake && <p>Our lab develops a flavour for your menu or your brand.</p>}</div><FlavourEnquiryLink className={cx(styles.button, styles.red)}>Develop a flavour</FlavourEnquiryLink></div>
       </div>
     </Section>
   );
@@ -180,7 +224,8 @@ export function BlendPage(props: ProductPageProps & { kind: Blend }) {
   return (
     <main className={cx(styles.page, local.page, !milkshake && local.frappe)} style={{ "--pp-bg": "#F6F6F4", "--blend-tint": milkshake ? "#F3E4E7" : "#EBDCCB" } as CSSProperties}>
       <BlendHero {...props} />
-      <Section className={local.band} title="Made for service" label="Made for service" side={milkshake ? "Fast at the bar, simple to store, the same result from every barista." : undefined}>
+      <Section className={cx(local.band, milkshake && local.service)} title="Made for service" label="Made for service">
+        {milkshake && <p className={local.serviceIntro}>Fast at the bar, simple to store, the same result from every barista.</p>}
         <Stats className={local.stats} items={[
           { value: "30 sec", label: "Preparation time" },
           { value: milkshake ? "17 cups" : "14 cups", label: "From one 500 g doypack" },
@@ -190,8 +235,7 @@ export function BlendPage(props: ProductPageProps & { kind: Blend }) {
           { value: "Room temp", label: "Compact, easy to store" },
         ]} />
       </Section>
-      {milkshake && <MenuGallery kind={kind} assets={assets} />}
-      <Prepare kind={kind} />
+      {milkshake ? <><MilkshakeRecipe /><MenuGallery kind={kind} assets={assets} /></> : <PrepareFrappe />}
       <FlavourRange kind={kind} />
       {!milkshake && <MenuGallery kind={kind} assets={assets} />}
       <Inside className={cx(local.band, local.pack)} sets={nutrition[kind]} tableTitle="Nutrition facts" fullMobile side={<>

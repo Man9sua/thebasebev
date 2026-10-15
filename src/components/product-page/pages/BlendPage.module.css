@@ -2,7 +2,7 @@
 .page h2 { font-weight: var(--tbb-font-weight-heading) !important; }
 .hero { background: var(--blend-tint); padding: calc(16 * var(--u)) var(--pp-inline) calc(120 * var(--u)); }
 .heroGrid { display: grid; grid-template-columns: calc(520 * var(--u)) minmax(0,1fr); gap: calc(72 * var(--u)); align-items: center; }
-.heroPhoto { width: 100%; aspect-ratio: 672 / 780; object-fit: contain; background: #fff; border-radius: calc(32 * var(--u)); }
+.heroPhoto { width: 100%; height: auto; object-fit: contain; border-radius: calc(32 * var(--u)); }
 .heroCopy { display: flex; flex-direction: column; gap: calc(32 * var(--u)); }
 .heroName { font-size: calc(112 * var(--u)); line-height: .84; letter-spacing: -.025em !important; font-weight: var(--tbb-font-weight-heading) !important; text-transform: uppercase; }
 .lead { font-size: calc(21 * var(--u)); color: #3a3835; max-width: 540px; }
@@ -16,6 +16,27 @@
 .stats { column-gap: calc(48 * var(--u)); row-gap: calc(56 * var(--u)); }
 .stats > * { background: transparent; border-radius: 0; padding: 0; }
 .stats > * > :first-child { white-space: nowrap; }
+.service { gap: calc(24 * var(--u)); padding-bottom: 0; }
+.service h2 { text-wrap: initial; }
+.serviceIntro, .flavourIntro, .recipeIntro p { font-size: calc(18 * var(--u)); line-height: 1.55; color: #3a3835; }
+.service .stats { margin-top: calc(40 * var(--u)); }
+.recipe { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "intro card" "method card"; column-gap: calc(112 * var(--u)); row-gap: calc(56 * var(--u)); align-items: start; }
+.recipeIntro { grid-area: intro; display: flex; flex-direction: column; gap: calc(24 * var(--u)); }
+.recipeIntro h2 { text-wrap: initial; }
+.recipeCard { grid-area: card; display: flex; flex-direction: column; gap: calc(40 * var(--u)); padding: calc(40 * var(--u)); background: #fff; border-radius: calc(28 * var(--u)); }
+.recipeYield { font-size: calc(14 * var(--u)); color: #6e6a63; font-weight: var(--tbb-font-weight-button); }
+.recipeIngredients { display: flex; flex-direction: column; gap: calc(20 * var(--u)); }
+.recipeIngredients dl { margin: 0; }
+.recipeIngredients dl > div { display: flex; align-items: center; justify-content: space-between; gap: calc(20 * var(--u)); padding-block: calc(24 * var(--u)); border-bottom: 1px solid #dcd9d3; }
+.recipeIngredients dl > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.recipeIngredients dt { font-size: calc(18 * var(--u)); font-weight: var(--tbb-font-weight-button); line-height: 1.35; }
+.recipeIngredients dd { flex: none; margin: 0; font-size: calc(28 * var(--u)); font-weight: var(--tbb-font-weight-heading); line-height: 1; text-transform: uppercase; }
+.recipeMethod { grid-area: method; display: flex; flex-direction: column; gap: calc(40 * var(--u)); list-style: none; margin: 0; padding: 0; }
+.recipeMethod li { display: flex; flex-direction: column; gap: calc(10 * var(--u)); }
+.recipeMethod h3 { font-size: calc(32 * var(--u)); line-height: 1; font-weight: var(--tbb-font-weight-heading); text-transform: uppercase; }
+.recipeMethod p { font-size: calc(17 * var(--u)); line-height: 1.5; color: #55524c; }
+.recipeLink { font-size: calc(16 * var(--u)); font-weight: var(--tbb-font-weight-button); line-height: 1.4; color: inherit; text-decoration: none; }
+.recipeLink:hover { color: var(--pp-red); }
 .formula { display: flex; gap: calc(16 * var(--u)); align-items: stretch; }
 .formulaPart { display: flex; gap: calc(16 * var(--u)); min-width: 0; flex: 1; }
 .formulaPart:last-child { flex: 1.4; }
@@ -27,9 +48,10 @@
 .ingredient > :last-child { font-size: calc(15 * var(--u)); color: #55524c; line-height: 1.4; }
 .result { background: #0e0e0e; color: #f6f6f4; }
 .result > :first-child, .result > :last-child { color: #b5b1aa; }
-.finish { display: flex; gap: calc(16 * var(--u)); align-items: center; font-size: calc(17 * var(--u)); }
-.finish strong { font-size: calc(22 * var(--u)); text-transform: uppercase; }
 .flavourBand { background: var(--blend-tint); }
+.milkshakeFlavours { gap: calc(24 * var(--u)); }
+.milkshakeFlavours .flavourLayout { margin-top: calc(24 * var(--u)); }
+.milkshakeFlavours .flavour, .milkshakeFlavours .own strong { font-weight: var(--tbb-font-weight-heading); }
 .flavourLayout { display: grid; grid-template-columns: minmax(0,1fr) calc(380 * var(--u)); gap: calc(16 * var(--u)); }
 .flavours { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: calc(12 * var(--u)); }
 .flavour { background: white; border-radius: calc(22 * var(--u)); padding: calc(28 * var(--u)); min-height: calc(90 * var(--u)); display: flex; align-items: flex-end; font-size: calc(28 * var(--u)); font-weight: var(--tbb-font-weight-subheading); text-transform: uppercase; line-height: .95; }
@@ -84,18 +106,36 @@
 @media (max-width: 1023px) {
   .hero { padding: 24px 20px 48px; }
   .heroGrid { display: flex; flex-direction: column; gap: 28px; align-items: stretch; }
-  .heroPhoto { border-radius: 22px; max-height: 390px; object-fit: contain; background: #fff; }
+  .heroPhoto { border-radius: 22px; }
   .heroName { font-size: clamp(40px, 11.3vw, 52px); line-height: .88; }
   .heroCopy { gap: 24px; }
   .lead { font-size: 16px; }
-  .heroFacts { gap: 12px; }
+  .heroFacts { grid-template-columns: 1fr; gap: 8px; }
+  .heroFacts div { flex-direction: row; justify-content: space-between; gap: 20px; align-items: baseline; }
   .heroFacts dt { font-size: 12px; }
-  .heroFacts dd { font-size: 14px; }
+  .heroFacts dd { font-size: 12px; text-align: right; }
   .actions { flex-direction: column; gap: 8px; }
   .band, .frappe .band { padding: 64px 20px 48px; gap: 24px; }
   .page .band h2, .page .faq h2, .frappe .band h2 { font-size: 40px; }
   .stats { column-gap: 24px; row-gap: 28px; }
   .stats > * > :first-child { font-size: 28px; white-space: normal; }
+  .service { gap: 20px; padding-bottom: 0; }
+  .serviceIntro, .flavourIntro, .recipeIntro p { font-size: 16px; }
+  .service .stats { margin-top: 8px; column-gap: 24px; row-gap: 32px; }
+  .service .stats > * > :first-child { font-size: clamp(22px, 6.66vw, 26px); }
+  .recipe { grid-template-columns: 1fr; grid-template-areas: "intro" "ingredients" "method" "link"; gap: 32px; }
+  .recipeIntro { gap: 20px; }
+  .recipeCard { display: contents; }
+  .recipeIngredients { grid-area: ingredients; gap: 12px; background: #fff; border-radius: 22px; padding: 24px 20px; }
+  .recipeYield { font-size: 14px; }
+  .recipeIngredients dl > div { padding-block: 20px; gap: 12px; }
+  .recipeIngredients dt { font-size: 16px; }
+  .recipeIngredients dd { font-size: 24px; }
+  .recipeMethod { gap: 28px; }
+  .recipeMethod li { gap: 8px; }
+  .recipeMethod h3 { font-size: 24px; }
+  .recipeMethod p { font-size: 16px; }
+  .recipeLink { grid-area: link; font-size: 16px; }
   .formula { flex-direction: column; gap: 8px; }
   .formulaPart { flex-direction: column; align-items: stretch; gap: 8px; }
   .operator, .frappeFormula .operator { font-size: 22px; }
@@ -103,13 +143,17 @@
   .ingredient > :first-child { font-size: 14px; }
   .ingredient strong, .frappeFormula strong { font-size: 36px; }
   .ingredient > :last-child { font-size: 14px; }
-  .finish { flex-direction: column; align-items: flex-start; font-size: 15px; }
   .flavourLayout, .frappeFlavours { display: flex; flex-direction: column; }
   .flavours { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
   .flavour, .frappeFlavours .flavour { padding: 16px; border-radius: 16px; min-height: 80px; font-size: 20px; }
+  .milkshakeFlavours { gap: 20px; padding-inline: 12px; }
+  .milkshakeFlavours > h2, .milkshakeFlavours > .flavourIntro { padding-inline: 8px; }
+  .milkshakeFlavours .flavourLayout { margin-top: 8px; gap: 24px; }
+  .milkshakeFlavours .flavour { min-height: 58px; padding: 20px 18px; align-items: center; font-size: clamp(15px, 4.615vw, 18px); }
   .frappeFlavours .flavours { grid-template-columns: 1fr; }
   .frappeFlavours .flavour { padding: 20px; min-height: 0; font-size: 22px; }
   .own, .frappeFlavours .own { padding: 24px; border-radius: 20px; gap: 24px; }
+  .milkshakeFlavours .own { padding: 28px 20px; }
   .own strong, .frappeFlavours .own strong { font-size: 30px; }
   .own p { font-size: 15px; }
   .gallery, .galleryMilkshake { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
@@ -131,4 +175,6 @@
   .cafeFinish b { font-size: 20px; }
   .cafeFinish p { font-size: 15px; }
   .faq { padding: 64px 12px 24px; gap: 12px; }
+  .faq summary { align-items: center; }
+  .faq summary > span:last-child { display: flex; flex: none; width: 32px; height: 32px; align-items: center; justify-content: center; border-radius: 50%; background: #f0efeb; font-size: 18px; }
 }

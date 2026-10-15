@@ -193,7 +193,7 @@ async function runViewport(label, viewport) {
   for (const [slug, count, sourceFlavour, calories] of [["milkshake", 9, "Vanilla", "123"], ["frappe", 3, "Salted Caramel", "143"]]) {
     await caseOf(slug, async () => {
       await visit(`/${slug}`);
-      for (const title of ["Made for service", "How to prepare", `${count} flavours`, "Inside the pack"]) {
+      for (const title of ["Made for service", slug === "milkshake" ? "One cup, one recipe" : "How to prepare", `${count} flavours`, "Inside the pack"]) {
         check(await page.getByRole("heading", { name: title, exact: true }).isVisible(), `${label} ${slug}: ${title} visible`);
       }
       // The photo-removal message concerns the Purée bottle mockup. The latest
@@ -210,18 +210,60 @@ async function runViewport(label, viewport) {
       check(await page.getByRole("link", { name: "Request marketing kit", exact: true }).getAttribute("href") === "/ae/contacts", `${label} ${slug}: marketing kit request has a real destination`);
       const hero = page.locator("main section").first().locator("img").first();
       await hero.evaluate((image) => image.decode());
-      check((await hero.getAttribute("src"))?.includes(`/products/${slug}/hero-`), `${label} ${slug}: supplied hero photograph`);
+      const heroName = slug === "milkshake" ? "hero-pouch" : "hero-pack-glass";
+      check((await hero.getAttribute("src"))?.includes(`/products/${slug}/${heroName}-`), `${label} ${slug}: owner-selected packaging hero`);
+      await page.locator("main section").first().screenshot({ path: path.join(artifactRoot, `${label}-${slug}-hero.png`) });
+      if (slug === "milkshake") {
+        const service = page.locator('section[aria-label="Made for service"]');
+        const recipe = page.locator('section[aria-labelledby="milkshake-recipe-title"]');
+        const range = page.locator('section[aria-label="Flavours"]');
+        check(await service.getByText("Fast at the bar, simple to store, the same result from every barista.", { exact: true }).isVisible(), `${label} milkshake: service introduction visible`);
+        check(await service.evaluate((node) => node.nextElementSibling?.getAttribute("aria-labelledby") === "milkshake-recipe-title"), `${label} milkshake: recipe immediately follows service`);
+        const ingredients = await recipe.locator("dl > div").allTextContents();
+        check(ingredients.map(normalize).join("|") === "the Base Milkshake30 g|Dairy or plant-based milk200 ml|Ice cubes100 ml|Your syrup or toppingTo taste", `${label} milkshake: exact supplied recipe quantities`);
+        const recipeLink = recipe.getByRole("link");
+        check(await recipeLink.getAttribute("href") === "/ae/knowledge-recipes", `${label} milkshake: recipe link has a real destination`);
+        check(await range.getByText("Each one built on the same base, so texture and foam stay the same.", { exact: true }).isVisible(), `${label} milkshake: flavour introduction visible`);
+        check(await recipe.locator("ol h3").evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).fontWeight === "900")), `${label} milkshake: recipe step labels match the supplied display style`);
+        if (viewport.width < 1024) {
+          check(await page.locator("main section").first().locator("dl").evaluate((list) => {
+            const rows = [...list.children].map((row) => ({ row: row.getBoundingClientRect(), label: row.firstElementChild.getBoundingClientRect(), value: row.lastElementChild.getBoundingClientRect() }));
+            return rows.length === 3 && rows.every(({ label, value }) => Math.abs(label.y - value.y) < 3 && value.x > label.right)
+              && rows[1].row.y >= rows[0].row.bottom && rows[2].row.y >= rows[1].row.bottom;
+          }), `${label} milkshake: mobile specification label/value rows`);
+          check(await recipe.evaluate((node) => {
+            const card = node.querySelector("dl").getBoundingClientRect();
+            const method = node.querySelector("ol").getBoundingClientRect();
+            const link = node.querySelector("a").getBoundingClientRect();
+            return method.y >= card.bottom && link.y >= method.bottom;
+          }), `${label} milkshake: mobile recipe card, method, link order`);
+          check(await service.getByText("Room temp", { exact: true }).evaluate((node) => node.getBoundingClientRect().height <= parseFloat(getComputedStyle(node).fontSize) * 1.2), `${label} milkshake: Room temp stays on one line`);
+        } else {
+          check(await service.getByRole("heading").evaluate((node) => node.getBoundingClientRect().height <= parseFloat(getComputedStyle(node).fontSize) * 1.2), `${label} milkshake: service heading stays on one line`);
+        }
+        for (const [name, section] of [["service", service], ["recipe", recipe], ["flavours", range]]) {
+          await section.screenshot({ path: path.join(artifactRoot, `${label}-milkshake-${name}.png`) });
+        }
+      }
       check(await page.locator('main nav[aria-label="Breadcrumb"]').count() === 0, `${label} ${slug}: no overline breadcrumbs`);
       const nutrition = page.locator("section").filter({ has: page.getByRole("heading", { name: "Inside the pack", exact: true }) });
       check(await nutrition.getByRole("tablist").count() === 0, `${label} ${slug}: no unsupported nutrition variants`);
       const table = nutrition.locator("[class*='nutritionFullMobile']");
       check(await table.count() === 1 && await table.isVisible(), `${label} ${slug}: single source nutrition table visible`);
-      check((await table.innerText()).includes(sourceFlavour), `${label} ${slug}: nutrition labelled for supplied flavour`);
+      check(slug === "milkshake" ? !(await table.innerText()).includes(sourceFlavour) : (await table.innerText()).includes(sourceFlavour), `${label} ${slug}: owner-approved nutrition caption`);
       check((await table.innerText()).includes(calories), `${label} ${slug}: source calories retained`);
       const details = page.locator("section[aria-labelledby='product-faq-title'] details");
       check(await details.count() === 9, `${label} ${slug}: all nine FAQ entries retained`);
       check(await details.locator("summary:visible").count() === 9, `${label} ${slug}: all FAQ questions visible`);
       check(await details.evaluateAll((nodes) => nodes.every((node) => !node.open)), `${label} ${slug}: FAQ starts collapsed`);
+      if (viewport.width < 1024) {
+        check(await details.first().locator("summary > span").evaluate((icon) => {
+          const rect = icon.getBoundingClientRect();
+          const style = getComputedStyle(icon);
+          return rect.width >= 30 && Math.abs(rect.width - rect.height) < 1 && style.borderRadius === "50%" && style.backgroundColor === "rgb(240, 239, 235)";
+        }), `${label} ${slug}: FAQ plus has a light circular button`);
+      }
+      await page.locator("section[aria-labelledby='product-faq-title']").screenshot({ path: path.join(artifactRoot, `${label}-${slug}-questions.png`) });
       await details.first().locator("summary").click();
       check(await details.first().locator("p").isVisible(), `${label} ${slug}: FAQ opens`);
       await details.first().locator("summary").click();
@@ -269,6 +311,12 @@ async function runViewport(label, viewport) {
         && boxes[0].width < boxes[2].width
         && cards.every((card) => getComputedStyle(card).backgroundColor === "rgb(255, 255, 255)");
     }), `${label} manufacturer: one white-tile row with a narrower Halal mark`);
+    if (viewport.width >= 1024) {
+      check(await markList.locator("li").first().evaluate((card) => {
+        const rect = card.getBoundingClientRect();
+        return Math.abs(rect.width - rect.height) < 2;
+      }), `${label} manufacturer: Halal tile is square`);
+    }
     await page.waitForFunction(() => {
       let node = document.querySelector("#about ul[aria-label='Quality certifications']");
       while (node) {
@@ -306,7 +354,7 @@ async function runViewport(label, viewport) {
   await caseOf("missing-visuals", async () => {
     for (const [route, names] of [
       ["", ["THE BASE branded shipping carton artwork", "Barista working at a point-of-sale terminal in a café"]],
-      ["/rnd", ["THE BASE branded laboratory interior render, where taste begins", "THE BASE branded laboratory room render with tasting workstations"]],
+      ["/rnd", ["Laboratory technician examining a sample through a microscope", "THE BASE branded laboratory room render with tasting workstations"]],
     ]) {
       await visit(route);
       for (const name of names) {

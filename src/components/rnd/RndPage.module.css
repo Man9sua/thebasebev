@@ -143,8 +143,12 @@
 }
 
 .heroMedia {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 75%;
+  height: 100%;
   object-fit: cover;
-  object-position: right center;
+  object-position: 45% 40%;
 }
 
 .hero::after {
@@ -153,9 +157,11 @@
   content: "";
   background: linear-gradient(
     90deg,
-    rgba(10, 12, 14, 0.94),
-    rgba(10, 12, 14, 0.82) 45%,
-    rgba(10, 12, 14, 0.35)
+    var(--tbb-rd-ink-deep) 0%,
+    var(--tbb-rd-ink-deep) 34%,
+    rgba(11, 14, 20, 0.82) 52%,
+    rgba(11, 14, 20, 0.28) 78%,
+    rgba(11, 14, 20, 0) 100%
   );
   pointer-events: none;
 }
@@ -813,6 +819,10 @@
   .processGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .heroMedia {
+    width: 100%;
+  }
 }
 
 @media (max-width: 47.9375rem) {
@@ -822,7 +832,17 @@
   }
 
   .hero::after {
-    background: rgba(10, 12, 14, 0.78);
+    background: linear-gradient(
+      180deg,
+      rgba(11, 14, 20, 0.45) 0%,
+      rgba(11, 14, 20, 0.85) 42%,
+      var(--tbb-rd-ink-deep) 100%
+    );
+  }
+
+  .heroMedia {
+    height: 60%;
+    object-position: 40% 40%;
   }
 
   .heroActions .primary,
