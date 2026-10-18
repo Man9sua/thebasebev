@@ -4,7 +4,7 @@ import openNextWorker from "./.open-next/worker.js";
 import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
 import publicRoutePaths from "./src/data/public-route-paths.json";
 import { publicPath } from "./src/lib/site-paths";
-import { toDefaultCountryPath } from "./src/lib/country-paths";
+import { retiredRouteRedirect, toDefaultCountryPath } from "./src/lib/country-paths";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
@@ -148,7 +148,7 @@ async function staticFastPath(
     );
   }
 
-  const redirect = PERMANENT_REDIRECTS.get(pathname);
+  const redirect = PERMANENT_REDIRECTS.get(pathname) ?? retiredRouteRedirect(pathname);
   if (redirect) {
     return new Response(null, {
       status: 301,

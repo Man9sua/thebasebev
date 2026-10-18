@@ -355,8 +355,8 @@ async function runViewport(label, viewport) {
 
   await caseOf("missing-visuals", async () => {
     for (const [route, names] of [
-      ["", ["THE BASE branded shipping carton artwork", "Barista working at a point-of-sale terminal in a café"]],
-      ["/rnd", ["Laboratory technician examining a sample through a microscope", "THE BASE branded laboratory room render with tasting workstations"]],
+      ["", ["the Base branded shipping carton artwork", "Barista working at a point-of-sale terminal in a café"]],
+      ["/rnd", ["Laboratory technician examining a sample through a microscope", "the Base branded laboratory room render with tasting workstations"]],
     ]) {
       await visit(route);
       for (const name of names) {
@@ -401,7 +401,7 @@ async function runViewport(label, viewport) {
     await accepted;
     await form.locator(".js-successbox").waitFor({ state: "visible" });
     check(await form.getByRole("heading", { name: /Request.*received/ }).isVisible(), `${label} samples: confirmed mocked delivery shows the confirmation`);
-    check(await form.getByText(/The Base team will contact you/).isVisible(), `${label} samples: confirmation does not promise an unverified local team`);
+    check(await form.getByText(/the Base team will contact you/).isVisible(), `${label} samples: confirmation does not promise an unverified local team`);
     await page.keyboard.press("Escape");
   });
 

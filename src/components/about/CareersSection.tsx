@@ -44,7 +44,7 @@ export function CareersSection({ standalone = false }: { standalone?: boolean })
             <label className={`${styles.agreement} ${styles.full}`}><input name="privacy-consent" type="checkbox" value="yes" required /><span>I agree to the <SiteLink href="/privacy">Privacy Policy</SiteLink>.</span></label>
             <button className={`${styles.submit} ${styles.full}`} type="submit">Send application</button>
           </div>
-          <div className={`js-successbox t-form__successbox ${styles.success}`} style={{ display: "none" }} role="status">Thank you. Your application has been sent to THE BASE team.</div>
+          <div className={`js-successbox t-form__successbox ${styles.success}`} style={{ display: "none" }} role="status">Thank you. Your application has been sent to the Base team.</div>
         </form>
       </div>
     </section>

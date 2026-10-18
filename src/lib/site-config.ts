@@ -126,7 +126,6 @@ export const FOOTER_LINKS = {
     { label: "Blog", href: "/resources/blog" },
     { label: "Glossary", href: "/resources/glossary" },
     { label: "Tools", href: "/resources/tools" },
-    { label: "Wholesale Strategy", href: "/wholesale-strategy" },
   ],
   /*
    * The bottom line of the footer. The redesign moves Sitemap here, out of

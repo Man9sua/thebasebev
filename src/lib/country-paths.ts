@@ -1,4 +1,5 @@
 import { DISTRIBUTOR_MARKETS } from "../data/distributor-markets";
+import retiredRoutes from "../data/retired-routes.json";
 
 export const DEFAULT_COUNTRY_CODE = "AE";
 export const COUNTRY_CODES = DISTRIBUTOR_MARKETS.map(({ code }) => code);
@@ -67,6 +68,30 @@ export function switchCountryPath(href: string, code: string) {
   const country = countryCodes.has(requested) ? requested : DEFAULT_COUNTRY_CODE;
   return `/${country.toLowerCase()}${parsed.route === "/" ? "" : parsed.route}${suffix}`;
 }
+
+const RETIRED_ROUTES = retiredRoutes as Readonly<Record<string, string>>;
+
+/**
+ * A retired page, in any market: `/sa/wholesale-strategy` → `/sa/distributors`.
+ * The country prefix is kept, so a visitor stays on their market's site; a
+ * bare route without a prefix goes to the default market.
+ */
+export function retiredRouteRedirect(pathname: string) {
+  const country = pathCountry(pathname);
+  const route = country ? pathname.slice(country.prefix.length) || "/" : pathname;
+  const replacement = RETIRED_ROUTES[route];
+  if (!replacement) return null;
+  return `/${(country?.code ?? DEFAULT_COUNTRY_CODE).toLowerCase()}${replacement}`;
+}
+
+/** Every retired route with every market prefix, for build-time redirect lists. */
+export const RETIRED_ROUTE_REDIRECTS = Object.entries(RETIRED_ROUTES).flatMap(([route, replacement]) => [
+  { source: route, destination: `/${DEFAULT_COUNTRY_CODE.toLowerCase()}${replacement}` },
+  ...COUNTRY_CODES.map((code) => ({
+    source: `/${code.toLowerCase()}${route}`,
+    destination: `/${code.toLowerCase()}${replacement}`,
+  })),
+]);
 
 /** Reuse the generated English HTML/RSC document, without redirecting the visible URL. */
 export function toDefaultCountryPath(pathname: string) {

@@ -26,7 +26,6 @@ const SECTIONS: readonly SitemapSection[] = [
       { href: "/request-samples", label: "Request samples" },
       { href: "/contacts", label: "Get a quote" },
       { href: "/find-your-distributor", label: "Find your distributor" },
-      { href: "/wholesale-strategy", label: "Wholesale strategy" },
     ],
   },
   {

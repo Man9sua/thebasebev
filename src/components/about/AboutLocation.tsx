@@ -69,7 +69,7 @@ export function AboutLocation() {
           <iframe
             className={styles.frame}
             src={LAB_LOCATION.embedSrc}
-            title={`Map: The Base lab and showroom, ${LAB_LOCATION.city}`}
+            title={`Map: the Base lab and showroom, ${LAB_LOCATION.city}`}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             allowFullScreen

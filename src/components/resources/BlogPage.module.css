@@ -1,11 +1,11 @@
 /**
- * The Blog shelf.
+ * The Blog shelf, in the house style of the redesigned pages.
  *
- * Deliberately the Glossary's surface: same paper, same bordered control
- * panel, same uppercase meta and same card border, so the two Resources
- * shelves read as one system. The differences are the ones a post needs — a
- * 16:10 cover, a lead card that spans the grid, and three columns instead of
- * two, because thirty cards in two columns is a very long page.
+ * Shares its surface with the Glossary so the two Resources shelves read as
+ * one system, and both follow Catalogue and About: warm paper, an uppercase
+ * Exo 900 title at the catalogue's scale, a white rounded panel for search and
+ * filters, pill chips, and white 20px-radius cards without hairline borders.
+ * The lead card spans the grid; three columns keep thirty posts compact.
  *
  * `!important` on the card headings and copy for the reason the picker carries
  * it: `design-tokens` zeroes `p`/heading margins for redesigned surfaces with
@@ -13,59 +13,66 @@
  */
 
 .page {
+  --shelf-paper: var(--tbb-rd-paper);
+  --shelf-ink: var(--tbb-rd-ink);
+  --shelf-body: var(--tbb-rd-body);
+  --shelf-muted: #55524c;
+  --shelf-field: var(--tbb-rd-field);
+  --shelf-chip: var(--tbb-rd-card);
+  --shelf-red: var(--tbb-rd-red);
+  --shelf-gutter: clamp(1.25rem, 6.6667vw, 6rem);
   min-height: 100vh;
   padding-top: var(--tbb-header-h);
   overflow: clip;
-  background: #fbf8f3;
-  color: var(--tbb-ink);
+  background: var(--shelf-paper);
+  color: var(--shelf-ink);
+  font-family: var(--tbb-font-body);
 }
 
 .hero {
-  padding: clamp(5rem, 10vw, 9rem) var(--tbb-gutter) clamp(3.5rem, 7vw, 6rem);
-  border-bottom: 1px solid var(--tbb-line);
-  background:
-    radial-gradient(circle at 78% 18%, rgba(255, 0, 0, 0.08), transparent 27%),
-    var(--tbb-grey-lightest);
+  padding: clamp(3rem, 6vw, 5.5rem) var(--shelf-gutter) clamp(2rem, 3.5vw, 3rem);
 }
 
 .heroInner,
 .content {
   width: 100%;
-  max-width: var(--tbb-measure-wide);
+  max-width: var(--tbb-measure);
   margin-inline: auto;
 }
 
 .hero h1 {
-  max-width: 12ch;
-  margin-top: 1rem;
+  margin: 0 !important;
   font-family: var(--tbb-font-heading);
-  font-size: clamp(3.4rem, 9vw, 8.5rem);
+  font-size: clamp(2.5rem, 5.4vw, 5rem);
   font-weight: var(--tbb-font-weight-heading);
-  letter-spacing: -0.055em;
-  line-height: 0.88;
+  letter-spacing: -0.02em;
+  line-height: 0.86 !important;
   text-transform: uppercase;
 }
 
 .hero p {
-  max-width: 42rem;
-  margin-top: clamp(1.5rem, 3vw, 2.5rem);
-  color: var(--tbb-ink-soft);
-  font-size: clamp(1rem, 1.4vw, 1.25rem);
-  line-height: 1.5;
+  max-width: 40rem;
+  margin: clamp(1.25rem, 2.2vw, 1.75rem) 0 0 !important;
+  color: var(--shelf-body);
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
+/* Padded itself, so its measure includes the gutters to line up with the hero. */
 .content {
-  padding: clamp(3rem, 7vw, 6rem) var(--tbb-gutter) var(--tbb-section);
+  max-width: calc(var(--tbb-measure) + 2 * var(--shelf-gutter));
+  padding: 0 var(--shelf-gutter) clamp(4.5rem, 9vw, 8rem);
 }
 
 /* ---- controls ---- */
 
 .controls {
   display: grid;
-  gap: 1.5rem;
-  padding: clamp(1.25rem, 3vw, 2rem);
-  border: 1px solid var(--tbb-line);
-  background: rgba(255, 255, 255, 0.64);
+  gap: 1.25rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-radius: 1.5rem;
+  background: #fff;
 }
 
 .search {
@@ -75,35 +82,42 @@
 
 .search svg {
   position: absolute;
-  inset-inline-start: 1.1rem;
+  inset-inline-start: 1.25rem;
   top: 50%;
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1.125rem;
+  height: 1.125rem;
   transform: translateY(-50%);
   fill: none;
-  stroke: var(--tbb-muted);
-  stroke-width: 1.5;
+  stroke: var(--tbb-rd-muted);
+  stroke-width: 1.6;
   pointer-events: none;
 }
 
 .search input {
   width: 100%;
   min-height: 3.5rem;
-  padding: 0.8rem 1.25rem 0.8rem 3.15rem;
-  border: 1px solid var(--tbb-line);
+  padding: 0.8rem 1.25rem 0.8rem 3.25rem;
+  border: 1px solid transparent;
   border-radius: 999px;
   outline: none;
-  background: var(--tbb-grey-lightest);
-  color: var(--tbb-ink);
+  background: var(--shelf-field);
+  color: var(--shelf-ink);
   font: inherit;
+  font-size: 0.9375rem;
+  font-weight: var(--tbb-font-weight-body);
   transition:
     border-color var(--tbb-dur-fast) var(--tbb-ease),
     background var(--tbb-dur-fast) var(--tbb-ease);
 }
 
+.search input::placeholder {
+  color: var(--tbb-rd-placeholder);
+  opacity: 1;
+}
+
 .search input:focus {
-  border-color: var(--tbb-ink);
-  background: var(--tbb-paper);
+  border-color: var(--shelf-ink);
+  background: #fff;
 }
 
 .filterGroup {
@@ -115,13 +129,14 @@
 .filter,
 .filterActive {
   min-height: 2.75rem;
-  padding-inline: 1rem;
-  border: 1px solid var(--tbb-line);
+  padding-inline: 1.125rem;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: transparent;
-  color: var(--tbb-ink);
+  background: var(--shelf-field);
+  color: var(--shelf-ink);
   font: inherit;
-  font-size: 0.68rem;
+  font-family: var(--tbb-font-button);
+  font-size: 0.75rem;
   font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -130,17 +145,15 @@
     background var(--tbb-dur-fast) var(--tbb-ease),
     color var(--tbb-dur-fast) var(--tbb-ease),
     border-color var(--tbb-dur-fast) var(--tbb-ease);
-  font-family: var(--tbb-font-button);
 }
 
 .filterActive {
-  border-color: var(--tbb-black);
-  background: var(--tbb-black);
-  color: var(--tbb-on-dark);
+  background: var(--shelf-ink);
+  color: #fff;
 }
 
 .filter:hover {
-  border-color: var(--tbb-ink);
+  border-color: var(--shelf-ink);
 }
 
 .filter:focus-visible,
@@ -148,7 +161,7 @@
 .resultBar button:focus-visible,
 .lead:focus-visible,
 .post:focus-visible {
-  outline: 2px solid var(--tbb-accent);
+  outline: 2px solid var(--shelf-red);
   outline-offset: 3px;
 }
 
@@ -157,25 +170,29 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: clamp(2rem, 4vw, 3rem) 0 1.25rem;
-  color: var(--tbb-muted);
-  font-size: 0.72rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem) 0.25rem 1rem;
+  color: var(--shelf-muted);
+  font-size: 0.8125rem;
+  font-weight: var(--tbb-font-weight-medium);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .resultBar button {
-  padding: 0 0 0.2rem;
+  padding: 0;
   border: 0;
   background: transparent;
-  color: var(--tbb-ink);
+  color: var(--shelf-red);
   font: inherit;
-  font-size: inherit;
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: inherit;
   text-transform: inherit;
   cursor: pointer;
-  font-family: var(--tbb-font-button);
-  font-weight: var(--tbb-font-weight-button);
+}
+
+.resultBar button:hover {
+  color: var(--tbb-rd-red-dark);
 }
 
 /* ---- cards ---- */
@@ -184,30 +201,30 @@
 .post {
   display: grid;
   min-width: 0;
-  border: 1px solid var(--tbb-line);
-  background: rgba(255, 255, 255, 0.64);
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: #fff;
   color: inherit !important;
   text-decoration: none !important;
   transition:
-    border-color var(--tbb-dur-fast) var(--tbb-ease),
-    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    box-shadow var(--tbb-dur-fast) var(--tbb-ease),
     transform var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .lead:hover,
 .post:hover {
-  border-color: rgba(0, 0, 0, 0.34);
-  background: var(--tbb-paper);
   color: inherit !important;
   text-decoration: none !important;
+  box-shadow: 0 18px 40px -24px rgba(14, 14, 14, 0.35);
   transform: translateY(-3px);
 }
 
 /* The lead runs as a spread: picture on the left, copy on the right. */
 .lead {
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   align-items: stretch;
-  margin-bottom: clamp(0.75rem, 1.6vw, 1.5rem);
+  margin-bottom: clamp(1rem, 1.6vw, 1.5rem);
+  border-radius: 1.5rem;
 }
 
 .leadArt,
@@ -215,12 +232,11 @@
   display: block;
   position: relative;
   overflow: hidden;
-  background: var(--tbb-grey-lightest);
+  background: var(--shelf-chip);
 }
 
-/* The cover is what sizes the lead row. Left to its own height it came out
-   near 800px against 350 of copy, which put the call to action half a screen
-   under the sentence it belongs to. */
+/* The cover is what sizes the lead row; left to its own height it put the
+   call to action half a screen under the sentence it belongs to. */
 .leadArt,
 .art {
   aspect-ratio: 16 / 10;
@@ -247,8 +263,7 @@
   flex-direction: column;
 }
 
-/* Centred rather than pinned: the copy is the shorter half of the spread, and
-   hanging it from the top left it floating over an empty lower half. */
+/* Centred rather than pinned: the copy is the shorter half of the spread. */
 .leadCopy {
   justify-content: center;
   padding: clamp(1.75rem, 3.4vw, 3rem);
@@ -259,63 +274,84 @@
   padding-top: clamp(1.25rem, 2.4vw, 1.75rem);
 }
 
-/* The cover keeps its ratio, so the copy is what takes up the slack when a
-   card is shorter than its row — without this the spare height opened as a gap
-   between the picture and the text instead. */
+/* The cover keeps its ratio, so the copy takes up the slack in a tall row. */
 .post {
   grid-template-rows: auto minmax(0, 1fr);
 }
 
 .postBody {
-  padding: clamp(1.35rem, 2.2vw, 1.75rem);
+  padding: clamp(1.25rem, 2vw, 1.5rem);
 }
 
+/* Topic as a chip, date as plain metadata. */
 .postMeta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  color: var(--tbb-muted);
-  font-size: 0.65rem;
+  gap: 0.5rem 1rem;
+  color: var(--shelf-muted);
+  font-size: 0.8125rem;
+  font-weight: var(--tbb-font-weight-medium);
+  line-height: 1.3;
+}
+
+.postMeta > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: var(--shelf-chip);
+  color: var(--shelf-ink);
+  font-family: var(--tbb-font-button);
+  font-size: 0.6875rem;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .lead h2,
 .post h2 {
-  margin: clamp(1rem, 2vw, 1.5rem) 0 0 !important;
+  margin: 1rem 0 0 !important;
   font-family: var(--tbb-font-heading);
   font-weight: var(--tbb-font-weight-subheading);
-  letter-spacing: -0.025em;
-  line-height: 1.08 !important;
+  letter-spacing: -0.01em;
+  line-height: 1.15 !important;
+  text-wrap: balance;
 }
 
 .lead h2 {
-  font-size: clamp(1.7rem, 3vw, 2.75rem);
+  font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+  line-height: 1.05 !important;
 }
 
 .post h2 {
-  font-size: clamp(1.25rem, 1.7vw, 1.5rem);
+  font-size: clamp(1.125rem, 1.4vw, 1.3125rem);
 }
 
 .excerpt {
   display: block;
-  margin-top: 0.9rem;
-  color: var(--tbb-ink-soft);
+  margin-top: 0.75rem;
+  color: var(--shelf-body);
   font-size: 0.9375rem;
   line-height: 1.55;
 }
 
-/* Pinned to the foot so a two-line title and a four-line title still line
-   their call to action up across a row. */
+.lead .excerpt {
+  font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+}
+
+/* Pinned to the foot so call to actions line up across a row. */
 .readMore {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   margin-top: auto;
-  padding-top: clamp(1.25rem, 2.4vw, 2rem);
-  color: var(--tbb-accent);
-  font-size: 0.7rem;
+  padding-top: clamp(1.25rem, 2vw, 1.5rem);
+  color: var(--shelf-red);
+  font-family: var(--tbb-font-button);
+  font-size: 0.75rem;
   font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -333,23 +369,26 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+  gap: clamp(1rem, 1.6vw, 1.5rem);
 }
 
 .empty {
-  padding: clamp(4rem, 10vw, 8rem) 1rem;
-  border-top: 1px solid var(--tbb-ink);
+  padding: clamp(3.5rem, 8vw, 6rem) 1.5rem;
+  border-radius: 1.5rem;
+  background: #fff;
   text-align: center;
 }
 
 .empty strong {
   font-family: var(--tbb-font-heading);
-  font-size: var(--tbb-text-h3);
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+  font-weight: var(--tbb-font-weight-heading);
+  text-transform: uppercase;
 }
 
 .empty p {
-  margin-top: 0.75rem;
-  color: var(--tbb-muted);
+  margin-top: 0.75rem !important;
+  color: var(--shelf-muted);
 }
 
 @media (max-width: 74.9375rem) {
@@ -360,15 +399,16 @@
 
 @media (max-width: 47.9375rem) {
   .hero {
-    padding-top: clamp(4.5rem, 22vw, 7rem);
+    padding-top: 2.5rem;
   }
 
   .hero h1 {
-    font-size: clamp(3.2rem, 17vw, 5rem);
+    font-size: clamp(2.75rem, 13vw, 3.5rem);
   }
 
   .controls {
-    padding: 1rem;
+    padding: 0.875rem;
+    border-radius: 1.25rem;
   }
 
   /* One swipeable row rather than four stacked lines of chips. */
@@ -391,10 +431,11 @@
   /* The lead loses its spread and becomes the first card of the column. */
   .lead {
     grid-template-columns: minmax(0, 1fr);
+    border-radius: 1.25rem;
   }
 
   .leadCopy {
-    padding: 1.5rem;
+    padding: 1.375rem;
   }
 
   .grid {
@@ -402,19 +443,13 @@
   }
 
   .postBody {
-    padding: 1.35rem;
+    padding: 1.25rem;
   }
 }
 
 @media (max-width: 22.5rem) {
-  .content {
-    padding-inline: 1rem;
-  }
-
-  .postMeta {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.3rem;
+  .page {
+    --shelf-gutter: 1rem;
   }
 }
 

@@ -1,3 +1,4 @@
+import { brandCase } from "@/lib/brand";
 import { publicUrl } from "@/lib/site-paths";
 import Image from "next/image";
 import { PublicLink as Link } from "@/components/site/PublicLink";
@@ -26,17 +27,17 @@ function displayDate(value: string) {
 function Inline({ content }: { content: BlogInline[] }) {
   return content.map((part, index) => {
     const key = `${part.type}-${index}`;
-    let node = <>{part.text}</>;
+    let node = <>{brandCase(part.text)}</>;
 
     if (part.type === "link") {
       const href = resolveBlogHref(part.href);
       node = href.startsWith("/") ? (
         <Link href={href} prefetch={false}>
-          {part.text}
+          {brandCase(part.text)}
         </Link>
       ) : (
         <a href={href} rel="noreferrer noopener">
-          {part.text}
+          {brandCase(part.text)}
         </a>
       );
     }
@@ -91,7 +92,7 @@ function Block({ block, index }: { block: BlogBlock; index: number }) {
             alt={block.alt}
             width={1440}
             height={900}
-            sizes="(max-width: 47.9375rem) 92vw, 46rem"
+            sizes="(max-width: 47.9375rem) 92vw, 38rem"
             loading={index < 2 ? "eager" : "lazy"}
           />
         </figure>
@@ -132,6 +133,11 @@ export function BlogArticlePage({
         <meta itemProp="mainEntityOfPage" content={publicUrl(post.seo.canonical)} />
         <meta itemProp="author" content="The Base Beverage LLC" />
 
+        <Link className={styles.backLink} href="/resources/blog">
+          <span aria-hidden="true">←</span>
+          Back to Blog
+        </Link>
+
         <header className={styles.header}>
           <h1 itemProp="headline">{post.title}</h1>
           <div className={styles.meta}>
@@ -143,15 +149,10 @@ export function BlogArticlePage({
           </div>
           {post.excerpt && (
             <p className={styles.standfirst} itemProp="description">
-              {post.excerpt}
+              {brandCase(post.excerpt)}
             </p>
           )}
         </header>
-
-        <Link className={styles.backLink} href="/resources/blog">
-          <span aria-hidden="true">←</span>
-          Back to Blog
-        </Link>
 
         {post.cover && (
           <div className={styles.cover}>
@@ -160,7 +161,7 @@ export function BlogArticlePage({
               alt={post.cover.alt}
               width={1440}
               height={900}
-              sizes="(max-width: 47.9375rem) 100vw, 64rem"
+              sizes="(max-width: 47.9375rem) 92vw, 54rem"
               priority
               itemProp="image"
             />

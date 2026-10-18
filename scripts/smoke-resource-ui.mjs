@@ -59,7 +59,7 @@ async function auditViewport(browser, viewport) {
   check((await page.locator("[data-tools-page]").count()) === 1, `${label}: tools React page missing`);
   check((await page.locator("#rec2429369331, #rec2430603261").count()) === 0, `${label}: legacy tool records remain`);
   check(
-    (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "3.92 AED",
+    (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "7.27 AED",
     `${label}: default calculator result changed`,
   );
   await shellAndOverflow(page, "/resources/tools", label);
@@ -68,21 +68,20 @@ async function auditViewport(browser, viewport) {
   }
 
   if (viewport.width === 390 || viewport.width === 1440) {
-    await page.getByLabel("Cost per kg (AED)").fill("160");
+    await page.getByLabel("Waste", { exact: true }).fill("10,0");
     check(
-      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "4.80 AED",
+      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "7.61 AED",
       `${label}: calculator did not recompute after input`,
     );
-    await page.getByRole("button", { name: "RU", exact: true }).click();
+    await page.getByRole("button", { name: "Matcha latte", exact: true }).click();
     check(
-      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "4.80 ₽",
-      `${label}: RU currency switch failed`,
+      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "6.09 AED",
+      `${label}: drink preset did not load`,
     );
-    await page.locator("[data-menu-picker] input[type='checkbox']").first().check();
-    await page.locator("[data-menu-generate]").click();
-    check((await page.locator("[data-menu-template]").count()) === 1, `${label}: menu was not generated`);
-    await page.locator("[data-menu-reset]").click();
-    check((await page.locator("[data-menu-template]").count()) === 0, `${label}: menu reset failed`);
+    check(
+      (await page.getByRole("button", { name: "Matcha latte", exact: true }).getAttribute("aria-pressed")) === "true",
+      `${label}: preset chip is not marked pressed`,
+    );
   }
 
   await open(page, "/resources/glossary");
@@ -109,10 +108,6 @@ async function auditViewport(browser, viewport) {
     check(businessCount > 0 && businessCount < 101, `${label}: category filter did not narrow results`);
   }
 
-  await open(page, "/wholesale-strategy");
-  check((await page.locator("#rec2361929781").count()) === 0, `${label}: wholesale attribution record remains`);
-  check(!(await page.locator("body").innerText()).includes("Mineragua Sparkling Water"), `${label}: wholesale attribution copy remains`);
-  await shellAndOverflow(page, "/wholesale-strategy", label);
 
   if (viewport.width === 390 || viewport.width === 1440) {
     const homePage = await browser.newPage({ viewport });
@@ -128,7 +123,7 @@ async function auditViewport(browser, viewport) {
      * with articles on it.
      */
     check(
-      (await homePage.locator('a[href="/resources/blog"]').count()) > 0,
+      (await homePage.locator('a[href="/ae/resources/blog"]').count()) > 0,
       `${label}: the homepage no longer links to the Blog index`,
     );
     await homePage.close();
@@ -142,7 +137,7 @@ async function auditViewport(browser, viewport) {
       .first()
       .getAttribute("href");
     check(
-      Boolean(firstPost?.startsWith("/tpost/")),
+      Boolean(firstPost?.startsWith("/ae/tpost/")),
       `${label}: the Blog's first card points at ${firstPost}`,
     );
     await open(blogPage, firstPost ?? "/resources/blog");

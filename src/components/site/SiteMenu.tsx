@@ -65,12 +65,13 @@ export function SiteMenu({
         <div className={styles.layout}>
           <div className={styles.main}>
             <nav className={`${styles.nav} ${overlay.item}`} aria-label="Main">
-              {SITE_NAV.map((item, index) => (
+              {/* No per-link delay: the nav enters as one block, and a delay on the
+                  link itself held back its hover colour, unlike the Shop pill. */}
+              {SITE_NAV.map((item) => (
                 <SiteLink
                   key={item.href}
                   href={item.href}
                   className={navLink(item.href)}
-                  style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
                   aria-current={pathname === publicPath(item.href) ? "page" : undefined}
                   onClick={onClose}
                 >

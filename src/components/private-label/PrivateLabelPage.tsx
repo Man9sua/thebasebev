@@ -61,7 +61,7 @@ export function PrivateLabelPage() {
               <div className={`js-errorbox-all t-form__errorbox-wrapper ${styles.full} ${styles.error}`} style={{ display: "none" }} role="alert"><span className="js-rule-error js-rule-error-all" /></div>
               <button type="submit" className={`${styles.primary} ${styles.full}`}>Request a quote</button>
             </div>
-            <div className={`js-successbox t-form__successbox ${styles.success}`} style={{ display: "none" }} role="status">Thank you. Your brief has been sent to THE BASE team.</div>
+            <div className={`js-successbox t-form__successbox ${styles.success}`} style={{ display: "none" }} role="status">Thank you. Your brief has been sent to the Base team.</div>
           </form>
         </div>
       </section>

@@ -155,8 +155,7 @@ function MilkshakeRecipe() {
           </div>)}</dl>
         </div>
         <SiteLink href="/knowledge-recipes" className={local.recipeLink}>
-          <span className={styles.desktopOnly}>More recipes in Recipe base →</span>
-          <span className={styles.mobileOnly}>More recipes →</span>
+          More recipes →
         </SiteLink>
       </div>
       <ol className={local.recipeMethod}>{milkshakeMethod.map(({ label, text }) => <li key={label}>

@@ -7,7 +7,6 @@ import { publicPath } from "@/lib/site-paths";
 
 const auditedLastModified = {
   "/": "2026-08-20T20:38:39+00:00",
-  "/wholesale-strategy": "2026-08-20T14:18:41+00:00",
   "/contacts": "2026-08-20T14:18:43+00:00",
   "/about-us": "2026-08-20T14:18:45+00:00",
   "/resources": "2026-08-20T14:18:46+00:00",
@@ -45,8 +44,8 @@ function languages(url: string) {
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  if (sitemapRoutes.length !== 29) {
-    throw new Error(`Expected 29 audited sitemap routes, received ${sitemapRoutes.length}.`);
+  if (sitemapRoutes.length !== 28) {
+    throw new Error(`Expected 28 audited sitemap routes, received ${sitemapRoutes.length}.`);
   }
 
   const publicPages = sitemapRoutes.map(({ route }) => {

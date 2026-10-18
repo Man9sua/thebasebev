@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { CURRENT_MARKET, MARKETS, type Market } from "@/lib/site-config";
 import { switchCountryPath } from "@/lib/country-paths";
+import { saveMarketPreference } from "@/lib/market-preference";
 import { useCountryCode } from "./useCountryCode";
 import styles from "./CountrySelect.module.css";
 
@@ -75,6 +76,7 @@ export function CountrySelect({
   }, [open]);
 
   const choose = (market: Market) => {
+    saveMarketPreference(market.code);
     if (market.code === currentMarket.code) {
       close(true);
       return;

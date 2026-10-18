@@ -317,11 +317,11 @@ try {
   await rail.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
   check(
-    (await rail.locator("[data-card]").count()) === 6,
-    "reading: expected six cards on the rail",
+    (await rail.locator("[data-card]").count()) === 5,
+    "reading: expected five cards on the rail",
   );
   check(
-    (await rail.locator("a[href='/ae/wholesale-strategy']").count()) === 1 &&
+    (await rail.locator("a[href='/ae/rnd']").count()) === 1 &&
       (await rail.locator("a[href^='/ae/tpost/']").count()) === 1,
     "reading: the rail lost either its guides or its article",
   );

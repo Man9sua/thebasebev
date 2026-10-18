@@ -13,12 +13,11 @@ const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route
 const publicPath = (route) => route === "/" ? "/ae" : `/ae${route}`;
 const publicRoutePaths = JSON.parse(fs.readFileSync("src/data/public-route-paths.json", "utf8"));
 const nativeRoutes = readNativeRoutes();
-const expectedSitemapUrls = 29 /* audited */ + nativeRoutes.length + glossaryContent.entries.length + blogContent.posts.length;
+const expectedSitemapUrls = 28 /* audited */ + nativeRoutes.length + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
   "/",
   "/main",
-  "/wholesale-strategy",
   "/contacts",
   "/about-us",
   "/resources",
@@ -65,6 +64,10 @@ const redirects = new Map([
   ["/raf-cofee", publicPath("/raf-coffee")],
   ["/functional-wellness", publicPath("/catalog")],
   ["/cabinet", publicPath("/")],
+  // Retired pages answer in every market with that market's replacement.
+  ["/wholesale-strategy", "/ae/distributors"],
+  ["/ae/wholesale-strategy", "/ae/distributors"],
+  ["/sa/wholesale-strategy", "/sa/distributors"],
   // Blog posts renamed after publication — Tilda resolved both spellings on
   // the post id; every route here is generated, so the old one needs saying.
   [

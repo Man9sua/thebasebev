@@ -316,7 +316,7 @@ function SampleDrawer({
                   <br /> received
                 </h2>
                 <p className={styles.thanks}>
-                  Thank you{firstName ? `, ${firstName}` : ""}. The Base team will contact you on WhatsApp within
+                  Thank you{firstName ? `, ${firstName}` : ""}. the Base team will contact you on WhatsApp within
                   one business day to confirm the address.
                 </p>
                 {picked.length > 0 && (

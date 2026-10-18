@@ -1,3 +1,4 @@
+import { brandCase } from "@/lib/brand";
 import { publicUrl } from "@/lib/site-paths";
 import { PublicLink as Link } from "@/components/site/PublicLink";
 import { Fragment } from "react";
@@ -25,10 +26,10 @@ function GlossaryInlineContent({ content }: { content: GlossaryInline[] }) {
         <Fragment key={key}>
           {href.startsWith("/") ? (
             <Link href={href} prefetch={false}>
-              {part.text}
+              {brandCase(part.text)}
             </Link>
           ) : (
-            <a href={href}>{part.text}</a>
+            <a href={href}>{brandCase(part.text)}</a>
           )}
           {separator}
         </Fragment>
@@ -37,7 +38,7 @@ function GlossaryInlineContent({ content }: { content: GlossaryInline[] }) {
 
     return (
       <Fragment key={`${part.text}-${index}`}>
-        {part.text}
+        {brandCase(part.text)}
         {separator}
       </Fragment>
     );
@@ -60,6 +61,11 @@ export function GlossaryArticlePage({ entry, relatedEntries }: GlossaryArticlePa
         <meta itemProp="mainEntityOfPage" content={publicUrl(entry.seo.canonical)} />
         <meta itemProp="author" content="The Base Beverage LLC" />
 
+        <Link className={styles.backLink} href="/resources/glossary">
+          <span aria-hidden="true">←</span>
+          Back to Glossary
+        </Link>
+
         <header className={styles.header}>
           <h1 itemProp="headline">{entry.title}</h1>
           <div className={styles.meta}>
@@ -68,13 +74,8 @@ export function GlossaryArticlePage({ entry, relatedEntries }: GlossaryArticlePa
               {displayDate(entry.published)}
             </time>
           </div>
-          {entry.excerpt && <p itemProp="description">{entry.excerpt}</p>}
+          {entry.excerpt && <p itemProp="description">{brandCase(entry.excerpt)}</p>}
         </header>
-
-        <Link className={styles.backLink} href="/resources/glossary">
-          <span aria-hidden="true">←</span>
-          Back to Glossary
-        </Link>
 
         <div className={styles.body} itemProp="articleBody" data-glossary-article-body>
           {entry.contentStatus === "empty-production-source" ? (

@@ -32,8 +32,8 @@ function Lab() {
           <p>Every product the Base makes starts here, in our own laboratory in Dubai. Our technologists develop the recipe, test it and sign it off before a single batch is produced.</p>
         </div>
         <div className={styles.labPhotos}>
-          <Image src={resizedImage("/images/tild3635-3534-4562-a230-386630306263__3_1.jpg") ?? "/images/tild3635-3534-4562-a230-386630306263__3_1.jpg"} alt="THE BASE laboratory technologist in Dubai" width={600} height={440} sizes="(max-width: 767px) 92vw, 46vw" />
-          <Image src="/images/tild3637-3037-4530-b561-386139383037__mask_group.png" alt="THE BASE laboratory, where taste begins" width={628} height={460} sizes="(max-width: 767px) 92vw, 46vw" />
+          <Image src={resizedImage("/images/tild3635-3534-4562-a230-386630306263__3_1.jpg") ?? "/images/tild3635-3534-4562-a230-386630306263__3_1.jpg"} alt="the Base laboratory technologist in Dubai" width={600} height={440} sizes="(max-width: 767px) 92vw, 46vw" />
+          <Image src="/images/tild3637-3037-4530-b561-386139383037__mask_group.png" alt="the Base laboratory, where taste begins" width={628} height={460} sizes="(max-width: 767px) 92vw, 46vw" />
         </div>
         <div className={styles.checks}>
           {LAB_CHECKS.map((item) => <div key={item.title}><h3>{item.title}</h3><p>{item.body}</p></div>)}
@@ -50,7 +50,7 @@ function Lab() {
 function Logistics() {
   return (
     <section className={`${styles.section} ${styles.logistics}`} aria-labelledby="about-logistics-title" data-surface="dark">
-      <Image className={styles.truck} src={resizedImage("/images/tild3663-3430-4638-b336-316531626361__mask_group_4.jpg") ?? "/images/tild3663-3430-4638-b336-316531626361__mask_group_4.jpg"} alt="THE BASE delivery truck" fill sizes="100vw" />
+      <Image className={styles.truck} src={resizedImage("/images/tild3663-3430-4638-b336-316531626361__mask_group_4.jpg") ?? "/images/tild3663-3430-4638-b336-316531626361__mask_group_4.jpg"} alt="the Base delivery truck" fill sizes="100vw" />
       <div className={styles.inner}>
         <h2 id="about-logistics-title">From the UAE to six continents</h2>
         <p className={styles.logisticsLead}>Your samples and orders are in safe hands. Our supply chain team finds the route for every shipment, so it arrives on time, to your door.</p>
@@ -68,12 +68,12 @@ function Manufacturing() {
       <div className={styles.inner}>
         <h2 id="about-manufacturing-title">Every pouch.<br />One standard.</h2>
         <p className={styles.manufacturingLead}>{CATALOG_PRODUCTS.length} categories, one factory, one quality bar. Every product leaves the line made, checked and packed the same way.</p>
-        <div className={styles.packs} aria-label="THE BASE beverage base range">
-          {PACK_SLUGS.map((slug) => <Image key={slug} src={`/images/pack-${slug}.webp`} alt={`THE BASE ${slug.replaceAll("-", " ")} pouch`} width={400} height={540} sizes="(max-width: 767px) 26vw, 13vw" />)}
+        <div className={styles.packs} aria-label="the Base beverage base range">
+          {PACK_SLUGS.map((slug) => <Image key={slug} src={`/images/pack-${slug}.webp`} alt={`the Base ${slug.replaceAll("-", " ")} pouch`} width={400} height={540} sizes="(max-width: 767px) 26vw, 13vw" />)}
         </div>
         <div className={styles.manufacturingDetails}>
           <div className={styles.brandImage}>
-            <Image src="/images/tild6663-3864-4961-b139-316164363938__mask_group_1.jpg" alt="THE BASE branded shipping carton" width={906} height={993} sizes="(max-width: 767px) 90vw, 30vw" />
+            <Image src="/images/tild6663-3864-4961-b139-316164363938__mask_group_1.jpg" alt="the Base branded shipping carton" width={906} height={993} sizes="(max-width: 767px) 90vw, 30vw" />
           </div>
           <div><h3>One recipe, every batch</h3><p>Each batch is made to the approved reference sample, so a drink tastes the same in Dubai, Riyadh or Almaty.</p></div>
           <div><h3>Branded to the last detail</h3><p>Pouch, carton and tape carry the Base identity, so every delivery is recognised the moment it arrives.</p></div>
@@ -97,7 +97,7 @@ export function AboutPage() {
       <section className={`${styles.section} ${styles.partner}`} aria-labelledby="about-partner-title">
         <div className={styles.partnerInner}>
           <div><h2 id="about-partner-title">Let’s partner</h2><p>Unlock new opportunities by partnering with us. Whether you&apos;re a distributor, retailer, or business looking for premium products, let&apos;s collaborate for success.</p><SiteLink className={styles.primaryButton} href="/contacts">Join us today</SiteLink></div>
-          <Image src="/images/tild3665-6262-4465-b138-356434326663__rectangle_1087.png" alt="THE BASE meeting room in Dubai" width={640} height={460} sizes="(max-width: 767px) 90vw, 45vw" />
+          <Image src="/images/tild3665-6262-4465-b138-356434326663__rectangle_1087.png" alt="the Base meeting room in Dubai" width={640} height={460} sizes="(max-width: 767px) 90vw, 45vw" />
         </div>
       </section>
     </main>

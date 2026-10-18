@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { getFirstTouchAttribution } from "@/components/forms/first-touch";
 import { countryCodeFromPath, countryPath } from "@/lib/country-paths";
+import { pageMarket } from "@/lib/market-preference";
 import {
   LEGACY_FORM_NAMES,
   resolveLeadFormType,
@@ -244,7 +245,7 @@ function completeLegacySuccess(form: HTMLFormElement) {
   const formId = form.id || form.name || "lead-form";
   const dataLayerWindow = window as DataLayerWindow;
   dataLayerWindow.dataLayer = dataLayerWindow.dataLayer ?? [];
-  dataLayerWindow.dataLayer.push({ event: `submit_${formId}` });
+  dataLayerWindow.dataLayer.push({ event: `submit_${formId}`, ...pageMarket(window.location.pathname) });
 
   const successUrl =
     form.dataset.successUrl ||

@@ -101,7 +101,7 @@ export function DistributorFinderPage() {
             </dl>
             <div className={styles.actions}>
               <a
-                href={uae ? COMPANY.whatsappHref : `${COMPANY.whatsappHref}?text=${encodeURIComponent(`Hello, I would like to find THE BASE distributor in ${selected.name}.`)}`}
+                href={uae ? COMPANY.whatsappHref : `${COMPANY.whatsappHref}?text=${encodeURIComponent(`Hello, I would like to find the Base distributor in ${selected.name}.`)}`}
                 className={`${styles.button} ${styles.red}`}
                 target="_blank"
                 rel="noreferrer noopener"
@@ -118,7 +118,7 @@ export function DistributorFinderPage() {
             </div>
             <div className={styles.partnerFoot}>
               <p>
-                {uae ? "Enquiries from this page go to THE BASE UAE team." : `Local contact details for ${selected.name} are not published yet. The UAE team will help with your enquiry.`}
+                {uae ? "Enquiries from this page go to the Base UAE team." : `Local contact details for ${selected.name} are not published yet. The UAE team will help with your enquiry.`}
               </p>
               {uae && <SiteLink href="/" className={styles.marketLink}>Open thebasebev.com/ae →</SiteLink>}
             </div>

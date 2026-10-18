@@ -157,12 +157,12 @@ const controlledRoutes = [
   },
 ];
 
-if (friendlyRoutes.length !== 37 || legacyPageRedirects.length !== 41 || productAliasRedirects.length !== 26) {
+if (friendlyRoutes.length !== 36 || legacyPageRedirects.length !== 41 || productAliasRedirects.length !== 26) {
   throw new Error(
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, legacyPages=${legacyPageRedirects.length}, productAliases=${productAliasRedirects.length}.`,
   );
 }
-const expectedControlledRoutes = 45 + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
+const expectedControlledRoutes = 44 + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (controlledRoutes.length !== expectedControlledRoutes) {
   throw new Error(
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
@@ -223,7 +223,7 @@ const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
-const expectedSitemapRoutes = 29 /* audited */ + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
+const expectedSitemapRoutes = 28 /* audited */ + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== expectedSitemapRoutes) {
   throw new Error(
     `Expected HTTP 200 with ${expectedSitemapRoutes} target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,

@@ -226,6 +226,11 @@ const H1_NOT_PRESERVED = new Map([
     target: "Your brand. Our craft.",
     reason: "Latest supplied private-label design uses Your brand. Our craft.; title, description and canonical are preserved",
   }],
+  ["/resources/tools", {
+    h1: "Tools for Menu Planning",
+    target: "Drink cost calculator",
+    reason: "Supplied cost calculator design uses Drink cost calculator; title, description and canonical are preserved",
+  }],
   ["/resources", {
     h1: "Resources for HORECA Professionals",
     target: "Resources",

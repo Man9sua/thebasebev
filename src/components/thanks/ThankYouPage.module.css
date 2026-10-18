@@ -1,177 +1,161 @@
 /**
  * The confirmation page.
  *
- * One centred column on paper, sized by its content rather than by a fixed
- * artboard — which is what broke the exported version on a phone. Nothing here
- * is a new colour or a new control: the badge is the mark red, the buttons are
- * the site's pills, and the three steps are the numbered list `/distributors`
- * already uses.
+ * One left-aligned column on paper, vertically centred in the viewport under
+ * the fixed header and sized by its content — which is what broke the
+ * exported version on a phone. Colours come from the redesign palette in
+ * `design-tokens.css`; type roles from the typography contract.
  */
 
 .page {
   display: flex;
   min-height: 100vh;
+  min-height: 100svh;
   align-items: center;
-  justify-content: center;
-  padding: calc(var(--tbb-header-h) + clamp(2.5rem, 6vw, 5rem)) var(--tbb-gutter)
-    clamp(4rem, 8vw, 7rem);
-  background: var(--tbb-paper-warm);
-  color: var(--tbb-ink);
-}
-
-.panel {
-  width: 100%;
-  max-width: 44rem;
-  padding: clamp(1.75rem, 5vw, 3.5rem);
-  border: 1px solid var(--tbb-line);
-  border-radius: var(--tbb-card-radius);
+  padding: calc(var(--tbb-header-h) + clamp(3rem, 8vw, 7.5rem)) clamp(1.25rem, 6vw, 7.5rem)
+    clamp(3rem, 8vw, 7.5rem);
   background: var(--tbb-paper);
-  text-align: center;
+  color: var(--tbb-rd-ink);
 }
 
-.badge {
-  display: grid;
-  width: 3.5rem;
-  height: 3.5rem;
-  margin: 0 auto clamp(1.25rem, 3vw, 1.75rem);
-  place-items: center;
-  border-radius: 999px;
-  background: var(--tbb-accent);
-  color: var(--tbb-white);
+.inner {
+  display: flex;
+  width: 100%;
+  max-width: 75rem;
+  margin: 0 auto;
+  flex-direction: column;
+  gap: clamp(3rem, 7vw, 6rem);
 }
 
-.badge svg {
-  width: 1.5rem;
-  height: 1.5rem;
+.head {
+  display: flex;
+  max-width: 55rem;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.label {
+  color: var(--tbb-rd-red);
+  font-family: var(--tbb-font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .title {
-  margin: 0.75rem 0 0 !important;
+  margin: 0 !important;
   font-family: var(--tbb-font-heading);
-  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  font-size: clamp(3.25rem, 8vw, 7.5rem);
   font-weight: var(--tbb-font-weight-heading);
+  line-height: 0.86 !important;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
-  letter-spacing: -0.03em;
-  line-height: 1.08 !important;
-  text-wrap: balance;
 }
 
 .lead {
-  max-width: 34rem;
-  margin: clamp(0.85rem, 2vw, 1.15rem) auto 0 !important;
-  color: var(--tbb-ink-soft);
-  font-size: clamp(0.9375rem, 1.3vw, 1.0625rem);
-  line-height: 1.55;
+  max-width: 38.75rem;
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-family: var(--tbb-font-body);
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-weight: var(--tbb-font-weight-body);
+  line-height: 1.5;
+  text-wrap: pretty;
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.button {
+  display: inline-flex;
+  height: 3.75rem;
+  flex: none;
+  align-items: center;
   justify-content: center;
-  margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
-}
-
-/* ---- what happens next ---- */
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(0.75rem, 2vw, 1.25rem);
-  margin: clamp(2rem, 4.5vw, 3rem) 0 0;
-  padding: clamp(1.75rem, 4vw, 2.5rem) 0 0;
-  border-top: 1px solid var(--tbb-line);
-  list-style: none;
-  text-align: left;
-}
-
-.step {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.stepNumber {
-  color: var(--tbb-accent);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: var(--tbb-tracking-label);
-}
-
-.stepTitle {
-  font-weight: var(--tbb-font-weight-subheading);
-  font-size: 0.9375rem;
-  line-height: 1.3;
-}
-
-.stepBody {
-  color: var(--tbb-ink-soft);
+  padding: 0 2.125rem;
+  border: 1.5px solid var(--tbb-rd-ink);
+  border-radius: 1.875rem;
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  line-height: 1.5;
+  font-weight: var(--tbb-font-weight-button);
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.buttonInk {
+  background: var(--tbb-rd-ink);
+  color: var(--tbb-white);
+}
+
+.buttonInk:hover {
+  border-color: var(--tbb-rd-red);
+  background: var(--tbb-rd-red);
+  color: var(--tbb-white);
+}
+
+.buttonOutline {
+  padding: 0 2rem;
+  background: transparent;
+  color: var(--tbb-rd-ink);
+}
+
+.buttonOutline:hover {
+  border-color: var(--tbb-rd-red);
+  color: var(--tbb-rd-red);
 }
 
 /* ---- foot ---- */
 
 .foot {
-  margin: clamp(1.75rem, 4vw, 2.5rem) 0 0 !important;
-  color: var(--tbb-muted);
-  font-size: 0.875rem;
-  line-height: 1.5;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 3.5rem;
+  row-gap: 1rem;
+  color: var(--tbb-rd-body-soft);
+  font-family: var(--tbb-font-body);
+  font-size: 1rem;
+  line-height: 1.4;
 }
 
-.foot a {
-  color: var(--tbb-ink);
+.footLabel {
+  white-space: nowrap;
+}
+
+.footLink {
+  color: var(--tbb-rd-ink);
+  font-weight: 700;
   text-decoration: none;
-  text-decoration-color: rgba(255, 0, 0, 0.58);}
+  white-space: nowrap;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.footLink:hover {
+  color: var(--tbb-rd-red);
+}
 
 .home {
-  display: inline-flex;
-  min-height: 2.75rem;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  color: var(--tbb-ink);
-  font-size: var(--tbb-text-label);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: opacity var(--tbb-dur-fast) var(--tbb-ease);
+  margin-left: auto;
 }
 
-.home:hover {
-  opacity: 0.55;
-}
-
-.foot a:focus-visible,
-.home:focus-visible {
-  outline: 2px solid var(--tbb-accent);
+.button:focus-visible,
+.footLink:focus-visible {
+  outline: 2px solid var(--tbb-rd-red);
   outline-offset: 3px;
 }
 
-@media (max-width: 47.9375rem) {
-  .page {
-    padding-top: calc(var(--tbb-header-h) + 2rem);
-  }
-
-  .panel {
-    padding: 1.5rem 1.25rem 1.75rem;
-  }
-
-  /* Three abreast is three words per line at this width. */
-  .steps {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.25rem;
-  }
-
-  .actions :global(.tbb-pill) {
-    flex: 1 1 100%;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .home {
+  .button,
+  .footLink {
     transition: none;
   }
 }

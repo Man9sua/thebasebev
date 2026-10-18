@@ -29,6 +29,9 @@ import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SitemapPage } from "@/components/sitemap/SitemapPage";
 import { ThankYouPage } from "@/components/thanks/ThankYouPage";
+import { LegalDocumentPage } from "@/components/legal/LegalDocumentPage";
+import { ZoomCallBlock } from "@/components/site/ZoomCallBlock";
+import { PRIVACY_POLICY, TERMS_AND_CONDITIONS } from "@/components/legal/legal-content";
 import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
 import {
@@ -208,6 +211,9 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   };
 }
 
+/** The export's closing Zoom-call record, replaced by `ZoomCallBlock`. */
+const ZOOM_CALL_RECORD = "rec2503542591";
+
 /** Short names for the trail; anything not listed falls back to its title. */
 const CRUMB_NAMES: Record<string, string> = {
   "/catalog": "Catalogue",
@@ -216,7 +222,6 @@ const CRUMB_NAMES: Record<string, string> = {
   "/distributors": "Distributors",
   "/rnd": "R&D",
   "/private-labeling": "Private Labeling",
-  "/wholesale-strategy": "Wholesale Strategy",
   "/resources": "Resources",
   "/resources/blog": "Blog",
   "/resources/glossary": "Glossary",
@@ -476,6 +481,23 @@ async function RouteBody({ params }: RouteProps) {
     );
   }
 
+  // Privacy and Terms: the exported legal text in the house layout, followed
+  // by the native Zoom call block. Only the legal record and the export's own
+  // Zoom block are cut; the rest stays as runtime — including the record
+  // carrying the page's JSON-LD and the popup lead forms.
+  if (route === "/privacy" || route === "/terms") {
+    const legalRecord = route === "/privacy" ? "rec2430715951" : "rec2546753201";
+    const runtimePage = withoutLegacyRecords(page, [legalRecord, ZOOM_CALL_RECORD]);
+    return (
+      <div className="tbb">
+        <SiteHeader />
+        <LegalDocumentPage content={route === "/privacy" ? PRIVACY_POLICY : TERMS_AND_CONDITIONS} />
+        <LegacyPageShell page={runtimePage} runtimeOnly />
+        <SiteFooter />
+      </div>
+    );
+  }
+
   // A product page is React down to the FAQ and the export from there on. The
   // eight blocks React replaces — the hero, the tab strip, the four figures,
   // the comparative table, the flavours, the usage note, the FAQ and its
@@ -495,6 +517,11 @@ async function RouteBody({ params }: RouteProps) {
 
   // Redesigned products own the visible hero copy; SEO metadata stays above.
   const RedesignedProduct = product ? PRODUCT_PAGES[product.slug] : undefined;
+
+  // The export's closing Zoom-call card is drawn natively, to the new design,
+  // wherever a retained page still carries it.
+  const zoomCall = !page.native && page.bodyHtml.includes(`id="${ZOOM_CALL_RECORD}"`);
+  const shellPage = zoomCall ? withoutLegacyRecords(page, [ZOOM_CALL_RECORD]) : page;
 
   // Everything else: one shared header and footer, with the old Tilda chrome
   // already removed from the markup server-side.
@@ -517,7 +544,8 @@ async function RouteBody({ params }: RouteProps) {
         )
       )}
       {/* A native route has no export behind it, so nothing to carry over. */}
-      {!page.native && <LegacyPageShell page={page} opensPage={!intro && !product} />}
+      {!page.native && <LegacyPageShell page={shellPage} opensPage={!intro && !product} />}
+      {zoomCall && <ZoomCallBlock />}
       <SiteFooter />
     </div>
   );

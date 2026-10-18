@@ -282,7 +282,7 @@ export function RndPage() {
           <span className={styles.labMedia}>
             <Image
               src="/images/tild6261-3964-4535-b037-643166626332__rectangle_1134_1.jpg"
-              alt="THE BASE branded laboratory room render with tasting workstations"
+              alt="the Base branded laboratory room render with tasting workstations"
               fill
               sizes="(max-width: 63.9375rem) 92vw, 35rem"
             />
@@ -422,7 +422,7 @@ export function RndPage() {
               <label className={styles.consent}>
                 <input name="privacy-consent" type="checkbox" required />
                 <span>
-                  I consent to THE BASE processing this inquiry as described in the{" "}
+                  I consent to the Base processing this inquiry as described in the{" "}
                   <SiteLink href="/privacy">Privacy Policy</SiteLink>.
                 </span>
               </label>
@@ -443,7 +443,7 @@ export function RndPage() {
               className={`js-successbox t-form__successbox ${styles.success}`}
               style={{ display: "none" }}
             >
-              Thank you. Your brief has been sent to THE BASE R&amp;D team.
+              Thank you. Your brief has been sent to the Base R&amp;D team.
             </div>
           </form>
         </div>

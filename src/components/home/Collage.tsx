@@ -34,7 +34,7 @@ const STEPS: Step[] = [
   },
   {
     src: "/images/tild6663-3864-4961-b139-316164363938__mask_group_1.jpg",
-    alt: "THE BASE branded shipping carton artwork",
+    alt: "the Base branded shipping carton artwork",
     label: "Production",
   },
   {
@@ -44,7 +44,7 @@ const STEPS: Step[] = [
   },
   {
     src: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
-    alt: "Barista in a THE BASE apron at the bar",
+    alt: "Barista in a the Base apron at the bar",
     label: "To cup",
   },
 ];

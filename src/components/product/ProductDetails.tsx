@@ -112,7 +112,7 @@ export function ProductDetails({ product }: { product: Product }) {
               {calculation.title}
             </h2>
             <p className={styles.eyebrow}>
-              Actual Recipe <strong>VS</strong> Based on THE BASE
+              Actual Recipe <strong>VS</strong> Based on the Base
             </p>
           </div>
 
@@ -154,7 +154,7 @@ export function ProductDetails({ product }: { product: Product }) {
                 </div>
                 <span aria-hidden="true">VS</span>
                 <div data-ours="true">
-                  <dt>with THE BASE</dt>
+                  <dt>with the Base</dt>
                   <dd>{margin.base}</dd>
                 </div>
               </dl>

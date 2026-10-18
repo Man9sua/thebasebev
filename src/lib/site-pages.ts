@@ -1,3 +1,4 @@
+import { brandCaseHtml } from "@/lib/brand";
 import { publicPath, publicUrl, SITE_ORIGIN } from "@/lib/site-paths";
 import fs from "node:fs";
 import { rewriteLegacyStructuredData } from "@/lib/legacy-structured-data";
@@ -20,7 +21,6 @@ type RouteDefinition = {
 const friendlyRoutes: RouteDefinition[] = [
   { route: "/", file: "page62361237.html", indexable: true },
   { route: "/main", file: "page62361237.html", indexable: false },
-  { route: "/wholesale-strategy", file: "page147468696.html", indexable: true },
   { route: "/contacts", file: "page62585333.html", indexable: true },
   { route: "/about-us", file: "page62588185.html", indexable: true },
   { route: "/resources", file: "page151583806.html", indexable: true },
@@ -486,13 +486,6 @@ function dropRecord(source: string, recordId: string) {
  * `PageIntro` gives the page a heading of its own; the wording is in
  * `data/page-intros.ts`.
  *
- * `/wholesale-strategy` opened with the theme's demo hero — "Refreshing Taste
- * Awaits" over a stock photograph of a bottle of Mineragua, someone else's
- * sparkling water — above a second navigation bar whose three tabs point at
- * sections the page does not have, and below that the theme's own credit block,
- * again in Russian, ending "Вы можете удалить этот блок". Removed, the page
- * opens on its real heading, "Wholesale Beverage Distribution in GCC".
- *
  * `/private-labeling` carried its `h1` at the foot of the page, under nothing,
  * followed by two blocks that are empty in the export. Its opening block is
  * dropped too and reappears as `PageIntro`, because the theme set both headings
@@ -512,12 +505,6 @@ const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
     "rec2493746891", // the theme's own burger menu, a second header
     "rec2496175441", // empty in the export, and a white band between two dark ones
   ],
-  // /wholesale-strategy
-  "page147468696.html": [
-    "rec2361929261", // second nav bar; its three tabs have no sections
-    "rec2361929271", // "Refreshing Taste Awaits" over a competitor's bottle
-    "rec2361929781", // Russian Unsplash credit block
-  ],
   // /private-labeling
   "page120311356.html": [
     "rec2507342601", // serif opening block — PageIntro replaces it
@@ -532,34 +519,6 @@ const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
 
 function dropTemplateDebris(source: string, file: string) {
   return (REMOVED_BODY_RECORDS[file] ?? []).reduce(dropRecord, source);
-}
-
-/**
- * Tilda destinations that stopped existing when Tilda did, by exported page.
- *
- * `/wholesale-strategy` opens on two buttons that were wired to Tilda's cart
- * (`#order:…`) and to a popup record (`#become-partner`). Neither is on the
- * migrated page, so both were doing nothing at all. They ask the same question
- * the contact page answers, and that is where they point now — the same
- * correction, for the same reason, that `DistributorsPage` makes to the one CTA
- * inside its preserved hero.
- *
- * The export on disk is the parity reference and stays as exported; this is a
- * rewrite of the served markup only.
- */
-const RETARGETED_LINKS: Record<string, readonly [string, string][]> = {
-  // /wholesale-strategy
-  "page147468696.html": [
-    ["#order:Request Sample=0", "/contacts"],
-    ["#become-partner", "/contacts"],
-  ],
-};
-
-function retargetDeadLinks(source: string, file: string) {
-  return (RETARGETED_LINKS[file] ?? []).reduce(
-    (value, [from, to]) => value.replaceAll(`href="${from}"`, `href="${to}"`),
-    source,
-  );
 }
 
 /**
@@ -958,7 +917,6 @@ export function getSitePage(route: string): SitePage | undefined {
     removeLegacyAnalyticsRuntime,
     (value) => dropReplacedRecords(value, definition.file),
     (value) => dropTemplateDebris(value, definition.file),
-    (value) => retargetDeadLinks(value, definition.file),
     relinkBlogPosts,
     (value) => normalizeContentLandmarks(value, definition.file),
     (value) => stabilizeCatalogRuntime(value, definition.file),
@@ -969,6 +927,8 @@ export function getSitePage(route: string): SitePage | undefined {
     scopeLegacyImagePasses,
     localizePageLinks,
     (value) => rewriteLegacyStructuredData(value, Boolean(getProduct(route.slice(1)))),
+    // Running copy only: "the Base", never "THE BASE" (titles and h1 untouched).
+    brandCaseHtml,
   ]);
 
   const headAssetsHtml = applyAll(assetsMatch?.[1] ?? "", [

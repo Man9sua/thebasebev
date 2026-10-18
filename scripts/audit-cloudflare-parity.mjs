@@ -22,7 +22,7 @@ const publicCanonical = (canonical) => {
 };
 
 const routes = [
-  "/", "/main", "/wholesale-strategy", "/contacts", "/about-us", "/resources",
+  "/", "/main", "/contacts", "/about-us", "/resources",
   "/distributors", "/resources/blog", "/private-labeling", "/sitemap",
   "/resources/glossary", "/resources/tools", "/rnd", "/raf-coffee", "/cream-latte",
   "/chai-latte", "/milkshake", "/frappe", "/iced-tea", "/cordial", "/topping",
@@ -54,7 +54,6 @@ const intentionalContentMigrations = new Set([
   "/catalog",
   "/contacts",
   "/distributors",
-  "/wholesale-strategy",
   "/private-labeling",
   "/sitemap",
   "/resources/glossary",
@@ -64,6 +63,10 @@ const intentionalContentMigrations = new Set([
   // stock photograph and is now a React page that fits a phone.
   "/resources/blog",
   "/thank-you-form",
+  // The legal pages render the exported text word for word in React; the
+  // legal record and the Zoom call block are no longer in the legacy `<main>`.
+  "/privacy",
+  "/terms",
   "/resources/tools",
   "/rnd",
   "/raf-coffee",

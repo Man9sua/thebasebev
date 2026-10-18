@@ -1,5 +1,6 @@
 "use client";
 
+import { brandCase } from "@/lib/brand";
 import { PublicLink as Link } from "@/components/site/PublicLink";
 import { useMemo, useState } from "react";
 import {
@@ -161,7 +162,7 @@ export function GlossaryPage() {
                     ↗
                   </span>
                 </div>
-                {term.excerpt && <p>{term.excerpt}</p>}
+                {term.excerpt && <p>{brandCase(term.excerpt)}</p>}
                 {term.contentStatus === "empty-production-source" && (
                   <span className={styles.sourceStatus}>Source article has no published copy</span>
                 )}

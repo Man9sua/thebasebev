@@ -364,7 +364,7 @@ export function DistributorsPage() {
                 <span className={styles.rangeMedia}>
                   {product.rangeImage && <Image
                     src={product.rangeImage}
-                    alt={`${product.name} beverage base by THE BASE`}
+                    alt={`${product.name} beverage base by the Base`}
                     fill
                     sizes="(max-width: 47.9375rem) 46vw, (max-width: 63.9375rem) 31vw, 25vw"
                     loading="lazy"
@@ -524,7 +524,7 @@ export function DistributorsPage() {
               <label className={styles.consent}>
                 <input name="privacy-consent" type="checkbox" required />
                 <span>
-                  I consent to THE BASE processing this inquiry as described in the{" "}
+                  I consent to the Base processing this inquiry as described in the{" "}
                   <SiteLink href="/privacy">Privacy Policy</SiteLink>.
                 </span>
               </label>

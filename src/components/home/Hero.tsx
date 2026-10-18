@@ -32,7 +32,7 @@ import styles from "./Hero.module.css";
  */
 export function Hero() {
   return (
-    <section className={styles.hero} data-hero aria-label="THE BASE">
+    <section className={styles.hero} data-hero aria-label="the Base">
       <div className={styles.media} aria-hidden="true">
         {/*
           Two crops of one photograph — see `build-home-hero.mjs`. The desktop

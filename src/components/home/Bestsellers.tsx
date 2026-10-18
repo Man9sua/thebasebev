@@ -345,7 +345,7 @@ export function Bestsellers() {
                       <img
                         className={styles.shot}
                         src={`/images/pack-${product.slug}.webp`}
-                        alt={`${product.name} base by THE BASE`}
+                        alt={`${product.name} base by the Base`}
                         // The coverflow exposes the active card and both
                         // neighbours. Keep those three decoded so a click/swipe
                         // never reveals an empty stage; distant cards stay lazy.

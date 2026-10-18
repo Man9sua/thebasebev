@@ -7,7 +7,7 @@ import styles from "./SupportPages.module.css";
 export function RequestSamplesPage() {
   return <main className={styles.page}>
     <h1>Try it on your menu.</h1>
-    <p className={styles.intro}>Tell us what you serve and which THE BASE products you would like to test. Our team will confirm suitable samples and delivery arrangements.</p>
+    <p className={styles.intro}>Tell us what you serve and which the Base products you would like to test. Our team will confirm suitable samples and delivery arrangements.</p>
     <div className={styles.links}>
       <SampleRequestModal className={styles.button} label="Request samples" />
       <SiteLink href="/catalog">Explore the range →</SiteLink>
@@ -24,7 +24,7 @@ const QUALITY_ITEMS = [
 export function CertificatesPage() {
   return <main className={styles.page}>
     <h1>Quality, documented.</h1>
-    <p className={styles.intro}>The right documentation for your product, your business and your market. Contact THE BASE for current certificates and product specifications.</p>
+    <p className={styles.intro}>The right documentation for your product, your business and your market. Contact the Base for current certificates and product specifications.</p>
     <div className={styles.cards}>{QUALITY_ITEMS.map(({ title, text }) => <section key={title} className={styles.card}><h2>{title}</h2><p>{text}</p></section>)}</div>
     <a className={styles.button} href={`mailto:${COMPANY.email}?subject=Product%20certificates%20and%20specifications`}>Request documentation</a>
   </main>;
@@ -34,7 +34,7 @@ export function CookiePolicyPage() {
   return <main className={styles.page}>
     <h1>Cookie policy.</h1>
     <div className={styles.copy}>
-      <p>This page describes storage used by the THE BASE website. Your browser can also control or remove cookies and website data.</p>
+      <p>This page describes storage used by the Base website. Your browser can also control or remove cookies and website data.</p>
       <h2>Necessary storage</h2>
       <p>The first-party <code>tbb-consent</code> cookie remembers your analytics and marketing choices for twelve months. It records both acceptance and refusal. Necessary storage also keeps forms and browsing preferences working.</p>
       <h2>Analytics and marketing</h2>
