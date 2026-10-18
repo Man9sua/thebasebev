@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { createPortal } from "react-dom";
 import { useOverlay } from "@/components/site/useOverlay";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
 import { SAMPLE_PRODUCTS, sampleProductFor } from "@/data/sample-flavours";
+import { cityOptions, countryOptions, marketCountryOptions } from "@/data/places";
+import { Autocomplete } from "./Autocomplete";
 import { MARKETS } from "@/lib/site-config";
 import styles from "./SampleRequestModal.module.css";
 
@@ -179,6 +181,13 @@ function SampleDrawer({
     const { value } = event.currentTarget;
     setFields((current) => ({ ...current, [key]: value }));
   };
+  const set = (key: keyof Fields) => (value: string) => setFields((current) => ({ ...current, [key]: value }));
+
+  // Country and city suggest as the visitor types; the city list follows
+  // the country in the field.
+  const countries = useMemo(() => countryOptions(), []);
+  const markets = useMemo(() => marketCountryOptions(), []);
+  const cities = useMemo(() => cityOptions(fields.countryName), [fields.countryName]);
 
   // Picks grouped by product, in the order the products were added.
   const groups = shown.flatMap((slug) => {
@@ -348,22 +357,37 @@ function SampleDrawer({
               </fieldset>
 
               <div className={styles.fields}>
-                {FIELDS.map((field) => (
-                  <label key={field.key} className={styles.field}>
-                    <span className={styles.label}>{field.label}</span>
-                    <input
-                      type={field.type ?? "text"}
+                {FIELDS.map((field) =>
+                  field.key === "countryName" || field.key === "city" ? (
+                    <Autocomplete
+                      key={field.key}
+                      className={styles.field}
+                      label={<span className={styles.label}>{field.label}</span>}
                       name={field.name}
                       value={fields[field.key]}
-                      onChange={update(field.key)}
-                      placeholder={field.placeholder}
-                      autoComplete={field.autoComplete}
-                      inputMode={field.type === "tel" ? "tel" : undefined}
+                      onChange={set(field.key)}
+                      options={field.key === "city" ? cities : countries}
+                      initial={field.key === "city" ? cities : markets}
                       required={field.required}
-                      data-tilda-req={field.required ? "1" : undefined}
+                      placeholder={field.key === "city" ? "Start typing" : undefined}
                     />
-                  </label>
-                ))}
+                  ) : (
+                    <label key={field.key} className={styles.field}>
+                      <span className={styles.label}>{field.label}</span>
+                      <input
+                        type={field.type ?? "text"}
+                        name={field.name}
+                        value={fields[field.key]}
+                        onChange={update(field.key)}
+                        placeholder={field.placeholder}
+                        autoComplete={field.autoComplete}
+                        inputMode={field.type === "tel" ? "tel" : undefined}
+                        required={field.required}
+                        data-tilda-req={field.required ? "1" : undefined}
+                      />
+                    </label>
+                  ),
+                )}
                 <label className={`${styles.field} ${styles.wide}`}>
                   <span className={styles.label}>Anything we should know? (optional)</span>
                   <textarea

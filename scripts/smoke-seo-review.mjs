@@ -375,6 +375,29 @@ async function runViewport(label, viewport) {
     await page.getByRole("button", { name: "Request a sample", exact: true }).first().click();
     const form = page.locator("#sample-request-modal-form");
     await completeIdentity(form);
+
+    // Country and city suggest as you type; the city list follows the country.
+    const country = form.getByRole("combobox", { name: "Country" });
+    const city = form.getByRole("combobox", { name: "City" });
+    // A click waits for the drawer to finish sliding in, so the list stays put.
+    await country.click();
+    await country.fill("Kaz");
+    await form.getByRole("option", { name: "Kazakhstan" }).click();
+    check(await country.inputValue() === "Kazakhstan", `${label} samples: a country suggestion fills the field`);
+    await city.fill("alm");
+    await city.press("ArrowDown");
+    await city.press("Enter");
+    check(await city.inputValue() === "Almaty", `${label} samples: a city is chosen with the keyboard`);
+    await city.fill("a");
+    await form.getByRole("listbox").waitFor();
+    await city.press("Escape");
+    check(await form.getByRole("listbox").isHidden() && await form.isVisible(), `${label} samples: Escape closes the suggestions, not the drawer`);
+    await country.fill("UAE");
+    await form.getByRole("option", { name: /United Arab Emirates/ }).click();
+    await city.fill("Dub");
+    await form.getByRole("option", { name: "Dubai" }).click();
+    check(await city.inputValue() === "Dubai", `${label} samples: the city list follows the chosen country`);
+
     const flavours = form.getByRole("group", { name: /Samples/ }).getByRole("checkbox");
     check(await flavours.count() === 9, `${label} samples: all confirmed Milkshake flavours selectable`);
     await flavours.first().uncheck();
