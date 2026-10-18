@@ -64,6 +64,150 @@ function observe(page, label) {
   });
 }
 
+async function checkCountrySelector(page, label) {
+  await page.goto(`${baseUrl}/ae/?utm_source=chatgpt.com&utm_campaign=country-selector`, { waitUntil: "domcontentloaded" });
+  const trigger = page.locator("header button[aria-label^='Country:']");
+  const list = page.getByRole("listbox", { name: "Country", exact: true });
+  async function openList() {
+    for (let attempt = 0; attempt < 6 && (await trigger.getAttribute("aria-expanded")) !== "true"; attempt += 1) {
+      await trigger.click();
+      await page.waitForTimeout(200);
+    }
+    await list.waitFor({ state: "visible" });
+  }
+  await openList();
+  check((await list.getByRole("option").count()) === 17, `${label}: country selector does not list the confirmed markets`);
+  await list.press("End");
+  const last = list.getByRole("option").last();
+  check((await last.getAttribute("data-active")) === "true", `${label}: country selector End key did not reach the last market`);
+  const lastBox = await last.boundingBox();
+  check(!!lastBox && lastBox.y >= 0 && lastBox.y + lastBox.height <= page.viewportSize().height, `${label}: last country option is clipped`);
+  await list.press("Home");
+  await list.press("Enter");
+  check((await trigger.getAttribute("aria-expanded")) === "false", `${label}: choosing the current country did not close the list`);
+  check(await trigger.evaluate((button) => document.activeElement === button), `${label}: country selector did not return keyboard focus`);
+  await trigger.click();
+  await list.press("ArrowDown");
+  await list.press("ArrowDown");
+  await Promise.all([
+    page.waitForURL((url) => /^\/qa\/?$/.test(url.pathname), { waitUntil: "load" }),
+    list.press("Enter"),
+  ]);
+  const destination = new URL(page.url());
+  check(destination.searchParams.get("utm_source") === "chatgpt.com" && destination.searchParams.get("utm_campaign") === "country-selector", `${label}: country selection lost campaign parameters`);
+  await page.locator('header button[aria-label="Country: QA, Qatar. Change country"]').waitFor();
+  await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
+  await page.locator(BESTSELLERS).waitFor();
+  await openList();
+  await list.press("Escape");
+  check((await trigger.getAttribute("aria-expanded")) === "false", `${label}: country selector Escape did not close the list`);
+}
+
+async function checkDistributorFinder(page, label, countryName, countryCode) {
+  let capturedLead;
+  await page.route("**/api/leads", async (route) => {
+    capturedLead = route.request().postDataJSON();
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: false,
+        error: "lead_backend_unavailable",
+        message: "Lead delivery is temporarily unavailable. Please contact us directly.",
+        requestId: "finder-smoke-mocked",
+      }),
+    });
+  });
+  await page.goto(`${baseUrl}/ae/find-your-distributor?market=AE`, { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(
+    (storageKey) => sessionStorage.getItem(storageKey) !== null,
+    firstTouchStorageKey,
+  );
+  const countries = page.locator('button[aria-controls="distributor-details"]');
+  check((await countries.count()) === 17, `${label}: finder does not list all 17 markets`);
+  const details = page.locator("#distributor-details");
+  check(
+    (await details.locator('a[href="tel:+971509890429"]').count()) === 1,
+    `${label}: UAE contact phone missing`,
+  );
+  await page.goto(`${baseUrl}/ae/find-your-distributor?market=${countryCode}`, { waitUntil: "domcontentloaded" });
+  await details.getByRole("heading", { name: "Partner details coming soon", exact: true }).waitFor();
+  check(
+    (await countries.filter({ hasText: countryName }).getAttribute("aria-pressed")) === "true",
+    `${label}: market query did not preselect its country`,
+  );
+  const search = page.getByRole("searchbox", { name: "Search country" });
+  await search.fill(countryName);
+  check((await countries.count()) === 1, `${label}: country search did not narrow the list`);
+  await countries.first().click();
+  await details.getByRole("heading", { name: "Partner details coming soon", exact: true }).waitFor();
+  check((await page.getByRole("navigation", { name: "Breadcrumb", exact: true }).count()) === 0, `${label}: finder breadcrumb row is still visible`);
+  check((await details.getByText(/Official partner|Distribution in /).count()) === 0, `${label}: finder partner eyebrow is still present`);
+  check(
+    (await details.locator('a[href^="tel:"], a[href^="mailto:"]').count()) === 0,
+    `${label}: pending market exposes unconfirmed contact details`,
+  );
+  check(
+    ((await details.getByRole("link", { name: "WhatsApp UAE team" }).getAttribute("href")) ?? "")
+      .startsWith("https://wa.me/971509890429?text="),
+    `${label}: pending market does not offer the confirmed UAE contact fallback`,
+  );
+  await search.fill("No such country");
+  check(await page.getByRole("status").isVisible(), `${label}: no-result search has no feedback`);
+  await search.fill("");
+  check((await countries.count()) === 17, `${label}: clearing country search did not restore the list`);
+  const sampleButton = details.getByRole("button", { name: "Request samples", exact: true });
+  check(await sampleButton.evaluate((button) => {
+    const styles = getComputedStyle(button);
+    return styles.backgroundColor === "rgba(0, 0, 0, 0)" && styles.color !== getComputedStyle(button.closest("section")).backgroundColor;
+  }), `${label}: Request samples text is unreadable against its background`);
+  await sampleButton.click();
+  const form = page.locator("#sample-request-modal-form");
+  await form.waitFor({ state: "visible" });
+  check(
+    (await form.locator('input[name="country"]').inputValue()) === countryCode,
+    `${label}: sample form lost the selected market`,
+  );
+  // Opened from the finder, the drawer has no product yet: samples from two.
+  await form.getByRole("combobox", { name: "Product" }).selectOption("matcha");
+  await form.getByText("Hojicha", { exact: true }).click();
+  await form.getByText("Purple Yum Ube", { exact: true }).click();
+  await form.getByRole("button", { name: "+ Add another product" }).click();
+  await form.getByRole("combobox", { name: "Another product" }).selectOption("milkshake");
+  await form.getByText("Banana", { exact: true }).click();
+  check(
+    (await form.locator('input[name="product"]').inputValue()) === "Matcha, Milkshake",
+    `${label}: sample form did not carry both products`,
+  );
+  await form.locator('input[name="name"]').fill("Browser Smoke");
+  await form.locator('input[name="email"]').fill("smoke@example.com");
+  await form.locator('input[name="Phone"]').fill("+971500000000");
+  await form.locator('input[name="company"]').fill("Browser Smoke LLC");
+  await form.locator('input[name="city"]').fill("Dubai");
+  const request = page.waitForRequest((candidate) => new URL(candidate.url()).pathname === "/api/leads");
+  await form.evaluate((element) => element.requestSubmit());
+  await request;
+  await form.locator(".js-rule-error-all").filter({ hasText: /temporarily unavailable/i }).waitFor();
+  check(
+    capturedLead?.country === countryCode && capturedLead?.formType === "sample",
+    `${label}: submitted sample lead lost its market or form type`,
+  );
+  check(
+    /- Matcha: Hojicha, Purple Yum Ube\n- Milkshake: Banana/.test(capturedLead?.message ?? ""),
+    `${label}: submitted sample lead lost its samples: ${capturedLead?.message}`,
+  );
+  check(
+    await form.locator(".js-successbox").isHidden(),
+    `${label}: failed delivery displayed a false success`,
+  );
+  await page.keyboard.press("Escape");
+  check((await page.locator("#sample-request-modal-form").count()) === 0, `${label}: finder sample form did not close`);
+  check(
+    await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
+    `${label}: finder has horizontal overflow`,
+  );
+}
+
 const browser = await chromium.launch({
   executablePath: chromePath,
   headless: true,
@@ -188,11 +332,11 @@ try {
   await rail.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
   check(
-    (await rail.locator("[data-card]").count()) === 6,
-    "reading: expected six cards on the rail",
+    (await rail.locator("[data-card]").count()) === 5,
+    "reading: expected five cards on the rail",
   );
   check(
-    (await rail.locator("a[href='/ae/wholesale-strategy']").count()) === 1 &&
+    (await rail.locator("a[href='/ae/rnd']").count()) === 1 &&
       (await rail.locator("a[href^='/ae/tpost/']").count()) === 1,
     "reading: the rail lost either its guides or its article",
   );
@@ -304,64 +448,21 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
-  // The region picker the bar used to carry stays gone: it offered five regions
-  // and did nothing with the choice. Asserted rather than merely dropped, so it
-  // cannot come back unnoticed.
+  // Country selection must reach existing destinations and retain campaign data.
   check(
     (await page.locator("header button[aria-label^='Region:']").count()) === 0,
     "header: the old region picker is back in the bar",
   );
-  // What sits beside search instead is the country selector, and it only offers
-  // what exists: the UAE is live and current, every other market is listed as
-  // coming and disabled, and nothing in it links anywhere — `/sa`, `/kz` and the
-  // rest are 404s.
-  const country = page.locator("header button[aria-label^='Country:']");
-  check((await country.count()) === 1, "header: the country selector is missing from the bar");
-  if ((await country.count()) === 1) {
-    await country.click();
-    await page.waitForTimeout(450);
-    const countryList = await country.evaluate((button) => {
-      const list = document.getElementById(button.getAttribute("aria-controls") ?? "");
-      if (!list) return null;
-      const options = [...list.querySelectorAll("[role='option']")];
-      return {
-        expanded: button.getAttribute("aria-expanded") === "true",
-        visible: getComputedStyle(list).visibility === "visible",
-        options: options.length,
-        selected: options
-          .filter((option) => option.getAttribute("aria-selected") === "true")
-          .map((option) => option.textContent ?? ""),
-        enabled: options.filter((option) => option.getAttribute("aria-disabled") !== "true").length,
-        soonOnDisabled: options
-          .filter((option) => option.getAttribute("aria-disabled") === "true")
-          .every((option) => /soon/i.test(option.textContent ?? "")),
-        links: list.querySelectorAll("a[href]").length,
-      };
-    });
-    check(
-      !!countryList && countryList.expanded && countryList.visible,
-      "header: the country list did not open",
-    );
-    check(
-      !!countryList &&
-        countryList.selected.length === 1 &&
-        countryList.selected[0].includes("United Arab Emirates"),
-      "header: the country list does not mark the UAE as current",
-    );
-    check(
-      !!countryList && countryList.options > 1 && countryList.enabled === 1,
-      "header: a country other than the UAE is choosable",
-    );
-    check(!!countryList?.soonOnDisabled, "header: a disabled country is not marked as coming");
-    check(countryList?.links === 0, "header: the country list links somewhere");
-    await page.keyboard.press("Escape");
-    await page.waitForTimeout(450);
-    check(
-      (await country.getAttribute("aria-expanded")) === "false" &&
-        (await country.evaluate((button) => document.activeElement === button)),
-      "header: Escape did not close the country list and return focus to it",
-    );
-  }
+  check(
+    await page.locator("header button[aria-label^='Country:']").isVisible(),
+    "header: country selector is missing",
+  );
+  check(
+    (await page.locator('header a[href="/ae/find-your-distributor"]').count()) === 0,
+    "header: country selector was not restored in place of the finder button",
+  );
+
+  await checkCountrySelector(page, "desktop");
   check(
     (await page.evaluate(() =>
       [...document.querySelectorAll("a[href]")].filter((a) =>
@@ -406,13 +507,19 @@ try {
   await page.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
   await page.locator("[data-catalog-card]").first().waitFor();
   await page.waitForTimeout(1_200);
-  check((await page.locator("[data-catalog-card]").count()) === 21, "catalog: expected 21 product cards");
-  check((await page.locator("[data-catalog-price]").count()) === 21, "catalog: expected a price or request label on every card");
+  check((await page.locator("[data-catalog-card]").count()) === 22, "catalog: expected 22 product cards");
+  check((await page.locator("[data-catalog-card][data-catalog-price]").count()) === 22, "catalog: every card retains its price metadata");
+  for (const slug of ["puree", "sauce", "add-ons", "electrolyte"]) {
+    check(
+      (await page.locator(`[data-catalog-card][data-product-slug="${slug}"] img`).count()) === 0,
+      `catalog: ${slug} shows an unconfirmed product image`,
+    );
+  }
   const catalogPrices = await page.locator("[data-catalog-card]").evaluateAll((cards) =>
     Object.fromEntries(
       cards.map((card) => [
         card.querySelector("[data-catalog-name]")?.textContent?.trim() ?? "",
-        card.querySelector("[data-catalog-price]")?.textContent?.trim() ?? "",
+        card.getAttribute("data-catalog-price") ?? "",
       ]),
     ),
   );
@@ -433,17 +540,25 @@ try {
     Tea: "Price on request",
     "Sugar Free": "14.22 AED",
     Vending: "Price on request",
+    Electrolyte: "Price on request",
   };
   for (const [name, expectedPrice] of Object.entries(expectedCatalogPrices)) {
     check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
   }
-  check((await page.locator("[data-catalog-filters] button").count()) === 5, "catalog: expected All plus four filters");
+  check((await page.locator("[data-catalog-filters], [data-catalog-sort]").count()) === 0, "catalog: removed filter and sort controls remain");
+  check(JSON.stringify(await page.locator("[data-catalog-card]").evaluateAll((cards) => cards.slice(0, 6).map((card) => card.getAttribute("data-product-slug")))) === JSON.stringify(["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"]), "catalog: featured order differs from the approved reference");
   check(
     !(await page.locator("#rec2839951603 .js-store-grid-cont-preloader").isVisible()),
     "catalog: hidden Tilda store preloader leaked into the public grid",
   );
-  await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
-  check((await page.locator("[data-catalog-card]").count()) === 4, "catalog: cold filter did not leave four cards");
+  const catalogSearch = page.getByRole("searchbox", { name: "Search products" });
+  await catalogSearch.fill("matcha");
+  check((await page.locator("[data-catalog-card]").count()) === 1, "catalog: search did not find Matcha");
+  await catalogSearch.fill("no-such-product");
+  check((await page.locator("[data-catalog-card]").count()) === 0, "catalog: no-match search returned cards");
+  check(await page.getByText(/Nothing matches/).isVisible(), "catalog: no-match explanation is missing");
+  await catalogSearch.fill("");
+  check((await page.locator("[data-catalog-card]").count()) === 22, "catalog: clearing search did not restore all ranges");
 
   // The catalogue sends buying off-site; the shelf must point where the source
   // says, which is per-country and no longer Odoo — see `SHOP_URL`.
@@ -465,7 +580,12 @@ try {
   await page.locator("h1").first().waitFor();
   await page.waitForTimeout(1_200);
   check(/Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""), "matcha: unexpected H1");
-  check((await page.locator("img").count()) > 10, "matcha: expected product imagery");
+  const productImage = page.locator("main img").first();
+  check(await productImage.isVisible(), "matcha: supplied product hero image is not visible");
+  check(
+    await productImage.evaluate((image) => image.complete && image.naturalWidth > 0),
+    "matcha: supplied product hero image failed to load",
+  );
   const hiddenProductContent = await page.locator("main .t-animate").evaluateAll((elements) =>
     elements.filter((element) => {
       const rect = element.getBoundingClientRect();
@@ -534,8 +654,8 @@ try {
   );
   check(
     (await page.getByRole("link", { name: "Find your distributor" }).first().getAttribute("href")) ===
-      "/ae/distributors",
-    "matcha: Find your distributor does not lead to the distributors page",
+      "/ae/find-your-distributor",
+    "matcha: Find your distributor does not lead to the finder page",
   );
   // Browser smoke must be safe against a credentialed staging environment.
   // Mock only the same-origin lead boundary so the UX and attribution path are
@@ -572,6 +692,8 @@ try {
   });
   const contactForm = page.locator("#form860957415");
   await contactForm.waitFor();
+  // LeadAttributionBridge adds this readonly field when it arms the native form.
+  await contactForm.locator('input[name="company_website"][readonly]').waitFor({ state: "attached" });
   await contactForm.locator('input[name="name"]').fill("Browser Smoke");
   await contactForm.locator('input[name="company"]').fill("THE BASE QA");
   await contactForm.locator('input[name="email"]').fill("smoke@example.com");
@@ -585,7 +707,9 @@ try {
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
+  const contactResponse = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/leads");
   await contactForm.evaluate((form) => form.requestSubmit());
+  await contactResponse;
   // Waited for rather than slept through: the message arrives when the lead
   // round-trip fails, and against a deployed Worker that is sometimes longer
   // than a fixed pause. One run in four failed here on a site whose forms had
@@ -610,6 +734,8 @@ try {
     "contacts: canonical was changed after hydration",
   );
 
+  await checkDistributorFinder(page, "desktop", "Saudi Arabia", "SA");
+
   await desktop.close();
   console.log("Browser smoke phase passed: desktop interactions");
 
@@ -624,6 +750,7 @@ try {
     (storageKey) => sessionStorage.getItem(storageKey) !== null,
     firstTouchStorageKey,
   );
+  await checkCountrySelector(mobilePage, "mobile");
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
   // The button ships in the server HTML, so it is clickable well before React
@@ -659,12 +786,15 @@ try {
     (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 0,
     "mobile: the old region picker is back in the menu",
   );
-  // The country selector stays in the bar at every width rather than moving
-  // into the menu the way the old picker did.
   check(
     await mobilePage.locator("header button[aria-label^='Country:']").isVisible(),
-    "mobile: the country selector is missing from the bar",
+    "mobile: country selector is missing",
   );
+  check(
+    await mobileMenu.getByRole("link", { name: "Find your distributor", exact: true }).isVisible(),
+    "mobile: menu lacks the distributor finder button",
+  );
+  await checkDistributorFinder(mobilePage, "mobile", "Kyrgyzstan", "KG");
   await mobile.close();
   console.log("Browser smoke phase passed: mobile interactions");
 
@@ -700,30 +830,11 @@ try {
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
       fullPage: false,
     });
-    // The country list opens from the right of the bar with search and the
-    // burger still to its right, so a narrow screen is where it would run off
-    // the left edge. Opened at every width, after the capture so the
-    // screenshot is of the page at rest.
-    const countryTrigger = visualPage.locator("header button[aria-label^='Country:']");
-    await countryTrigger.click();
-    await visualPage.waitForTimeout(450);
-    const countryPanel = await countryTrigger.evaluate((button) => {
-      const list = document.getElementById(button.getAttribute("aria-controls") ?? "");
-      if (!list) return null;
-      const box = list.getBoundingClientRect();
-      return {
-        open: button.getAttribute("aria-expanded") === "true",
-        left: box.left,
-        right: box.right,
-        cw: document.documentElement.clientWidth,
-      };
-    });
-    check(!!countryPanel?.open, `header: the country list did not open at ${width}x${height}`);
+    const countrySelector = visualPage.locator("header button[aria-label^='Country:']");
     check(
-      !!countryPanel && countryPanel.left >= -1 && countryPanel.right <= countryPanel.cw + 1,
-      `header: the country list leaves the viewport at ${width}x${height} (${Math.round(countryPanel?.left ?? 0)}..${Math.round(countryPanel?.right ?? 0)} of ${countryPanel?.cw})`,
+      await countrySelector.isVisible(),
+      `header: country selector is missing at ${width}x${height}`,
     );
-    await visualPage.keyboard.press("Escape");
   }
   await visual.close();
   console.log("Browser smoke phase passed: responsive captures");
@@ -773,6 +884,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, country selector, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, distributor finder, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

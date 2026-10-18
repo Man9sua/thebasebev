@@ -84,7 +84,7 @@ export function CheckoutPage() {
   if (!cart.ready || lines.length === 0) {
     return (
       <main className={styles.redirect} aria-live="polite">
-        <span className={styles.redirectMark}>THE BASE</span>
+        <span className={styles.redirectMark}>the Base</span>
         <p>{cart.ready ? "Returning to the catalogue…" : "Preparing your cart…"}</p>
       </main>
     );
@@ -96,7 +96,7 @@ export function CheckoutPage() {
         <SiteLink href="/catalog" className={styles.back}>
           <span aria-hidden="true">←</span> Back to shop
         </SiteLink>
-        <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
+        <SiteLink href="/" className={styles.logo} aria-label="the Base — home">
           <BrandLogo />
         </SiteLink>
         <span className={styles.mode}>Stripe test mode</span>
@@ -105,10 +105,9 @@ export function CheckoutPage() {
       <main className={styles.layout}>
         <form className={styles.form} onSubmit={submit}>
           <div className={styles.formInner}>
-            <p className={styles.eyebrow}>Secure checkout</p>
             <h1 className={styles.title}>Complete your order</h1>
             <p className={styles.intro}>
-              Review your THE BASE products here. Card and delivery details are entered on
+              Review your the Base products here. Card and delivery details are entered on
               Stripe’s secure Test Mode checkout in the next step.
             </p>
 
@@ -138,7 +137,7 @@ export function CheckoutPage() {
               </div>
               <p className={styles.note}>
                 Stripe collects the billing address, supported delivery country and card
-                authentication. THE BASE never receives or stores raw card details.
+                authentication. the Base never receives or stores raw card details.
               </p>
             </section>
 

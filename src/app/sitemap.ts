@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/data/blog";
 import { GLOSSARY_ENTRIES } from "@/data/glossary";
+import { PRODUCTS } from "@/data/products";
 import { nativeSitemapRoutes, SITE_ORIGIN, sitemapRoutes } from "@/lib/site-pages";
 import { publicPath } from "@/lib/site-paths";
 
 const auditedLastModified = {
   "/": "2026-08-20T20:38:39+00:00",
-  "/wholesale-strategy": "2026-08-20T14:18:41+00:00",
   "/contacts": "2026-08-20T14:18:43+00:00",
   "/about-us": "2026-08-20T14:18:45+00:00",
   "/resources": "2026-08-20T14:18:46+00:00",
@@ -36,11 +36,16 @@ const auditedLastModified = {
   "/catalog": "2026-08-20T14:19:28+00:00",
 } as const;
 
-const NATIVE_LAST_MODIFIED = "2026-10-06T00:00:00+00:00";
+const UPDATED_LAST_MODIFIED = "2026-10-07T00:00:00+00:00";
+const updatedRoutes = new Set(["/about-us", "/private-labeling", "/resources", "/sitemap", "/catalog", "/distributors", ...PRODUCTS.map((product) => product.route)]);
+
+function languages(url: string) {
+  return { languages: { en: url, "x-default": url } };
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  if (sitemapRoutes.length !== 29) {
-    throw new Error(`Expected 29 audited sitemap routes, received ${sitemapRoutes.length}.`);
+  if (sitemapRoutes.length !== 28) {
+    throw new Error(`Expected 28 audited sitemap routes, received ${sitemapRoutes.length}.`);
   }
 
   const publicPages = sitemapRoutes.map(({ route }) => {
@@ -52,24 +57,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return {
       url: `${SITE_ORIGIN}${publicPath(route)}`,
-      lastModified,
+      lastModified: updatedRoutes.has(route) ? UPDATED_LAST_MODIFIED : lastModified,
+      alternates: languages(`${SITE_ORIGIN}${publicPath(route)}`),
     };
   });
 
   // Ranges added after the export, served by React alone; dated by their launch.
   const nativePages = nativeSitemapRoutes.map((route) => ({
     url: `${SITE_ORIGIN}${publicPath(route)}`,
-    lastModified: NATIVE_LAST_MODIFIED,
+    lastModified: UPDATED_LAST_MODIFIED,
+    alternates: languages(`${SITE_ORIGIN}${publicPath(route)}`),
   }));
 
   const glossaryArticles = GLOSSARY_ENTRIES.map((entry) => ({
     url: `${SITE_ORIGIN}${publicPath(entry.path)}`,
     lastModified: `${entry.published}T00:00:00.000Z`,
+    alternates: languages(`${SITE_ORIGIN}${publicPath(entry.path)}`),
   }));
 
   const blogArticles = BLOG_POSTS.map((post) => ({
     url: `${SITE_ORIGIN}${publicPath(post.path)}`,
     lastModified: `${post.published}T00:00:00.000Z`,
+    alternates: languages(`${SITE_ORIGIN}${publicPath(post.path)}`),
   }));
 
   return [...publicPages, ...nativePages, ...glossaryArticles, ...blogArticles];

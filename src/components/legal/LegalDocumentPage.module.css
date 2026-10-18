@@ -1,0 +1,243 @@
+/**
+ * Legal documents in the house style: paper, the redesign palette, Exo 2 in
+ * its contract roles, the same side gutter as the Zoom call block below so
+ * the two left edges line up, and a ~70ch reading measure for the body.
+ */
+
+.page {
+  background: var(--tbb-paper);
+  color: var(--tbb-rd-ink);
+}
+
+.article {
+  max-width: 82.5rem;
+  margin: 0 auto;
+  padding: calc(var(--tbb-header-h) + clamp(3rem, 8vw, 7.5rem)) clamp(1.25rem, 6vw, 7.5rem) 0;
+  box-sizing: content-box;
+}
+
+/* ---- head ---- */
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--tbb-rd-field-line);
+}
+
+.badge {
+  color: var(--tbb-rd-red);
+  font-family: var(--tbb-font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.title {
+  margin: 0 !important;
+  font-family: var(--tbb-font-heading);
+  font-size: clamp(2.75rem, 7vw, 6.5rem);
+  font-weight: var(--tbb-font-weight-heading);
+  line-height: 0.88 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 2rem;
+  row-gap: 0.25rem;
+  margin: 0 !important;
+  color: var(--tbb-rd-body-soft);
+  font-family: var(--tbb-font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.meta strong {
+  color: var(--tbb-rd-ink);
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.nav a {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  padding: 0 1.125rem;
+  border: 1px solid var(--tbb-rd-field-line);
+  border-radius: 100px;
+  color: var(--tbb-rd-ink);
+  font-family: var(--tbb-font-body);
+  font-size: 0.875rem;
+  font-weight: var(--tbb-font-weight-medium);
+  text-decoration: none;
+  transition:
+    border-color var(--tbb-dur-fast) var(--tbb-ease),
+    color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.nav a:hover {
+  border-color: var(--tbb-rd-red);
+  color: var(--tbb-rd-red);
+}
+
+/* ---- body ---- */
+
+.body {
+  max-width: 70ch;
+  padding-top: clamp(2rem, 4vw, 3rem);
+  font-family: var(--tbb-font-body);
+  font-size: clamp(1rem, 1.2vw, 1.0625rem);
+  font-weight: var(--tbb-font-weight-body);
+  line-height: 1.7;
+}
+
+.intro {
+  margin: 0 !important;
+  color: var(--tbb-rd-body);
+  font-size: clamp(1.125rem, 1.6vw, 1.25rem);
+  line-height: 1.6;
+}
+
+.section {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  scroll-margin-top: calc(var(--tbb-header-h) + 1.5rem);
+}
+
+.sectionTitle {
+  margin: 0 0 1rem !important;
+  font-family: var(--tbb-font-heading);
+  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  font-weight: var(--tbb-font-weight-heading);
+  line-height: 1.05 !important;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.paragraph {
+  margin: 0 0 0.85rem !important;
+  color: var(--tbb-rd-body);
+}
+
+.paragraph:last-child {
+  margin-bottom: 0 !important;
+}
+
+.body strong {
+  color: var(--tbb-rd-ink);
+  font-weight: 700;
+}
+
+.list {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  color: var(--tbb-rd-body);
+}
+
+.list:last-child {
+  margin-bottom: 0;
+}
+
+.list li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.list li::marker {
+  color: var(--tbb-rd-red);
+}
+
+.cards {
+  display: grid;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.card {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--tbb-card-radius);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-body);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.contact {
+  margin-top: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: 1.5rem;
+  background: var(--tbb-rd-paper);
+}
+
+.contactName {
+  margin: 0 0 1rem !important;
+  font-family: var(--tbb-font-heading);
+  font-size: 1.25rem;
+  font-weight: var(--tbb-font-weight-subheading);
+  line-height: 1.2;
+}
+
+.contactRows {
+  display: grid;
+  margin: 0;
+  gap: 0.6rem;
+}
+
+.contactRow {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
+}
+
+.contactRow dt {
+  min-width: 4.5rem;
+  color: var(--tbb-rd-muted);
+}
+
+.contactRow dd {
+  margin: 0;
+  color: var(--tbb-rd-ink);
+  font-weight: var(--tbb-font-weight-medium);
+}
+
+.contactRow a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--tbb-rd-red);
+  text-underline-offset: 0.2em;
+}
+
+.nav a:focus-visible,
+.contactRow a:focus-visible {
+  outline: 2px solid var(--tbb-rd-red);
+  outline-offset: 3px;
+}
+
+@media (max-width: 47.9375rem) {
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .meta {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav a {
+    transition: none;
+  }
+}

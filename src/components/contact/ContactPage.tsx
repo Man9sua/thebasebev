@@ -1,3 +1,4 @@
+import { CopyButton } from "@/components/site/CopyButton";
 import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY } from "@/lib/site-config";
 import styles from "./ContactPage.module.css";
@@ -35,33 +36,25 @@ import styles from "./ContactPage.module.css";
  * kinds of lead.
  */
 
-/**
- * The department mailboxes. `short` is the label the card falls back to on a
- * phone, where four cards become a 2 × 2 grid of tiles — the full label and the
- * address do not fit, and the accessible name on the link carries both anyway.
- */
+/** Department labels and email addresses stay visible at every viewport. */
 const CHANNELS = [
   {
     label: "General enquiries",
-    short: "General",
     value: COMPANY.email,
     href: COMPANY.emailHref,
   },
   {
     label: "New wholesale accounts",
-    short: "Wholesale",
     value: "sales@thebasebev.com",
     href: "mailto:sales@thebasebev.com",
   },
   {
     label: "Retail and HoReCa orders",
-    short: "Orders",
     value: "retail@thebasebev.com",
     href: "mailto:retail@thebasebev.com",
   },
   {
     label: "Existing orders and logistics",
-    short: "Logistics",
     value: "supply@thebasebev.com",
     href: "mailto:supply@thebasebev.com",
   },
@@ -102,24 +95,26 @@ export function ContactPage() {
           </p>
 
           <div className={styles.phoneBlock}>
-            <a className={styles.phone} href="tel:+97142800375">
-              +971 4 280 0375
-            </a>
+            {/* Tap to call; the copy button sits beside it, visible on touch too. */}
+            <div className={styles.phoneRow}>
+              <a className={styles.phone} href="tel:+97142800375">
+                +971 4 280 0375
+              </a>
+              <CopyButton className={styles.copyButton} value="+971 4 280 0375" label="Copy phone number" />
+            </div>
             <span className={styles.hours}>Monday to Saturday, 09:00–18:00 GST (UTC+4)</span>
           </div>
 
           <div className={styles.channels}>
             {CHANNELS.map((channel) => (
-              <a
-                key={channel.value}
-                className={styles.channel}
-                href={channel.href}
-                aria-label={`${channel.label}: ${channel.value}`}
-              >
-                <span className={styles.channelLabel}>{channel.label}</span>
-                <span className={styles.channelShort}>{channel.short}</span>
-                <span className={styles.channelValue}>{channel.value}</span>
-              </a>
+              <div key={channel.value} className={styles.channel}>
+                <a className={styles.channelLink} href={channel.href} aria-label={`${channel.label}: ${channel.value}`}>
+                  <span className={styles.channelLabel}>{channel.label}</span>
+                  <span className={styles.channelValue}>{channel.value}</span>
+                </a>
+                {/* Shown on hover or focus with a pointer; always on touch screens. */}
+                <CopyButton className={styles.copyButton} value={channel.value} label={`Copy ${channel.value}`} />
+              </div>
             ))}
           </div>
         </div>
@@ -223,7 +218,7 @@ export function ContactPage() {
             className={`js-successbox t-form__successbox ${styles.success}`}
             style={{ display: "none" }}
           >
-            Thank you. Your enquiry has been sent to THE BASE team.
+            Thank you. Your enquiry has been sent to the Base team.
           </div>
         </form>
       </div>

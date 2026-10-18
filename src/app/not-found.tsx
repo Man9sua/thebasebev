@@ -4,7 +4,7 @@ import styles from "./not-found.module.css";
 export default function NotFound() {
   return (
     <main className={styles.page}>
-      <SiteLink className={styles.logo} href="/" aria-label="THE BASE home">
+      <SiteLink className={styles.logo} href="/" aria-label="the Base home">
         <span className={styles.the}>the</span>
         <span className={styles.base}>BASE</span>
       </SiteLink>

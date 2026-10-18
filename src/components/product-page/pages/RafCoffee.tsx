@@ -73,7 +73,7 @@ const faq = [
   },
 ];
 
-export function RafCoffeePage({ product, headline, assets }: ProductPageProps) {
+export function RafCoffeePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   // The first menu photo is the hero shot.
   const serves = [
@@ -99,7 +99,6 @@ export function RafCoffeePage({ product, headline, assets }: ProductPageProps) {
         className={local.hero}
         productName={product.name}
         title="Raf coffee"
-        headline={headline}
         lead={{
           desktop:
             "The velvety, ice-cream-like raf without fresh cream. Steam the base with milk and an espresso shot, ready in a minute.",

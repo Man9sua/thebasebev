@@ -1,5 +1,7 @@
+import { brandCaseHtml } from "@/lib/brand";
 import { publicPath, publicUrl, SITE_ORIGIN } from "@/lib/site-paths";
 import fs from "node:fs";
+import { rewriteLegacyStructuredData } from "@/lib/legacy-structured-data";
 import path from "node:path";
 import { BLOG_POSTS } from "@/data/blog";
 import { getProduct } from "@/data/products";
@@ -19,7 +21,6 @@ type RouteDefinition = {
 const friendlyRoutes: RouteDefinition[] = [
   { route: "/", file: "page62361237.html", indexable: true },
   { route: "/main", file: "page62361237.html", indexable: false },
-  { route: "/wholesale-strategy", file: "page147468696.html", indexable: true },
   { route: "/contacts", file: "page62585333.html", indexable: true },
   { route: "/about-us", file: "page62588185.html", indexable: true },
   { route: "/resources", file: "page151583806.html", indexable: true },
@@ -221,6 +222,14 @@ function removeLegacyAnalyticsRuntime(source: string) {
     /<noscript\b[^>]*>[\s\S]*?(?:googletagmanager|GTM-)[\s\S]*?<\/noscript>/gi,
     "",
   );
+}
+
+/** The root layout self-hosts Exo 2; exported font links would load duplicate faces. */
+function removeLegacyFontLinks(source: string) {
+  return source.replace(/<link\b[^>]*>/gi, (tag) => {
+    const href = tag.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2] ?? "";
+    return /^(?:https?:)?\/\/fonts\.(?:googleapis|gstatic)\.com(?:\/|$)/i.test(href) ? "" : tag;
+  });
 }
 
 /**
@@ -465,7 +474,7 @@ function dropRecord(source: string, recordId: string) {
 /**
  * Tilda template debris, by exported page.
  *
- * Three of the parity pages were built on stock Tilda themes and were still
+ * Four of the parity pages were built on stock Tilda themes and were still
  * carrying pieces of the theme rather than pieces of the site. None of it is
  * content anybody wrote for THE BASE, and two of the entries were actively
  * damaging:
@@ -477,17 +486,13 @@ function dropRecord(source: string, recordId: string) {
  * `PageIntro` gives the page a heading of its own; the wording is in
  * `data/page-intros.ts`.
  *
- * `/wholesale-strategy` opened with the theme's demo hero — "Refreshing Taste
- * Awaits" over a stock photograph of a bottle of Mineragua, someone else's
- * sparkling water — above a second navigation bar whose three tabs point at
- * sections the page does not have, and below that the theme's own credit block,
- * again in Russian, ending "Вы можете удалить этот блок". Removed, the page
- * opens on its real heading, "Wholesale Beverage Distribution in GCC".
- *
  * `/private-labeling` carried its `h1` at the foot of the page, under nothing,
  * followed by two blocks that are empty in the export. Its opening block is
  * dropped too and reappears as `PageIntro`, because the theme set both headings
  * in a serif no other page on this site uses.
+ *
+ * `/garnish` ended with the theme's sample paragraph about visual aids in
+ * speeches, unrelated to the product, after its FAQ.
  *
  * Everything here is a removal from the served markup only. The export on disk
  * is the parity reference and stays as exported.
@@ -500,12 +505,6 @@ const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
     "rec2493746891", // the theme's own burger menu, a second header
     "rec2496175441", // empty in the export, and a white band between two dark ones
   ],
-  // /wholesale-strategy
-  "page147468696.html": [
-    "rec2361929261", // second nav bar; its three tabs have no sections
-    "rec2361929271", // "Refreshing Taste Awaits" over a competitor's bottle
-    "rec2361929781", // Russian Unsplash credit block
-  ],
   // /private-labeling
   "page120311356.html": [
     "rec2507342601", // serif opening block — PageIntro replaces it
@@ -514,38 +513,12 @@ const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
     "rec1937217991", // empty in the export
     "rec2360860451", // empty in the export
   ],
+  // /garnish
+  "page62576005.html": ["rec2489072221"], // theme placeholder about visual aids
 };
 
 function dropTemplateDebris(source: string, file: string) {
   return (REMOVED_BODY_RECORDS[file] ?? []).reduce(dropRecord, source);
-}
-
-/**
- * Tilda destinations that stopped existing when Tilda did, by exported page.
- *
- * `/wholesale-strategy` opens on two buttons that were wired to Tilda's cart
- * (`#order:…`) and to a popup record (`#become-partner`). Neither is on the
- * migrated page, so both were doing nothing at all. They ask the same question
- * the contact page answers, and that is where they point now — the same
- * correction, for the same reason, that `DistributorsPage` makes to the one CTA
- * inside its preserved hero.
- *
- * The export on disk is the parity reference and stays as exported; this is a
- * rewrite of the served markup only.
- */
-const RETARGETED_LINKS: Record<string, readonly [string, string][]> = {
-  // /wholesale-strategy
-  "page147468696.html": [
-    ["#order:Request Sample=0", "/contacts"],
-    ["#become-partner", "/contacts"],
-  ],
-};
-
-function retargetDeadLinks(source: string, file: string) {
-  return (RETARGETED_LINKS[file] ?? []).reduce(
-    (value, [from, to]) => value.replaceAll(`href="${from}"`, `href="${to}"`),
-    source,
-  );
 }
 
 /**
@@ -847,17 +820,20 @@ export function normalizeSitePath(parts?: string[]) {
 }
 
 /**
- * Routes with no Tilda page at all: product ranges added after the export.
- *
- * They are kept apart from `friendlyRoutes` on purpose. That list is the
- * migration's parity contract — the sitemap, its audited lastmods and the
- * route audits all count it against production — and production has never
- * served these URLs. They are indexable on the real hostname like any other
- * product page, and listed in the sitemap after the audited routes.
+ * Native product and business pages with no Tilda export. Existing migration
+ * routes stay in `friendlyRoutes`; all native pages have production canonicals
+ * and enter the sitemap, with preview indexing blocked by the Worker.
  */
 type NativeRoute = { route: string; title: string; description: string };
 
 const NATIVE_ROUTES: NativeRoute[] = [
+  { route: "/electrolyte", title: "Electrolyte Drink Mix for HoReCa & Retail | The Base", description: "Electrolyte drink mixes for hydration menus, hospitality and retail. Explore the range and request specifications or samples from THE BASE in UAE." },
+  { route: "/find-your-distributor", title: "Find Your Distributor | The Base", description: "Find THE BASE beverage supply contacts across 17 markets. Contact our UAE team, request samples or enquire about distribution in your country." },
+  { route: "/careers", title: "Careers at THE BASE | UAE Beverage Manufacturing", description: "Join THE BASE in UAE. Tell us about your experience in production, quality, logistics, sales, marketing or beverage development." },
+  { route: "/request-samples", title: "Request Beverage Samples | The Base UAE", description: "Request THE BASE beverage samples for your café, bar or hospitality business. Share your menu requirements with our UAE team." },
+  { route: "/certificates", title: "Quality & Certificates | The Base", description: "Learn about THE BASE quality standards, HACCP and Halal documentation. Request product-specific certificates and specifications from our team." },
+  { route: "/faq", title: "Frequently Asked Questions | The Base", description: "Answers about THE BASE beverage production, private label, custom R&D, samples, storage and distribution." },
+  { route: "/cookie-policy", title: "Cookie Policy | The Base", description: "How THE BASE uses necessary storage, analytics and marketing consent. Manage your cookie preferences at any time." },
   {
     route: "/puree",
     title: "Fruit Purées for Cafés, Bars & HoReCa | The Base",
@@ -894,6 +870,7 @@ const nativeByPath = new Map(NATIVE_ROUTES.map((definition) => [definition.route
 
 function nativePage({ route, title, description }: NativeRoute): SitePage {
   const canonical = publicUrl(`${SITE_ORIGIN}${route}`);
+  const image = getProduct(route.slice(1))?.image ?? "/images/tild3435-6364-4232-a539-303363373037__frame_1413375666_1.jpg";
   return {
     route,
     file: "",
@@ -902,8 +879,7 @@ function nativePage({ route, title, description }: NativeRoute): SitePage {
     description,
     canonical,
     robots: "",
-    // The catalogue plate: the product on its own colour, as on the shelf.
-    openGraph: { url: canonical, title, description, type: "website", image: `${SITE_ORIGIN}/images/tile-${route.slice(1)}.webp` },
+    openGraph: { url: canonical, title, description, type: "website", image: `${SITE_ORIGIN}${image}` },
     bodyHtml: "",
     headAssetsHtml: "",
     native: true,
@@ -941,7 +917,6 @@ export function getSitePage(route: string): SitePage | undefined {
     removeLegacyAnalyticsRuntime,
     (value) => dropReplacedRecords(value, definition.file),
     (value) => dropTemplateDebris(value, definition.file),
-    (value) => retargetDeadLinks(value, definition.file),
     relinkBlogPosts,
     (value) => normalizeContentLandmarks(value, definition.file),
     (value) => stabilizeCatalogRuntime(value, definition.file),
@@ -951,12 +926,16 @@ export function getSitePage(route: string): SitePage | undefined {
     promoteCriticalImages,
     scopeLegacyImagePasses,
     localizePageLinks,
+    (value) => rewriteLegacyStructuredData(value, Boolean(getProduct(route.slice(1)))),
+    // Running copy only: "the Base", never "THE BASE" (titles and h1 untouched).
+    brandCaseHtml,
   ]);
 
   const headAssetsHtml = applyAll(assetsMatch?.[1] ?? "", [
     (value) => removeInlineScriptContaining(value, "__tbCanonInit"),
     (value) => removeInlineScriptContaining(value, "/api/tildafeed"),
     removeLegacyAnalyticsRuntime,
+    removeLegacyFontLinks,
     useResizedLegacyImages,
     (value) => preserveCatalogPrices(value, definition.file),
     (value) => stabilizeCatalogRuntime(value, definition.file),

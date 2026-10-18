@@ -74,7 +74,7 @@ export function BrandFilm({ className }: { className?: string }) {
       loop
       playsInline
       preload="none"
-      aria-label="THE BASE brand film"
+      aria-label="the Base brand film"
       // Ambient footage is decoration: it says nothing a visitor has to reach,
       // and a control strip over it is the thing this block asked to lose.
       tabIndex={-1}

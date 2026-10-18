@@ -107,7 +107,7 @@ export function SiteHeader({
           .join(" ")}
         data-header-theme={menuSurface ? "dark" : solid ? "light" : "hero"}
       >
-        <SiteLink href="/" className={styles.logo} aria-label="THE BASE — home">
+        <SiteLink href="/" className={styles.logo} aria-label="the Base — home">
           <BrandMarkVertical />
         </SiteLink>
 

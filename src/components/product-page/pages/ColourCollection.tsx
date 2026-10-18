@@ -16,7 +16,7 @@ const colours = [
   { name: "Matcha", tin: "matcha", text: "Stone-ground Japanese green tea.", taste: "Grassy, umami, gentle bitterness.", best: "Lattes, iced matcha, lemonade." },
   { name: "Hojicha", tin: "hojicha", text: "Roasted Japanese green tea.", taste: "Roasted, caramel, nutty, low bitterness.", best: "Hot lattes, affogato, the evening menu." },
   { name: "Butterfly Pea", tin: "butterfly-pea", text: "Blue flower extract. Turns violet with citrus.", taste: "Neutral, lightly floral.", best: "Lemonades, mocktails, blue lattes." },
-  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract.", taste: "Mild, fresh, lightly sweet.", best: "Pink lattes, smoothies, cocktails." },
+  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract.", taste: "Mild, fresh, lightly sweet.", best: "Pink lattes, smoothies, iced tea." },
   { name: "Ube", tin: "ube", text: "Purple yam from the Philippines.", taste: "Vanilla-like, nutty, sweet and earthy.", best: "Lattes, frappes, desserts." },
 ];
 
@@ -46,7 +46,7 @@ const faq = [
   },
 ];
 
-export function ColourCollectionPage({ product, headline }: ProductPageProps) {
+export function ColourCollectionPage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#ECE8E2", "--pp-chip": "#ECE8E2", "--stat": 34 } as CSSProperties}>
       <Hero
@@ -59,7 +59,6 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
             <br /> collection
           </>
         }
-        headline={headline}
         lead={{
           desktop: "Five natural powders for beverage menus. One ingredient in every tin, nothing added. Colour, naturally.",
           mobile: "Five natural powders for beverage menus. One ingredient, nothing added.",
@@ -121,7 +120,7 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
           title="Your own colour menu"
           text="Signature drinks with the collection, developed by our lab in Dubai."
           action={
-            <SiteLink href="/rnd" className={cx(styles.button, styles.red)}>
+            <SiteLink href="/rnd#rnd-form" className={cx(styles.button, styles.red)}>
               Talk to R&amp;D
             </SiteLink>
           }
@@ -162,7 +161,7 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
         />
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} />
+      <Faq className={local.faq} productName={product.name} items={faq} line={null} distributor={false} />
     </main>
   );
 }

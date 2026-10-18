@@ -37,14 +37,6 @@ export type Entry = {
 
 export const HOMEPAGE_ENTRIES: Entry[] = [
   {
-    href: "/wholesale-strategy",
-    category: "Market",
-    title: "Wholesale Strategy and Market Insights",
-    summary:
-      "Wholesale beverage distribution in the GCC: margins, MOQ, supplier checklist and the mistakes that cost money.",
-    image: "/images/tild3935-6337-4533-a633-643534346539__photo-1590497008432-.jpg",
-  },
-  {
     href: "/rnd",
     category: "R&D",
     title: "Beverage R&D and Product Development",
