@@ -168,6 +168,17 @@ async function checkDistributorFinder(page, label, countryName, countryCode) {
     (await form.locator('input[name="country"]').inputValue()) === countryCode,
     `${label}: sample form lost the selected market`,
   );
+  // Opened from the finder, the drawer has no product yet: samples from two.
+  await form.getByRole("combobox", { name: "Product" }).selectOption("matcha");
+  await form.getByText("Hojicha", { exact: true }).click();
+  await form.getByText("Purple Yum Ube", { exact: true }).click();
+  await form.getByRole("button", { name: "+ Add another product" }).click();
+  await form.getByRole("combobox", { name: "Another product" }).selectOption("milkshake");
+  await form.getByText("Banana", { exact: true }).click();
+  check(
+    (await form.locator('input[name="product"]').inputValue()) === "Matcha, Milkshake",
+    `${label}: sample form did not carry both products`,
+  );
   await form.locator('input[name="name"]').fill("Browser Smoke");
   await form.locator('input[name="email"]').fill("smoke@example.com");
   await form.locator('input[name="Phone"]').fill("+971500000000");
@@ -180,6 +191,10 @@ async function checkDistributorFinder(page, label, countryName, countryCode) {
   check(
     capturedLead?.country === countryCode && capturedLead?.formType === "sample",
     `${label}: submitted sample lead lost its market or form type`,
+  );
+  check(
+    /- Matcha: Hojicha, Purple Yum Ube\n- Milkshake: Banana/.test(capturedLead?.message ?? ""),
+    `${label}: submitted sample lead lost its samples: ${capturedLead?.message}`,
   );
   check(
     await form.locator(".js-successbox").isHidden(),

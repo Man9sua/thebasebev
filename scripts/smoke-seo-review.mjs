@@ -375,7 +375,7 @@ async function runViewport(label, viewport) {
     await page.getByRole("button", { name: "Request a sample", exact: true }).first().click();
     const form = page.locator("#sample-request-modal-form");
     await completeIdentity(form);
-    const flavours = form.getByRole("group", { name: /Flavours/ }).getByRole("checkbox");
+    const flavours = form.getByRole("group", { name: /Samples/ }).getByRole("checkbox");
     check(await flavours.count() === 9, `${label} samples: all confirmed Milkshake flavours selectable`);
     await flavours.first().uncheck();
     const requests = leads.length;
@@ -384,13 +384,13 @@ async function runViewport(label, viewport) {
     check(leads.length === requests, `${label} samples: zero flavours cannot send a lead`);
     await form.evaluate((element) => element.requestSubmit());
     check(leads.length === requests, `${label} samples: programmatic submit also respects the minimum`);
-    for (let i = 0; i < 3; i++) await flavours.nth(i).check();
-    check(await flavours.nth(3).isDisabled(), `${label} samples: a fourth flavour is disabled`);
-    await flavours.nth(2).uncheck();
-    check(await flavours.nth(3).isEnabled(), `${label} samples: removing a flavour re-enables other choices`);
-    await flavours.nth(2).check();
+    for (let i = 0; i < 6; i++) await flavours.nth(i).check();
+    check(await flavours.nth(6).isDisabled(), `${label} samples: a seventh flavour is disabled`);
+    await flavours.nth(5).uncheck();
+    check(await flavours.nth(6).isEnabled(), `${label} samples: removing a flavour re-enables other choices`);
+    await flavours.nth(5).check();
     const lead = await failedSubmit(form, "/milkshake", null);
-    check(lead?.formType === "sample" && /Flavours:/.test(lead?.message ?? ""), `${label} samples: selected flavours preserve the sample lead contract`);
+    check(lead?.formType === "sample" && /Samples \(6\):\n- Milkshake: /.test(lead?.message ?? ""), `${label} samples: selected flavours preserve the sample lead contract`);
     check(await form.getByRole("link", { name: "Privacy Policy", exact: true }).getAttribute("href") === "/ae/privacy", `${label} samples: working Privacy Policy link`);
     await context.route("**/api/leads", async (route) => {
       leads.push(route.request().postDataJSON());

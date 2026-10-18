@@ -5,25 +5,30 @@ import { createPortal } from "react-dom";
 import { useOverlay } from "@/components/site/useOverlay";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
-import { sampleFlavoursFor } from "@/data/sample-flavours";
+import { SAMPLE_PRODUCTS, sampleProductFor } from "@/data/sample-flavours";
 import { MARKETS } from "@/lib/site-config";
 import styles from "./SampleRequestModal.module.css";
 
 /**
  * "Request a sample", to the design ("Request a Sample Form"): a drawer from
- * the right with the product's own flavours (up to three), the kind of
- * business and the contact fields, then a confirmation in the same drawer.
+ * the right with the samples, the kind of business and the contact fields,
+ * then a confirmation in the same drawer. Samples come from any product: the
+ * one the drawer was opened from is on it already, and "Add another product"
+ * puts more beside it, up to six flavours in all.
  *
  * It is still the export's "Free Sample" lead form underneath, sent by
  * `LeadAttributionBridge` to `/api/leads`, so it keeps that form's field
- * names: `product` stays the product's name and `country` the market code.
- * Flavours, business, city, country name and note travel in `text`, which is
- * what the CRM shows as the customer's message. Email stays required because
+ * names: `product` carries the chosen products' names and `country` the
+ * market code. The samples by product, business, city, country name and
+ * note travel in `text`, which is what the CRM shows as the customer's
+ * message. Email stays required because
  * the lead contract requires it.
  */
 
-const MAX_FLAVOURS = 3;
+const MAX_SAMPLES = 6;
 const BUSINESSES = ["Café", "Restaurant", "Hotel", "Distributor", "Other"] as const;
+
+type Sample = Readonly<{ slug: string; flavour: string }>;
 
 type Fields = {
   name: string;
@@ -97,12 +102,16 @@ function SampleDrawer({
   country: string;
   onClose: () => void;
 }) {
-  const flavours = sampleFlavoursFor(productName);
+  const origin = sampleProductFor(productName);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
-  const [picked, setPicked] = useState<string[]>(flavours.slice(0, 1));
-  const [flavourError, setFlavourError] = useState(false);
+  // The products on the form, in the order they were added; the one the
+  // drawer was opened from comes first, with its first flavour picked.
+  const [shown, setShown] = useState<string[]>(origin ? [origin.slug] : []);
+  const [picked, setPicked] = useState<Sample[]>(origin ? [{ slug: origin.slug, flavour: origin.flavours[0] }] : []);
+  const [adding, setAdding] = useState(!origin);
+  const [sampleError, setSampleError] = useState(false);
   const [business, setBusiness] = useState<string>(BUSINESSES[0]);
   const [fields, setFields] = useState<Fields>({
     name: "",
@@ -129,15 +138,41 @@ function SampleDrawer({
     return () => observer.disconnect();
   }, []);
 
-  const toggle = (flavour: string) => {
-    setFlavourError(false);
+  const full = picked.length >= MAX_SAMPLES;
+  const isPicked = (slug: string, flavour: string) =>
+    picked.some((sample) => sample.slug === slug && sample.flavour === flavour);
+
+  const toggle = (slug: string, flavour: string) => {
+    setSampleError(false);
     setPicked((current) =>
-      current.includes(flavour)
-        ? current.filter((item) => item !== flavour)
-        : current.length >= MAX_FLAVOURS
+      current.some((sample) => sample.slug === slug && sample.flavour === flavour)
+        ? current.filter((sample) => !(sample.slug === slug && sample.flavour === flavour))
+        : current.length >= MAX_SAMPLES
           ? current
-          : [...current, flavour],
+          : [...current, { slug, flavour }],
     );
+  };
+
+  const addProduct = (event: ChangeEvent<HTMLSelectElement>) => {
+    const slug = event.currentTarget.value;
+    if (!slug) return;
+    setSampleError(false);
+    setShown((current) => (current.includes(slug) ? current : [...current, slug]));
+    setAdding(false);
+  };
+
+  const removeProduct = (slug: string) => {
+    const next = shown.filter((item) => item !== slug);
+    setShown(next);
+    if (next.length === 0) setAdding(true);
+    setPicked((current) => current.filter((sample) => sample.slug !== slug));
+  };
+
+  const flagMissing = (event: { preventDefault(): void; currentTarget: HTMLElement }) => {
+    event.preventDefault();
+    setSampleError(true);
+    event.currentTarget.closest("fieldset")?.scrollIntoView({ block: "nearest" });
+    event.currentTarget.focus({ preventScroll: true });
   };
 
   const update = (key: keyof Fields) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -145,8 +180,17 @@ function SampleDrawer({
     setFields((current) => ({ ...current, [key]: value }));
   };
 
+  // Picks grouped by product, in the order the products were added.
+  const groups = shown.flatMap((slug) => {
+    const product = SAMPLE_PRODUCTS.find((item) => item.slug === slug);
+    const flavours = picked.filter((sample) => sample.slug === slug).map((sample) => sample.flavour);
+    return product && flavours.length > 0 ? [{ product, flavours }] : [];
+  });
+  const choices = SAMPLE_PRODUCTS.filter((product) => !shown.includes(product.slug));
+
   const message = [
-    picked.length > 0 && `Flavours: ${picked.join(", ")}`,
+    groups.length > 0 &&
+      `Samples (${picked.length}):\n${groups.map((group) => `- ${group.product.name}: ${group.flavours.join(", ")}`).join("\n")}`,
     `Business: ${business}`,
     fields.countryName.trim() && `Country: ${fields.countryName.trim()}`,
     fields.city.trim() && `City: ${fields.city.trim()}`,
@@ -154,6 +198,8 @@ function SampleDrawer({
   ]
     .filter(Boolean)
     .join("\n");
+  // The CRM's product field: every product with a pick, by name.
+  const products = groups.map((group) => group.product.name).join(", ") || productName;
 
   const firstName = fields.name.trim().split(/\s+/)[0];
 
@@ -169,7 +215,7 @@ function SampleDrawer({
         tabIndex={-1}
       >
         <div className={styles.top}>
-          <span className={styles.step}>{done ? "Done" : productName ? `${productName} sample` : "Sample request"}</span>
+          <span className={styles.step}>{done ? "Done" : "Sample request"}</span>
           <button ref={closeRef} type="button" className={styles.close} onClick={onClose} aria-label="Close sample request form">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" />
@@ -180,7 +226,7 @@ function SampleDrawer({
         <form id="sample-request-modal-form" className={`js-form-proccess ${styles.form}`}>
           <input type="hidden" name="tildaspec-formname" defaultValue="Free Sample" />
           <input type="hidden" name="country" value={country} />
-          {productName && <input type="hidden" name="product" value={productName} />}
+          {products && <input type="hidden" name="product" value={products} />}
           <input type="hidden" name="text" value={message} />
 
           <div className={`t-form__inputsbox ${styles.inputs}`}>
@@ -191,57 +237,98 @@ function SampleDrawer({
                   <br /> a sample
                 </h2>
                 <p className={styles.lead}>
-                  Free for cafés, restaurants, hotels and distributors.
-                  {flavours.length > 0 && " Choose up to three flavours."}
+                  Free for cafés, restaurants, hotels and distributors. Choose up to {MAX_SAMPLES} flavours, from one
+                  product or several.
                 </p>
               </div>
 
-              {flavours.length > 0 && (
-                <fieldset className={styles.group}>
-                  <legend className={styles.groupHead}>
-                    <span className={styles.groupTitle}>Flavours</span>
-                    <span className={styles.count}>
-                      {picked.length} of {MAX_FLAVOURS}
-                    </span>
-                  </legend>
-                  <div className={styles.chips}>
-                    {flavours.map((flavour, index) => {
-                      const on = picked.includes(flavour);
-                      const full = !on && picked.length >= MAX_FLAVOURS;
-                      return (
-                        <label
-                          key={flavour}
-                          className={on ? styles.chipOn : styles.chip}
-                          data-disabled={full || undefined}
+              <fieldset className={styles.group}>
+                <legend className={styles.groupHead}>
+                  <span className={styles.groupTitle}>Samples</span>
+                  <span className={styles.count} aria-live="polite">
+                    {picked.length} of {MAX_SAMPLES}
+                  </span>
+                </legend>
+
+                {shown.map((slug, productIndex) => {
+                  const product = SAMPLE_PRODUCTS.find((item) => item.slug === slug);
+                  if (!product) return null;
+                  return (
+                    <div key={slug} className={styles.product}>
+                      <div className={styles.productHead}>
+                        <span className={styles.productName}>{product.name}</span>
+                        <button
+                          type="button"
+                          className={styles.remove}
+                          onClick={() => removeProduct(slug)}
+                          aria-label={`Remove ${product.name}`}
                         >
-                          <input
-                            className={styles.flavourInput}
-                            type="checkbox"
-                            checked={on}
-                            disabled={full}
-                            required={index === 0 && picked.length === 0}
-                            aria-invalid={flavourError || undefined}
-                            aria-describedby={flavourError ? "sample-flavour-error" : undefined}
-                            onChange={() => toggle(flavour)}
-                            onInvalid={(event) => {
-                              event.preventDefault();
-                              setFlavourError(true);
-                              event.currentTarget.closest("fieldset")?.scrollIntoView({ block: "nearest" });
-                              event.currentTarget.focus({ preventScroll: true });
-                            }}
-                          />
-                          {flavour}
-                        </label>
-                      );
-                    })}
-                  </div>
-                  {flavourError && (
-                    <p id="sample-flavour-error" className={styles.error} role="alert">
-                      Choose at least one flavour.
-                    </p>
-                  )}
-                </fieldset>
-              )}
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6L6 18" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className={styles.chips}>
+                        {product.flavours.map((flavour, index) => {
+                          const on = isPicked(slug, flavour);
+                          const off = !on && full;
+                          return (
+                            <label key={flavour} className={on ? styles.chipOn : styles.chip} data-disabled={off || undefined}>
+                              <input
+                                className={styles.flavourInput}
+                                type="checkbox"
+                                checked={on}
+                                disabled={off}
+                                required={productIndex === 0 && index === 0 && picked.length === 0}
+                                aria-invalid={sampleError || undefined}
+                                aria-describedby={sampleError ? "sample-flavour-error" : undefined}
+                                onChange={() => toggle(slug, flavour)}
+                                onInvalid={flagMissing}
+                              />
+                              {flavour}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {choices.length > 0 &&
+                  (adding ? (
+                    <label className={styles.field}>
+                      <span className={styles.label}>{shown.length > 0 ? "Another product" : "Product"}</span>
+                      <select
+                        className={styles.select}
+                        value=""
+                        onChange={addProduct}
+                        required={shown.length === 0}
+                        aria-invalid={(sampleError && shown.length === 0) || undefined}
+                        aria-describedby={sampleError ? "sample-flavour-error" : undefined}
+                        onInvalid={flagMissing}
+                      >
+                        <option value="" disabled>
+                          Choose a product
+                        </option>
+                        {choices.map((product) => (
+                          <option key={product.slug} value={product.slug}>
+                            {product.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : (
+                    <button type="button" className={styles.add} onClick={() => setAdding(true)} disabled={full}>
+                      + Add another product
+                    </button>
+                  ))}
+
+                {sampleError && (
+                  <p id="sample-flavour-error" className={styles.error} role="alert">
+                    {shown.length === 0 ? "Choose a product and at least one flavour." : "Choose at least one flavour."}
+                  </p>
+                )}
+              </fieldset>
 
               <fieldset className={styles.group}>
                 <legend className={styles.groupTitle}>Your business</legend>
@@ -319,10 +406,14 @@ function SampleDrawer({
                   Thank you{firstName ? `, ${firstName}` : ""}. the Base team will contact you on WhatsApp within
                   one business day to confirm the address.
                 </p>
-                {picked.length > 0 && (
+                {groups.length > 0 && (
                   <div className={styles.summary}>
-                    <span className={styles.summaryLabel}>Your sample</span>
-                    <span className={styles.summaryValue}>{picked.join(", ")}</span>
+                    <span className={styles.summaryLabel}>Your samples ({picked.length})</span>
+                    {groups.map((group) => (
+                      <span key={group.product.slug} className={styles.summaryValue}>
+                        {group.product.name}: {group.flavours.join(", ")}
+                      </span>
+                    ))}
                   </div>
                 )}
                 <button type="button" className={styles.back} onClick={onClose}>

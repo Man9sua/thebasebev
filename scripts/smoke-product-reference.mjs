@@ -172,7 +172,7 @@ async function critical(page, main, slug, label) {
     await main.getByRole("button", { name: /request a sample/i }).first().click();
     const form = page.locator("#sample-request-modal-form");
     await form.waitFor({ state: "visible" });
-    const choices = form.getByRole("group", { name: /Flavours/ }).getByRole("checkbox");
+    const choices = form.getByRole("group", { name: /Samples/ }).getByRole("checkbox");
     check(await choices.count() === 6, `${label} Jam: all six sample choices`);
     check(await choices.filter({ visible: true }).count() === 6, `${label} Jam: sample choices rendered`);
     await page.keyboard.press("Escape");
