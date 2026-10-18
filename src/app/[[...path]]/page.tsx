@@ -439,12 +439,13 @@ async function RouteBody({ params }: RouteProps) {
   }
 
   if (route === "/resources/tools") {
-    const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261"]);
+    const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261", ZOOM_CALL_RECORD]);
     return (
       <div className="tbb">
         <SiteHeader />
         <ToolsPage />
         <LegacyPageShell page={runtimePage} runtimeOnly />
+        <ZoomCallBlock />
         <SiteFooter />
       </div>
     );
