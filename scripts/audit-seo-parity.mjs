@@ -17,7 +17,7 @@ function publicUrl(value) {
   } catch { return value; }
 }
 const expectedSitemapRoutes =
-  29 + readNativeRoutes().length + glossaryContent.entries.length + blogContent.posts.length;
+  28 + readNativeRoutes().length + glossaryContent.entries.length + blogContent.posts.length;
 const addedRoutes = new Set(["/electrolyte", "/find-your-distributor", "/careers", "/request-samples", "/certificates", "/faq", "/cookie-policy"]);
 
 /*

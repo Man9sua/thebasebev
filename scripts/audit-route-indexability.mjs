@@ -171,7 +171,7 @@ if (friendlyRoutes.length !== 36 || legacyPageRedirects.length !== 41 || product
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, legacyPages=${legacyPageRedirects.length}, productAliases=${productAliasRedirects.length}.`,
   );
 }
-const expectedControlledRoutes = 44 + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
+const expectedControlledRoutes = 45 + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (controlledRoutes.length !== expectedControlledRoutes) {
   throw new Error(
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,

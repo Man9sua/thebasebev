@@ -139,7 +139,7 @@ Current verified production preview:
 https://the-base-production.mansua.workers.dev
 ```
 
-The OpenNext configuration uses its read-only Workers Static Assets incremental cache for the SSG pages. The Cloudflare build also prepares a generated static-document fast path so the public site stays below the target account's Workers Free CPU limit; dynamic APIs remain in OpenNext. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
+The Cloudflare build prepares a generated Static Assets document fast path so public SSG pages stay below the target account's Workers Free CPU limit. The duplicate incremental cache is disabled; dynamic APIs remain in OpenNext. Next 16.4 requires OpenNext 1.20.14 or later to inline `server/preview-props.json`; a successful Next build alone does not verify those API handlers. The scoped `@node-minify/core` glob override keeps that adapter's build dependency on a patched release. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
 
 Run the complete sequential verification against a deployed target with:
 

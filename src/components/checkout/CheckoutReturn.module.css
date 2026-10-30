@@ -1,5 +1,6 @@
 .page { min-height: 100vh; background: var(--tbb-rd-paper); color: var(--tbb-rd-ink); }
 .header { display: flex; align-items: center; min-height: 88px; padding: 14px clamp(20px,5vw,64px); background: #fff; border-bottom: 1px solid var(--tbb-rd-line); }
+.header a { color: inherit; }
 .header svg { display: block; width: auto; height: 60px; }
 .content { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; max-width: 900px; padding: 80px clamp(20px,5vw,64px) 120px; }
 .label { font-size: 14px; font-weight: var(--tbb-font-weight-medium); color: var(--tbb-rd-muted); }
