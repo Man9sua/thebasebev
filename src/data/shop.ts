@@ -2,9 +2,7 @@ import { CATALOG_PRODUCTS, type CatalogProduct } from "./catalog";
 import { SAMPLE_FLAVOURS } from "./sample-flavours";
 import catalogTiles from "./catalog-tiles.json";
 
-export const SHOP_SAMPLE_LIMIT = 6;
-export const SHOP_MAX_QUANTITY = 10;
-export const SHOP_MAX_LINES = 20;
+export { SHOP_MAX_QUANTITY, SHOP_MAX_LINES } from "../lib/shop-limits";
 export type ShopKind = "products" | "samples";
 export type ShopProduct = CatalogProduct & { flavors: readonly string[]; format: string };
 

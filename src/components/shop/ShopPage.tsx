@@ -10,7 +10,6 @@ import {
   SHOP_PRODUCTS,
   SHOP_MAX_QUANTITY,
   SHOP_MAX_LINES,
-  SHOP_SAMPLE_LIMIT,
   getShopProduct,
   shopKindForCountry,
   type ShopProduct,
@@ -19,8 +18,10 @@ import {
   addCartItem,
   addSampleCartItem,
   cartLineKey,
+  removeCartItem,
   removeSampleCartItem,
   setCartItemQuantity,
+  setSampleCartItemQuantity,
   type CartItem,
 } from "@/lib/cart-store";
 import { formatShopMoney, getShopUnitAmount } from "@/lib/shop-payment";
@@ -72,9 +73,9 @@ function Quantity({ name, quantity, canAdd = true, onChange }: { name: string; q
   );
 }
 
-function changeProductQuantity(slug: string, flavor: string, quantity: number, previous: number) {
-  if (previous === 0 && quantity > 0) addCartItem(slug, flavor, quantity);
-  else setCartItemQuantity(slug, flavor, quantity);
+function changeQuantity(kind: ShopKind, slug: string, flavor: string, quantity: number, previous: number) {
+  if (previous === 0 && quantity > 0) (kind === "samples" ? addSampleCartItem : addCartItem)(slug, flavor, quantity);
+  else (kind === "samples" ? setSampleCartItemQuantity : setCartItemQuantity)(slug, flavor, quantity);
 }
 
 function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopProduct; kind: ShopKind; count: number; onChoose: () => void; eager: boolean }) {
@@ -107,8 +108,8 @@ function FlavourPicker({ product, kind, items, onClose }: { product: ShopProduct
   const quantities = new Map(lines.map((line) => [line.flavor, line.quantity]));
   const count = itemCount(lines);
   const samples = kind === "samples";
-  const boxCount = items.length;
-  const full = items.length >= (samples ? SHOP_SAMPLE_LIMIT : SHOP_MAX_LINES);
+  const boxCount = itemCount(items);
+  const full = items.length >= SHOP_MAX_LINES;
 
   return (
     <div className={styles.overlay} data-shop-picker={product.slug}>
@@ -119,7 +120,7 @@ function FlavourPicker({ product, kind, items, onClose }: { product: ShopProduct
           <div className={styles.pickerHead}>
             <div className={styles.pickerCopy}>
               <h2 className={styles.pickerTitle} id={id}>{product.name} flavours</h2>
-              <span className={styles.pickerMeta}>{samples ? "One sample pouch per flavour" : `${product.format}, ${unitLabel(product, kind)}`}</span>
+              <span className={styles.pickerMeta}>{samples ? "Choose a quantity for each flavour" : `${product.format}, ${unitLabel(product, kind)}`}</span>
             </div>
             <button className={styles.dismiss} ref={dismiss} type="button" aria-label="Close flavour picker" onClick={onClose}><CloseIcon /></button>
           </div>
@@ -129,16 +130,14 @@ function FlavourPicker({ product, kind, items, onClose }: { product: ShopProduct
               return (
                 <li className={styles.flavourRow} key={flavor} data-shop-flavor={flavor}>
                   <span className={styles.flavourName}>{flavor}</span>
-                  {samples ? (
-                    <button className={`${styles.control} ${styles.sampleToggle}`} type="button" aria-label={`${quantity ? "Remove" : "Add"} ${flavor} ${product.name} sample`} aria-pressed={quantity > 0} disabled={full && quantity === 0} onClick={() => quantity ? removeSampleCartItem(product.slug, flavor) : addSampleCartItem(product.slug, flavor)}>{quantity > 0 ? "Added" : "Add"}</button>
-                  ) : <Quantity name={`${flavor} ${product.name}`} quantity={quantity} canAdd={!full || quantity > 0} onChange={(next) => changeProductQuantity(product.slug, flavor, next, quantity)} />}
+                  <Quantity name={`${flavor} ${product.name}`} quantity={quantity} canAdd={!full || quantity > 0} onChange={(next) => changeQuantity(kind, product.slug, flavor, next, quantity)} />
                 </li>
               );
             })}
           </ul>
           <div className={styles.pickerFoot}>
-            {full && <p className={styles.limitNote} role="status">{samples ? `Sample box is full: ${SHOP_SAMPLE_LIMIT} flavours` : `Cart limit reached: ${SHOP_MAX_LINES} flavours. Remove a flavour to add another.`}</p>}
-            <button className={styles.control} type="button" onClick={onClose}>{count > 0 ? samples ? `Done: ${boxCount} of ${SHOP_SAMPLE_LIMIT} in box` : `Done: ${count} in cart` : "Close"}</button>
+            {full && <p className={styles.limitNote} role="status">This checkout supports {SHOP_MAX_LINES} different flavours. Remove a flavour to add another.</p>}
+            <button className={styles.control} type="button" onClick={onClose}>{count > 0 ? samples ? `Done: ${boxCount} in sample box` : `Done: ${count} in cart` : "Close"}</button>
           </div>
         </div>
       </div>
@@ -175,13 +174,14 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
                 <div className={styles.lineCopy}>
                   <span className={styles.lineName}>{product.name}</span>
                   <span className={styles.lineFlavour}>{item.flavor}</span>
-                  {samples ? <button className={styles.remove} type="button" aria-label={`Remove ${item.flavor} ${product.name} sample`} onClick={() => removeSampleCartItem(item.slug, item.flavor)}>Remove</button> : <Quantity name={`${item.flavor} ${product.name}`} quantity={item.quantity} onChange={(next) => setCartItemQuantity(item.slug, item.flavor, next)} />}
+                  <Quantity name={`${item.flavor} ${product.name}`} quantity={item.quantity} onChange={(next) => changeQuantity(kind, item.slug, item.flavor, next, item.quantity)} />
+                  <button className={styles.remove} type="button" aria-label={`Remove ${item.flavor} ${product.name}`} onClick={() => (samples ? removeSampleCartItem : removeCartItem)(item.slug, item.flavor)}>Remove</button>
                 </div>
                 <span className={styles.linePrice}>{samples ? "Free" : unit === null ? "Price pending" : formatShopMoney(unit * item.quantity)}</span>
               </li>
             );
           })}
-          {items.length === 0 && <li className={styles.empty} role="status">{samples ? `Your sample box is empty. Add up to ${SHOP_SAMPLE_LIMIT} flavours.` : "Your cart is empty. Choose a product and its flavours to get started."}</li>}
+          {items.length === 0 && <li className={styles.empty} role="status">{samples ? "Your sample box is empty. Choose flavours and quantities to get started." : "Your cart is empty. Choose a product and its flavours to get started."}</li>}
         </ul>
         {total > 0 && (
           <div className={styles.drawerFoot}>
@@ -254,7 +254,7 @@ export function ShopPage() {
           <section className={styles.sampleNotice} aria-labelledby="shop-samples-title">
             <div className={styles.noticeCopy}>
               <h2 className={styles.noticeTitle} id="shop-samples-title">Free samples for businesses in {countryName}</h2>
-              <p className={styles.noticeText}>Online orders ship within the UAE. Pick up to {SHOP_SAMPLE_LIMIT} flavours, we send them by DHL Express. You pay only for delivery.</p>
+              <p className={styles.noticeText}>Choose your flavours and quantities. We send them by DHL Express. You pay only for delivery.</p>
             </div>
             <SiteLink className={`${styles.control} ${styles.outline}`} href="/distributors">Find your distributor</SiteLink>
           </section>
@@ -268,7 +268,7 @@ export function ShopPage() {
           <SiteLink className={styles.control} href="/contacts">Get a quote</SiteLink>
         </section>
       </div>
-      {total > 0 && !drawerOpen && !picking && <button className={styles.cartBar} type="button" data-shop-cart-open aria-haspopup="dialog" onClick={openDrawer}><span>{samples ? `${total} of ${SHOP_SAMPLE_LIMIT} samples` : `${total} in cart, ${amount === null ? "prices pending" : formatShopMoney(amount)}`}</span><span className={styles.cartBarAction}>{samples ? "Sample box" : "View cart"}</span></button>}
+      {total > 0 && !drawerOpen && !picking && <button className={styles.cartBar} type="button" data-shop-cart-open aria-haspopup="dialog" onClick={openDrawer}><span>{samples ? `${total} ${total === 1 ? "sample" : "samples"}` : `${total} in cart, ${amount === null ? "prices pending" : formatShopMoney(amount)}`}</span><span className={styles.cartBarAction}>{samples ? "Sample box" : "View cart"}</span></button>}
       {picking && <FlavourPicker product={picking} kind={kind} items={currentCart.items} onClose={closePicker} />}
       {drawerOpen && <CartDrawer kind={kind} country={country} countryName={countryName} items={currentCart.items} onClose={closeDrawer} />}
     </main>

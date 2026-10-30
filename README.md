@@ -56,8 +56,8 @@ Stripe powers the shop checkout in staging Test Mode. Product prices and deliver
 ### Shop and checkout
 
 The shop uses the established `/ae/catalog` URL (and country aliases). UAE visitors
-choose products and quantities; other markets can build a box of up to six free
-samples. Products and samples have separate persistent baskets. The supplied Shop
+choose products and quantities; other markets can choose free samples and their
+quantities. Products and samples have separate persistent baskets. The supplied Shop
 and Checkout HTML determine the layout; the published product/flavour registry
 determines what can be selected.
 

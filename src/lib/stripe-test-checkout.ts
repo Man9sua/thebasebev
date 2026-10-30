@@ -1,6 +1,7 @@
 import type Stripe from "stripe";
 import { getCheckoutProductId } from "@/data/catalog";
 import { SAMPLE_PRODUCTS } from "@/data/sample-flavours";
+import { isShopQuantity, SHOP_MAX_LINES } from "./shop-limits";
 import {
   getShopQuote, getShopUnitAmount, isShopCountry,
   type ShopCheckoutKind, type ShopPaymentPricing, type ShopShippingMethod,
@@ -78,7 +79,7 @@ function validateCheckoutPayload(input: unknown): { ok: true; data: ValidatedChe
   const customer = validateCustomer(input.customer);
   if (!customer) return { ok: false, code: "INVALID_CUSTOMER" };
   if (input.email !== undefined && (!validEmail(input.email) || input.email !== customer.email)) return { ok: false, code: "INVALID_EMAIL" };
-  if (!Array.isArray(input.items) || !input.items.length || input.items.length > (input.kind === "samples" ? 6 : 20)) return { ok: false, code: "INVALID_ITEMS" };
+  if (!Array.isArray(input.items) || !input.items.length || input.items.length > SHOP_MAX_LINES) return { ok: false, code: "INVALID_ITEMS" };
 
   const seen = new Set<string>();
   const items: ValidatedCheckout["items"][number][] = [];
@@ -92,8 +93,7 @@ function validateCheckoutPayload(input: unknown): { ok: true; data: ValidatedChe
     if (typeof item.flavor !== "string" || !product.flavours.includes(item.flavor)) return { ok: false, code: "INVALID_FLAVOR" };
     const key = JSON.stringify([product.slug, item.flavor]);
     if (seen.has(key)) return { ok: false, code: "DUPLICATE_LINE" };
-    if (typeof item.quantity !== "number" || !Number.isInteger(item.quantity)
-      || item.quantity < 1 || item.quantity > (input.kind === "samples" ? 1 : 10)) return { ok: false, code: "INVALID_QUANTITY" };
+    if (!isShopQuantity(item.quantity)) return { ok: false, code: "INVALID_QUANTITY" };
     seen.add(key);
     items.push({ slug: product.slug, name: product.name, flavor: item.flavor, quantity: item.quantity });
   }

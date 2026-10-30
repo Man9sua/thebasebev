@@ -9,13 +9,14 @@ import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
 import { getCheckoutProductId } from "@/data/catalog";
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
-import { getShopProduct, SHOP_MAX_QUANTITY, SHOP_SAMPLE_LIMIT } from "@/data/shop";
+import { getShopProduct, SHOP_MAX_QUANTITY } from "@/data/shop";
 import {
   cartLineKey,
   removeSubmittedSamples,
   removeCartItem,
   removeSampleCartItem,
   setCartItemQuantity,
+  setSampleCartItemQuantity,
 } from "@/lib/cart-store";
 import { rememberPendingCheckout } from "@/lib/checkout-session";
 import { submitShopQuoteRequest, submitShopSampleRequest } from "@/lib/shop-lead";
@@ -155,6 +156,8 @@ export function CheckoutPage() {
   const paidCart = useCart();
   const sampleCart = useSampleCart();
   const cart = isSample ? sampleCart : paidCart;
+  const totalQuantity = cart.items.reduce((total, item) => total + item.quantity, 0);
+  const setQuantity = isSample ? setSampleCartItemQuantity : setCartItemQuantity;
   const [fields, setFields] = useState(INITIAL_FIELDS);
   const [businessType, setBusinessType] = useState("Café");
   const [emirate, setEmirate] = useState("Dubai");
@@ -216,7 +219,7 @@ export function CheckoutPage() {
       setError("Please check the highlighted fields.");
       return;
     }
-    if (empty || lines.length !== cart.items.length || (isSample && lines.length > SHOP_SAMPLE_LIMIT)) {
+    if (empty || lines.length !== cart.items.length) {
       setError(empty ? "Add products before continuing." : "Please review the products in your basket.");
       return;
     }
@@ -299,7 +302,7 @@ export function CheckoutPage() {
           {!cart.ready ? <p role="status">Preparing your {isSample ? "sample box" : "cart"}…</p> : empty ? (
             <section className={styles.empty}>
               <h2>{isSample ? "Your sample box is empty" : "Your cart is empty"}</h2>
-              <p>{isSample ? "Choose up to six flavours in the shop." : "Choose products and flavours in the shop."}</p>
+              <p>Choose products, flavours and quantities in the shop.</p>
               <SiteLink href={shopHref} className={styles.backButton}>{isSample ? "Pick flavours" : "Go to shop"}</SiteLink>
             </section>
           ) : (
@@ -347,20 +350,20 @@ export function CheckoutPage() {
                 </section>}
               </div>
               <aside className={styles.summary} aria-labelledby="order-summary-title">
-                <div className={styles.summaryHead}><h2 id="order-summary-title">{isSample ? "Sample box" : "Your order"}</h2>{isSample && <span>{lines.length} of {SHOP_SAMPLE_LIMIT}</span>}</div>
+                <div className={styles.summaryHead}><h2 id="order-summary-title">{isSample ? "Sample box" : "Your order"}</h2>{isSample && <span>{totalQuantity} {totalQuantity === 1 ? "sample" : "samples"}</span>}</div>
                 <div className={styles.lines}>{lines.map((line) => (
                   <article key={cartLineKey(line.slug, line.flavor)} className={styles.line}>
                     <div className={styles.thumb}>
                       <ShopPackImage product={line.product} sizes="56px" />
-                      {!isSample && <span className={styles.quantityBadge}>{line.quantity}</span>}
+                      <span className={styles.quantityBadge}>{line.quantity}</span>
                     </div>
                     <div className={styles.lineCopy}>
                       <h3>{line.product.name}</h3><p>{line.flavor}</p>
-                      {!isSample && <div className={styles.quantity} aria-label={`${line.product.name} ${line.flavor} quantity`}>
-                        <button type="button" disabled={pending} aria-label={`Decrease ${line.product.name} ${line.flavor} quantity`} onClick={() => setCartItemQuantity(line.slug, line.flavor, line.quantity - 1)}>−</button>
+                      <div className={styles.quantity} aria-label={`${line.product.name} ${line.flavor} quantity`}>
+                        <button type="button" disabled={pending} aria-label={`Decrease ${line.product.name} ${line.flavor} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity - 1)}>−</button>
                         <span>{line.quantity}</span>
-                        <button type="button" disabled={pending || line.quantity >= SHOP_MAX_QUANTITY} aria-label={`Increase ${line.product.name} ${line.flavor} quantity`} onClick={() => setCartItemQuantity(line.slug, line.flavor, line.quantity + 1)}>+</button>
-                      </div>}
+                        <button type="button" disabled={pending || line.quantity >= SHOP_MAX_QUANTITY} aria-label={`Increase ${line.product.name} ${line.flavor} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity + 1)}>+</button>
+                      </div>
                       <button type="button" className={styles.remove} disabled={pending} aria-label={`Remove ${line.product.name} ${line.flavor}`} onClick={() => (isSample ? removeSampleCartItem : removeCartItem)(line.slug, line.flavor)}>Remove</button>
                     </div>
                     {!isSample && <strong className={styles.linePrice}>{line.unitAmount === null ? "Price to confirm" : formatShopMoney(line.unitAmount * line.quantity)}</strong>}

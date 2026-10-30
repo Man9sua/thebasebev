@@ -76,9 +76,6 @@
 .step:disabled { opacity: .4; cursor: not-allowed; }
 .step:not(:disabled):hover { background: var(--shop-ink); color: #fff; }
 .quantity { min-width: 24px; color: var(--shop-ink); text-align: center; font-size: 16px; font-weight: var(--tbb-font-weight-button); }
-.sampleToggle { min-width: 92px; min-height: 40px; border-color: var(--tbb-rd-field-line); padding: 8px 12px; background: #fff; color: var(--shop-ink); font-size: 12px; }
-.sampleToggle[aria-pressed="true"] { border-color: var(--shop-ink); background: var(--shop-ink); color: #fff; }
-.sampleToggle:not(:disabled):hover { border-color: var(--shop-ink); background: var(--shop-ink); color: #fff; }
 .pickerFoot { display: flex; flex: none; flex-direction: column; gap: 8px; padding: 16px 24px 24px; }
 .page .limitNote { margin: 0 !important; color: var(--shop-muted); font-size: 13px; line-height: 1.4 !important; text-align: center; }
 .pickerFoot .control { width: 100%; min-height: 56px; }

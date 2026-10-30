@@ -10,6 +10,9 @@ fulfillment automatically. A payment annotation is not a posted accounting entry
 Product orders contain every selected product/flavour and quantity. Sample
 orders contain zero-priced sample lines. Delivery is a separate line. Full packs
 and sample packs must use their respective Odoo product variants.
+Samples use quantity controls like products; there is no six-flavour business
+limit or one-sample-per-flavour rule. Preserve quantities in storage, requests and
+Stripe line items. Both baskets share only the transport bounds in `shop-limits.ts`.
 
 ## Current verified state
 

@@ -1,4 +1,4 @@
-import { getShopProduct, SHOP_MAX_QUANTITY, SHOP_MAX_LINES, SHOP_SAMPLE_LIMIT } from "@/data/shop";
+import { getShopProduct, SHOP_MAX_QUANTITY, SHOP_MAX_LINES } from "@/data/shop";
 
 export type CartItem = Readonly<{ slug: string; flavor: string; quantity: number }>;
 export type CartState = Readonly<{ ready: boolean; items: readonly CartItem[] }>;
@@ -7,8 +7,8 @@ const SERVER_STATE: CartState = Object.freeze({ ready: false, items: Object.free
 export function cartLineKey(slug: string, flavor: string): string { return `${slug}::${flavor}`; }
 function sameLine(item: CartItem, slug: string, flavor: string) { return item.slug === slug && item.flavor === flavor; }
 
-/** Independent product baskets and six-flavour sample boxes share persistence rules. */
-function createCartStore(storageKey: string, samples: boolean) {
+/** Product and sample baskets share quantity rules but keep separate storage. */
+function createCartStore(storageKey: string) {
   let state = SERVER_STATE;
   let hydrated = false;
   const listeners = new Set<() => void>();
@@ -18,12 +18,12 @@ function createCartStore(storageKey: string, samples: boolean) {
     const byLine = new Map<string, CartItem>();
     for (const entry of value) {
       if (!entry || typeof entry !== "object" || typeof entry.slug !== "string" ||
-        typeof entry.flavor !== "string" || !Number.isInteger(entry.quantity) || entry.quantity < 1 ||
+        typeof entry.flavor !== "string" || !Number.isSafeInteger(entry.quantity) || entry.quantity < 1 ||
         !getShopProduct(entry.slug)?.flavors.includes(entry.flavor)) continue;
       const key = cartLineKey(entry.slug, entry.flavor);
-      if (!byLine.has(key) && byLine.size >= (samples ? SHOP_SAMPLE_LIMIT : SHOP_MAX_LINES)) continue;
+      if (!byLine.has(key) && byLine.size >= SHOP_MAX_LINES) continue;
       byLine.set(key, { slug: entry.slug, flavor: entry.flavor,
-        quantity: samples ? 1 : Math.min((byLine.get(key)?.quantity ?? 0) + entry.quantity, SHOP_MAX_QUANTITY) });
+        quantity: Math.min((byLine.get(key)?.quantity ?? 0) + entry.quantity, SHOP_MAX_QUANTITY) });
     }
     return [...byLine.values()];
   }
@@ -51,13 +51,13 @@ function createCartStore(storageKey: string, samples: boolean) {
     emit(items);
   }
   function add(slug: string, flavor: string, quantity = 1): boolean {
-    if (!getShopProduct(slug)?.flavors.includes(flavor) || !Number.isInteger(quantity) || quantity < 1) return false;
+    if (!getShopProduct(slug)?.flavors.includes(flavor) || !Number.isSafeInteger(quantity) || quantity < 1) return false;
     hydrate();
     const existing = state.items.find((item) => sameLine(item, slug, flavor));
-    if (!existing && state.items.length >= (samples ? SHOP_SAMPLE_LIMIT : SHOP_MAX_LINES)) return false;
+    if (!existing && state.items.length >= SHOP_MAX_LINES) return false;
     persist(existing ? state.items.map((item) => sameLine(item, slug, flavor)
-      ? { ...item, quantity: samples ? 1 : Math.min(item.quantity + quantity, SHOP_MAX_QUANTITY) } : item)
-      : [...state.items, { slug, flavor, quantity: samples ? 1 : Math.min(quantity, SHOP_MAX_QUANTITY) }]);
+      ? { ...item, quantity: Math.min(item.quantity + quantity, SHOP_MAX_QUANTITY) } : item)
+      : [...state.items, { slug, flavor, quantity: Math.min(quantity, SHOP_MAX_QUANTITY) }]);
     return true;
   }
   function remove(slug: string, flavor: string) {
@@ -66,14 +66,18 @@ function createCartStore(storageKey: string, samples: boolean) {
   }
   function setQuantity(slug: string, flavor: string, quantity: number) {
     hydrate();
-    if (!Number.isInteger(quantity) || quantity <= 0) return remove(slug, flavor);
+    if (!Number.isSafeInteger(quantity)) return;
+    if (quantity <= 0) return remove(slug, flavor);
     persist(state.items.map((item) => sameLine(item, slug, flavor)
-      ? { ...item, quantity: samples ? 1 : Math.min(quantity, SHOP_MAX_QUANTITY) } : item));
+      ? { ...item, quantity: Math.min(quantity, SHOP_MAX_QUANTITY) } : item));
   }
   function removeSubmitted(items: readonly CartItem[]) {
     hydrate();
-    const sent = new Set(items.map((item) => cartLineKey(item.slug, item.flavor)));
-    persist(state.items.filter((item) => !sent.has(cartLineKey(item.slug, item.flavor))));
+    const sent = new Map(items.map((item) => [cartLineKey(item.slug, item.flavor), item.quantity]));
+    persist(state.items.flatMap((item) => {
+      const quantity = item.quantity - (sent.get(cartLineKey(item.slug, item.flavor)) ?? 0);
+      return quantity > 0 ? [{ ...item, quantity }] : [];
+    }));
   }
   return {
     subscribe(listener: () => void) {
@@ -85,9 +89,9 @@ function createCartStore(storageKey: string, samples: boolean) {
   };
 }
 
-// Keep existing paid baskets while samples use their own limit and storage.
-const cart = createCartStore("thebase:cart:v2", false);
-const sampleCart = createCartStore("thebase:sample-cart:v1", true);
+// Keep both existing storage keys so saved selections survive this change.
+const cart = createCartStore("thebase:cart:v2");
+const sampleCart = createCartStore("thebase:sample-cart:v1");
 export const subscribeCart = cart.subscribe;
 export const getCartSnapshot = cart.getSnapshot;
 export const getCartServerSnapshot = () => SERVER_STATE;
@@ -98,6 +102,7 @@ export const clearCart = cart.clear;
 export const subscribeSampleCart = sampleCart.subscribe;
 export const getSampleCartSnapshot = sampleCart.getSnapshot;
 export const addSampleCartItem = sampleCart.add;
+export const setSampleCartItemQuantity = sampleCart.setQuantity;
 export const removeSampleCartItem = sampleCart.remove;
 export const clearSampleCart = sampleCart.clear;
 export const removeSubmittedSamples = sampleCart.removeSubmitted;

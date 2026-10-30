@@ -5,6 +5,7 @@ import Stripe from "stripe";
 
 import { SAMPLE_PRODUCTS } from "../src/data/sample-flavours";
 import { getShopQuote, getShopUnitAmount, type ShopPaymentPricing } from "../src/lib/shop-payment";
+import { SHOP_MAX_LINES, SHOP_MAX_QUANTITY } from "../src/lib/shop-limits";
 import { handleStripeTestSession, type StripeSessionStatus } from "../src/lib/stripe-test-session";
 import {
   handleStripeTestCheckout,
@@ -566,13 +567,33 @@ test("legacy ID and slug cannot duplicate the same product flavour", async () =>
   assert.equal((await response.json()).error.code, "DUPLICATE_LINE");
 });
 
-test("sample box accepts six distinct samples, rejects seven and multiple packs", async () => {
-  const items = SAMPLE_PRODUCTS.slice(0, 7).map(product => ({ productId: product.slug, flavor: product.flavours[0], quantity: 1 }));
-  assert.equal((await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind: "samples", items: items.slice(0, 6) }), checkoutDependencies())).status, 201);
-  const seven = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind: "samples", items }), checkoutDependencies());
-  assert.equal((await seven.json()).error.code, "INVALID_ITEMS");
-  const quantity = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind: "samples", items: [{ ...items[0], quantity: 2 }] }), checkoutDependencies());
-  assert.equal((await quantity.json()).error.code, "INVALID_QUANTITY");
+test("sample checkout preserves more than six flavours and multiple free packs", async () => {
+  const items = SAMPLE_PRODUCTS.slice(0, 8).map((product, index) => ({ productId: product.slug, flavor: product.flavours[0], quantity: index === 0 ? 12 : index + 2 }));
+  let captured: Stripe.Checkout.SessionCreateParams | undefined;
+  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind: "samples", items }),
+    checkoutDependencies(async params => {
+      captured = params;
+      return { id: "cs_test_multiple_samples", url: "https://checkout.stripe.com/c/pay/cs_test_multiple_samples", livemode: false };
+    }));
+  assert.equal(response.status, 201);
+  assert.deepEqual(captured?.line_items?.map(item => item.quantity), items.map(item => item.quantity));
+  assert.ok(captured?.line_items?.every(item => item.price_data?.unit_amount === 0));
+  assert.equal(captured?.shipping_options?.[0].shipping_rate_data?.fixed_amount?.amount, 1234);
+  assert.equal(captured?.metadata?.tb_subtotal, "0");
+  assert.equal(captured?.metadata?.tb_total, "1234");
+});
+
+test("both checkout kinds reject malformed quantities and oversized transport payloads", async () => {
+  const choices = SAMPLE_PRODUCTS.flatMap(product => product.flavours.map(flavor => ({ productId: product.slug, flavor, quantity: 1 })));
+  assert.ok(choices.length > SHOP_MAX_LINES);
+  for (const kind of ["samples", "products"]) {
+    for (const quantity of [0, -1, 1.5, SHOP_MAX_QUANTITY + 1, Number.MAX_SAFE_INTEGER + 1]) {
+      const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind, items: [{ ...choices[0], quantity }] }), checkoutDependencies());
+      assert.equal((await response.json()).error.code, "INVALID_QUANTITY");
+    }
+    const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind, items: choices.slice(0, SHOP_MAX_LINES + 1) }), checkoutDependencies());
+    assert.equal((await response.json()).error.code, "INVALID_ITEMS");
+  }
 });
 
 test("shipping and tax tampering is rejected before any Stripe call", async () => {

@@ -95,8 +95,9 @@ test("only published product/flavour pairs and positive integer quantities can b
     assert.equal(cart.addCartItem(slug, flavor), false);
     assert.equal(cart.addSampleCartItem(slug, flavor), false);
   }
-  for (const quantity of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+  for (const quantity of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1]) {
     assert.equal(cart.addCartItem(valid.slug, valid.flavor, quantity), false);
+    assert.equal(cart.addSampleCartItem(valid.slug, valid.flavor, quantity), false);
   }
   const atHome = products.find(({ slug }) => slug === "at-home")!;
   assert.equal(cart.addCartItem(atHome.slug, atHome.flavor), true, "new shop ranges must not be limited to the old thirteen checkout IDs");
@@ -122,52 +123,65 @@ test("corrupt storage is ignored while valid stored lines retain their flavour a
   ]));
   const cart = cartFor(browser);
   cart.subscribeCart(() => {});
-  assert.deepEqual(items(cart.getCartSnapshot()), [{ ...first, quantity: 10 }, second]);
+  assert.deepEqual(items(cart.getCartSnapshot()), [{ ...first, quantity: 102 }, second]);
 });
 
-test("paid baskets allow twenty distinct flavours with ten units each and release a removed slot", () => {
+test("paid baskets retain quantities above ten and use only shared transport bounds", () => {
   const browser = new Browser();
   const cart = cartFor(browser);
-  assert.ok(choices.length > 20);
-  for (const line of choices.slice(0, 20)) assert.equal(cart.addCartItem(line.slug, line.flavor, 100), true);
-  assert.equal(cart.getCartSnapshot().items.length, 20);
-  assert.ok(cart.getCartSnapshot().items.every(({ quantity }) => quantity === 10));
-  const extra = choices[20], first = choices[0];
+  assert.ok(choices.length > shop.SHOP_MAX_LINES);
+  for (const line of choices.slice(0, shop.SHOP_MAX_LINES)) assert.equal(cart.addCartItem(line.slug, line.flavor, 100), true);
+  assert.equal(cart.getCartSnapshot().items.length, shop.SHOP_MAX_LINES);
+  assert.ok(cart.getCartSnapshot().items.every(({ quantity }) => quantity === 100));
+  const extra = choices[shop.SHOP_MAX_LINES], first = choices[0];
   assert.equal(cart.addCartItem(extra.slug, extra.flavor), false);
   cart.setCartItemQuantity(first.slug, first.flavor, 3);
-  assert.equal(cart.addCartItem(first.slug, first.flavor, 100), true, "a full basket may still edit an existing flavour");
-  assert.equal(cart.getCartSnapshot().items[0].quantity, 10);
+  assert.equal(cart.addCartItem(first.slug, first.flavor, shop.SHOP_MAX_QUANTITY), true, "a full basket may still edit an existing flavour");
+  assert.equal(cart.getCartSnapshot().items[0].quantity, shop.SHOP_MAX_QUANTITY);
   cart.removeCartItem(first.slug, first.flavor);
   assert.equal(cart.addCartItem(extra.slug, extra.flavor), true);
-  assert.equal(cart.getCartSnapshot().items.length, 20);
+  assert.equal(cart.getCartSnapshot().items.length, shop.SHOP_MAX_LINES);
   cart.setCartItemQuantity(extra.slug, extra.flavor, 0);
-  assert.equal(cart.getCartSnapshot().items.length, 19);
+  assert.equal(cart.getCartSnapshot().items.length, shop.SHOP_MAX_LINES - 1);
 
-  browser.localStorage.setItem(PAID_KEY, JSON.stringify(choices.slice(0, 25).map((line) => ({ ...line, quantity: 30 }))));
+  browser.localStorage.setItem(PAID_KEY, JSON.stringify(choices.slice(0, shop.SHOP_MAX_LINES + 1).map((line) => ({ ...line, quantity: 30 }))));
   const reloaded = cartFor(new Browser(browser.localStorage));
   reloaded.subscribeCart(() => {});
-  assert.equal(reloaded.getCartSnapshot().items.length, 20, "restored baskets must obey the same server line limit");
-  assert.ok(reloaded.getCartSnapshot().items.every(({ quantity }) => quantity === 10));
+  assert.equal(reloaded.getCartSnapshot().items.length, shop.SHOP_MAX_LINES, "restored baskets obey the same transport bound");
+  assert.ok(reloaded.getCartSnapshot().items.every(({ quantity }) => quantity === 30));
 });
 
-test("sample boxes hold six distinct flavours, always one pouch per choice", () => {
+test("samples support more than six flavours, editable quantities and restoration without truncation", () => {
   const browser = new Browser();
   const cart = cartFor(browser);
-  for (const line of products.slice(0, 6)) assert.equal(cart.addSampleCartItem(line.slug, line.flavor, 9), true);
-  const extra = products[6], first = products[0];
-  assert.equal(cart.addSampleCartItem(first.slug, first.flavor), true);
-  assert.equal(cart.addSampleCartItem(extra.slug, extra.flavor), false);
-  assert.equal(cart.getSampleCartSnapshot().items.length, 6);
-  assert.ok(cart.getSampleCartSnapshot().items.every(({ quantity }) => quantity === 1));
-  cart.removeSampleCartItem(first.slug, first.flavor);
-  assert.equal(cart.addSampleCartItem(extra.slug, extra.flavor), true);
-  assert.equal(cart.getSampleCartSnapshot().items.length, 6);
+  for (const line of products.slice(0, 8)) assert.equal(cart.addSampleCartItem(line.slug, line.flavor, 3), true);
+  const first = products[0];
+  cart.setSampleCartItemQuantity(first.slug, first.flavor, 12);
+  assert.equal(cart.getSampleCartSnapshot().items.length, 8);
+  assert.equal(cart.getSampleCartSnapshot().items[0].quantity, 12);
+  const restored = cartFor(new Browser(browser.localStorage));
+  restored.subscribeSampleCart(() => {});
+  assert.deepEqual(items(restored.getSampleCartSnapshot()), items(cart.getSampleCartSnapshot()));
+  cart.setSampleCartItemQuantity(first.slug, first.flavor, 0);
+  assert.equal(cart.getSampleCartSnapshot().items.length, 7);
+  assert.equal(cart.addSampleCartItem(first.slug, first.flavor, 2), true);
+  assert.equal(cart.getSampleCartSnapshot().items.length, 8);
 
   browser.localStorage.setItem(SAMPLE_KEY, JSON.stringify(choices.slice(0, 10).map((line) => ({ ...line, quantity: 30 }))));
   const reloaded = cartFor(new Browser(browser.localStorage));
   reloaded.subscribeSampleCart(() => {});
-  assert.equal(reloaded.getSampleCartSnapshot().items.length, 6);
-  assert.ok(reloaded.getSampleCartSnapshot().items.every(({ quantity }) => quantity === 1));
+  assert.equal(reloaded.getSampleCartSnapshot().items.length, 10);
+  assert.ok(reloaded.getSampleCartSnapshot().items.every(({ quantity }) => quantity === 30));
+});
+
+test("a completed sample request subtracts only the submitted quantity", () => {
+  const cart = cartFor(new Browser());
+  const first = products[0];
+  cart.addSampleCartItem(first.slug, first.flavor, 3);
+  const submitted = cart.getSampleCartSnapshot().items;
+  cart.addSampleCartItem(first.slug, first.flavor, 2);
+  cart.removeSubmittedSamples(submitted);
+  assert.deepEqual(items(cart.getSampleCartSnapshot()), [{ ...first, quantity: 2 }]);
 });
 
 test("a completed sample request preserves choices added while delivery was pending", () => {

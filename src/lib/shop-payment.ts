@@ -1,5 +1,6 @@
 import { SAMPLE_PRODUCTS } from "@/data/sample-flavours";
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
+import { isShopQuantity, SHOP_MAX_LINES } from "./shop-limits";
 
 export type ShopCheckoutKind = "products" | "samples";
 export type ShopShippingMethod = "standard" | "express";
@@ -56,15 +57,14 @@ export function getShopQuote(input: ShopQuoteInput, pricing: ShopPaymentPricing 
     ({ ready: false, subtotal, shipping: null, total: null, reason, currency: "aed" });
   if (!isShopCountry(input.country) || !["products", "samples"].includes(input.kind)
     || !["standard", "express"].includes(input.shippingMethod)) return pending("Delivery is not available for this selection.");
-  if (!input.items.length || input.items.length > (input.kind === "samples" ? 6 : 20)) return pending("Please review the items in your bag.");
+  if (!input.items.length || input.items.length > SHOP_MAX_LINES) return pending("Please review the items in your bag.");
 
   let subtotal = 0;
   const seen = new Set<string>();
   for (const item of input.items) {
     const product = SAMPLE_PRODUCTS.find(({ slug }) => slug === item.slug);
     const key = JSON.stringify([item.slug, item.flavor]);
-    if (!product?.flavours.includes(item.flavor) || seen.has(key) || !Number.isInteger(item.quantity)
-      || item.quantity < 1 || item.quantity > (input.kind === "samples" ? 1 : 10)) return pending("Please review the items in your bag.");
+    if (!product?.flavours.includes(item.flavor) || seen.has(key) || !isShopQuantity(item.quantity)) return pending("Please review the items in your bag.");
     seen.add(key);
     if (input.kind === "samples") continue;
     const amount = getShopUnitAmount(item.slug, pricing);
