@@ -77,6 +77,10 @@ The webhook verifies signatures but does not claim order fulfillment; an order
 fulfillment sink and production payment activation remain separate work before
 any Live launch.
 
+The agreed next payment step is a paid **draft quotation in Odoo Sales**, without
+automatic confirmation or invoicing. See [PAYMENT_PIPELINE.md](./PAYMENT_PIPELINE.md)
+for the implementation sequence and required prices, tax and SKU information.
+
 Against a running production build, the local smoke commands are:
 
 ```powershell

@@ -80,6 +80,11 @@ npm audit
 
 Stripe is used for the shop checkout. Stripe checks are required in CI and the readiness audit. Staging uses Test Mode only; product prices and delivery fees must be explicitly approved before enabling payment. Never substitute HTML demo amounts or legacy prices for approved pricing.
 
+For paid website orders, the agreed Odoo destination is Sales **Quotation**
+(`sale.order`, state `draft`) with a verified Stripe payment reference and amount.
+Do not automatically confirm it, create invoices, or post accounting entries.
+See `PAYMENT_PIPELINE.md`; the payment-to-Sales receiver is not implemented yet.
+
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 
 Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Before every deployment, verify that Wrangler selects account `mansua` and exact account ID `678720af4dded7d23aad4a859b6e5f3a`. Deploy staging only when the current task explicitly authorizes it; the prelaunch integration workflow is such authorization. Production-preview and the production domain require separate human approval. Never add a custom domain during migration preparation.

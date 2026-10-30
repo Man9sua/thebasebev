@@ -25,9 +25,11 @@
 .page .noticeText { margin: 0 !important; font-size: 16px; color: var(--tbb-rd-body); line-height: 1.5 !important; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); column-gap: 24px; row-gap: 48px; }
 .card { display: flex; min-width: 0; flex-direction: column; gap: 14px; }
+.card > .control { margin-top: auto; }
 .tile { display: block; position: relative; overflow: hidden; aspect-ratio: 672 / 780; border-radius: 24px; background: var(--shop-field); }
-.tile img { object-fit: cover; transition: transform var(--tbb-dur) var(--tbb-ease); }
-.tile:hover img { transform: scale(1.03); }
+.tile img { object-fit: cover; }
+.tile img, .tile > svg { transition: transform var(--tbb-dur) var(--tbb-ease); }
+.tile:hover img, .tile:hover > svg { transform: scale(1.03); }
 .viewMore { display: flex; position: absolute; left: 16px; bottom: 16px; align-items: center; min-height: 40px; padding: 0 18px; border-radius: 20px; background: rgba(255, 255, 255, .94); color: var(--shop-ink); font-size: 12px; font-weight: var(--tbb-font-weight-button); letter-spacing: .1em; text-transform: uppercase; }
 .info { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .productCopy { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
