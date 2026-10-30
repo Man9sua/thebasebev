@@ -221,6 +221,11 @@ await Promise.all(Array.from({ length: 1 }, () => worker()));
  * route comes back under the ordinary rule instead of staying quietly exempt.
  */
 const H1_NOT_PRESERVED = new Map([
+  ["/catalog", {
+    h1: "Catalogue",
+    target: "Shop",
+    reason: "The supplied shop HTML replaces the catalogue heading; its established URL, title, description and canonical are preserved",
+  }],
   ["/private-labeling", {
     h1: "Wholesale and Private Labeling",
     target: "Your brand. Our craft.",

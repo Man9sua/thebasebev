@@ -8,7 +8,7 @@ import { DistributorFinderPage } from "@/components/distributor-finder/Distribut
 import { PrivateLabelPage } from "@/components/private-label/PrivateLabelPage";
 import { ResourcesPage } from "@/components/resources/ResourcesPage";
 import { CertificatesPage, CookiePolicyPage, RequestSamplesPage } from "@/components/site/SupportPages";
-import { CatalogPage } from "@/components/catalog/CatalogPage";
+import { ShopPage } from "@/components/shop/ShopPage";
 import { DistributorsPage } from "@/components/distributors/DistributorsPage";
 import { RndPage } from "@/components/rnd/RndPage";
 import { ContactPage } from "@/components/contact/ContactPage";
@@ -58,8 +58,6 @@ import {
   normalizeSitePath,
   SITE_ORIGIN,
   withoutLegacyRecords,
-  catalogWeights,
-  catalogFlavors,
 } from "@/lib/site-pages";
 
 type RouteProps = {
@@ -216,7 +214,7 @@ const ZOOM_CALL_RECORD = "rec2503542591";
 
 /** Short names for the trail; anything not listed falls back to its title. */
 const CRUMB_NAMES: Record<string, string> = {
-  "/catalog": "Catalogue",
+  "/catalog": "Shop",
   "/about-us": "About Us",
   "/contacts": "Contacts",
   "/distributors": "Distributors",
@@ -402,7 +400,7 @@ async function RouteBody({ params }: RouteProps) {
           darkHero={route === "/rnd" || route === "/distributors"}
         />
         {route === "/catalog" ? (
-          <CatalogPage weights={catalogWeights()} flavors={catalogFlavors()} />
+          <ShopPage />
         ) : route === "/rnd" ? (
           <RndPage />
         ) : route === "/distributors" ? (

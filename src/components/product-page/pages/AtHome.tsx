@@ -94,10 +94,9 @@ export function AtHomePage({ product }: ProductPageProps) {
             <span className={styles.mobileOnly}>The same café recipes in 150 g pouches, to make at home in a minute.</span>
           </p>
           <div className={styles.heroActions}>
-            {/* Out of the app: the shop is another platform, as on the catalogue. */}
-            <a className={cx(styles.button, styles.red)} href={SHOP_URL} data-shop-link>
-              Buy online ↗
-            </a>
+            <SiteLink className={cx(styles.button, styles.red)} href={`${SHOP_URL}?search=at+home`} data-shop-link>
+              Shop At Home
+            </SiteLink>
             <DistributorLink>Stock it in your café</DistributorLink>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
 import { SiteLink } from "@/components/site/SiteLink";
 import { DISTRIBUTOR_GROUPS, DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
 import { COMPANY, SHOP_URL } from "@/lib/site-config";
-import { countryCodeFromPath } from "@/lib/country-paths";
+import { countryCodeFromPath, countryPath } from "@/lib/country-paths";
 import styles from "./DistributorFinderPage.module.css";
 
 function subscribeMarket(change: () => void) {
@@ -114,7 +114,7 @@ export function DistributorFinderPage() {
                 country={selected.code}
                 label="Request samples"
               />
-              {uae && <a className={`${styles.button} ${styles.shop}`} href={SHOP_URL} target="_blank" rel="noreferrer noopener">Shop online ↗</a>}
+              {uae && <a className={`${styles.button} ${styles.shop}`} href={countryPath(SHOP_URL, selected.code)}>Shop online</a>}
             </div>
             <div className={styles.partnerFoot}>
               <p>

@@ -46,11 +46,36 @@ Run checks sequentially on Windows/OneDrive to avoid concurrent `.next` file loc
 npm.cmd run typecheck
 npm.cmd run lint
 npm.cmd run audit:leads
+npm.cmd run test:stripe
 npm.cmd run build
 npm.cmd run check:assets
 ```
 
-Stripe is no longer used. Stripe-specific checks are optional and excluded from normal CI and the default readiness audit.
+Stripe powers the shop checkout in staging Test Mode. Product prices and delivery charges require owner approval; until configured, checkout accepts quotation requests and creates no payment. Stripe checks are included in CI and the readiness audit.
+
+### Shop and checkout
+
+The shop uses the established `/ae/catalog` URL (and country aliases). UAE visitors
+choose products and quantities; other markets can build a box of up to six free
+samples. Products and samples have separate persistent baskets. The supplied Shop
+and Checkout HTML determine the layout; the published product/flavour registry
+determines what can be selected.
+
+Approved amounts belong in `src/lib/shop-payment.ts`, in AED minor units (fils):
+`productUnitAmounts[slug]` and `shipping[kind][country][method]`. Every price and
+delivery fee starts unconfigured. HTML demonstration prices and the old product
+registry prices are never used for payments. Until amounts are approved, customers
+can request an exact quote through `/api/leads`; samples remain free and DHL
+delivery is separate, including the customer's own DHL account option.
+
+`STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-side staging secrets.
+Only Test Mode keys and staging/localhost hosts are accepted. Checkout creates
+zero-priced sample lines with a separate shipping rate. The return page verifies
+the Stripe session and quoted totals before confirming payment, and clears only
+the matching unchanged basket. A failed/cancelled payment keeps the basket.
+The webhook verifies signatures but does not claim order fulfillment; an order
+fulfillment sink and production payment activation remain separate work before
+any Live launch.
 
 Against a running production build, the local smoke commands are:
 
@@ -214,7 +239,7 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 | Visual parity of Next.js output | PARTIAL | Nine target widths are captured and representative layouts were reviewed; exhaustive page-by-page pixel diffs remain. |
 | Interactive parity | PARTIAL | Hero, header/menu/region, mobile menu, catalogue filters/prices, add-to-cart, checkout dialog, product-order popup, and honest form failure UX pass browser smoke; remaining legacy surfaces still need route-level tests/React extraction. |
 | Lead delivery and attribution | STAGING VERIFIED | Typed bridge/API exist; one controlled Odoo lead preserved request ID and full first-touch attribution. Production enablement remains human-controlled. |
-| Checkout/order delivery | NEEDS CREDENTIALS | Cart state/UI are verified without submitting a real order; owned receiver/payment contracts are required. |
+| Checkout/order delivery | TEST MODE READY; PRICING PENDING | Staging Stripe authentication and basket/checkout contracts are verified without creating payments. Approved product prices, delivery fees, an order fulfillment sink and Live approval remain required. |
 | Dynamic recipes/catalog feed | BLOCKED | Upstream feed data is not contained in the export. |
 | OpenNext Worker bundle | DONE | `npm run cf:build` completes locally; Windows emits the upstream WSL recommendation. |
 | Cloudflare staging deployment | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in `mansua`; post-deploy remote smoke is blocked by account-wide Error 1027 until the Free quota resets. |

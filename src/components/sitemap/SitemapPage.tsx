@@ -112,7 +112,7 @@ export function SitemapPage() {
                 </section>
               ))}
             </div>
-            <a className={styles.shopLink} href={SHOP_URL} target="_blank" rel="noopener">Online shop for cafés and home <span aria-hidden="true">&#8599;</span></a>
+            <Link className={styles.shopLink} href={SHOP_URL}>Online shop for cafés and home</Link>
           </section>
           <section className={styles.markets}>
             <header className={styles.sectionHeading}>

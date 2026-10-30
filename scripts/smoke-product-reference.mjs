@@ -85,11 +85,21 @@ async function screenshot(locator, name) {
 async function typography(page, slug, label) {
   const main = page.locator("main").filter({ has: page.locator("h1") }).first();
   await main.locator("h1").first().waitFor({ state: "visible" });
+  check(await page.locator("header [data-cart-control]").count() === 1, `${label} ${slug}: native Shop basket remains available`);
+  const shopActions = main.getByRole("link", { name: /buy online|shop at home/i });
+  if (slug === "at-home") check(await shopActions.count() > 0, `${label} At Home: Shop At Home action exists`);
+  for (const link of await shopActions.all()) {
+    const destination = new URL(await link.getAttribute("href"), baseUrl);
+    check(destination.origin === new URL(baseUrl).origin && destination.pathname === "/ae/catalog",
+      `${label} ${slug}: shopping action reaches the native Shop`);
+    if (slug === "at-home") check(destination.searchParams.get("search") === "at home",
+      `${label} At Home: Shop action keeps the At Home search`);
+  }
   await font(main.locator("h1").first(), 900, `${label} ${slug} heading`, { uppercase: true });
   await font(await firstPainted(main.locator("h2")), 900, `${label} ${slug} section`, { uppercase: true });
   await font(await firstPainted(main.locator("p")), [400, 500], `${label} ${slug} body`);
   const actions = main.locator('button, a[class*="button"], a[class*="Button"]')
-    .filter({ hasText: /request.*sample|find your distributor|buy online|stock it/i });
+    .filter({ hasText: /request.*sample|find your distributor|buy online|shop at home|stock it/i });
   await font(await firstPainted(actions), 600, `${label} ${slug} CTA`, { uppercase: true, tracking: true });
   await font(await firstPainted(main.locator("summary")), 800, `${label} ${slug} FAQ`);
   const statistic = await firstPainted(main.locator('[class*="statValue"]'));

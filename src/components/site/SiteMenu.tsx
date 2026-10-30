@@ -137,14 +137,13 @@ export function SiteMenu({
               Get a quote
             </SiteLink>
 
-            <a
+            <SiteLink
               className={styles.footShop}
               href={SHOP_URL}
-              target="_blank"
-              rel="noreferrer noopener"
+              onClick={onClose}
             >
-              Shop <span aria-hidden="true">↗</span>
-            </a>
+              Shop
+            </SiteLink>
             <div className={styles.footLinks}>
               {SITE_NAV_SECONDARY.map((item) => (
                 <SiteLink

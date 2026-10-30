@@ -16,8 +16,7 @@ export default defineConfig([
     "node_modules/**",
     "public/**",
     "tilda_export/**",
-    "output/whatsapp-review-20261015/**",
-    "output/whatsapp-media-review-20261015/**",
-    "output/product-reference-20261015/**",
+    // Private reference extraction and browser captures are generated artifacts.
+    "output/**",
   ]),
 ]);

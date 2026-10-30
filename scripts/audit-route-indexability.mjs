@@ -138,6 +138,15 @@ const controlledRoutes = [
     reason: "POST-only Stripe Test checkout boundary; GET is intentionally rejected",
   },
   {
+    route: "/api/checkout/stripe/session",
+    type: "dynamic API",
+    expectedStatus: 400,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "Read-only Stripe verification requires a valid session; a bare GET is rejected before contacting Stripe",
+  },
+  {
     route: "/api/stripe/webhook",
     type: "dynamic API",
     expectedStatus: 405,
@@ -318,7 +327,7 @@ Target: \`${targetOrigin}\`
 - Native public routes: ${nativeRoutes.length} (canonical/indexable and included in the sitemap).
 - Retired \`pageNNNN.html\` aliases served as permanent redirects: ${legacyPageRedirects.length}.
 - Retired Tilda product aliases served as permanent redirects: ${productAliasRedirects.length}.
-- Technical/metadata/API routes: 8.
+- Technical/metadata/API routes: 9.
 - **Controlled route total: ${controlledRoutes.length}.**
 - Permanent redirects (not generated pages): ${redirectRows.length}.
 - Sitemap members: ${sitemapPaths.size}.

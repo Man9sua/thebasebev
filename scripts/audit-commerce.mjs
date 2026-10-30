@@ -1,19 +1,4 @@
-import fs from "node:fs";
 import { chromium } from "@playwright/test";
-
-/**
- * The shop's address, read out of the source rather than repeated here.
- *
- * It is not Odoo any more and it will not be one URL for long: the site hands
- * buying to whichever platform sells the range in the visitor's country. A
- * literal here would turn every one of those into a failing audit.
- */
-const SHOP_URL = /export const SHOP_URL = "([^"]+)"/
-  .exec(fs.readFileSync("src/lib/site-config.ts", "utf8"))?.[1];
-if (!SHOP_URL) {
-  console.error("Could not read SHOP_URL out of src/lib/site-config.ts");
-  process.exit(1);
-}
 
 /** The account link has to leave for Odoo and nowhere else. */
 const ODOO_ORIGIN = "https://odoo.";
@@ -23,11 +8,130 @@ const chromePath =
   process.env.CHROME_PATH ??
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const failures = [];
+const blockedMutations = [];
+let leadAttempts = 0;
+let checkoutAttempts = 0;
+
+function check(condition, message) {
+  if (!condition) failures.push(message);
+}
+
+async function openShop(page, country = "AE") {
+  await page.goto(`${baseUrl}/${country.toLowerCase()}/catalog`, { waitUntil: "load" });
+  await page.locator("[data-shop-product]").first().waitFor();
+  const cookies = page.getByRole("region", { name: "Cookies", exact: true });
+  if (await cookies.isVisible()) await cookies.getByRole("button", { name: "Reject", exact: true }).click();
+  await page.locator(`header [data-cart-control][aria-label^="${country === "AE" ? "Cart" : "Sample box"}"]`).waitFor();
+}
+
+async function openPicker(page, slug) {
+  await page.locator(`[data-shop-choose="${slug}"]`).click();
+  const picker = page.locator(`[data-shop-picker="${slug}"]`);
+  await picker.getByRole("dialog").waitFor();
+  return picker;
+}
+
+async function closePicker(page, picker) {
+  await picker.getByRole("button", { name: "Close flavour picker", exact: true }).click();
+  await picker.waitFor({ state: "detached" });
+}
+
+async function openBasket(page, kind) {
+  await page.locator("header [data-cart-control]").click();
+  const basket = page.locator(`[data-shop-drawer="${kind}"]`);
+  await basket.getByRole("dialog").waitFor();
+  return basket;
+}
+
+async function shopBaskets(page) {
+  await openShop(page);
+  let picker = await openPicker(page, "milkshake");
+  check(await picker.locator("[data-shop-flavor]").count() === 9, "Shop: Milkshake offers the nine approved flavours");
+  const vanilla = picker.getByRole("group", { name: "Vanilla Milkshake quantity", exact: true });
+  await vanilla.getByRole("button", { name: "Add one Vanilla Milkshake", exact: true }).click();
+  await vanilla.getByRole("button", { name: "Add one Vanilla Milkshake", exact: true }).click();
+  await picker.getByRole("button", { name: "Add one Banana Milkshake", exact: true }).click();
+  await closePicker(page, picker);
+  picker = await openPicker(page, "matcha");
+  await picker.getByRole("button", { name: "Add one Classic Matcha", exact: true }).click();
+  await closePicker(page, picker);
+
+  let basket = await openBasket(page, "products");
+  check(await basket.locator("[data-shop-cart-line]").count() === 3, "Shop: two Milkshake flavours and Matcha remain separate lines");
+  const vanillaLine = basket.locator('[data-shop-cart-line="milkshake::Vanilla"]');
+  await vanillaLine.getByRole("button", { name: "Add one Vanilla Milkshake", exact: true }).click();
+  check(/−\s*3\s*\+/.test(await vanillaLine.getByRole("group").innerText()), "Shop: basket quantity increases independently");
+  await vanillaLine.getByRole("button", { name: "Remove one Vanilla Milkshake", exact: true }).click();
+  check(/−\s*2\s*\+/.test(await vanillaLine.getByRole("group").innerText()), "Shop: basket quantity decreases independently");
+  await page.reload({ waitUntil: "load" });
+  basket = await openBasket(page, "products");
+  check(await basket.locator("[data-shop-cart-line]").count() === 3, "Shop: all selected flavour lines survive reload");
+  check(/−\s*2\s*\+/.test(await basket.locator('[data-shop-cart-line="milkshake::Vanilla"]').getByRole("group").innerText()), "Shop: quantity survives reload");
+  for (const line of ["milkshake::Banana", "matcha::Classic"]) {
+    check(await basket.locator(`[data-shop-cart-line="${line}"]`).count() === 1, `Shop: ${line} survives reload`);
+  }
+  const checkout = basket.getByRole("link", { name: "Checkout", exact: true });
+  const destination = new URL(await checkout.getAttribute("href"), baseUrl);
+  check(destination.origin === new URL(baseUrl).origin && destination.pathname === "/checkout"
+    && destination.searchParams.get("country") === "AE" && destination.searchParams.get("kind") === "products",
+  "Shop: paid checkout stays on this site with country and kind");
+  await checkout.click();
+  await page.getByRole("heading", { name: "Checkout", exact: true }).waitFor();
+  const summary = page.getByRole("complementary", { name: "Your order", exact: true });
+  for (const flavor of ["Vanilla", "Banana", "Classic"]) {
+    check(await summary.getByText(flavor, { exact: true }).isVisible(), `Checkout: ${flavor} was retained`);
+  }
+  check(await page.getByRole("button", { name: "Request order quote", exact: true }).isVisible(), "Checkout: unknown product prices and delivery offer a quote");
+  check(await page.getByRole("button", { name: /continue to secure payment/i }).count() === 0, "Checkout: unapproved amounts cannot open Stripe");
+  const paidBasket = await page.evaluate(() => localStorage.getItem("thebase:cart:v2"));
+
+  await openShop(page, "SA");
+  check(await page.getByRole("heading", { name: "Free samples for businesses in Saudi Arabia", exact: true }).isVisible(), "Shop: foreign market switches to samples");
+  picker = await openPicker(page, "milkshake");
+  const choices = picker.locator("[data-shop-flavor]");
+  for (let index = 0; index < 6; index++) await choices.nth(index).getByRole("button").click();
+  check(await choices.nth(6).getByRole("button").isDisabled(), "Samples: a seventh flavour is disabled");
+  await choices.first().getByRole("button").click();
+  check(await choices.nth(6).getByRole("button").isEnabled(), "Samples: removing a flavour frees a slot");
+  await choices.first().getByRole("button").click();
+  await closePicker(page, picker);
+  basket = await openBasket(page, "samples");
+  check(await basket.locator("[data-shop-cart-line]").count() === 6, "Samples: exactly six selected flavours in the separate basket");
+  check(await page.evaluate(() => localStorage.getItem("thebase:cart:v2")) === paidBasket, "Samples: country switch preserves the paid basket");
+  const request = basket.getByRole("link", { name: "Request samples", exact: true });
+  const sampleDestination = new URL(await request.getAttribute("href"), baseUrl);
+  check(sampleDestination.pathname === "/checkout" && sampleDestination.searchParams.get("country") === "SA"
+    && sampleDestination.searchParams.get("kind") === "samples", "Samples: checkout retains country and sample kind");
+  await request.click();
+  await page.getByRole("heading", { name: "Request samples", exact: true }).waitFor();
+  const sampleSummary = page.getByRole("complementary", { name: "Sample box", exact: true });
+  check(await sampleSummary.getByText("6 of 6", { exact: true }).isVisible(), "Samples: six-flavour summary reaches checkout");
+  check(await page.getByRole("button", { name: "Send request", exact: true }).isVisible(), "Samples: unknown shipping is requested before payment");
+  check(await page.getByRole("button", { name: "Pay delivery securely", exact: true }).count() === 0, "Samples: unknown shipping cannot create a Stripe session");
+  check(await page.getByRole("radio", { name: /Use my DHL account/ }).isVisible(), "Samples: own DHL account remains available");
+  check(checkoutAttempts === 0 && leadAttempts === 0, "Shop: basket inspection made no payment or lead request");
+}
 
 const browser = await chromium.launch({ executablePath: chromePath, headless: true });
 
 try {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  await context.route("**/*", (route) => {
+    const request = route.request();
+    if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
+      blockedMutations.push(`${request.method()} ${new URL(request.url()).pathname}`);
+      return route.abort();
+    }
+    return route.fallback();
+  });
+  await context.route("**/api/leads", (route) => {
+    leadAttempts++;
+    return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
+  });
+  await context.route("**/api/checkout**", (route) => {
+    checkoutAttempts++;
+    return route.abort();
+  });
   const page = await context.newPage();
 
   for (const route of ["/catalog", "/matcha", "/electrolyte", "/find-your-distributor", "/catalog/tproduct/975474893862-matcha"]) {
@@ -70,19 +174,16 @@ try {
       return {
         title: document.title,
         bodyClasses: document.body.className,
-        catalogCards: [...document.querySelectorAll("[data-catalog-card]")].map((element) => ({
-          name: element.querySelector("[data-catalog-name]")?.textContent?.trim() ?? null,
-          price: element.getAttribute("data-catalog-price"),
+        catalogCards: [...document.querySelectorAll("[data-shop-product]")].map((element) => ({
+          name: element.querySelector("h2")?.textContent?.trim() ?? null,
+          price: /Price pending/.test(element.textContent ?? "") ? "pending" : null,
           href: element instanceof HTMLAnchorElement ? element.getAttribute("href") : null,
         })),
         controls,
         productData,
         legacyCartNodes: document.querySelectorAll('[class*="t706__cartwin"]').length,
-        // The bar carries an account rather than a basket: the owner's
-        // instruction is that this site does not sell, so what has to be there
-        // is the way back into the platform that does.
         accountControl: document.querySelector('header a[aria-label="Your account"]')?.getAttribute("href") ?? null,
-        nativeCartControl: Boolean(document.querySelector('header a[aria-label^="Cart"]')),
+        nativeCartControl: Boolean(document.querySelector('header [data-cart-control]')),
       };
     });
 
@@ -92,26 +193,15 @@ try {
     if (audit.accountControl && !audit.accountControl.startsWith(ODOO_ORIGIN)) {
       failures.push(`${route}: the account link points at ${audit.accountControl}`);
     }
-    if (audit.nativeCartControl) failures.push(`${route}: the bar still carries a cart`);
+    if (!audit.nativeCartControl) failures.push(`${route}: native header basket is missing`);
     if (audit.legacyCartNodes > 0) failures.push(`${route}: legacy Tilda cart is still mounted`);
     if (route === "/catalog" && audit.catalogCards.length !== 22) {
       failures.push(`/catalog: expected 22 visible catalogue cards, received ${audit.catalogCards.length}`);
     }
 
     if (route === "/catalog") {
-      // The shelf hands buying over to the platform that sells the range. What
-      // it has to get right is the destination — a "Buy" that stays on this
-      // site now goes nowhere.
-      const shopLinks = page.locator("[data-shop-link]");
-      const shopCount = await shopLinks.count();
-      const firstShopHref = shopCount ? await shopLinks.first().getAttribute("href") : null;
-      if (shopCount === 0) failures.push("/catalog: no card offers the shop");
-      if (firstShopHref !== SHOP_URL) {
-        failures.push(`/catalog: Buy points at ${firstShopHref}`);
-      }
-      if (await page.locator("[data-cart-add]").count()) {
-        failures.push("/catalog: the shelf still carries an add-to-cart control");
-      }
+      check(await page.locator("[data-shop-choose]").count() === 22, "/catalog: every range opens a native flavour picker");
+      check(audit.catalogCards.every((card) => card.price === "pending"), "/catalog: unapproved prices remain pending");
     }
 
     if (route === "/matcha") {
@@ -143,6 +233,10 @@ try {
       }
     }
   }
+
+  await shopBaskets(page);
+  check(blockedMutations.length === 0, `Unexpected mutations blocked: ${blockedMutations.join(", ")}`);
+  check(leadAttempts === 0 && checkoutAttempts === 0, "Commerce audit unexpectedly attempted a lead or payment");
 
   await context.close();
 } finally {

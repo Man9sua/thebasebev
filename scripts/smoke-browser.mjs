@@ -10,17 +10,6 @@ const artifactRoot = path.resolve(".visual-artifacts");
 const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
 /** The homepage's first section below the hero — what "the page has arrived". */
 const BESTSELLERS = "#bestsellers";
-/**
- * Where "Buy" leaves for, read out of the source rather than repeated here: it
- * is per-country now, so a literal would turn every new country into a failing
- * smoke run.
- */
-const SHOP_URL = /export const SHOP_URL = "([^"]+)"/
-  .exec(fs.readFileSync("src/lib/site-config.ts", "utf8"))?.[1];
-if (!SHOP_URL) {
-  console.error("Could not read SHOP_URL out of src/lib/site-config.ts");
-  process.exit(1);
-}
 const failures = [];
 const pageErrors = [];
 const hydrationErrors = [];
@@ -30,6 +19,29 @@ fs.mkdirSync(artifactRoot, { recursive: true });
 
 function check(condition, message) {
   if (!condition) failures.push(message);
+}
+
+async function readOnlyContext(options) {
+  const context = await browser.newContext(options);
+  await context.route("**/*", (route) => {
+    const request = route.request();
+    if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
+      failures.push(`Unmocked mutation blocked: ${request.method()} ${new URL(request.url()).pathname}`);
+      return route.abort();
+    }
+    return route.fallback();
+  });
+  // Explicit page mocks below own intentional submissions. This default also
+  // protects the early navigation and responsive-only phases.
+  await context.route("**/api/leads", (route) => {
+    failures.push("An unmocked lead attempt was blocked");
+    return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
+  });
+  await context.route("**/api/checkout**", (route) => {
+    failures.push("A checkout API request was blocked");
+    return route.abort();
+  });
+  return context;
 }
 
 // React reports a hydration mismatch through `console.error`, not as a page
@@ -214,7 +226,7 @@ const browser = await chromium.launch({
 });
 
 try {
-  const history = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const history = await readOnlyContext({ viewport: { width: 390, height: 844 } });
   const historyPage = await history.newPage();
   observe(historyPage, "history");
   await historyPage.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
@@ -232,7 +244,7 @@ try {
   await history.close();
   console.log("Browser smoke phase passed: history");
 
-  const desktop = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const desktop = await readOnlyContext({ viewport: { width: 1440, height: 1000 } });
   const page = await desktop.newPage();
   observe(page, "desktop");
 
@@ -505,76 +517,36 @@ try {
   );
 
   await page.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
-  await page.locator("[data-catalog-card]").first().waitFor();
+  await page.locator("[data-shop-product]").first().waitFor();
   await page.waitForTimeout(1_200);
-  check((await page.locator("[data-catalog-card]").count()) === 22, "catalog: expected 22 product cards");
-  check((await page.locator("[data-catalog-card][data-catalog-price]").count()) === 22, "catalog: every card retains its price metadata");
+  check((await page.locator("[data-shop-product]").count()) === 22, "Shop: expected 22 product cards");
+  check((await page.getByRole("heading", { name: "Shop", exact: true }).count()) === 1, "Shop: visible heading matches the approved reference");
+  check((await page.locator("[data-shop-product]").getByText("Price pending", { exact: true }).count()) === 22, "Shop: unapproved product amounts remain pending");
   for (const slug of ["puree", "sauce", "add-ons", "electrolyte"]) {
     check(
-      (await page.locator(`[data-catalog-card][data-product-slug="${slug}"] img`).count()) === 0,
-      `catalog: ${slug} shows an unconfirmed product image`,
+      (await page.locator(`[data-shop-product="${slug}"] img`).count()) === 0,
+      `Shop: ${slug} shows an unconfirmed product image`,
     );
   }
-  const catalogPrices = await page.locator("[data-catalog-card]").evaluateAll((cards) =>
-    Object.fromEntries(
-      cards.map((card) => [
-        card.querySelector("[data-catalog-name]")?.textContent?.trim() ?? "",
-        card.getAttribute("data-catalog-price") ?? "",
-      ]),
-    ),
-  );
-  const expectedCatalogPrices = {
-    Milkshake: "45.38 AED",
-    Frappe: "49.40 AED",
-    "Iced Tea": "42.81 AED",
-    Cordial: "50.15 AED",
-    "Raf Coffee": "38.74 AED",
-    "Chai Latte": "52.05 AED",
-    Matcha: "70.42 AED",
-    Chocolate: "67.88 AED",
-    "Cream Latte": "38.76 AED",
-    Jam: "64.94 AED",
-    Topping: "Price on request",
-    Garnish: "4.91 AED",
-    Syrup: "48.82 AED",
-    Tea: "Price on request",
-    "Sugar Free": "14.22 AED",
-    Vending: "Price on request",
-    Electrolyte: "Price on request",
-  };
-  for (const [name, expectedPrice] of Object.entries(expectedCatalogPrices)) {
-    check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
-  }
   check((await page.locator("[data-catalog-filters], [data-catalog-sort]").count()) === 0, "catalog: removed filter and sort controls remain");
-  check(JSON.stringify(await page.locator("[data-catalog-card]").evaluateAll((cards) => cards.slice(0, 6).map((card) => card.getAttribute("data-product-slug")))) === JSON.stringify(["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"]), "catalog: featured order differs from the approved reference");
+  check(JSON.stringify(await page.locator("[data-shop-product]").evaluateAll((cards) => cards.slice(0, 6).map((card) => card.getAttribute("data-shop-product")))) === JSON.stringify(["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"]), "Shop: featured order differs from the approved reference");
   check(
     !(await page.locator("#rec2839951603 .js-store-grid-cont-preloader").isVisible()),
     "catalog: hidden Tilda store preloader leaked into the public grid",
   );
-  const catalogSearch = page.getByRole("searchbox", { name: "Search products" });
+  const catalogSearch = page.getByRole("searchbox", { name: "Search products or flavours" });
   await catalogSearch.fill("matcha");
-  check((await page.locator("[data-catalog-card]").count()) === 1, "catalog: search did not find Matcha");
+  check(await page.locator('[data-shop-product="matcha"]').isVisible(), "Shop: search did not find Matcha");
+  await catalogSearch.fill("Vanilla");
+  check(await page.locator('[data-shop-product="milkshake"]').isVisible(), "Shop: search does not include product flavours");
   await catalogSearch.fill("no-such-product");
-  check((await page.locator("[data-catalog-card]").count()) === 0, "catalog: no-match search returned cards");
+  check((await page.locator("[data-shop-product]").count()) === 0, "catalog: no-match search returned cards");
   check(await page.getByText(/Nothing matches/).isVisible(), "catalog: no-match explanation is missing");
   await catalogSearch.fill("");
-  check((await page.locator("[data-catalog-card]").count()) === 22, "catalog: clearing search did not restore all ranges");
+  check((await page.locator("[data-shop-product]").count()) === 22, "catalog: clearing search did not restore all ranges");
 
-  // The catalogue sends buying off-site; the shelf must point where the source
-  // says, which is per-country and no longer Odoo — see `SHOP_URL`.
-  check(
-    (await page.locator("[data-catalog-card] [data-shop-link]").count()) > 0,
-    "catalog: no card offers the shop",
-  );
-  check(
-    (await page.locator("[data-catalog-card] [data-shop-link]").first().getAttribute("href")) ===
-      SHOP_URL,
-    "catalog: Buy does not point at the shop",
-  );
-  check(
-    (await page.locator("[data-catalog-card] [data-cart-add]").count()) === 0,
-    "catalog: the shelf still carries an add-to-cart control",
-  );
+  check((await page.locator('[data-shop-choose][aria-haspopup="dialog"]').count()) === 22, "Shop: each range opens its native flavour picker");
+  check((await page.locator("header [data-cart-control]").count()) === 1, "Shop: native basket control is missing");
 
   await page.goto(`${baseUrl}/ae/matcha`, { waitUntil: "domcontentloaded" });
   await page.locator("h1").first().waitFor();
@@ -629,15 +601,14 @@ try {
     "matcha: the sample modal left the page scroll locked",
   );
 
-  // Product pages collect enquiries; buying happens off-site, and the bar
-  // offers the account on the platform that does it rather than a basket.
+  // Product enquiry forms remain in place beside the native Shop basket.
   check(
     (await page.locator("[data-cart-add]").count()) === 0,
     "matcha: product page still has an add-to-cart control",
   );
   check(
-    (await page.locator('header a[aria-label^="Cart"]').count()) === 0,
-    "matcha: the bar still carries a cart",
+    (await page.locator("header [data-cart-control]").count()) === 1,
+    "matcha: native header basket is missing",
   );
   check(
     (
@@ -739,7 +710,7 @@ try {
   await desktop.close();
   console.log("Browser smoke phase passed: desktop interactions");
 
-  const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const mobile = await readOnlyContext({ viewport: { width: 390, height: 844 } });
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
@@ -813,7 +784,7 @@ try {
     { width: 360, height: 800 },
     { width: 320, height: 720 },
   ];
-  const visual = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const visual = await readOnlyContext({ viewport: { width: 1440, height: 1000 } });
   const visualPage = await visual.newPage();
   for (const { width, height } of viewports) {
     await visualPage.setViewportSize({ width, height });
@@ -839,7 +810,7 @@ try {
   await visual.close();
   console.log("Browser smoke phase passed: responsive captures");
 
-  const reduced = await browser.newContext({
+  const reduced = await readOnlyContext({
     viewport: { width: 390, height: 844 },
     reducedMotion: "reduce",
   });
@@ -858,7 +829,7 @@ try {
   await reduced.close();
   console.log("Browser smoke phase passed: reduced motion");
 
-  const noScript = await browser.newContext({
+  const noScript = await readOnlyContext({
     viewport: { width: 390, height: 844 },
     javaScriptEnabled: false,
   });
@@ -884,6 +855,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, distributor finder, menu, bestsellers, reading rail, the brand film, catalog filters/framing, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution.");
+  console.log("Browser smoke passed: hero, header, distributor finder, menu, bestsellers, reading rail, the brand film, native Shop/search/pending prices, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution. No real lead or order was submitted.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

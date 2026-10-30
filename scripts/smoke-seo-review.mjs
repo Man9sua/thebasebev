@@ -42,6 +42,18 @@ const browser = await chromium.launch({
 });
 
 async function mockLeadDelivery(context, leads) {
+  await context.route("**/*", (route) => {
+    const request = route.request();
+    if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
+      failures.push(`Unmocked mutation blocked: ${request.method()} ${new URL(request.url()).pathname}`);
+      return route.abort();
+    }
+    return route.fallback();
+  });
+  await context.route("**/api/checkout**", (route) => {
+    failures.push("A checkout API request was blocked during SEO/UI review");
+    return route.abort();
+  });
   // This boundary is mocked before any page is opened. No lead reaches CRM.
   await context.route("**/api/leads", async (route) => {
     leads.push(route.request().postDataJSON());
@@ -103,6 +115,29 @@ async function runViewport(label, viewport) {
     }));
     check(font.family.includes("Exo 2") && font.weight === String(weight), `${label} ${role}: Exo 2 weight ${weight}`);
     check(await page.evaluate(() => Array.from(document.fonts).some((face) => face.family.replace(/["']/g, "") === "Exo 2" && face.status === "loaded")), `${label} ${role}: self-hosted Exo 2 is loaded`);
+  }
+
+  async function checkNativeShop() {
+    await visit("/catalog");
+    const cards = page.locator("[data-shop-product]");
+    check(await cards.count() === 22, `${label} Shop: all 22 ranges are available`);
+    await checkFont(page.getByRole("heading", { name: "Shop", exact: true }), 900, "Shop heading");
+    await checkFont(cards.first().locator("h2"), 800, "Shop range name");
+    await checkFont(cards.first().locator("[data-shop-choose]"), 600, "Shop flavour action");
+    check(await cards.getByText("Price pending", { exact: true }).count() === 22, `${label} Shop: unapproved prices remain pending`);
+    check(await page.locator("header [data-cart-control]").count() === 1, `${label} Shop: native header basket`);
+    const atHome = page.locator('[data-shop-product="at-home"] svg image');
+    check(await atHome.count() === 1 && (await atHome.getAttribute("href")) === "/images/shop/at-home.jpg",
+      `${label} Shop: supplied At Home photograph uses the clipped image renderer`);
+    await page.locator('[data-shop-choose="milkshake"]').click();
+    const picker = page.locator('[data-shop-picker="milkshake"]');
+    await picker.getByRole("dialog").waitFor();
+    check(await picker.locator("[data-shop-flavor]").count() === 9, `${label} Shop: Milkshake picker uses the approved nine flavours`);
+    await page.keyboard.press("Escape");
+    await picker.waitFor({ state: "detached" });
+    await page.waitForFunction(() => document.activeElement?.getAttribute("data-shop-choose") === "milkshake");
+    check(await page.locator('[data-shop-choose="milkshake"]').evaluate((button) => button === document.activeElement),
+      `${label} Shop: closing the picker restores keyboard focus`);
   }
 
   const landingPath = "/careers?utm_source=chatgpt.com&utm_campaign=seo-review";
@@ -167,6 +202,8 @@ async function runViewport(label, viewport) {
     check(lead?.formType === "careers" && lead?.formName === "Join Our Team", `${label} careers: preserved Tilda form contract`);
     check(lead?.message === `Area: Production\n\n${message}`.trim(), `${label} careers: selected area and available message retained`);
   });
+
+  await caseOf("native-shop", checkNativeShop);
 
   await caseOf("private-label", async () => {
     await visit("/private-labeling");

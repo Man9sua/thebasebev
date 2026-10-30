@@ -164,6 +164,22 @@
   display: block;
 }
 
+.cartCount {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 3px;
+  border-radius: 50%;
+  background: var(--tbb-rd-red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--tbb-font-weight-button);
+}
+
 .action:hover {
   transform: translate3d(0, -2px, 0);
 }

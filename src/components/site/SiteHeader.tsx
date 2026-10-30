@@ -7,18 +7,13 @@ import { CountrySelect } from "@/components/site/CountrySelect";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
-import { ODOO_ACCOUNT_URL } from "@/lib/site-config";
+import { useCart, useSampleCart } from "@/components/cart/useCart";
+import { useCountryCode } from "./useCountryCode";
+import { shopKindForCountry } from "@/data/shop";
+import { ODOO_ACCOUNT_URL, SHOP_URL } from "@/lib/site-config";
 import styles from "./SiteHeader.module.css";
 
-/*
- * An account, not a basket.
- *
- * The bar carried a basket with a count on it, and behind it a native cart and
- * a checkout. The owner's instruction is that this site does not sell — it
- * hands the visitor to the platform that does, per country — so the only thing
- * left for that slot is the way back into an account on that platform. Drawn
- * in the same line as the search beside it rather than taken from a set.
- */
+/** Existing Odoo accounts remain available beside the native shopping basket. */
 function AccountIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
@@ -37,6 +32,10 @@ function SearchIcon() {
   );
 }
 
+function CartIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M4 8h16l-1.4 12H5.4L4 8ZM8 8V6a4 4 0 0 1 8 0v2" strokeLinejoin="round" /></svg>;
+}
+
 export function SiteHeader({
   overHero = false,
   productPage = false,
@@ -49,6 +48,13 @@ export function SiteHeader({
   darkHero?: boolean;
 }) {
   const pathname = usePathname();
+  const country = useCountryCode();
+  const cart = useCart();
+  const sampleCart = useSampleCart();
+  const samples = shopKindForCountry(country) === "samples";
+  const basket = samples ? sampleCart : cart;
+  const basketCount = basket.items.reduce((sum, item) => sum + item.quantity, 0);
+  const onShop = /\/(?:[a-z]{2}\/)?catalog\/?$/i.test(pathname);
   const [pastHero, setPastHero] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
@@ -114,6 +120,24 @@ export function SiteHeader({
         <div className={styles.actions}>
           <SiteLink href="/contacts" className={styles.cta}>
             Get your best deal now
+          </SiteLink>
+          <SiteLink
+            href={`${SHOP_URL}?cart=open`}
+            className={styles.action}
+            data-cart-control
+            aria-label={`${samples ? "Sample box" : "Cart"}, ${basketCount} ${basketCount === 1 ? "item" : "items"}`}
+            aria-haspopup={onShop ? "dialog" : undefined}
+            onClick={(event) => {
+              if (onShop && event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
+                event.preventDefault();
+                setSearchOpen(false);
+                setMenuOpen(false);
+                window.dispatchEvent(new Event("thebase:open-cart"));
+              }
+            }}
+          >
+            <CartIcon />
+            {basketCount > 0 && <span className={styles.cartCount}>{basketCount}</span>}
           </SiteLink>
           <a
             href={ODOO_ACCOUNT_URL}

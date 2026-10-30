@@ -1,0 +1,15 @@
+import { createStripeTestClient } from "@/lib/stripe-test-client";
+import { checkStripeTestCheckoutRateLimit } from "@/lib/stripe-test-rate-limit";
+import { handleStripeTestSession } from "@/lib/stripe-test-session";
+
+export const dynamic = "force-dynamic";
+
+export function GET(request: Request) {
+  const rateLimit = checkStripeTestCheckoutRateLimit(request);
+  if (!rateLimit.allowed) return Response.json({ ok: false, error: { code: "STRIPE_TEST_RATE_LIMITED", message: "Please wait before checking this payment again." } },
+    { status: 429, headers: { "Cache-Control": "no-store", "Retry-After": String(rateLimit.retryAfterSeconds) } });
+  return handleStripeTestSession(request, {
+    secretKey: process.env.STRIPE_SECRET_KEY,
+    retrieveSession: (key, sessionId) => createStripeTestClient(key).retrieveSession(sessionId),
+  });
+}

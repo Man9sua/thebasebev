@@ -34,29 +34,13 @@ export const CURRENT_MARKET = MARKETS.find((market) => market.code === "AE")!;
  * desktop encode is rendered today; the mobile one is here for whenever the
  * frame gets a source of its own on a small screen.
  */
-/**
- * Where a purchase is actually made, which is not here.
- *
- * This site is the company's card: the catalogue is the shelf and the product
- * pages are the specification, and buying happens on whichever platform sells
- * the range in the visitor's country. In the UAE that is Bidfood, and their
- * app is what the owner asked `Shop` to open.
- *
- * One constant for now because there is one country. It is read rather than
- * repeated — `audit:commerce` and `smoke:browser` both check the rendered
- * href against this file — so the per-country table the roadmap calls for can
- * replace it without a second place to update.
- */
-export const SHOP_URL = "https://apps.apple.com/ae/app/bidfood-home-uae/id1508719076";
+/** The native shop keeps the established catalogue URL and its incoming links. */
+export const SHOP_URL = "/catalog";
 
 /**
  * The customer's own account, which lives in Odoo.
  *
- * The bar used to carry a basket. There is no basket to carry: the owner's
- * instruction is that the site does not sell, so the icon beside search is the
- * way back into an account on the platform that does. Odoo sends an
- * unauthenticated visitor to its own sign-in and an authenticated one to their
- * orders, so one href covers both.
+ * Existing customers can still use their Odoo account beside the native basket.
  */
 export const ODOO_ACCOUNT_URL = "https://odoo.thebasebev.com/my";
 
@@ -85,14 +69,10 @@ export const BRAND_VIDEO = {
  * reloaded the homepage while `/about-us` — a real page, indexable, and one the
  * footer already links to — went unlinked from the menu entirely.
  *
- * "Shop" is now "Catalogue". The menu redesign renames it because the label was
- * doing two jobs: the shop — cart, Stripe checkout — and the presentation of the
- * range, which is what the route actually opens. The document goes further and
- * moves the shop out to an external `Shop ↗` button; there is no external shop
- * to point one at, so that half waits for a URL. See the note in `SiteMenu.tsx`.
+ * The shop occupies the catalogue's existing route to preserve inbound links.
  */
 export const SITE_NAV = [
-  { label: "Catalogue", href: "/catalog" },
+  { label: "Shop", href: SHOP_URL },
   { label: "Distributors", href: "/distributors" },
   { label: "R&D", href: "/rnd" },
   { label: "About", href: "/about-us" },
@@ -111,7 +91,7 @@ export const SITE_NAV_SECONDARY = [
 
 export const FOOTER_LINKS = {
   products: [
-    { label: "Catalogue", href: "/catalog" },
+    { label: "Shop", href: SHOP_URL },
     { label: "Private Labeling", href: "/private-labeling" },
     { label: "Sugar Free", href: "/sugar-free" },
     { label: "Vending", href: "/vending" },

@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:stripe": "tsx --test tests/stripe-checkout.test.ts",
+    "test:shop": "tsx --test tests/shop-cart.test.ts tests/checkout-pending.test.ts",
     "test:country-routing": "tsx --test tests/country-routing.test.ts",
     "test:seo-structured-data": "tsx --test tests/seo-structured-data.test.ts",
     "test:consent-settings": "tsx --test tests/consent-settings.test.ts",
@@ -48,7 +49,7 @@
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.2",
-    "next": "^16.3.1",
+    "next": "^16.4.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "stripe": "^22.5.0"
@@ -63,7 +64,7 @@
     "fast-glob": "file:tools/eslint-glob",
     "tsx": "^4.23.12",
     "typescript": "^6.0.3",
-    "wrangler": "^4.151.0"
+    "wrangler": "^4.153.0"
   },
   "overrides": {
     "fast-glob": "$fast-glob"
