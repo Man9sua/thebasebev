@@ -65,6 +65,10 @@
 .pickerCopy { display: flex; flex-direction: column; gap: 8px; }
 .page .pickerTitle, .page .drawerTitle { margin: 0 !important; font-size: 28px; font-weight: var(--tbb-font-weight-heading) !important; line-height: 1 !important; text-transform: uppercase; }
 .pickerMeta { color: var(--shop-muted); font-size: 14px; line-height: 1.4; }
+.kindSwitch { display: flex; gap: 8px; padding: 0 24px 12px; }
+.kindSwitch button { appearance: none; flex: 1; border: 1px solid var(--shop-ink); border-radius: 999px; padding: 10px 12px; background: #fff; color: var(--shop-ink); font: inherit; font-size: 12px; font-weight: var(--tbb-font-weight-button); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.kindSwitch button[aria-pressed="true"] { background: var(--shop-ink); color: #fff; }
+.flavourPrice { display: block; margin-top: 3px; color: var(--shop-muted); font-size: 12px; font-weight: var(--tbb-font-weight-body); }
 .dismiss { appearance: none; display: grid; flex: none; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; padding: 0; background: var(--shop-field); color: var(--shop-ink); cursor: pointer; }
 .dismiss svg { width: 18px; height: 18px; }
 .dismiss:hover { background: var(--shop-ink); color: #fff; }

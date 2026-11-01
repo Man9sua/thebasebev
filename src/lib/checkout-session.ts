@@ -4,7 +4,7 @@ import type { ShopKind } from "@/data/shop";
 const KEY = "thebase:checkout-pending:v1";
 
 function signature(items: readonly CartItem[]) {
-  return JSON.stringify(items.map(({ slug, flavor, quantity }) => [slug, flavor, quantity])
+  return JSON.stringify(items.map(item => [item.slug, item.flavor, item.quantity, "kind" in item ? item.kind : null])
     .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right))));
 }
 

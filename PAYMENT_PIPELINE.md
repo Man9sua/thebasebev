@@ -17,8 +17,16 @@ Stripe line items. Both baskets share only the transport bounds in `shop-limits.
 ## Current verified state
 
 - Native baskets and checkout exist at the established catalogue URLs.
-- Staging accepts Stripe Test Mode only. Prices and delivery remain unconfigured;
-  checkout offers a quotation request through `/api/leads` until amounts are approved.
+- The owner supplied `BaseBev_Master_Price_List_to_01.09.2026 (1).xlsx` and
+  confirmed 5% VAT is additional. 89 product/flavour/pack prices are mapped;
+  43 site variants remain unresolved and use the quotation path. See `SHOP_PRICING.md`.
+- UAE delivery is AED 30 before VAT, free for paid goods from AED 500 before VAT.
+  Goods and free samples share one delivery. Sample-only parcels cost AED 30
+  before VAT through 5 kg; unknown weights and heavier parcels require a quote.
+- Weekday orders are delivered the next day; weekend orders in 1–2 days.
+- Staging accepts Stripe Test Mode only. Card checkout remains closed until VAT
+  is configured in Stripe and verified payment delivery to Odoo is implemented.
+  The calculated order can be requested through `/api/leads`.
 - `/api/stripe/webhook` verifies the Stripe signature but currently acknowledges
   events with `processed: false`. It does not yet create a Sales quotation.
 - The existing enquiry pipeline is separate; do not repurpose or modify the live
@@ -57,6 +65,7 @@ Stripe line items. Both baskets share only the transport bounds in `shop-limits.
 
 ## Data still required
 
-Approved prices, tax treatment, delivery amounts and a reviewed SKU mapping are
-required before enabling a charge. The presence of valid API keys alone does not
-make checkout ready to accept money.
+A reviewed Odoo variant mapping, Stripe tax setup, and the durable payment-to-Sales
+receiver are required before enabling a charge. Non-UAE/express delivery tariffs
+and unmatched product prices remain unconfigured. The presence of valid API keys
+alone does not make checkout ready to accept money.

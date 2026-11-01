@@ -10,7 +10,7 @@ const featured = ["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "c
 const featuredRank = new Map(featured.map((slug, index) => [slug, index]));
 const tiles = catalogTiles as Record<string, { image: string; source: string }>;
 const formats: Readonly<Record<string, string>> = {
-  tea: "1 g sachets", "sugar-free": "1 g sachets", puree: "950 ml bottle", sauce: "1.89 L bottle",
+  tea: "100 × 1 g sachets", "sugar-free": "100 × 1 g sachets", puree: "950 ml bottle", sauce: "1.89 L bottle",
   "colour-collection": "100 g tin", "add-ons": "1–5 g sticks", electrolyte: "Sticks, packs and bulk", "at-home": "150 g pouch", garnish: "50 g pouch",
 };
 const names: Readonly<Record<string, string>> = { jam: "Jam", garnish: "Garnish", topping: "Topping", "sugar-syrup": "Syrup" };

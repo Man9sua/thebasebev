@@ -53,7 +53,8 @@ export function SiteHeader({
   const sampleCart = useSampleCart();
   const samples = shopKindForCountry(country) === "samples";
   const basket = samples ? sampleCart : cart;
-  const basketCount = basket.items.reduce((sum, item) => sum + item.quantity, 0);
+  const basketCount = basket.items.reduce((sum, item) => sum + item.quantity, 0)
+    + (samples ? 0 : sampleCart.items.reduce((sum, item) => sum + item.quantity, 0));
   const onShop = /\/(?:[a-z]{2}\/)?catalog\/?$/i.test(pathname);
   const [pastHero, setPastHero] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

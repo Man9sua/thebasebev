@@ -81,8 +81,8 @@ async function shopBaskets(page) {
   for (const flavor of ["Vanilla", "Banana", "Classic"]) {
     check(await summary.getByText(flavor, { exact: true }).isVisible(), `Checkout: ${flavor} was retained`);
   }
-  check(await page.getByRole("button", { name: "Request order quote", exact: true }).isVisible(), "Checkout: unknown product prices and delivery offer a quote");
-  check(await page.getByRole("button", { name: /continue to secure payment/i }).count() === 0, "Checkout: unapproved amounts cannot open Stripe");
+  check(await page.getByRole("button", { name: "Request order quote", exact: true }).isVisible(), "Checkout: order request remains available until verified payment fulfillment is connected");
+  check(await page.getByRole("button", { name: /continue to secure payment/i }).count() === 0, "Checkout: card payment stays closed until order processing is ready");
   const paidBasket = await page.evaluate(() => localStorage.getItem("thebase:cart:v2"));
 
   await openShop(page, "SA");
@@ -116,6 +116,22 @@ async function shopBaskets(page) {
   check(await page.getByRole("button", { name: "Pay delivery securely", exact: true }).count() === 0, "Samples: unknown shipping cannot create a Stripe session");
   check(await page.getByRole("radio", { name: /Use my DHL account/ }).isVisible(), "Samples: own DHL account remains available");
   check(checkoutAttempts === 0 && leadAttempts === 0, "Shop: basket inspection made no payment or lead request");
+
+  await openShop(page);
+  await page.evaluate(() => {
+    localStorage.setItem("thebase:cart:v2", JSON.stringify([{ slug: "milkshake", flavor: "Vanilla", quantity: 17 }]));
+    localStorage.setItem("thebase:sample-cart:v1", JSON.stringify([{ slug: "milkshake", flavor: "Vanilla", quantity: 1 }]));
+  });
+  await page.goto(`${baseUrl}/checkout?country=AE&kind=products`, { waitUntil: "load" });
+  const mixedSummary = page.getByRole("complementary", { name: "Your order", exact: true });
+  await mixedSummary.locator('[data-checkout-line-kind="samples"]').waitFor();
+  check(await mixedSummary.locator('[data-checkout-line-kind="products"]').count() === 1, "Mixed checkout retains the paid pack");
+  check(await mixedSummary.locator('[data-checkout-line-kind="samples"]').count() === 1, "Mixed checkout retains the same flavour as a separate free sample");
+  check(await mixedSummary.getByText(/^AED\s*531\.30$/, { exact: true }).isVisible(), "Mixed checkout: 476 net goods + 30 delivery + 25.30 VAT = 531.30 AED");
+  await mixedSummary.locator('[data-checkout-line-kind="products"]').getByRole("button", { name: "Increase Milkshake Vanilla quantity", exact: true }).click();
+  check(await mixedSummary.getByText(/^AED\s*529\.20$/, { exact: true }).isVisible(), "Mixed checkout: 504 net goods qualify for free delivery; total is 529.20 AED");
+  check(await mixedSummary.getByText(/Weekend orders are delivered in 1–2 days/).isVisible(), "Checkout displays the approved weekday and weekend delivery times");
+  check(checkoutAttempts === 0 && leadAttempts === 0, "Mixed basket editing makes no real request or payment");
 }
 
 const browser = await chromium.launch({ executablePath: chromePath, headless: true });
@@ -182,7 +198,7 @@ try {
         bodyClasses: document.body.className,
         catalogCards: [...document.querySelectorAll("[data-shop-product]")].map((element) => ({
           name: element.querySelector("h2")?.textContent?.trim() ?? null,
-          price: /Price pending/.test(element.textContent ?? "") ? "pending" : null,
+          price: /Price on request/.test(element.textContent ?? "") ? "pending" : /AED\s*[\d,.]+/.test(element.textContent ?? "") ? "approved" : null,
           href: element instanceof HTMLAnchorElement ? element.getAttribute("href") : null,
         })),
         controls,
@@ -207,7 +223,9 @@ try {
 
     if (route === "/catalog") {
       check(await page.locator("[data-shop-choose]").count() === 22, "/catalog: every range opens a native flavour picker");
-      check(audit.catalogCards.every((card) => card.price === "pending"), "/catalog: unapproved prices remain pending");
+      check(audit.catalogCards.filter(card => card.price === "approved").length === 17, "/catalog: 17 ranges display approved prices");
+      check(audit.catalogCards.filter(card => card.price === "pending").length === 5, "/catalog: five ranges without matching source prices remain on request");
+      check(!/\bVAT\b/i.test(await page.locator("main").innerText()), "/catalog: VAT details are reserved for checkout");
     }
 
     if (route === "/matcha") {

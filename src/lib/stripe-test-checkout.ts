@@ -3,7 +3,7 @@ import { getCheckoutProductId } from "@/data/catalog";
 import { SAMPLE_PRODUCTS } from "@/data/sample-flavours";
 import { isShopQuantity, SHOP_MAX_LINES } from "./shop-limits";
 import {
-  getShopQuote, getShopUnitAmount, isShopCountry,
+  getShopQuote, getShopUnitAmount, isShopCountry, SHOP_ORDER_PAYMENTS_READY,
   type ShopCheckoutKind, type ShopPaymentPricing, type ShopShippingMethod,
 } from "@/lib/shop-payment";
 
@@ -26,7 +26,7 @@ export type ShopCustomer = Readonly<{
 type ValidatedCheckout = Readonly<{
   kind: ShopCheckoutKind; country: string; shippingMethod: ShopShippingMethod;
   customer: ShopCustomer;
-  items: readonly Readonly<{ slug: string; name: string; flavor: string; quantity: number }>[];
+  items: readonly Readonly<{ slug: string; name: string; flavor: string; quantity: number; kind: ShopCheckoutKind }>[];
 }>;
 export type StripeCheckoutSessionResult = Readonly<{ id: string; url: string | null; livemode: boolean }>;
 export type StripeCheckoutClient = Readonly<{
@@ -37,6 +37,7 @@ export type StripeCheckoutDependencies = Readonly<{
   createClient: (secretKey: string) => StripeCheckoutClient;
   createRequestId?: () => string;
   pricing?: ShopPaymentPricing;
+  orderReceiverReady?: boolean;
 }>;
 
 const CUSTOMER_LIMITS = {
@@ -91,11 +92,13 @@ function validateCheckoutPayload(input: unknown): { ok: true; data: ValidatedChe
     const product = SAMPLE_PRODUCTS.find(product => product.slug === slug);
     if (!product) return { ok: false, code: "INVALID_PRODUCT" };
     if (typeof item.flavor !== "string" || !product.flavours.includes(item.flavor)) return { ok: false, code: "INVALID_FLAVOR" };
-    const key = JSON.stringify([product.slug, item.flavor]);
+    const kind = item.kind ?? input.kind;
+    if ((kind !== "products" && kind !== "samples") || (input.kind === "samples" && kind !== "samples")) return { ok: false, code: "INVALID_ITEM_KIND" };
+    const key = JSON.stringify([kind, product.slug, item.flavor]);
     if (seen.has(key)) return { ok: false, code: "DUPLICATE_LINE" };
     if (!isShopQuantity(item.quantity)) return { ok: false, code: "INVALID_QUANTITY" };
     seen.add(key);
-    items.push({ slug: product.slug, name: product.name, flavor: item.flavor, quantity: item.quantity });
+    items.push({ slug: product.slug, name: product.name, flavor: item.flavor, quantity: item.quantity, kind });
   }
   return { ok: true, data: { kind: input.kind, country: input.country, shippingMethod: input.shippingMethod, customer, items } };
 }
@@ -142,6 +145,8 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
   const secretKey = dependencies.secretKey?.trim();
   if (!secretKey) return stripeApiError(503, "STRIPE_TEST_NOT_CONFIGURED", "Secure Test checkout is not configured.");
   if (!isStripeTestKey(secretKey)) return stripeApiError(503, "STRIPE_TEST_KEY_REQUIRED", "Only a Stripe Test Mode secret key is accepted.");
+  if (!(dependencies.orderReceiverReady ?? SHOP_ORDER_PAYMENTS_READY)) return stripeApiError(503, "ORDER_RECEIVER_NOT_READY", "Please send your order request. Card checkout is not available yet.");
+  if (quote.vat !== 0) return stripeApiError(503, "STRIPE_VAT_NOT_CONFIGURED", "VAT must be configured for secure card checkout.");
 
   const requestId = `tb_test_${dependencies.createRequestId?.() ?? crypto.randomUUID()}`;
   const metadata = { tb_request_id: requestId, integration: SHOP_STRIPE_INTEGRATION,
@@ -156,9 +161,9 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
   const params: Stripe.Checkout.SessionCreateParams = {
     mode: "payment", payment_method_types: ["card"],
     line_items: data.items.map(item => ({ quantity: item.quantity, price_data: {
-      currency: "aed", unit_amount: data.kind === "samples" ? 0 : getShopUnitAmount(item.slug, dependencies.pricing)!,
-      product_data: { name: `${item.name} — ${item.flavor}${data.kind === "samples" ? " (sample)" : ""}`,
-        metadata: { slug: item.slug, flavor: item.flavor, kind: data.kind } },
+      currency: "aed", unit_amount: item.kind === "samples" ? 0 : getShopUnitAmount(item.slug, dependencies.pricing, item.flavor)!,
+      product_data: { name: `${item.name} — ${item.flavor}${item.kind === "samples" ? " (sample)" : ""}`,
+        metadata: { slug: item.slug, flavor: item.flavor, kind: item.kind } },
     } })),
     shipping_options: [{ shipping_rate_data: { type: "fixed_amount", display_name: data.shippingMethod === "express" ? "Express delivery" : "Standard delivery",
       fixed_amount: { amount: quote.shipping!, currency: "aed" } } }],

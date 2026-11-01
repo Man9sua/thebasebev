@@ -51,22 +51,25 @@ npm.cmd run build
 npm.cmd run check:assets
 ```
 
-Stripe powers the shop checkout in staging Test Mode. Product prices and delivery charges require owner approval; until configured, checkout accepts quotation requests and creates no payment. Stripe checks are included in CI and the readiness audit.
+Stripe checkout is staging Test Mode only. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Card payments stay closed until Stripe tax setup and the payment-to-Odoo receiver are complete. Stripe checks are included in CI and the readiness audit.
 
 ### Shop and checkout
 
 The shop uses the established `/ae/catalog` URL (and country aliases). UAE visitors
-choose products and quantities; other markets can choose free samples and their
-quantities. Products and samples have separate persistent baskets. The supplied Shop
+choose products, free samples and quantities; other markets can choose free samples.
+The persistent baskets remain separate in storage but combine into one UAE shipment
+and checkout. The supplied Shop
 and Checkout HTML determine the layout; the published product/flavour registry
 determines what can be selected.
 
-Approved amounts belong in `src/lib/shop-payment.ts`, in AED minor units (fils):
-`productUnitAmounts[slug]` and `shipping[kind][country][method]`. Every price and
-delivery fee starts unconfigured. HTML demonstration prices and the old product
-registry prices are never used for payments. Until amounts are approved, customers
-can request an exact quote through `/api/leads`; samples remain free and DHL
-delivery is separate, including the customer's own DHL account option.
+Approved variant prices are in `src/data/shop-prices.json`, in AED minor units
+(fils), with source SKU, pack size and spreadsheet row. `src/lib/shop-payment.ts`
+calculates 5% additional VAT and one UAE delivery charge: AED 30 before VAT below
+AED 500 in paid goods, free from AED 500 before VAT. Samples do not increase that
+threshold. Sample-only parcels cost AED 30 before VAT up to 5 kg; unknown weights
+and heavier parcels require a quote. See `SHOP_PRICING.md` for unmatched variants.
+HTML demo prices and legacy prices are never substituted. `/api/leads` remains
+the order request path until verified payment fulfillment is connected.
 
 `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-side staging secrets.
 Only Test Mode keys and staging/localhost hosts are accepted. Checkout creates
@@ -243,7 +246,7 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 | Visual parity of Next.js output | PARTIAL | Nine target widths are captured and representative layouts were reviewed; exhaustive page-by-page pixel diffs remain. |
 | Interactive parity | PARTIAL | Hero, header/menu/region, mobile menu, catalogue filters/prices, add-to-cart, checkout dialog, product-order popup, and honest form failure UX pass browser smoke; remaining legacy surfaces still need route-level tests/React extraction. |
 | Lead delivery and attribution | STAGING VERIFIED | Typed bridge/API exist; one controlled Odoo lead preserved request ID and full first-touch attribution. Production enablement remains human-controlled. |
-| Checkout/order delivery | TEST MODE READY; PRICING PENDING | Staging Stripe authentication and basket/checkout contracts are verified without creating payments. Approved product prices, delivery fees, an order fulfillment sink and Live approval remain required. |
+| Checkout/order delivery | PRICES CONFIGURED; FULFILLMENT PENDING | 89 variant prices, 5% VAT and UAE delivery calculations are configured. Unmatched prices, Stripe tax setup, a durable Odoo Sales receiver and separate Live approval remain required. |
 | Dynamic recipes/catalog feed | BLOCKED | Upstream feed data is not contained in the export. |
 | OpenNext Worker bundle | DONE | `npm run cf:build` completes locally; Windows emits the upstream WSL recommendation. |
 | Cloudflare staging deployment | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in `mansua`; post-deploy remote smoke is blocked by account-wide Error 1027 until the Free quota resets. |

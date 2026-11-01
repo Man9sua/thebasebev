@@ -521,7 +521,9 @@ try {
   await page.waitForTimeout(1_200);
   check((await page.locator("[data-shop-product]").count()) === 22, "Shop: expected 22 product cards");
   check((await page.getByRole("heading", { name: "Shop", exact: true }).count()) === 1, "Shop: visible heading matches the approved reference");
-  check((await page.locator("[data-shop-product]").getByText("Price pending", { exact: true }).count()) === 22, "Shop: unapproved product amounts remain pending");
+  check((await page.locator("[data-shop-product]").getByText("Price on request", { exact: true }).count()) === 5, "Shop: ranges without approved matching prices remain on request");
+  check((await page.locator("[data-shop-product]").getByText(/AED\s*[\d,.]+/).count()) === 17, "Shop: approved range prices are visible");
+  check(!/\bVAT\b/i.test(await page.locator("main").innerText()), "Shop: VAT details only appear at checkout");
   for (const slug of ["puree", "sauce", "add-ons", "electrolyte"]) {
     check(
       (await page.locator(`[data-shop-product="${slug}"] img`).count()) === 0,

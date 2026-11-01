@@ -4,6 +4,7 @@ import { isShopQuantity, SHOP_MAX_LINES } from "./shop-limits";
 import type { CartItem } from "./cart-store";
 import { defaultFormName } from "./lead-forms";
 import { MAX_MESSAGE_LENGTH, MAX_SHORT_TEXT_LENGTH, validateLeadPayload } from "./leads";
+import { formatShopMoney, getShopQuote, getShopUnitAmount, shopItemKind } from "./shop-payment";
 
 export type ShopCustomer = {
   name: string; email: string; phone: string;
@@ -11,7 +12,7 @@ export type ShopCustomer = {
   city?: string; street?: string; postalCode?: string; unit?: string; trn?: string; notes?: string;
 };
 export type ShopQuoteRequest = {
-  kind: ShopKind; country: string; items: readonly CartItem[]; customer: ShopCustomer; consent: boolean;
+  kind: ShopKind; country: string; items: readonly (CartItem & { kind?: ShopKind })[]; customer: ShopCustomer; consent: boolean;
   deliveryPayment?: "link" | "dhl-account"; dhlAccount?: string; shippingMethod?: "standard" | "express";
 };
 
@@ -22,7 +23,9 @@ export async function submitShopQuoteRequest(input: ShopQuoteRequest): Promise<{
     return { ok: false, message: "Please review the items in your basket." };
   }
   const items = input.items.map((item) => ({ item, product: getShopProduct(item.slug) }));
-  if (items.some(({ item, product }) => !product?.flavors.includes(item.flavor) || !isShopQuantity(item.quantity))) {
+  if (items.some(({ item, product }) => !product?.flavors.includes(item.flavor) || !isShopQuantity(item.quantity)
+    || !["products", "samples"].includes(shopItemKind(input.kind, item))
+    || (input.kind === "samples" && shopItemKind(input.kind, item) !== "samples"))) {
     return { ok: false, message: "Please review your selected flavours and quantities." };
   }
   if (input.deliveryPayment === "dhl-account" && !input.dhlAccount?.trim()) {
@@ -33,14 +36,16 @@ export async function submitShopQuoteRequest(input: ShopQuoteRequest): Promise<{
   const delivery = input.deliveryPayment === "dhl-account"
     ? `Customer DHL account: ${input.dhlAccount!.trim()}`
     : "Confirm delivery cost and send a secure payment link before dispatch.";
-  const introduction = input.kind === "samples" ? "Shop sample delivery request. Samples are free." : "Shop product and delivery quotation. Prices require confirmation.";
+  const introduction = input.kind === "samples" ? "Shop sample delivery request. Samples are free." : "Shop product and sample order request. Confirm before payment.";
+  const quote = input.deliveryPayment === "dhl-account" ? null : getShopQuote({ kind: input.kind, country: input.country, shippingMethod: input.shippingMethod ?? "standard", items: input.items });
   const details = [
     `Business: ${customer.businessType ?? ""}`, `Website / Instagram: ${customer.website ?? ""}`,
     `Delivery address: ${[customer.emirate, customer.city, customer.street, customer.unit, customer.postalCode, input.country].filter(Boolean).join(", ")}`,
     `Delivery: ${input.shippingMethod ?? "standard"}. ${delivery}`,
+    quote?.ready ? `Subtotal excl. VAT: ${formatShopMoney(quote.subtotal!)}; delivery excl. VAT: ${formatShopMoney(quote.shipping!)}; VAT (5%): ${formatShopMoney(quote.vat!)}; total: ${formatShopMoney(quote.total!)}.` : "",
     customer.trn ? `TRN: ${customer.trn}` : "", customer.notes ?? "",
   ].filter(Boolean).join("\n");
-  const selection = items.map(({ item, product }) => `${product!.name} — ${item.flavor} × ${item.quantity}`).join("\n");
+  const selection = items.map(({ item, product }) => `${product!.name} — ${item.flavor}${shopItemKind(input.kind, item) === "samples" ? " (free sample)" : ""} × ${item.quantity}`).join("\n");
   const detailedMessage = [introduction, selection, details].join("\n");
   // Large baskets retain every line in order_json without exceeding the lead note limit.
   const message = detailedMessage.length <= MAX_MESSAGE_LENGTH ? detailedMessage : [
@@ -54,9 +59,15 @@ export async function submitShopQuoteRequest(input: ShopQuoteRequest): Promise<{
     ...getFirstTouchAttribution(), formType, formName: defaultFormName(formType),
     name: customer.name, email: customer.email, phone: customer.phone, company: customer.company, country: input.country,
     product: productSummary.length <= MAX_SHORT_TEXT_LENGTH ? productSummary : `${productNames.length} product ranges`, message, consent: input.consent,
-    order: { currency: "AED", items: items.map(({ item, product }) => ({
-      name: `${product!.name} — ${item.flavor}`, sku: `${item.slug}::${item.flavor}`, quantity: item.quantity,
-    })) },
+    order: { currency: "AED", ...(quote?.ready ? { total: quote.total! / 100 } : {}), items: items.map(({ item, product }) => {
+      const sample = shopItemKind(input.kind, item) === "samples";
+      const amount = sample ? 0 : getShopUnitAmount(item.slug, undefined, item.flavor);
+      return {
+        name: `${product!.name} — ${item.flavor}${sample ? " (free sample)" : ""}`,
+        sku: `${item.slug}::${item.flavor}${input.kind === "products" && sample ? "::sample" : ""}`, quantity: item.quantity,
+        ...(amount === null ? {} : { unitPrice: amount / 100 }),
+      };
+    }) },
     submissionPage: window.location.href, clientTimestamp: new Date().toISOString(),
   };
   const validation = validateLeadPayload(payload);

@@ -20,7 +20,7 @@ import {
 const ENDPOINT =
   "https://the-base-staging.mansua.workers.dev/api/checkout/stripe";
 const TEST_SECRET_KEY = "sk_test_unit_test_only";
-// Explicit fixtures only. Runtime prices and shipping remain unconfigured.
+// Explicit zero-tax fixtures keep provider checks independent of the owner price list.
 const PRICING: ShopPaymentPricing = {
   productUnitAmounts: Object.fromEntries(SAMPLE_PRODUCTS.map(product => [product.slug, product.slug === "milkshake" ? 4538 : 6788])),
   shipping: { products: { AE: { standard: 1234, express: 2345 } }, samples: { AE: { standard: 1234, express: 2345 }, KW: { standard: 3456 } } },
@@ -51,6 +51,7 @@ function checkoutDependencies(
   return {
     secretKey: TEST_SECRET_KEY,
     pricing: PRICING,
+    orderReceiverReady: true,
     createRequestId: () => "unit-request-id",
     createClient: () => ({
       createSession:
@@ -499,34 +500,57 @@ test("oversized webhook payload is rejected before signature verification", asyn
   assert.equal(verificationAttempted, false);
 });
 
-test("public prices and delivery are unconfigured; samples are free but not shipping-free", () => {
+test("public prices are variant-specific; samples remain free and delivery carries VAT", () => {
   for (const product of SAMPLE_PRODUCTS) assert.equal(getShopUnitAmount(product.slug), null);
   const input = { kind: "products" as const, country: "AE", shippingMethod: "standard" as const,
     items: [{ slug: "milkshake", flavor: "Vanilla", quantity: 1 }] };
   const paid = getShopQuote(input);
-  assert.equal(paid.ready, false);
-  assert.equal(paid.subtotal, null);
+  assert.equal(paid.ready, true);
+  assert.equal(paid.subtotal, 2800);
   const samples = getShopQuote({ ...input, kind: "samples" });
-  assert.equal(samples.ready, false);
+  assert.equal(samples.ready, true);
   assert.equal(samples.subtotal, 0);
-  assert.equal(samples.shipping, null);
-  assert.equal(samples.total, null);
+  assert.equal(samples.shipping, 3000);
+  assert.equal(samples.total, 3150);
 });
 
-test("missing public pricing never creates a Stripe client even when a Test key exists", async () => {
+test("a known public total never enables Stripe before the order receiver is ready", async () => {
   let calls = 0;
   const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), {
-    secretKey: TEST_SECRET_KEY, createClient: () => { calls++; throw new Error("No public prices approved"); },
+    secretKey: TEST_SECRET_KEY, createClient: () => { calls++; throw new Error("Order receiver is not ready"); },
   });
   assert.equal(response.status, 503);
-  assert.equal((await response.json()).error.code, "CHECKOUT_PRICING_NOT_CONFIGURED");
+  assert.equal((await response.json()).error.code, "ORDER_RECEIVER_NOT_READY");
   assert.equal(calls, 0);
+});
+
+test("approved VAT cannot be silently omitted from a Stripe charge", async () => {
+  let calls = 0;
+  const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), {
+    secretKey: TEST_SECRET_KEY, orderReceiverReady: true,
+    createClient: () => { calls++; throw new Error("VAT has not been configured in Stripe"); },
+  });
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error.code, "STRIPE_VAT_NOT_CONFIGURED");
+  assert.equal(calls, 0);
+});
+
+test("a mixed Stripe fixture retains free sample lines and charges one delivery", async () => {
+  let captured: Stripe.Checkout.SessionCreateParams | undefined;
+  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(),
+    items: [{ productId: "389328196132", flavor: "Strawberry", quantity: 2, kind: "products" }, { productId: "389328196132", flavor: "Strawberry", quantity: 3, kind: "samples" }],
+  }), checkoutDependencies(async params => { captured = params; return { id: "cs_test_mixed", url: "https://checkout.stripe.com/c/pay/cs_test_mixed", livemode: false }; }));
+  assert.equal(response.status, 201);
+  assert.equal(captured?.line_items?.length, 2);
+  assert.equal(captured?.line_items?.[0].price_data?.unit_amount, 4538);
+  assert.equal(captured?.line_items?.[1].price_data?.unit_amount, 0);
+  assert.equal(captured?.shipping_options?.length, 1);
 });
 
 test("product quote sums several products and shipping as separate integer amounts", () => {
   const quote = getShopQuote({ kind: "products", country: "AE", shippingMethod: "standard",
     items: [{ slug: "milkshake", flavor: "Vanilla", quantity: 2 }, { slug: "chocolate", flavor: "Hot Chocolate", quantity: 1 }] }, PRICING);
-  assert.deepEqual(quote, { ready: true, subtotal: 15864, shipping: 1234, total: 17098, reason: null, currency: "aed" });
+  assert.deepEqual(quote, { ready: true, subtotal: 15864, shipping: 1234, vat: 0, total: 17098, reason: null, currency: "aed" });
 });
 
 test("sample Stripe session charges only its separately configured shipping fee", async () => {

@@ -10,6 +10,7 @@ import { clearCart, clearSampleCart } from "@/lib/cart-store";
 import { consumePendingCheckout } from "@/lib/checkout-session";
 import { formatShopMoney, isShopCountry } from "@/lib/shop-payment";
 import type { ShopKind } from "@/data/shop";
+import { combineShopBaskets } from "@/lib/shop-basket";
 import styles from "./CheckoutReturn.module.css";
 
 type VerifiedPayment = {
@@ -57,9 +58,10 @@ function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; req
 
   useEffect(() => {
     if (!confirmed || !payment || !cart.ready || !sampleCart.ready) return;
-    const basket = payment.kind === "samples" ? sampleCart : cart;
-    if (consumePendingCheckout(sessionId, payment.kind, basket.items)) {
-      (payment.kind === "samples" ? clearSampleCart : clearCart)();
+    const items = combineShopBaskets(payment.kind === "samples" ? "international" : payment.country, cart.items, sampleCart.items);
+    if (consumePendingCheckout(sessionId, payment.kind, items)) {
+      if (payment.kind === "products") clearCart();
+      clearSampleCart();
     }
   }, [confirmed, payment, sessionId, cart, sampleCart]);
 

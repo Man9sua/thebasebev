@@ -24,7 +24,8 @@ import {
   setSampleCartItemQuantity,
   type CartItem,
 } from "@/lib/cart-store";
-import { formatShopMoney, getShopUnitAmount } from "@/lib/shop-payment";
+import { formatShopMoney, getShopUnitAmount, getShopPriceRange, getShopQuote, getShopPackLabel, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
+import { combineShopBaskets, shopBasketKey, type ShopBasketItem } from "@/lib/shop-basket";
 import { ShopPackImage } from "./ShopPackImage";
 import styles from "./ShopPage.module.css";
 
@@ -37,7 +38,7 @@ function itemCount(items: readonly CartItem[]) {
 function subtotal(items: readonly CartItem[]) {
   let total = 0;
   for (const item of items) {
-    const amount = getShopUnitAmount(item.slug);
+    const amount = getShopUnitAmount(item.slug, undefined, item.flavor);
     if (amount === null) return null;
     total += amount * item.quantity;
   }
@@ -55,8 +56,8 @@ const SEARCH_PRODUCTS = SHOP_PRODUCTS.map((product) => ({
 
 function unitLabel(product: ShopProduct, kind: ShopKind) {
   if (kind === "samples") return "Free sample";
-  const amount = getShopUnitAmount(product.slug);
-  return amount === null ? "Price pending" : formatShopMoney(amount);
+  const range = getShopPriceRange(product.slug);
+  return range === null ? "Price on request" : `${range.min === range.max ? "" : "From "}${formatShopMoney(range.min)}`;
 }
 
 function CloseIcon() {
@@ -99,7 +100,7 @@ function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopP
   );
 }
 
-function FlavourPicker({ product, kind, items, onClose }: { product: ShopProduct; kind: ShopKind; items: readonly CartItem[]; onClose: () => void }) {
+function FlavourPicker({ product, kind, items, allowSamples, totalLines, onKindChange, onClose }: { product: ShopProduct; kind: ShopKind; items: readonly CartItem[]; allowSamples: boolean; totalLines: number; onKindChange: (kind: ShopKind) => void; onClose: () => void }) {
   const panel = useRef<HTMLDivElement>(null);
   const dismiss = useRef<HTMLButtonElement>(null);
   const id = useId();
@@ -109,7 +110,7 @@ function FlavourPicker({ product, kind, items, onClose }: { product: ShopProduct
   const count = itemCount(lines);
   const samples = kind === "samples";
   const boxCount = itemCount(items);
-  const full = items.length >= SHOP_MAX_LINES;
+  const full = totalLines >= SHOP_MAX_LINES;
 
   return (
     <div className={styles.overlay} data-shop-picker={product.slug}>
@@ -124,12 +125,17 @@ function FlavourPicker({ product, kind, items, onClose }: { product: ShopProduct
             </div>
             <button className={styles.dismiss} ref={dismiss} type="button" aria-label="Close flavour picker" onClick={onClose}><CloseIcon /></button>
           </div>
+          {allowSamples && <div className={styles.kindSwitch} role="group" aria-label="Pack type">
+            <button type="button" aria-pressed={!samples} onClick={() => onKindChange("products")}>Full packs</button>
+            <button type="button" aria-pressed={samples} onClick={() => onKindChange("samples")}>Free samples</button>
+          </div>}
           <ul className={styles.flavourList} aria-label={`${product.name} flavours`}>
             {product.flavors.map((flavor) => {
               const quantity = quantities.get(flavor) ?? 0;
+              const unit = getShopUnitAmount(product.slug, undefined, flavor);
               return (
                 <li className={styles.flavourRow} key={flavor} data-shop-flavor={flavor}>
-                  <span className={styles.flavourName}>{flavor}</span>
+                  <span className={styles.flavourName}>{flavor}{!samples && <small className={styles.flavourPrice}>{unit === null ? "Price on request" : formatShopMoney(unit)}</small>}</span>
                   <Quantity name={`${flavor} ${product.name}`} quantity={quantity} canAdd={!full || quantity > 0} onChange={(next) => changeQuantity(kind, product.slug, flavor, next, quantity)} />
                 </li>
               );
@@ -145,13 +151,13 @@ function FlavourPicker({ product, kind, items, onClose }: { product: ShopProduct
   );
 }
 
-function CartDrawer({ kind, country, countryName, items, onClose }: { kind: ShopKind; country: string; countryName: string; items: readonly CartItem[]; onClose: () => void }) {
+function CartDrawer({ kind, country, countryName, items, onClose }: { kind: ShopKind; country: string; countryName: string; items: readonly ShopBasketItem[]; onClose: () => void }) {
   const panel = useRef<HTMLDivElement>(null);
   const dismiss = useRef<HTMLButtonElement>(null);
   const id = useId();
   useOverlay(true, onClose, panel, dismiss);
   const samples = kind === "samples";
-  const amount = subtotal(items);
+  const quote = getShopQuote({ kind, country, shippingMethod: "standard", items });
   const total = itemCount(items);
   const checkoutHref = `/checkout?country=${encodeURIComponent(country)}&kind=${kind}`;
 
@@ -167,17 +173,18 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
           {items.map((item) => {
             const product = getShopProduct(item.slug);
             if (!product) return null;
-            const unit = getShopUnitAmount(item.slug);
+            const unit = getShopUnitAmount(item.slug, undefined, item.flavor);
+            const sample = item.kind === "samples";
             return (
-              <li className={styles.cartLine} key={cartLineKey(item.slug, item.flavor)} data-shop-cart-line={cartLineKey(item.slug, item.flavor)}>
+              <li className={styles.cartLine} key={shopBasketKey(item)} data-shop-cart-line={cartLineKey(item.slug, item.flavor)} data-shop-line-kind={item.kind}>
                 <div className={styles.lineArt} style={{ backgroundColor: product.backgroundColor }}><ShopPackImage product={product} sizes="64px" /></div>
                 <div className={styles.lineCopy}>
                   <span className={styles.lineName}>{product.name}</span>
-                  <span className={styles.lineFlavour}>{item.flavor}</span>
-                  <Quantity name={`${item.flavor} ${product.name}`} quantity={item.quantity} onChange={(next) => changeQuantity(kind, item.slug, item.flavor, next, item.quantity)} />
-                  <button className={styles.remove} type="button" aria-label={`Remove ${item.flavor} ${product.name}`} onClick={() => (samples ? removeSampleCartItem : removeCartItem)(item.slug, item.flavor)}>Remove</button>
+                  <span className={styles.lineFlavour}>{item.flavor} · {sample ? "Free sample" : getShopPackLabel(item.slug, item.flavor) ?? product.format}</span>
+                  <Quantity name={`${item.flavor} ${product.name}${sample ? " sample" : ""}`} quantity={item.quantity} onChange={(next) => changeQuantity(item.kind, item.slug, item.flavor, next, item.quantity)} />
+                  <button className={styles.remove} type="button" aria-label={`Remove ${item.flavor} ${product.name}${sample ? " sample" : ""}`} onClick={() => (sample ? removeSampleCartItem : removeCartItem)(item.slug, item.flavor)}>Remove</button>
                 </div>
-                <span className={styles.linePrice}>{samples ? "Free" : unit === null ? "Price pending" : formatShopMoney(unit * item.quantity)}</span>
+                <span className={styles.linePrice}>{sample ? "Free" : unit === null ? "Price on request" : formatShopMoney(unit * item.quantity)}</span>
               </li>
             );
           })}
@@ -186,10 +193,12 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
         {total > 0 && (
           <div className={styles.drawerFoot}>
             <dl className={styles.summary}>
-              {samples ? <><div><dt>Samples</dt><dd>Free</dd></div><div><dt>DHL Express to {countryName}</dt><dd>Delivery price pending</dd></div></> : <><div><dt>Subtotal</dt><dd>{amount === null ? "Price pending" : formatShopMoney(amount)}</dd></div><div><dt>VAT and delivery</dt><dd>Confirmed at checkout</dd></div><div className={styles.total}><dt>Total</dt><dd>{amount === null ? "Price pending" : "At checkout"}</dd></div></>}
+              <div><dt>{samples ? "Samples" : "Subtotal"}</dt><dd>{samples ? "Free" : quote.subtotal === null ? "Price on request" : formatShopMoney(quote.subtotal)}</dd></div>
+              <div><dt>Delivery to {countryName}</dt><dd>{quote.shipping === null ? "To be confirmed" : quote.shipping === 0 ? "Free" : formatShopMoney(quote.shipping)}</dd></div>
+              <div className={styles.total}><dt>Total</dt><dd>At checkout</dd></div>
             </dl>
             <SiteLink className={styles.control} href={checkoutHref}>{samples ? "Request samples" : "Checkout"}</SiteLink>
-            <p className={styles.limitNote}>{samples ? "Sample delivery is confirmed before payment." : "Prices and delivery are confirmed before payment."}</p>
+            <p className={styles.limitNote}>{country === "AE" ? UAE_DELIVERY_TIMING : "Sample delivery is confirmed before payment."}</p>
           </div>
         )}
       </aside>
@@ -203,7 +212,10 @@ export function ShopPage() {
   const kind = shopKindForCountry(country);
   const cart = useCart();
   const sampleCart = useSampleCart();
-  const currentCart = kind === "samples" ? sampleCart : cart;
+  const [pickerKind, setPickerKind] = useState<ShopKind>("products");
+  const currentCart = country !== "AE" || pickerKind === "samples" ? sampleCart : cart;
+  const basket = useMemo(() => combineShopBaskets(country, cart.items, sampleCart.items), [country, cart.items, sampleCart.items]);
+  const basketKind = basket.length ? basket.some(item => item.kind === "products") ? "products" : "samples" : kind;
   const [query, setQuery] = useState("");
   const [picking, setPicking] = useState<ShopProduct | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -229,11 +241,11 @@ export function ShopPage() {
   const products = useMemo(() => SEARCH_PRODUCTS.filter((entry) => !search || entry.text.includes(search)).map(({ product }) => product), [search]);
   const quantities = useMemo(() => {
     const byProduct = new Map<string, number>();
-    for (const item of currentCart.items) byProduct.set(item.slug, (byProduct.get(item.slug) ?? 0) + item.quantity);
+    for (const item of basket) byProduct.set(item.slug, (byProduct.get(item.slug) ?? 0) + item.quantity);
     return byProduct;
-  }, [currentCart.items]);
-  const total = itemCount(currentCart.items);
-  const amount = subtotal(currentCart.items);
+  }, [basket]);
+  const total = itemCount(basket);
+  const amount = subtotal(country === "AE" ? cart.items : []);
   const samples = kind === "samples";
 
   return (
@@ -250,6 +262,7 @@ export function ShopPage() {
             <input type="search" data-shop-search placeholder="Search products or flavours" value={query} autoComplete="off" onChange={(event) => setQuery(event.currentTarget.value)} />
           </label>
         </section>
+        {country === "AE" && <p className={styles.noticeText}>{UAE_DELIVERY_TIMING} Free delivery on product orders from AED 500. Free samples can travel with your order.</p>}
         {samples && (
           <section className={styles.sampleNotice} aria-labelledby="shop-samples-title">
             <div className={styles.noticeCopy}>
@@ -261,16 +274,16 @@ export function ShopPage() {
         )}
         <section aria-label="Shop products">
           <p className="tbb-visually-hidden" role="status">{search ? `${products.length} product ranges found` : ""}</p>
-          {products.length > 0 ? <div className={styles.grid}>{products.map((product, index) => <ProductCard product={product} key={product.slug} kind={kind} count={quantities.get(product.slug) ?? 0} eager={index < 4} onChoose={() => setPicking(product)} />)}</div> : <p className={styles.empty}>Nothing matches “{query.trim()}”. Try a product or flavour name, or <SiteLink href="/contacts">ask our team</SiteLink>.</p>}
+          {products.length > 0 ? <div className={styles.grid}>{products.map((product, index) => <ProductCard product={product} key={product.slug} kind={kind} count={quantities.get(product.slug) ?? 0} eager={index < 4} onChoose={() => { setPickerKind(kind); setPicking(product); }} />)}</div> : <p className={styles.empty}>Nothing matches “{query.trim()}”. Try a product or flavour name, or <SiteLink href="/contacts">ask our team</SiteLink>.</p>}
         </section>
         <section className={styles.quote} aria-labelledby="shop-wholesale-title">
           <div className={styles.noticeCopy}><h2 className={styles.quoteTitle} id="shop-wholesale-title">Buying wholesale?</h2><p className={styles.noticeText}>Distributor prices and private label from Dubai. We reply within one business day.</p></div>
           <SiteLink className={styles.control} href="/contacts">Get a quote</SiteLink>
         </section>
       </div>
-      {total > 0 && !drawerOpen && !picking && <button className={styles.cartBar} type="button" data-shop-cart-open aria-haspopup="dialog" onClick={openDrawer}><span>{samples ? `${total} ${total === 1 ? "sample" : "samples"}` : `${total} in cart, ${amount === null ? "prices pending" : formatShopMoney(amount)}`}</span><span className={styles.cartBarAction}>{samples ? "Sample box" : "View cart"}</span></button>}
-      {picking && <FlavourPicker product={picking} kind={kind} items={currentCart.items} onClose={closePicker} />}
-      {drawerOpen && <CartDrawer kind={kind} country={country} countryName={countryName} items={currentCart.items} onClose={closeDrawer} />}
+      {total > 0 && !drawerOpen && !picking && <button className={styles.cartBar} type="button" data-shop-cart-open aria-haspopup="dialog" onClick={openDrawer}><span>{basketKind === "samples" ? `${total} ${total === 1 ? "sample" : "samples"}` : `${total} in cart, ${amount === null ? "prices pending" : formatShopMoney(amount)}`}</span><span className={styles.cartBarAction}>{basketKind === "samples" ? "Sample box" : "View cart"}</span></button>}
+      {picking && <FlavourPicker product={picking} kind={country === "AE" ? pickerKind : "samples"} items={currentCart.items} totalLines={basket.length} allowSamples={country === "AE"} onKindChange={setPickerKind} onClose={closePicker} />}
+      {drawerOpen && <CartDrawer kind={basketKind} country={country} countryName={countryName} items={basket} onClose={closeDrawer} />}
     </main>
   );
 }

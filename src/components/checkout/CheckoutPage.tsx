@@ -11,7 +11,6 @@ import { getCheckoutProductId } from "@/data/catalog";
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
 import { getShopProduct, SHOP_MAX_QUANTITY } from "@/data/shop";
 import {
-  cartLineKey,
   removeSubmittedSamples,
   removeCartItem,
   removeSampleCartItem,
@@ -20,7 +19,8 @@ import {
 } from "@/lib/cart-store";
 import { rememberPendingCheckout } from "@/lib/checkout-session";
 import { submitShopQuoteRequest, submitShopSampleRequest } from "@/lib/shop-lead";
-import { formatShopMoney, getShopQuote, getShopUnitAmount } from "@/lib/shop-payment";
+import { formatShopMoney, getShopQuote, getShopUnitAmount, getShopPackLabel, SHOP_ORDER_PAYMENTS_READY, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
+import { combineShopBaskets, shopBasketKey } from "@/lib/shop-basket";
 import styles from "./CheckoutPage.module.css";
 
 type Fields = {
@@ -151,13 +151,13 @@ export function CheckoutPage() {
   const requestedCountry = searchParams.get("country")?.toUpperCase();
   const country = requestedCountry && COUNTRY_NAMES.has(requestedCountry) ? requestedCountry : routeCountry;
   const countryName = COUNTRY_NAMES.get(country) ?? country;
-  const isSample = country !== "AE" || searchParams.get("kind") === "samples";
-  const kind = isSample ? "samples" : "products";
   const paidCart = useCart();
   const sampleCart = useSampleCart();
-  const cart = isSample ? sampleCart : paidCart;
+  const items = useMemo(() => combineShopBaskets(country, paidCart.items, sampleCart.items), [country, paidCart.items, sampleCart.items]);
+  const isSample = country !== "AE" || (items.length > 0 && items.every(item => item.kind === "samples"));
+  const kind = isSample ? "samples" : "products";
+  const cart = { ready: paidCart.ready && sampleCart.ready, items };
   const totalQuantity = cart.items.reduce((total, item) => total + item.quantity, 0);
-  const setQuantity = isSample ? setSampleCartItemQuantity : setCartItemQuantity;
   const [fields, setFields] = useState(INITIAL_FIELDS);
   const [businessType, setBusinessType] = useState("Café");
   const [emirate, setEmirate] = useState("Dubai");
@@ -171,11 +171,11 @@ export function CheckoutPage() {
 
   const lines = useMemo(() => cart.items.flatMap((item) => {
     const product = getShopProduct(item.slug);
-    return product ? [{ ...item, product, unitAmount: getShopUnitAmount(item.slug) }] : [];
+    return product ? [{ ...item, product, unitAmount: getShopUnitAmount(item.slug, undefined, item.flavor) }] : [];
   }), [cart.items]);
   const quote = useMemo(() => getShopQuote({ kind, country, shippingMethod, items: cart.items }),
     [kind, country, shippingMethod, cart.items]);
-  const quoteNeeded = !quote.ready || (isSample && deliveryPayment === "dhl-account");
+  const quoteNeeded = !SHOP_ORDER_PAYMENTS_READY || !quote.ready || (isSample && deliveryPayment === "dhl-account");
   const shopHref = `/${country.toLowerCase()}/catalog`;
   const contactFields = isSample ? BUSINESS_FIELDS : CONTACT_FIELDS;
   const addressFields = isSample ? SAMPLE_ADDRESS_FIELDS : ADDRESS_FIELDS;
@@ -185,8 +185,9 @@ export function CheckoutPage() {
     : quote.subtotal === null ? "To be confirmed" : formatShopMoney(quote.subtotal);
   const shippingLabel = isSample && deliveryPayment === "dhl-account" ? "Your DHL account"
     : quote.shipping === null ? isSample ? "Quote, then pay by link" : "To be confirmed"
-      : formatShopMoney(quote.shipping);
-  const totalLabel = quote.total === null ? "Awaiting quote" : formatShopMoney(quote.total);
+      : quote.shipping === 0 ? "Free" : formatShopMoney(quote.shipping);
+  const ownDhlAccount = isSample && deliveryPayment === "dhl-account";
+  const totalLabel = ownDhlAccount || quote.total === null ? "Awaiting quote" : formatShopMoney(quote.total);
   const submitLabel = pending ? "Please wait…"
     : quoteNeeded ? isSample ? "Send request" : "Request order quote"
       : isSample ? "Pay delivery securely" : "Continue to secure payment";
@@ -194,7 +195,7 @@ export function CheckoutPage() {
     ? isSample ? "Samples are free. You pay only the confirmed delivery charge on Stripe."
       : "You will continue to secure payment on Stripe."
     : isSample ? `For ${countryName}. If we have a distributor there, they may contact you too.`
-      : "An exact quote is confirmed before any payment.";
+      : "Our team confirms your order before payment.";
 
   function updateField(key: keyof Fields, value: string) {
     setFields((current) => ({ ...current, [key]: value }));
@@ -254,7 +255,7 @@ export function CheckoutPage() {
             kind, country, currency: "aed", shippingMethod, email: customer.email, customer,
             items: cart.items.map((item) => ({
               productId: getCheckoutProductId(item.slug) ?? item.slug,
-              flavor: item.flavor, quantity: item.quantity,
+              flavor: item.flavor, quantity: item.quantity, kind: item.kind,
             })),
           }),
         });
@@ -351,30 +352,38 @@ export function CheckoutPage() {
               </div>
               <aside className={styles.summary} aria-labelledby="order-summary-title">
                 <div className={styles.summaryHead}><h2 id="order-summary-title">{isSample ? "Sample box" : "Your order"}</h2>{isSample && <span>{totalQuantity} {totalQuantity === 1 ? "sample" : "samples"}</span>}</div>
-                <div className={styles.lines}>{lines.map((line) => (
-                  <article key={cartLineKey(line.slug, line.flavor)} className={styles.line}>
+                <div className={styles.lines}>{lines.map((line) => {
+                  const sample = line.kind === "samples";
+                  const setQuantity = sample ? setSampleCartItemQuantity : setCartItemQuantity;
+                  const remove = sample ? removeSampleCartItem : removeCartItem;
+                  const label = `${line.product.name} ${line.flavor}${!isSample && sample ? " sample" : ""}`;
+                  return (
+                  <article key={shopBasketKey(line)} className={styles.line} data-checkout-line-kind={line.kind}>
                     <div className={styles.thumb}>
                       <ShopPackImage product={line.product} sizes="56px" />
                       <span className={styles.quantityBadge}>{line.quantity}</span>
                     </div>
                     <div className={styles.lineCopy}>
-                      <h3>{line.product.name}</h3><p>{line.flavor}</p>
-                      <div className={styles.quantity} aria-label={`${line.product.name} ${line.flavor} quantity`}>
-                        <button type="button" disabled={pending} aria-label={`Decrease ${line.product.name} ${line.flavor} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity - 1)}>−</button>
+                      <h3>{line.product.name}</h3><p><span>{line.flavor}</span><span>{line.kind === "samples" ? " · Free sample" : ` · ${getShopPackLabel(line.slug, line.flavor) ?? line.product.format}`}</span></p>
+                      <div className={styles.quantity} aria-label={`${label} quantity`}>
+                        <button type="button" disabled={pending} aria-label={`Decrease ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity - 1)}>−</button>
                         <span>{line.quantity}</span>
-                        <button type="button" disabled={pending || line.quantity >= SHOP_MAX_QUANTITY} aria-label={`Increase ${line.product.name} ${line.flavor} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity + 1)}>+</button>
+                        <button type="button" disabled={pending || line.quantity >= SHOP_MAX_QUANTITY} aria-label={`Increase ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity + 1)}>+</button>
                       </div>
-                      <button type="button" className={styles.remove} disabled={pending} aria-label={`Remove ${line.product.name} ${line.flavor}`} onClick={() => (isSample ? removeSampleCartItem : removeCartItem)(line.slug, line.flavor)}>Remove</button>
+                      <button type="button" className={styles.remove} disabled={pending} aria-label={`Remove ${label}`} onClick={() => remove(line.slug, line.flavor)}>Remove</button>
                     </div>
-                    {!isSample && <strong className={styles.linePrice}>{line.unitAmount === null ? "Price to confirm" : formatShopMoney(line.unitAmount * line.quantity)}</strong>}
+                    {!isSample && <strong className={styles.linePrice}>{line.kind === "samples" ? "Free" : line.unitAmount === null ? "Price to confirm" : formatShopMoney(line.unitAmount * line.quantity)}</strong>}
                   </article>
-                ))}</div>
+                ); })}</div>
                 <dl className={styles.totals}>
-                  <div><dt>{isSample ? "Samples" : "Subtotal"}</dt><dd>{subtotalLabel}</dd></div>
-                  <div><dt>{isSample ? "DHL Express" : "Delivery"}</dt><dd>{shippingLabel}</dd></div>
-                  {(!isSample || !quoteNeeded) && <div className={styles.totalLine}><dt>{isSample ? "Delivery total" : "Total"}</dt><dd>{totalLabel}</dd></div>}
+                  <div><dt>{isSample ? "Samples" : "Subtotal, excl. VAT"}</dt><dd>{subtotalLabel}</dd></div>
+                  <div><dt>{isSample && country !== "AE" ? "DHL Express" : "Delivery, excl. VAT"}</dt><dd>{shippingLabel}</dd></div>
+                  <div><dt>VAT (5%)</dt><dd>{ownDhlAccount || quote.vat === null ? "To be confirmed" : formatShopMoney(quote.vat)}</dd></div>
+                  <div className={styles.totalLine}><dt>{isSample ? "Delivery total" : "Total"}</dt><dd>{totalLabel}</dd></div>
                 </dl>
-                {!isSample && !quote.ready && <p className={styles.quoteNote}>{quote.reason || "Product prices and delivery must be confirmed before payment. Request an exact quote below."}</p>}
+                {country === "AE" && <p className={styles.quoteNote}>{isSample ? "Sample delivery: AED 30 + VAT for parcels up to 5 kg. Larger parcels are quoted separately." : "Free UAE delivery on products from AED 500 before VAT. Below AED 500: AED 30 + VAT. Samples travel with your order at no extra delivery charge."}</p>}
+                {country === "AE" && <p className={styles.quoteNote}>{UAE_DELIVERY_TIMING}</p>}
+                {!quote.ready && <p className={styles.quoteNote}>{quote.reason || "Product prices and delivery must be confirmed before payment. Request an exact quote below."}</p>}
                 <label className={styles.consent}>
                   <input type="checkbox" name="consent" checked={consent} disabled={pending} required aria-invalid={fieldErrors.consent ? true : undefined} aria-describedby={fieldErrors.consent ? "checkout-consent-error" : undefined} onChange={(event) => { setConsent(event.target.checked); setFieldErrors((current) => ({ ...current, consent: undefined })); }} />
                   <span>I agree to the <SiteLink href={`/${country.toLowerCase()}/privacy`}>Privacy Policy</SiteLink>.</span>

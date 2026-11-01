@@ -68,3 +68,28 @@ test("invalid sample quantities never submit and delivery failures remain failur
     assert.equal(capture.length, 1);
   }, 503);
 });
+
+test("mixed order requests preserve paid packs, free samples and the approved VAT total", async () => {
+  const { submitShopQuoteRequest } = await import("../src/lib/shop-lead");
+  await withBrowser(async capture => {
+    const result = await submitShopQuoteRequest({ kind: "products", country: "AE", customer, consent: true,
+      items: [{ slug: "milkshake", flavor: "Vanilla", quantity: 17, kind: "products" }, { slug: "milkshake", flavor: "Vanilla", quantity: 1, kind: "samples" }] });
+    assert.equal(result.ok, true);
+    const payload = capture[0] as { order: { total: number; items: { sku: string; unitPrice: number; quantity: number }[] }; message: string };
+    assert.equal(payload.order.total, 531.3);
+    assert.deepEqual(payload.order.items.map(item => [item.sku, item.quantity, item.unitPrice]), [["milkshake::Vanilla", 17, 28], ["milkshake::Vanilla::sample", 1, 0]]);
+    assert.match(payload.message, /VAT \(5%\)/);
+  });
+});
+
+test("an unpriced variant can still request a quote without an invented amount", async () => {
+  const { submitShopQuoteRequest } = await import("../src/lib/shop-lead");
+  await withBrowser(async capture => {
+    const result = await submitShopQuoteRequest({ kind: "products", country: "AE", customer, consent: true,
+      items: [{ slug: "puree", flavor: "Mango", quantity: 2 }] });
+    assert.equal(result.ok, true);
+    const payload = capture[0] as { order: { total?: number; items: { unitPrice?: number }[] } };
+    assert.equal(payload.order.total, undefined);
+    assert.equal(payload.order.items[0].unitPrice, undefined);
+  });
+});

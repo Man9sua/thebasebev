@@ -10,6 +10,15 @@ const basket: readonly CartItem[] = [
   { slug: "iced-tea", flavor: "Peach", quantity: 1 },
 ];
 
+test("paid and sample versions of one flavour cannot swap in a pending checkout", () => {
+  withStorage(() => {
+    const mixed = [{ ...basket[0], kind: "products" }, { ...basket[1], kind: "samples" }];
+    rememberPendingCheckout(SESSION, "products", mixed);
+    assert.equal(consumePendingCheckout(SESSION, "products", mixed.map(item => ({ ...item, kind: item.kind === "samples" ? "products" : "samples" }))), false);
+    assert.equal(consumePendingCheckout(SESSION, "products", [...mixed].reverse()), true);
+  });
+});
+
 class MemoryStorage {
   readonly values = new Map<string, string>();
   denied: "read" | "write" | "remove" | null = null;

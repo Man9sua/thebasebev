@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:stripe": "tsx --test tests/stripe-checkout.test.ts",
-    "test:shop": "tsx --test tests/shop-cart.test.ts tests/checkout-pending.test.ts tests/shop-lead.test.ts",
+    "test:shop": "tsx --test tests/shop-cart.test.ts tests/checkout-pending.test.ts tests/shop-lead.test.ts tests/shop-pricing.test.ts",
     "test:country-routing": "tsx --test tests/country-routing.test.ts",
     "test:seo-structured-data": "tsx --test tests/seo-structured-data.test.ts",
     "test:consent-settings": "tsx --test tests/consent-settings.test.ts",
