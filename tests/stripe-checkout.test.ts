@@ -111,6 +111,7 @@ test("valid checkout uses server price, AED and staging return URLs", async () =
   );
   assert.equal(capturedParams?.customer_email, "buyer@example.com");
   assert.equal(capturedParams?.billing_address_collection, "required");
+  assert.equal(capturedParams?.payment_intent_data?.shipping, undefined, "Stripe forbids prefilled PaymentIntent shipping with Checkout shipping collection");
   assert.deepEqual(capturedParams?.shipping_address_collection?.allowed_countries, [
     "AE",
   ]);
@@ -595,6 +596,14 @@ test("an old unbound attempt cannot reuse a provider idempotency key after its r
   assert.equal(calls, 0);
 });
 
+test("a provider parameter conflict requires a fresh client checkout key", async () => {
+  const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), checkoutDependencies(async () => {
+    throw Object.assign(new Error("Parameters changed"), { type: "StripeIdempotencyError" });
+  }));
+  assert.equal(response.status, 409);
+  assert.equal((await response.json()).error.code, "CHECKOUT_KEY_REUSED");
+});
+
 test("a mixed Stripe fixture retains free sample lines and charges one delivery", async () => {
   let captured: Stripe.Checkout.SessionCreateParams | undefined;
   const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(),
@@ -627,7 +636,7 @@ test("sample Stripe session charges only its separately configured shipping fee"
   for (const line of captured?.line_items?.slice(0, 2) ?? []) { assert.equal(line.price_data?.unit_amount, 0); assert.equal(line.quantity, 1); }
   assert.equal(captured?.line_items?.[2].price_data?.unit_amount, 3456);
   assert.deepEqual(captured?.shipping_address_collection?.allowed_countries, ["KW"]);
-  assert.equal(captured?.payment_intent_data?.shipping?.address.country, "KW");
+  assert.equal(captured?.payment_intent_data?.shipping, undefined);
   assert.equal(captured?.metadata?.kind, "samples");
   assert.equal(captured?.automatic_tax, undefined); // No prototype 5% VAT is silently added.
 });

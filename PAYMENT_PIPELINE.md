@@ -38,8 +38,8 @@ Stripe line items. Both baskets share only the transport bounds in `shop-limits.
 - Odoo 19 Enterprise uses the AED pricelist and existing exclusive 5% Dubai tax,
   rounding per line. The receiver action is installed without an automatic
   trigger. A dry run verified transaction locking and rejected an invalid SKU
-  before any customer or quotation was created. Full payment verification is
-  pending deployment of this implementation.
+  before any customer or quotation was created. The full Test Mode payment
+  verification procedure is recorded below; Live activation requires its own approval.
 - Credentials stay server-side in ignored local files and Cloudflare secrets.
 
 ## Durable processing

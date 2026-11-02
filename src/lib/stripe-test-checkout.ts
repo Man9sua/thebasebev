@@ -193,11 +193,6 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
       kind: data.kind, country: data.country, shipping_method: data.shippingMethod, utm_source: data.attribution?.utm_source ?? "",
       tb_subtotal: String(quote.subtotal), tb_shipping: String(quote.shipping), tb_vat: String(quote.vat), tb_total: String(quote.total) };
     const { customer } = data;
-    const shipping: Stripe.Checkout.SessionCreateParams.PaymentIntentData.Shipping | undefined = customer.street && customer.city ? {
-      name: customer.name, phone: customer.phone,
-      address: { country: data.country, city: customer.city, line1: customer.street, line2: customer.unit,
-        state: customer.emirate, postal_code: customer.postalCode },
-    } : undefined;
     const params: Stripe.Checkout.SessionCreateParams = {
       mode: "payment", payment_method_types: ["card"],
       invoice_creation: { enabled: false },
@@ -213,7 +208,7 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
       cancel_url: `${url.origin}/checkout?stripe_checkout=cancelled&country=${data.country}&kind=${data.kind}`,
       metadata: { ...metadata, company: customer.company ?? "", trn: customer.trn ?? "", notes: customer.notes ?? "",
         business_type: customer.businessType ?? "", website: customer.website ?? "" },
-      payment_intent_data: { metadata, shipping },
+      payment_intent_data: { metadata },
     };
     const session = await client.createSession(params, { idempotencyKey: requestId });
     if (session.livemode || !session.id.startsWith("cs_test_") || !validCheckoutUrl(session.url)) return stripeApiError(502, "STRIPE_TEST_SESSION_REJECTED", "Stripe did not return a valid Test Mode checkout.");
@@ -221,6 +216,7 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
     return checkoutResponse(session);
   } catch (error) {
     const code = error instanceof Error ? error.message : "";
+    if (error && typeof error === "object" && "type" in error && error.type === "StripeIdempotencyError") return stripeApiError(409, "CHECKOUT_KEY_REUSED", "This checkout changed. Please retry.");
     if (["ORDER_NOT_PAYABLE", "ODOO_VARIANT_UNRESOLVED", "ORDER_NEEDS_QUOTE"].includes(code)) return stripeApiError(503, "ORDER_NEEDS_QUOTE", "Please request a quote for these items.");
     if (code === "CHECKOUT_KEY_REUSED") return stripeApiError(409, code, "Your order changed. Please retry checkout.");
     return stripeApiError(502, "STRIPE_TEST_UNAVAILABLE", "Secure Test checkout is temporarily unavailable. Your basket has been kept.");
