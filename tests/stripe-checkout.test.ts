@@ -94,6 +94,7 @@ test("valid checkout uses server price, AED and staging return URLs", async () =
 
   assert.equal(response.status, 201);
   assert.equal(capturedParams?.mode, "payment");
+  assert.equal(capturedParams?.adaptive_pricing?.enabled, false, "Approved AED prices must not switch to a visitor currency");
   assert.equal(capturedParams?.line_items?.[0]?.quantity, 2);
   assert.equal(capturedParams?.line_items?.[0]?.price_data?.currency, "aed");
   assert.equal(capturedParams?.line_items?.[0]?.price_data?.unit_amount, 4538);

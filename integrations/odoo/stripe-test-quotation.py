@@ -62,15 +62,18 @@ else:
     billing_country = env['res.country'].search([('code', '=', billing.get('country'))], limit=1)
     if not billing_country:
         raise UserError('A valid billing country is required.')
+    billing_state = env['res.country.state'].search([('country_id', '=', billing_country.id), '|', ('code', '=ilike', billing.get('state') or ''), ('name', '=ilike', billing.get('state') or '')], limit=1)
+    shipping_state = env['res.country.state'].search([('country_id', '=', 2), '|', ('code', '=ilike', shipping.get('state') or ''), ('name', '=ilike', shipping.get('state') or '')], limit=1)
     Partner = env['res.partner'].with_context(tracking_disable=True, mail_create_nosubscribe=True, mail_notrack=True)
     partner = Partner.create({'name': '[STRIPE TEST] ' + buyer['name'], 'email': buyer['email'],
         'phone': buyer.get('phone') or False, 'company_name': buyer.get('company') or False,
         'ref': reference, 'country_id': billing_country.id, 'street': billing.get('line1') or False,
-        'street2': billing.get('line2') or False, 'city': billing.get('city') or False,
+        'street2': billing.get('line2') or False, 'city': billing.get('city') or billing_state.name or billing.get('state') or False, 'state_id': billing_state.id or False,
         'zip': billing.get('postal_code') or False, 'company_id': 1})
     delivery = Partner.create({'parent_id': partner.id, 'name': shipping.get('name') or buyer['name'],
         'type': 'delivery', 'country_id': 2, 'street': shipping['line1'], 'street2': shipping.get('line2') or False,
-        'city': shipping.get('city') or False, 'zip': shipping.get('postal_code') or False, 'company_id': 1})
+        'city': shipping.get('city') or shipping_state.name or shipping.get('state') or buyer.get('city') or False,
+        'state_id': shipping_state.id or False, 'zip': shipping.get('postal_code') or False, 'company_id': 1})
     note = '<p>STRIPE TEST — payment verified; no real charge.</p><p>Session: ' + session + '</p><p>Payment: ' + payment + '</p><p>Snapshot: ' + digest + '</p><p>Paid AED: ' + str(total / 100.0) + '</p>'
     note += '<p>Attribution: ' + (payload.get('attribution_note') or '') + '</p><p>Customer note: ' + (payload.get('customer_note') or '') + '</p>'
     order = Sale.create({'name': 'STRIPE TEST / ' + session[-16:], 'partner_id': partner.id, 'partner_invoice_id': partner.id,

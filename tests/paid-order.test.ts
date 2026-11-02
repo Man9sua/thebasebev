@@ -7,6 +7,7 @@ import { processPaidSession, type PaidOrderDependencies } from "../src/lib/strip
 import { handleStripeTestWebhook } from "../src/lib/stripe-test-webhook";
 import { testOrderStore } from "./helpers/order-store";
 import { handleStripeTestSession } from "../src/lib/stripe-test-session";
+import { createStripeTestClient } from "../src/lib/stripe-test-client";
 
 async function fixture(kind: "products" | "samples" = "products") {
   const database = new DatabaseSync(":memory:");
@@ -80,6 +81,7 @@ test("tampered totals, tax, variants, quantities and refunded payments never rea
     (f: Awaited<ReturnType<typeof fixture>>) => { f.lines.data[0].quantity = 3; },
     (f: Awaited<ReturnType<typeof fixture>>) => { (f.lines.data[0].price!.product as Stripe.Product).metadata.sku = "another"; },
     (f: Awaited<ReturnType<typeof fixture>>) => { f.lines.data[0].taxes![0].rate.id = "txr_another"; },
+    (f: Awaited<ReturnType<typeof fixture>>) => { f.lines.data[0].taxes = undefined; },
     (f: Awaited<ReturnType<typeof fixture>>) => { f.payment.amount_received = 1; },
     (f: Awaited<ReturnType<typeof fixture>>) => { (f.payment.latest_charge as Stripe.Charge).amount_refunded = 1; },
     (f: Awaited<ReturnType<typeof fixture>>) => { f.payment.livemode = true; },
@@ -130,6 +132,22 @@ test("signed failed webhook receives 503 and the same event can later succeed", 
 });
 
 const receiptUrl = "https://the-base-staging.mansua.workers.dev/api/checkout/stripe/session?session_id=cs_test_verified";
+test("Stripe adapter explicitly expands tax rates as well as product variants", async () => {
+  const original = globalThis.fetch;
+  const urls: URL[] = [];
+  globalThis.fetch = async input => {
+    urls.push(new URL(input instanceof Request ? input.url : String(input)));
+    return Response.json({ object: "list", data: [], has_more: false, url: "/v1/checkout/sessions/cs_test_adapter/line_items" });
+  };
+  try {
+    await createStripeTestClient("sk_test_fixture").listLineItems("cs_test_adapter");
+    assert.equal(urls.length, 1);
+    const expansions = [...urls[0].searchParams.entries()].filter(([key]) => key.startsWith("expand")).map(([, value]) => value);
+    assert.ok(expansions.includes("data.price.product"));
+    assert.ok(expansions.includes("data.taxes"));
+    assert.equal(urls[0].searchParams.get("limit"), "100");
+  } finally { globalThis.fetch = original; }
+});
 test("receipt reads the persisted order, discloses no customer and never delivers to Odoo", async () => {
   const f = await fixture();
   await f.orders.attachSession(f.order.id, f.session.id);

@@ -195,6 +195,7 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
     const { customer } = data;
     const params: Stripe.Checkout.SessionCreateParams = {
       mode: "payment", payment_method_types: ["card"],
+      adaptive_pricing: { enabled: false },
       invoice_creation: { enabled: false },
       line_items: snapshot.lines.map((item, index) => ({ quantity: item.quantity, ...(quote.vat !== 0 && item.kind !== "samples" ? { tax_rates: [taxRateId] } : {}), price_data: {
         currency: "aed", unit_amount: item.unitAmount, tax_behavior: "exclusive",
