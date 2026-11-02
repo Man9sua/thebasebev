@@ -16,13 +16,13 @@ export async function createPaidQuotation(order: StoredOrder, session: Stripe.Ch
     buyer: order.snapshot.customer, billing, shipping: { ...shipping.address, name: shipping.name },
     attribution_note: escape(JSON.stringify(order.snapshot.attribution ?? {})), customer_note: escape(order.snapshot.customer.notes ?? ""),
     lines: order.snapshot.lines.map(line => ({ product_id: line.productId, sku: line.sku, name: line.name, kind: line.kind, quantity: line.quantity, unit_amount: line.unitAmount })) };
-  const response = await fetch(`${config.url.replace(/\/$/, "")}/json/2/ir.actions.server/run`, {
+  const response = await fetch(new URL("/json/2/ir.actions.server/run", config.url), {
     method: "POST", headers: { Authorization: `bearer ${config.apiKey}`, "Content-Type": "application/json",
       ...(config.database ? { "X-Odoo-Database": config.database } : {}) },
     body: JSON.stringify({ ids: [mapping.actionId], context: { allowed_company_ids: [mapping.companyId], tb_stripe_order: payload } }),
-    signal: AbortSignal.timeout(25_000), redirect: "error",
+    signal: AbortSignal.timeout(25_000), redirect: "manual",
   });
-  if (!response.ok) throw new Error("ODOO_QUOTATION_UNAVAILABLE");
+  if (!response.ok) throw new Error(`ODOO_HTTP_${response.status}`);
   const result = await response.json();
   if (result?.res_model !== "sale.order" || !Number.isSafeInteger(result.res_id) || result.res_id <= 0
     || typeof result.tb_name !== "string" || result.tb_total !== order.snapshot.amounts.total

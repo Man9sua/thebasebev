@@ -68,8 +68,9 @@ export async function processPaidSession(sessionId: string, dependencies: PaidOr
     if (result.total !== order.snapshot.amounts.total) throw new Error("ODOO_TOTAL_MISMATCH");
     await dependencies.orders.fulfilled(order.id, result.id, result.name);
     return { processed: true, duplicate: result.duplicate };
-  } catch {
-    await dependencies.orders.failed(order.id, "ODOO_DELIVERY_RETRY_REQUIRED");
+  } catch (error) {
+    const code = error instanceof Error && /^(?:ODOO_[A-Z_0-9]+|ORDER_ADDRESS_INVALID)$/.test(error.message) ? error.message : "ODOO_DELIVERY_RETRY_REQUIRED";
+    await dependencies.orders.failed(order.id, code);
     throw new Error("ODOO_DELIVERY_RETRY_REQUIRED");
   }
 }

@@ -8,6 +8,7 @@ import { handleStripeTestWebhook } from "../src/lib/stripe-test-webhook";
 import { testOrderStore } from "./helpers/order-store";
 import { handleStripeTestSession } from "../src/lib/stripe-test-session";
 import { createStripeTestClient } from "../src/lib/stripe-test-client";
+import { createPaidQuotation } from "../src/lib/odoo-paid-order";
 
 async function fixture(kind: "products" | "samples" = "products") {
   const database = new DatabaseSync(":memory:");
@@ -132,6 +133,34 @@ test("signed failed webhook receives 503 and the same event can later succeed", 
 });
 
 const receiptUrl = "https://the-base-staging.mansua.workers.dev/api/checkout/stripe/session?session_id=cs_test_verified";
+test("Odoo adapter uses an edge-compatible redirect mode and rejects redirects or upstream failures", async () => {
+  const f = await fixture();
+  const address = { country: "AE", line1: "Test building", line2: null, city: "Dubai", state: "DU", postal_code: null };
+  f.session.collected_information = { shipping_details: { name: "Payment QA", address } } as Stripe.Checkout.Session.CollectedInformation;
+  f.session.customer_details = { address } as Stripe.Checkout.Session.CustomerDetails;
+  const original = globalThis.fetch;
+  let status = 200;
+  let calls = 0;
+  globalThis.fetch = async (input, init) => {
+    calls++;
+    assert.equal(String(input), "https://odoo.thebasebev.com/json/2/ir.actions.server/run");
+    assert.equal(init?.redirect, "manual");
+    assert.equal(new Headers(init?.headers).get("Authorization"), "bearer odoo_test_fixture");
+    return Response.json({ res_model: "sale.order", res_id: 123, tb_name: "TEST-QUOTATION", tb_state: "draft", tb_total: 9030, tb_duplicate: false }, { status });
+  };
+  const config = { url: "https://odoo.thebasebev.com/web#ignored", apiKey: "odoo_test_fixture" };
+  try {
+    assert.equal((await createPaidQuotation(f.order, f.session, "pi_verified", config)).id, 123);
+    status = 503;
+    await assert.rejects(createPaidQuotation(f.order, f.session, "pi_verified", config), /ODOO_HTTP_503/);
+    status = 307;
+    await assert.rejects(createPaidQuotation(f.order, f.session, "pi_verified", config), /ODOO_HTTP_307/);
+    assert.equal(calls, 3);
+    await assert.rejects(createPaidQuotation(f.order, f.session, "pi_verified", { ...config, url: "https://foreign.example" }), /NOT_CONFIGURED/);
+    assert.equal(calls, 3);
+  } finally { globalThis.fetch = original; }
+});
+
 test("Stripe adapter explicitly expands tax rates as well as product variants", async () => {
   const original = globalThis.fetch;
   const urls: URL[] = [];
