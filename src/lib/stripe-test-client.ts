@@ -8,5 +8,8 @@ export function createStripeTestClient(secretKey: string) {
     createSession: (params: Stripe.Checkout.SessionCreateParams, options: Stripe.RequestOptions) =>
       stripe.checkout.sessions.create(params, options),
     retrieveSession: (sessionId: string) => stripe.checkout.sessions.retrieve(sessionId),
+    retrieveTaxRate: (id: string) => stripe.taxRates.retrieve(id),
+    listLineItems: (id: string) => stripe.checkout.sessions.listLineItems(id, { limit: 100, expand: ["data.price.product"] }),
+    retrievePaymentIntent: (id: string) => stripe.paymentIntents.retrieve(id, { expand: ["latest_charge"] }),
   };
 }

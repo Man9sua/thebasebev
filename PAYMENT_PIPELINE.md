@@ -24,19 +24,67 @@ Stripe line items. Both baskets share only the transport bounds in `shop-limits.
   Goods and free samples share one delivery. Sample-only parcels cost AED 30
   before VAT through 5 kg; unknown weights and heavier parcels require a quote.
 - Weekday orders are delivered the next day; weekend orders in 1–2 days.
-- Staging accepts Stripe Test Mode only. Card checkout remains closed until VAT
-  is configured in Stripe and verified payment delivery to Odoo is implemented.
-  The calculated order can be requested through `/api/leads`.
-- `/api/stripe/webhook` verifies the Stripe signature but currently acknowledges
-  events with `processed: false`. It does not yet create a Sales quotation.
+- Staging accepts Stripe Test Mode only. A manual exclusive 5% UAE VAT rate is
+  configured. Goods and delivery use that rate; sample lines remain zero-priced.
+- 88 paid variants and 52 sample variants map to distinct Odoo product records.
+  The full Rainbow Unicorn pack has several Odoo recipes and requires a quote.
+  Unmapped variants, unknown weights and unapproved delivery rates retain `/api/leads`.
+- `/api/stripe/webhook` verifies the raw-body signature, retrieves the actual
+  session, PaymentIntent, charge and complete line items, and matches them against
+  the immutable D1 snapshot. Refunded/disputed payments and mismatched amounts,
+  VAT, variants or quantities cannot create a quotation.
 - The existing enquiry pipeline is separate; do not repurpose or modify the live
   Tilda relay or existing Odoo lead automations for payment fulfillment.
-- Read-only inspection on 2026-10-30 confirmed Odoo 19 Enterprise, access to Sales
-  field metadata, draft defaults, an active AED currency, and separate product
-  SKUs for full packs and samples. Creating a quotation has not been tested.
+- Odoo 19 Enterprise uses the AED pricelist and existing exclusive 5% Dubai tax,
+  rounding per line. The receiver action is installed without an automatic
+  trigger. A dry run verified transaction locking and rejected an invalid SKU
+  before any customer or quotation was created. Full payment verification is
+  pending deployment of this implementation.
 - Credentials stay server-side in ignored local files and Cloudflare secrets.
 
-## Implementation sequence
+## Durable processing
+
+1. Validate the customer, consent and selection. Calculate prices, VAT and delivery
+   on the server. Store the immutable snapshot in `SHOP_ORDERS` before calling Stripe.
+   A checkout idempotency key is tied to the full snapshot, including attribution.
+2. Send the server-created lines to Stripe. Delivery is its own taxable line,
+   ensuring Stripe and Odoo both use line rounding. A charged delivery consumes one
+   of Stripe's 100 line slots; larger selections retain the quotation path.
+3. A verified paid webhook reads Stripe independently. It never trusts a browser
+   return, client amount or event body alone as proof of payment.
+4. Odoo action `THE BASE Stripe Test — paid draft quotation` runs
+   `integrations/odoo/stripe-test-quotation.py` as a single transaction. A PostgreSQL
+   transaction advisory lock serializes the session reference. The existing draft
+   is reused on retries; a fresh quotation, contacts and lines commit together only
+   when Odoo's subtotal, VAT and total equal the verified charge.
+5. Mark D1 fulfilled only after Odoo commits. Any failure returns HTTP 503 to Stripe
+   and preserves the paid order for retry. Closing the browser does not affect
+   processing. The return page only reads status and polls for the quotation.
+
+The Odoo action only accepts Test Mode references and labels its quotations and
+contacts `STRIPE TEST`. It does not call `action_confirm`, create invoices, post
+payments or create stock transfers. Billing and delivery addresses remain separate.
+`utm_source=chatgpt.com`, landing page, referrer, current page and customer notes
+travel in the snapshot and an internal quotation annotation, without email fan-out.
+They are not inserted into customer-facing terms. Receipts expose no customer details.
+
+## Configuration
+
+`wrangler.jsonc` binds only staging to `the-base-staging-orders`. Apply its
+non-destructive schema with `wrangler d1 migrations apply the-base-staging-orders
+--remote --env staging`. Keep `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+`STRIPE_UAE_VAT_RATE_ID`, `ODOO_URL`, `ODOO_API_KEY`, optional `ODOO_DATABASE` and
+`SHOP_PAYMENTS_ENABLED=test` in ignored local files and staging secrets. A missing
+binding, secret or receiver flag fails closed. Never configure Live keys in staging.
+
+The enabled Stripe Test endpoint is `/api/stripe/webhook` on the authoritative
+staging hostname and subscribes to `checkout.session.completed`. Card-only checkout
+uses immediate payment; the handler also supports `checkout.session.async_payment_succeeded`.
+After an Odoo outage, resend the successful Checkout event from Stripe's dashboard.
+Retries must reuse the same session; never create a replacement paid session to
+recover an already paid order. D1 stores the last retry-required state.
+
+## Validation and rollout
 
 1. **Approve the amounts and SKU mapping.** Receive the product/flavour prices,
    whether VAT is included, and delivery rates for products and samples by country
@@ -65,7 +113,7 @@ Stripe line items. Both baskets share only the transport bounds in `shop-limits.
 
 ## Data still required
 
-A reviewed Odoo variant mapping, Stripe tax setup, and the durable payment-to-Sales
-receiver are required before enabling a charge. Non-UAE/express delivery tariffs
-and unmatched product prices remain unconfigured. The presence of valid API keys
-alone does not make checkout ready to accept money.
+Non-UAE/express delivery tariffs and unmatched product prices remain unconfigured.
+Live rollout requires separate approval, Live credentials/provider configuration,
+a Live receiver and end-to-end verification. Production DNS, Tilda, the production
+domain and existing lead automations remain outside this staging implementation.

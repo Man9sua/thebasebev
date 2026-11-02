@@ -83,7 +83,7 @@ Stripe is used for the shop checkout. Stripe checks are required in CI and the r
 For paid website orders, the agreed Odoo destination is Sales **Quotation**
 (`sale.order`, state `draft`) with a verified Stripe payment reference and amount.
 Do not automatically confirm it, create invoices, or post accounting entries.
-See `PAYMENT_PIPELINE.md`; the payment-to-Sales receiver is not implemented yet.
+See `PAYMENT_PIPELINE.md` for the Test Mode receiver, durable order ledger and verification status.
 
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 

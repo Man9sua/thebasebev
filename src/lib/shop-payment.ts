@@ -2,6 +2,7 @@ import { SAMPLE_PRODUCTS } from "@/data/sample-flavours";
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
 import { isShopQuantity, SHOP_MAX_LINES } from "./shop-limits";
 import priceList from "@/data/shop-prices.json";
+import availability from "@/data/shop-payment-availability.json";
 
 export type ShopCheckoutKind = "products" | "samples";
 export type ShopShippingMethod = "standard" | "express";
@@ -45,8 +46,8 @@ export const SHOP_PAYMENT_PRICING: ShopPaymentPricing = Object.freeze({
   uaeDelivery: Object.freeze({ amount: 3000, freeFromSubtotal: 50_000, maxSampleWeightGrams: 5000 }),
 });
 
-// Keep card checkout closed until verified payment delivery to Odoo is connected.
-export const SHOP_ORDER_PAYMENTS_READY = false;
+// The server also requires its Test Mode secrets, ledger binding and receiver flag.
+export const SHOP_ORDER_PAYMENTS_READY = true;
 export const UAE_DELIVERY_TIMING = "Orders placed on weekdays are delivered the next day. Weekend orders are delivered in 1–2 days.";
 
 const variantsByKey = new Map(priceList.records.map(item => [`${item.slug}::${item.flavor}`, item]));
@@ -57,6 +58,11 @@ for (const item of priceList.records) {
 }
 const VAT_SCALE = BigInt(10_000);
 const VAT_HALF_SCALE = BigInt(5000);
+const payableVariants = new Map(availability.map(row => [`${row.slug}::${row.flavor}`, row]));
+
+export function hasPayableVariants(kind: ShopCheckoutKind, items: readonly ShopPaymentItem[]) {
+  return items.length > 0 && items.every(item => payableVariants.get(`${item.slug}::${item.flavor}`)?.[shopItemKind(kind, item)] === true);
+}
 
 function variantFor(slug: string, flavor: string, pricing: ShopPaymentPricing) {
   return pricing === SHOP_PAYMENT_PRICING ? variantsByKey.get(`${slug}::${flavor}`)

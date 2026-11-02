@@ -51,7 +51,7 @@ npm.cmd run build
 npm.cmd run check:assets
 ```
 
-Stripe checkout is staging Test Mode only. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Card payments stay closed until Stripe tax setup and the payment-to-Odoo receiver are complete. Stripe checks are included in CI and the readiness audit.
+Stripe checkout is staging Test Mode only. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `PAYMENT_PIPELINE.md` for setup and verification status.
 
 ### Shop and checkout
 
@@ -69,20 +69,20 @@ AED 500 in paid goods, free from AED 500 before VAT. Samples do not increase tha
 threshold. Sample-only parcels cost AED 30 before VAT up to 5 kg; unknown weights
 and heavier parcels require a quote. See `SHOP_PRICING.md` for unmatched variants.
 HTML demo prices and legacy prices are never substituted. `/api/leads` remains
-the order request path until verified payment fulfillment is connected.
+the request path for unresolved variants and delivery quotes.
 
 `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-side staging secrets.
 Only Test Mode keys and staging/localhost hosts are accepted. Checkout creates
-zero-priced sample lines with a separate shipping rate. The return page verifies
+zero-priced sample lines and a separate delivery line taxed at 5%. The return page verifies
 the Stripe session and quoted totals before confirming payment, and clears only
 the matching unchanged basket. A failed/cancelled payment keeps the basket.
-The webhook verifies signatures but does not claim order fulfillment; an order
-fulfillment sink and production payment activation remain separate work before
-any Live launch.
+The webhook verifies signatures and records fulfillment only after an Odoo draft
+quotation commits. Durable snapshots live in a staging D1 database; a transaction
+lock in Odoo prevents duplicate quotations after concurrent deliveries or timeouts.
 
-The agreed next payment step is a paid **draft quotation in Odoo Sales**, without
-automatic confirmation or invoicing. See [PAYMENT_PIPELINE.md](./PAYMENT_PIPELINE.md)
-for the implementation sequence and required prices, tax and SKU information.
+The destination is a paid **draft quotation in Odoo Sales**, without automatic
+confirmation or invoicing. See [PAYMENT_PIPELINE.md](./PAYMENT_PIPELINE.md) for the
+Test Mode verification status and separate Live rollout requirements.
 
 Against a running production build, the local smoke commands are:
 

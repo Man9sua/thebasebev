@@ -3,9 +3,11 @@ import { getCheckoutProductId } from "@/data/catalog";
 import { SAMPLE_PRODUCTS } from "@/data/sample-flavours";
 import { isShopQuantity, SHOP_MAX_LINES } from "./shop-limits";
 import {
-  getShopQuote, getShopUnitAmount, isShopCountry, SHOP_ORDER_PAYMENTS_READY,
+  getShopQuote, isShopCountry,
   type ShopCheckoutKind, type ShopPaymentPricing, type ShopShippingMethod,
 } from "@/lib/shop-payment";
+import { prepareOrderSnapshot, type OrderSnapshot, type OrderStore } from "./shop-order";
+import { parseFirstTouchAttribution, type FirstTouchAttribution } from "./leads";
 
 export const STRIPE_TEST_STAGING_ORIGIN = "https://the-base-staging.mansua.workers.dev";
 export const SHOP_STRIPE_INTEGRATION = "the_base_shop_test";
@@ -23,14 +25,17 @@ export type ShopCustomer = Readonly<{
   businessType?: string; company?: string; website?: string; emirate?: string;
   city?: string; street?: string; postalCode?: string; unit?: string; trn?: string; notes?: string;
 }>;
-type ValidatedCheckout = Readonly<{
+export type ValidatedCheckout = Readonly<{
   kind: ShopCheckoutKind; country: string; shippingMethod: ShopShippingMethod;
   customer: ShopCustomer;
+  attribution?: FirstTouchAttribution & { currentPage: string };
   items: readonly Readonly<{ slug: string; name: string; flavor: string; quantity: number; kind: ShopCheckoutKind }>[];
 }>;
 export type StripeCheckoutSessionResult = Readonly<{ id: string; url: string | null; livemode: boolean }>;
 export type StripeCheckoutClient = Readonly<{
   createSession: (params: Stripe.Checkout.SessionCreateParams, options: Stripe.RequestOptions) => Promise<StripeCheckoutSessionResult>;
+  retrieveTaxRate?: (id: string) => Promise<Stripe.TaxRate>;
+  retrieveSession?: (id: string) => Promise<StripeCheckoutSessionResult & { status: string | null; payment_status: string }>;
 }>;
 export type StripeCheckoutDependencies = Readonly<{
   secretKey?: string;
@@ -38,6 +43,9 @@ export type StripeCheckoutDependencies = Readonly<{
   createRequestId?: () => string;
   pricing?: ShopPaymentPricing;
   orderReceiverReady?: boolean;
+  orders?: OrderStore;
+  taxRateId?: string;
+  prepareSnapshot?: (data: ValidatedCheckout, taxRateId: string) => OrderSnapshot;
 }>;
 
 const CUSTOMER_LIMITS = {
@@ -73,6 +81,7 @@ function validateCustomer(input: unknown): ShopCustomer | null {
 function validateCheckoutPayload(input: unknown): { ok: true; data: ValidatedCheckout } | { ok: false; code: string } {
   if (!isRecord(input)) return { ok: false, code: "INVALID_CHECKOUT_PAYLOAD" };
   if (Object.keys(input).some(key => FORBIDDEN_PRICE_FIELDS.has(key))) return { ok: false, code: "CLIENT_PRICE_FORBIDDEN" };
+  if (input.consent !== true) return { ok: false, code: "INVALID_CONSENT" };
   if (input.kind !== "products" && input.kind !== "samples") return { ok: false, code: "INVALID_CHECKOUT_KIND" };
   if (typeof input.currency !== "string" || input.currency.toLowerCase() !== "aed") return { ok: false, code: "UNSUPPORTED_CURRENCY" };
   if (typeof input.country !== "string" || !isShopCountry(input.country)) return { ok: false, code: "INVALID_COUNTRY" };
@@ -100,7 +109,14 @@ function validateCheckoutPayload(input: unknown): { ok: true; data: ValidatedChe
     seen.add(key);
     items.push({ slug: product.slug, name: product.name, flavor: item.flavor, quantity: item.quantity, kind });
   }
-  return { ok: true, data: { kind: input.kind, country: input.country, shippingMethod: input.shippingMethod, customer, items } };
+  let attribution: ValidatedCheckout["attribution"];
+  if (input.attribution !== undefined) {
+    const parsed = parseFirstTouchAttribution(input.attribution);
+    const currentPage = isRecord(input.attribution) ? input.attribution.currentPage : undefined;
+    if (!parsed || typeof currentPage !== "string" || currentPage.length > 2048 || !/^https?:\/\//.test(currentPage)) return { ok: false, code: "INVALID_ATTRIBUTION" };
+    attribution = { ...parsed, currentPage };
+  }
+  return { ok: true, data: { kind: input.kind, country: input.country, shippingMethod: input.shippingMethod, customer, items, ...(attribution ? { attribution } : {}) } };
 }
 
 export function isAllowedStripeTestHost(hostname: string) {
@@ -145,41 +161,68 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
   const secretKey = dependencies.secretKey?.trim();
   if (!secretKey) return stripeApiError(503, "STRIPE_TEST_NOT_CONFIGURED", "Secure Test checkout is not configured.");
   if (!isStripeTestKey(secretKey)) return stripeApiError(503, "STRIPE_TEST_KEY_REQUIRED", "Only a Stripe Test Mode secret key is accepted.");
-  if (!(dependencies.orderReceiverReady ?? SHOP_ORDER_PAYMENTS_READY)) return stripeApiError(503, "ORDER_RECEIVER_NOT_READY", "Please send your order request. Card checkout is not available yet.");
-  if (quote.vat !== 0) return stripeApiError(503, "STRIPE_VAT_NOT_CONFIGURED", "VAT must be configured for secure card checkout.");
+  if (!dependencies.orderReceiverReady || !dependencies.orders) return stripeApiError(503, "ORDER_RECEIVER_NOT_READY", "Please send your order request. Card checkout is not available yet.");
+  const taxRateId = dependencies.taxRateId ?? "";
+  if (quote.vat !== 0 && !/^txr_[A-Za-z0-9]+$/.test(taxRateId)) return stripeApiError(503, "STRIPE_VAT_NOT_CONFIGURED", "VAT must be configured for secure card checkout.");
 
-  const requestId = `tb_test_${dependencies.createRequestId?.() ?? crypto.randomUUID()}`;
-  const metadata = { tb_request_id: requestId, integration: SHOP_STRIPE_INTEGRATION,
-    kind: data.kind, country: data.country, shipping_method: data.shippingMethod,
-    tb_subtotal: String(quote.subtotal), tb_shipping: String(quote.shipping), tb_total: String(quote.total) };
-  const { customer } = data;
-  const shipping: Stripe.Checkout.SessionCreateParams.PaymentIntentData.Shipping | undefined = customer.street && customer.city ? {
-    name: customer.name, phone: customer.phone,
-    address: { country: data.country, city: customer.city, line1: customer.street, line2: customer.unit,
-      state: customer.emirate, postal_code: customer.postalCode },
-  } : undefined;
-  const params: Stripe.Checkout.SessionCreateParams = {
-    mode: "payment", payment_method_types: ["card"],
-    line_items: data.items.map(item => ({ quantity: item.quantity, price_data: {
-      currency: "aed", unit_amount: item.kind === "samples" ? 0 : getShopUnitAmount(item.slug, dependencies.pricing, item.flavor)!,
-      product_data: { name: `${item.name} — ${item.flavor}${item.kind === "samples" ? " (sample)" : ""}`,
-        metadata: { slug: item.slug, flavor: item.flavor, kind: item.kind } },
-    } })),
-    shipping_options: [{ shipping_rate_data: { type: "fixed_amount", display_name: data.shippingMethod === "express" ? "Express delivery" : "Standard delivery",
-      fixed_amount: { amount: quote.shipping!, currency: "aed" } } }],
-    shipping_address_collection: { allowed_countries: [data.country as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry] },
-    billing_address_collection: "required", phone_number_collection: { enabled: true },
-    customer_email: customer.email,
-    success_url: `${url.origin}/checkout?session_id={CHECKOUT_SESSION_ID}&country=${data.country}&kind=${data.kind}`,
-    cancel_url: `${url.origin}/checkout?stripe_checkout=cancelled&country=${data.country}&kind=${data.kind}`,
-    metadata: { ...metadata, company: customer.company ?? "", trn: customer.trn ?? "", notes: customer.notes ?? "",
-      business_type: customer.businessType ?? "", website: customer.website ?? "" },
-    payment_intent_data: { metadata, shipping },
-  };
+  const checkoutKey = request.headers.get("Idempotency-Key") ?? dependencies.createRequestId?.() ?? crypto.randomUUID();
+  if (!/^[A-Za-z0-9_-]{8,100}$/.test(checkoutKey)) return stripeApiError(422, "INVALID_CHECKOUT_KEY", "Please retry checkout.");
+  const requestId = `tb_test_${checkoutKey}`;
   try {
-    const session = await dependencies.createClient(secretKey).createSession(params, { idempotencyKey: requestId });
-    if (session.livemode || !session.id.startsWith("cs_test_") || !validCheckoutUrl(session.url)) return stripeApiError(502, "STRIPE_TEST_SESSION_REJECTED", "Stripe did not return a valid Test Mode checkout.");
-    return Response.json({ ok: true, checkout: { sessionId: session.id, url: session.url, requestId, currency: "AED", testMode: true } },
+    const client = dependencies.createClient(secretKey);
+    if (quote.vat !== 0) {
+      const rate = await client.retrieveTaxRate?.(taxRateId);
+      if (!rate || rate.livemode || !rate.active || rate.percentage !== 5 || rate.inclusive || rate.country !== "AE") return stripeApiError(503, "STRIPE_VAT_NOT_CONFIGURED", "The approved VAT rate is unavailable.");
+    }
+    const snapshot = dependencies.prepareSnapshot?.(data, taxRateId) ?? prepareOrderSnapshot(data, taxRateId, dependencies.pricing);
+    const order = await dependencies.orders.reserve(checkoutKey, snapshot);
+    if (order.state !== "pending") return stripeApiError(409, "CHECKOUT_ALREADY_PAID", "This payment is already being processed. Please check your payment confirmation.");
+    const checkoutResponse = (session: StripeCheckoutSessionResult) => Response.json({ ok: true, checkout: { sessionId: session.id, url: session.url, requestId, currency: "AED", testMode: true } },
       { status: 201, headers: { "Cache-Control": "no-store" } });
-  } catch { return stripeApiError(502, "STRIPE_TEST_UNAVAILABLE", "Secure Test checkout is temporarily unavailable."); }
+    if (order.sessionId) {
+      const existing = await client.retrieveSession?.(order.sessionId);
+      if (existing?.status === "expired") return stripeApiError(409, "CHECKOUT_EXPIRED", "This checkout expired. Please retry.");
+      if (existing?.status === "complete" || existing?.payment_status === "paid") return stripeApiError(409, "CHECKOUT_ALREADY_PAID", "This payment is already being processed. Please check your payment confirmation.");
+      if (!existing || existing.id !== order.sessionId || existing.livemode || !validCheckoutUrl(existing.url)) throw new Error("CHECKOUT_SESSION_INVALID");
+      return checkoutResponse(existing);
+    }
+    // Stripe can prune idempotency keys after 24 hours. An unbound old attempt
+    // needs reconciliation, rather than silently creating a second session.
+    if (Date.now() - order.createdAt > 23 * 60 * 60 * 1000) return stripeApiError(409, "CHECKOUT_REVIEW_REQUIRED", "Please contact the team to check your previous checkout attempt.");
+    const metadata = { tb_request_id: requestId, integration: SHOP_STRIPE_INTEGRATION, tb_protocol: "2", tb_order_id: order.id, tb_snapshot_hash: order.hash,
+      kind: data.kind, country: data.country, shipping_method: data.shippingMethod, utm_source: data.attribution?.utm_source ?? "",
+      tb_subtotal: String(quote.subtotal), tb_shipping: String(quote.shipping), tb_vat: String(quote.vat), tb_total: String(quote.total) };
+    const { customer } = data;
+    const shipping: Stripe.Checkout.SessionCreateParams.PaymentIntentData.Shipping | undefined = customer.street && customer.city ? {
+      name: customer.name, phone: customer.phone,
+      address: { country: data.country, city: customer.city, line1: customer.street, line2: customer.unit,
+        state: customer.emirate, postal_code: customer.postalCode },
+    } : undefined;
+    const params: Stripe.Checkout.SessionCreateParams = {
+      mode: "payment", payment_method_types: ["card"],
+      invoice_creation: { enabled: false },
+      line_items: snapshot.lines.map((item, index) => ({ quantity: item.quantity, ...(quote.vat !== 0 && item.kind !== "samples" ? { tax_rates: [taxRateId] } : {}), price_data: {
+        currency: "aed", unit_amount: item.unitAmount, tax_behavior: "exclusive",
+        product_data: { name: item.name,
+          metadata: { slug: item.slug, flavor: item.flavor, kind: item.kind, sku: item.sku, tb_index: String(index) } },
+      } })),
+      shipping_address_collection: { allowed_countries: [data.country as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry] },
+      billing_address_collection: "required", phone_number_collection: { enabled: true },
+      customer_email: customer.email,
+      success_url: `${url.origin}/checkout?session_id={CHECKOUT_SESSION_ID}&country=${data.country}&kind=${data.kind}`,
+      cancel_url: `${url.origin}/checkout?stripe_checkout=cancelled&country=${data.country}&kind=${data.kind}`,
+      metadata: { ...metadata, company: customer.company ?? "", trn: customer.trn ?? "", notes: customer.notes ?? "",
+        business_type: customer.businessType ?? "", website: customer.website ?? "" },
+      payment_intent_data: { metadata, shipping },
+    };
+    const session = await client.createSession(params, { idempotencyKey: requestId });
+    if (session.livemode || !session.id.startsWith("cs_test_") || !validCheckoutUrl(session.url)) return stripeApiError(502, "STRIPE_TEST_SESSION_REJECTED", "Stripe did not return a valid Test Mode checkout.");
+    await dependencies.orders.attachSession(order.id, session.id);
+    return checkoutResponse(session);
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "";
+    if (["ORDER_NOT_PAYABLE", "ODOO_VARIANT_UNRESOLVED", "ORDER_NEEDS_QUOTE"].includes(code)) return stripeApiError(503, "ORDER_NEEDS_QUOTE", "Please request a quote for these items.");
+    if (code === "CHECKOUT_KEY_REUSED") return stripeApiError(409, code, "Your order changed. Please retry checkout.");
+    return stripeApiError(502, "STRIPE_TEST_UNAVAILABLE", "Secure Test checkout is temporarily unavailable. Your basket has been kept.");
+  }
 }

@@ -30,7 +30,7 @@ flavour selection, the floating cart control and the basket drawer show no VAT
 annotation. Their prices remain the source net prices; the final tax-inclusive
 total is presented at checkout.
 
-Price calculation does not enable card payments. Stripe tax setup, verified events, durable idempotency and delivery to an Odoo Sales draft quotation must be complete before `SHOP_ORDER_PAYMENTS_READY` can be enabled. No invoice, order confirmation or accounting payment is created by the pricing step.
+Mapped UAE variants support Stripe Test Mode when the durable ledger, approved VAT rate and Odoo receiver are configured. 88 paid variants and 52 sample variants have an unambiguous Odoo mapping. Rainbow Unicorn's full pack has several Odoo recipes and remains on quotation. Unknown variants, sample weights and delivery rates keep the request flow. No invoice, order confirmation or accounting payment is created. See `PAYMENT_PIPELINE.md`.
 
 ## Unresolved variants
 

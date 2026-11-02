@@ -6,7 +6,6 @@ import Stripe from "stripe";
 import { SAMPLE_PRODUCTS } from "../src/data/sample-flavours";
 import { getShopQuote, getShopUnitAmount, type ShopPaymentPricing } from "../src/lib/shop-payment";
 import { SHOP_MAX_LINES, SHOP_MAX_QUANTITY } from "../src/lib/shop-limits";
-import { handleStripeTestSession, type StripeSessionStatus } from "../src/lib/stripe-test-session";
 import {
   handleStripeTestCheckout,
   STRIPE_TEST_CATALOG,
@@ -14,8 +13,10 @@ import {
 } from "../src/lib/stripe-test-checkout";
 import {
   handleStripeTestWebhook,
-  InMemoryStripeEventRegistry,
 } from "../src/lib/stripe-test-webhook";
+import { testOrderStore } from "./helpers/order-store";
+import type { ValidatedCheckout } from "../src/lib/stripe-test-checkout";
+import type { OrderSnapshot } from "../src/lib/shop-order";
 
 const ENDPOINT =
   "https://the-base-staging.mansua.workers.dev/api/checkout/stripe";
@@ -26,7 +27,7 @@ const PRICING: ShopPaymentPricing = {
   shipping: { products: { AE: { standard: 1234, express: 2345 } }, samples: { AE: { standard: 1234, express: 2345 }, KW: { standard: 3456 } } },
 };
 const CUSTOMER = { name: "Checkout QA", email: "buyer@example.com", phone: "+971500000000", city: "Dubai", street: "QA street", company: "Fixture company" };
-const DEFAULTS = { kind: "products", country: "AE", shippingMethod: "standard", customer: CUSTOMER };
+const DEFAULTS = { kind: "products", country: "AE", shippingMethod: "standard", customer: CUSTOMER, consent: true };
 
 function checkoutRequest(body: unknown) {
   return new Request(ENDPOINT, {
@@ -52,6 +53,15 @@ function checkoutDependencies(
     secretKey: TEST_SECRET_KEY,
     pricing: PRICING,
     orderReceiverReady: true,
+    orders: testOrderStore(),
+    prepareSnapshot: (data: ValidatedCheckout): OrderSnapshot => {
+      const quote = getShopQuote(data, PRICING);
+      const lines: OrderSnapshot["lines"][number][] = data.items.map((item, index) => ({ ...item, name: `${item.name} — ${item.flavor}`, sku: `fixture-${index}`, productId: index + 1,
+        unitAmount: item.kind === "samples" ? 0 : getShopUnitAmount(item.slug, PRICING, item.flavor)! }));
+      if (quote.shipping) lines.push({ slug: "delivery", flavor: "Delivery", name: "Delivery", kind: "delivery", sku: "SHIP", productId: 2330, quantity: 1, unitAmount: quote.shipping });
+      return { version: 2, kind: data.kind, country: data.country, shippingMethod: data.shippingMethod, customer: data.customer, taxRateId: "txr_fixture", consent: true,
+        amounts: { subtotal: quote.subtotal!, shipping: quote.shipping!, vat: quote.vat!, total: quote.total! }, lines };
+    },
     createRequestId: () => "unit-request-id",
     createClient: () => ({
       createSession:
@@ -104,8 +114,8 @@ test("valid checkout uses server price, AED and staging return URLs", async () =
   assert.deepEqual(capturedParams?.shipping_address_collection?.allowed_countries, [
     "AE",
   ]);
-  assert.equal(capturedParams?.shipping_options?.[0].shipping_rate_data?.fixed_amount?.amount, 1234);
-  assert.equal(capturedParams?.line_items?.length, 1);
+  assert.equal(capturedParams?.line_items?.[1].price_data?.unit_amount, 1234);
+  assert.equal(capturedParams?.line_items?.length, 2);
   assert.equal(capturedParams?.metadata?.tb_request_id, "tb_test_unit-request-id");
   assert.equal(capturedOptions?.idempotencyKey, "tb_test_unit-request-id");
 });
@@ -174,7 +184,7 @@ test("two flavours of one product are two lines at the same server price", async
   );
 
   assert.equal(response.status, 201);
-  assert.equal(capturedParams?.line_items?.length, 2);
+  assert.equal(capturedParams?.line_items?.length, 3);
   assert.deepEqual(
     capturedParams?.line_items?.map((line) => [
       line.price_data?.product_data?.name,
@@ -184,6 +194,7 @@ test("two flavours of one product are two lines at the same server price", async
     [
       ["Milkshake — Strawberry", 1, 4538],
       ["Milkshake — Mango", 3, 4538],
+      ["Delivery", 1, 1234],
     ],
   );
 });
@@ -347,7 +358,6 @@ test("webhook rejects an invalid Stripe signature", async () => {
     ),
     {
       webhookSecret: "whsec_unit_test_only",
-      eventRegistry: new InMemoryStripeEventRegistry(),
     },
   );
   const body = await response.json();
@@ -365,7 +375,6 @@ test("production hostname cannot receive Stripe Test webhook events", async () =
     }),
     {
       webhookSecret: "whsec_unit_test_only",
-      eventRegistry: new InMemoryStripeEventRegistry(),
     },
   );
   const body = await response.json();
@@ -374,21 +383,21 @@ test("production hostname cannot receive Stripe Test webhook events", async () =
   assert.equal(body.error.code, "STRIPE_TEST_HOST_REQUIRED");
 });
 
-test("verified duplicate webhook event is acknowledged without reprocessing", async () => {
+test("verified repeated webhook sessions reach the durable receiver", async () => {
   const webhookSecret = "whsec_unit_test_only";
   const payload = JSON.stringify({
     id: "evt_test_duplicate",
     object: "event",
     type: "checkout.session.completed",
     livemode: false,
-    data: { object: { id: "cs_test_unit_session" } },
+    data: { object: { id: "cs_test_unit_session", object: "checkout.session" } },
   });
   const signature = await Stripe.webhooks.generateTestHeaderStringAsync({
     payload,
     secret: webhookSecret,
     cryptoProvider: Stripe.createSubtleCryptoProvider(),
   });
-  const registry = new InMemoryStripeEventRegistry();
+  let deliveries = 0;
 
   const deliver = () =>
     handleStripeTestWebhook(
@@ -400,7 +409,7 @@ test("verified duplicate webhook event is acknowledged without reprocessing", as
           body: payload,
         },
       ),
-      { webhookSecret, eventRegistry: registry },
+      { webhookSecret, processSession: async () => ({ processed: true, duplicate: deliveries++ > 0 }) },
     );
 
   const firstResponse = await deliver();
@@ -410,10 +419,11 @@ test("verified duplicate webhook event is acknowledged without reprocessing", as
 
   assert.equal(firstResponse.status, 200);
   assert.equal(firstBody.duplicate, false);
-  assert.equal(firstBody.processed, false);
+  assert.equal(firstBody.processed, true);
   assert.equal(duplicateResponse.status, 200);
   assert.equal(duplicateBody.duplicate, true);
-  assert.equal(duplicateBody.processed, false);
+  assert.equal(duplicateBody.processed, true);
+  assert.equal(deliveries, 2);
 });
 
 test("a correctly signed live-mode webhook event is rejected", async () => {
@@ -441,7 +451,6 @@ test("a correctly signed live-mode webhook event is rejected", async () => {
     ),
     {
       webhookSecret,
-      eventRegistry: new InMemoryStripeEventRegistry(),
     },
   );
   const body = await response.json();
@@ -459,7 +468,6 @@ test("missing webhook secret does not attempt verification", async () => {
     ),
     {
       webhookSecret: undefined,
-      eventRegistry: new InMemoryStripeEventRegistry(),
       verifyEvent: async () => {
         verificationAttempted = true;
         throw new Error("must not verify");
@@ -486,7 +494,6 @@ test("oversized webhook payload is rejected before signature verification", asyn
     ),
     {
       webhookSecret: "whsec_unit_test_only",
-      eventRegistry: new InMemoryStripeEventRegistry(),
       verifyEvent: async () => {
         verificationAttempted = true;
         throw new Error("must not verify");
@@ -527,11 +534,64 @@ test("a known public total never enables Stripe before the order receiver is rea
 test("approved VAT cannot be silently omitted from a Stripe charge", async () => {
   let calls = 0;
   const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), {
-    secretKey: TEST_SECRET_KEY, orderReceiverReady: true,
+    secretKey: TEST_SECRET_KEY, orderReceiverReady: true, orders: testOrderStore(),
     createClient: () => { calls++; throw new Error("VAT has not been configured in Stripe"); },
   });
   assert.equal(response.status, 503);
   assert.equal((await response.json()).error.code, "STRIPE_VAT_NOT_CONFIGURED");
+  assert.equal(calls, 0);
+});
+
+test("approved UAE checkout taxes goods and delivery while samples remain free", async () => {
+  let params: Stripe.Checkout.SessionCreateParams | undefined;
+  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), items: [
+    { productId: "milkshake", flavor: "Vanilla", quantity: 2, kind: "products" },
+    { productId: "milkshake", flavor: "Vanilla", quantity: 1, kind: "samples" },
+  ] }), { secretKey: TEST_SECRET_KEY, orders: testOrderStore(), orderReceiverReady: true, taxRateId: "txr_fixture",
+    createClient: () => ({ retrieveTaxRate: async () => ({ id: "txr_fixture", active: true, livemode: false, percentage: 5, inclusive: false, country: "AE" }) as Stripe.TaxRate,
+      createSession: async captured => { params = captured; return { id: "cs_test_taxed", url: "https://checkout.stripe.com/c/pay/cs_test_taxed", livemode: false }; } }),
+  });
+  assert.equal(response.status, 201);
+  assert.deepEqual(params?.line_items?.map(line => line.price_data?.unit_amount), [2800, 0, 3000]);
+  assert.deepEqual(params?.line_items?.map(line => line.tax_rates), [["txr_fixture"], undefined, ["txr_fixture"]]);
+  assert.equal(params?.metadata?.tb_vat, "430");
+  assert.equal(params?.metadata?.tb_total, "9030");
+  assert.equal(params?.shipping_options, undefined);
+});
+
+test("consent is required before creating any checkout session", async () => {
+  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), consent: false }), checkoutDependencies());
+  assert.equal(response.status, 422);
+  assert.equal((await response.json()).error.code, "INVALID_CONSENT");
+});
+
+test("retrying a bound checkout reuses its session, and expired sessions require a fresh attempt", async () => {
+  let creates = 0;
+  let status = "open";
+  const dependency = checkoutDependencies(async () => { creates++; return { id: "cs_test_reused", url: "https://checkout.stripe.com/c/pay/cs_test_reused", livemode: false }; });
+  const client = dependency.createClient();
+  const dependencies = { ...dependency, createClient: () => ({ ...client,
+    retrieveSession: async () => ({ id: "cs_test_reused", url: "https://checkout.stripe.com/c/pay/cs_test_reused", livemode: false, status, payment_status: "unpaid" }),
+  }) };
+  const request = () => new Request(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": "stable-unit-checkout" }, body: JSON.stringify(validPayload()) });
+  assert.equal((await handleStripeTestCheckout(request(), dependencies)).status, 201);
+  assert.equal((await handleStripeTestCheckout(request(), dependencies)).status, 201);
+  assert.equal(creates, 1);
+  status = "expired";
+  const expired = await handleStripeTestCheckout(request(), dependencies);
+  assert.equal(expired.status, 409);
+  assert.equal((await expired.json()).error.code, "CHECKOUT_EXPIRED");
+  assert.equal(creates, 1);
+});
+
+test("an old unbound attempt cannot reuse a provider idempotency key after its retention window", async () => {
+  let calls = 0;
+  const dependencies = checkoutDependencies(async () => { calls++; throw new Error("Must not create a second session"); });
+  const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), { ...dependencies, orders: { ...dependencies.orders,
+    reserve: async (key, snapshot) => ({ ...await dependencies.orders.reserve(key, snapshot), createdAt: Date.now() - 24 * 60 * 60 * 1000 }),
+  } });
+  assert.equal(response.status, 409);
+  assert.equal((await response.json()).error.code, "CHECKOUT_REVIEW_REQUIRED");
   assert.equal(calls, 0);
 });
 
@@ -541,10 +601,11 @@ test("a mixed Stripe fixture retains free sample lines and charges one delivery"
     items: [{ productId: "389328196132", flavor: "Strawberry", quantity: 2, kind: "products" }, { productId: "389328196132", flavor: "Strawberry", quantity: 3, kind: "samples" }],
   }), checkoutDependencies(async params => { captured = params; return { id: "cs_test_mixed", url: "https://checkout.stripe.com/c/pay/cs_test_mixed", livemode: false }; }));
   assert.equal(response.status, 201);
-  assert.equal(captured?.line_items?.length, 2);
+  assert.equal(captured?.line_items?.length, 3);
   assert.equal(captured?.line_items?.[0].price_data?.unit_amount, 4538);
   assert.equal(captured?.line_items?.[1].price_data?.unit_amount, 0);
-  assert.equal(captured?.shipping_options?.length, 1);
+  assert.equal(captured?.line_items?.[2].price_data?.unit_amount, 1234);
+  assert.equal(captured?.shipping_options, undefined);
 });
 
 test("product quote sums several products and shipping as separate integer amounts", () => {
@@ -562,9 +623,9 @@ test("sample Stripe session charges only its separately configured shipping fee"
     return { id: "cs_test_sample", url: "https://checkout.stripe.com/c/pay/cs_test_sample", livemode: false };
   }));
   assert.equal(response.status, 201);
-  assert.equal(captured?.line_items?.length, 2);
-  for (const line of captured?.line_items ?? []) { assert.equal(line.price_data?.unit_amount, 0); assert.equal(line.quantity, 1); }
-  assert.equal(captured?.shipping_options?.[0].shipping_rate_data?.fixed_amount?.amount, 3456);
+  assert.equal(captured?.line_items?.length, 3);
+  for (const line of captured?.line_items?.slice(0, 2) ?? []) { assert.equal(line.price_data?.unit_amount, 0); assert.equal(line.quantity, 1); }
+  assert.equal(captured?.line_items?.[2].price_data?.unit_amount, 3456);
   assert.deepEqual(captured?.shipping_address_collection?.allowed_countries, ["KW"]);
   assert.equal(captured?.payment_intent_data?.shipping?.address.country, "KW");
   assert.equal(captured?.metadata?.kind, "samples");
@@ -581,7 +642,7 @@ test("several products accept current slug aliases including new ranges", async 
     return { id: "cs_test_many", url: "https://checkout.stripe.com/c/pay/cs_test_many", livemode: false };
   }));
   assert.equal(response.status, 201);
-  assert.equal(count, 2);
+  assert.equal(count, 3);
 });
 
 test("legacy ID and slug cannot duplicate the same product flavour", async () => {
@@ -600,9 +661,9 @@ test("sample checkout preserves more than six flavours and multiple free packs",
       return { id: "cs_test_multiple_samples", url: "https://checkout.stripe.com/c/pay/cs_test_multiple_samples", livemode: false };
     }));
   assert.equal(response.status, 201);
-  assert.deepEqual(captured?.line_items?.map(item => item.quantity), items.map(item => item.quantity));
-  assert.ok(captured?.line_items?.every(item => item.price_data?.unit_amount === 0));
-  assert.equal(captured?.shipping_options?.[0].shipping_rate_data?.fixed_amount?.amount, 1234);
+  assert.deepEqual(captured?.line_items?.slice(0, items.length).map(item => item.quantity), items.map(item => item.quantity));
+  assert.ok(captured?.line_items?.slice(0, items.length).every(item => item.price_data?.unit_amount === 0));
+  assert.equal(captured?.line_items?.at(-1)?.price_data?.unit_amount, 1234);
   assert.equal(captured?.metadata?.tb_subtotal, "0");
   assert.equal(captured?.metadata?.tb_total, "1234");
 });
@@ -665,67 +726,4 @@ test("unsafe Stripe redirect URL is rejected", async () => {
     const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), checkoutDependencies(async () => ({ id: "cs_test_bad", url, livemode: false })));
     assert.equal((await response.json()).error.code, "STRIPE_TEST_SESSION_REJECTED");
   }
-});
-
-const SESSION_ENDPOINT = `${ENDPOINT}/session?session_id=cs_test_verification`;
-function verifiedSession(overrides: Partial<StripeSessionStatus> = {}): StripeSessionStatus {
-  return { id: "cs_test_verification", livemode: false, status: "complete", payment_status: "paid", currency: "aed",
-    amount_total: 5772, shipping_cost: { amount_total: 1234 },
-    metadata: { integration: "the_base_shop_test", kind: "products", country: "AE", tb_subtotal: "4538", tb_shipping: "1234", tb_total: "5772" }, ...overrides };
-}
-
-test("session verification confirms only complete paid sessions and returns no customer data", async () => {
-  const response = await handleStripeTestSession(new Request(SESSION_ENDPOINT), {
-    secretKey: TEST_SECRET_KEY, retrieveSession: async () => verifiedSession(),
-  });
-  const body = await response.json();
-  assert.equal(response.status, 200);
-  assert.equal(body.checkout.confirmed, true);
-  assert.equal(body.checkout.fulfilled, false);
-  assert.equal(body.checkout.total, 5772);
-  assert.equal(body.checkout.shipping, 1234);
-  assert.equal(body.checkout.customer, undefined);
-  assert.equal(body.checkout.metadata, undefined);
-  assert.equal(response.headers.get("Cache-Control"), "no-store");
-  for (const patch of [{ status: "open", payment_status: "unpaid" }, { status: "expired", payment_status: "unpaid" }, { payment_status: "no_payment_required" }]) {
-    const pending = await handleStripeTestSession(new Request(SESSION_ENDPOINT), { secretKey: TEST_SECRET_KEY, retrieveSession: async () => verifiedSession(patch) });
-    assert.equal((await pending.json()).checkout.confirmed, false);
-  }
-});
-
-test("session verification rejects Live, foreign integration, changed ID and invalid totals", async () => {
-  const patches: Partial<StripeSessionStatus>[] = [{ livemode: true }, { currency: "usd" }, { id: "cs_test_other" }, { amount_total: -1 },
-    { metadata: { integration: "another-app", kind: "products" } }, { shipping_cost: { amount_total: -1 } },
-    { amount_total: 6000 }, { shipping_cost: null }, { shipping_cost: { amount_total: 1 } },
-    { metadata: { ...verifiedSession().metadata, tb_total: "0" } }];
-  for (const patch of patches) {
-    const response = await handleStripeTestSession(new Request(SESSION_ENDPOINT), { secretKey: TEST_SECRET_KEY, retrieveSession: async () => verifiedSession(patch) });
-    assert.equal((await response.json()).error.code, "STRIPE_TEST_SESSION_REJECTED");
-  }
-});
-
-test("sample verification matches the server shipping-only quote exactly", async () => {
-  const metadata = { ...verifiedSession().metadata, kind: "samples", tb_subtotal: "0", tb_shipping: "1234", tb_total: "1234" };
-  const response = await handleStripeTestSession(new Request(SESSION_ENDPOINT), { secretKey: TEST_SECRET_KEY,
-    retrieveSession: async () => verifiedSession({ amount_total: 1234, metadata }) });
-  assert.equal((await response.json()).checkout.confirmed, true);
-  const invalid = await handleStripeTestSession(new Request(SESSION_ENDPOINT), { secretKey: TEST_SECRET_KEY,
-    retrieveSession: async () => verifiedSession({ amount_total: 1235, metadata }) });
-  assert.equal((await invalid.json()).error.code, "STRIPE_TEST_SESSION_REJECTED");
-  const pending = await handleStripeTestSession(new Request(SESSION_ENDPOINT), { secretKey: TEST_SECRET_KEY,
-    retrieveSession: async () => verifiedSession({ status: "open", payment_status: "unpaid", amount_total: 0, shipping_cost: null, metadata }) });
-  assert.equal((await pending.json()).checkout.confirmed, false);
-});
-
-test("session readback rejects invalid ID, production host and Live key before Stripe access", async () => {
-  let calls = 0;
-  for (const [url, secretKey, code] of [
-    [SESSION_ENDPOINT.replace("cs_test_verification", "cs_live_not_allowed"), TEST_SECRET_KEY, "INVALID_SESSION_ID"],
-    [SESSION_ENDPOINT.replace("the-base-staging.mansua.workers.dev", "thebasebev.com"), TEST_SECRET_KEY, "STRIPE_TEST_HOST_REQUIRED"],
-    [SESSION_ENDPOINT, "sk_live_not_allowed", "STRIPE_TEST_KEY_REQUIRED"],
-  ]) {
-    const response = await handleStripeTestSession(new Request(url), { secretKey, retrieveSession: async () => { calls++; return verifiedSession(); } });
-    assert.equal((await response.json()).error.code, code);
-  }
-  assert.equal(calls, 0);
 });

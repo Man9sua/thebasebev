@@ -389,7 +389,7 @@
       "sku": "TE-002-s1-dp100",
       "unitAmount": 1725,
       "packGrams": 100,
-      "sampleWeightGrams": null,
+      "sampleWeightGrams": 100,
       "sourceRow": 187
     },
     {
@@ -398,7 +398,7 @@
       "sku": "TE-003-s1-dp100",
       "unitAmount": 1388,
       "packGrams": 100,
-      "sampleWeightGrams": null,
+      "sampleWeightGrams": 100,
       "sourceRow": 188
     },
     {
@@ -407,7 +407,7 @@
       "sku": "TE-001-s1-dp100",
       "unitAmount": 1578,
       "packGrams": 100,
-      "sampleWeightGrams": null,
+      "sampleWeightGrams": 100,
       "sourceRow": 186
     },
     {

@@ -81,8 +81,8 @@ async function shopBaskets(page) {
   for (const flavor of ["Vanilla", "Banana", "Classic"]) {
     check(await summary.getByText(flavor, { exact: true }).isVisible(), `Checkout: ${flavor} was retained`);
   }
-  check(await page.getByRole("button", { name: "Request order quote", exact: true }).isVisible(), "Checkout: order request remains available until verified payment fulfillment is connected");
-  check(await page.getByRole("button", { name: /continue to secure payment/i }).count() === 0, "Checkout: card payment stays closed until order processing is ready");
+  check(await page.getByRole("button", { name: "Continue to secure payment", exact: true }).isVisible(), "Checkout: mapped UAE goods offer secure Test Mode payment");
+  check(await page.getByText("Test checkout. Use a Stripe test card; no real payment is taken.", { exact: true }).isVisible(), "Checkout: Test Mode is clear before payment");
   const paidBasket = await page.evaluate(() => localStorage.getItem("thebase:cart:v2"));
 
   await openShop(page, "SA");

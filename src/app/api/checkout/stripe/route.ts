@@ -1,10 +1,11 @@
 import { handleStripeTestCheckout } from "@/lib/stripe-test-checkout";
 import { createStripeTestClient } from "@/lib/stripe-test-client";
 import { checkStripeTestCheckoutRateLimit } from "@/lib/stripe-test-rate-limit";
+import { getShopPaymentRuntime } from "@/lib/shop-payment-runtime";
 
 export const dynamic = "force-dynamic";
 
-export function POST(request: Request) {
+export async function POST(request: Request) {
   const rateLimit = checkStripeTestCheckoutRateLimit(request);
   if (!rateLimit.allowed) {
     return Response.json(
@@ -25,8 +26,9 @@ export function POST(request: Request) {
     );
   }
 
+  const runtime = await getShopPaymentRuntime();
   return handleStripeTestCheckout(request, {
-    secretKey: process.env.STRIPE_SECRET_KEY,
+    secretKey: runtime.secretKey, orders: runtime.orders, taxRateId: runtime.taxRateId, orderReceiverReady: runtime.receiverReady,
     createClient: createStripeTestClient,
   });
 }

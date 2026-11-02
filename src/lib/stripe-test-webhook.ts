@@ -1,12 +1,12 @@
 import Stripe from "stripe";
 
-const DEFAULT_EVENT_REGISTRY_LIMIT = 1_000;
 const MAX_WEBHOOK_BODY_BYTES = 1024 * 1024;
 
 export type VerifiedStripeEvent = Readonly<{
   id: string;
   type: string;
   livemode: boolean;
+  sessionId?: string;
 }>;
 
 export type VerifyStripeEvent = (
@@ -15,28 +15,10 @@ export type VerifyStripeEvent = (
   webhookSecret: string,
 ) => Promise<VerifiedStripeEvent>;
 
-export class InMemoryStripeEventRegistry {
-  private readonly eventIds = new Set<string>();
-
-  constructor(private readonly limit = DEFAULT_EVENT_REGISTRY_LIMIT) {}
-
-  claim(eventId: string) {
-    if (this.eventIds.has(eventId)) return false;
-
-    this.eventIds.add(eventId);
-    if (this.eventIds.size > this.limit) {
-      const oldestEventId = this.eventIds.values().next().value;
-      if (oldestEventId) this.eventIds.delete(oldestEventId);
-    }
-
-    return true;
-  }
-}
-
 export type StripeWebhookDependencies = Readonly<{
   webhookSecret?: string;
-  eventRegistry: InMemoryStripeEventRegistry;
   verifyEvent?: VerifyStripeEvent;
+  processSession?: (id: string) => Promise<{ processed: boolean; duplicate?: boolean; ignored?: boolean; pending?: boolean }>;
 }>;
 
 export async function verifyStripeWebhookEvent(
@@ -52,7 +34,9 @@ export async function verifyStripeWebhookEvent(
     Stripe.createSubtleCryptoProvider(),
   );
 
-  return { id: event.id, type: event.type, livemode: event.livemode };
+  const object = event.data.object;
+  return { id: event.id, type: event.type, livemode: event.livemode,
+    ...(object.object === "checkout.session" ? { sessionId: object.id } : {}) };
 }
 
 function apiError(status: number, code: string, message: string) {
@@ -148,18 +132,16 @@ export async function handleStripeTestWebhook(
     );
   }
 
-  const firstDelivery = dependencies.eventRegistry.claim(event.id);
-
-  // Proof of concept only: verified events are acknowledged but deliberately
-  // do not create an order, write to Odoo, or send Telegram notifications.
-  return Response.json(
-    {
-      ok: true,
-      received: true,
-      duplicate: !firstDelivery,
-      processed: false,
-      testMode: true,
-    },
-    { status: 200, headers: { "Cache-Control": "no-store" } },
-  );
+  if (!["checkout.session.completed", "checkout.session.async_payment_succeeded"].includes(event.type)) {
+    return Response.json({ ok: true, received: true, processed: false, ignored: true }, { headers: { "Cache-Control": "no-store" } });
+  }
+  if (!event.sessionId || !/^cs_test_[A-Za-z0-9_]+$/.test(event.sessionId)) return apiError(422, "STRIPE_EVENT_INVALID", "A Test checkout session is required.");
+  if (!dependencies.processSession) return apiError(503, "ORDER_RECEIVER_NOT_READY", "Payment processing is not configured. Retry this event.");
+  try {
+    const result = await dependencies.processSession(event.sessionId);
+    return Response.json({ ok: true, received: true, testMode: true, ...result }, { headers: { "Cache-Control": "no-store" } });
+  } catch {
+    // Stripe retries a failed delivery. Never consume an event before Odoo commits.
+    return apiError(503, "ORDER_DELIVERY_RETRY_REQUIRED", "The paid order is awaiting processing. Retry this event.");
+  }
 }

@@ -1,0 +1,536 @@
+[
+  {
+    "slug": "milkshake",
+    "flavor": "Banana",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Mango",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Date",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Honey Dew",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Strawberry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Vanilla",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Yogurt",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Cookies & Cream",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "milkshake",
+    "flavor": "Rainbow Unicorn",
+    "products": false,
+    "samples": true
+  },
+  {
+    "slug": "frappe",
+    "flavor": "Coffee",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "frappe",
+    "flavor": "Salted Caramel",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "frappe",
+    "flavor": "Vanilla",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Classic",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Pure",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Mango Coconut",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Anchan Blueberry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Pink",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Raspberry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Strawberry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Purple Yum Ube",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "matcha",
+    "flavor": "Hojicha",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "chai-latte",
+    "flavor": "Karak",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "chai-latte",
+    "flavor": "Masala",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "chocolate",
+    "flavor": "Hot Chocolate",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "chocolate",
+    "flavor": "Hot Chocolate No Sugar",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "cordial",
+    "flavor": "Classic Mojito",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "cordial",
+    "flavor": "Red Rose Lemon",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "iced-tea",
+    "flavor": "Lemon",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "iced-tea",
+    "flavor": "Peach",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "iced-tea",
+    "flavor": "Green",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "raf-coffee",
+    "flavor": "Vanilla",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "raf-coffee",
+    "flavor": "Salted Caramel",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "raf-coffee",
+    "flavor": "Pineapple Caramel",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "raf-coffee",
+    "flavor": "Raspberry Coconut",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "raf-coffee",
+    "flavor": "Spanish Peach",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "cream-latte",
+    "flavor": "Birds Dream",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "cream-latte",
+    "flavor": "Citrus Sundae",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "cream-latte",
+    "flavor": "Tropical Berry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "cream-latte",
+    "flavor": "Salty Caramel Sunset",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "cream-latte",
+    "flavor": "Golden Caramel Banana",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "cream-latte",
+    "flavor": "Vanilla Sky",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "cream-latte",
+    "flavor": "Nutty Pistachio",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "tea",
+    "flavor": "Black",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "tea",
+    "flavor": "Green",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "tea",
+    "flavor": "Jasmine",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "topping",
+    "flavor": "Classic Cheese Cream",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "topping",
+    "flavor": "Coffee Crème",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "jam",
+    "flavor": "Strawberry Watermelon",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Amaretto",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Cherry",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Mango",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Mint",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Black Currant",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Coconut",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Melon",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Peach",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Raspberry",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-free",
+    "flavor": "Hazelnut",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "sugar-syrup",
+    "flavor": "Vanilla",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "sugar-syrup",
+    "flavor": "Salted Caramel",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "sugar-syrup",
+    "flavor": "Hazelnut",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "sugar-syrup",
+    "flavor": "Raspberry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "sugar-syrup",
+    "flavor": "Mango",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "sugar-syrup",
+    "flavor": "Blueberry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Strawberry Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Banana Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Dragon Fruit Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Kiwi Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Mango Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Blueberry Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Cherry Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "garnish",
+    "flavor": "Raspberry Cubes",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "vending",
+    "flavor": "Chocolate",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "vending",
+    "flavor": "Chocolate No Added Sugar",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "vending",
+    "flavor": "Karak",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "vending",
+    "flavor": "Banana Ice Cream Salted Caramel",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Matcha Mango Coconut",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Matcha Blue",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Matcha Pink",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Matcha Raspberry",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Matcha Strawberry",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Chocolate Strawberry",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Chocolate Orange",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Chocolate Mocha",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Iced Tea Lemon",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Iced Tea Peach",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Chai Latte Karak",
+    "products": true,
+    "samples": false
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Milkshake Cookies & Cream",
+    "products": true,
+    "samples": true
+  },
+  {
+    "slug": "at-home",
+    "flavor": "Cordial Dates Cola",
+    "products": true,
+    "samples": false
+  }
+]

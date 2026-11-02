@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 import { useCart, useSampleCart } from "@/components/cart/useCart";
 import { ShopPackImage } from "@/components/shop/ShopPackImage";
 import { BrandLogo } from "@/components/site/BrandLogo";
@@ -19,8 +19,9 @@ import {
 } from "@/lib/cart-store";
 import { rememberPendingCheckout } from "@/lib/checkout-session";
 import { submitShopQuoteRequest, submitShopSampleRequest } from "@/lib/shop-lead";
-import { formatShopMoney, getShopQuote, getShopUnitAmount, getShopPackLabel, SHOP_ORDER_PAYMENTS_READY, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
+import { formatShopMoney, getShopQuote, getShopUnitAmount, getShopPackLabel, hasPayableVariants, SHOP_ORDER_PAYMENTS_READY, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
 import { combineShopBaskets, shopBasketKey } from "@/lib/shop-basket";
+import { getFirstTouchAttribution } from "@/components/forms/first-touch";
 import styles from "./CheckoutPage.module.css";
 
 type Fields = {
@@ -168,6 +169,7 @@ export function CheckoutPage() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [completed, setCompleted] = useState(false);
+  const checkoutAttempt = useRef<{ payload: string; key: string } | null>(null);
 
   const lines = useMemo(() => cart.items.flatMap((item) => {
     const product = getShopProduct(item.slug);
@@ -175,7 +177,8 @@ export function CheckoutPage() {
   }), [cart.items]);
   const quote = useMemo(() => getShopQuote({ kind, country, shippingMethod, items: cart.items }),
     [kind, country, shippingMethod, cart.items]);
-  const quoteNeeded = !SHOP_ORDER_PAYMENTS_READY || !quote.ready || (isSample && deliveryPayment === "dhl-account");
+  const quoteNeeded = !SHOP_ORDER_PAYMENTS_READY || !quote.ready || !hasPayableVariants(kind, items)
+    || items.length + (quote.shipping ? 1 : 0) > 100 || (quote.total ?? 0) > 99_999_999 || (isSample && deliveryPayment === "dhl-account");
   const shopHref = `/${country.toLowerCase()}/catalog`;
   const contactFields = isSample ? BUSINESS_FIELDS : CONTACT_FIELDS;
   const addressFields = isSample ? SAMPLE_ADDRESS_FIELDS : ADDRESS_FIELDS;
@@ -248,20 +251,22 @@ export function CheckoutPage() {
         if (isSample) removeSubmittedSamples(request.items);
         setCompleted(true);
       } else {
+        const payload = JSON.stringify({
+          kind, country, currency: "aed", shippingMethod, email: customer.email, customer, consent,
+          attribution: { ...getFirstTouchAttribution(), currentPage: window.location.href },
+          items: cart.items.map((item) => ({ productId: getCheckoutProductId(item.slug) ?? item.slug,
+            flavor: item.flavor, quantity: item.quantity, kind: item.kind })),
+        });
+        if (checkoutAttempt.current?.payload !== payload) checkoutAttempt.current = { payload, key: crypto.randomUUID() };
         const response = await fetch("/api/checkout/stripe", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            kind, country, currency: "aed", shippingMethod, email: customer.email, customer,
-            items: cart.items.map((item) => ({
-              productId: getCheckoutProductId(item.slug) ?? item.slug,
-              flavor: item.flavor, quantity: item.quantity, kind: item.kind,
-            })),
-          }),
+          headers: { "Content-Type": "application/json", "Idempotency-Key": checkoutAttempt.current.key },
+          body: payload,
         });
         const body = await response.json().catch(() => null);
         const url = stripeCheckoutUrl(body?.checkout?.url);
         const sessionId = body?.checkout?.sessionId;
+        if (["CHECKOUT_KEY_REUSED", "CHECKOUT_EXPIRED"].includes(body?.error?.code)) checkoutAttempt.current = null;
         if (!response.ok || body?.ok !== true || body.checkout?.testMode !== true || !url || typeof sessionId !== "string" ||
           !/^cs_test_[a-zA-Z0-9_]+$/.test(sessionId)) {
           throw new Error(body?.error?.message || "Secure checkout is temporarily unavailable. Your cart has been kept.");
@@ -384,6 +389,7 @@ export function CheckoutPage() {
                 {country === "AE" && <p className={styles.quoteNote}>{isSample ? "Sample delivery: AED 30 + VAT for parcels up to 5 kg. Larger parcels are quoted separately." : "Free UAE delivery on products from AED 500 before VAT. Below AED 500: AED 30 + VAT. Samples travel with your order at no extra delivery charge."}</p>}
                 {country === "AE" && <p className={styles.quoteNote}>{UAE_DELIVERY_TIMING}</p>}
                 {!quote.ready && <p className={styles.quoteNote}>{quote.reason || "Product prices and delivery must be confirmed before payment. Request an exact quote below."}</p>}
+                {!quoteNeeded && <p className={styles.quoteNote}>Test checkout. Use a Stripe test card; no real payment is taken.</p>}
                 <label className={styles.consent}>
                   <input type="checkbox" name="consent" checked={consent} disabled={pending} required aria-invalid={fieldErrors.consent ? true : undefined} aria-describedby={fieldErrors.consent ? "checkout-consent-error" : undefined} onChange={(event) => { setConsent(event.target.checked); setFieldErrors((current) => ({ ...current, consent: undefined })); }} />
                   <span>I agree to the <SiteLink href={`/${country.toLowerCase()}/privacy`}>Privacy Policy</SiteLink>.</span>

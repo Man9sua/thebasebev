@@ -22,6 +22,8 @@ type VerifiedPayment = {
   country: string;
   total: number | null;
   testMode: boolean;
+  fulfilled: boolean;
+  quotation?: string | null;
 };
 
 function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; requestedCountry: string }) {
@@ -35,6 +37,8 @@ function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; req
 
   useEffect(() => {
     const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let attempts = 0;
     async function verify() {
       try {
         if (!/^cs_test_[A-Za-z0-9_]{1,200}$/.test(sessionId)) throw new Error("The payment reference is invalid.");
@@ -46,6 +50,7 @@ function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; req
           throw new Error("We could not verify this payment. Please contact the team with your payment reference.");
         }
         setPayment(body.checkout as VerifiedPayment);
+        if (body.checkout.confirmed && !body.checkout.fulfilled && attempts++ < 15) timer = setTimeout(verify, 2000);
       } catch (reason) {
         if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "We could not verify this payment.");
       } finally {
@@ -53,7 +58,7 @@ function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; req
       }
     }
     void verify();
-    return () => controller.abort();
+    return () => { controller.abort(); if (timer) clearTimeout(timer); };
   }, [sessionId]);
 
   useEffect(() => {
@@ -71,7 +76,8 @@ function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; req
       <p className={styles.label}>Secure checkout · Test mode</p>
       <h1>{!checked ? "Checking payment" : confirmed ? "Payment received" : "Payment not confirmed"}</h1>
       <p>{!checked ? "Checking the payment status with Stripe…" : confirmed
-        ? "Your test payment is confirmed. Our team will review the order and delivery details before dispatch."
+        ? payment?.fulfilled ? `Your test payment is confirmed. Order ${payment.quotation ?? "received"} is registered. Our team will review delivery before dispatch.`
+          : "Your test payment is confirmed. Your order is being registered. Our team will review delivery before dispatch."
         : error || "Your payment has not completed. The items remain in your basket."}</p>
       {confirmed && typeof payment?.total === "number" && <strong className={styles.amount}>{formatShopMoney(payment.total)}</strong>}
       <div className={styles.actions}>

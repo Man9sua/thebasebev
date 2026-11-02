@@ -17,6 +17,14 @@
       "name": "the-base-staging",
       "workers_dev": true,
       "preview_urls": true,
+      "d1_databases": [
+        {
+          "binding": "SHOP_ORDERS",
+          "database_name": "the-base-staging-orders",
+          "database_id": "24bce93e-5b5b-4f0d-b78f-4806822a9e8d",
+          "migrations_dir": "migrations"
+        }
+      ],
       "vars": {
         "APP_ENV": "staging"
       }
