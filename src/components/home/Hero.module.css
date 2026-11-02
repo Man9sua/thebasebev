@@ -18,7 +18,7 @@
   align-items: center;
   overflow: clip;
   background: var(--tbb-rd-paper);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 }
 
 /* ---- photograph ---- */
@@ -90,10 +90,10 @@
 
 .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   /* 120 at 1440. */
   font-size: clamp(2.75rem, 8.3333vw, 7.5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em !important;
   text-transform: uppercase;
@@ -134,9 +134,9 @@
   padding-inline: clamp(1.75rem, 2.5vw, 2.25rem);
   border: 1.5px solid transparent;
   border-radius: 999px;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-align: center;

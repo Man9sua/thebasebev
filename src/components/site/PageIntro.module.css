@@ -54,14 +54,10 @@
     clamp(2.5rem, 6vw, 5rem);
 }
 
-.eyebrow {
-  color: var(--ink-muted);
-}
-
 .title {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.9rem, 3.6vw, 3.2rem);
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 1.05;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -70,7 +66,7 @@
 }
 
 .tagline {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-body);
   font-size: clamp(1rem, 1.5vw, 1.35rem);
   font-weight: 500;
   color: var(--ink-soft);

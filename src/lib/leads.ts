@@ -73,8 +73,8 @@ export type LeadValidationResult =
   | { ok: false; issues: LeadValidationIssue[] };
 
 const MAX_URL_LENGTH = 4_096;
-const MAX_TEXT_LENGTH = 4_000;
-const MAX_SHORT_TEXT_LENGTH = 255;
+export const MAX_MESSAGE_LENGTH = 4_000;
+export const MAX_SHORT_TEXT_LENGTH = 255;
 const MAX_UTM_LENGTH = 512;
 const MAX_ORDER_ITEMS = 100;
 
@@ -419,7 +419,7 @@ export function validateLeadPayload(input: unknown): LeadValidationResult {
     country: readOptionalString(input, "country", 128, issues),
     company: readOptionalString(input, "company", MAX_SHORT_TEXT_LENGTH, issues),
     product: readOptionalString(input, "product", MAX_SHORT_TEXT_LENGTH, issues),
-    message: readOptionalString(input, "message", MAX_TEXT_LENGTH, issues),
+    message: readOptionalString(input, "message", MAX_MESSAGE_LENGTH, issues),
     formType,
     formName,
     consent,

@@ -26,7 +26,7 @@
   border-radius: 1.5rem;
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   /* Rises once, a second after load — see REVEAL_DELAY. */
   opacity: 0;
@@ -47,23 +47,24 @@
   gap: 0.5rem;
 }
 
-.title {
-  font-family: var(--tbb-font-display);
+.banner .title {
+  font-family: var(--tbb-font-heading);
   font-size: 1.25rem;
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
 }
 
-.text {
+.banner .text {
   margin: 0;
   color: var(--tbb-rd-body-soft);
   font-size: 0.9375rem;
-  line-height: 1.5;
+  /* Retained custom.css applies an !important line height to every body p. */
+  line-height: 1.5 !important;
 }
 
 .policy {
   color: var(--tbb-rd-ink);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* ---- the two buttons, deliberately the same size ---- */
@@ -73,8 +74,10 @@
   gap: 0.5rem;
 }
 
-.accept,
-.reject {
+/* Exported custom.css targets class names containing "accept" or "reject".
+   Keep these private names independent of its legacy cookie widget. */
+.primaryAction,
+.secondaryAction {
   flex: 1;
   display: inline-flex;
   align-items: center;
@@ -84,9 +87,9 @@
   padding-inline: 1rem;
   border: 1.5px solid var(--tbb-rd-ink);
   border-radius: 999px;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-transform: uppercase;
@@ -97,22 +100,22 @@
     color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-.accept {
+.primaryAction {
   background: var(--tbb-rd-ink);
   color: var(--tbb-rd-paper);
 }
 
-.accept:hover {
+.primaryAction:hover {
   background: var(--tbb-rd-red);
   border-color: var(--tbb-rd-red);
 }
 
-.reject {
+.secondaryAction {
   background: transparent;
   color: var(--tbb-rd-ink);
 }
 
-.reject:hover {
+.secondaryAction:hover {
   background: var(--tbb-rd-ink);
   color: var(--tbb-rd-paper);
 }
@@ -124,9 +127,9 @@
   background: none;
   padding: 0;
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   text-align: center;
   cursor: pointer;
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
@@ -134,6 +137,13 @@
 
 .settingsLink:hover {
   color: var(--tbb-rd-red);
+}
+
+.banner button:focus-visible,
+.banner a:focus-visible,
+.dialog button:focus-visible {
+  outline: 2px solid var(--tbb-rd-ink) !important;
+  outline-offset: 3px;
 }
 
 /* ---- the settings dialog ---- */
@@ -162,7 +172,7 @@
   border-radius: 1.75rem;
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
@@ -177,11 +187,11 @@
   gap: 1rem;
 }
 
-.dialogTitle {
+.dialog .dialogTitle {
   margin: 0;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
 }
 
@@ -237,7 +247,7 @@
 
 .rowTitle {
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-subheading);
 }
 
 .rowBody {
@@ -305,8 +315,8 @@
   gap: 0.5rem;
 }
 
-.dialogButtons .accept,
-.dialogButtons .reject {
+.dialogButtons .primaryAction,
+.dialogButtons .secondaryAction {
   min-height: 3.25rem;
 }
 
@@ -325,8 +335,8 @@
     padding: 1.5rem 1.25rem 1.25rem;
   }
 
-  .accept,
-  .reject {
+  .primaryAction,
+  .secondaryAction {
     min-height: 3.25rem;
   }
 

@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { CheckoutPage } from "@/components/checkout/CheckoutPage";
+import { Suspense } from "react";
+import { CheckoutFlow } from "@/components/checkout/CheckoutFlow";
 import { SITE_ORIGIN } from "@/lib/site-pages";
 
 export const metadata: Metadata = {
-  title: "Secure Checkout | THE BASE",
-  description: "Review THE BASE products and continue to secure Stripe Test Mode checkout.",
+  title: "Secure Checkout | The Base",
+  description: "Review your The Base products or free samples, confirm delivery and continue to secure checkout.",
   alternates: { canonical: `${SITE_ORIGIN}/checkout` },
   robots: { index: false, follow: false },
 };
 
 export default function CheckoutRoute() {
-  return <CheckoutPage />;
+  return <Suspense fallback={<main aria-busy="true">Preparing checkout…</main>}><CheckoutFlow /></Suspense>;
 }

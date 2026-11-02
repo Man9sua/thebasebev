@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { PRODUCTS } from "@/data/products";
 import { publicPath } from "@/lib/site-paths";
+import { toDefaultCountryPath } from "@/lib/country-paths";
 import {
-  CURRENT_MARKET,
   FOOTER_LINKS,
   SHOP_URL,
   SITE_NAV,
@@ -28,7 +28,7 @@ export function SiteMenu({
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const pathname = toDefaultCountryPath(usePathname()).replace(/\/+$/, "");
   useOverlay(open, onClose, panelRef);
 
   const [productsOpen, setProductsOpen] = useState(true);
@@ -65,12 +65,13 @@ export function SiteMenu({
         <div className={styles.layout}>
           <div className={styles.main}>
             <nav className={`${styles.nav} ${overlay.item}`} aria-label="Main">
-              {SITE_NAV.map((item, index) => (
+              {/* No per-link delay: the nav enters as one block, and a delay on the
+                  link itself held back its hover colour, unlike the Shop pill. */}
+              {SITE_NAV.map((item) => (
                 <SiteLink
                   key={item.href}
                   href={item.href}
                   className={navLink(item.href)}
-                  style={{ transitionDelay: open ? `${120 + index * 55}ms` : "0ms" }}
                   aria-current={pathname === publicPath(item.href) ? "page" : undefined}
                   onClick={onClose}
                 >
@@ -136,14 +137,13 @@ export function SiteMenu({
               Get a quote
             </SiteLink>
 
-            <a
+            <SiteLink
               className={styles.footShop}
               href={SHOP_URL}
-              target="_blank"
-              rel="noreferrer noopener"
+              onClick={onClose}
             >
-              Shop <span aria-hidden="true">↗</span>
-            </a>
+              Shop
+            </SiteLink>
             <div className={styles.footLinks}>
               {SITE_NAV_SECONDARY.map((item) => (
                 <SiteLink
@@ -161,11 +161,13 @@ export function SiteMenu({
             </div>
 
             <div className={styles.footMeta}>
-              {/* The market this build serves, read from the same entry as the
-                  bar's country selector so the two cannot disagree. */}
-              <span className={styles.footRegion}>
-                {`${CURRENT_MARKET.label} ${CURRENT_MARKET.language}`}
-              </span>
+              <SiteLink
+                href="/find-your-distributor"
+                className={styles.footFinder}
+                onClick={onClose}
+              >
+                Find your distributor
+              </SiteLink>
 
               {FOOTER_LINKS.legal.map((item) => (
                 <SiteLink

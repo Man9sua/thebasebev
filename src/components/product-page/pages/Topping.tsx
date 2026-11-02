@@ -6,7 +6,6 @@ import {
   Info,
   Inside,
   Kit,
-  Responsive,
   Section,
   Shelf,
   Stats,
@@ -22,8 +21,7 @@ import local from "./Topping.module.css";
 
 /**
  * Toppings ("Topping · страница продукта", desktop 1440 / mobile 390).
- * Matcha's shape; Inside adds the "≈ 72 kcal per serve" card, which the
- * phone moves above the table.
+ * Matcha's shape, with dry-base nutrition and the prepared-serving card.
  */
 
 const SLUG = "topping";
@@ -32,7 +30,7 @@ const nutrition: NutritionSet[] = [
   {
     name: "Classic Cheese Cream",
     caption: "Per 100 g of dry base",
-    mobileCaption: "Classic Cheese Cream · per 100 g dry base",
+    mobileCaption: "Per 100 g of dry base",
     rows: [
       { label: "Calories", value: "525 kcal" },
       { label: "Total fat", value: "34.7 g", dv: "49.6%" },
@@ -61,7 +59,7 @@ const faq = [
     q: "Can I freeze it for desserts?",
     a: "Yes, whipped topping can be frozen for cold desserts. Thaw in the fridge before serving.",
   },
-  { q: "How many serves from one pouch?", a: "About 60 serves of 50 g from a 500 g pouch." },
+  { q: "How many serves from one pouch?", a: "Yield depends on the recipe, whipping and final serving size. Ask your distributor for the recipe and specification for your topping." },
   { q: "How long does whipped topping keep?", a: "Keep it covered in the fridge and use it within the shift." },
   { q: "Can I use plant milk?", a: "Yes. Oat and almond milk whip well with the base." },
   { q: "Does it contain milk?", a: "Yes, it contains milk protein." },
@@ -72,7 +70,7 @@ const faq = [
   },
 ];
 
-export function ToppingPage({ product, headline, assets }: ProductPageProps) {
+export function ToppingPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     { ...hero, alt: "Topping serve" },
@@ -97,11 +95,10 @@ export function ToppingPage({ product, headline, assets }: ProductPageProps) {
         className={local.hero}
         productName={product.name}
         title="Toppings"
-        headline={headline}
         lead={{
           desktop:
-            "Whipped toppings and cheese foam without fresh cream. Whisk the base with milk and you have 450 g of stable topping in a minute.",
-          mobile: "Whipped topping and cheese foam without fresh cream. 450 g of topping in a minute.",
+            "Whipped toppings and cheese foam without fresh cream. Whisk the base with milk for a stable topping in a minute.",
+          mobile: "Whipped topping and cheese foam without fresh cream. Whisk with milk in a minute.",
         }}
         image={
           // eslint-disable-next-line @next/next/no-img-element
@@ -114,7 +111,7 @@ export function ToppingPage({ product, headline, assets }: ProductPageProps) {
           className={local.stats}
           items={[
             { value: "1 min", label: "Preparation time" },
-            { value: "60 serves", label: "From one 500 g pouch" },
+            { value: "500 g", label: "Resealable pouch" },
             { value: "50 g", label: "Per serving" },
             { value: "18 months", label: "Shelf life" },
             { value: "No cream", label: "No fresh cream, no cream chargers" },
@@ -144,13 +141,13 @@ export function ToppingPage({ product, headline, assets }: ProductPageProps) {
             { label: "Milk", value: "200 ml" },
             { label: "Base", value: "100 g" },
             { label: "Whisk", value: <span className={local.whisk}>20–30 sec</span> },
-            { label: "Yield", value: "450 g", dark: true },
+            { label: "Result", value: "Whipped topping", dark: true },
             { label: "Serve", value: "50 g", dark: true },
           ]}
         />
         <p className={cx(styles.side, styles.desktopOnly)}>
-          Whisk 100 g of base with 200 ml of cold milk for 20–30 seconds until smooth and creamy. You get 450 g of
-          topping, about nine serves of 50 g.
+          Whisk 100 g of base with 200 ml of cold milk for 20–30 seconds until smooth and creamy. Yield depends on
+          whipping and final serving size. Ask your distributor for your flavour’s recipe and specification.
         </p>
       </Section>
 
@@ -172,12 +169,12 @@ export function ToppingPage({ product, headline, assets }: ProductPageProps) {
         sets={nutrition}
         side={
           <>
-            <div className={local.kcal}>
-              <span className={local.kcalLabel}>
-                <Responsive desktop="One 50 g serve of whipped topping" mobile="One 50 g serve, whipped with whole milk" />
+            <div className={local.prepared}>
+              <span className={local.preparedLabel}>
+                One 50 g serve of whipped topping
               </span>
-              <span className={local.kcalValue}>≈ 72 kcal</span>
-              <span className={cx(local.kcalText, styles.desktopOnly)}>
+              <span className={local.preparedValue}>≈ 72 kcal</span>
+              <span className={local.preparedText}>
                 Made with whole milk. About 58 kcal from the base, 14 kcal from the milk.
               </span>
             </div>

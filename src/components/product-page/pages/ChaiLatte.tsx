@@ -6,6 +6,7 @@ import {
   Info,
   Inside,
   Kit,
+  MarketingKitAction,
   Section,
   Shelf,
   Stats,
@@ -81,7 +82,7 @@ const faq = [
   },
 ];
 
-export function ChaiLattePage({ product, headline, assets }: ProductPageProps) {
+export function ChaiLattePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   // The first menu photo is the hero shot.
   const serves = [hero, productImage(SLUG, "serve-2", [640, 1000])];
@@ -101,7 +102,6 @@ export function ChaiLattePage({ product, headline, assets }: ProductPageProps) {
         className={local.hero}
         productName={product.name}
         title="Chai latte"
-        headline={headline}
         lead={{
           desktop:
             "Karak and masala chai for cafés. Black tea, milk and spice in one base: steam with milk and serve in 30 seconds.",
@@ -132,15 +132,11 @@ export function ChaiLattePage({ product, headline, assets }: ProductPageProps) {
             Ready for
             <br /> your menu
           </h2>
-          {assets.marketingKit && (
-            <div className={cx(local.kitCard, styles.desktopOnly)}>
-              <span className={local.kitCardTitle}>Marketing kit</span>
-              <span className={local.kitCardText}>{KIT_TEXT}</span>
-              <a href={assets.marketingKit} className={cx(styles.button, styles.red, local.kitCardButton)} download>
-                Download kit
-              </a>
-            </div>
-          )}
+          <div className={cx(local.kitCard, styles.desktopOnly)}>
+            <span className={local.kitCardTitle}>Marketing kit</span>
+            <span className={local.kitCardText}>{KIT_TEXT}</span>
+            <MarketingKitAction href={assets.marketingKit} className={local.kitCardButton} />
+          </div>
         </div>
         {serves.map((tile, i) => (
           <div key={i} className={local.tile}>

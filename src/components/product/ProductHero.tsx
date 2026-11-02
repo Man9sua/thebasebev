@@ -447,7 +447,7 @@ export function ProductHero({ product }: { product: Product }) {
         <img
           className={styles.pack}
           src={`/images/pack-${product.slug}.webp`}
-          alt={`${product.name} base by THE BASE, ${detail?.weight ?? "500g"} pouch`}
+          alt={`${product.name} base by the Base, ${detail?.weight ?? "500g"} pouch`}
           fetchPriority="high"
           decoding="sync"
         />
@@ -535,7 +535,7 @@ export function ProductHero({ product }: { product: Product }) {
                   vs
                 </span>
                 <div className={styles.marginSide}>
-                  <p className={styles.marginLabel}>with THE BASE</p>
+                  <p className={styles.marginLabel}>with the Base</p>
                   <p className={styles.marginValue}>{margin.base}</p>
                 </div>
               </div>

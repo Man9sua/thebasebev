@@ -42,9 +42,9 @@
 .metricTitle {
   max-width: 13rem;
   margin: 0;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.05rem, 1.7vw, 1.35rem);
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
 }
 
@@ -83,11 +83,12 @@
 
 .title {
   margin: 0;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.75rem, 3.4vw, 2.75rem);
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 1.12;
   letter-spacing: -0.025em;
+  text-transform: uppercase;
 }
 
 .eyebrow {
@@ -151,7 +152,7 @@
 }
 
 .table tbody th {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -218,7 +219,7 @@
 
 .marginSummary dd {
   margin: 0.35rem 0 0;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.25rem, 2vw, 1.65rem);
   font-weight: 700;
 }
@@ -276,9 +277,9 @@
 
 .customTitle {
   margin: 0;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.5rem, 2.5vw, 2rem);
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.15;
 }
 
@@ -305,7 +306,9 @@
   background: var(--tbb-accent, #f10f16);
   color: #fff;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-button);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   text-decoration: none;
   transition: transform var(--tbb-dur-fast) var(--tbb-ease);
 }
@@ -351,6 +354,8 @@
 
 .faqInner > .title {
   margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+
+  text-transform: uppercase;
 }
 
 @media (max-width: 899px) {
