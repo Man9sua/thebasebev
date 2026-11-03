@@ -8,8 +8,9 @@
  * hence the doubled selectors and !important on the title.
  */
 
+/* The first section of the page: it starts below the fixed header. */
 .section {
-  padding: 24px var(--tbb-gutter, 24px);
+  padding: calc(var(--tbb-header-h) + 24px) var(--tbb-gutter, 24px) 24px;
 }
 
 /* The container the cqw units measure: the slider's own width, up to 1920px. */
@@ -341,7 +342,7 @@
 
 @media (max-width: 759px) {
   .section {
-    padding-top: 16px;
+    padding-top: calc(var(--tbb-header-h) + 16px);
     padding-bottom: 16px;
   }
 }

@@ -258,35 +258,21 @@ try {
   // first desktop wheel event.
   await page.waitForTimeout(250);
 
-  // The hero is one photograph anchored to the right edge with the copy held on
-  // the left. It replaced a marquee of product tiles, so the rail assertions are
-  // gone; what still matters is that it is a picture and not video, that the
-  // picture runs the height of the frame and takes the half the copy does not,
-  // and that the one above-the-fold CTA still opens the range.
-  const hero = page.locator("section[data-hero]");
-  check((await hero.locator("video").count()) === 0, "home: hero must not use video");
-  const heroImage = hero.locator("img").first();
-  check((await heroImage.count()) === 1, "home: hero is missing its photograph");
-  const heroImageBox = await heroImage.boundingBox();
-  const view = page.viewportSize();
-  check(
-    !!heroImageBox && heroImageBox.x + heroImageBox.width >= view.width - 1,
-    `home: hero photograph must reach the right edge (ends at ${Math.round(
-      (heroImageBox?.x ?? 0) + (heroImageBox?.width ?? 0),
-    )} of ${view.width})`,
-  );
-  check(
-    !!heroImageBox && heroImageBox.width > view.width * 0.5,
-    `home: hero photograph must take at least half the frame (got ${Math.round(heroImageBox?.width ?? 0)} of ${view.width})`,
-  );
-  check(
-    !!heroImageBox && heroImageBox.height > view.height * 0.6,
-    `home: hero photograph is too short (${Math.round(heroImageBox?.height ?? 0)}px of ${view.height})`,
-  );
-  check(
-    (await hero.locator("a[href='/ae/catalog']").count()) > 0,
-    "home: hero CTA must point at the catalog",
-  );
+  // The homepage opens with the product slider, which replaced the
+  // photographic hero at the owner's request. It keeps the page's h1 for
+  // search, starts below the fixed header, shows one slide at a time and
+  // links every slide to its product page in the visitor's market.
+  const slider = page.locator("[data-home-slider]");
+  check(((await slider.locator("h1").textContent()) ?? "").trim() === "Premium Beverage Bases", "home: the slider lost the page's h1");
+  const slides = slider.locator("[aria-roledescription='slide']");
+  check((await slides.count()) === 15, "home: the slider does not carry its fifteen slides");
+  check((await slides.first().getAttribute("href")) === "/ae/raf-coffee", "home: the first slide must open Raf Coffee in the market");
+  check((await slider.locator("[aria-roledescription='slide'][data-active]").count()) === 1, "home: exactly one slide must be on screen");
+  const frameBox = await slider.locator("[data-ink]").first().boundingBox();
+  const headerBox = await page.locator("header").first().boundingBox();
+  check(!!frameBox && !!headerBox && frameBox.y >= headerBox.y + headerBox.height, "home: the slider starts under the fixed header");
+  await slider.getByRole("button", { name: "Next slide" }).click();
+  check((await slides.nth(1).getAttribute("data-active")) !== null, "home: the next arrow did not move the slider");
   // The bar carries the vertical mark — the near-square one the design file
   // draws — rather than the landscape lockup the live site still uses. It
   // carries its own two colours, so it no longer takes part in the bar's colour
@@ -825,8 +811,8 @@ try {
   // render-ready instead of racing the stylesheet response.
   await reducedPage.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
   check(
-    await reducedPage.locator("section[data-hero] h1").isVisible(),
-    "reduced-motion: homepage hero content is not immediately visible",
+    await reducedPage.locator("[data-home-slider] [data-active] h3").isVisible(),
+    "reduced-motion: the first slide's copy is not immediately visible",
   );
   await reduced.close();
   console.log("Browser smoke phase passed: reduced motion");
@@ -839,8 +825,8 @@ try {
   observe(noScriptPage, "no-script");
   await noScriptPage.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
   check(
-    await noScriptPage.locator("section[data-hero] h1").isVisible(),
-    "no-script: homepage hero content is not visible",
+    await noScriptPage.locator("[data-home-slider] [data-active] h3").isVisible(),
+    "no-script: the first slide's copy is not visible",
   );
   await noScript.close();
   console.log("Browser smoke phase passed: no JavaScript");
@@ -857,6 +843,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: hero, header, distributor finder, menu, bestsellers, reading rail, the brand film, native Shop/search/pending prices, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution. No real lead or order was submitted.");
+  console.log("Browser smoke passed: home slider, header, distributor finder, menu, bestsellers, reading rail, the brand film, native Shop/search/pending prices, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution. No real lead or order was submitted.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

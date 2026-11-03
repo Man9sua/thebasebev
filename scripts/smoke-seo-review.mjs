@@ -386,8 +386,6 @@ async function runViewport(label, viewport) {
     }
     await markList.screenshot({ path: path.join(artifactRoot, `${label}-manufacturer-certifications.png`) });
     await about.locator(":scope > div").filter({ has: page.locator("#about-title") }).screenshot({ path: path.join(artifactRoot, `${label}-manufacturer-reference.png`) });
-    const heroSample = page.locator("main").getByRole("link", { name: "Request samples", exact: true }).first();
-    check(await heroSample.getAttribute("href") === "/ae/request-samples", `${label} home: sample CTA opens the sample destination`);
   });
 
   await caseOf("missing-visuals", async () => {

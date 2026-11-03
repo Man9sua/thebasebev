@@ -20,11 +20,11 @@ function moveTo(position: Position, next: number): Position {
 }
 
 /**
- * The product slider under the hero, to the design ("The Base Homepage
- * Slider"): one product a slide, each in its own colour, each opening its
- * product page. It turns every five seconds and stops while the pointer or
- * the keyboard is on it, while it is off screen or the tab is hidden, and for
- * visitors who ask for reduced motion. Dots, arrows and a swipe move it.
+ * The homepage's first section, to the design ("The Base Homepage Slider"):
+ * one product a slide, each in its own colour, each opening its product page.
+ * It turns every five seconds and stops while the pointer or the keyboard is
+ * on it, while it is off screen or the tab is hidden, and for visitors who ask
+ * for reduced motion. Dots, arrows and a swipe move it.
  *
  * Only the slide on screen and its two neighbours load their pictures; the
  * rest follow as the slider reaches them.
@@ -87,11 +87,14 @@ export function HomeSlider() {
       ref={rootRef}
       className={styles.section}
       aria-roledescription="carousel"
-      aria-labelledby="home-slider-title"
+      aria-labelledby="home-title"
+      data-home-slider
     >
-      <h2 id="home-slider-title" className={styles.hidden}>
-        Our range
-      </h2>
+      {/* The page's h1, kept from the hero the slider replaced: the slides
+          carry the visible copy, this keeps the page's headline for search. */}
+      <h1 id="home-title" className={styles.hidden}>
+        Premium Beverage Bases
+      </h1>
       <div className={styles.stage}>
         <div
           className={styles.frame}
@@ -131,7 +134,9 @@ export function HomeSlider() {
                           src={image.src}
                           alt={image.alt}
                           className={styles.picture}
-                          loading="lazy"
+                          // The first slide is the top of the page: it loads at once.
+                          loading={slideIndex === 0 ? "eager" : "lazy"}
+                          fetchPriority={slideIndex === 0 ? "high" : undefined}
                           decoding="async"
                           draggable={false}
                           style={{ left: image.left, bottom: image.bottom, height: image.height, rotate: image.rotate }}

@@ -112,7 +112,7 @@ async function auditViewport(browser, viewport) {
   if (viewport.width === 390 || viewport.width === 1440) {
     const homePage = await browser.newPage({ viewport });
     await open(homePage, "/");
-    const homePresent = (await homePage.locator("[data-hero]").count()) === 1;
+    const homePresent = (await homePage.locator("[data-home-slider]").count()) === 1;
     check(homePresent, `${label}: homepage missing during the blog-link audit`);
     /*
      * The Blog index used to be an empty Tilda feed container — the posts were
