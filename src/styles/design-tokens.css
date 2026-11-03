@@ -81,9 +81,10 @@
   /* Compatibility for retained CSS while new rules use the named roles. */
   --tbb-font-sans: var(--tbb-font-body);
   --tbb-font-display: var(--tbb-font-heading);
-  /* Guidebook p.18: packaging names and slogans only. Not licensed here yet —
-     falls back to the brand face until the file is supplied. */
-  --tbb-font-slogan: "Big Noodle Titling", var(--tbb-font-exo, "Exo 2"), sans-serif;
+  /* Guidebook p.18: packaging names and slogans only (the homepage slider).
+     The face is loaded in the root layout, not preloaded: only pages that
+     set a slogan download it. */
+  --tbb-font-slogan: var(--tbb-font-noodle, "Big Noodle Titling"), var(--tbb-font-exo, "Exo 2"), sans-serif;
 
   /* Fluid scale — clamp() keeps every step responsive without breakpoints,
      which also means no layout shift when the viewport changes. */

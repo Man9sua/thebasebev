@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@/components/analytics/Analytics";
 import { CookieConsent } from "@/components/consent/CookieConsent";
 import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
@@ -29,6 +30,18 @@ const exo2 = Exo_2({
   variable: "--tbb-font-exo",
 });
 
+/**
+ * Big Noodle Titling, the guidebook's slogan face (free for commercial use,
+ * per the notice in the file). Not preloaded: the browser fetches it only on
+ * a page that sets a slogan.
+ */
+const noodle = localFont({
+  src: "../fonts/big-noodle-titling.ttf",
+  display: "swap",
+  preload: false,
+  variable: "--tbb-font-noodle",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://thebasebev.com"),
   icons: {
@@ -53,7 +66,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={exo2.variable} suppressHydrationWarning>
+    <html lang="en" className={`${exo2.variable} ${noodle.variable}`} suppressHydrationWarning>
       <head>
         {/*
           The exported pages reference their assets relatively — `images/…`,
