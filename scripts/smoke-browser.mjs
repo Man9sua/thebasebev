@@ -248,7 +248,7 @@ try {
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage: a photographic hero, then the bestsellers carousel.
+  // The homepage: the product slider, then the bestsellers grid.
   // Navigation and the product grid moved out of the old hover mega-menu into
   // the full-screen menu panel, so they are asserted there rather than on hover.
   await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
@@ -287,13 +287,15 @@ try {
     `header: the mark collapsed (height ${Math.round(headerMark)})`,
   );
 
+  // Bestsellers: six shop cards, each with a price and an Add that opens the
+  // shop's flavour picker, and a link to the whole catalogue.
   check(
-    (await page.locator(`${BESTSELLERS} [aria-roledescription='slide']`).count()) === 5,
-    "home: expected five bestseller slides",
+    (await page.locator(`${BESTSELLERS} [data-bestseller]`).count()) === 6,
+    "home: expected six bestseller cards",
   );
   check(
-    (await page.locator(`${BESTSELLERS} [aria-current]`).count()) === 5,
-    "home: expected five bestseller dots",
+    (await page.locator(`${BESTSELLERS} a`).filter({ hasText: /^All \d+ categories$/ }).getAttribute("href")) === "/ae/catalog",
+    "home: the bestsellers must link to the whole catalogue",
   );
   check(
     (await page.locator("h1").count()) === 1,
@@ -311,17 +313,15 @@ try {
   await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
   await page.locator(BESTSELLERS).scrollIntoViewIfNeeded();
   await page.waitForTimeout(300);
-  await page.locator(`${BESTSELLERS} [aria-label='Next product']`).click();
-  await page.waitForTimeout(900);
+  await page.locator(`${BESTSELLERS} [data-bestseller='matcha'] button`).click();
+  const bestsellerPicker = page.locator("[data-shop-picker='matcha']");
+  await bestsellerPicker.waitFor();
   check(
-    (await page
-      .locator(
-        `${BESTSELLERS} .is-active, ${BESTSELLERS} [aria-hidden='false'][aria-roledescription='slide']`,
-      )
-      .first()
-      .getAttribute("aria-label"))?.startsWith("2 of 5"),
-    "home: next arrow did not activate slide two",
+    (await bestsellerPicker.locator("[data-shop-flavor]").count()) > 0,
+    "home: Add did not open the Matcha flavour picker",
   );
+  await page.keyboard.press("Escape");
+  await bestsellerPicker.waitFor({ state: "detached" });
 
   // Guides and tools: a native overflow scroller, so the arrows move it and a
   // vertical wheel over it must still scroll the page. It carries the five

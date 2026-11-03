@@ -9,6 +9,7 @@
   font-family: var(--tbb-font-body);
   font-weight: var(--tbb-font-weight-body);
 }
+.scope { min-height: 0; background: none; }
 .content { display: flex; flex-direction: column; gap: 48px; max-width: 1440px; margin-inline: auto; padding: calc(var(--tbb-header-h) + 72px) clamp(16px, 6vw, 96px) 120px; }
 .intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
 .introCopy { display: flex; flex-direction: column; gap: 20px; }

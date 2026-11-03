@@ -1,0 +1,194 @@
+/*
+ * The homepage bestsellers: six shop cards, four to a row on a wide screen,
+ * two on a phone. The heading is the guidebook's slogan face, like the
+ * slider's titles above it.
+ *
+ * Headings answer the export's custom.css on retained pages, hence the
+ * doubled selectors and !important.
+ */
+
+.section {
+  padding: clamp(48px, 6vw, 96px) var(--tbb-gutter, 24px);
+  background: #fff;
+  color: var(--tbb-rd-ink, #0e0e0e);
+  font-family: var(--tbb-font-body);
+}
+
+.inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 3vw, 40px);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section .title {
+  margin: 0 !important;
+  font-family: var(--tbb-font-slogan);
+  font-size: clamp(44px, 5vw, 80px);
+  font-weight: 400 !important;
+  line-height: 0.9 !important;
+  letter-spacing: 0 !important;
+  text-transform: uppercase;
+}
+
+.all {
+  flex: none;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid currentColor;
+  color: inherit;
+  font-size: 15px;
+  font-weight: var(--tbb-font-weight-button);
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.all:hover {
+  color: var(--tbb-rd-red, #e3141b);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: clamp(12px, 1.6vw, 24px);
+  row-gap: clamp(28px, 3vw, 40px);
+}
+
+.card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 672 / 780;
+  border-radius: 16px;
+}
+
+.tile img {
+  object-fit: cover;
+  transition: transform var(--tbb-dur) var(--tbb-ease);
+}
+
+.tile:hover img {
+  transform: scale(1.03);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section .name {
+  margin: 0 !important;
+  font-family: var(--tbb-font-body);
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: var(--tbb-font-weight-subheading) !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-transform: none;
+}
+
+.name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.name a:hover {
+  color: var(--tbb-rd-red, #e3141b);
+}
+
+.meta {
+  color: var(--tbb-rd-muted, #6b6b6b);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.price {
+  min-width: 0;
+  font-size: clamp(14px, 1.1vw, 16px);
+  font-weight: var(--tbb-font-weight-subheading);
+}
+
+.add,
+.addOn {
+  flex: none;
+  min-height: 36px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--tbb-rd-ink, #0e0e0e);
+  color: #fff;
+  font-family: var(--tbb-font-button);
+  font-size: 13px;
+  font-weight: var(--tbb-font-weight-button);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.add:hover {
+  background: var(--tbb-rd-red, #e3141b);
+}
+
+.addOn {
+  background: var(--tbb-rd-red, #e3141b);
+}
+
+.addOn:hover {
+  background: var(--tbb-rd-red-dark, #b81016);
+}
+
+.all:focus-visible,
+.name a:focus-visible,
+.add:focus-visible,
+.addOn:focus-visible {
+  outline: 2px solid var(--tbb-rd-red, #e3141b);
+  outline-offset: 3px;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 719px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .foot {
+    flex-wrap: wrap;
+  }
+
+  .all {
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile img {
+    transition: none;
+  }
+}

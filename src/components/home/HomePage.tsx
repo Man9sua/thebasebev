@@ -1,7 +1,7 @@
 import { About } from "@/components/home/About";
 import { BlogCarousel } from "@/components/home/BlogCarousel";
-import { Bestsellers } from "@/components/home/Bestsellers";
 import { Collage } from "@/components/home/Collage";
+import { HomeBestsellers } from "@/components/home/HomeBestsellers";
 import { HomeSlider } from "@/components/home/HomeSlider";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -11,8 +11,8 @@ import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
  * The homepage.
  *
  * Five sections: the product slider (in place of the photographic hero, at
- * the owner's request), the bestsellers carousel, the collage, the editorial
- * rail and the About block the brand film plays inside.
+ * the owner's request), the bestsellers grid of shop cards, the collage, the
+ * editorial rail and the About block the brand film plays inside.
  *
  * This is the page as it stood before `5992bb5` rebuilt it from the Figma file
  * into eight sections — hero, four savings, the range as a 4×4 grid, four
@@ -52,7 +52,7 @@ export function HomePage() {
       <SiteHeader />
       <main>
         <HomeSlider />
-        <Bestsellers />
+        <HomeBestsellers />
         <Collage />
         <BlogCarousel />
         <About />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { useCart, useSampleCart } from "@/components/cart/useCart";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
@@ -29,7 +29,7 @@ import { combineShopBaskets, shopBasketKey, type ShopBasketItem } from "@/lib/sh
 import { ShopPackImage } from "./ShopPackImage";
 import styles from "./ShopPage.module.css";
 
-type ShopKind = ReturnType<typeof shopKindForCountry>;
+export type ShopKind = ReturnType<typeof shopKindForCountry>;
 
 function itemCount(items: readonly CartItem[]) {
   return items.reduce((count, item) => count + item.quantity, 0);
@@ -54,7 +54,7 @@ const SEARCH_PRODUCTS = SHOP_PRODUCTS.map((product) => ({
   text: normalize(`${product.name} ${product.flavors.join(" ")}`),
 }));
 
-function unitLabel(product: ShopProduct, kind: ShopKind) {
+export function unitLabel(product: ShopProduct, kind: ShopKind) {
   if (kind === "samples") return "Free sample";
   const range = getShopPriceRange(product.slug);
   return range === null ? "Price on request" : `${range.min === range.max ? "" : "From "}${formatShopMoney(range.min)}`;
@@ -100,7 +100,16 @@ function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopP
   );
 }
 
-function FlavourPicker({ product, kind, items, allowSamples, totalLines, onKindChange, onClose }: { product: ShopProduct; kind: ShopKind; items: readonly CartItem[]; allowSamples: boolean; totalLines: number; onKindChange: (kind: ShopKind) => void; onClose: () => void }) {
+/**
+ * The shop's own styles hang off its page; outside the shop (the homepage
+ * bestsellers) the picker sits in this scope instead, which carries the same
+ * variables and rules without the page's height and background.
+ */
+export function ShopScope({ children }: { children: ReactNode }) {
+  return <div className={`${styles.page} ${styles.scope}`}>{children}</div>;
+}
+
+export function FlavourPicker({ product, kind, items, allowSamples, totalLines, onKindChange, onClose }: { product: ShopProduct; kind: ShopKind; items: readonly CartItem[]; allowSamples: boolean; totalLines: number; onKindChange: (kind: ShopKind) => void; onClose: () => void }) {
   const panel = useRef<HTMLDivElement>(null);
   const dismiss = useRef<HTMLButtonElement>(null);
   const id = useId();

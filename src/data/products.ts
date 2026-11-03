@@ -347,19 +347,14 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-/**
- * Featured in the Bestsellers carousel, in order.
- *
- * Same five products, in the same order, as the hero slider running on
- * production today — the homepage changes how they are presented, not which
- * products it promotes.
- */
+/** The homepage bestsellers grid, in order: the six the owner chose. */
 export const BESTSELLER_SLUGS = [
-  "cream-latte",
-  "milkshake",
   "matcha",
+  "milkshake",
+  "raf-coffee",
   "iced-tea",
-  "cordial",
+  "chocolate",
+  "cream-latte",
 ] as const;
 
 /** The homepage mini-catalog shows at most four. */
