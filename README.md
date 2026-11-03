@@ -51,6 +51,39 @@ npm.cmd run build
 npm.cmd run check:assets
 ```
 
+Stripe checkout is staging Test Mode only. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `PAYMENT_PIPELINE.md` for setup and verification status.
+
+### Shop and checkout
+
+The shop uses the established `/ae/catalog` URL (and country aliases). UAE visitors
+choose products, free samples and quantities; other markets can choose free samples.
+The persistent baskets remain separate in storage but combine into one UAE shipment
+and checkout. The supplied Shop
+and Checkout HTML determine the layout; the published product/flavour registry
+determines what can be selected.
+
+Approved variant prices are in `src/data/shop-prices.json`, in AED minor units
+(fils), with source SKU, pack size and spreadsheet row. `src/lib/shop-payment.ts`
+calculates 5% additional VAT and one UAE delivery charge: AED 30 before VAT below
+AED 500 in paid goods, free from AED 500 before VAT. Samples do not increase that
+threshold. Sample-only parcels cost AED 30 before VAT up to 5 kg; unknown weights
+and heavier parcels require a quote. See `SHOP_PRICING.md` for unmatched variants.
+HTML demo prices and legacy prices are never substituted. `/api/leads` remains
+the request path for unresolved variants and delivery quotes.
+
+`STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-side staging secrets.
+Only Test Mode keys and staging/localhost hosts are accepted. Checkout creates
+zero-priced sample lines and a separate delivery line taxed at 5%. The return page verifies
+the Stripe session and quoted totals before confirming payment, and clears only
+the matching unchanged basket. A failed/cancelled payment keeps the basket.
+The webhook verifies signatures and records fulfillment only after an Odoo draft
+quotation commits. Durable snapshots live in a staging D1 database; a transaction
+lock in Odoo prevents duplicate quotations after concurrent deliveries or timeouts.
+
+The destination is a paid **draft quotation in Odoo Sales**, without automatic
+confirmation or invoicing. See [PAYMENT_PIPELINE.md](./PAYMENT_PIPELINE.md) for the
+Test Mode verification status and separate Live rollout requirements.
+
 Against a running production build, the local smoke commands are:
 
 ```powershell
@@ -113,7 +146,7 @@ Current verified production preview:
 https://the-base-production.mansua.workers.dev
 ```
 
-The OpenNext configuration uses its read-only Workers Static Assets incremental cache for the SSG pages. The Cloudflare build also prepares a generated static-document fast path so the public site stays below the target account's Workers Free CPU limit; dynamic APIs remain in OpenNext. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
+The Cloudflare build prepares a generated Static Assets document fast path so public SSG pages stay below the target account's Workers Free CPU limit. The duplicate incremental cache is disabled; dynamic APIs remain in OpenNext. Next 16.4 requires OpenNext 1.20.14 or later to inline `server/preview-props.json`; a successful Next build alone does not verify those API handlers. The scoped `@node-minify/core` glob override keeps that adapter's build dependency on a patched release. `worker.ts` adds safe baseline headers and forces `X-Robots-Tag: noindex, nofollow` on staging and every `workers.dev` preview. Only a future approved request on the exact real production hostname can omit that transport directive. No custom domain route is configured.
 
 Run the complete sequential verification against a deployed target with:
 
@@ -213,7 +246,7 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 | Visual parity of Next.js output | PARTIAL | Nine target widths are captured and representative layouts were reviewed; exhaustive page-by-page pixel diffs remain. |
 | Interactive parity | PARTIAL | Hero, header/menu/region, mobile menu, catalogue filters/prices, add-to-cart, checkout dialog, product-order popup, and honest form failure UX pass browser smoke; remaining legacy surfaces still need route-level tests/React extraction. |
 | Lead delivery and attribution | STAGING VERIFIED | Typed bridge/API exist; one controlled Odoo lead preserved request ID and full first-touch attribution. Production enablement remains human-controlled. |
-| Checkout/order delivery | NEEDS CREDENTIALS | Cart state/UI are verified without submitting a real order; owned receiver/payment contracts are required. |
+| Checkout/order delivery | PRICES CONFIGURED; FULFILLMENT PENDING | 89 variant prices, 5% VAT and UAE delivery calculations are configured. Unmatched prices, Stripe tax setup, a durable Odoo Sales receiver and separate Live approval remain required. |
 | Dynamic recipes/catalog feed | BLOCKED | Upstream feed data is not contained in the export. |
 | OpenNext Worker bundle | DONE | `npm run cf:build` completes locally; Windows emits the upstream WSL recommendation. |
 | Cloudflare staging deployment | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in `mansua`; post-deploy remote smoke is blocked by account-wide Error 1027 until the Free quota resets. |

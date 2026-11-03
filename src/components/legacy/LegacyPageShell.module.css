@@ -14,15 +14,15 @@
    as a band of empty page between the two. */
 .opensPage {
   padding-top: var(--tbb-header-h);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   color: var(--tbb-ink);
   background: var(--tbb-paper);
 
   /* Tilda templates read these variables before falling back to Arial. Using
      the shared tokens keeps legacy content inside the same type system as the
      React homepage without rewriting its layout. */
-  --t-headline-font: var(--tbb-font-display);
-  --t-text-font: var(--tbb-font-sans);
+  --t-headline-font: var(--tbb-font-heading);
+  --t-text-font: var(--tbb-font-body);
 }
 
 /* Anchor links land below the bar rather than behind it. */
@@ -56,7 +56,7 @@ main.shell.shell :global(.t-animate_started) {
 .product :global(h3),
 .product :global(.t-title),
 .product :global(.t-name) {
-  font-family: var(--tbb-font-display) !important;
+  font-family: var(--tbb-font-heading) !important;
 }
 
 .product :global(.t-text),
@@ -64,5 +64,5 @@ main.shell.shell :global(.t-animate_started) {
 .product :global(button),
 .product :global(input),
 .product :global(textarea) {
-  font-family: var(--tbb-font-sans) !important;
+  font-family: var(--tbb-font-body) !important;
 }

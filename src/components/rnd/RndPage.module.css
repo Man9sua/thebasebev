@@ -21,7 +21,7 @@
 
   background: var(--tbb-rd-paper);
   color: var(--tbb-rd-ink);
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
 }
 
 .inner {
@@ -41,9 +41,9 @@
 
 .sectionTitle {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2.5rem, 5.5556vw, 5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -73,9 +73,9 @@
   padding-inline: clamp(1.5rem, 2.5vw, 2.25rem);
   border: 1.5px solid transparent;
   border-radius: 999px;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-button);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-align: center;
@@ -134,7 +134,15 @@
   color: var(--tbb-rd-paper);
 }
 
-.heroPhoto {
+.heroInner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: 0 auto;
+}
+
+.heroMedia {
   position: absolute;
   inset: 0 0 0 auto;
   width: 75%;
@@ -143,14 +151,10 @@
   object-position: 45% 40%;
 }
 
-/* The copy runs across the left half, so the veil is opaque there and clears
-   by the right edge. The middle stops are heavier than the design document's
-   because its hero is a flat 1440 artboard and this one is fluid: on a wide
-   screen the three terms at the foot reach further right than they do there,
-   and the brightest part of the photograph is exactly where they land. */
-.heroVeil {
+.hero::after {
   position: absolute;
   inset: 0;
+  content: "";
   background: linear-gradient(
     90deg,
     var(--tbb-rd-ink-deep) 0%,
@@ -162,19 +166,11 @@
   pointer-events: none;
 }
 
-.heroInner {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: var(--tbb-measure);
-  margin: 0 auto;
-}
-
 .heroTitle {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(3rem, 7.2222vw, 6.5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -215,7 +211,7 @@
 
 .heroTermTitle {
   font-size: clamp(0.9375rem, 1.1806vw, 1.0625rem);
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
   color: var(--tbb-rd-paper);
 }
@@ -275,9 +271,9 @@
 
 .page .valueTitle {
   margin: auto 0 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.5rem, 2.7778vw, 2.5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 0.92 !important;
   text-transform: uppercase;
   color: inherit;
@@ -347,7 +343,7 @@
 .page .baseTitle {
   margin: 0 !important;
   font-size: clamp(1.3125rem, 1.8056vw, 1.625rem);
-  font-weight: 800 !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 1.15 !important;
   color: var(--tbb-rd-ink);
 }
@@ -383,9 +379,9 @@
 }
 
 .processNumber {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2rem, 4.4444vw, 4rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   color: var(--tbb-rd-red);
   font-variant-numeric: tabular-nums;
@@ -394,7 +390,7 @@
 .page .processTitle {
   margin: 0.5rem 0 0 !important;
   font-size: clamp(1.25rem, 1.6667vw, 1.5rem);
-  font-weight: 800 !important;
+  font-weight: var(--tbb-font-weight-subheading) !important;
   line-height: 1.15 !important;
   color: var(--tbb-rd-ink);
 }
@@ -429,7 +425,7 @@
 
 .paidTitle {
   font-size: clamp(1.1875rem, 1.6667vw, 1.5rem);
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
   color: var(--tbb-rd-paper);
 }
@@ -458,6 +454,7 @@
 }
 
 .labMedia {
+  position: relative;
   display: block;
   min-height: 25rem;
   overflow: hidden;
@@ -466,9 +463,8 @@
 }
 
 .labMedia img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .labCopy {
@@ -496,9 +492,9 @@
 }
 
 .labFactValue {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.375rem, 2.2222vw, 2rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 0.9;
   text-transform: uppercase;
   color: var(--tbb-rd-ink);
@@ -578,9 +574,9 @@
 
 .briefNumber {
   grid-row: span 2;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.5rem, 2.2222vw, 2rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   color: var(--tbb-rd-red);
   font-variant-numeric: tabular-nums;
@@ -588,7 +584,7 @@
 
 .briefTitle {
   font-size: clamp(1.0625rem, 1.3889vw, 1.25rem);
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
   color: var(--tbb-rd-paper);
 }
@@ -776,7 +772,7 @@
 
 .consent a {
   color: var(--tbb-rd-ink) !important;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .error {
@@ -824,7 +820,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .heroPhoto {
+  .heroMedia {
     width: 100%;
   }
 }
@@ -835,9 +831,7 @@
     padding-bottom: clamp(3rem, 8vw, 4rem);
   }
 
-  /* The photograph moves behind the copy, so the veil runs down rather than
-     across. */
-  .heroVeil {
+  .hero::after {
     background: linear-gradient(
       180deg,
       rgba(11, 14, 20, 0.45) 0%,
@@ -846,7 +840,7 @@
     );
   }
 
-  .heroPhoto {
+  .heroMedia {
     height: 60%;
     object-position: 40% 40%;
   }

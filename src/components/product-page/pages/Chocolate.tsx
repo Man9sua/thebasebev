@@ -5,6 +5,7 @@ import {
   Hero,
   Info,
   Inside,
+  MarketingKitAction,
   Section,
   Shelf,
   Stats,
@@ -72,7 +73,7 @@ const faq = [
   },
 ];
 
-export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
+export function ChocolatePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     { ...hero, alt: "Hot chocolate serve" },
@@ -96,7 +97,6 @@ export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
         className={local.hero}
         productName={product.name}
         title="Hot chocolate"
-        headline={headline}
         lead={{
           desktop:
             "Rich, creamy hot chocolate for cafés, hotels and vending. Steam with milk and serve in 40 seconds, hot or iced.",
@@ -128,16 +128,11 @@ export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
             Ready for
             <br /> your menu
           </h2>
-          {assets.marketingKit && (
-            <div className={local.kit}>
-              <span className={local.kitTitle}>Marketing kit</span>
-              <span className={local.kitText}>Menu photos, delivery-app formats, descriptions in English and Arabic.</span>
-              <a href={assets.marketingKit} className={cx(styles.button, styles.red, local.kitButton)} download>
-                <span className={styles.desktopOnly}>Download kit</span>
-                <span className={styles.mobileOnly}>Download marketing kit</span>
-              </a>
-            </div>
-          )}
+          <div className={local.kit}>
+            <span className={local.kitTitle}>Marketing kit</span>
+            <span className={local.kitText}>Menu photos, delivery-app formats, descriptions in English and Arabic.</span>
+            <MarketingKitAction href={assets.marketingKit} className={local.kitButton} />
+          </div>
         </div>
         <div className={local.tiles}>
           {serves.map((tile, i) => (

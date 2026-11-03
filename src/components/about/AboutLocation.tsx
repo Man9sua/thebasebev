@@ -5,8 +5,10 @@ import styles from "./AboutLocation.module.css";
  * The lab and showroom: Warehouse 50, 26th Street, Al Quoz Industrial Area 2
  * (the address in the Organization JSON-LD). `directionsHref` is the Google
  * Maps share link for the "The Base Beverage LLC" listing; the embed is the
- * key-less `maps/embed?pb=` view centred on the coordinates that link
- * resolves to (25.1244211, 55.2445616), so it needs no API key.
+ * key-less `output=embed` view pinned on the coordinates that link resolves
+ * to (25.1244211, 55.2445616), so it needs no API key. `hl=en` holds the map
+ * in English whatever the visitor's browser language; the `pb=` embed ignored
+ * its own language field and followed the browser instead.
  */
 const LAB_LOCATION = {
   label: "Lab and showroom",
@@ -14,7 +16,7 @@ const LAB_LOCATION = {
   directionsHref: "https://maps.app.goo.gl/Yyp9hxTtiFChTNt3A",
   visitHref: "/contacts",
   embedSrc:
-    "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d28000!2d55.2445616!3d25.1244211!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sae!4v1759500000000",
+    "https://www.google.com/maps?q=25.1244211,55.2445616&z=12&hl=en&output=embed",
 } as const;
 
 /**
@@ -67,7 +69,7 @@ export function AboutLocation() {
           <iframe
             className={styles.frame}
             src={LAB_LOCATION.embedSrc}
-            title={`Map: The Base lab and showroom, ${LAB_LOCATION.city}`}
+            title={`Map: the Base lab and showroom, ${LAB_LOCATION.city}`}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             allowFullScreen

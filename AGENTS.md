@@ -29,6 +29,17 @@ The migration must preserve SEO, organic Google traffic, AI/Search referrals, ex
 - Do not intentionally block Googlebot, Bingbot, Applebot, OAI-SearchBot, ChatGPT-User, PerplexityBot/Perplexity-User, or Claude search/user crawlers.
 - Do not activate all exported analytics IDs. `GTM` is authoritative when configured; direct GA is only a fallback.
 
+## Typography rules
+
+- The main page is the typography reference for every page and future edit.
+- Follow `TYPOGRAPHY_CONTRACT.md` and the shared font roles in
+  `src/styles/design-tokens.css`: Exo 2; display headings 900, smaller headings
+  800, body 400/500 and CTA/control labels 600. Headings are uppercase; CTA
+  labels are uppercase with 0.1em tracking. Preserve responsive sizes and semantic
+  roles unless the user requests a design change.
+- Do not introduce page-specific font stacks or universal font overrides that
+  affect logos, icons, emoji flags or native pages through legacy CSS.
+
 ## Lead pipeline rules
 
 - All public forms MUST submit to `/api/leads`. No other client-facing lead endpoint.
@@ -67,6 +78,13 @@ npm run audit:cloudflare-parity
 npm audit
 ```
 
+Stripe is used for the shop checkout. Stripe checks are required in CI and the readiness audit. Staging uses Test Mode only; product prices and delivery fees must be explicitly approved before enabling payment. Never substitute HTML demo amounts or legacy prices for approved pricing.
+
+For paid website orders, the agreed Odoo destination is Sales **Quotation**
+(`sale.order`, state `draft`) with a verified Stripe payment reference and amount.
+Do not automatically confirm it, create invoices, or post accounting entries.
+See `PAYMENT_PIPELINE.md` for the Test Mode receiver, durable order ledger and verification status.
+
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 
 Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Before every deployment, verify that Wrangler selects account `mansua` and exact account ID `678720af4dded7d23aad4a859b6e5f3a`. Deploy staging only when the current task explicitly authorizes it; the prelaunch integration workflow is such authorization. Production-preview and the production domain require separate human approval. Never add a custom domain during migration preparation.
@@ -89,13 +107,3 @@ Report each step's real outcome. A failed deploy or a failing check is reported 
 - `develop`: integration branch.
 - Work on `feature/*`, `fix/*`, or `migration/*`; open a PR toward `develop`, then promote reviewed releases to `main`.
 - Never force-push shared branches. Never commit build output, browser artifacts, credentials, tokens, or Cloudflare secrets.
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->

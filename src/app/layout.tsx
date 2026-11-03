@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@/components/analytics/Analytics";
 import { CookieConsent } from "@/components/consent/CookieConsent";
 import { LeadAttributionBridge } from "@/components/forms/LeadAttributionBridge";
+import { MarketPrompt } from "@/components/site/MarketPrompt";
 import { FIRST_TOUCH_SCRIPT } from "@/components/forms/first-touch";
 import "./globals.css";
 
@@ -10,9 +12,8 @@ import "./globals.css";
  * Exo 2 — the brand face, per Guidebook p.16: "EXO 2.0 font looks technical
  * and friendly, free font with open license".
  *
- * It replaces Jost, which was a stand-in picked before the Guidebook was
- * available. Weights map to the Guidebook's roles: 700 Header Bold, 400
- * Subheader Regular, 300 body Light.
+ * The shared contract uses 900 for display headings, 800 for subheadings,
+ * 400/500 for body copy and 600 for controls.
  *
  * next/font self-hosts the files at build time — no runtime request to Google —
  * and reserves metrics up front, so the swap causes no shift.
@@ -24,12 +25,21 @@ import "./globals.css";
  */
 const exo2 = Exo_2({
   subsets: ["latin", "latin-ext"],
-  // 800 and 900 are the redesign's display weights — the Distributors and R&D
-  // headings are set in Black at 80–120px, and at that size 700 reads as a
-  // different typeface rather than as the same one one step lighter.
   weight: ["300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
   variable: "--tbb-font-exo",
+});
+
+/**
+ * Big Noodle Titling, the guidebook's slogan face (free for commercial use,
+ * per the notice in the file). Not preloaded: the browser fetches it only on
+ * a page that sets a slogan.
+ */
+const noodle = localFont({
+  src: "../fonts/big-noodle-titling.ttf",
+  display: "swap",
+  preload: false,
+  variable: "--tbb-font-noodle",
 });
 
 export const metadata: Metadata = {
@@ -56,7 +66,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={exo2.variable} suppressHydrationWarning>
+    <html lang="en" className={`${exo2.variable} ${noodle.variable}`} suppressHydrationWarning>
       <head>
         {/*
           The exported pages reference their assets relatively — `images/…`,
@@ -87,6 +97,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="t-body" suppressHydrationWarning>
         {children}
         <LeadAttributionBridge />
+        <MarketPrompt />
         {/* In the layout, not in a page: the widget it replaces only existed on
             the routes served through the legacy shell, so the site asked some
             visitors for consent and not others. Above `Analytics`, which reads
