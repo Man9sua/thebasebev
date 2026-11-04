@@ -79,6 +79,7 @@ export function HomeBestsellers() {
                     type="button"
                     className={count > 0 ? styles.addOn : styles.add}
                     aria-haspopup="dialog"
+                    disabled={!cart.ready || !sampleCart.ready}
                     aria-label={count > 0 ? `${product.name}: ${count} added, edit` : `Add ${product.name}`}
                     onClick={() => {
                       setPickerKind(kind);

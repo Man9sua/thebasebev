@@ -38,6 +38,7 @@ async function readOnlyContext(options) {
     return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
   });
   await context.route("**/api/checkout**", (route) => {
+    if (route.request().method() === "GET" && new URL(route.request().url()).pathname === "/api/checkout/stripe/config") return route.fallback();
     failures.push("A checkout API request was blocked");
     return route.abort();
   });
@@ -251,12 +252,8 @@ try {
   // The homepage: the product slider, then the bestsellers grid.
   // Navigation and the product grid moved out of the old hover mega-menu into
   // the full-screen menu panel, so they are asserted there rather than on hover.
-  await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
   await page.locator(BESTSELLERS).waitFor();
-  // Nothing covers the page any more — the loading screen is gone — so this is
-  // just a frame for the hero and the scene controller to settle in before the
-  // first desktop wheel event.
-  await page.waitForTimeout(250);
 
   // The homepage opens with the product slider, which replaced the
   // photographic hero at the owner's request. It keeps the page's h1 for
