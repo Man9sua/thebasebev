@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { isAllowedStripeHost, isStripeSessionId, type StripePolicy } from "./stripe-mode";
 
 const MAX_WEBHOOK_BODY_BYTES = 1024 * 1024;
 
@@ -15,7 +16,7 @@ export type VerifyStripeEvent = (
   webhookSecret: string,
 ) => Promise<VerifiedStripeEvent>;
 
-export type StripeWebhookDependencies = Readonly<{
+export type StripeWebhookDependencies = StripePolicy & Readonly<{
   webhookSecret?: string;
   verifyEvent?: VerifyStripeEvent;
   processSession?: (id: string) => Promise<{ processed: boolean; duplicate?: boolean; ignored?: boolean; pending?: boolean }>;
@@ -46,7 +47,7 @@ function apiError(status: number, code: string, message: string) {
   );
 }
 
-export async function handleStripeTestWebhook(
+export async function handleStripeWebhook(
   request: Request,
   dependencies: StripeWebhookDependencies,
 ) {
@@ -57,16 +58,12 @@ export async function handleStripeTestWebhook(
     return apiError(400, "INVALID_REQUEST_URL", "The request URL is invalid.");
   }
 
-  if (
-    requestUrl.hostname !== "the-base-staging.mansua.workers.dev" &&
-    requestUrl.hostname !== "localhost" &&
-    requestUrl.hostname !== "127.0.0.1" &&
-    requestUrl.hostname !== "[::1]"
-  ) {
+  const live = dependencies.mode === "live";
+  if (!isAllowedStripeHost(requestUrl, dependencies)) {
     return apiError(
       403,
-      "STRIPE_TEST_HOST_REQUIRED",
-      "Stripe Test webhooks are available only on local development and the staging hostname.",
+      "STRIPE_HOST_REJECTED",
+      "Stripe webhooks are unavailable on this hostname.",
     );
   }
 
@@ -75,7 +72,7 @@ export async function handleStripeTestWebhook(
     return apiError(
       503,
       "STRIPE_WEBHOOK_NOT_CONFIGURED",
-      "Stripe Test Mode webhook verification is not configured.",
+      "Stripe webhook verification is not configured.",
     );
   }
 
@@ -116,11 +113,11 @@ export async function handleStripeTestWebhook(
     );
   }
 
-  if (event.livemode) {
+  if (event.livemode !== live) {
     return apiError(
       422,
-      "STRIPE_LIVE_EVENT_REJECTED",
-      "This endpoint accepts Stripe Test Mode events only.",
+      "STRIPE_EVENT_MODE_REJECTED",
+      "This event does not match the configured payment mode.",
     );
   }
 
@@ -135,11 +132,11 @@ export async function handleStripeTestWebhook(
   if (!["checkout.session.completed", "checkout.session.async_payment_succeeded"].includes(event.type)) {
     return Response.json({ ok: true, received: true, processed: false, ignored: true }, { headers: { "Cache-Control": "no-store" } });
   }
-  if (!event.sessionId || !/^cs_test_[A-Za-z0-9_]+$/.test(event.sessionId)) return apiError(422, "STRIPE_EVENT_INVALID", "A Test checkout session is required.");
+  if (!event.sessionId || !isStripeSessionId(event.sessionId, dependencies.mode)) return apiError(422, "STRIPE_EVENT_INVALID", "A checkout session in the configured payment mode is required.");
   if (!dependencies.processSession) return apiError(503, "ORDER_RECEIVER_NOT_READY", "Payment processing is not configured. Retry this event.");
   try {
     const result = await dependencies.processSession(event.sessionId);
-    return Response.json({ ok: true, received: true, testMode: true, ...result }, { headers: { "Cache-Control": "no-store" } });
+    return Response.json({ ok: true, received: true, testMode: !live, ...result }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     // Stripe retries a failed delivery. Never consume an event before Odoo commits.
     return apiError(503, "ORDER_DELIVERY_RETRY_REQUIRED", "The paid order is awaiting processing. Retry this event.");

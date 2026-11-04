@@ -1,19 +1,19 @@
-import { handleStripeTestCheckout } from "@/lib/stripe-test-checkout";
-import { createStripeTestClient } from "@/lib/stripe-test-client";
-import { checkStripeTestCheckoutRateLimit } from "@/lib/stripe-test-rate-limit";
+import { handleStripeCheckout } from "@/lib/stripe-checkout";
+import { createStripeClient } from "@/lib/stripe-client";
+import { checkStripeCheckoutRateLimit } from "@/lib/stripe-rate-limit";
 import { getShopPaymentRuntime } from "@/lib/shop-payment-runtime";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const rateLimit = checkStripeTestCheckoutRateLimit(request);
+  const rateLimit = checkStripeCheckoutRateLimit(request);
   if (!rateLimit.allowed) {
     return Response.json(
       {
         ok: false,
         error: {
-          code: "STRIPE_TEST_RATE_LIMITED",
-          message: "Too many Stripe Test checkout requests.",
+          code: "STRIPE_RATE_LIMITED",
+          message: "Too many checkout requests. Please try again shortly.",
         },
       },
       {
@@ -27,8 +27,9 @@ export async function POST(request: Request) {
   }
 
   const runtime = await getShopPaymentRuntime();
-  return handleStripeTestCheckout(request, {
+  return handleStripeCheckout(request, {
+    mode: runtime.mode, liveOrigin: runtime.liveOrigin,
     secretKey: runtime.secretKey, orders: runtime.orders, taxRateId: runtime.taxRateId, orderReceiverReady: runtime.receiverReady,
-    createClient: createStripeTestClient,
+    createClient: createStripeClient,
   });
 }

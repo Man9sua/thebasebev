@@ -8,14 +8,12 @@ import {
 } from "@/lib/shop-payment";
 import { prepareOrderSnapshot, type OrderSnapshot, type OrderStore } from "./shop-order";
 import { parseFirstTouchAttribution, type FirstTouchAttribution } from "./leads";
+import { isAllowedStripeHost, isStripeKey, isStripeSessionId, stripeIntegration, type StripePolicy } from "./stripe-mode";
 
-export const STRIPE_TEST_STAGING_ORIGIN = "https://the-base-staging.mansua.workers.dev";
-export const SHOP_STRIPE_INTEGRATION = "the_base_shop_test";
 const MAX_CHECKOUT_BODY_BYTES = 16 * 1024;
-const STAGING_HOST = new URL(STRIPE_TEST_STAGING_ORIGIN).hostname;
 
 // Keep existing public product IDs while accepting slugs for the new ranges.
-export const STRIPE_TEST_CATALOG = Object.freeze(Object.fromEntries(SAMPLE_PRODUCTS.map(product => [
+export const STRIPE_CATALOG = Object.freeze(Object.fromEntries(SAMPLE_PRODUCTS.map(product => [
   getCheckoutProductId(product.slug) ?? product.slug,
   { slug: product.slug, name: product.name, flavors: product.flavours },
 ])));
@@ -37,7 +35,7 @@ export type StripeCheckoutClient = Readonly<{
   retrieveTaxRate?: (id: string) => Promise<Stripe.TaxRate>;
   retrieveSession?: (id: string) => Promise<StripeCheckoutSessionResult & { status: string | null; payment_status: string }>;
 }>;
-export type StripeCheckoutDependencies = Readonly<{
+export type StripeCheckoutDependencies = StripePolicy & Readonly<{
   secretKey?: string;
   createClient: (secretKey: string) => StripeCheckoutClient;
   createRequestId?: () => string;
@@ -97,7 +95,7 @@ function validateCheckoutPayload(input: unknown): { ok: true; data: ValidatedChe
     if (!isRecord(item)) return { ok: false, code: "INVALID_ITEM" };
     if (Object.keys(item).some(key => FORBIDDEN_PRICE_FIELDS.has(key))) return { ok: false, code: "CLIENT_PRICE_FORBIDDEN" };
     if (typeof item.productId !== "string") return { ok: false, code: "INVALID_PRODUCT" };
-    const slug = Object.hasOwn(STRIPE_TEST_CATALOG, item.productId) ? STRIPE_TEST_CATALOG[item.productId].slug : item.productId;
+    const slug = Object.hasOwn(STRIPE_CATALOG, item.productId) ? STRIPE_CATALOG[item.productId].slug : item.productId;
     const product = SAMPLE_PRODUCTS.find(product => product.slug === slug);
     if (!product) return { ok: false, code: "INVALID_PRODUCT" };
     if (typeof item.flavor !== "string" || !product.flavours.includes(item.flavor)) return { ok: false, code: "INVALID_FLAVOR" };
@@ -119,14 +117,6 @@ function validateCheckoutPayload(input: unknown): { ok: true; data: ValidatedChe
   return { ok: true, data: { kind: input.kind, country: input.country, shippingMethod: input.shippingMethod, customer, items, ...(attribution ? { attribution } : {}) } };
 }
 
-export function isAllowedStripeTestHost(hostname: string) {
-  return [STAGING_HOST, "localhost", "127.0.0.1", "[::1]"].includes(hostname);
-}
-
-export function isStripeTestKey(secretKey: string | undefined) {
-  return /^(?:sk|rk)_test_/.test(secretKey?.trim() ?? "");
-}
-
 export function stripeApiError(status: number, code: string, message: string) {
   return Response.json({ ok: false, error: { code, message } }, { status, headers: { "Cache-Control": "no-store" } });
 }
@@ -139,9 +129,11 @@ function validCheckoutUrl(value: string | null) {
   } catch { return false; }
 }
 
-export async function handleStripeTestCheckout(request: Request, dependencies: StripeCheckoutDependencies) {
+export async function handleStripeCheckout(request: Request, dependencies: StripeCheckoutDependencies) {
   const url = new URL(request.url);
-  if (!isAllowedStripeTestHost(url.hostname)) return stripeApiError(403, "STRIPE_TEST_HOST_REQUIRED", "Secure Test checkout is only available on staging and local development.");
+  const mode = dependencies.mode ?? "test";
+  const live = mode === "live";
+  if (!isAllowedStripeHost(url, dependencies)) return stripeApiError(403, "STRIPE_HOST_REJECTED", "Secure checkout is unavailable on this hostname.");
   const origin = request.headers.get("origin");
   if (origin && origin !== url.origin) return stripeApiError(403, "CHECKOUT_ORIGIN_REJECTED", "The checkout request origin is invalid.");
   if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) return stripeApiError(415, "INVALID_CONTENT_TYPE", "The checkout request must be JSON.");
@@ -159,37 +151,38 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
   const quote = getShopQuote(data, dependencies.pricing);
   if (!quote.ready) return stripeApiError(503, "CHECKOUT_PRICING_NOT_CONFIGURED", quote.reason ?? "Prices and delivery need to be confirmed before payment.");
   const secretKey = dependencies.secretKey?.trim();
-  if (!secretKey) return stripeApiError(503, "STRIPE_TEST_NOT_CONFIGURED", "Secure Test checkout is not configured.");
-  if (!isStripeTestKey(secretKey)) return stripeApiError(503, "STRIPE_TEST_KEY_REQUIRED", "Only a Stripe Test Mode secret key is accepted.");
+  if (!secretKey) return stripeApiError(503, "STRIPE_NOT_CONFIGURED", "Secure checkout is not configured.");
+  if (!isStripeKey(secretKey, mode)) return stripeApiError(503, "STRIPE_MODE_KEY_REQUIRED", "The Stripe key does not match the configured payment mode.");
   if (!dependencies.orderReceiverReady || !dependencies.orders) return stripeApiError(503, "ORDER_RECEIVER_NOT_READY", "Please send your order request. Card checkout is not available yet.");
   const taxRateId = dependencies.taxRateId ?? "";
   if (quote.vat !== 0 && !/^txr_[A-Za-z0-9]+$/.test(taxRateId)) return stripeApiError(503, "STRIPE_VAT_NOT_CONFIGURED", "VAT must be configured for secure card checkout.");
 
   const checkoutKey = request.headers.get("Idempotency-Key") ?? dependencies.createRequestId?.() ?? crypto.randomUUID();
   if (!/^[A-Za-z0-9_-]{8,100}$/.test(checkoutKey)) return stripeApiError(422, "INVALID_CHECKOUT_KEY", "Please retry checkout.");
-  const requestId = `tb_test_${checkoutKey}`;
+  const requestId = `tb_${mode}_${checkoutKey}`;
   try {
     const client = dependencies.createClient(secretKey);
     if (quote.vat !== 0) {
       const rate = await client.retrieveTaxRate?.(taxRateId);
-      if (!rate || rate.livemode || !rate.active || rate.percentage !== 5 || rate.inclusive || rate.country !== "AE") return stripeApiError(503, "STRIPE_VAT_NOT_CONFIGURED", "The approved VAT rate is unavailable.");
+      if (!rate || rate.livemode !== live || !rate.active || rate.percentage !== 5 || rate.inclusive || rate.country !== "AE") return stripeApiError(503, "STRIPE_VAT_NOT_CONFIGURED", "The approved VAT rate is unavailable.");
     }
-    const snapshot = dependencies.prepareSnapshot?.(data, taxRateId) ?? prepareOrderSnapshot(data, taxRateId, dependencies.pricing);
+    const snapshot = dependencies.prepareSnapshot?.(data, taxRateId) ?? prepareOrderSnapshot(data, taxRateId, dependencies.pricing, mode);
+    if ((snapshot.mode ?? "test") !== mode) throw new Error("ORDER_MODE_MISMATCH");
     const order = await dependencies.orders.reserve(checkoutKey, snapshot);
     if (order.state !== "pending") return stripeApiError(409, "CHECKOUT_ALREADY_PAID", "This payment is already being processed. Please check your payment confirmation.");
-    const checkoutResponse = (session: StripeCheckoutSessionResult) => Response.json({ ok: true, checkout: { sessionId: session.id, url: session.url, requestId, currency: "AED", testMode: true } },
+    const checkoutResponse = (session: StripeCheckoutSessionResult) => Response.json({ ok: true, checkout: { sessionId: session.id, url: session.url, requestId, currency: "AED", testMode: !live } },
       { status: 201, headers: { "Cache-Control": "no-store" } });
     if (order.sessionId) {
       const existing = await client.retrieveSession?.(order.sessionId);
       if (existing?.status === "expired") return stripeApiError(409, "CHECKOUT_EXPIRED", "This checkout expired. Please retry.");
       if (existing?.status === "complete" || existing?.payment_status === "paid") return stripeApiError(409, "CHECKOUT_ALREADY_PAID", "This payment is already being processed. Please check your payment confirmation.");
-      if (!existing || existing.id !== order.sessionId || existing.livemode || !validCheckoutUrl(existing.url)) throw new Error("CHECKOUT_SESSION_INVALID");
+      if (!existing || existing.id !== order.sessionId || existing.livemode !== live || !isStripeSessionId(existing.id, mode) || !validCheckoutUrl(existing.url)) throw new Error("CHECKOUT_SESSION_INVALID");
       return checkoutResponse(existing);
     }
     // Stripe can prune idempotency keys after 24 hours. An unbound old attempt
     // needs reconciliation, rather than silently creating a second session.
     if (Date.now() - order.createdAt > 23 * 60 * 60 * 1000) return stripeApiError(409, "CHECKOUT_REVIEW_REQUIRED", "Please contact the team to check your previous checkout attempt.");
-    const metadata = { tb_request_id: requestId, integration: SHOP_STRIPE_INTEGRATION, tb_protocol: "2", tb_order_id: order.id, tb_snapshot_hash: order.hash,
+    const metadata = { tb_request_id: requestId, integration: stripeIntegration(mode), tb_protocol: "2", tb_order_id: order.id, tb_snapshot_hash: order.hash,
       kind: data.kind, country: data.country, shipping_method: data.shippingMethod, utm_source: data.attribution?.utm_source ?? "",
       tb_subtotal: String(quote.subtotal), tb_shipping: String(quote.shipping), tb_vat: String(quote.vat), tb_total: String(quote.total) };
     const { customer } = data;
@@ -212,7 +205,7 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
       payment_intent_data: { metadata },
     };
     const session = await client.createSession(params, { idempotencyKey: requestId });
-    if (session.livemode || !session.id.startsWith("cs_test_") || !validCheckoutUrl(session.url)) return stripeApiError(502, "STRIPE_TEST_SESSION_REJECTED", "Stripe did not return a valid Test Mode checkout.");
+    if (session.livemode !== live || !isStripeSessionId(session.id, mode) || !validCheckoutUrl(session.url)) return stripeApiError(502, "STRIPE_SESSION_REJECTED", "Stripe did not return a checkout in the configured payment mode.");
     await dependencies.orders.attachSession(order.id, session.id);
     return checkoutResponse(session);
   } catch (error) {
@@ -220,6 +213,6 @@ export async function handleStripeTestCheckout(request: Request, dependencies: S
     if (error && typeof error === "object" && "type" in error && error.type === "StripeIdempotencyError") return stripeApiError(409, "CHECKOUT_KEY_REUSED", "This checkout changed. Please retry.");
     if (["ORDER_NOT_PAYABLE", "ODOO_VARIANT_UNRESOLVED", "ORDER_NEEDS_QUOTE"].includes(code)) return stripeApiError(503, "ORDER_NEEDS_QUOTE", "Please request a quote for these items.");
     if (code === "CHECKOUT_KEY_REUSED") return stripeApiError(409, code, "Your order changed. Please retry checkout.");
-    return stripeApiError(502, "STRIPE_TEST_UNAVAILABLE", "Secure Test checkout is temporarily unavailable. Your basket has been kept.");
+    return stripeApiError(502, "STRIPE_UNAVAILABLE", "Secure checkout is temporarily unavailable. Your basket has been kept.");
   }
 }

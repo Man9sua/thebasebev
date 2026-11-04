@@ -1,9 +1,10 @@
 import type Stripe from "stripe";
 import type { OrderStore, StoredOrder } from "./shop-order";
 import type { QuotationResult } from "./odoo-paid-order";
-import { SHOP_STRIPE_INTEGRATION } from "./stripe-test-checkout";
+import { isStripeSessionId, stripeIntegration, type StripeMode } from "./stripe-mode";
 
 export type PaidOrderDependencies = {
+  mode?: StripeMode;
   orders: OrderStore;
   retrieveSession(id: string): Promise<Stripe.Checkout.Session>;
   listLineItems(id: string): Promise<Stripe.ApiList<Stripe.LineItem>>;
@@ -11,10 +12,10 @@ export type PaidOrderDependencies = {
   createQuotation(order: StoredOrder, session: Stripe.Checkout.Session, paymentId: string): Promise<QuotationResult>;
 };
 
-export function verifySessionSnapshot(session: Stripe.Checkout.Session, order: StoredOrder, requirePaid = true) {
+export function verifySessionSnapshot(session: Stripe.Checkout.Session, order: StoredOrder, requirePaid = true, mode: StripeMode = "test") {
   const expected = order.snapshot.amounts;
-  if (session.livemode || !session.id.startsWith("cs_test_") || session.currency !== "aed" || session.mode !== "payment"
-    || session.metadata?.integration !== SHOP_STRIPE_INTEGRATION || session.metadata.tb_protocol !== "2"
+  if (session.livemode !== (mode === "live") || !isStripeSessionId(session.id, mode) || (order.snapshot.mode ?? "test") !== mode || session.currency !== "aed" || session.mode !== "payment"
+    || session.metadata?.integration !== stripeIntegration(mode) || session.metadata.tb_protocol !== "2"
     || session.metadata.tb_order_id !== order.id || session.metadata.tb_snapshot_hash !== order.hash
     || (order.sessionId !== null && order.sessionId !== session.id)
     || session.amount_subtotal !== expected.subtotal + expected.shipping || session.amount_total !== expected.total
@@ -38,27 +39,30 @@ function verifyLines(order: StoredOrder, lines: Stripe.ApiList<Stripe.LineItem>)
     const tax = expected.kind === "samples" ? 0 : Number((BigInt(expected.unitAmount * expected.quantity) * BigInt(500) + BigInt(5000)) / BigInt(10000));
     if (line.amount_tax !== tax || line.amount_total !== line.amount_subtotal + tax
       || (tax > 0 && (line.taxes?.length !== 1 || line.taxes[0].rate.id !== order.snapshot.taxRateId
-        || line.taxes[0].rate.percentage !== 5 || line.taxes[0].rate.inclusive || line.taxes[0].rate.livemode))) throw new Error("PAYMENT_TAX_MISMATCH");
+        || line.taxes[0].rate.percentage !== 5 || line.taxes[0].rate.inclusive || line.taxes[0].rate.livemode !== (order.snapshot.mode === "live")))) throw new Error("PAYMENT_TAX_MISMATCH");
   }
 }
 
 export async function processPaidSession(sessionId: string, dependencies: PaidOrderDependencies) {
+  const mode = dependencies.mode ?? "test";
+  if (!isStripeSessionId(sessionId, mode)) throw new Error("PAYMENT_MODE_MISMATCH");
   const session = await dependencies.retrieveSession(sessionId);
   if (session.id !== sessionId) throw new Error("PAYMENT_SESSION_MISMATCH");
-  if (session.metadata?.integration !== SHOP_STRIPE_INTEGRATION || session.metadata.tb_protocol !== "2") return { processed: false, ignored: true };
+  if (session.metadata?.integration !== stripeIntegration(mode) || session.metadata.tb_protocol !== "2") return { processed: false, ignored: true };
   const order = await dependencies.orders.get(session.metadata.tb_order_id ?? "");
   if (!order) throw new Error("ORDER_SNAPSHOT_MISSING");
   if (session.status !== "complete" || session.payment_status !== "paid") return { processed: false, pending: true };
-  verifySessionSnapshot(session, order);
+  verifySessionSnapshot(session, order, true, mode);
   const paymentId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
   if (!paymentId || !paymentId.startsWith("pi_")) throw new Error("PAYMENT_INTENT_MISSING");
   const [payment, lines] = await Promise.all([dependencies.retrievePaymentIntent(paymentId), dependencies.listLineItems(session.id)]);
   const charge = payment.latest_charge;
-  if (payment.livemode || payment.id !== paymentId || payment.status !== "succeeded" || payment.currency !== "aed"
+  if (payment.livemode !== (mode === "live") || payment.id !== paymentId || payment.status !== "succeeded" || payment.currency !== "aed"
     || payment.amount !== order.snapshot.amounts.total || payment.amount_received !== order.snapshot.amounts.total
-    || payment.metadata.integration !== SHOP_STRIPE_INTEGRATION || payment.metadata.tb_protocol !== "2"
+    || payment.metadata.integration !== stripeIntegration(mode) || payment.metadata.tb_protocol !== "2"
     || payment.metadata.tb_order_id !== order.id || payment.metadata.tb_snapshot_hash !== order.hash
-    || !charge || typeof charge === "string" || !charge.paid || charge.refunded || charge.amount_refunded !== 0 || charge.disputed) throw new Error("PAYMENT_INTENT_MISMATCH");
+    || !charge || typeof charge === "string" || charge.livemode !== (mode === "live") || charge.currency !== "aed"
+    || charge.amount !== order.snapshot.amounts.total || !charge.paid || charge.refunded || charge.amount_refunded !== 0 || charge.disputed) throw new Error("PAYMENT_INTENT_MISMATCH");
   verifyLines(order, lines);
   await dependencies.orders.attachSession(order.id, session.id);
   await dependencies.orders.paid(order.id, paymentId);

@@ -1,4 +1,5 @@
-import type { ShopCustomer } from "./stripe-test-checkout";
+import type { ShopCustomer } from "./stripe-checkout";
+import type { StripeMode } from "./stripe-mode";
 import { getShopQuote, getShopUnitAmount, shopItemKind, type ShopPaymentPricing, type ShopQuoteInput } from "./shop-payment";
 import mapping from "@/data/shop-odoo.json";
 import { SAMPLE_PRODUCTS } from "@/data/sample-flavours";
@@ -9,7 +10,7 @@ export type OrderLine = Readonly<{
   sku: string; productId: number; quantity: number; unitAmount: number;
 }>;
 export type OrderSnapshot = Readonly<{
-  version: 2; kind: "products" | "samples"; country: string; shippingMethod: string;
+  version: 2; mode?: StripeMode; kind: "products" | "samples"; country: string; shippingMethod: string;
   customer: ShopCustomer; taxRateId: string;
   consent: true;
   attribution?: FirstTouchAttribution & { currentPage: string };
@@ -35,7 +36,7 @@ export interface OrderStore {
 const variants = new Map(mapping.records.map(row => [`${row.slug}::${row.flavor}`, row]));
 const names = new Map(SAMPLE_PRODUCTS.map(row => [row.slug, row.name]));
 
-export function prepareOrderSnapshot(input: ShopQuoteInput & { customer: ShopCustomer; attribution?: OrderSnapshot["attribution"] }, taxRateId: string, pricing?: ShopPaymentPricing): OrderSnapshot {
+export function prepareOrderSnapshot(input: ShopQuoteInput & { customer: ShopCustomer; attribution?: OrderSnapshot["attribution"] }, taxRateId: string, pricing?: ShopPaymentPricing, mode: StripeMode = "test"): OrderSnapshot {
   const quote = getShopQuote(input, pricing);
   if (!quote.ready || input.country !== "AE" || !/^txr_[a-zA-Z0-9]+$/.test(taxRateId)) throw new Error("ORDER_NOT_PAYABLE");
   const lines: OrderLine[] = input.items.map(item => {
@@ -48,7 +49,7 @@ export function prepareOrderSnapshot(input: ShopQuoteInput & { customer: ShopCus
   if (quote.shipping! > 0) lines.push({ slug: "delivery", flavor: "UAE standard delivery", kind: "delivery", name: "UAE delivery",
     sku: mapping.delivery.sku, productId: mapping.delivery.id, quantity: 1, unitAmount: quote.shipping! });
   if (lines.length > 100 || quote.total! > 99_999_999) throw new Error("ORDER_NEEDS_QUOTE");
-  return { version: 2, kind: input.kind, country: input.country, shippingMethod: input.shippingMethod, customer: input.customer, taxRateId, consent: true,
+  return { version: 2, mode, kind: input.kind, country: input.country, shippingMethod: input.shippingMethod, customer: input.customer, taxRateId, consent: true,
     ...(input.attribution ? { attribution: input.attribution } : {}),
     amounts: { subtotal: quote.subtotal!, shipping: quote.shipping!, vat: quote.vat!, total: quote.total! }, lines };
 }

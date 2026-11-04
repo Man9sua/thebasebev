@@ -51,7 +51,7 @@ npm.cmd run build
 npm.cmd run check:assets
 ```
 
-Stripe checkout is staging Test Mode only. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `PAYMENT_PIPELINE.md` for setup and verification status.
+Stripe checkout uses Test Mode on staging and separately configured Live Mode only on the owner-approved Live preview. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `PAYMENT_PIPELINE.md` for setup and verification status.
 
 ### Shop and checkout
 
@@ -72,17 +72,20 @@ HTML demo prices and legacy prices are never substituted. `/api/leads` remains
 the request path for unresolved variants and delivery quotes.
 
 `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-side staging secrets.
-Only Test Mode keys and staging/localhost hosts are accepted. Checkout creates
+They are accepted only on staging/localhost. Live uses separate `STRIPE_LIVE_*`
+keys, an exact approved origin and a separate Odoo action and D1 ledger. Checkout creates
 zero-priced sample lines and a separate delivery line taxed at 5%. The return page verifies
 the Stripe session and quoted totals before confirming payment, and clears only
 the matching unchanged basket. A failed/cancelled payment keeps the basket.
 The webhook verifies signatures and records fulfillment only after an Odoo draft
-quotation commits. Durable snapshots live in a staging D1 database; a transaction
+quotation commits. Durable snapshots live in mode-specific D1 databases; a transaction
 lock in Odoo prevents duplicate quotations after concurrent deliveries or timeouts.
 
 The destination is a paid **draft quotation in Odoo Sales**, without automatic
 confirmation or invoicing. See [PAYMENT_PIPELINE.md](./PAYMENT_PIPELINE.md) for the
-Test Mode verification status and separate Live rollout requirements.
+Test Mode evidence and Live setup/verification requirements. The approved Live
+preview is `https://the-base-production.mansua.workers.dev`; Tilda still serves
+the real production domain. No automatic confirmation or invoicing is enabled.
 
 Against a running production build, the local smoke commands are:
 
@@ -132,7 +135,7 @@ npm.cmd run deploy:production-preview
 
 This command targets `the-base-production` on `workers.dev` only. It does not attach `thebasebev.com`.
 
-The configured staging Worker name is `the-base-staging`. The repository does not configure the production domain and this workflow must not be used to change `thebasebev.com`, its DNS, or the existing Tilda project. Version `daa6c072-728d-4c24-9e96-7856b048b41f` was deployed on 2026-08-24. Post-deploy smoke is temporarily blocked by Cloudflare Error 1027 because account `mansua` exhausted its Free daily Worker request quota; repeat the remote suite after the 00:00 UTC reset.
+The configured staging Worker name is `the-base-staging`. The repository does not configure the production domain and this workflow must not be used to change `thebasebev.com`, its DNS, or the existing Tilda project. The approved Live payment preview has its own order database and credentials; see `PAYMENT_PIPELINE.md` for the rollout and verification procedure.
 
 Current verified staging deployment:
 

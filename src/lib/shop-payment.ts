@@ -46,7 +46,7 @@ export const SHOP_PAYMENT_PRICING: ShopPaymentPricing = Object.freeze({
   uaeDelivery: Object.freeze({ amount: 3000, freeFromSubtotal: 50_000, maxSampleWeightGrams: 5000 }),
 });
 
-// The server also requires its Test Mode secrets, ledger binding and receiver flag.
+// The server separately verifies its mode-specific secrets, ledger and receiver.
 export const SHOP_ORDER_PAYMENTS_READY = true;
 export const UAE_DELIVERY_TIMING = "Orders placed on weekdays are delivered the next day. Weekend orders are delivered in 1–2 days.";
 

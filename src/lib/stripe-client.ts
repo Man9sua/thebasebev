@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 
-export function createStripeTestClient(secretKey: string) {
+export function createStripeClient(secretKey: string) {
   const stripe = new Stripe(secretKey, {
     httpClient: Stripe.createFetchHttpClient(), maxNetworkRetries: 1, timeout: 10_000,
   });

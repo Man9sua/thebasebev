@@ -75,14 +75,24 @@ async function shopBaskets(page) {
   check(destination.origin === new URL(baseUrl).origin && destination.pathname === "/checkout"
     && destination.searchParams.get("country") === "AE" && destination.searchParams.get("kind") === "products",
   "Shop: paid checkout stays on this site with country and kind");
+  const configResponse = page.waitForResponse(response => new URL(response.url()).pathname === "/api/checkout/stripe/config" && response.request().method() === "GET");
   await checkout.click();
+  const paymentConfig = (await (await configResponse).json()).payment;
   await page.getByRole("heading", { name: "Checkout", exact: true }).waitFor();
   const summary = page.getByRole("complementary", { name: "Your order", exact: true });
   for (const flavor of ["Vanilla", "Banana", "Classic"]) {
     check(await summary.getByText(flavor, { exact: true }).isVisible(), `Checkout: ${flavor} was retained`);
   }
-  check(await page.getByRole("button", { name: "Continue to secure payment", exact: true }).isVisible(), "Checkout: mapped UAE goods offer secure Test Mode payment");
-  check(await page.getByText("Test checkout. Use a Stripe test card; no real payment is taken.", { exact: true }).isVisible(), "Checkout: Test Mode is clear before payment");
+  const payButton = page.getByRole("button", { name: "Continue to secure payment", exact: true });
+  check(await payButton.isVisible(), "Checkout: mapped UAE goods offer secure payment");
+  const testNotice = page.getByText("Test checkout. Use a Stripe test card; no real payment is taken.", { exact: true });
+  if (paymentConfig.mode === "test") await testNotice.waitFor();
+  check(paymentConfig.mode === "test" ? await testNotice.isVisible() : paymentConfig.mode === "live" && await testNotice.count() === 0,
+    "Checkout: payment mode matches the server and Test mode is labelled");
+  if (new URL(baseUrl).hostname.endsWith(".workers.dev")) {
+    if (paymentConfig.ready === true) await payButton.click({ trial: true });
+    check(paymentConfig.ready === true && await payButton.isEnabled(), "Deployed checkout: receiver and mode configuration are ready");
+  }
   const paidBasket = await page.evaluate(() => localStorage.getItem("thebase:cart:v2"));
 
   await openShop(page, "SA");
@@ -151,6 +161,7 @@ try {
     return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
   });
   await context.route("**/api/checkout**", (route) => {
+    if (route.request().method() === "GET" && new URL(route.request().url()).pathname === "/api/checkout/stripe/config") return route.fallback();
     checkoutAttempts++;
     return route.abort();
   });

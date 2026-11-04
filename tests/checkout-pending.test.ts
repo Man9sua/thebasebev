@@ -87,14 +87,24 @@ test("reordering unchanged lines still identifies the same sample box", () => {
   });
 });
 
-test("invalid or live session IDs cannot overwrite a pending Test Mode checkout", () => {
+test("invalid session IDs cannot overwrite a pending checkout", () => {
   withStorage((storage) => {
     rememberPendingCheckout(SESSION, "products", basket);
     const original = storage.getItem(KEY);
-    for (const sessionId of ["", "cs_test_", "cs_live_other", "cs_test_has-dash", "https://example.com/cs_test_other"]) {
+    for (const sessionId of ["", "cs_test_", "cs_live_", "cs_test_has-dash", "https://example.com/cs_test_other"]) {
       rememberPendingCheckout(sessionId, "products", basket);
       assert.equal(storage.getItem(KEY), original);
     }
+  });
+});
+
+test("a verified Live return clears only its exact unchanged basket", () => {
+  withStorage(() => {
+    rememberPendingCheckout("cs_live_pendingShop123", "products", basket);
+    assert.equal(consumePendingCheckout(SESSION, "products", basket), false);
+    assert.equal(consumePendingCheckout("cs_live_pendingShop123", "products", basket.map(item => ({ ...item, quantity: item.quantity + 1 }))), false);
+    assert.equal(consumePendingCheckout("cs_live_pendingShop123", "products", basket), true);
+    assert.equal(consumePendingCheckout("cs_live_pendingShop123", "products", basket), false);
   });
 });
 

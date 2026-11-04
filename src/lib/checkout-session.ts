@@ -1,5 +1,6 @@
 import type { CartItem } from "./cart-store";
 import type { ShopKind } from "@/data/shop";
+import { stripeSessionMode } from "./stripe-mode";
 
 const KEY = "thebase:checkout-pending:v1";
 
@@ -10,7 +11,7 @@ function signature(items: readonly CartItem[]) {
 
 /** A verified return may clear only the unchanged basket sent to that session. */
 export function rememberPendingCheckout(sessionId: string, kind: ShopKind, items: readonly CartItem[]) {
-  if (!/^cs_test_[A-Za-z0-9_]+$/.test(sessionId)) return;
+  if (!stripeSessionMode(sessionId)) return;
   try { window.sessionStorage.setItem(KEY, JSON.stringify({ sessionId, kind, items: signature(items) })); }
   catch { /* Payment can proceed without browser storage; the return keeps the basket. */ }
 }

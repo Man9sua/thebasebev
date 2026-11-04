@@ -4,39 +4,40 @@ import { DatabaseSync } from "node:sqlite";
 import Stripe from "stripe";
 import { prepareOrderSnapshot } from "../src/lib/shop-order";
 import { processPaidSession, type PaidOrderDependencies } from "../src/lib/stripe-paid-order";
-import { handleStripeTestWebhook } from "../src/lib/stripe-test-webhook";
+import { handleStripeWebhook } from "../src/lib/stripe-webhook";
 import { testOrderStore } from "./helpers/order-store";
-import { handleStripeTestSession } from "../src/lib/stripe-test-session";
-import { createStripeTestClient } from "../src/lib/stripe-test-client";
+import { handleStripeSession } from "../src/lib/stripe-session";
+import { createStripeClient } from "../src/lib/stripe-client";
 import { createPaidQuotation } from "../src/lib/odoo-paid-order";
+import { stripeIntegration, type StripeMode } from "../src/lib/stripe-mode";
 
-async function fixture(kind: "products" | "samples" = "products") {
+async function fixture(kind: "products" | "samples" = "products", mode: StripeMode = "test") {
   const database = new DatabaseSync(":memory:");
   const orders = testOrderStore(database);
   const snapshot = prepareOrderSnapshot({ kind, country: "AE", shippingMethod: "standard",
     customer: { name: "Payment QA", email: "payment-qa@example.com", phone: "+971500000000", city: "Dubai", street: "QA street" },
     items: kind === "samples" ? [{ slug: "milkshake", flavor: "Vanilla", quantity: 2, kind: "samples" }] : [{ slug: "milkshake", flavor: "Vanilla", quantity: 2, kind: "products" }, { slug: "milkshake", flavor: "Vanilla", quantity: 1, kind: "samples" }],
-  }, "txr_fixture");
+  }, "txr_fixture", undefined, mode);
   const order = await orders.reserve("unit-checkout-key", snapshot);
-  const metadata = { integration: "the_base_shop_test", tb_protocol: "2", tb_order_id: order.id, tb_snapshot_hash: order.hash };
-  const session = { id: "cs_test_verified", object: "checkout.session", livemode: false, mode: "payment", status: "complete", payment_status: "paid",
+  const metadata = { integration: stripeIntegration(mode), tb_protocol: "2", tb_order_id: order.id, tb_snapshot_hash: order.hash };
+  const session = { id: `cs_${mode}_verified`, object: "checkout.session", livemode: mode === "live", mode: "payment", status: "complete", payment_status: "paid",
     currency: "aed", amount_subtotal: snapshot.amounts.subtotal + snapshot.amounts.shipping, amount_total: snapshot.amounts.total, total_details: { amount_tax: snapshot.amounts.vat, amount_shipping: 0, amount_discount: 0 },
     metadata, payment_intent: "pi_verified", shipping_cost: null,
   } as unknown as Stripe.Checkout.Session;
-  const payment = { id: "pi_verified", livemode: false, status: "succeeded", currency: "aed", amount: snapshot.amounts.total, amount_received: snapshot.amounts.total, metadata,
-    latest_charge: { paid: true, refunded: false, amount_refunded: 0, disputed: false },
+  const payment = { id: "pi_verified", livemode: mode === "live", status: "succeeded", currency: "aed", amount: snapshot.amounts.total, amount_received: snapshot.amounts.total, metadata,
+    latest_charge: { livemode: mode === "live", currency: "aed", amount: snapshot.amounts.total, paid: true, refunded: false, amount_refunded: 0, disputed: false },
   } as unknown as Stripe.PaymentIntent;
   const lines = { has_more: false, data: snapshot.lines.map((row, index) => {
     const subtotal = row.quantity * row.unitAmount;
     const tax = row.kind === "samples" ? 0 : Math.round(subtotal * .05);
     return { quantity: row.quantity, currency: "aed", amount_subtotal: subtotal, amount_tax: tax, amount_discount: 0, amount_total: subtotal + tax,
       price: { unit_amount: row.unitAmount, product: { metadata: { tb_index: String(index), sku: row.sku, kind: row.kind } } },
-      taxes: tax ? [{ rate: { id: "txr_fixture", percentage: 5, inclusive: false, livemode: false } }] : [],
+      taxes: tax ? [{ rate: { id: "txr_fixture", percentage: 5, inclusive: false, livemode: mode === "live" } }] : [],
     };
   }) } as unknown as Stripe.ApiList<Stripe.LineItem>;
   let creates = 0;
-  const dependencies: PaidOrderDependencies = { orders, retrieveSession: async () => session, listLineItems: async () => lines, retrievePaymentIntent: async () => payment,
-    createQuotation: async () => { creates++; return { id: 123, name: "TEST-QUOTATION", state: "draft", total: 9030, duplicate: false }; } };
+  const dependencies: PaidOrderDependencies = { mode, orders, retrieveSession: async () => session, listLineItems: async () => lines, retrievePaymentIntent: async () => payment,
+    createQuotation: async () => { creates++; return { id: 123, name: "TEST-QUOTATION", state: "draft", total: snapshot.amounts.total, duplicate: false }; } };
   return { database, orders, order, snapshot, session, payment, lines, dependencies, creates: () => creates };
 }
 
@@ -122,7 +123,7 @@ test("signed failed webhook receives 503 and the same event can later succeed", 
     data: { object: { object: "checkout.session", id: "cs_test_retry" } } });
   const signature = await Stripe.webhooks.generateTestHeaderStringAsync({ payload, secret, cryptoProvider: Stripe.createSubtleCryptoProvider() });
   let attempts = 0;
-  const deliver = () => handleStripeTestWebhook(new Request("https://the-base-staging.mansua.workers.dev/api/stripe/webhook", {
+  const deliver = () => handleStripeWebhook(new Request("https://the-base-staging.mansua.workers.dev/api/stripe/webhook", {
     method: "POST", headers: { "stripe-signature": signature }, body: payload,
   }), { webhookSecret: secret, processSession: async () => { if (attempts++ === 0) throw new Error("Odoo unavailable"); return { processed: true }; } });
   assert.equal((await deliver()).status, 503);
@@ -169,7 +170,7 @@ test("Stripe adapter explicitly expands tax rates as well as product variants", 
     return Response.json({ object: "list", data: [], has_more: false, url: "/v1/checkout/sessions/cs_test_adapter/line_items" });
   };
   try {
-    await createStripeTestClient("sk_test_fixture").listLineItems("cs_test_adapter");
+    await createStripeClient("sk_test_fixture").listLineItems("cs_test_adapter");
     assert.equal(urls.length, 1);
     const expansions = [...urls[0].searchParams.entries()].filter(([key]) => key.startsWith("expand")).map(([, value]) => value);
     assert.ok(expansions.includes("data.price.product"));
@@ -182,7 +183,7 @@ test("receipt reads the persisted order, discloses no customer and never deliver
   await f.orders.attachSession(f.order.id, f.session.id);
   f.session.customer_details = { name: "Private buyer", email: "private@example.com" } as Stripe.Checkout.Session.CustomerDetails;
   const dependencies = { secretKey: "sk_test_fixture", orders: f.orders, retrieveSession: async () => f.session };
-  const response = await handleStripeTestSession(new Request(receiptUrl), dependencies);
+  const response = await handleStripeSession(new Request(receiptUrl), dependencies);
   const body = await response.json();
   assert.equal(body.checkout.confirmed, true);
   assert.equal(body.checkout.fulfilled, false);
@@ -195,7 +196,7 @@ test("receipt reads the persisted order, discloses no customer and never deliver
   assert.equal(response.headers.get("Cache-Control"), "no-store");
   await f.orders.paid(f.order.id, "pi_verified");
   await f.orders.fulfilled(f.order.id, 123, "TEST-QUOTATION");
-  assert.equal((await (await handleStripeTestSession(new Request(receiptUrl), dependencies)).json()).checkout.quotation, "TEST-QUOTATION");
+  assert.equal((await (await handleStripeSession(new Request(receiptUrl), dependencies)).json()).checkout.quotation, "TEST-QUOTATION");
 });
 
 test("unpaid, expired and missing ledger receipts cannot report order fulfillment", async () => {
@@ -204,12 +205,12 @@ test("unpaid, expired and missing ledger receipts cannot report order fulfillmen
   for (const status of ["open", "expired"] as const) {
     f.session.status = status;
     f.session.payment_status = "unpaid";
-    const response = await handleStripeTestSession(new Request(receiptUrl + "&paid=true&fulfilled=true"), { secretKey: "sk_test_fixture", orders: f.orders, retrieveSession: async () => f.session });
+    const response = await handleStripeSession(new Request(receiptUrl + "&paid=true&fulfilled=true"), { secretKey: "sk_test_fixture", orders: f.orders, retrieveSession: async () => f.session });
     const body = await response.json();
     assert.equal(body.checkout.confirmed, false);
     assert.equal(body.checkout.fulfilled, false);
   }
-  assert.equal((await handleStripeTestSession(new Request(receiptUrl), { secretKey: "sk_test_fixture", retrieveSession: async () => { throw new Error("Must not verify without ledger"); } })).status, 503);
+  assert.equal((await handleStripeSession(new Request(receiptUrl), { secretKey: "sk_test_fixture", retrieveSession: async () => { throw new Error("Must not verify without ledger"); } })).status, 503);
   assert.equal(f.creates(), 0);
 });
 
@@ -220,14 +221,14 @@ test("receipt rejects changed identities, currency, total, VAT and snapshot hash
     const f = await fixture();
     await f.orders.attachSession(f.order.id, f.session.id);
     Object.assign(f.session, patch);
-    const response = await handleStripeTestSession(new Request(receiptUrl), { secretKey: "sk_test_fixture", orders: f.orders, retrieveSession: async () => f.session });
+    const response = await handleStripeSession(new Request(receiptUrl), { secretKey: "sk_test_fixture", orders: f.orders, retrieveSession: async () => f.session });
     assert.equal(response.status, 502);
   }
   let calls = 0;
   for (const [url, key, expected] of [[receiptUrl.replace('cs_test_verified','cs_live_invalid'), 'sk_test_fixture', 'INVALID_SESSION_ID'],
-    [receiptUrl.replace('the-base-staging.mansua.workers.dev','thebasebev.com'), 'sk_test_fixture', 'STRIPE_TEST_HOST_REQUIRED'],
-    [receiptUrl,'sk_live_invalid','STRIPE_TEST_KEY_REQUIRED']] as const) {
-    const response = await handleStripeTestSession(new Request(url), { secretKey: key, retrieveSession: async () => { calls++; throw new Error("Must reject before Stripe"); } });
+    [receiptUrl.replace('the-base-staging.mansua.workers.dev','thebasebev.com'), 'sk_test_fixture', 'STRIPE_HOST_REJECTED'],
+    [receiptUrl,'sk_live_invalid','STRIPE_MODE_KEY_REQUIRED']] as const) {
+    const response = await handleStripeSession(new Request(url), { secretKey: key, retrieveSession: async () => { calls++; throw new Error("Must reject before Stripe"); } });
     assert.equal((await response.json()).error.code, expected);
   }
   assert.equal(calls, 0);
@@ -237,11 +238,79 @@ test("sample-only receipt includes VAT and verifies the delivery-only amount", a
   const f = await fixture("samples");
   await f.orders.attachSession(f.order.id, f.session.id);
   const dependencies = { secretKey: "sk_test_fixture", orders: f.orders, retrieveSession: async () => f.session };
-  const response = await handleStripeTestSession(new Request(receiptUrl), dependencies);
+  const response = await handleStripeSession(new Request(receiptUrl), dependencies);
   const body = await response.json();
   assert.equal(body.checkout.confirmed, true);
   assert.equal(body.checkout.total, 3150);
   assert.equal(body.checkout.kind, "samples");
   f.session.amount_total = 3151;
-  assert.equal((await handleStripeTestSession(new Request(receiptUrl), dependencies)).status, 502);
+  assert.equal((await handleStripeSession(new Request(receiptUrl), dependencies)).status, 502);
+});
+
+test("verified Live payments create one durable quotation with real quantities and survive retries", async () => {
+  const f = await fixture("products", "live");
+  assert.deepEqual(await processPaidSession(f.session.id, f.dependencies), { processed: true, duplicate: false });
+  assert.equal((await f.orders.get(f.order.id))?.state, "fulfilled");
+  assert.equal((await f.orders.get(f.order.id))?.snapshot.mode, "live");
+  assert.deepEqual(await processPaidSession(f.session.id, { ...f.dependencies, orders: testOrderStore(f.database) }), { processed: true, duplicate: true });
+  assert.equal(f.creates(), 1);
+  assert.deepEqual(f.snapshot.lines.map(line => [line.kind, line.quantity, line.unitAmount]), [["products", 2, 2800], ["samples", 1, 0], ["delivery", 1, 3000]]);
+});
+
+test("Test snapshots, intents, charges and tax rates cannot satisfy a Live payment", async () => {
+  for (const scenario of ["snapshot", "session", "intent", "charge", "tax"] as const) {
+    const f = await fixture("products", "live");
+    if (scenario === "session") f.session.livemode = false;
+    if (scenario === "intent") f.payment.livemode = false;
+    if (scenario === "charge") (f.payment.latest_charge as Stripe.Charge).livemode = false;
+    if (scenario === "tax") f.lines.data[0].taxes![0].rate.livemode = false;
+    const dependencies = scenario === "snapshot" ? { ...f.dependencies, orders: { ...f.orders, get: async () => ({ ...f.order, snapshot: { ...f.snapshot, mode: "test" as const } }) } } : f.dependencies;
+    await assert.rejects(processPaidSession(f.session.id, dependencies));
+    assert.equal(f.creates(), 0);
+    assert.equal((await f.orders.get(f.order.id))?.state, "pending");
+  }
+});
+
+test("Live receipt is read-only, confirms the charged amount and reports the draft quotation", async () => {
+  const f = await fixture("samples", "live");
+  await processPaidSession(f.session.id, f.dependencies);
+  const url = "https://the-base-production.mansua.workers.dev/api/checkout/stripe/session?session_id=" + f.session.id;
+  const dependencies = { mode: "live" as const, liveOrigin: "https://the-base-production.mansua.workers.dev", secretKey: "sk_live_fixture", orders: f.orders, retrieveSession: async () => f.session };
+  const response = await handleStripeSession(new Request(url), dependencies);
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.checkout.testMode, false);
+  assert.equal(body.checkout.total, 3150);
+  assert.equal(body.checkout.confirmed, true);
+  assert.equal(body.checkout.fulfilled, true);
+  assert.equal(body.checkout.quotation, "TEST-QUOTATION");
+  assert.equal(body.checkout.customer, undefined);
+  assert.equal(body.checkout.address, undefined);
+  assert.equal(f.creates(), 1);
+  assert.equal((await handleStripeSession(new Request(url.replace("the-base-production", "the-base-staging")), dependencies)).status, 403);
+});
+
+test("Live Odoo delivery requires a separate action and never falls back to the Test receiver", async () => {
+  const f = await fixture("products", "live");
+  const address = { country: "AE", line1: "Fixture", city: "Dubai" };
+  f.session.collected_information = { shipping_details: { name: "Fixture", address } } as Stripe.Checkout.Session.CollectedInformation;
+  f.session.customer_details = { address } as Stripe.Checkout.Session.CustomerDetails;
+  const original = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async (_input, init) => {
+    calls++;
+    const payload = JSON.parse(String(init?.body));
+    assert.deepEqual(payload.ids, [9999]);
+    assert.equal(payload.context.tb_stripe_order.test_mode, false);
+    assert.equal(payload.context.tb_stripe_order.session_id, "cs_live_verified");
+    return Response.json({ res_model: "sale.order", res_id: 456, tb_name: "S00456", tb_state: "draft", tb_total: 9030, tb_duplicate: false });
+  };
+  const config = { url: "https://odoo.thebasebev.com", apiKey: "odoo_fixture" };
+  try {
+    await assert.rejects(createPaidQuotation(f.order, f.session, "pi_verified", config), /RECEIVER_MODE_MISMATCH/);
+    await assert.rejects(createPaidQuotation(f.order, f.session, "pi_verified", { ...config, actionId: 1629 }), /RECEIVER_MODE_MISMATCH/);
+    assert.equal(calls, 0);
+    assert.equal((await createPaidQuotation(f.order, f.session, "pi_verified", { ...config, actionId: 9999 })).state, "draft");
+    assert.equal(calls, 1);
+  } finally { globalThis.fetch = original; }
 });

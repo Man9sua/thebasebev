@@ -7,15 +7,15 @@ import { SAMPLE_PRODUCTS } from "../src/data/sample-flavours";
 import { getShopQuote, getShopUnitAmount, type ShopPaymentPricing } from "../src/lib/shop-payment";
 import { SHOP_MAX_LINES, SHOP_MAX_QUANTITY } from "../src/lib/shop-limits";
 import {
-  handleStripeTestCheckout,
-  STRIPE_TEST_CATALOG,
+  handleStripeCheckout,
+  STRIPE_CATALOG,
   type StripeCheckoutClient,
-} from "../src/lib/stripe-test-checkout";
+} from "../src/lib/stripe-checkout";
 import {
-  handleStripeTestWebhook,
-} from "../src/lib/stripe-test-webhook";
+  handleStripeWebhook,
+} from "../src/lib/stripe-webhook";
 import { testOrderStore } from "./helpers/order-store";
-import type { ValidatedCheckout } from "../src/lib/stripe-test-checkout";
+import type { ValidatedCheckout } from "../src/lib/stripe-checkout";
 import type { OrderSnapshot } from "../src/lib/shop-order";
 
 const ENDPOINT =
@@ -79,7 +79,7 @@ test("valid checkout uses server price, AED and staging return URLs", async () =
   let capturedParams: Stripe.Checkout.SessionCreateParams | undefined;
   let capturedOptions: Stripe.RequestOptions | undefined;
 
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest(validPayload()),
     checkoutDependencies(async (params, options) => {
       capturedParams = params;
@@ -123,7 +123,7 @@ test("valid checkout uses server price, AED and staging return URLs", async () =
 });
 
 test("invalid product is rejected before Stripe is called", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({
       currency: "AED",
       items: [{ productId: "not-a-product", flavor: "Strawberry", quantity: 1 }],
@@ -137,7 +137,7 @@ test("invalid product is rejected before Stripe is called", async () => {
 });
 
 test("a flavour the product is not sold in is rejected before Stripe is called", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({
       currency: "AED",
       items: [{ productId: "389328196132", flavor: "Free Of Charge", quantity: 1 }],
@@ -151,7 +151,7 @@ test("a flavour the product is not sold in is rejected before Stripe is called",
 });
 
 test("an item with no flavour is rejected — the factory cannot fill it", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({
       currency: "AED",
       items: [{ productId: "389328196132", quantity: 1 }],
@@ -167,7 +167,7 @@ test("an item with no flavour is rejected — the factory cannot fill it", async
 test("two flavours of one product are two lines at the same server price", async () => {
   let capturedParams: Stripe.Checkout.SessionCreateParams | undefined;
 
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({
       currency: "AED",
       items: [
@@ -202,7 +202,7 @@ test("two flavours of one product are two lines at the same server price", async
 });
 
 test("the same product and flavour twice is a duplicate line", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({
       currency: "AED",
       items: [
@@ -220,9 +220,9 @@ test("the same product and flavour twice is a duplicate line", async () => {
 
 test("all 22 shop ranges accept current flavours with fixture pricing", async () => {
   assert.equal(SAMPLE_PRODUCTS.length, 22);
-  assert.equal(Object.keys(STRIPE_TEST_CATALOG).length, 22);
+  assert.equal(Object.keys(STRIPE_CATALOG).length, 22);
   for (const product of SAMPLE_PRODUCTS) {
-    const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(),
+    const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(),
       items: [{ productId: product.slug, flavor: product.flavours[0], quantity: 1 }] }),
     checkoutDependencies(async params => {
       assert.equal(params.line_items?.[0].price_data?.product_data?.metadata?.slug, product.slug);
@@ -233,7 +233,7 @@ test("all 22 shop ranges accept current flavours with fixture pricing", async ()
 });
 
 test("invalid customer email is rejected before Stripe is called", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({ ...validPayload(), email: "not-an-email" }),
     checkoutDependencies(),
   );
@@ -244,7 +244,7 @@ test("invalid customer email is rejected before Stripe is called", async () => {
 });
 
 test("tampered client price is rejected", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({
       currency: "AED",
       items: [{ productId: "389328196132", quantity: 1, price: 1 }],
@@ -258,7 +258,7 @@ test("tampered client price is rejected", async () => {
 });
 
 test("invalid quantity is rejected", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({
       currency: "AED",
       items: [{ productId: "389328196132", flavor: "Strawberry", quantity: 1.5 }],
@@ -272,7 +272,7 @@ test("invalid quantity is rejected", async () => {
 });
 
 test("unsupported currency is rejected", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({ ...validPayload(), currency: "USD" }),
     checkoutDependencies(),
   );
@@ -283,7 +283,7 @@ test("unsupported currency is rejected", async () => {
 });
 
 test("oversized checkout payload is rejected before Stripe is called", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest({ ...validPayload(), note: "x".repeat(20_000) }),
     checkoutDependencies(),
   );
@@ -295,7 +295,7 @@ test("oversized checkout payload is rejected before Stripe is called", async () 
 
 test("missing Stripe secret is build-safe and returns 503", async () => {
   let clientCreated = false;
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest(validPayload()),
     {
       secretKey: undefined,
@@ -309,13 +309,13 @@ test("missing Stripe secret is build-safe and returns 503", async () => {
   const body = await response.json();
 
   assert.equal(response.status, 503);
-  assert.equal(body.error.code, "STRIPE_TEST_NOT_CONFIGURED");
+  assert.equal(body.error.code, "STRIPE_NOT_CONFIGURED");
   assert.equal(clientCreated, false);
 });
 
 test("live Stripe secret prefix is rejected before a client is created", async () => {
   let clientCreated = false;
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     checkoutRequest(validPayload()),
     {
       secretKey: "sk_" + "live_unit_test_only",
@@ -329,12 +329,12 @@ test("live Stripe secret prefix is rejected before a client is created", async (
   const body = await response.json();
 
   assert.equal(response.status, 503);
-  assert.equal(body.error.code, "STRIPE_TEST_KEY_REQUIRED");
+  assert.equal(body.error.code, "STRIPE_MODE_KEY_REQUIRED");
   assert.equal(clientCreated, false);
 });
 
 test("production hostname cannot call the Stripe Test Mode proof of concept", async () => {
-  const response = await handleStripeTestCheckout(
+  const response = await handleStripeCheckout(
     new Request("https://thebasebev.com/api/checkout/stripe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -345,11 +345,11 @@ test("production hostname cannot call the Stripe Test Mode proof of concept", as
   const body = await response.json();
 
   assert.equal(response.status, 403);
-  assert.equal(body.error.code, "STRIPE_TEST_HOST_REQUIRED");
+  assert.equal(body.error.code, "STRIPE_HOST_REJECTED");
 });
 
 test("webhook rejects an invalid Stripe signature", async () => {
-  const response = await handleStripeTestWebhook(
+  const response = await handleStripeWebhook(
     new Request(
       "https://the-base-staging.mansua.workers.dev/api/stripe/webhook",
       {
@@ -369,7 +369,7 @@ test("webhook rejects an invalid Stripe signature", async () => {
 });
 
 test("production hostname cannot receive Stripe Test webhook events", async () => {
-  const response = await handleStripeTestWebhook(
+  const response = await handleStripeWebhook(
     new Request("https://thebasebev.com/api/stripe/webhook", {
       method: "POST",
       headers: { "stripe-signature": "t=1,v1=unused" },
@@ -382,7 +382,7 @@ test("production hostname cannot receive Stripe Test webhook events", async () =
   const body = await response.json();
 
   assert.equal(response.status, 403);
-  assert.equal(body.error.code, "STRIPE_TEST_HOST_REQUIRED");
+  assert.equal(body.error.code, "STRIPE_HOST_REJECTED");
 });
 
 test("verified repeated webhook sessions reach the durable receiver", async () => {
@@ -402,7 +402,7 @@ test("verified repeated webhook sessions reach the durable receiver", async () =
   let deliveries = 0;
 
   const deliver = () =>
-    handleStripeTestWebhook(
+    handleStripeWebhook(
       new Request(
         "https://the-base-staging.mansua.workers.dev/api/stripe/webhook",
         {
@@ -442,7 +442,7 @@ test("a correctly signed live-mode webhook event is rejected", async () => {
     secret: webhookSecret,
     cryptoProvider: Stripe.createSubtleCryptoProvider(),
   });
-  const response = await handleStripeTestWebhook(
+  const response = await handleStripeWebhook(
     new Request(
       "https://the-base-staging.mansua.workers.dev/api/stripe/webhook",
       {
@@ -458,12 +458,12 @@ test("a correctly signed live-mode webhook event is rejected", async () => {
   const body = await response.json();
 
   assert.equal(response.status, 422);
-  assert.equal(body.error.code, "STRIPE_LIVE_EVENT_REJECTED");
+  assert.equal(body.error.code, "STRIPE_EVENT_MODE_REJECTED");
 });
 
 test("missing webhook secret does not attempt verification", async () => {
   let verificationAttempted = false;
-  const response = await handleStripeTestWebhook(
+  const response = await handleStripeWebhook(
     new Request(
       "https://the-base-staging.mansua.workers.dev/api/stripe/webhook",
       { method: "POST", body: "{}" },
@@ -485,7 +485,7 @@ test("missing webhook secret does not attempt verification", async () => {
 
 test("oversized webhook payload is rejected before signature verification", async () => {
   let verificationAttempted = false;
-  const response = await handleStripeTestWebhook(
+  const response = await handleStripeWebhook(
     new Request(
       "https://the-base-staging.mansua.workers.dev/api/stripe/webhook",
       {
@@ -525,7 +525,7 @@ test("public prices are variant-specific; samples remain free and delivery carri
 
 test("a known public total never enables Stripe before the order receiver is ready", async () => {
   let calls = 0;
-  const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), {
+  const response = await handleStripeCheckout(checkoutRequest(validPayload()), {
     secretKey: TEST_SECRET_KEY, createClient: () => { calls++; throw new Error("Order receiver is not ready"); },
   });
   assert.equal(response.status, 503);
@@ -535,7 +535,7 @@ test("a known public total never enables Stripe before the order receiver is rea
 
 test("approved VAT cannot be silently omitted from a Stripe charge", async () => {
   let calls = 0;
-  const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), {
+  const response = await handleStripeCheckout(checkoutRequest(validPayload()), {
     secretKey: TEST_SECRET_KEY, orderReceiverReady: true, orders: testOrderStore(),
     createClient: () => { calls++; throw new Error("VAT has not been configured in Stripe"); },
   });
@@ -546,7 +546,7 @@ test("approved VAT cannot be silently omitted from a Stripe charge", async () =>
 
 test("approved UAE checkout taxes goods and delivery while samples remain free", async () => {
   let params: Stripe.Checkout.SessionCreateParams | undefined;
-  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), items: [
+  const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), items: [
     { productId: "milkshake", flavor: "Vanilla", quantity: 2, kind: "products" },
     { productId: "milkshake", flavor: "Vanilla", quantity: 1, kind: "samples" },
   ] }), { secretKey: TEST_SECRET_KEY, orders: testOrderStore(), orderReceiverReady: true, taxRateId: "txr_fixture",
@@ -562,7 +562,7 @@ test("approved UAE checkout taxes goods and delivery while samples remain free",
 });
 
 test("consent is required before creating any checkout session", async () => {
-  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), consent: false }), checkoutDependencies());
+  const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), consent: false }), checkoutDependencies());
   assert.equal(response.status, 422);
   assert.equal((await response.json()).error.code, "INVALID_CONSENT");
 });
@@ -576,11 +576,11 @@ test("retrying a bound checkout reuses its session, and expired sessions require
     retrieveSession: async () => ({ id: "cs_test_reused", url: "https://checkout.stripe.com/c/pay/cs_test_reused", livemode: false, status, payment_status: "unpaid" }),
   }) };
   const request = () => new Request(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": "stable-unit-checkout" }, body: JSON.stringify(validPayload()) });
-  assert.equal((await handleStripeTestCheckout(request(), dependencies)).status, 201);
-  assert.equal((await handleStripeTestCheckout(request(), dependencies)).status, 201);
+  assert.equal((await handleStripeCheckout(request(), dependencies)).status, 201);
+  assert.equal((await handleStripeCheckout(request(), dependencies)).status, 201);
   assert.equal(creates, 1);
   status = "expired";
-  const expired = await handleStripeTestCheckout(request(), dependencies);
+  const expired = await handleStripeCheckout(request(), dependencies);
   assert.equal(expired.status, 409);
   assert.equal((await expired.json()).error.code, "CHECKOUT_EXPIRED");
   assert.equal(creates, 1);
@@ -589,7 +589,7 @@ test("retrying a bound checkout reuses its session, and expired sessions require
 test("an old unbound attempt cannot reuse a provider idempotency key after its retention window", async () => {
   let calls = 0;
   const dependencies = checkoutDependencies(async () => { calls++; throw new Error("Must not create a second session"); });
-  const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), { ...dependencies, orders: { ...dependencies.orders,
+  const response = await handleStripeCheckout(checkoutRequest(validPayload()), { ...dependencies, orders: { ...dependencies.orders,
     reserve: async (key, snapshot) => ({ ...await dependencies.orders.reserve(key, snapshot), createdAt: Date.now() - 24 * 60 * 60 * 1000 }),
   } });
   assert.equal(response.status, 409);
@@ -598,7 +598,7 @@ test("an old unbound attempt cannot reuse a provider idempotency key after its r
 });
 
 test("a provider parameter conflict requires a fresh client checkout key", async () => {
-  const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), checkoutDependencies(async () => {
+  const response = await handleStripeCheckout(checkoutRequest(validPayload()), checkoutDependencies(async () => {
     throw Object.assign(new Error("Parameters changed"), { type: "StripeIdempotencyError" });
   }));
   assert.equal(response.status, 409);
@@ -607,7 +607,7 @@ test("a provider parameter conflict requires a fresh client checkout key", async
 
 test("a mixed Stripe fixture retains free sample lines and charges one delivery", async () => {
   let captured: Stripe.Checkout.SessionCreateParams | undefined;
-  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(),
+  const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(),
     items: [{ productId: "389328196132", flavor: "Strawberry", quantity: 2, kind: "products" }, { productId: "389328196132", flavor: "Strawberry", quantity: 3, kind: "samples" }],
   }), checkoutDependencies(async params => { captured = params; return { id: "cs_test_mixed", url: "https://checkout.stripe.com/c/pay/cs_test_mixed", livemode: false }; }));
   assert.equal(response.status, 201);
@@ -626,7 +626,7 @@ test("product quote sums several products and shipping as separate integer amoun
 
 test("sample Stripe session charges only its separately configured shipping fee", async () => {
   let captured: Stripe.Checkout.SessionCreateParams | undefined;
-  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind: "samples", country: "KW",
+  const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), kind: "samples", country: "KW",
     items: [{ productId: "389328196132", flavor: "Vanilla", quantity: 1 }, { productId: "tea", flavor: "Black", quantity: 1 }] }),
   checkoutDependencies(async params => {
     captured = params;
@@ -644,7 +644,7 @@ test("sample Stripe session charges only its separately configured shipping fee"
 
 test("several products accept current slug aliases including new ranges", async () => {
   let count = 0;
-  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), items: [
+  const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), items: [
     { productId: "milkshake", flavor: "Vanilla", quantity: 2 }, { productId: "tea", flavor: "Black", quantity: 3 },
   ] }), checkoutDependencies(async params => {
     count = params.line_items?.length ?? 0;
@@ -656,7 +656,7 @@ test("several products accept current slug aliases including new ranges", async 
 });
 
 test("legacy ID and slug cannot duplicate the same product flavour", async () => {
-  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), items: [
+  const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), items: [
     { productId: "389328196132", flavor: "Vanilla", quantity: 1 }, { productId: "milkshake", flavor: "Vanilla", quantity: 1 },
   ] }), checkoutDependencies());
   assert.equal((await response.json()).error.code, "DUPLICATE_LINE");
@@ -665,7 +665,7 @@ test("legacy ID and slug cannot duplicate the same product flavour", async () =>
 test("sample checkout preserves more than six flavours and multiple free packs", async () => {
   const items = SAMPLE_PRODUCTS.slice(0, 8).map((product, index) => ({ productId: product.slug, flavor: product.flavours[0], quantity: index === 0 ? 12 : index + 2 }));
   let captured: Stripe.Checkout.SessionCreateParams | undefined;
-  const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind: "samples", items }),
+  const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), kind: "samples", items }),
     checkoutDependencies(async params => {
       captured = params;
       return { id: "cs_test_multiple_samples", url: "https://checkout.stripe.com/c/pay/cs_test_multiple_samples", livemode: false };
@@ -683,10 +683,10 @@ test("both checkout kinds reject malformed quantities and oversized transport pa
   assert.ok(choices.length > SHOP_MAX_LINES);
   for (const kind of ["samples", "products"]) {
     for (const quantity of [0, -1, 1.5, SHOP_MAX_QUANTITY + 1, Number.MAX_SAFE_INTEGER + 1]) {
-      const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind, items: [{ ...choices[0], quantity }] }), checkoutDependencies());
+      const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), kind, items: [{ ...choices[0], quantity }] }), checkoutDependencies());
       assert.equal((await response.json()).error.code, "INVALID_QUANTITY");
     }
-    const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), kind, items: choices.slice(0, SHOP_MAX_LINES + 1) }), checkoutDependencies());
+    const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), kind, items: choices.slice(0, SHOP_MAX_LINES + 1) }), checkoutDependencies());
     assert.equal((await response.json()).error.code, "INVALID_ITEMS");
   }
 });
@@ -694,7 +694,7 @@ test("both checkout kinds reject malformed quantities and oversized transport pa
 test("shipping and tax tampering is rejected before any Stripe call", async () => {
   let calls = 0;
   for (const field of ["shipping", "shippingAmount", "shippingFee", "tax", "vat", "total", "discounts"]) {
-    const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), [field]: 0 }),
+    const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), [field]: 0 }),
       checkoutDependencies(async () => { calls++; throw new Error("Must reject tampering"); }));
     assert.equal((await response.json()).error.code, "CLIENT_PRICE_FORBIDDEN", field);
   }
@@ -709,7 +709,7 @@ test("unsupported delivery selection, unknown customer fields and missing contac
     [{ customer: { ...CUSTOMER, name: "" } }, "INVALID_CUSTOMER"],
     [{ customer: { ...CUSTOMER, phone: "       " } }, "INVALID_CUSTOMER"],
   ] as const) {
-    const response = await handleStripeTestCheckout(checkoutRequest({ ...validPayload(), ...patch }), checkoutDependencies());
+    const response = await handleStripeCheckout(checkoutRequest({ ...validPayload(), ...patch }), checkoutDependencies());
     assert.equal((await response.json()).error.code, code);
   }
 });
@@ -725,7 +725,7 @@ test("invalid fixture prices and missing/zero sample shipping never produce a pa
 });
 
 test("cross-origin checkout cannot create a session", async () => {
-  const response = await handleStripeTestCheckout(new Request(ENDPOINT, { method: "POST",
+  const response = await handleStripeCheckout(new Request(ENDPOINT, { method: "POST",
     headers: { "content-type": "application/json", origin: "https://another.example" }, body: JSON.stringify(validPayload()) }), checkoutDependencies());
   assert.equal(response.status, 403);
   assert.equal((await response.json()).error.code, "CHECKOUT_ORIGIN_REJECTED");
@@ -733,7 +733,7 @@ test("cross-origin checkout cannot create a session", async () => {
 
 test("unsafe Stripe redirect URL is rejected", async () => {
   for (const url of ["https://another.example/pay", "javascript:alert(1)", "https://checkout.stripe.com@another.example/pay"]) {
-    const response = await handleStripeTestCheckout(checkoutRequest(validPayload()), checkoutDependencies(async () => ({ id: "cs_test_bad", url, livemode: false })));
-    assert.equal((await response.json()).error.code, "STRIPE_TEST_SESSION_REJECTED");
+    const response = await handleStripeCheckout(checkoutRequest(validPayload()), checkoutDependencies(async () => ({ id: "cs_test_bad", url, livemode: false })));
+    assert.equal((await response.json()).error.code, "STRIPE_SESSION_REJECTED");
   }
 });

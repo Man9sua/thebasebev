@@ -33,6 +33,14 @@
       "name": "the-base-production",
       "workers_dev": true,
       "preview_urls": true,
+      "d1_databases": [
+        {
+          "binding": "SHOP_ORDERS",
+          "database_name": "the-base-live-orders",
+          "database_id": "359415ea-a600-4a7c-b02a-83b7ee2b454f",
+          "migrations_dir": "migrations"
+        }
+      ],
       "vars": {
         "APP_ENV": "production"
       }

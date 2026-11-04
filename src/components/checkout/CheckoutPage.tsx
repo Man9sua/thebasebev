@@ -22,6 +22,8 @@ import { submitShopQuoteRequest, submitShopSampleRequest } from "@/lib/shop-lead
 import { formatShopMoney, getShopQuote, getShopUnitAmount, getShopPackLabel, hasPayableVariants, SHOP_ORDER_PAYMENTS_READY, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
 import { combineShopBaskets, shopBasketKey } from "@/lib/shop-basket";
 import { getFirstTouchAttribution } from "@/components/forms/first-touch";
+import { stripeSessionMode } from "@/lib/stripe-mode";
+import { useShopPaymentConfig } from "./useShopPaymentConfig";
 import styles from "./CheckoutPage.module.css";
 
 type Fields = {
@@ -154,6 +156,7 @@ export function CheckoutPage() {
   const countryName = COUNTRY_NAMES.get(country) ?? country;
   const paidCart = useCart();
   const sampleCart = useSampleCart();
+  const paymentConfig = useShopPaymentConfig();
   const items = useMemo(() => combineShopBaskets(country, paidCart.items, sampleCart.items), [country, paidCart.items, sampleCart.items]);
   const isSample = country !== "AE" || (items.length > 0 && items.every(item => item.kind === "samples"));
   const kind = isSample ? "samples" : "products";
@@ -251,6 +254,7 @@ export function CheckoutPage() {
         if (isSample) removeSubmittedSamples(request.items);
         setCompleted(true);
       } else {
+        if (!paymentConfig.ready) throw new Error("Card payment is temporarily unavailable. Your basket has been kept.");
         const payload = JSON.stringify({
           kind, country, currency: "aed", shippingMethod, email: customer.email, customer, consent,
           attribution: { ...getFirstTouchAttribution(), currentPage: window.location.href },
@@ -267,8 +271,8 @@ export function CheckoutPage() {
         const url = stripeCheckoutUrl(body?.checkout?.url);
         const sessionId = body?.checkout?.sessionId;
         if (["CHECKOUT_KEY_REUSED", "CHECKOUT_EXPIRED"].includes(body?.error?.code)) checkoutAttempt.current = null;
-        if (!response.ok || body?.ok !== true || body.checkout?.testMode !== true || !url || typeof sessionId !== "string" ||
-          !/^cs_test_[a-zA-Z0-9_]+$/.test(sessionId)) {
+        if (!response.ok || body?.ok !== true || typeof body.checkout?.testMode !== "boolean" || !url || typeof sessionId !== "string" ||
+          stripeSessionMode(sessionId) !== paymentConfig.mode || body.checkout.testMode !== (paymentConfig.mode === "test")) {
           throw new Error(body?.error?.message || "Secure checkout is temporarily unavailable. Your cart has been kept.");
         }
         rememberPendingCheckout(sessionId, kind, cart.items);
@@ -389,14 +393,15 @@ export function CheckoutPage() {
                 {country === "AE" && <p className={styles.quoteNote}>{isSample ? "Sample delivery: AED 30 + VAT for parcels up to 5 kg. Larger parcels are quoted separately." : "Free UAE delivery on products from AED 500 before VAT. Below AED 500: AED 30 + VAT. Samples travel with your order at no extra delivery charge."}</p>}
                 {country === "AE" && <p className={styles.quoteNote}>{UAE_DELIVERY_TIMING}</p>}
                 {!quote.ready && <p className={styles.quoteNote}>{quote.reason || "Product prices and delivery must be confirmed before payment. Request an exact quote below."}</p>}
-                {!quoteNeeded && <p className={styles.quoteNote}>Test checkout. Use a Stripe test card; no real payment is taken.</p>}
+                {!quoteNeeded && paymentConfig.mode === "test" && <p className={styles.quoteNote}>Test checkout. Use a Stripe test card; no real payment is taken.</p>}
+                {!quoteNeeded && paymentConfig.loaded && !paymentConfig.ready && <p className={styles.quoteNote} role="status">Card payment is temporarily unavailable. Your basket has been kept.</p>}
                 <label className={styles.consent}>
                   <input type="checkbox" name="consent" checked={consent} disabled={pending} required aria-invalid={fieldErrors.consent ? true : undefined} aria-describedby={fieldErrors.consent ? "checkout-consent-error" : undefined} onChange={(event) => { setConsent(event.target.checked); setFieldErrors((current) => ({ ...current, consent: undefined })); }} />
                   <span>I agree to the <SiteLink href={`/${country.toLowerCase()}/privacy`}>Privacy Policy</SiteLink>.</span>
                 </label>
                 {fieldErrors.consent && <p id="checkout-consent-error" className={styles.fieldError}>{fieldErrors.consent}</p>}
                 {error && <p className={styles.error} role="alert">{error}</p>}
-                <button className={styles.submit} type="submit" disabled={pending}>{submitLabel}</button>
+                <button className={styles.submit} type="submit" disabled={pending || (!quoteNeeded && !paymentConfig.ready)}>{submitLabel}</button>
                 <p className={styles.caption}>{caption}</p>
               </aside>
             </form>

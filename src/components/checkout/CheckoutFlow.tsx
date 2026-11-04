@@ -12,6 +12,7 @@ import { formatShopMoney, isShopCountry } from "@/lib/shop-payment";
 import type { ShopKind } from "@/data/shop";
 import { combineShopBaskets } from "@/lib/shop-basket";
 import styles from "./CheckoutReturn.module.css";
+import { stripeSessionMode } from "@/lib/stripe-mode";
 
 type VerifiedPayment = {
   sessionId: string;
@@ -41,12 +42,13 @@ function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; req
     let attempts = 0;
     async function verify() {
       try {
-        if (!/^cs_test_[A-Za-z0-9_]{1,200}$/.test(sessionId)) throw new Error("The payment reference is invalid.");
+        const mode = stripeSessionMode(sessionId);
+        if (!mode) throw new Error("The payment reference is invalid.");
         const response = await fetch(`/api/checkout/stripe/session?session_id=${encodeURIComponent(sessionId)}`, {
           cache: "no-store", signal: controller.signal,
         });
         const body = await response.json().catch(() => null);
-        if (!response.ok || body?.ok !== true || body.checkout?.sessionId !== sessionId || body.checkout?.testMode !== true) {
+        if (!response.ok || body?.ok !== true || body.checkout?.sessionId !== sessionId || body.checkout?.testMode !== (mode === "test")) {
           throw new Error("We could not verify this payment. Please contact the team with your payment reference.");
         }
         setPayment(body.checkout as VerifiedPayment);
@@ -73,11 +75,11 @@ function PaymentReturn({ sessionId, requestedCountry }: { sessionId: string; req
   return <div className={`tbb ${styles.page}`}>
     <header className={styles.header}><SiteLink href={`/${country.toLowerCase()}/catalog`} aria-label="The Base shop"><BrandLogo /></SiteLink></header>
     <main className={styles.content} aria-live="polite">
-      <p className={styles.label}>Secure checkout · Test mode</p>
+      <p className={styles.label}>Secure checkout{payment?.testMode === true ? " · Test mode" : ""}</p>
       <h1>{!checked ? "Checking payment" : confirmed ? "Payment received" : "Payment not confirmed"}</h1>
       <p>{!checked ? "Checking the payment status with Stripe…" : confirmed
-        ? payment?.fulfilled ? `Your test payment is confirmed. Order ${payment.quotation ?? "received"} is registered. Our team will review delivery before dispatch.`
-          : "Your test payment is confirmed. Your order is being registered. Our team will review delivery before dispatch."
+        ? payment?.fulfilled ? `Your ${payment.testMode ? "test " : ""}payment is confirmed. Order ${payment.quotation ?? "received"} is registered. Our team will review delivery before dispatch.`
+          : `Your ${payment?.testMode ? "test " : ""}payment is confirmed. Your order is being registered. Our team will review delivery before dispatch.`
         : error || "Your payment has not completed. The items remain in your basket."}</p>
       {confirmed && typeof payment?.total === "number" && <strong className={styles.amount}>{formatShopMoney(payment.total)}</strong>}
       <div className={styles.actions}>

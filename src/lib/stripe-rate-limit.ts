@@ -6,7 +6,7 @@ type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
 
-export function checkStripeTestCheckoutRateLimit(request: Request) {
+export function checkStripeCheckoutRateLimit(request: Request) {
   const now = Date.now();
   if (buckets.size > MAX_KEYS) {
     for (const [key, bucket] of buckets) {
