@@ -1,8 +1,12 @@
+"use client";
+
 import type { AnchorHTMLAttributes } from "react";
-import { publicPath } from "@/lib/site-paths";
+import { countryPath } from "@/lib/country-paths";
+import { useCountryCode } from "./useCountryCode";
 
 type SiteLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
 
 export function SiteLink({ href, ...rest }: SiteLinkProps) {
-  return <a href={publicPath(href)} {...rest} />;
+  const country = useCountryCode();
+  return <a href={countryPath(href, country)} {...rest} />;
 }

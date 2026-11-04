@@ -82,7 +82,7 @@ const faq = [
   },
 ];
 
-export function CordialPage({ product, headline, assets }: ProductPageProps) {
+export function CordialPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     hero,
@@ -103,7 +103,6 @@ export function CordialPage({ product, headline, assets }: ProductPageProps) {
       <Hero
         productName={product.name}
         title="Cordial"
-        headline={headline}
         lead={{
           desktop:
             "Mojitos, lemonades and mocktails without fresh fruit or house syrups. Add sparkling water and ice, ready in 30 seconds.",

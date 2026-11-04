@@ -125,7 +125,7 @@
 
 .pouchName {
   font-size: calc(19 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
 }
 
@@ -189,7 +189,7 @@
 
 .tillCardTitle {
   font-size: calc(20 * var(--u));
-  font-weight: 800;
+  font-weight: var(--tbb-font-weight-subheading);
   color: var(--pp-paper);
 }
 

@@ -33,9 +33,9 @@
   padding: clamp(1.1rem, 2.2vw, 1.6rem) clamp(1rem, 2.4vw, 1.5rem);
   border: 0;
   background: none;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-button);
   font-size: clamp(1rem, 1.5vw, 1.25rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   line-height: 1.25;
   text-align: left;
   color: var(--tbb-ink);

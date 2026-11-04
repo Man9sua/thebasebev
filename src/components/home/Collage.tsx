@@ -15,18 +15,9 @@ import styles from "./Collage.module.css";
  * captioned, so the order it was making an argument in was legible to nobody.
  * Four steps, all four named.
  *
- * The photographs are the ones already in `public/images`, and the ones the
- * document itself names for the first and third frames. Two notes worth
- * keeping:
- *
- * - **Production is a placeholder and the document says so** — it draws a grey
- *   panel reading "нужно реальное фото производства the Base". The bottling
- *   line below is the nearest thing in the pool, and it is wrong in the way
- *   the site review flags: it is a liquids line, and this company sells dry
- *   powder. It needs a photograph of THE BASE's own plant.
- * - **The rest of the eight** — the microscope, the syrup swirl, the container
- *   port and the toast — are out, not deleted. They are stock, and the review's
- *   note is that the homepage should be showing this company's own rooms.
+ * Production uses the supplied branded carton artwork. A photograph of the
+ * plant's production line has not been provided; the artwork does not claim
+ * to show one.
  */
 
 type Step = {
@@ -42,8 +33,8 @@ const STEPS: Step[] = [
     label: "Formulation",
   },
   {
-    src: "/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg",
-    alt: "Beverage production line",
+    src: "/images/tild6663-3864-4961-b139-316164363938__mask_group_1.jpg",
+    alt: "the Base branded shipping carton artwork",
     label: "Production",
   },
   {
@@ -53,7 +44,7 @@ const STEPS: Step[] = [
   },
   {
     src: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
-    alt: "Barista in a THE BASE apron at the bar",
+    alt: "Barista in a the Base apron at the bar",
     label: "To cup",
   },
 ];
