@@ -3,6 +3,7 @@ import path from "node:path";
 import { chromium } from "@playwright/test";
 
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
+const baseOrigin = new URL(baseUrl).origin;
 const chromePath =
   process.env.CHROME_PATH ??
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -25,8 +26,11 @@ async function readOnlyContext(options) {
   const context = await browser.newContext(options);
   await context.route("**/*", (route) => {
     const request = route.request();
+    const url = new URL(request.url());
+    // Neutralize Cloudflare's production performance beacon without sending it.
+    if (request.method() === "POST" && url.origin === baseOrigin && url.pathname === "/cdn-cgi/rum") return route.fulfill({ status: 204, body: "" });
     if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
-      failures.push(`Unmocked mutation blocked: ${request.method()} ${new URL(request.url()).pathname}`);
+      failures.push(`Unmocked mutation blocked: ${request.method()} ${url.pathname}`);
       return route.abort();
     }
     return route.fallback();

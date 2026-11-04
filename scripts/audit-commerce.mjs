@@ -4,6 +4,7 @@ import { chromium } from "@playwright/test";
 const ODOO_ORIGIN = "https://odoo.";
 
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
+const baseOrigin = new URL(baseUrl).origin;
 const chromePath =
   process.env.CHROME_PATH ??
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -159,8 +160,11 @@ try {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   await context.route("**/*", (route) => {
     const request = route.request();
+    const url = new URL(request.url());
+    // Neutralize Cloudflare's production performance beacon without sending it.
+    if (request.method() === "POST" && url.origin === baseOrigin && url.pathname === "/cdn-cgi/rum") return route.fulfill({ status: 204, body: "" });
     if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
-      blockedMutations.push(`${request.method()} ${new URL(request.url()).pathname}`);
+      blockedMutations.push(`${request.method()} ${url.pathname}`);
       return route.abort();
     }
     return route.fallback();
