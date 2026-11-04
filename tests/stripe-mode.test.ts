@@ -87,6 +87,37 @@ test("the Live origin is an exact HTTPS origin and never the staging hostname", 
   assert.equal(isAllowedStripeHost(new URL(STAGING_ORIGIN), {}), true);
 });
 
+test("explicitly approved Live domains retain their own checkout return URL without opening other hosts", async () => {
+  const approved = ["https://thebasebev.com", "https://www.thebasebev.com"];
+  for (const origin of approved) {
+    const dependencies = liveDependencies();
+    const client = dependencies.createClient();
+    let captured: Stripe.Checkout.SessionCreateParams | undefined;
+    const response = await handleStripeCheckout(request(origin), { ...dependencies, liveAdditionalOrigins: approved,
+      createClient: () => ({ ...client, createSession: async params => { captured = params; return client.createSession(); } }),
+    });
+    assert.equal(response.status, 201);
+    assert.equal(captured?.success_url, origin + "/checkout?session_id={CHECKOUT_SESSION_ID}&country=AE&kind=products");
+    assert.ok(captured?.cancel_url?.startsWith(origin + "/checkout?"));
+  }
+  for (const origin of [STAGING_ORIGIN, "http://localhost:3000", "http://thebasebev.com", "https://thebasebev.com.evil.example", "https://unapproved.example"]) {
+    const response = await handleStripeCheckout(request(origin), { ...liveDependencies(), liveAdditionalOrigins: approved,
+      createClient: () => { throw new Error("Unapproved host reached Stripe"); },
+    });
+    assert.equal(response.status, 403);
+  }
+});
+
+test("invalid additional Live origins reject the entire policy and never substitute for a missing primary", () => {
+  const domain = "https://thebasebev.com";
+  for (const invalid of [STAGING_ORIGIN, "http://example.com", "https://example.com/checkout", "https://localhost"]) {
+    const configured = { ...policy, liveAdditionalOrigins: [domain, invalid] };
+    assert.equal(isAllowedStripeHost(new URL(domain), configured), false);
+    assert.equal(isAllowedStripeHost(new URL(LIVE_ORIGIN), configured), false);
+  }
+  assert.equal(isAllowedStripeHost(new URL(domain), { mode: "live", liveAdditionalOrigins: [domain] }), false);
+});
+
 test("Live activation needs its own key, ledger, receiver, webhook, VAT and production environment", () => {
   const configured = { APP_ENV: "production", SHOP_PAYMENTS_ENABLED: "live", SHOP_LIVE_ORIGIN: LIVE_ORIGIN,
     SHOP_ORDERS: {}, STRIPE_LIVE_SECRET_KEY: "sk_live_fixture", STRIPE_LIVE_WEBHOOK_SECRET: "whsec_live_fixture",
@@ -104,6 +135,10 @@ test("Live activation needs its own key, ledger, receiver, webhook, VAT and prod
   const restricted = resolveShopPaymentRuntime({ ...configured, STRIPE_LIVE_RESTRICTED_KEY: "rk_live_runtime_only" });
   assert.equal(restricted.secretKey, "rk_live_runtime_only");
   assert.equal(restricted.receiverReady, true);
+  const domains = resolveShopPaymentRuntime({ ...configured, SHOP_LIVE_ADDITIONAL_ORIGINS: " https://thebasebev.com, https://www.thebasebev.com " });
+  assert.equal(domains.receiverReady, true);
+  assert.deepEqual(domains.liveAdditionalOrigins, ["https://thebasebev.com", "https://www.thebasebev.com"]);
+  assert.equal(resolveShopPaymentRuntime({ ...configured, SHOP_LIVE_ADDITIONAL_ORIGINS: STAGING_ORIGIN }).receiverReady, false);
 });
 
 test("staging reads Test secrets even when Live credentials also exist", () => {
@@ -117,18 +152,19 @@ test("staging reads Test secrets even when Live credentials also exist", () => {
   assert.equal(runtime.webhookSecret, "whsec_test_fixture");
 });
 
-test("signed Live webhook runs only on its Live origin; Test events and mismatched session IDs are rejected", async () => {
+test("signed Live webhook runs only on approved Live origins; Test events and mismatched session IDs are rejected", async () => {
   const secret = "whsec_live_unit_only";
   let calls = 0;
-  for (const scenario of ["valid", "staging", "test-event", "test-session"] as const) {
+  for (const scenario of ["valid", "domain", "staging", "test-event", "test-session"] as const) {
     const payload = JSON.stringify({ id: "evt_live_fixture", object: "event", type: "checkout.session.completed", livemode: scenario !== "test-event",
       data: { object: { object: "checkout.session", id: scenario === "test-session" ? "cs_test_wrong" : "cs_live_fixture" } } });
     const signature = await Stripe.webhooks.generateTestHeaderStringAsync({ payload, secret, cryptoProvider: Stripe.createSubtleCryptoProvider() });
-    const response = await handleStripeWebhook(new Request((scenario === "staging" ? STAGING_ORIGIN : LIVE_ORIGIN) + "/api/stripe/webhook", {
+    const origin = scenario === "staging" ? STAGING_ORIGIN : scenario === "domain" ? "https://thebasebev.com" : LIVE_ORIGIN;
+    const response = await handleStripeWebhook(new Request(origin + "/api/stripe/webhook", {
       method: "POST", headers: { "stripe-signature": signature }, body: payload,
-    }), { ...policy, webhookSecret: secret, processSession: async () => { calls++; return { processed: true }; } });
-    assert.equal(response.status, scenario === "valid" ? 200 : scenario === "staging" ? 403 : 422);
-    if (scenario === "valid") assert.equal((await response.json()).testMode, false);
+    }), { ...policy, liveAdditionalOrigins: ["https://thebasebev.com"], webhookSecret: secret, processSession: async () => { calls++; return { processed: true }; } });
+    assert.equal(response.status, scenario === "valid" || scenario === "domain" ? 200 : scenario === "staging" ? 403 : 422);
+    if (scenario === "valid" || scenario === "domain") assert.equal((await response.json()).testMode, false);
   }
-  assert.equal(calls, 1);
+  assert.equal(calls, 2);
 });

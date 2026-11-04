@@ -13,7 +13,7 @@ export function saveLivePaymentValues(values) {
   const file = ".env.local";
   let text = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
   for (const [name, value] of Object.entries(values)) {
-    if (!/^(?:STRIPE_LIVE_(?:ACCOUNT_ID|SECRET_KEY|RESTRICTED_KEY|WEBHOOK_SECRET|UAE_VAT_RATE_ID)|SHOP_LIVE_ORIGIN|ODOO_LIVE_ACTION_ID)$/.test(name)
+    if (!/^(?:STRIPE_LIVE_(?:ACCOUNT_ID|SECRET_KEY|RESTRICTED_KEY|WEBHOOK_SECRET|UAE_VAT_RATE_ID)|SHOP_LIVE_(?:ORIGIN|ADDITIONAL_ORIGINS)|ODOO_LIVE_ACTION_ID)$/.test(name)
       || typeof value !== "string" || /[\r\n]/.test(value)) throw new Error("INVALID_LIVE_CONFIGURATION");
     const pattern = new RegExp(`^${name}=.*$`, "m");
     const line = `${name}=${JSON.stringify(value)}`;

@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   const runtime = await getShopPaymentRuntime();
   return handleStripeCheckout(request, {
-    mode: runtime.mode, liveOrigin: runtime.liveOrigin,
+    mode: runtime.mode, liveOrigin: runtime.liveOrigin, liveAdditionalOrigins: runtime.liveAdditionalOrigins,
     secretKey: runtime.secretKey, orders: runtime.orders, taxRateId: runtime.taxRateId, orderReceiverReady: runtime.receiverReady,
     createClient: createStripeClient,
   });

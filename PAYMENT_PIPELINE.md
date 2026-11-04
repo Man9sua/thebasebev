@@ -30,6 +30,13 @@ Stripe line items. Both baskets share only the transport bounds in `shop-limits.
   on 2026-11-04. This is an isolated payment-enabled preview; it does not move the
   production domain from Tilda. Live has separate keys, VAT, webhook, D1 ledger
   and Odoo receiver. No Live capability can activate on staging or localhost.
+- On 2026-11-05 the owner additionally approved Live checkout on the already
+  routed `https://thebasebev.com` domain, including its `www` alias. These exact
+  origins are configured server-side in `SHOP_LIVE_ADDITIONAL_ORIGINS`. Checkout
+  returns to the hostname where the customer started. The approved Worker origin
+  and its existing Stripe webhook remain active so previous sessions and retries
+  continue to use the same Live ledger and draft-quotation receiver. This change
+  does not create or modify domain routes, DNS or Tilda.
 - 88 paid variants and 52 sample variants map to distinct Odoo product records.
   The full Rainbow Unicorn pack has several Odoo recipes and requires a quote.
   Unmapped variants, unknown weights and unapproved delivery rates retain `/api/leads`.
@@ -100,6 +107,12 @@ the exact approved `SHOP_LIVE_ORIGIN`, `STRIPE_LIVE_RESTRICTED_KEY` (preferred;
 and the server-side Odoo credentials. The full Live secret key can remain local
 for setup; only the restricted runtime key needs to be uploaded. Never silently
 fall back from an invalid restricted key to broader permissions.
+
+`SHOP_LIVE_ADDITIONAL_ORIGINS` optionally lists comma-separated exact HTTPS
+origins approved for the same Live integration. Every entry must be valid;
+staging, localhost, paths and non-HTTPS entries reject the whole Live policy.
+The primary `SHOP_LIVE_ORIGIN` remains required. An alias never activates Live
+on staging and does not change Stripe credentials, delivery tariffs or SKU mapping.
 
 `GET /api/checkout/stripe/config` exposes only the mode and readiness, never keys,
 upstream URLs or customer data. The UI waits for readiness before offering a
@@ -174,5 +187,5 @@ recover an already paid order. D1 stores the last retry-required state.
 
 Non-UAE/express delivery tariffs and unmatched product prices remain unconfigured.
 The first owner/customer-authorized real payment is required for end-to-end Live
-verification. Production DNS, Tilda, the production domain and existing lead
-automations remain outside the approved preview rollout.
+verification. Production DNS, Tilda and existing lead automations remain outside
+this payment configuration task.

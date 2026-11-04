@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     { status: 429, headers: { "Cache-Control": "no-store", "Retry-After": String(rateLimit.retryAfterSeconds) } });
   const runtime = await getShopPaymentRuntime();
   return handleStripeSession(request, {
-    mode: runtime.mode, liveOrigin: runtime.liveOrigin,
+    mode: runtime.mode, liveOrigin: runtime.liveOrigin, liveAdditionalOrigins: runtime.liveAdditionalOrigins,
     secretKey: runtime.secretKey, orders: runtime.orders,
     retrieveSession: (key, sessionId) => createStripeClient(key).retrieveSession(sessionId),
   });

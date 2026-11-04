@@ -204,7 +204,7 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
             <dl className={styles.summary}>
               <div><dt>{samples ? "Samples" : "Subtotal"}</dt><dd>{samples ? "Free" : quote.subtotal === null ? "Price on request" : formatShopMoney(quote.subtotal)}</dd></div>
               <div><dt>Delivery to {countryName}</dt><dd>{quote.shipping === null ? "To be confirmed" : quote.shipping === 0 ? "Free" : formatShopMoney(quote.shipping)}</dd></div>
-              <div className={styles.total}><dt>Total</dt><dd>At checkout</dd></div>
+              <div className={styles.total}><dt>Total</dt><dd>{quote.total === null ? "To be confirmed" : formatShopMoney(quote.total)}</dd></div>
             </dl>
             <SiteLink className={styles.control} href={checkoutHref}>{samples ? "Request samples" : "Checkout"}</SiteLink>
             <p className={styles.limitNote}>{country === "AE" ? UAE_DELIVERY_TIMING : "Sample delivery is confirmed before payment."}</p>

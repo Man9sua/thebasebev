@@ -3,7 +3,7 @@
 Project: THE BASE
 
 - Production: `https://thebasebev.com`
-- Current production runtime: Tilda
+- Current production runtime: Next.js + Cloudflare Workers/OpenNext on the existing `the-base-production` route (verified 2026-11-05). Keep the Tilda source intact.
 - New runtime: Next.js + TypeScript + Cloudflare Workers/OpenNext
 - Cloudflare account for THE BASE: `mansua` (`678720af4dded7d23aad4a859b6e5f3a`).
 - Staging: `https://the-base-staging.mansua.workers.dev`
@@ -79,6 +79,11 @@ npm audit
 ```
 
 Stripe is used for the shop checkout. Stripe checks are required in CI and the readiness audit. Staging uses Test Mode only; product prices and delivery fees must be explicitly approved before enabling payment. Never substitute HTML demo amounts or legacy prices for approved pricing.
+
+The owner approved Live payments on the already routed `https://thebasebev.com`
+domain on 2026-11-05, in addition to the previously approved production Worker.
+Exact server-side origins share its existing Live webhook, ledger and Odoo
+receiver. This payment approval does not authorize DNS, domain-route or Tilda changes.
 
 For paid website orders, the agreed Odoo destination is Sales **Quotation**
 (`sale.order`, state `draft`) with a verified Stripe payment reference and amount.

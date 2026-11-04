@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   const runtime = await getShopPaymentRuntime();
   const client = runtime.secretKey && isStripeKey(runtime.secretKey, runtime.mode) ? createStripeClient(runtime.secretKey) : null;
   return handleStripeWebhook(request, {
-    mode: runtime.mode, liveOrigin: runtime.liveOrigin,
+    mode: runtime.mode, liveOrigin: runtime.liveOrigin, liveAdditionalOrigins: runtime.liveAdditionalOrigins,
     webhookSecret: runtime.webhookSecret,
     processSession: client && runtime.orders && runtime.receiverReady ? id => processPaidSession(id, {
       mode: runtime.mode, orders: runtime.orders!, retrieveSession: client.retrieveSession, listLineItems: client.listLineItems,

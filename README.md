@@ -51,7 +51,7 @@ npm.cmd run build
 npm.cmd run check:assets
 ```
 
-Stripe checkout uses Test Mode on staging and separately configured Live Mode only on the owner-approved Live preview. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `PAYMENT_PIPELINE.md` for setup and verification status.
+Stripe checkout uses Test Mode on staging and separately configured Live Mode only on owner-approved origins. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `PAYMENT_PIPELINE.md` for setup and verification status.
 
 ### Shop and checkout
 
@@ -83,9 +83,11 @@ lock in Odoo prevents duplicate quotations after concurrent deliveries or timeou
 
 The destination is a paid **draft quotation in Odoo Sales**, without automatic
 confirmation or invoicing. See [PAYMENT_PIPELINE.md](./PAYMENT_PIPELINE.md) for the
-Test Mode evidence and Live setup/verification requirements. The approved Live
-preview is `https://the-base-production.mansua.workers.dev`; Tilda still serves
-the real production domain. No automatic confirmation or invoicing is enabled.
+Test Mode evidence and Live setup/verification requirements. Live is approved on
+`https://the-base-production.mansua.workers.dev` and, since 2026-11-05, the already
+routed `https://thebasebev.com` domain and its `www` alias. Exact server-configured
+origins share the existing Live webhook and ledger. No automatic confirmation or
+invoicing is enabled; this task does not change domain routes, DNS or Tilda.
 
 Against a running production build, the local smoke commands are:
 

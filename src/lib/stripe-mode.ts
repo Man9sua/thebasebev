@@ -1,5 +1,5 @@
 export type StripeMode = "test" | "live";
-export type StripePolicy = Readonly<{ mode?: StripeMode; liveOrigin?: string }>;
+export type StripePolicy = Readonly<{ mode?: StripeMode; liveOrigin?: string; liveAdditionalOrigins?: readonly string[] }>;
 
 export const STRIPE_STAGING_ORIGIN = "https://the-base-staging.mansua.workers.dev";
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
@@ -13,8 +13,11 @@ export function validLiveOrigin(value: string | undefined): string | undefined {
 }
 
 export function isAllowedStripeHost(url: URL, policy: StripePolicy) {
-  return policy.mode === "live" ? url.origin === validLiveOrigin(policy.liveOrigin)
-    : url.origin === STRIPE_STAGING_ORIGIN || LOCAL_HOSTS.has(url.hostname);
+  if (policy.mode !== "live") return url.origin === STRIPE_STAGING_ORIGIN || LOCAL_HOSTS.has(url.hostname);
+  const primary = validLiveOrigin(policy.liveOrigin);
+  if (!primary) return false;
+  const origins = [primary, ...(policy.liveAdditionalOrigins ?? [])];
+  return origins.every(origin => validLiveOrigin(origin) === origin) && origins.includes(url.origin);
 }
 
 export function isStripeKey(secretKey: string | undefined, mode: StripeMode = "test") {

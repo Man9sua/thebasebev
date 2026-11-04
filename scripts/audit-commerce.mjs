@@ -89,7 +89,7 @@ async function shopBaskets(page) {
   if (paymentConfig.mode === "test") await testNotice.waitFor();
   check(paymentConfig.mode === "test" ? await testNotice.isVisible() : paymentConfig.mode === "live" && await testNotice.count() === 0,
     "Checkout: payment mode matches the server and Test mode is labelled");
-  if (new URL(baseUrl).hostname.endsWith(".workers.dev")) {
+  if (new URL(baseUrl).protocol === "https:") {
     if (paymentConfig.ready === true) await payButton.click({ trial: true });
     check(paymentConfig.ready === true && await payButton.isEnabled(), "Deployed checkout: receiver and mode configuration are ready");
   }
@@ -109,6 +109,7 @@ async function shopBaskets(page) {
   await page.reload({ waitUntil: "load" });
   basket = await openBasket(page, "samples");
   const firstSample = basket.locator('[data-shop-cart-line="milkshake::Banana"]');
+  check(await basket.getByText("To be confirmed", { exact: true }).count() === 2, "Samples: international delivery and total remain unquoted rather than showing a guessed amount");
   check(/−\s*3\s*\+/.test(await firstSample.getByRole("group").innerText()), "Samples: several packs survive reload");
   check(await page.evaluate(() => localStorage.getItem("thebase:cart:v2")) === paidBasket, "Samples: country switch preserves the paid basket");
   const request = basket.getByRole("link", { name: "Request samples", exact: true });
@@ -132,7 +133,15 @@ async function shopBaskets(page) {
     localStorage.setItem("thebase:cart:v2", JSON.stringify([{ slug: "milkshake", flavor: "Vanilla", quantity: 17 }]));
     localStorage.setItem("thebase:sample-cart:v1", JSON.stringify([{ slug: "milkshake", flavor: "Vanilla", quantity: 1 }]));
   });
-  await page.goto(`${baseUrl}/checkout?country=AE&kind=products`, { waitUntil: "load" });
+  await page.reload({ waitUntil: "load" });
+  basket = await openBasket(page, "products");
+  check(await basket.getByText(/^AED\s*531\.30$/, { exact: true }).isVisible(), "Mixed cart: total includes the approved delivery and tax, matching checkout");
+  const paidLine = basket.locator('[data-shop-line-kind="products"]');
+  await paidLine.getByRole("button", { name: "Add one Vanilla Milkshake", exact: true }).click();
+  check(await basket.getByText(/^AED\s*529\.20$/, { exact: true }).isVisible(), "Mixed cart: total updates when goods qualify for free delivery");
+  await paidLine.getByRole("button", { name: "Remove one Vanilla Milkshake", exact: true }).click();
+  check(await basket.getByText(/^AED\s*531\.30$/, { exact: true }).isVisible(), "Mixed cart: reducing goods below the free-delivery threshold restores the charge");
+  await basket.getByRole("link", { name: "Checkout", exact: true }).click();
   const mixedSummary = page.getByRole("complementary", { name: "Your order", exact: true });
   await mixedSummary.locator('[data-checkout-line-kind="samples"]').waitFor();
   check(await mixedSummary.locator('[data-checkout-line-kind="products"]').count() === 1, "Mixed checkout retains the paid pack");
