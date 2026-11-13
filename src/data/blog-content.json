@@ -8,6 +8,1209 @@
   },
   "posts": [
     {
+      "uid": "tb1768c45f",
+      "path": "/tpost/tb1768c45f-frappe-cost-per-cup-base-vs-scratch",
+      "sourceUrl": "https://thebasebev.com/tpost/tb1768c45f-frappe-cost-per-cup-base-vs-scratch",
+      "title": "Frappe Cost per Cup: Base vs Built From Scratch",
+      "excerpt": "How to calculate the real cost of a frappe, line by line, and why the cheapest-looking recipe is often the most expensive one to run.",
+      "published": "2026-11-13",
+      "topic": {
+        "id": "economics",
+        "label": "Menu economics"
+      },
+      "cover": {
+        "src": "/images/hero-frappe.webp",
+        "alt": "Frappe made with THE BASE frappe base"
+      },
+      "body": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "A frappe looks cheap on paper: ice, milk, coffee, something sweet. In practice it is one of the drinks where cafés lose the most margin without noticing, because the real cost hides in waste, labour and inconsistency rather than in the ingredient invoice."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Here is how to calculate what a frappe actually costs you, and how a powdered base compares with building it from separate ingredients."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "What goes into the cost of one frappe?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Count every line, not just the main ingredient:"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            [
+              {
+                "type": "text",
+                "text": "Base or ingredients:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " coffee, sugar or syrup, milk powder or cream, stabiliser to stop the ice separating"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Milk:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " the portion per cup"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Ice:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " small per cup, but not zero"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Packaging:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " cup, dome lid, straw"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Toppings:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " whipped cream, sauce, crumbs"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Waste:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " drinks remade because they separated, came out too sweet or too thin"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Labour:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " seconds at the blender multiplied by your cost per minute of barista time"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "The formula"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Cost per cup = ingredients + milk + ice + packaging + toppings + (waste share) + (labour seconds × cost per second)",
+              "strong": true
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Then: "
+            },
+            {
+              "type": "text",
+              "text": "food cost % = cost per cup ÷ menu price (without VAT) × 100.",
+              "strong": true
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Write it in a sheet with one row per drink. Most owners who do this for the first time find one or two drinks well above their target food cost."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Where scratch recipes lose money"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Stabiliser is the hidden cost.",
+              "strong": true
+            },
+            {
+              "type": "text",
+              "text": " Without a binder, a blended drink separates into ice and liquid within minutes. Cafés that skip it remake drinks or get them back from guests. Cafés that add it buy one more ingredient and one more step."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Every extra ingredient is a measuring step.",
+              "strong": true
+            },
+            {
+              "type": "text",
+              "text": " Coffee, sugar, powder and stabiliser measured separately means four chances to get it wrong on a busy shift. Each mistake shows up as waste, not on the invoice."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Sweetness drifts.",
+              "strong": true
+            },
+            {
+              "type": "text",
+              "text": " When syrup is added by pump, two baristas rarely make the same drink. Guests notice, and the drink that was popular last month quietly drops."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "How a frappe base changes the numbers"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "A powdered frappe base combines flavour, sweetness, milk solids and stabiliser in one product. The barista measures one scoop, adds milk and ice, and blends. The ingredient line on the invoice may look higher than plain sugar and coffee, but the per-cup cost often comes out lower once waste and labour are counted, because:"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            [
+              {
+                "type": "text",
+                "text": "One measuring step instead of four cuts mistakes."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "The stabiliser is already inside, so drinks hold their texture until the guest finishes."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Every cup tastes the same, so remakes and complaints drop."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Stock is one SKU per flavour instead of several ingredients per drink."
+              }
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Run your own test"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Make ten frappes each way on a normal shift. Record ingredients used, time per drink and every remake. Divide the totals by ten. That one-hour test gives you a real cost per cup for your café, which beats any supplier's claim, including ours."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Where THE BASE fits"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "THE BASE makes "
+            },
+            {
+              "type": "link",
+              "text": "frappe bases",
+              "href": "/frappe"
+            },
+            {
+              "type": "text",
+              "text": " in classic and seasonal flavours at its own factory in the UAE, Halal, HACCP and ISO 22000 certified, and supplies more than 5,000 outlets in 26 countries. We can also develop a custom frappe for a chain's menu. Samples are free, so you can run the ten-cup test above with our base against your current recipe."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "FAQ"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "What is a good food cost for a frappe?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "It depends on your concept and rent, but most cafés aim to keep drink food cost well below a third of the menu price. Set your own target and measure every drink against it."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "Why does my frappe separate?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "It is missing a stabiliser, or the stabiliser dose is too low for the amount of ice. A frappe base includes it in the right ratio."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "Can a frappe base be used for non-coffee drinks?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Yes. Many cafés use flavoured frappe bases such as chocolate, vanilla or caramel without coffee for kids and non-coffee guests."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "link",
+              "text": "Request free frappe samples",
+              "href": "/contacts"
+            },
+            {
+              "type": "text",
+              "text": " or visit our showroom in Al Quoz, Dubai, Monday to Saturday, 9:00 to 18:00."
+            }
+          ]
+        }
+      ],
+      "bodyText": "A frappe looks cheap on paper: ice, milk, coffee, something sweet. In practice it is one of the drinks where cafés lose the most margin without noticing, because the real cost hides in waste, labour and inconsistency rather than in the ingredient invoice.\n\nHere is how to calculate what a frappe actually costs you, and how a powdered base compares with building it from separate ingredients.\n\nWhat goes into the cost of one frappe?\n\nCount every line, not just the main ingredient:\n\nBase or ingredients: coffee, sugar or syrup, milk powder or cream, stabiliser to stop the ice separating\nMilk: the portion per cup\nIce: small per cup, but not zero\nPackaging: cup, dome lid, straw\nToppings: whipped cream, sauce, crumbs\nWaste: drinks remade because they separated, came out too sweet or too thin\nLabour: seconds at the blender multiplied by your cost per minute of barista time\n\nThe formula\n\nCost per cup = ingredients + milk + ice + packaging + toppings + (waste share) + (labour seconds × cost per second)\n\nThen: food cost % = cost per cup ÷ menu price (without VAT) × 100.\n\nWrite it in a sheet with one row per drink. Most owners who do this for the first time find one or two drinks well above their target food cost.\n\nWhere scratch recipes lose money\n\nStabiliser is the hidden cost. Without a binder, a blended drink separates into ice and liquid within minutes. Cafés that skip it remake drinks or get them back from guests. Cafés that add it buy one more ingredient and one more step.\n\nEvery extra ingredient is a measuring step. Coffee, sugar, powder and stabiliser measured separately means four chances to get it wrong on a busy shift. Each mistake shows up as waste, not on the invoice.\n\nSweetness drifts. When syrup is added by pump, two baristas rarely make the same drink. Guests notice, and the drink that was popular last month quietly drops.\n\nHow a frappe base changes the numbers\n\nA powdered frappe base combines flavour, sweetness, milk solids and stabiliser in one product. The barista measures one scoop, adds milk and ice, and blends. The ingredient line on the invoice may look higher than plain sugar and coffee, but the per-cup cost often comes out lower once waste and labour are counted, because:\n\nOne measuring step instead of four cuts mistakes.\nThe stabiliser is already inside, so drinks hold their texture until the guest finishes.\nEvery cup tastes the same, so remakes and complaints drop.\nStock is one SKU per flavour instead of several ingredients per drink.\n\nRun your own test\n\nMake ten frappes each way on a normal shift. Record ingredients used, time per drink and every remake. Divide the totals by ten. That one-hour test gives you a real cost per cup for your café, which beats any supplier's claim, including ours.\n\nWhere THE BASE fits\n\nTHE BASE makes frappe bases in classic and seasonal flavours at its own factory in the UAE, Halal, HACCP and ISO 22000 certified, and supplies more than 5,000 outlets in 26 countries. We can also develop a custom frappe for a chain's menu. Samples are free, so you can run the ten-cup test above with our base against your current recipe.\n\nFAQ\n\nWhat is a good food cost for a frappe?\n\nIt depends on your concept and rent, but most cafés aim to keep drink food cost well below a third of the menu price. Set your own target and measure every drink against it.\n\nWhy does my frappe separate?\n\nIt is missing a stabiliser, or the stabiliser dose is too low for the amount of ice. A frappe base includes it in the right ratio.\n\nCan a frappe base be used for non-coffee drinks?\n\nYes. Many cafés use flavoured frappe bases such as chocolate, vanilla or caramel without coffee for kids and non-coffee guests.\n\nRequest free frappe samples or visit our showroom in Al Quoz, Dubai, Monday to Saturday, 9:00 to 18:00.",
+      "readingMinutes": 3,
+      "sourceStatus": 200,
+      "sourceRobots": "index, follow",
+      "sourceTextHash": "bc3bdd56f664f88cf568631e076081671927ad284ce3fb904dc0b816da8e9429",
+      "seo": {
+        "title": "Frappe Cost per Cup: Base vs Built From Scratch",
+        "description": "How to calculate the real cost of a frappe, line by line, and why the cheapest-looking recipe is often the most expensive one to run.",
+        "canonical": "https://thebasebev.com/tpost/tb1768c45f-frappe-cost-per-cup-base-vs-scratch",
+        "openGraphTitle": "Frappe Cost per Cup: Base vs Built From Scratch",
+        "openGraphDescription": "How to calculate the real cost of a frappe, line by line, and why the cheapest-looking recipe is often the most expensive one to run.",
+        "openGraphImage": "https://thebasebev.com/images/hero-frappe.webp"
+      }
+    },
+    {
+      "uid": "tbc1dc2c25",
+      "path": "/tpost/tbc1dc2c25-gulf-winter-menu-hot-drinks-that-sell",
+      "sourceUrl": "https://thebasebev.com/tpost/tbc1dc2c25-gulf-winter-menu-hot-drinks-that-sell",
+      "title": "The Gulf Winter Menu: Hot Drinks That Actually Sell",
+      "excerpt": "From November to February, evenings in the UAE and Saudi Arabia cool down and hot drinks pick up. Five builds to add, how to keep them consistent, and what to cut.",
+      "published": "2026-11-13",
+      "topic": {
+        "id": "economics",
+        "label": "Menu economics"
+      },
+      "cover": {
+        "src": "/images/hero-chocolate.webp",
+        "alt": "Hot chocolate made with THE BASE chocolate base"
+      },
+      "body": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Winter in the Gulf is short and mild, but it changes what guests order. From November to February the evenings cool down, terraces fill up, and hot drinks start to outsell iced ones after sunset. A café that switches part of its menu for these months catches demand that an all-iced menu leaves on the table."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "The trick is to add winter drinks that your team can make fast and the same way every time, without buying new equipment or training a new skill."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Which hot drinks sell best in a Gulf winter?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "These five are reliable because guests already know them and they all build on milk and a steam wand:"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            [
+              {
+                "type": "text",
+                "text": "Hot chocolate.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " The best seller with families and non-coffee guests. Finish with marshmallows or a cocoa dusting for a higher price point."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Chai latte and karak.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " Spiced tea is a local habit, so it needs no explanation on the menu. Offer it both sweet and less sweet."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Raf coffee.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " Espresso with cream and vanilla, whipped together. Rich and dessert-like, it works as a signature drink."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Spiced and seasonal lattes.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " Cinnamon, cardamom, gingerbread or saffron on a latte base. One limited flavour per month keeps regulars curious."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Ube or matcha latte, hot.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " Colour still sells on social media in winter, and both work hot."
+              }
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "How do you keep hot drinks consistent across shifts?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Hot drinks fail on consistency more than on recipe. One barista adds more syrup, another less chocolate, and the drink tastes different on every shift. A powdered base fixes this: the sweetness and flavour are set in the factory, and the barista only measures base and milk."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "A typical build with a hot chocolate base:"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            [
+              {
+                "type": "text",
+                "text": "35 g",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " chocolate base"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "200 ml",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " milk"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Stir in a pitcher until fully dissolved, steam or heat, pour into an 8 oz cup. About one minute from start to serve."
+              }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "With a 500 g pouch you get 14 cups, which makes stock planning simple: count the cups you expect to sell, divide by 14, and you know how many pouches to order."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "What should you cut for winter?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Keep the menu short. For each winter drink you add, remove or pause one iced drink that slows down in the cooler months. Fewer items means faster service at the evening peak and less stock sitting open."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "How to price winter drinks"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Work from cost per cup, not from the competitor's board. Add base, milk, cup, lid and any topping, then set the menu price so ingredients stay at the share of price you target for the rest of your menu. Toppings such as marshmallows, whipped cream or a chocolate drizzle cost little and let you charge more for the same drink."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Where THE BASE fits"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "THE BASE produces ready bases for "
+            },
+            {
+              "type": "link",
+              "text": "hot chocolate",
+              "href": "/chocolate"
+            },
+            {
+              "type": "text",
+              "text": ", "
+            },
+            {
+              "type": "link",
+              "text": "chai latte",
+              "href": "/chai-latte"
+            },
+            {
+              "type": "text",
+              "text": ", "
+            },
+            {
+              "type": "link",
+              "text": "raf coffee",
+              "href": "/raf-coffee"
+            },
+            {
+              "type": "text",
+              "text": " and "
+            },
+            {
+              "type": "link",
+              "text": "cream latte",
+              "href": "/cream-latte"
+            },
+            {
+              "type": "text",
+              "text": " at its own factory in the UAE, Halal, HACCP and ISO 22000 certified. The raf and cream latte bases contain no coffee: your barista adds fresh espresso, so the drink still tastes like your coffee. Bases are medium sweet, work with plant milk, and can also be served iced when the weather turns warm again."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "FAQ"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "When should a UAE café switch to a winter menu?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Most cafés add hot specials in November and run them until late February or March, when daytime heat returns."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "Can the same bases be used for iced drinks?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Yes. Milk-based bases dissolve in cold milk as well, so one stock covers hot drinks in winter and iced drinks in summer."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "Do I need new equipment for these drinks?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "No. A steam wand, a pitcher and a scale are enough for every drink above."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Planning your winter menu? "
+            },
+            {
+              "type": "link",
+              "text": "Ask for free samples",
+              "href": "/contacts"
+            },
+            {
+              "type": "text",
+              "text": " or come to our showroom in Al Quoz, Dubai, Monday to Saturday, 9:00 to 18:00, and taste the range with our team."
+            }
+          ]
+        }
+      ],
+      "bodyText": "Winter in the Gulf is short and mild, but it changes what guests order. From November to February the evenings cool down, terraces fill up, and hot drinks start to outsell iced ones after sunset. A café that switches part of its menu for these months catches demand that an all-iced menu leaves on the table.\n\nThe trick is to add winter drinks that your team can make fast and the same way every time, without buying new equipment or training a new skill.\n\nWhich hot drinks sell best in a Gulf winter?\n\nThese five are reliable because guests already know them and they all build on milk and a steam wand:\n\nHot chocolate. The best seller with families and non-coffee guests. Finish with marshmallows or a cocoa dusting for a higher price point.\nChai latte and karak. Spiced tea is a local habit, so it needs no explanation on the menu. Offer it both sweet and less sweet.\nRaf coffee. Espresso with cream and vanilla, whipped together. Rich and dessert-like, it works as a signature drink.\nSpiced and seasonal lattes. Cinnamon, cardamom, gingerbread or saffron on a latte base. One limited flavour per month keeps regulars curious.\nUbe or matcha latte, hot. Colour still sells on social media in winter, and both work hot.\n\nHow do you keep hot drinks consistent across shifts?\n\nHot drinks fail on consistency more than on recipe. One barista adds more syrup, another less chocolate, and the drink tastes different on every shift. A powdered base fixes this: the sweetness and flavour are set in the factory, and the barista only measures base and milk.\n\nA typical build with a hot chocolate base:\n\n35 g chocolate base\n200 ml milk\nStir in a pitcher until fully dissolved, steam or heat, pour into an 8 oz cup. About one minute from start to serve.\n\nWith a 500 g pouch you get 14 cups, which makes stock planning simple: count the cups you expect to sell, divide by 14, and you know how many pouches to order.\n\nWhat should you cut for winter?\n\nKeep the menu short. For each winter drink you add, remove or pause one iced drink that slows down in the cooler months. Fewer items means faster service at the evening peak and less stock sitting open.\n\nHow to price winter drinks\n\nWork from cost per cup, not from the competitor's board. Add base, milk, cup, lid and any topping, then set the menu price so ingredients stay at the share of price you target for the rest of your menu. Toppings such as marshmallows, whipped cream or a chocolate drizzle cost little and let you charge more for the same drink.\n\nWhere THE BASE fits\n\nTHE BASE produces ready bases for hot chocolate, chai latte, raf coffee and cream latte at its own factory in the UAE, Halal, HACCP and ISO 22000 certified. The raf and cream latte bases contain no coffee: your barista adds fresh espresso, so the drink still tastes like your coffee. Bases are medium sweet, work with plant milk, and can also be served iced when the weather turns warm again.\n\nFAQ\n\nWhen should a UAE café switch to a winter menu?\n\nMost cafés add hot specials in November and run them until late February or March, when daytime heat returns.\n\nCan the same bases be used for iced drinks?\n\nYes. Milk-based bases dissolve in cold milk as well, so one stock covers hot drinks in winter and iced drinks in summer.\n\nDo I need new equipment for these drinks?\n\nNo. A steam wand, a pitcher and a scale are enough for every drink above.\n\nPlanning your winter menu? Ask for free samples or come to our showroom in Al Quoz, Dubai, Monday to Saturday, 9:00 to 18:00, and taste the range with our team.",
+      "readingMinutes": 3,
+      "sourceStatus": 200,
+      "sourceRobots": "index, follow",
+      "sourceTextHash": "ad4b6e9ac3fb0493b11649807ab5ab3338bda3a642bbba5107fc4ab9fb3f0c6f",
+      "seo": {
+        "title": "The Gulf Winter Menu: Hot Drinks That Actually Sell",
+        "description": "From November to February, evenings in the UAE and Saudi Arabia cool down and hot drinks pick up. Five builds to add, how to keep them consistent, and what to cut.",
+        "canonical": "https://thebasebev.com/tpost/tbc1dc2c25-gulf-winter-menu-hot-drinks-that-sell",
+        "openGraphTitle": "The Gulf Winter Menu: Hot Drinks That Actually Sell",
+        "openGraphDescription": "From November to February, evenings in the UAE and Saudi Arabia cool down and hot drinks pick up. Five builds to add, how to keep them consistent, and what to cut.",
+        "openGraphImage": "https://thebasebev.com/images/hero-chocolate.webp"
+      }
+    },
+    {
+      "uid": "tbd4b1406d",
+      "path": "/tpost/tbd4b1406d-ube-latte-explained-for-cafe-owners",
+      "sourceUrl": "https://thebasebev.com/tpost/tbd4b1406d-ube-latte-explained-for-cafe-owners",
+      "title": "Ube Latte, Explained for Café Owners",
+      "excerpt": "What ube is, why the purple latte keeps trending, and how a café can add it with 5 g of pure powder per drink and no new equipment.",
+      "published": "2026-11-13",
+      "topic": {
+        "id": "product",
+        "label": "Product & formulation"
+      },
+      "cover": {
+        "src": "/images/blog/ube-latte-explained-for-cafe-owners.webp",
+        "alt": "THE BASE Ube Premium 100 g tin, 100% purple yam powder"
+      },
+      "body": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Ube is purple yam ("
+            },
+            {
+              "type": "text",
+              "text": "Dioscorea alata",
+              "em": true
+            },
+            {
+              "type": "text",
+              "text": "), a root from the Philippines with a mild, nutty, vanilla-like taste and a colour no syrup can fake. In a café it works the way matcha does: a small dose of powder, whisked and topped with milk, gives a drink guests photograph before they taste it. If your menu already runs matcha, you can add an ube latte this week with the same bar tools."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Why is everyone ordering ube right now?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Three things push it. The colour performs on social feeds without any artificial dye. The flavour is gentle enough for guests who find matcha bitter. And it pairs with what cafés already stock: milk, cream, coffee and coconut. That makes ube a low-risk way to add a seasonal or signature drink without training a new skill."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Pure ube or a flavoured mix?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "This is the decision that sets your cost and your quality."
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            [
+              {
+                "type": "text",
+                "text": "Pure ube powder",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " is dried and milled purple yam, nothing added. You control sweetness, the colour is real, and the label stays clean."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Ube flavour mixes",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " are mostly sugar, creamer and colouring with a small share of yam, or none at all. Faster, but the taste is flat and the ingredient list is long."
+              }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Check the label before you buy. If sugar or a colour code comes before ube, you are paying for sugar."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "How much ube goes into one drink?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "With a 100% purple yam powder, a little goes a long way. These are the starting builds we use on the bar:"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            [
+              {
+                "type": "text",
+                "text": "Ube latte:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " 5 g powder, 250 ml hot milk"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Iced ube latte:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " 5 g powder, 200 ml cold milk, ice"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Ube cold foam:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " 3 g powder, 100 ml cream"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Ube smoothie:",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " 5 g powder, 300 ml smoothie base"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Whisk the powder with 30 ml warm water first, then add milk. That step removes lumps and brings the colour up. Sweeten to your house standard; pure ube has no sugar of its own."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "What does an ube latte cost you per cup?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "At 5 g per drink, one 100 g tin makes 20 drinks. Your ingredient cost is the tin price divided by 20, plus milk, cup and lid. Because the dose is small, ube usually lands close to a matcha latte on cost while selling at a signature-drink price. Run the numbers with your own milk and packaging prices before you set the menu price."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Three ways to sell it"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            [
+              {
+                "type": "text",
+                "text": "Ube cold foam on iced coffee.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " The easiest entry: no new base drink, just a purple layer on an americano or cold brew."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Dirty ube latte.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " A shot of espresso poured over an iced ube latte. Coffee guests get something new without leaving coffee."
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "text": "Ube and coconut.",
+                "strong": true
+              },
+              {
+                "type": "text",
+                "text": " Swap dairy for coconut milk for a tropical, plant-based version."
+              }
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "Where THE BASE fits"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "THE BASE makes beverage bases and pure powders at its own factory in the UAE, with Halal, HACCP and ISO 22000 certification. "
+            },
+            {
+              "type": "text",
+              "text": "Ube Premium",
+              "strong": true
+            },
+            {
+              "type": "text",
+              "text": " is our 100 g tin of 100% purple yam powder: no sugar, no colourants, no fillers. It is launching soon; cafés and distributors can ask for a free sample now and taste it at our showroom in Al Quoz, Dubai."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "content": [
+            {
+              "type": "text",
+              "text": "FAQ"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "Does ube taste like taro?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "They are often confused. Taro is a different root with a starchier, earthier taste. Ube is sweeter and more vanilla-like, and its purple is deeper."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "Can ube be served hot and iced?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Yes. Pure ube powder dissolves in both once it is whisked with a little warm water first."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "Is ube suitable for vegan menus?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Pure ube powder is plant-based. Pair it with oat, almond or coconut milk for a fully vegan drink."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": [
+            {
+              "type": "text",
+              "text": "How long does ube powder keep?"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Keep the tin closed, dry and away from light. Use the best-before date on the pack as your guide."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "Want to try it on your bar? "
+            },
+            {
+              "type": "link",
+              "text": "Request a free sample",
+              "href": "/contacts"
+            },
+            {
+              "type": "text",
+              "text": " or visit the Al Quoz showroom Monday to Saturday, 9:00 to 18:00."
+            }
+          ]
+        }
+      ],
+      "bodyText": "Ube is purple yam (Dioscorea alata), a root from the Philippines with a mild, nutty, vanilla-like taste and a colour no syrup can fake. In a café it works the way matcha does: a small dose of powder, whisked and topped with milk, gives a drink guests photograph before they taste it. If your menu already runs matcha, you can add an ube latte this week with the same bar tools.\n\nWhy is everyone ordering ube right now?\n\nThree things push it. The colour performs on social feeds without any artificial dye. The flavour is gentle enough for guests who find matcha bitter. And it pairs with what cafés already stock: milk, cream, coffee and coconut. That makes ube a low-risk way to add a seasonal or signature drink without training a new skill.\n\nPure ube or a flavoured mix?\n\nThis is the decision that sets your cost and your quality.\n\nPure ube powder is dried and milled purple yam, nothing added. You control sweetness, the colour is real, and the label stays clean.\nUbe flavour mixes are mostly sugar, creamer and colouring with a small share of yam, or none at all. Faster, but the taste is flat and the ingredient list is long.\n\nCheck the label before you buy. If sugar or a colour code comes before ube, you are paying for sugar.\n\nHow much ube goes into one drink?\n\nWith a 100% purple yam powder, a little goes a long way. These are the starting builds we use on the bar:\n\nUbe latte: 5 g powder, 250 ml hot milk\nIced ube latte: 5 g powder, 200 ml cold milk, ice\nUbe cold foam: 3 g powder, 100 ml cream\nUbe smoothie: 5 g powder, 300 ml smoothie base\n\nWhisk the powder with 30 ml warm water first, then add milk. That step removes lumps and brings the colour up. Sweeten to your house standard; pure ube has no sugar of its own.\n\nWhat does an ube latte cost you per cup?\n\nAt 5 g per drink, one 100 g tin makes 20 drinks. Your ingredient cost is the tin price divided by 20, plus milk, cup and lid. Because the dose is small, ube usually lands close to a matcha latte on cost while selling at a signature-drink price. Run the numbers with your own milk and packaging prices before you set the menu price.\n\nThree ways to sell it\n\nUbe cold foam on iced coffee. The easiest entry: no new base drink, just a purple layer on an americano or cold brew.\nDirty ube latte. A shot of espresso poured over an iced ube latte. Coffee guests get something new without leaving coffee.\nUbe and coconut. Swap dairy for coconut milk for a tropical, plant-based version.\n\nWhere THE BASE fits\n\nTHE BASE makes beverage bases and pure powders at its own factory in the UAE, with Halal, HACCP and ISO 22000 certification. Ube Premium is our 100 g tin of 100% purple yam powder: no sugar, no colourants, no fillers. It is launching soon; cafés and distributors can ask for a free sample now and taste it at our showroom in Al Quoz, Dubai.\n\nFAQ\n\nDoes ube taste like taro?\n\nThey are often confused. Taro is a different root with a starchier, earthier taste. Ube is sweeter and more vanilla-like, and its purple is deeper.\n\nCan ube be served hot and iced?\n\nYes. Pure ube powder dissolves in both once it is whisked with a little warm water first.\n\nIs ube suitable for vegan menus?\n\nPure ube powder is plant-based. Pair it with oat, almond or coconut milk for a fully vegan drink.\n\nHow long does ube powder keep?\n\nKeep the tin closed, dry and away from light. Use the best-before date on the pack as your guide.\n\nWant to try it on your bar? Request a free sample or visit the Al Quoz showroom Monday to Saturday, 9:00 to 18:00.",
+      "readingMinutes": 3,
+      "sourceStatus": 200,
+      "sourceRobots": "index, follow",
+      "sourceTextHash": "4be8c8d64ccc73df3631d1eefbe7c18d35b5ce7ce4cf75556c5f9f4e41900c0b",
+      "seo": {
+        "title": "Ube Latte, Explained for Café Owners",
+        "description": "What ube is, why the purple latte keeps trending, and how a café can add it with 5 g of pure powder per drink and no new equipment.",
+        "canonical": "https://thebasebev.com/tpost/tbd4b1406d-ube-latte-explained-for-cafe-owners",
+        "openGraphTitle": "Ube Latte, Explained for Café Owners",
+        "openGraphDescription": "What ube is, why the purple latte keeps trending, and how a café can add it with 5 g of pure powder per drink and no new equipment.",
+        "openGraphImage": "https://thebasebev.com/images/blog/ube-latte-explained-for-cafe-owners.webp"
+      }
+    },
+    {
       "uid": "ybiotcu9u1",
       "path": "/tpost/ybiotcu9u1-uji-to-warehouse-3-days-reimagined",
       "sourceUrl": "https://thebasebev.com/tpost/ybiotcu9u1-uji-to-warehouse-3-days-reimagined",
