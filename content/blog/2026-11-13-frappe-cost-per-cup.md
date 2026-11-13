@@ -54,7 +54,7 @@ Make ten frappes each way on a normal shift. Record ingredients used, time per d
 
 ## Where THE BASE fits
 
-THE BASE makes [frappe bases](/frappe) in classic and seasonal flavours at its own factory in the UAE, Halal, HACCP and ISO 22000 certified, and supplies more than 5,000 outlets in 26 countries. We can also develop a custom frappe for a chain's menu. Samples are free, so you can run the ten-cup test above with our base against your current recipe.
+THE BASE makes [frappe bases](/frappe) in classic and seasonal flavours at its own factory in the UAE, Halal, HACCP and ISO 22000 certified, and its drinks are served at 5,000 points of sale in 24+ markets. We can also develop a custom frappe for a chain's menu. Samples are free, so you can run the ten-cup test above with our base against your current recipe.
 
 ## FAQ
 
