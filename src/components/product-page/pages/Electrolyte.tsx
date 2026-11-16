@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import { SiteLink } from "@/components/site/SiteLink";
 import { DistributorLink, Faq, SampleButton, Section, Stats, cx, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
@@ -51,6 +52,10 @@ export function ElectrolytePage({ product }: ProductPageProps) {
           <h1 id="product-title">Electrolyte</h1>
           <p>Electrolyte powder drink in five flavours. In single-serve sticks, bar packs and 25 kg bulk.</p>
           <div className={local.heroActions}><SampleButton productName={product.name} /><DistributorLink /></div>
+        </div>
+        <div className={local.heroMedia}>
+          <Image src="/images/shop/electrolyte.webp" alt="The Base Electrolyte 5 g stick" fill
+            sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1440px) 38vw, 544px" loading="eager" />
         </div>
       </section>
       <Section title="In every stick" label="In every stick">
