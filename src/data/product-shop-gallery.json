@@ -1,0 +1,55 @@
+{
+  "chai-latte": [
+    "/images/products/chai-latte/serve-2-640.webp"
+  ],
+  "chocolate": [
+    "/images/products/chocolate/serve-2-640.webp",
+    "/images/products/chocolate/serve-3-640.webp"
+  ],
+  "cordial": [
+    "/images/products/cordial/serve-10-640.webp",
+    "/images/products/cordial/serve-11-640.webp",
+    "/images/products/cordial/serve-12-640.webp",
+    "/images/products/cordial/serve-2-640.webp"
+  ],
+  "frappe": [
+    "/images/products/frappe/menu-1-320.webp",
+    "/images/products/frappe/menu-2-320.webp",
+    "/images/products/frappe/menu-3-320.webp",
+    "/images/products/frappe/menu-4-320.webp"
+  ],
+  "iced-tea": [
+    "/images/products/iced-tea/serve-2-640.webp",
+    "/images/products/iced-tea/serve-3-640.webp",
+    "/images/products/iced-tea/serve-4-640.webp",
+    "/images/products/iced-tea/serve-5-640.webp"
+  ],
+  "matcha": [
+    "/images/products/matcha/serve-1-640.webp",
+    "/images/products/matcha/serve-10-640.webp",
+    "/images/products/matcha/serve-2-640.webp",
+    "/images/products/matcha/serve-3-640.webp"
+  ],
+  "milkshake": [
+    "/images/products/milkshake/menu-1-320.webp",
+    "/images/products/milkshake/menu-2-320.webp",
+    "/images/products/milkshake/menu-3-320.webp",
+    "/images/products/milkshake/menu-4-320.webp"
+  ],
+  "raf-coffee": [
+    "/images/products/raf-coffee/serve-10-640.webp",
+    "/images/products/raf-coffee/serve-2-640.webp",
+    "/images/products/raf-coffee/serve-3-640.webp",
+    "/images/products/raf-coffee/serve-4-640.webp"
+  ],
+  "sugar-syrup": [
+    "/images/products/sugar-syrup/serve-2-640.webp",
+    "/images/products/sugar-syrup/serve-3-640.webp"
+  ],
+  "topping": [
+    "/images/products/topping/serve-2-640.webp",
+    "/images/products/topping/serve-3-640.webp",
+    "/images/products/topping/serve-4-640.webp",
+    "/images/products/topping/serve-5-640.webp"
+  ]
+}

@@ -253,15 +253,12 @@ try {
     }
 
     if (route === "/matcha") {
-      if (await page.locator("[data-cart-add]").count()) {
-        failures.push("/matcha: product page still has an add-to-cart control");
-      }
+      check(await page.locator("[data-cart-add]").count() === 1,
+        "/matcha: product purchase panel must keep its native add-to-cart control");
 
-
-      // The redesigned product page carries one lead form, the sample; its
-      // second action is the distributor finder, a plain link.
+      // Sample enquiries keep the existing lead form and product context.
       for (const action of [
-        { label: "Request a sample", form: "#sample-request-modal-form", formName: "Free Sample" },
+        { label: "Request a free sample", form: "#sample-request-modal-form", formName: "Free Sample" },
       ]) {
         await page.getByRole("button", { name: action.label }).first().click();
         const form = page.locator(action.form);

@@ -82,42 +82,14 @@ function observe(page, label) {
 }
 
 async function checkCountrySelector(page, label) {
-  await page.goto(`${baseUrl}/ae/?utm_source=chatgpt.com&utm_campaign=country-selector`, { waitUntil: "domcontentloaded" });
-  const trigger = page.locator("header button[aria-label^='Country:']");
-  const list = page.getByRole("listbox", { name: "Country", exact: true });
-  async function openList() {
-    for (let attempt = 0; attempt < 6 && (await trigger.getAttribute("aria-expanded")) !== "true"; attempt += 1) {
-      await trigger.click();
-      await page.waitForTimeout(200);
-    }
-    await list.waitFor({ state: "visible" });
+  for (const country of ["qa", "kw"]) {
+    await page.goto(`${baseUrl}/${country}/catalog?utm_source=chatgpt.com`, { waitUntil: "domcontentloaded" });
+    await page.locator("[data-shop-product]").first().waitFor();
+    check((await page.locator("header button[aria-label^='Country:']").count()) === 0, `${label}: country dropdown should be removed`);
+    check(new URL(page.url()).pathname === `/${country}/catalog`, `${label}: country subfolder was lost`);
+    check(new URL(page.url()).searchParams.get("utm_source") === "chatgpt.com", `${label}: country route lost attribution`);
   }
-  await openList();
-  check((await list.getByRole("option").count()) === 17, `${label}: country selector does not list the confirmed markets`);
-  await list.press("End");
-  const last = list.getByRole("option").last();
-  check((await last.getAttribute("data-active")) === "true", `${label}: country selector End key did not reach the last market`);
-  const lastBox = await last.boundingBox();
-  check(!!lastBox && lastBox.y >= 0 && lastBox.y + lastBox.height <= page.viewportSize().height, `${label}: last country option is clipped`);
-  await list.press("Home");
-  await list.press("Enter");
-  check((await trigger.getAttribute("aria-expanded")) === "false", `${label}: choosing the current country did not close the list`);
-  check(await trigger.evaluate((button) => document.activeElement === button), `${label}: country selector did not return keyboard focus`);
-  await trigger.click();
-  await list.press("ArrowDown");
-  await list.press("ArrowDown");
-  await Promise.all([
-    page.waitForURL((url) => /^\/qa\/?$/.test(url.pathname), { waitUntil: "load" }),
-    list.press("Enter"),
-  ]);
-  const destination = new URL(page.url());
-  check(destination.searchParams.get("utm_source") === "chatgpt.com" && destination.searchParams.get("utm_campaign") === "country-selector", `${label}: country selection lost campaign parameters`);
-  await page.locator('header button[aria-label="Country: QA, Qatar. Change country"]').waitFor();
   await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
-  await page.locator(BESTSELLERS).waitFor();
-  await openList();
-  await list.press("Escape");
-  check((await trigger.getAttribute("aria-expanded")) === "false", `${label}: country selector Escape did not close the list`);
 }
 
 async function checkDistributorFinder(page, label, countryName, countryCode) {
@@ -453,8 +425,8 @@ try {
     "header: the old region picker is back in the bar",
   );
   check(
-    await page.locator("header button[aria-label^='Country:']").isVisible(),
-    "header: country selector is missing",
+    (await page.locator("header button[aria-label^='Country:']").count()) === 0,
+    "header: removed country dropdown is present",
   );
   check(
     (await page.locator('header a[href="/ae/find-your-distributor"]').count()) === 0,
@@ -511,7 +483,7 @@ try {
   check((await page.locator("[data-shop-product]").getByText("Price on request", { exact: true }).count()) === 5, "Shop: ranges without approved matching prices remain on request");
   check((await page.locator("[data-shop-product]").getByText(/AED\s*[\d,.]+/).count()) === 17, "Shop: approved range prices are visible");
   check(!/\bVAT\b/i.test(await page.locator("main").innerText()), "Shop: VAT details only appear at checkout");
-  for (const slug of ["puree", "sauce", "add-ons", "electrolyte"]) {
+  for (const slug of ["puree", "sauce", "add-ons"]) {
     check(
       (await page.locator(`[data-shop-product="${slug}"] img`).count()) === 0,
       `Shop: ${slug} shows an unconfirmed product image`,
@@ -747,8 +719,8 @@ try {
     "mobile: the old region picker is back in the menu",
   );
   check(
-    await mobilePage.locator("header button[aria-label^='Country:']").isVisible(),
-    "mobile: country selector is missing",
+    (await mobilePage.locator("header button[aria-label^='Country:']").count()) === 0,
+    "mobile: removed country dropdown is present",
   );
   check(
     await mobileMenu.getByRole("link", { name: "Find your distributor", exact: true }).isVisible(),
@@ -792,8 +764,8 @@ try {
     });
     const countrySelector = visualPage.locator("header button[aria-label^='Country:']");
     check(
-      await countrySelector.isVisible(),
-      `header: country selector is missing at ${width}x${height}`,
+      (await countrySelector.count()) === 0,
+      `header: removed country dropdown is present at ${width}x${height}`,
     );
   }
   await visual.close();

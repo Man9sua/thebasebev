@@ -1,7 +1,8 @@
+import { ProductShopHero } from "../ProductShopHero";
+import { AtHomePackImage } from "@/components/product/AtHomePackImage";
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { SHOP_URL } from "@/lib/site-config";
-import { DistributorLink, Faq, cx, productImage, productPageStyles as styles } from "../blocks";
+import { Faq, cx, productImage, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { AtHomeChips } from "./AtHomeChips";
 import local from "./AtHome.module.css";
@@ -63,7 +64,6 @@ const shelves: readonly { id: string; title: string; note: string; pouches: read
   },
 ];
 
-const heroPouches = ["matcha-blue", "chocolate-strawberry", "iced-tea-peach", "milkshake-cookies-cream"];
 
 const faq = [
   {
@@ -74,46 +74,13 @@ const faq = [
   { q: "Where can I buy online?", a: "In the the Base online shop." },
 ];
 
-const pouchName = (image: string) =>
-  shelves.flatMap((shelf) => shelf.pouches).find((pouch) => pouch.image === image)?.name ?? "";
 
 export function AtHomePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
-      <section className={local.hero} aria-labelledby="product-title">
-        <div className={local.heroCopy}>
-          <h1 id="product-title" className={cx(styles.heroTitle, local.heroTitle)}>
-            Crafted for cafés,
-            <br /> now at home
-          </h1>
-          <p className={styles.heroLead}>
-            <span className={styles.desktopOnly}>
-              The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in
-              a minute.
-            </span>
-            <span className={styles.mobileOnly}>The same café recipes in 150 g pouches, to make at home in a minute.</span>
-          </p>
-          <div className={styles.heroActions}>
-            <SiteLink className={cx(styles.button, styles.red)} href={`${SHOP_URL}?search=at+home`} data-shop-link>
-              Shop At Home
-            </SiteLink>
-            <DistributorLink>Stock it in your café</DistributorLink>
-          </div>
-        </div>
-        <div className={local.heroGrid}>
-          {heroPouches.map((image, i) => (
-            <div key={image} className={cx(local.plate, i > 1 && styles.desktopOnly)}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                {...productImage(SLUG, image, [400, 600])}
-                sizes="(max-width: 1023px) 45vw, 300px"
-                alt={`${pouchName(image)} 150 g pouch`}
-                fetchPriority={i < 2 ? "high" : undefined}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+      <ProductShopHero slug={product.slug} title={<>Crafted for cafés,<br /> now at home</>}
+        lead="The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in a minute."
+        image={<AtHomePackImage src="/images/shop/at-home.jpg" alt="Blue Matcha 150 g pouch" />} />
 
       <AtHomeChips
         route={product.route}

@@ -21,7 +21,7 @@ export const SHOP_PRODUCTS: readonly ShopProduct[] = [...CATALOG_PRODUCTS]
   .map((product) => ({
     ...product,
     name: names[product.slug] ?? product.name,
-    image: product.slug === "at-home" ? "/images/shop/at-home.jpg" : featuredRank.has(product.slug) ? `/images/shop/${product.slug}.webp`
+    image: product.slug === "electrolyte" ? "/images/shop/electrolyte.webp" : product.slug === "at-home" ? "/images/shop/at-home.jpg" : featuredRank.has(product.slug) ? `/images/shop/${product.slug}.webp`
       : tiles[product.slug]?.source === "illustration" ? product.image : tiles[product.slug]?.image ?? product.image,
     flavors: SAMPLE_FLAVOURS[product.slug] ?? [],
     format: formats[product.slug] ?? "500 g pouch",

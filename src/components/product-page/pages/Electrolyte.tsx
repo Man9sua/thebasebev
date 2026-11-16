@@ -1,8 +1,9 @@
+import { HeroVideo } from "../HeroVideo";
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { Faq, Hero, Section, Stats, cx, productPageStyles as styles } from "../blocks";
+import { DistributorLink, Faq, SampleButton, Section, Stats, cx, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { UseCards, rangeStyles } from "./Range";
 import local from "./Electrolyte.module.css";
 
 const flavours = [
@@ -46,17 +47,14 @@ const faq = [
 export function ElectrolytePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
-      <Hero
-        className={rangeHeroClass}
-        style={heroSize(92, 52)}
-        productName={product.name}
-        title="Electrolyte"
-        lead={{
-          desktop: "Electrolyte powder drink in five flavours. In single-serve sticks, bar packs and 25 kg bulk.",
-          mobile: "Electrolyte powder drink in five flavours. Sticks, bar packs and 25 kg bulk.",
-        }}
-        image={<RangePhotoPlaceholder />}
-      />
+      <section className={local.videoHero} aria-labelledby="product-title" data-hero>
+        <HeroVideo />
+        <div className={local.videoCopy}>
+          <h1 id="product-title">Electrolyte</h1>
+          <p>Electrolyte powder drink in five flavours. In single-serve sticks, bar packs and 25 kg bulk.</p>
+          <div className={local.videoActions}><SampleButton productName={product.name} /><DistributorLink /></div>
+        </div>
+      </section>
       <Section title="In every stick" label="In every stick">
         <Stats className={cx(rangeStyles.stats6, local.stickStats)} columns={6} items={stickStats} />
       </Section>

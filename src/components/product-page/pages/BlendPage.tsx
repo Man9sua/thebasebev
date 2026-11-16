@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react";
+import { ProductShopHero } from "../ProductShopHero";
 import { SiteLink } from "@/components/site/SiteLink";
 import {
-  DistributorLink, Faq, FlavourEnquiryLink, Inside, Kit, MarketingKitAction, SampleButton,
+  Faq, FlavourEnquiryLink, Inside, Kit, MarketingKitAction,
   Section, Stats, cx, productImage, productPageStyles as styles,
   type NutritionSet,
 } from "../blocks";
@@ -94,29 +95,14 @@ const heroMedia = {
 
 function BlendHero({ kind, product, assets }: ProductPageProps & { kind: Blend }) {
   const milkshake = kind === "milkshake";
-  return (
-    <section className={local.hero} aria-labelledby="product-title">
-      <div className={local.heroGrid}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img {...heroMedia[kind]} alt={heroMedia[kind].alt} sizes="(max-width: 1023px) calc(100vw - 40px), (max-width: 1440px) 36.12vw, 520px" fetchPriority="high" className={local.heroPhoto} />
-        <div className={local.heroCopy}>
-          <h1 id="product-title" className={local.heroName}>{product.name}</h1>
-          <p className={local.lead}>
-            {milkshake
-              ? "The body and taste of your milkshake in one scoop. Thick and creamy, with a foam that holds and does not separate. Works with any syrup or topping, on dairy or plant-based milk."
-              : "The body and taste of a café frappe in one scoop. Smooth and creamy, with a texture that holds in the cup. Add espresso, your syrup or purée and finish with a topping."}
-          </p>
-          {milkshake && <dl className={local.heroFacts}>
-            <div><dt>Format</dt><dd>500 g pouch</dd></div>
-            <div><dt>Milk</dt><dd>Dairy or plant-based</dd></div>
-            <div><dt>Certified</dt><dd>HACCP and Halal</dd></div>
-          </dl>}
-          <div className={local.actions}><SampleButton productName={product.name} /><DistributorLink /></div>
-          {assets.specification && <a href={assets.specification} className={styles.textLink} download>Download spec sheet (PDF)</a>}
-        </div>
-      </div>
-    </section>
-  );
+  return <ProductShopHero slug={product.slug} title={product.name} specification={assets.specification}
+    lead={milkshake
+      ? "The body and taste of your milkshake in one scoop. Thick and creamy, with a foam that holds and does not separate. Works with any syrup or topping, on dairy or plant-based milk."
+      : "The body and taste of a café frappe in one scoop. Smooth and creamy, with a texture that holds in the cup. Add espresso, your syrup or purée and finish with a topping."}
+    image={
+      // eslint-disable-next-line @next/next/no-img-element
+      <img {...heroMedia[kind]} alt={heroMedia[kind].alt} fetchPriority="high" />
+    } />;
 }
 
 const milkshakeRecipe = [

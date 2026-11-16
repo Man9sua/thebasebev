@@ -27,6 +27,7 @@ import {
 import { formatShopMoney, getShopUnitAmount, getShopPriceRange, getShopQuote, getShopPackLabel, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
 import { combineShopBaskets, shopBasketKey, type ShopBasketItem } from "@/lib/shop-basket";
 import { ShopPackImage } from "./ShopPackImage";
+import { DeliveryProgress } from "./DeliveryProgress";
 import styles from "./ShopPage.module.css";
 
 export type ShopKind = ReturnType<typeof shopKindForCountry>;
@@ -53,6 +54,15 @@ const SEARCH_PRODUCTS = SHOP_PRODUCTS.map((product) => ({
   product,
   text: normalize(`${product.name} ${product.flavors.join(" ")}`),
 }));
+
+const GROUPS = [
+  { id: "all", label: "All", slugs: [] },
+  { id: "hot", label: "Hot drinks", slugs: ["matcha", "raf-coffee", "chocolate", "cream-latte", "chai-latte", "tea", "vending"] },
+  { id: "cold", label: "Cold drinks", slugs: ["milkshake", "iced-tea", "frappe", "cordial"] },
+  { id: "syrup", label: "Syrups & toppings", slugs: ["sugar-syrup", "sugar-free", "jam", "topping", "garnish", "puree", "sauce"] },
+  { id: "functional", label: "Functional", slugs: ["colour-collection", "add-ons", "electrolyte"] },
+  { id: "retail", label: "150 g retail packs", slugs: ["at-home"] },
+];
 
 export function unitLabel(product: ShopProduct, kind: ShopKind) {
   if (kind === "samples") return "Free sample";
@@ -83,7 +93,7 @@ function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopP
   return (
     <article className={styles.card} data-shop-product={product.slug}>
       <SiteLink className={styles.tile} style={{ backgroundColor: product.backgroundColor }} href={product.route} aria-label={`View more about ${product.name}`} tabIndex={-1}>
-        <ShopPackImage product={product} sizes="(max-width: 719px) calc(100vw - 32px), (max-width: 1100px) 28vw, 280px" eager={eager} />
+        <ShopPackImage product={product} sizes="(max-width: 719px) calc((100vw - 44px) / 2), (max-width: 1100px) 28vw, 280px" eager={eager} />
         <span className={styles.viewMore}>View more</span>
       </SiteLink>
       <div className={styles.info}>
@@ -93,7 +103,7 @@ function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopP
         </div>
         <span className={styles.price}>{unitLabel(product, kind)}</span>
       </div>
-      <button className={`${styles.control} ${count > 0 ? styles.inCart : ""}`} type="button" aria-haspopup="dialog" data-shop-choose={product.slug} onClick={onChoose}>
+      <button className={`${styles.control} ${styles.cardAction} ${count > 0 ? styles.inCart : ""}`} type="button" aria-haspopup="dialog" data-shop-choose={product.slug} onClick={onChoose}>
         {count > 0 ? `${count} in ${kind === "samples" ? "sample box" : "cart"}, edit` : kind === "samples" ? "Add to sample box" : "Choose flavours"}
       </button>
     </article>
@@ -178,6 +188,7 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
           <h2 className={styles.drawerTitle} id={id}>{samples ? "Sample box" : "Cart"}</h2>
           <button className={styles.dismiss} ref={dismiss} type="button" aria-label={`Close ${samples ? "sample box" : "cart"}`} onClick={onClose}><CloseIcon /></button>
         </div>
+        {!samples && country === "AE" && quote.subtotal !== null && <div className={styles.deliveryProgress}><DeliveryProgress subtotal={quote.subtotal} /></div>}
         <ul className={styles.drawerBody}>
           {items.map((item) => {
             const product = getShopProduct(item.slug);
@@ -226,6 +237,7 @@ export function ShopPage() {
   const basket = useMemo(() => combineShopBaskets(country, cart.items, sampleCart.items), [country, cart.items, sampleCart.items]);
   const basketKind = basket.length ? basket.some(item => item.kind === "products") ? "products" : "samples" : kind;
   const [query, setQuery] = useState("");
+  const [group, setGroup] = useState("all");
   const [picking, setPicking] = useState<ShopProduct | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const closePicker = useCallback(() => setPicking(null), []);
@@ -247,7 +259,11 @@ export function ShopPage() {
   }, []);
 
   const search = normalize(query.trim());
-  const products = useMemo(() => SEARCH_PRODUCTS.filter((entry) => !search || entry.text.includes(search)).map(({ product }) => product), [search]);
+  const products = useMemo(() => {
+    const selected = GROUPS.find(entry => entry.id === group);
+    return SEARCH_PRODUCTS.filter(entry => (!search || entry.text.includes(search))
+      && (group === "all" || selected?.slugs.includes(entry.product.slug))).map(({ product }) => product);
+  }, [search, group]);
   const quantities = useMemo(() => {
     const byProduct = new Map<string, number>();
     for (const item of basket) byProduct.set(item.slug, (byProduct.get(item.slug) ?? 0) + item.quantity);
@@ -282,6 +298,10 @@ export function ShopPage() {
           </section>
         )}
         <section aria-label="Shop products">
+          <div className={styles.categories} role="group" aria-label="Product categories">
+            {GROUPS.map(entry => <button key={entry.id} type="button" aria-pressed={group === entry.id} onClick={() => setGroup(entry.id)}>{entry.label}</button>)}
+          </div>
+          <p className={styles.resultCount}>{products.length} {products.length === 1 ? "product" : "products"}</p>
           <p className="tbb-visually-hidden" role="status">{search ? `${products.length} product ranges found` : ""}</p>
           {products.length > 0 ? <div className={styles.grid}>{products.map((product, index) => <ProductCard product={product} key={product.slug} kind={kind} count={quantities.get(product.slug) ?? 0} eager={index < 4} onChoose={() => { setPickerKind(kind); setPicking(product); }} />)}</div> : <p className={styles.empty}>Nothing matches “{query.trim()}”. Try a product or flavour name, or <SiteLink href="/contacts">ask our team</SiteLink>.</p>}
         </section>

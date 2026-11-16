@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { BrandMarkVertical } from "@/components/site/BrandMarkVertical";
-import { CountrySelect } from "@/components/site/CountrySelect";
 import { SiteLink } from "@/components/site/SiteLink";
 import { SiteMenu } from "@/components/site/SiteMenu";
 import { SiteSearch } from "@/components/site/SiteSearch";
@@ -100,9 +99,11 @@ export function SiteHeader({
 
   return (
     <>
+      {onShop && <div className={styles.shopBanner}>{samples ? "Free samples for businesses · Shipped from Dubai" : "Next-day UAE delivery · Free on product orders from AED 500"}</div>}
       <header
         className={[
           styles.header,
+          onShop ? styles.shopHeader : "",
           noHeroScrim ? styles.noHeroScrim : "",
           darkHero ? styles.darkHero : "",
           solid || menuSurface || searchOpen ? styles.solid : "",
@@ -142,7 +143,7 @@ export function SiteHeader({
           </SiteLink>
           <a
             href={ODOO_ACCOUNT_URL}
-            className={styles.action}
+            className={`${styles.action} ${styles.accountAction}`}
             aria-label="Your account"
             target="_blank"
             rel="noreferrer noopener"
@@ -150,11 +151,9 @@ export function SiteHeader({
             <AccountIcon />
           </a>
 
-          <CountrySelect triggerClassName={styles.action} overlayOpen={menuOpen || searchOpen} />
-
           <button
             type="button"
-            className={styles.action}
+            className={`${styles.action} ${styles.searchAction}`}
             onClick={() => {
               setMenuOpen(false);
               setMenuClosing(false);
@@ -168,7 +167,7 @@ export function SiteHeader({
 
           <button
             type="button"
-            className={styles.action}
+            className={`${styles.action} ${styles.menuAction}`}
             onClick={() => {
               setSearchOpen(false);
               if (menuOpen) closeMenu();

@@ -4,6 +4,8 @@ import { SiteLink } from "@/components/site/SiteLink";
 import { faqPage } from "@/lib/structured-data";
 import { NutritionTabs, type NutritionSet } from "./NutritionTabs";
 import { AnimatedDetails } from "./AnimatedDetails";
+import { PRODUCTS } from "@/data/products";
+import { ProductShopHero } from "./ProductShopHero";
 import styles from "./ProductPage.module.css";
 
 /**
@@ -16,6 +18,7 @@ import styles from "./ProductPage.module.css";
 export const cx = (...names: Array<string | false | null | undefined>) => names.filter(Boolean).join(" ");
 
 type WithClass = { className?: string; style?: CSSProperties };
+const PRODUCT_SLUGS_BY_NAME = new Map(PRODUCTS.map(product => [product.name, product.slug]));
 
 /** `/images/products/<slug>/<name>-<w>.webp` at every width that was generated. */
 export function productImage(slug: string, name: string, widths: number[]) {
@@ -92,9 +95,6 @@ export function Hero({
   title,
   lead,
   image,
-  className,
-  style,
-  mediaClassName,
 }: WithClass & {
   productName: string;
   title: ReactNode;
@@ -103,21 +103,8 @@ export function Hero({
   mediaClassName?: string;
 }) {
   return (
-    <section className={cx(styles.hero, className)} style={style} aria-labelledby="product-title">
-      <div className={styles.heroCopy}>
-        <h1 id="product-title" className={styles.heroTitle}>
-          {title}
-        </h1>
-        <p className={styles.heroLead}>
-          <Responsive {...lead} />
-        </p>
-        <div className={styles.heroActions}>
-          <SampleButton productName={productName} />
-          <DistributorLink />
-        </div>
-      </div>
-      <div className={cx(styles.heroMedia, mediaClassName)}>{image}</div>
-    </section>
+    <ProductShopHero slug={PRODUCT_SLUGS_BY_NAME.get(productName) ?? ""}
+      title={title} lead={<Responsive {...lead} />} image={image} />
   );
 }
 

@@ -4,12 +4,14 @@ import { useSearchParams } from "next/navigation";
 import { FormEvent, useMemo, useRef, useState } from "react";
 import { useCart, useSampleCart } from "@/components/cart/useCart";
 import { ShopPackImage } from "@/components/shop/ShopPackImage";
+import { DeliveryProgress } from "@/components/shop/DeliveryProgress";
+import { FlavourPicker, ShopScope } from "@/components/shop/ShopPage";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
 import { getCheckoutProductId } from "@/data/catalog";
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
-import { getShopProduct, SHOP_MAX_QUANTITY } from "@/data/shop";
+import { getShopProduct, SHOP_MAX_QUANTITY, type ShopProduct } from "@/data/shop";
 import {
   removeSubmittedSamples,
   removeCartItem,
@@ -82,6 +84,7 @@ const DHL_FIELD: FieldDefinition = { key: "dhlAccount", label: "DHL account numb
 const EMIRATES = ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah", "Umm Al Quwain"];
 const BUSINESS_TYPES = ["Café", "Restaurant", "Hotel", "Distributor", "Other"];
 const COUNTRY_NAMES = new Map(DISTRIBUTOR_MARKETS.map(({ code, name }) => [code, name]));
+const SAMPLE_SUGGESTIONS = ["chai-latte", "iced-tea", "cordial", "frappe", "sugar-free", "cream-latte"].map(getShopProduct).filter((product): product is ShopProduct => Boolean(product));
 const SHIPPING_METHODS = [
   { id: "standard", name: "Standard", description: "Delivery time and cost confirmed before payment" },
   { id: "express", name: "Express", description: "Availability and cost confirmed for your address" },
@@ -172,6 +175,7 @@ export function CheckoutPage() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [completed, setCompleted] = useState(false);
+  const [samplePicker, setSamplePicker] = useState<ShopProduct | null>(null);
   const checkoutAttempt = useRef<{ payload: string; key: string } | null>(null);
 
   const lines = useMemo(() => cart.items.flatMap((item) => {
@@ -305,7 +309,7 @@ export function CheckoutPage() {
       ) : (
         <main className={styles.main}>
           <div className={styles.heading}>
-            <h1 className={styles.title}>{isSample ? "Request samples" : "Checkout"}</h1>
+            <h1 className={styles.title}>{isSample ? "Request samples" : "Cart & checkout"}</h1>
             {isSample && <p>Samples are free for cafés, restaurants, hotels and distributors. A manager checks your business, then confirms DHL Express delivery from Dubai.</p>}
           </div>
           {cancelled && <p className={styles.quoteNote} role="status">Checkout was cancelled. Your basket has been kept.</p>}
@@ -317,6 +321,35 @@ export function CheckoutPage() {
             </section>
           ) : (
             <form className={styles.grid} onSubmit={submit} noValidate aria-busy={pending}>
+              <section className={styles.basket} aria-label="Items in your order">
+                {!isSample && country === "AE" && quote.subtotal !== null && <DeliveryProgress subtotal={quote.subtotal} />}
+                <div className={styles.lines}>{lines.map((line) => {
+                  const sample = line.kind === "samples";
+                  const setQuantity = sample ? setSampleCartItemQuantity : setCartItemQuantity;
+                  const remove = sample ? removeSampleCartItem : removeCartItem;
+                  const label = `${line.product.name} ${line.flavor}${!isSample && sample ? " sample" : ""}`;
+                  return (
+                  <article key={shopBasketKey(line)} className={styles.line} data-checkout-line-kind={line.kind}>
+                    <div className={styles.thumb}>
+                      <ShopPackImage product={line.product} sizes="(max-width: 559px) 72px, 104px" />
+                    </div>
+                    <div className={styles.lineCopy}>
+                      <h3>{line.product.name}</h3><p><span>{line.flavor}</span><span>{line.kind === "samples" ? " · Free sample" : ` · ${getShopPackLabel(line.slug, line.flavor) ?? line.product.format}`}</span></p>
+                      <div className={styles.quantity} aria-label={`${label} quantity`}>
+                        <button type="button" disabled={pending} aria-label={`Decrease ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity - 1)}>−</button>
+                        <span>{line.quantity}</span>
+                        <button type="button" disabled={pending || line.quantity >= SHOP_MAX_QUANTITY} aria-label={`Increase ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity + 1)}>+</button>
+                      </div>
+                      <button type="button" className={styles.remove} disabled={pending} aria-label={`Remove ${label}`} onClick={() => remove(line.slug, line.flavor)}>Remove</button>
+                    </div>
+                    {!isSample && <strong className={styles.linePrice}>{line.kind === "samples" ? "Free" : line.unitAmount === null ? "Price to confirm" : formatShopMoney(line.unitAmount * line.quantity)}</strong>}
+                  </article>
+                ); })}</div>
+                {!isSample && <div className={styles.sampleSuggestions}>
+                  <h2>Add free samples to this order</h2>
+                  <div className={styles.chips}>{SAMPLE_SUGGESTIONS.map(product => <button type="button" key={product.slug} aria-pressed={sampleCart.items.some(item => item.slug === product.slug)} disabled={pending} onClick={() => setSamplePicker(product)}>{product.name}</button>)}</div>
+                </div>}
+              </section>
               <div className={styles.sections}>
                 <section className={styles.section} aria-labelledby="checkout-contact-title">
                   <div className={styles.sectionHead}><span className={styles.step}>1</span><h2 id="checkout-contact-title">{isSample ? "Your business" : "Contact"}</h2></div>
@@ -361,29 +394,6 @@ export function CheckoutPage() {
               </div>
               <aside className={styles.summary} aria-labelledby="order-summary-title">
                 <div className={styles.summaryHead}><h2 id="order-summary-title">{isSample ? "Sample box" : "Your order"}</h2>{isSample && <span>{totalQuantity} {totalQuantity === 1 ? "sample" : "samples"}</span>}</div>
-                <div className={styles.lines}>{lines.map((line) => {
-                  const sample = line.kind === "samples";
-                  const setQuantity = sample ? setSampleCartItemQuantity : setCartItemQuantity;
-                  const remove = sample ? removeSampleCartItem : removeCartItem;
-                  const label = `${line.product.name} ${line.flavor}${!isSample && sample ? " sample" : ""}`;
-                  return (
-                  <article key={shopBasketKey(line)} className={styles.line} data-checkout-line-kind={line.kind}>
-                    <div className={styles.thumb}>
-                      <ShopPackImage product={line.product} sizes="56px" />
-                      <span className={styles.quantityBadge}>{line.quantity}</span>
-                    </div>
-                    <div className={styles.lineCopy}>
-                      <h3>{line.product.name}</h3><p><span>{line.flavor}</span><span>{line.kind === "samples" ? " · Free sample" : ` · ${getShopPackLabel(line.slug, line.flavor) ?? line.product.format}`}</span></p>
-                      <div className={styles.quantity} aria-label={`${label} quantity`}>
-                        <button type="button" disabled={pending} aria-label={`Decrease ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity - 1)}>−</button>
-                        <span>{line.quantity}</span>
-                        <button type="button" disabled={pending || line.quantity >= SHOP_MAX_QUANTITY} aria-label={`Increase ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity + 1)}>+</button>
-                      </div>
-                      <button type="button" className={styles.remove} disabled={pending} aria-label={`Remove ${label}`} onClick={() => remove(line.slug, line.flavor)}>Remove</button>
-                    </div>
-                    {!isSample && <strong className={styles.linePrice}>{line.kind === "samples" ? "Free" : line.unitAmount === null ? "Price to confirm" : formatShopMoney(line.unitAmount * line.quantity)}</strong>}
-                  </article>
-                ); })}</div>
                 <dl className={styles.totals}>
                   <div><dt>{isSample ? "Samples" : "Subtotal, excl. VAT"}</dt><dd>{subtotalLabel}</dd></div>
                   <div><dt>{isSample && country !== "AE" ? "DHL Express" : "Delivery, excl. VAT"}</dt><dd>{shippingLabel}</dd></div>
@@ -408,6 +418,8 @@ export function CheckoutPage() {
           )}
         </main>
       )}
+      {samplePicker && <ShopScope><FlavourPicker product={samplePicker} kind="samples" items={sampleCart.items}
+        allowSamples={false} totalLines={items.length} onKindChange={() => {}} onClose={() => setSamplePicker(null)} /></ShopScope>}
     </div>
   );
 }
