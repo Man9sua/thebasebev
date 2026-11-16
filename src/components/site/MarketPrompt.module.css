@@ -18,7 +18,8 @@
   animation: barIn 220ms ease-out both;
 }
 
-:global(html body):has(:global(header[data-header-theme])):has(.bar) {
+:global(html body):has(:global([data-shop-page])):has(.bar),
+:global(html body):has(:global(#product-title)):has(.bar) {
   padding-top: var(--tbb-market-prompt-height, 80px);
 }
 

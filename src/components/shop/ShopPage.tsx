@@ -274,7 +274,7 @@ export function ShopPage() {
   const samples = kind === "samples";
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-shop-page>
       <div className={styles.content}>
         <section className={styles.intro} aria-labelledby="shop-title">
           <div className={styles.introCopy}>
