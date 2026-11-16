@@ -1,4 +1,3 @@
-import { HeroVideo } from "../HeroVideo";
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { DistributorLink, Faq, SampleButton, Section, Stats, cx, productPageStyles as styles } from "../blocks";
@@ -47,12 +46,11 @@ const faq = [
 export function ElectrolytePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
-      <section className={local.videoHero} aria-labelledby="product-title" data-hero>
-        <HeroVideo />
-        <div className={local.videoCopy}>
+      <section className={local.hero} aria-labelledby="product-title" data-hero>
+        <div className={local.heroCopy}>
           <h1 id="product-title">Electrolyte</h1>
           <p>Electrolyte powder drink in five flavours. In single-serve sticks, bar packs and 25 kg bulk.</p>
-          <div className={local.videoActions}><SampleButton productName={product.name} /><DistributorLink /></div>
+          <div className={local.heroActions}><SampleButton productName={product.name} /><DistributorLink /></div>
         </div>
       </section>
       <Section title="In every stick" label="In every stick">
