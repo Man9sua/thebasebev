@@ -2,7 +2,7 @@
 
 .bar {
   position: fixed;
-  top: var(--tbb-header-h);
+  top: var(--tbb-market-prompt-top, var(--tbb-header-h));
   left: 0;
   right: 0;
   z-index: 70;
@@ -16,6 +16,10 @@
   color: var(--tbb-rd-paper);
   font-family: var(--tbb-font-body);
   animation: barIn 220ms ease-out both;
+}
+
+:global(body):has(.bar) {
+  padding-top: var(--tbb-market-prompt-height, 80px);
 }
 
 .bar .text {

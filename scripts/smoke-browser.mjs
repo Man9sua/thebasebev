@@ -444,9 +444,13 @@ try {
   );
 
   // Everything the old mega-menu linked to now lives in the menu panel.
-  await page.locator("header button[aria-label='Open menu']").click();
-  await page.waitForTimeout(900);
   const menu = page.locator("#site-menu");
+  // Country-route navigation can finish before the header hydrates.
+  for (let attempt = 0; attempt < 6; attempt++) {
+    await page.locator("header button[aria-label='Open menu']").click();
+    await page.waitForTimeout(900);
+    if (await menu.evaluate(el => getComputedStyle(el).clipPath === "inset(0px)")) break;
+  }
   check(
     await menu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
     "header: menu panel did not open",
@@ -480,6 +484,13 @@ try {
   await page.waitForTimeout(1_200);
   check((await page.locator("[data-shop-product]").count()) === 22, "Shop: expected 22 product cards");
   check((await page.getByRole("heading", { name: "Shop", exact: true }).count()) === 1, "Shop: visible heading matches the approved reference");
+  const marketPrompt = page.getByRole("region", { name: "Your country", exact: true });
+  if (await marketPrompt.isVisible()) {
+    const promptBox = await marketPrompt.boundingBox();
+    const headingBox = await page.getByRole("heading", { name: "Shop", exact: true }).boundingBox();
+    check(promptBox && headingBox && headingBox.y >= promptBox.y + promptBox.height,
+      "Shop: market prompt overlaps the page heading");
+  }
   check((await page.locator("[data-shop-product]").getByText("Price on request", { exact: true }).count()) === 5, "Shop: ranges without approved matching prices remain on request");
   check((await page.locator("[data-shop-product]").getByText(/AED\s*[\d,.]+/).count()) === 17, "Shop: approved range prices are visible");
   check(!/\bVAT\b/i.test(await page.locator("main").innerText()), "Shop: VAT details only appear at checkout");

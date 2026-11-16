@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
 import { countryCodeFromPath, switchCountryPath } from "@/lib/country-paths";
 import { pageMarket, readMarketPreference, saveMarketPreference } from "@/lib/market-preference";
@@ -25,6 +25,28 @@ const here = () => `${window.location.pathname}${window.location.search}${window
  */
 export function MarketPrompt() {
   const [suggested, setSuggested] = useState<string | null>(null);
+  const bar = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!suggested || !bar.current) return;
+    const root = document.documentElement;
+    const header = document.querySelector<HTMLElement>("header[data-header-theme]");
+    const measure = () => {
+      root.style.setProperty("--tbb-market-prompt-height", `${bar.current?.offsetHeight ?? 0}px`);
+      if (header) root.style.setProperty("--tbb-market-prompt-top", `${header.getBoundingClientRect().bottom}px`);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(bar.current);
+    if (header) observer.observe(header);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+      root.style.removeProperty("--tbb-market-prompt-height");
+      root.style.removeProperty("--tbb-market-prompt-top");
+    };
+  }, [suggested]);
 
   // Market and language on the data layer, and on every Shop / Buy click.
   useEffect(() => {
@@ -81,7 +103,7 @@ export function MarketPrompt() {
   };
 
   return (
-    <div className={styles.bar} role="region" aria-label="Your country">
+    <div className={styles.bar} ref={bar} role="region" aria-label="Your country">
       <p className={styles.text}>
         Looks like you’re in {marketName(suggested)}. Go to {marketName(suggested)} site?
       </p>
