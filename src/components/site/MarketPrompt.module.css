@@ -18,7 +18,7 @@
   animation: barIn 220ms ease-out both;
 }
 
-:global(body):has(.bar) {
+:global(html body):has(.bar) {
   padding-top: var(--tbb-market-prompt-height, 80px);
 }
 
