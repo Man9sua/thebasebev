@@ -537,13 +537,12 @@ try {
     /Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""),
     "matcha: product content failed after a hard refresh",
   );
-  // The hero's two calls to action are React modals now rather than the
-  // export's popup anchors, so this no longer waits for `a[href="#sample"]`.
+  // The purchase panel's sample enquiry keeps the existing lead form.
   // What has to hold is not that a dialog opens but that the form inside it is
   // one the lead bridge owns: `tildaspec-formname` is how
   // `LeadAttributionBridge` decides to post a submission to `/api/leads`
   // instead of leaving it to a Tilda runtime that is not on this page.
-  await page.getByRole("button", { name: "Request a sample" }).first().click();
+  await page.getByRole("button", { name: "Request a free sample", exact: true }).click();
   await page.locator("#sample-request-modal-form").waitFor({ state: "visible" });
   check(
     (await page
@@ -564,8 +563,8 @@ try {
 
   // Product enquiry forms remain in place beside the native Shop basket.
   check(
-    (await page.locator("[data-cart-add]").count()) === 0,
-    "matcha: product page still has an add-to-cart control",
+    (await page.locator("[data-cart-add]").count()) === 1,
+    "matcha: native purchase panel is missing its add-to-cart control",
   );
   check(
     (await page.locator("header [data-cart-control]").count()) === 1,

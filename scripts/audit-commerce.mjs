@@ -79,10 +79,10 @@ async function shopBaskets(page) {
   const configResponse = page.waitForResponse(response => new URL(response.url()).pathname === "/api/checkout/stripe/config" && response.request().method() === "GET");
   await checkout.click();
   const paymentConfig = (await (await configResponse).json()).payment;
-  await page.getByRole("heading", { name: "Checkout", exact: true }).waitFor();
-  const summary = page.getByRole("complementary", { name: "Your order", exact: true });
+  await page.getByRole("heading", { name: "Cart & checkout", exact: true }).waitFor();
+  const basketLines = page.getByRole("region", { name: "Items in your order", exact: true });
   for (const flavor of ["Vanilla", "Banana", "Classic"]) {
-    check(await summary.getByText(flavor, { exact: true }).isVisible(), `Checkout: ${flavor} was retained`);
+    check(await basketLines.getByText(flavor, { exact: true }).isVisible(), `Checkout: ${flavor} was retained`);
   }
   const payButton = page.getByRole("button", { name: "Continue to secure payment", exact: true });
   check(await payButton.isVisible(), "Checkout: mapped UAE goods offer secure payment");
@@ -144,11 +144,12 @@ async function shopBaskets(page) {
   check(await basket.getByText(/^AED\s*531\.30$/, { exact: true }).isVisible(), "Mixed cart: reducing goods below the free-delivery threshold restores the charge");
   await basket.getByRole("link", { name: "Checkout", exact: true }).click();
   const mixedSummary = page.getByRole("complementary", { name: "Your order", exact: true });
-  await mixedSummary.locator('[data-checkout-line-kind="samples"]').waitFor();
-  check(await mixedSummary.locator('[data-checkout-line-kind="products"]').count() === 1, "Mixed checkout retains the paid pack");
-  check(await mixedSummary.locator('[data-checkout-line-kind="samples"]').count() === 1, "Mixed checkout retains the same flavour as a separate free sample");
+  const mixedLines = page.getByRole("region", { name: "Items in your order", exact: true });
+  await mixedLines.locator('[data-checkout-line-kind="samples"]').waitFor();
+  check(await mixedLines.locator('[data-checkout-line-kind="products"]').count() === 1, "Mixed checkout retains the paid pack");
+  check(await mixedLines.locator('[data-checkout-line-kind="samples"]').count() === 1, "Mixed checkout retains the same flavour as a separate free sample");
   check(await mixedSummary.getByText(/^AED\s*531\.30$/, { exact: true }).isVisible(), "Mixed checkout: 476 net goods + 30 delivery + 25.30 VAT = 531.30 AED");
-  await mixedSummary.locator('[data-checkout-line-kind="products"]').getByRole("button", { name: "Increase Milkshake Vanilla quantity", exact: true }).click();
+  await mixedLines.locator('[data-checkout-line-kind="products"]').getByRole("button", { name: "Increase Milkshake Vanilla quantity", exact: true }).click();
   check(await mixedSummary.getByText(/^AED\s*529\.20$/, { exact: true }).isVisible(), "Mixed checkout: 504 net goods qualify for free delivery; total is 529.20 AED");
   check(await mixedSummary.getByText(/Weekend orders are delivered in 1–2 days/).isVisible(), "Checkout displays the approved weekday and weekend delivery times");
   check(checkoutAttempts === 0 && leadAttempts === 0, "Mixed basket editing makes no real request or payment");
