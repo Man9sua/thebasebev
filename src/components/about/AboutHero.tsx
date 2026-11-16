@@ -54,7 +54,7 @@ export function AboutHero() {
             sizes="(max-width: 1023px) calc(100vw - 24px), min(1312px, calc(100vw - 8.888vw))"
             width={1312}
             height={984}
-            alt="The Base showroom in Dubai"
+            alt="the Base showroom in Dubai"
             fetchPriority="high"
             decoding="async"
           />

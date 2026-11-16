@@ -94,7 +94,7 @@ const faq = [
   },
 ];
 
-export function TeaPage({ product, headline, assets }: ProductPageProps) {
+export function TeaPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     { ...hero, alt: "Tea serve" },
@@ -120,7 +120,6 @@ export function TeaPage({ product, headline, assets }: ProductPageProps) {
         className={cx(s.hero, j.darkActions)}
         productName={product.name}
         title="Tea"
-        headline={headline}
         lead={{
           desktop:
             "Instant black, green and jasmine tea in single sachets. One gram, one cup: no brewing, no steeping, the same taste every time.",

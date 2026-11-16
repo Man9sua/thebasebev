@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { Breadcrumbs, DistributorLink, FlavourEnquiryLink, Responsive, SampleButton, cx, productPageStyles as styles } from "./blocks";
+import { FlavourEnquiryLink, Hero, Responsive, cx, productPageStyles as styles } from "./blocks";
 import fb from "./familyB.module.css";
 
 /**
@@ -31,17 +31,11 @@ export function FamilyPage({ tint, children }: { tint: string; children: ReactNo
 export function FamilyHero({
   productName,
   title,
-  headline,
   lead,
   image,
-  media,
-  top = 24,
-  mobileTitleSize = 64,
 }: {
   productName: string;
   title: ReactNode;
-  /** Production's ranking sentence, kept as a small h2 under the name. */
-  headline?: string;
   lead: { desktop: ReactNode; mobile?: ReactNode };
   image: ReactNode;
   /**
@@ -54,39 +48,7 @@ export function FamilyHero({
   top?: number;
   mobileTitleSize?: number;
 }) {
-  return (
-    <section
-      className={fb.hero}
-      aria-labelledby="product-title"
-      style={
-        {
-          "--fb-hero-top": top,
-          "--fb-media-w": media.width,
-          "--fb-media-h": media.height,
-          "--fb-media-mh": `${media.mobileHeight}px`,
-          "--fb-inset": media.inset ?? "100%",
-          "--fb-inset-m": media.mobileInset ?? media.inset ?? "100%",
-          "--fb-hero-m": `${mobileTitleSize}px`,
-        } as Vars
-      }
-    >
-      <div className={fb.heroCopy}>
-        <Breadcrumbs current={productName} />
-        <h1 id="product-title" className={cx(styles.heroTitle, fb.heroName)}>
-          {title}
-        </h1>
-        {headline && <h2 className={styles.heroHeadline}>{headline}</h2>}
-        <p className={fb.heroLead}>
-          <Responsive {...lead} />
-        </p>
-        <div className={fb.heroActions}>
-          <SampleButton productName={productName} className={fb.cta} />
-          <DistributorLink className={fb.cta} />
-        </div>
-      </div>
-      <div className={cx(fb.heroMedia, fb[media.kind])}>{image}</div>
-    </section>
-  );
+  return <Hero productName={productName} title={title} lead={lead} image={image} />;
 }
 
 /* ---------------- section shell ---------------- */

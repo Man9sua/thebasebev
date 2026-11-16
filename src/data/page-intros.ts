@@ -18,8 +18,6 @@
  */
 
 export type PageIntro = {
-  /** Small label above the heading. */
-  eyebrow: string;
   /** The page's `h1`. */
   title: string;
   /**
@@ -41,7 +39,6 @@ export type PageIntro = {
 
 export const PAGE_INTROS: Record<string, PageIntro> = {
   "/private-labeling": {
-    eyebrow: "Private label",
     title: "Wholesale and Private Labeling",
     tagline: "Your Brand. Our Craft.",
     lead:
@@ -50,7 +47,6 @@ export const PAGE_INTROS: Record<string, PageIntro> = {
     video: "/images/vide6532-6533-4465-b562-656236323061__11900460_1920_1080_2.mp4",
   },
   "/rnd": {
-    eyebrow: "R&D lab",
     tone: "dark",
     title: "Beverage R&D and Product Development in Dubai",
     /*

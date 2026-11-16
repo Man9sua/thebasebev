@@ -30,7 +30,7 @@ export function AboutQuality() {
             sizes="(max-width: 1023px) max(calc(100vw - 40px), 454px), 1014px"
             width={1400}
             height={1050}
-            alt="The Base warehouse in the UAE"
+            alt="the Base warehouse in the UAE"
             loading="lazy"
             decoding="async"
           />

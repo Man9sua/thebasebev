@@ -5,11 +5,11 @@ import { SiteLink } from "@/components/site/SiteLink";
 import {
   CONSENT_DENIED,
   CONSENT_GRANTED,
-  CONSENT_REQUESTED,
   type Consent,
   consentSnapshot,
   serverConsentSnapshot,
   subscribeConsent,
+  subscribeConsentSettings,
   writeConsent,
 } from "@/lib/consent";
 import styles from "./CookieConsent.module.css";
@@ -89,10 +89,7 @@ export function CookieConsent() {
   }, []);
 
   /** The footer's "Cookie settings" link, and anything else that asks. */
-  useEffect(() => {
-    window.addEventListener(CONSENT_REQUESTED, openSettings);
-    return () => window.removeEventListener(CONSENT_REQUESTED, openSettings);
-  }, [openSettings]);
+  useEffect(() => subscribeConsentSettings(openSettings), [openSettings]);
 
   const store = useCallback((next: Consent) => {
     writeConsent(next);
@@ -132,17 +129,17 @@ export function CookieConsent() {
             <span className={styles.title}>Cookies</span>
             <p className={styles.text}>
               We use cookies to run the site and, with your consent, to measure traffic.{" "}
-              <SiteLink href="/privacy" className={styles.policy}>
+              <SiteLink href="/cookie-policy" className={styles.policy}>
                 Cookie policy
               </SiteLink>
             </p>
           </div>
 
           <div className={styles.buttons}>
-            <button type="button" className={styles.accept} onClick={() => store(CONSENT_GRANTED)}>
+            <button type="button" className={styles.primaryAction} onClick={() => store(CONSENT_GRANTED)}>
               Accept all
             </button>
-            <button type="button" className={styles.reject} onClick={() => store(CONSENT_DENIED)}>
+            <button type="button" className={styles.secondaryAction} onClick={() => store(CONSENT_DENIED)}>
               Reject
             </button>
           </div>
@@ -218,12 +215,12 @@ export function CookieConsent() {
             </div>
 
             <div className={styles.dialogButtons}>
-              <button type="button" className={styles.accept} onClick={() => store(draft)}>
+              <button type="button" className={styles.primaryAction} onClick={() => store(draft)}>
                 Save choices
               </button>
               <button
                 type="button"
-                className={styles.reject}
+                className={styles.secondaryAction}
                 onClick={() => store(CONSENT_GRANTED)}
               >
                 Accept all

@@ -40,7 +40,7 @@ const faq = [
   },
 ];
 
-export function SugarSyrupPage({ product, headline }: ProductPageProps) {
+export function SugarSyrupPage({ product }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 900]);
   const serves = [
     { ...hero, alt: "Drink with Sugar Syrup" },
@@ -58,7 +58,6 @@ export function SugarSyrupPage({ product, headline }: ProductPageProps) {
             <br className={styles.desktopOnly} /> syrup
           </>
         }
-        headline={headline}
         mobileTitleSize={60}
         lead={{
           desktop:

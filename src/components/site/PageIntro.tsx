@@ -12,7 +12,7 @@ import styles from "./PageIntro.module.css";
  * no other page on the site uses and then put it at the bottom under an empty
  * block.
  *
- * So this is a page head and nothing more — label, heading, statement, lead —
+ * So this is a page head and nothing more — heading, statement, lead —
  * on the site's own type and spacing. Where the page had a film of its own it
  * runs behind, muted and looping, which is how it was used before.
  */
@@ -40,10 +40,6 @@ export function PageIntro({ intro }: { intro: PageIntroContent }) {
 
       <div className={styles.inner}>
         {intro.legacyH1 && <h1 className="tbb-visually-hidden">{intro.legacyH1}</h1>}
-
-        <Reveal as="p" className={`tbb-label ${styles.eyebrow}`} distance={12}>
-          {intro.eyebrow}
-        </Reveal>
 
         <Reveal delay={60} distance={20}>
           {intro.legacyH1 ? (
