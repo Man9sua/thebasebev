@@ -59,7 +59,10 @@ export function useOverlay(
     // Wait for the wipe before focusing, so the panel is not announced while
     // it is still clipped out of view.
     const focusTimer = window.setTimeout(() => {
-      (focusRef?.current ?? panelRef.current)?.focus();
+      const panel = panelRef.current;
+      if (panel && !panel.contains(document.activeElement)) {
+        (focusRef?.current ?? panel).focus({ preventScroll: true });
+      }
     }, 220);
 
     return () => {

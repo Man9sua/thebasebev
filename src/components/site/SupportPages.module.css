@@ -1,0 +1,145 @@
+/*
+ * Request samples, Certificates, FAQ, Cookie policy and Careers: short pages
+ * in the house style (the home page's scale) — paper background, uppercase 900
+ * title, muted 18px lede, white cards, uppercase pill buttons. Spacing is gap
+ * and padding: `.tbb h1, p { margin: 0 }` would otherwise win.
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  max-width: 1248px;
+  margin: 0 auto;
+  padding: calc(var(--tbb-header-h) + clamp(2.5rem, 5vw, 4.5rem)) clamp(1.25rem, 6.6667vw, 6rem) clamp(4rem, 8vw, 7rem);
+  color: var(--tbb-rd-ink);
+}
+
+.page h1 {
+  margin: 0;
+  font-family: var(--tbb-font-heading);
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: var(--tbb-font-weight-heading) !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase;
+}
+
+.intro {
+  max-width: 46rem;
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  line-height: 1.55 !important;
+  color: var(--tbb-rd-body);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding-block: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(1.5rem, 2.2vw, 2rem);
+  border-radius: 1.5rem;
+  background: #fff;
+}
+
+.card h2 {
+  margin: 0;
+  font-family: var(--tbb-font-heading);
+  font-size: 1.375rem;
+  font-weight: var(--tbb-font-weight-subheading) !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase;
+}
+
+.card p,
+.copy p,
+.copy li {
+  line-height: 1.6 !important;
+  color: var(--tbb-rd-body);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 46rem;
+}
+
+.copy h2 {
+  margin: 0;
+  padding-top: 1.5rem;
+  font-family: var(--tbb-font-heading);
+  font-size: clamp(1.5rem, 2vw, 1.75rem);
+  font-weight: var(--tbb-font-weight-heading) !important;
+  line-height: 1 !important;
+  text-transform: uppercase;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.75rem;
+  padding: 0 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--tbb-rd-ink);
+  color: #fff;
+  font-family: var(--tbb-font-button);
+  font-size: 0.875rem;
+  font-weight: var(--tbb-font-weight-button);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.button:hover {
+  background: var(--tbb-rd-red);
+  color: #fff;
+}
+
+.links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+
+/* Text links keep the ink colour, never the browser's visited purple. */
+.links a:not(.button),
+.links a:not(.button):visited {
+  color: var(--tbb-rd-ink);
+  font-size: 0.875rem;
+  font-weight: var(--tbb-font-weight-button);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.links a:not(.button):hover {
+  color: var(--tbb-rd-red);
+}
+
+@media (max-width: 767px) {
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .button {
+    width: 100%;
+  }
+}

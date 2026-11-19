@@ -1,0 +1,929 @@
+{
+  "companyId": 1,
+  "currencyId": 128,
+  "pricelistId": 11,
+  "taxId": 3,
+  "actionId": 1629,
+  "delivery": {
+    "id": 2330,
+    "sku": "SHIP"
+  },
+  "records": [
+    {
+      "slug": "milkshake",
+      "flavor": "Banana",
+      "products": {
+        "id": 1191,
+        "sku": "MS-007-f500"
+      },
+      "samples": {
+        "id": 1825,
+        "sku": "MS-007-f50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Mango",
+      "products": {
+        "id": 1375,
+        "sku": "MS-005-f500"
+      },
+      "samples": {
+        "id": 1823,
+        "sku": "MS-005-f50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Date",
+      "products": {
+        "id": 1299,
+        "sku": "MS-014-f500"
+      },
+      "samples": {
+        "id": 1829,
+        "sku": "MS-014-F50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Honey Dew",
+      "products": {
+        "id": 1337,
+        "sku": "MS-006-f500"
+      },
+      "samples": {
+        "id": 1824,
+        "sku": "MS-006-f50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Strawberry",
+      "products": {
+        "id": 1518,
+        "sku": "MS-002-f500"
+      },
+      "samples": {
+        "id": 1822,
+        "sku": "MS-002-f50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Vanilla",
+      "products": {
+        "id": 1546,
+        "sku": "MS-001-f500"
+      },
+      "samples": {
+        "id": 1821,
+        "sku": "MS-001-f50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Yogurt",
+      "products": {
+        "id": 1563,
+        "sku": "MS-010-f500"
+      },
+      "samples": {
+        "id": 1828,
+        "sku": "MS-010-f50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Cookies & Cream",
+      "products": {
+        "id": 2321,
+        "sku": "MS-023-f500"
+      },
+      "samples": {
+        "id": 3028,
+        "sku": "MS-023-f50"
+      }
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Rainbow Unicorn",
+      "samples": {
+        "id": 1826,
+        "sku": "MS-012-F50"
+      }
+    },
+    {
+      "slug": "frappe",
+      "flavor": "Coffee",
+      "products": {
+        "id": 1285,
+        "sku": "FR-018-f500"
+      }
+    },
+    {
+      "slug": "frappe",
+      "flavor": "Salted Caramel",
+      "products": {
+        "id": 1494,
+        "sku": "FR-008-f500"
+      },
+      "samples": {
+        "id": 1851,
+        "sku": "FR-008-f50"
+      }
+    },
+    {
+      "slug": "frappe",
+      "flavor": "Vanilla",
+      "products": {
+        "id": 1544,
+        "sku": "FR-009-f500"
+      },
+      "samples": {
+        "id": 1852,
+        "sku": "FR-009-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Classic",
+      "products": {
+        "id": 1275,
+        "sku": "MT-002-f500"
+      },
+      "samples": {
+        "id": 1831,
+        "sku": "MT-002-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Pure",
+      "products": {
+        "id": 2425,
+        "sku": "MT-011-f500"
+      },
+      "samples": {
+        "id": 1398,
+        "sku": "MT-011-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Mango Coconut",
+      "products": {
+        "id": 1383,
+        "sku": "MT-007-f500"
+      },
+      "samples": {
+        "id": 1837,
+        "sku": "MT-007-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Anchan Blueberry",
+      "products": {
+        "id": 1181,
+        "sku": "MT-001-f500"
+      },
+      "samples": {
+        "id": 1830,
+        "sku": "MT-001-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Pink",
+      "products": {
+        "id": 1448,
+        "sku": "MT-004-f500"
+      },
+      "samples": {
+        "id": 1834,
+        "sku": "MT-004-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Raspberry",
+      "products": {
+        "id": 1478,
+        "sku": "MT-008-f500"
+      },
+      "samples": {
+        "id": 1838,
+        "sku": "MT-008-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Strawberry",
+      "products": {
+        "id": 1515,
+        "sku": "MT-003-f500"
+      },
+      "samples": {
+        "id": 1833,
+        "sku": "MT-003-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Purple Yum Ube",
+      "products": {
+        "id": 2426,
+        "sku": "MT-012-f500"
+      },
+      "samples": {
+        "id": 3027,
+        "sku": "MT-012-f50"
+      }
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Hojicha",
+      "products": {
+        "id": 3257,
+        "sku": "MT-028-f500"
+      },
+      "samples": {
+        "id": 3951,
+        "sku": "MT-028-F50"
+      }
+    },
+    {
+      "slug": "chai-latte",
+      "flavor": "Karak",
+      "products": {
+        "id": 1352,
+        "sku": "CL-001-f500"
+      },
+      "samples": {
+        "id": 1351,
+        "sku": "CL-001-f50"
+      }
+    },
+    {
+      "slug": "chai-latte",
+      "flavor": "Masala",
+      "products": {
+        "id": 1392,
+        "sku": "CL-002-f500"
+      },
+      "samples": {
+        "id": 1391,
+        "sku": "CL-002-f50"
+      }
+    },
+    {
+      "slug": "chocolate",
+      "flavor": "Hot Chocolate",
+      "products": {
+        "id": 2286,
+        "sku": "CC-006-f500"
+      },
+      "samples": {
+        "id": 1893,
+        "sku": "CC-006-f50"
+      }
+    },
+    {
+      "slug": "chocolate",
+      "flavor": "Hot Chocolate No Sugar",
+      "products": {
+        "id": 2287,
+        "sku": "CC-001-f500"
+      },
+      "samples": {
+        "id": 2288,
+        "sku": "CC-001-f50"
+      }
+    },
+    {
+      "slug": "cordial",
+      "flavor": "Classic Mojito",
+      "products": {
+        "id": 1277,
+        "sku": "CR-006-f500"
+      },
+      "samples": {
+        "id": 1845,
+        "sku": "CR-006-f50"
+      }
+    },
+    {
+      "slug": "cordial",
+      "flavor": "Red Rose Lemon",
+      "products": {
+        "id": 1486,
+        "sku": "CR-019-f500"
+      },
+      "samples": {
+        "id": 1847,
+        "sku": "CR-019-f50"
+      }
+    },
+    {
+      "slug": "iced-tea",
+      "flavor": "Lemon",
+      "products": {
+        "id": 1360,
+        "sku": "IT-002-f500"
+      },
+      "samples": {
+        "id": 1841,
+        "sku": "IT-002-f50"
+      }
+    },
+    {
+      "slug": "iced-tea",
+      "flavor": "Peach",
+      "products": {
+        "id": 1427,
+        "sku": "IT-001-f500"
+      },
+      "samples": {
+        "id": 1840,
+        "sku": "IT-001-F50"
+      }
+    },
+    {
+      "slug": "iced-tea",
+      "flavor": "Green",
+      "products": {
+        "id": 1324,
+        "sku": "IT-009-f500"
+      },
+      "samples": {
+        "id": 1844,
+        "sku": "IT-009-f50"
+      }
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Vanilla",
+      "products": {
+        "id": 1548,
+        "sku": "RF-011-f500"
+      },
+      "samples": {
+        "id": 1801,
+        "sku": "RF-011-f50"
+      }
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Salted Caramel",
+      "products": {
+        "id": 1495,
+        "sku": "RF-004-f500"
+      },
+      "samples": {
+        "id": 1797,
+        "sku": "RF-004-f50"
+      }
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Pineapple Caramel",
+      "products": {
+        "id": 1444,
+        "sku": "RF-009-f500"
+      },
+      "samples": {
+        "id": 1800,
+        "sku": "RF-009-f50"
+      }
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Raspberry Coconut",
+      "products": {
+        "id": 1479,
+        "sku": "RF-005-f500"
+      },
+      "samples": {
+        "id": 1798,
+        "sku": "RF-005-f50"
+      }
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Spanish Peach",
+      "products": {
+        "id": 1507,
+        "sku": "RF-015-f500"
+      },
+      "samples": {
+        "id": 2307,
+        "sku": "RF-015-f50"
+      }
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Birds Dream",
+      "products": {
+        "id": 1203,
+        "sku": "CRL-001-f500"
+      }
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Citrus Sundae",
+      "products": {
+        "id": 1272,
+        "sku": "CRL-003-f500"
+      }
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Tropical Berry",
+      "products": {
+        "id": 1540,
+        "sku": "CRL-004-f500"
+      },
+      "samples": {
+        "id": 1804,
+        "sku": "CRL-004-f50"
+      }
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Salty Caramel Sunset",
+      "products": {
+        "id": 1496,
+        "sku": "CRL-005-f500"
+      },
+      "samples": {
+        "id": 1805,
+        "sku": "CRL-005-f50"
+      }
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Golden Caramel Banana",
+      "products": {
+        "id": 1319,
+        "sku": "CRL-006-f500"
+      },
+      "samples": {
+        "id": 1806,
+        "sku": "CRL-006-f50"
+      }
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Vanilla Sky",
+      "products": {
+        "id": 1551,
+        "sku": "CRL-007-f500"
+      },
+      "samples": {
+        "id": 1807,
+        "sku": "CRL-007-f50"
+      }
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Nutty Pistachio",
+      "products": {
+        "id": 1417,
+        "sku": "CRL-008-f500"
+      },
+      "samples": {
+        "id": 1808,
+        "sku": "CRL-008-f50"
+      }
+    },
+    {
+      "slug": "tea",
+      "flavor": "Black",
+      "products": {
+        "id": 1205,
+        "sku": "TE-002-s1-dp100"
+      },
+      "samples": {
+        "id": 3451,
+        "sku": "TE-002-s1-dp100"
+      }
+    },
+    {
+      "slug": "tea",
+      "flavor": "Green",
+      "products": {
+        "id": 1323,
+        "sku": "TE-003-s1-dp100"
+      },
+      "samples": {
+        "id": 3452,
+        "sku": "TE-003-s1-dp100"
+      }
+    },
+    {
+      "slug": "tea",
+      "flavor": "Jasmine",
+      "products": {
+        "id": 3315,
+        "sku": "TE-001-s1-dp100"
+      },
+      "samples": {
+        "id": 3453,
+        "sku": "TE-001-s1-dp100"
+      }
+    },
+    {
+      "slug": "topping",
+      "flavor": "Classic Cheese Cream",
+      "products": {
+        "id": 1276,
+        "sku": "TP-001-f500"
+      }
+    },
+    {
+      "slug": "topping",
+      "flavor": "Coffee Crème",
+      "products": {
+        "id": 1286,
+        "sku": "TP-009-f500"
+      }
+    },
+    {
+      "slug": "jam",
+      "flavor": "Strawberry Watermelon",
+      "products": {
+        "id": 1523,
+        "sku": "JM-002-f500"
+      },
+      "samples": {
+        "id": 1870,
+        "sku": "JM-002-f50"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Amaretto",
+      "products": {
+        "id": 1178,
+        "sku": "SF-001-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Cherry",
+      "products": {
+        "id": 1246,
+        "sku": "SF-007-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Mango",
+      "products": {
+        "id": 1382,
+        "sku": "SF-009-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Mint",
+      "products": {
+        "id": 1403,
+        "sku": "SF-010-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Black Currant",
+      "products": {
+        "id": 1212,
+        "sku": "SF-011-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Coconut",
+      "products": {
+        "id": 1282,
+        "sku": "SF-012-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Melon",
+      "products": {
+        "id": 1399,
+        "sku": "SF-013-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Peach",
+      "products": {
+        "id": 1428,
+        "sku": "SF-014-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Raspberry",
+      "products": {
+        "id": 1473,
+        "sku": "SF-015-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Hazelnut",
+      "products": {
+        "id": 1350,
+        "sku": "SF-004-s1-dp100"
+      }
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Vanilla",
+      "products": {
+        "id": 1545,
+        "sku": "SS-007-f500"
+      },
+      "samples": {
+        "id": 1819,
+        "sku": "SS-007-f50"
+      }
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Salted Caramel",
+      "products": {
+        "id": 1493,
+        "sku": "SS-004-f500"
+      },
+      "samples": {
+        "id": 1816,
+        "sku": "SS-004-f50"
+      }
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Hazelnut",
+      "products": {
+        "id": 1331,
+        "sku": "SS-008-f500"
+      },
+      "samples": {
+        "id": 1820,
+        "sku": "SS-008-f50"
+      }
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Raspberry",
+      "products": {
+        "id": 1475,
+        "sku": "SS-002-f500"
+      },
+      "samples": {
+        "id": 1814,
+        "sku": "SS-002-f50"
+      }
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Mango",
+      "products": {
+        "id": 1381,
+        "sku": "SS-005-f500"
+      },
+      "samples": {
+        "id": 1817,
+        "sku": "SS-005-f50"
+      }
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Blueberry",
+      "products": {
+        "id": 1218,
+        "sku": "SS-001-f500"
+      },
+      "samples": {
+        "id": 1813,
+        "sku": "SS-001-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Strawberry Cubes",
+      "products": {
+        "id": 1511,
+        "sku": "GR-003-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Banana Cubes",
+      "products": {
+        "id": 1192,
+        "sku": "GR-012-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Dragon Fruit Cubes",
+      "products": {
+        "id": 2305,
+        "sku": "GR-015-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Kiwi Cubes",
+      "products": {
+        "id": 2304,
+        "sku": "GR-014-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Mango Cubes",
+      "products": {
+        "id": 1376,
+        "sku": "GR-009-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Blueberry Cubes",
+      "products": {
+        "id": 1219,
+        "sku": "GR-013-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Cherry Cubes",
+      "products": {
+        "id": 1247,
+        "sku": "GR-006-f50"
+      }
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Raspberry Cubes",
+      "products": {
+        "id": 1474,
+        "sku": "GR-010-f50"
+      }
+    },
+    {
+      "slug": "vending",
+      "flavor": "Chocolate",
+      "products": {
+        "id": 1257,
+        "sku": "VD-002-f500"
+      },
+      "samples": {
+        "id": 1894,
+        "sku": "VD-002-f50"
+      }
+    },
+    {
+      "slug": "vending",
+      "flavor": "Chocolate No Added Sugar",
+      "products": {
+        "id": 1880,
+        "sku": "VD-000-f500"
+      }
+    },
+    {
+      "slug": "vending",
+      "flavor": "Karak",
+      "products": {
+        "id": 1353,
+        "sku": "VD-004-f500"
+      }
+    },
+    {
+      "slug": "vending",
+      "flavor": "Banana Ice Cream Salted Caramel",
+      "products": {
+        "id": 1197,
+        "sku": "VD-006-f500"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Mango Coconut",
+      "products": {
+        "id": 2428,
+        "sku": "MT-015-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Blue",
+      "products": {
+        "id": 2429,
+        "sku": "MT-016-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Pink",
+      "products": {
+        "id": 2430,
+        "sku": "MT-017-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Raspberry",
+      "products": {
+        "id": 2944,
+        "sku": "MT-008-f150"
+      },
+      "samples": {
+        "id": 1838,
+        "sku": "MT-008-f50"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Strawberry",
+      "products": {
+        "id": 2435,
+        "sku": "MT-023-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chocolate Strawberry",
+      "products": {
+        "id": 2394,
+        "sku": "CC-011-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chocolate Orange",
+      "products": {
+        "id": 2395,
+        "sku": "CC-012-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chocolate Mocha",
+      "products": {
+        "id": 2393,
+        "sku": "CC-010-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Iced Tea Lemon",
+      "products": {
+        "id": 3411,
+        "sku": "IT-021-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Iced Tea Peach",
+      "products": {
+        "id": 2417,
+        "sku": "IT-022-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chai Latte Karak",
+      "products": {
+        "id": 2403,
+        "sku": "CL-006-f150"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Milkshake Cookies & Cream",
+      "products": {
+        "id": 2423,
+        "sku": "MS-023-f150"
+      },
+      "samples": {
+        "id": 3028,
+        "sku": "MS-023-f50"
+      }
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Cordial Dates Cola",
+      "products": {
+        "id": 2411,
+        "sku": "CR-024-F150"
+      }
+    }
+  ]
+}
