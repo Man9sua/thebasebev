@@ -26,7 +26,7 @@
 .pack strong { border: 1px solid #141212; border-radius: 14px; padding: 18px; font-size: 16px; font-weight: inherit; }
 .price { font-size: clamp(26px, 2.6vw, 38px); line-height: 1.2; font-weight: var(--tbb-font-weight-subheading); }
 .purchase { display: flex; gap: 12px; }
-.quantity { display: inline-grid; grid-template-columns: 42px 28px 42px; align-items: center; border: 1px solid #141212; border-radius: 999px; text-align: center; font-weight: var(--tbb-font-weight-button); }
+.quantity { display: inline-grid; grid-template-columns: 42px auto 42px; align-items: center; border: 1px solid #141212; border-radius: 999px; text-align: center; font-weight: var(--tbb-font-weight-button); }
 .quantity button { min-height: 52px; border: 0; border-radius: 999px; background: transparent; color: #141212; font: inherit; font-size: 20px; cursor: pointer; }
 .add, .outline { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; border: 1px solid transparent; border-radius: 999px; padding: 12px 20px; font: var(--tbb-font-weight-button) 12px / 1.4 var(--tbb-font-button); letter-spacing: .1em; text-transform: uppercase; text-decoration: none; text-align: center; cursor: pointer; }
 .add { flex: 1; background: var(--tbb-rd-red); color: #fff; }

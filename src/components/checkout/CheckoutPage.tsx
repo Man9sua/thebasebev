@@ -1,11 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import { useCart, useSampleCart } from "@/components/cart/useCart";
 import { ShopPackImage } from "@/components/shop/ShopPackImage";
 import { DeliveryProgress } from "@/components/shop/DeliveryProgress";
-import { FlavourPicker, ShopScope } from "@/components/shop/ShopPage";
+import { FlavourPicker } from "@/components/shop/ShopPage";
+import { QuantityInput } from "@/components/shop/QuantityInput";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
@@ -176,6 +177,7 @@ export function CheckoutPage() {
   const [error, setError] = useState("");
   const [completed, setCompleted] = useState(false);
   const [samplePicker, setSamplePicker] = useState<ShopProduct | null>(null);
+  const closeSamplePicker = useCallback(() => setSamplePicker(null), []);
   const checkoutAttempt = useRef<{ payload: string; key: string } | null>(null);
 
   const lines = useMemo(() => cart.items.flatMap((item) => {
@@ -335,9 +337,9 @@ export function CheckoutPage() {
                     </div>
                     <div className={styles.lineCopy}>
                       <h3>{line.product.name}</h3><p><span>{line.flavor}</span><span>{line.kind === "samples" ? " · Free sample" : ` · ${getShopPackLabel(line.slug, line.flavor) ?? line.product.format}`}</span></p>
-                      <div className={styles.quantity} aria-label={`${label} quantity`}>
+                      <div className={styles.quantity} role="group" aria-label={`${label} quantity`}>
                         <button type="button" disabled={pending} aria-label={`Decrease ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity - 1)}>−</button>
-                        <span>{line.quantity}</span>
+                        <QuantityInput label={`${label} quantity`} value={line.quantity} disabled={pending} onChange={(next) => setQuantity(line.slug, line.flavor, next)} />
                         <button type="button" disabled={pending || line.quantity >= SHOP_MAX_QUANTITY} aria-label={`Increase ${label} quantity`} onClick={() => setQuantity(line.slug, line.flavor, line.quantity + 1)}>+</button>
                       </div>
                       <button type="button" className={styles.remove} disabled={pending} aria-label={`Remove ${label}`} onClick={() => remove(line.slug, line.flavor)}>Remove</button>
@@ -418,8 +420,8 @@ export function CheckoutPage() {
           )}
         </main>
       )}
-      {samplePicker && <ShopScope><FlavourPicker product={samplePicker} kind="samples" items={sampleCart.items}
-        allowSamples={false} totalLines={items.length} onKindChange={() => {}} onClose={() => setSamplePicker(null)} /></ShopScope>}
+      {samplePicker && <FlavourPicker product={samplePicker} kind="samples" items={sampleCart.items}
+        allowSamples={false} totalLines={items.length} onKindChange={() => {}} onClose={closeSamplePicker} />}
     </div>
   );
 }

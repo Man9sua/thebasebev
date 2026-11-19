@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useCart, useSampleCart } from "@/components/cart/useCart";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
@@ -27,6 +28,7 @@ import {
 import { formatShopMoney, getShopUnitAmount, getShopPriceRange, getShopQuote, getShopPackLabel, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
 import { combineShopBaskets, shopBasketKey, type ShopBasketItem } from "@/lib/shop-basket";
 import { ShopPackImage } from "./ShopPackImage";
+import { QuantityInput } from "./QuantityInput";
 import { DeliveryProgress } from "./DeliveryProgress";
 import styles from "./ShopPage.module.css";
 
@@ -78,7 +80,7 @@ function Quantity({ name, quantity, canAdd = true, onChange }: { name: string; q
   return (
     <div className={styles.stepper} role="group" aria-label={`${name} quantity`}>
       <button className={styles.step} type="button" disabled={quantity === 0} aria-label={`Remove one ${name}`} onClick={() => onChange(quantity - 1)}>−</button>
-      <span className={styles.quantity} aria-live="polite">{quantity}</span>
+      <QuantityInput label={`${name} quantity`} value={quantity} disabled={!canAdd} onChange={onChange} />
       <button className={styles.step} type="button" disabled={quantity >= SHOP_MAX_QUANTITY || !canAdd} aria-label={`Add one ${name}`} onClick={() => onChange(quantity + 1)}>+</button>
     </div>
   );
@@ -110,20 +112,29 @@ function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopP
   );
 }
 
-/**
- * The shop's own styles hang off its page; outside the shop (the homepage
- * bestsellers) the picker sits in this scope instead, which carries the same
- * variables and rules without the page's height and background.
- */
-export function ShopScope({ children }: { children: ReactNode }) {
-  return <div className={`${styles.page} ${styles.scope}`}>{children}</div>;
-}
-
 export function FlavourPicker({ product, kind, items, allowSamples, totalLines, onKindChange, onClose }: { product: ShopProduct; kind: ShopKind; items: readonly CartItem[]; allowSamples: boolean; totalLines: number; onKindChange: (kind: ShopKind) => void; onClose: () => void }) {
+  const overlay = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const dismiss = useRef<HTMLButtonElement>(null);
   const id = useId();
   useOverlay(true, onClose, panel, dismiss);
+  useEffect(() => {
+    // iOS resizes the visual viewport when the numeric keyboard opens.
+    const viewport = window.visualViewport;
+    const element = overlay.current;
+    if (!viewport || !element) return;
+    const fitViewport = () => {
+      element.style.setProperty("--picker-height", `${viewport.height}px`);
+      element.style.setProperty("--picker-top", `${viewport.offsetTop}px`);
+    };
+    fitViewport();
+    viewport.addEventListener("resize", fitViewport);
+    viewport.addEventListener("scroll", fitViewport);
+    return () => {
+      viewport.removeEventListener("resize", fitViewport);
+      viewport.removeEventListener("scroll", fitViewport);
+    };
+  }, []);
   const lines = items.filter((item) => item.slug === product.slug);
   const quantities = new Map(lines.map((line) => [line.flavor, line.quantity]));
   const count = itemCount(lines);
@@ -131,42 +142,45 @@ export function FlavourPicker({ product, kind, items, allowSamples, totalLines, 
   const boxCount = itemCount(items);
   const full = totalLines >= SHOP_MAX_LINES;
 
-  return (
-    <div className={styles.overlay} data-shop-picker={product.slug}>
+  return createPortal(
+    <div className={`${styles.page} ${styles.overlay} ${styles.pickerOverlay}`} ref={overlay} data-shop-picker={product.slug}>
       <button className={styles.scrim} type="button" tabIndex={-1} aria-label={`Close ${product.name} flavours`} onClick={onClose} />
       <div className={styles.picker} ref={panel} role="dialog" aria-modal="true" aria-labelledby={id} tabIndex={-1}>
         <div className={styles.pickerArt} style={{ backgroundColor: product.backgroundColor }}><ShopPackImage product={product} sizes="260px" eager /></div>
         <div className={styles.pickerContent}>
-          <div className={styles.pickerHead}>
-            <div className={styles.pickerCopy}>
-              <h2 className={styles.pickerTitle} id={id}>{product.name} flavours</h2>
-              <span className={styles.pickerMeta}>{samples ? "Choose a quantity for each flavour" : `${product.format}, ${unitLabel(product, kind)}`}</span>
+          <div className={styles.pickerScroll}>
+            <div className={styles.pickerHead}>
+              <div className={styles.pickerCopy}>
+                <h2 className={styles.pickerTitle} id={id}>{product.name} flavours</h2>
+                <span className={styles.pickerMeta}>{samples ? "Choose a quantity for each flavour" : `${product.format}, ${unitLabel(product, kind)}`}</span>
+              </div>
+              <button className={styles.dismiss} ref={dismiss} type="button" aria-label="Close flavour picker" onClick={onClose}><CloseIcon /></button>
             </div>
-            <button className={styles.dismiss} ref={dismiss} type="button" aria-label="Close flavour picker" onClick={onClose}><CloseIcon /></button>
+            {allowSamples && <div className={styles.kindSwitch} role="group" aria-label="Pack type">
+              <button type="button" aria-pressed={!samples} onClick={() => onKindChange("products")}>Full packs</button>
+              <button type="button" aria-pressed={samples} onClick={() => onKindChange("samples")}>Free samples</button>
+            </div>}
+            <ul className={styles.flavourList} aria-label={`${product.name} flavours`}>
+              {product.flavors.map((flavor) => {
+                const quantity = quantities.get(flavor) ?? 0;
+                const unit = getShopUnitAmount(product.slug, undefined, flavor);
+                return (
+                  <li className={styles.flavourRow} key={flavor} data-shop-flavor={flavor}>
+                    <span className={styles.flavourName}>{flavor}{!samples && <small className={styles.flavourPrice}>{unit === null ? "Price on request" : formatShopMoney(unit)}</small>}</span>
+                    <Quantity name={`${flavor} ${product.name}`} quantity={quantity} canAdd={!full || quantity > 0} onChange={(next) => changeQuantity(kind, product.slug, flavor, next, quantity)} />
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-          {allowSamples && <div className={styles.kindSwitch} role="group" aria-label="Pack type">
-            <button type="button" aria-pressed={!samples} onClick={() => onKindChange("products")}>Full packs</button>
-            <button type="button" aria-pressed={samples} onClick={() => onKindChange("samples")}>Free samples</button>
-          </div>}
-          <ul className={styles.flavourList} aria-label={`${product.name} flavours`}>
-            {product.flavors.map((flavor) => {
-              const quantity = quantities.get(flavor) ?? 0;
-              const unit = getShopUnitAmount(product.slug, undefined, flavor);
-              return (
-                <li className={styles.flavourRow} key={flavor} data-shop-flavor={flavor}>
-                  <span className={styles.flavourName}>{flavor}{!samples && <small className={styles.flavourPrice}>{unit === null ? "Price on request" : formatShopMoney(unit)}</small>}</span>
-                  <Quantity name={`${flavor} ${product.name}`} quantity={quantity} canAdd={!full || quantity > 0} onChange={(next) => changeQuantity(kind, product.slug, flavor, next, quantity)} />
-                </li>
-              );
-            })}
-          </ul>
           <div className={styles.pickerFoot}>
             {full && <p className={styles.limitNote} role="status">This checkout supports {SHOP_MAX_LINES} different flavours. Remove a flavour to add another.</p>}
             <button className={styles.control} type="button" onClick={onClose}>{count > 0 ? samples ? `Done: ${boxCount} in sample box` : `Done: ${count} in cart` : "Close"}</button>
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

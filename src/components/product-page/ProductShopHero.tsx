@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useCart } from "@/components/cart/useCart";
 import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
+import { QuantityInput } from "@/components/shop/QuantityInput";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
 import { getShopProduct, SHOP_MAX_QUANTITY } from "@/data/shop";
@@ -74,7 +75,7 @@ export function ProductShopHero({ slug, title, lead, image, specification }: {
         {purchasable && <div className={styles.purchase}>
           <div className={styles.quantity} role="group" aria-label={`${product.name} quantity`}>
             <button type="button" aria-label="Decrease quantity" disabled={quantity <= 1} onClick={() => setQuantity(quantity - 1)}>−</button>
-            <span>{quantity}</span>
+            <QuantityInput label={`${product.name} quantity`} value={quantity} min={1} onChange={setQuantity} />
             <button type="button" aria-label="Increase quantity" disabled={quantity >= SHOP_MAX_QUANTITY} onClick={() => setQuantity(quantity + 1)}>+</button>
           </div>
           <button className={styles.add} type="button" data-cart-add disabled={!cart.ready} onClick={add}>Add to cart</button>

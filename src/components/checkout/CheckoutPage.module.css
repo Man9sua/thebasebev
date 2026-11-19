@@ -76,7 +76,6 @@
 .linePrice { max-width: 160px; font-size: 20px; font-weight: var(--tbb-font-weight-subheading); line-height: 1.4; text-align: right; }
 .quantity { display: inline-grid; grid-template-columns: 34px minmax(24px, max-content) 34px; align-items: center; margin-top: 10px; border: 1px solid #ece9e3; border-radius: 20px; text-align: center; }
 .quantity button { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #111; font: var(--tbb-font-weight-button) 18px / 1 var(--tbb-font-button); cursor: pointer; }
-.quantity span { font-size: 14px; }
 .remove { display: inline-block; margin-left: 16px; padding: 5px 0; border: 0; background: transparent; color: #6e6a63; font: var(--tbb-font-weight-button) 12px / 1.4 var(--tbb-font-button); letter-spacing: .1em; text-transform: uppercase; text-decoration: underline; cursor: pointer; }
 .remove:hover { color: #e3141b; }
 .totals { display: grid; gap: 10px; margin: 0; padding: 20px; border-radius: 16px; background: #f6f6f4; }

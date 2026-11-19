@@ -244,8 +244,10 @@ try {
   const frameBox = await slider.locator("[data-ink]").first().boundingBox();
   const headerBox = await page.locator("header").first().boundingBox();
   check(!!frameBox && !!headerBox && frameBox.y >= headerBox.y + headerBox.height, "home: the slider starts under the fixed header");
+  await slider.getByRole("button", { name: "Show Raf Coffee", exact: true }).click();
   await slider.getByRole("button", { name: "Next slide" }).click();
   check((await slides.nth(1).getAttribute("data-active")) !== null, "home: the next arrow did not move the slider");
+  await page.waitForFunction(() => !document.querySelector('button[aria-label="Show Matcha"]')?.hasAttribute("aria-current"), undefined, { timeout: 6500 });
   // The bar carries the vertical mark — the near-square one the design file
   // draws — rather than the landscape lockup the live site still uses. It
   // carries its own two colours, so it no longer takes part in the bar's colour

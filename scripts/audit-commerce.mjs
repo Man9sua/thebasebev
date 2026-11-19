@@ -49,8 +49,8 @@ async function shopBaskets(page) {
   let picker = await openPicker(page, "milkshake");
   check(await picker.locator("[data-shop-flavor]").count() === 9, "Shop: Milkshake offers the nine approved flavours");
   const vanilla = picker.getByRole("group", { name: "Vanilla Milkshake quantity", exact: true });
-  await vanilla.getByRole("button", { name: "Add one Vanilla Milkshake", exact: true }).click();
-  await vanilla.getByRole("button", { name: "Add one Vanilla Milkshake", exact: true }).click();
+  await vanilla.getByRole("spinbutton").fill("100");
+  await vanilla.getByRole("spinbutton").press("Enter");
   await picker.getByRole("button", { name: "Add one Banana Milkshake", exact: true }).click();
   await closePicker(page, picker);
   picker = await openPicker(page, "matcha");
@@ -60,14 +60,17 @@ async function shopBaskets(page) {
   let basket = await openBasket(page, "products");
   check(await basket.locator("[data-shop-cart-line]").count() === 3, "Shop: two Milkshake flavours and Matcha remain separate lines");
   const vanillaLine = basket.locator('[data-shop-cart-line="milkshake::Vanilla"]');
+  const quantity = vanillaLine.getByRole("spinbutton");
+  check(await quantity.inputValue() === "100", "Shop: a typed flavour quantity reaches the cart");
+  await quantity.fill("2");
   await vanillaLine.getByRole("button", { name: "Add one Vanilla Milkshake", exact: true }).click();
-  check(/−\s*3\s*\+/.test(await vanillaLine.getByRole("group").innerText()), "Shop: basket quantity increases independently");
+  check(await quantity.inputValue() === "3", "Shop: basket quantity increases independently");
   await vanillaLine.getByRole("button", { name: "Remove one Vanilla Milkshake", exact: true }).click();
-  check(/−\s*2\s*\+/.test(await vanillaLine.getByRole("group").innerText()), "Shop: basket quantity decreases independently");
+  check(await quantity.inputValue() === "2", "Shop: basket quantity decreases independently");
   await page.reload({ waitUntil: "load" });
   basket = await openBasket(page, "products");
   check(await basket.locator("[data-shop-cart-line]").count() === 3, "Shop: all selected flavour lines survive reload");
-  check(/−\s*2\s*\+/.test(await basket.locator('[data-shop-cart-line="milkshake::Vanilla"]').getByRole("group").innerText()), "Shop: quantity survives reload");
+  check(await quantity.inputValue() === "2", "Shop: quantity survives reload");
   for (const line of ["milkshake::Banana", "matcha::Classic"]) {
     check(await basket.locator(`[data-shop-cart-line="${line}"]`).count() === 1, `Shop: ${line} survives reload`);
   }
@@ -111,7 +114,7 @@ async function shopBaskets(page) {
   basket = await openBasket(page, "samples");
   const firstSample = basket.locator('[data-shop-cart-line="milkshake::Banana"]');
   check(await basket.getByText("To be confirmed", { exact: true }).count() === 2, "Samples: international delivery and total remain unquoted rather than showing a guessed amount");
-  check(/−\s*3\s*\+/.test(await firstSample.getByRole("group").innerText()), "Samples: several packs survive reload");
+  check(await firstSample.getByRole("spinbutton").inputValue() === "3", "Samples: several packs survive reload");
   check(await page.evaluate(() => localStorage.getItem("thebase:cart:v2")) === paidBasket, "Samples: country switch preserves the paid basket");
   const request = basket.getByRole("link", { name: "Request samples", exact: true });
   const sampleDestination = new URL(await request.getAttribute("href"), baseUrl);
@@ -121,9 +124,10 @@ async function shopBaskets(page) {
   await page.getByRole("heading", { name: "Request samples", exact: true }).waitFor();
   const sampleSummary = page.getByRole("complementary", { name: "Sample box", exact: true });
   check(await sampleSummary.getByText("10 samples", { exact: true }).isVisible(), "Samples: all eight flavours and ten packs reach checkout");
-  await sampleSummary.getByRole("button", { name: "Increase Milkshake Banana quantity", exact: true }).click();
+  const sampleLines = page.getByRole("region", { name: "Items in your order", exact: true });
+  await sampleLines.getByRole("button", { name: "Increase Milkshake Banana quantity", exact: true }).click();
   check(await sampleSummary.getByText("11 samples", { exact: true }).isVisible(), "Samples: quantities can be edited at checkout");
-  await sampleSummary.getByRole("button", { name: "Decrease Milkshake Banana quantity", exact: true }).click();
+  await sampleLines.getByRole("button", { name: "Decrease Milkshake Banana quantity", exact: true }).click();
   check(await page.getByRole("button", { name: "Send request", exact: true }).isVisible(), "Samples: unknown shipping is requested before payment");
   check(await page.getByRole("button", { name: "Pay delivery securely", exact: true }).count() === 0, "Samples: unknown shipping cannot create a Stripe session");
   check(await page.getByRole("radio", { name: /Use my DHL account/ }).isVisible(), "Samples: own DHL account remains available");

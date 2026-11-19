@@ -9,7 +9,6 @@
   font-family: var(--tbb-font-body);
   font-weight: var(--tbb-font-weight-body);
 }
-.scope { min-height: 0; background: none; }
 .content { display: flex; flex-direction: column; gap: 48px; max-width: 1440px; margin-inline: auto; padding: calc(var(--tbb-header-h) + 72px) clamp(16px, 6vw, 96px) 120px; }
 .intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
 .introCopy { display: flex; flex-direction: column; gap: 20px; }
@@ -63,11 +62,13 @@
 .cartBar { appearance: none; display: flex; position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 45; align-items: center; gap: 20px; max-width: calc(100% - 24px); min-height: 56px; transform: translateX(-50%); border: 0; border-radius: 28px; padding: 8px 8px 8px 24px; background: var(--shop-ink); color: #fff; box-shadow: 0 12px 32px rgba(0, 0, 0, .25); font: inherit; font-size: 15px; font-weight: var(--tbb-font-weight-button); cursor: pointer; }
 .cartBarAction { display: flex; flex: none; align-items: center; justify-content: center; min-height: 40px; padding: 8px 20px; border-radius: 20px; background: var(--tbb-rd-red); color: #fff; font-size: 12px; font-weight: var(--tbb-font-weight-button); line-height: 1.2; letter-spacing: .1em; text-transform: uppercase; }
 .overlay { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; }
+.page.pickerOverlay { top: var(--picker-top, 0px); bottom: auto; height: var(--picker-height, 100dvh); min-height: 0; grid-template-rows: minmax(0, 1fr); background: transparent; }
 .scrim { position: absolute; inset: 0; border: 0; border-radius: 0; padding: 0; background: rgba(14, 14, 14, .4); cursor: pointer; }
-.picker { position: relative; display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); width: min(720px, calc(100% - 24px)); max-height: calc(100dvh - 48px); overflow: hidden; border-radius: 28px; background: #fff; box-shadow: 0 30px 80px rgba(0, 0, 0, .25); }
+.picker { position: relative; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 260px) minmax(0, 1fr); width: min(720px, calc(100% - 24px)); max-height: calc(100% - 48px); overflow: hidden; border-radius: 28px; background: #fff; box-shadow: 0 30px 80px rgba(0, 0, 0, .25); }
 .pickerArt { position: relative; min-height: 100%; background: var(--shop-field); }
 .pickerArt img { object-fit: cover; }
 .pickerContent { display: flex; min-width: 0; min-height: 0; flex-direction: column; }
+.pickerScroll { min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; }
 .pickerHead { display: flex; flex: none; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 24px 24px 12px; }
 .pickerCopy { display: flex; flex-direction: column; gap: 8px; }
 .page .pickerTitle, .page .drawerTitle { margin: 0 !important; font-size: 28px; font-weight: var(--tbb-font-weight-heading) !important; line-height: 1 !important; text-transform: uppercase; }
@@ -79,14 +80,13 @@
 .dismiss { appearance: none; display: grid; flex: none; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; padding: 0; background: var(--shop-field); color: var(--shop-ink); cursor: pointer; }
 .dismiss svg { width: 18px; height: 18px; }
 .dismiss:hover { background: var(--shop-ink); color: #fff; }
-.flavourList { display: flex; flex: 1; min-height: 0; flex-direction: column; overflow: auto; overscroll-behavior: contain; margin: 0; padding: 4px 24px 12px; list-style: none; }
+.flavourList { display: flex; flex-direction: column; margin: 0; padding: 4px 24px 12px; list-style: none; }
 .flavourRow { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding-block: 4px; }
 .flavourName { min-width: 0; font-size: 16px; font-weight: var(--tbb-font-weight-medium); line-height: 1.35; }
 .stepper { display: inline-flex; flex: none; align-items: center; gap: 4px; border-radius: 20px; padding: 2px; background: var(--shop-field); }
 .step { appearance: none; display: grid; flex: none; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 50%; padding: 0; background: #fff; color: var(--shop-ink); font: inherit; font-size: 20px; font-weight: var(--tbb-font-weight-button); cursor: pointer; }
 .step:disabled { opacity: .4; cursor: not-allowed; }
 .step:not(:disabled):hover { background: var(--shop-ink); color: #fff; }
-.quantity { min-width: 24px; color: var(--shop-ink); text-align: center; font-size: 16px; font-weight: var(--tbb-font-weight-button); }
 .pickerFoot { display: flex; flex: none; flex-direction: column; gap: 8px; padding: 16px 24px 24px; }
 .page .limitNote { margin: 0 !important; color: var(--shop-muted); font-size: 13px; line-height: 1.4 !important; text-align: center; }
 .pickerFoot .control { width: 100%; min-height: 56px; }
@@ -112,7 +112,6 @@
 .picker:focus, .pickerTitle:focus, .drawer:focus, .drawerTitle:focus { outline: none; }
 @media (max-width: 719px) {
   .page { background: #fff; }
-  .scope { background: none; }
   .content { gap: 20px; padding: 108px 16px 64px; }
   .intro { align-items: stretch; gap: 16px; }
   .introCopy { gap: 10px; }
@@ -140,9 +139,9 @@
   .cartBar { gap: 12px; width: calc(100% - 24px); justify-content: space-between; padding-left: 20px; font-size: 14px; }
   .cartBarAction { padding-inline: 16px; }
   .overlay { align-items: end; }
-  .picker { grid-template-columns: 1fr; width: 100%; max-height: min(88dvh, 760px); border-radius: 24px 24px 0 0; }
+  .picker { display: flex; flex-direction: column; width: 100%; max-height: min(calc(100% - env(safe-area-inset-top) - 12px), 88dvh, 760px); border-radius: 24px 24px 0 0; }
   .pickerArt { display: none; }
-  .pickerFoot { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+  .pickerFoot { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
   .drawerHead { padding-inline: 20px; }
   .drawerBody { padding-inline: 20px; }
   .drawerFoot { padding: 24px 20px max(24px, env(safe-area-inset-bottom)); }

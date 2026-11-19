@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useCart, useSampleCart } from "@/components/cart/useCart";
 import { ShopPackImage } from "@/components/shop/ShopPackImage";
-import { FlavourPicker, ShopScope, unitLabel, type ShopKind } from "@/components/shop/ShopPage";
+import { FlavourPicker, unitLabel, type ShopKind } from "@/components/shop/ShopPage";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
 import { BESTSELLER_SLUGS } from "@/data/products";
@@ -96,17 +96,15 @@ export function HomeBestsellers() {
       </div>
 
       {picking && (
-        <ShopScope>
-          <FlavourPicker
-            product={picking}
-            kind={country === "AE" ? pickerKind : "samples"}
-            items={pickerCart.items}
-            totalLines={basket.length}
-            allowSamples={country === "AE"}
-            onKindChange={setPickerKind}
-            onClose={close}
-          />
-        </ShopScope>
+        <FlavourPicker
+          product={picking}
+          kind={country === "AE" ? pickerKind : "samples"}
+          items={pickerCart.items}
+          totalLines={basket.length}
+          allowSamples={country === "AE"}
+          onKindChange={setPickerKind}
+          onClose={close}
+        />
       )}
     </section>
   );
