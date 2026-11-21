@@ -82,17 +82,16 @@ async function shopBaskets(page) {
   const configResponse = page.waitForResponse(response => new URL(response.url()).pathname === "/api/checkout/stripe/config" && response.request().method() === "GET");
   await checkout.click();
   const paymentConfig = (await (await configResponse).json()).payment;
-  await page.getByRole("heading", { name: "Cart & checkout", exact: true }).waitFor();
+  await page.getByRole("heading", { name: "Checkout", exact: true }).waitFor();
   const basketLines = page.getByRole("region", { name: "Items in your order", exact: true });
   for (const flavor of ["Vanilla", "Banana", "Classic"]) {
     check(await basketLines.getByText(flavor, { exact: true }).isVisible(), `Checkout: ${flavor} was retained`);
   }
   const payButton = page.getByRole("button", { name: "Continue to secure payment", exact: true });
   check(await payButton.isVisible(), "Checkout: mapped UAE goods offer secure payment");
-  const testNotice = page.getByText("Test checkout. Use a Stripe test card; no real payment is taken.", { exact: true });
-  if (paymentConfig.mode === "test") await testNotice.waitFor();
-  check(paymentConfig.mode === "test" ? await testNotice.isVisible() : paymentConfig.mode === "live" && await testNotice.count() === 0,
-    "Checkout: payment mode matches the server and Test mode is labelled");
+  const staging = new URL(baseUrl).hostname === "the-base-staging.mansua.workers.dev";
+  check(staging ? paymentConfig.mode === "test" : ["test", "live"].includes(paymentConfig.mode),
+    "Checkout: server reports a valid payment mode and staging uses Test mode");
   if (new URL(baseUrl).protocol === "https:") {
     if (paymentConfig.ready === true) await payButton.click({ trial: true });
     check(paymentConfig.ready === true && await payButton.isEnabled(), "Deployed checkout: receiver and mode configuration are ready");

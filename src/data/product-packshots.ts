@@ -9,7 +9,6 @@ function pouch(slug: string, alt: string): Packshot {
   };
 }
 
-const electrolyte = { src: "/images/shop/electrolyte.webp", alt: "The Base Electrolyte 5 g stick" };
 const packshots: Readonly<Record<string, Packshot | undefined>> = {
   "raf-coffee": pouch("raf-coffee", "Raf Coffee pouch"),
   "cream-latte": pouch("cream-latte", "Cream Latte pouch"),
@@ -33,8 +32,7 @@ const packshots: Readonly<Record<string, Packshot | undefined>> = {
     srcSet: [360, 560, 880].map(w => `/images/products/colour-collection/tin-butterfly-pea-${w}.webp ${w}w`).join(", "),
     alt: "Colour Collection Butterfly Pea powder tin",
   },
-  "add-ons": electrolyte,
-  electrolyte,
+  electrolyte: { src: "/images/shop/electrolyte.webp", alt: "The Base Electrolyte 5 g stick" },
 };
 
 export const getProductPackshot = (slug: string) => packshots[slug];

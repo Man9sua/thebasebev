@@ -44,7 +44,7 @@
 /* ---- shelf index ---- */
 
 .chips {
-  padding: 0 var(--pp-inline) calc(48 * var(--u));
+  padding: 24px var(--pp-inline) calc(48 * var(--u));
   display: flex;
   gap: calc(8 * var(--u));
   flex-wrap: wrap;
@@ -226,7 +226,7 @@
   }
 
   .chips {
-    padding: 0 20px;
+    padding: 16px 20px 0;
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;

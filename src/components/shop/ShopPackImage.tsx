@@ -13,5 +13,6 @@ export function ShopPackImage({
   eager?: boolean;
   alt?: string;
 }) {
-  return <ProductPackshot slug={product.slug} className={styles.image} alt={alt} sizes={sizes} eager={eager} />;
+  const className = product.slug === "electrolyte" ? styles.fullPhoto : styles.image;
+  return <ProductPackshot slug={product.slug} className={className} alt={alt} sizes={sizes} eager={eager} />;
 }

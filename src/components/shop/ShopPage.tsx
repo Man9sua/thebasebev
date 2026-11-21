@@ -228,7 +228,7 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
               <div className={styles.total}><dt>Total</dt><dd>{quote.total === null ? "To be confirmed" : formatShopMoney(quote.total)}</dd></div>
             </dl>
             <SiteLink className={styles.control} href={checkoutHref}>{samples ? "Request samples" : "Checkout"}</SiteLink>
-            <p className={styles.limitNote}>{country === "AE" ? UAE_DELIVERY_TIMING : "Sample delivery is confirmed before payment."}</p>
+            {country !== "AE" && <p className={styles.limitNote}>Sample delivery is confirmed before payment.</p>}
           </div>
         )}
       </aside>

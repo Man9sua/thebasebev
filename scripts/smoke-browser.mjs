@@ -480,13 +480,13 @@ try {
   check((await page.locator("[data-shop-product]").getByText("-", { exact: true }).count()) === 5, "Shop: ranges without approved matching prices remain on request");
   check((await page.locator("[data-shop-product]").getByText(/AED\s*[\d,.]+/).count()) === 17, "Shop: approved range prices are visible");
   check(!/\bVAT\b/i.test(await page.locator("main").innerText()), "Shop: VAT details only appear at checkout");
-  for (const slug of ["puree", "sauce"]) {
+  for (const slug of ["puree", "sauce", "add-ons"]) {
     check(
       (await page.locator(`[data-shop-product="${slug}"] img`).count()) === 0,
       `Shop: ${slug} shows an unconfirmed product image`,
     );
   }
-  check(await page.locator('[data-shop-product="add-ons"] img[src="/images/shop/electrolyte.webp"]').count() === 1, "Shop: Functional Add-ons stick is missing");
+  check(await page.locator('[data-shop-product="electrolyte"] img[src="/images/shop/electrolyte.webp"]').count() === 1, "Shop: Electrolyte stick is missing");
   check((await page.locator("[data-catalog-filters], [data-catalog-sort]").count()) === 0, "catalog: removed filter and sort controls remain");
   check(JSON.stringify(await page.locator("[data-shop-product]").evaluateAll((cards) => cards.slice(0, 6).map((card) => card.getAttribute("data-shop-product")))) === JSON.stringify(["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"]), "Shop: featured order differs from the approved reference");
   check(

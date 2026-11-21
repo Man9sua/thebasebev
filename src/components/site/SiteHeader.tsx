@@ -99,11 +99,9 @@ export function SiteHeader({
 
   return (
     <>
-      {onShop && <div className={styles.shopBanner}>{samples ? "Free samples for businesses · Shipped from Dubai" : "Next-day UAE delivery · Free on product orders from AED 500"}</div>}
       <header
         className={[
           styles.header,
-          onShop ? styles.shopHeader : "",
           noHeroScrim ? styles.noHeroScrim : "",
           darkHero ? styles.darkHero : "",
           solid || menuSurface || searchOpen ? styles.solid : "",
@@ -143,7 +141,7 @@ export function SiteHeader({
           </SiteLink>
           <a
             href={ODOO_ACCOUNT_URL}
-            className={`${styles.action} ${styles.accountAction}`}
+            className={styles.action}
             aria-label="Your account"
             target="_blank"
             rel="noreferrer noopener"
@@ -153,7 +151,7 @@ export function SiteHeader({
 
           <button
             type="button"
-            className={`${styles.action} ${styles.searchAction}`}
+            className={styles.action}
             onClick={() => {
               setMenuOpen(false);
               setMenuClosing(false);
@@ -167,7 +165,7 @@ export function SiteHeader({
 
           <button
             type="button"
-            className={`${styles.action} ${styles.menuAction}`}
+            className={styles.action}
             onClick={() => {
               setSearchOpen(false);
               if (menuOpen) closeMenu();

@@ -39,7 +39,6 @@ type Fields = {
   street: string;
   postalCode: string;
   unit: string;
-  notes: string;
   dhlAccount: string;
 };
 type FieldDefinition = {
@@ -55,7 +54,7 @@ type FieldErrors = Partial<Record<keyof Fields | "consent", string>>;
 
 const INITIAL_FIELDS: Fields = {
   name: "", phone: "", email: "", company: "", website: "", city: "",
-  street: "", postalCode: "", unit: "", notes: "", dhlAccount: "",
+  street: "", postalCode: "", unit: "", dhlAccount: "",
 };
 const CONTACT_FIELDS: readonly FieldDefinition[] = [
   { key: "name", label: "Full name", required: true, autoComplete: "name", maxLength: 120 },
@@ -243,7 +242,7 @@ export function CheckoutPage() {
       businessType: isSample ? businessType : undefined,
       emirate: isSample ? undefined : emirate, city: fields.city.trim(),
       street: fields.street.trim(), postalCode: fields.postalCode.trim(),
-      unit: fields.unit.trim(), notes: fields.notes.trim(),
+      unit: fields.unit.trim(),
     };
     setPending(true);
     try {
@@ -311,7 +310,7 @@ export function CheckoutPage() {
       ) : (
         <main className={styles.main}>
           <div className={styles.heading}>
-            <h1 className={styles.title}>{isSample ? "Request samples" : "Cart & checkout"}</h1>
+            <h1 className={styles.title}>{isSample ? "Request samples" : "Checkout"}</h1>
             {isSample && <p>Samples are free for cafés, restaurants, hotels and distributors. A manager checks your business, then confirms DHL Express delivery from Dubai.</p>}
           </div>
           {cancelled && <p className={styles.quoteNote} role="status">Checkout was cancelled. Your basket has been kept.</p>}
@@ -354,14 +353,14 @@ export function CheckoutPage() {
               </section>
               <div className={styles.sections}>
                 <section className={styles.section} aria-labelledby="checkout-contact-title">
-                  <div className={styles.sectionHead}><span className={styles.step}>1</span><h2 id="checkout-contact-title">{isSample ? "Your business" : "Contact"}</h2></div>
+                  <h2 id="checkout-contact-title">{isSample ? "Your business" : "Contact"}</h2>
                   {isSample && <div className={styles.chips} role="group" aria-label="Business type">{BUSINESS_TYPES.map((name) => (
                     <button key={name} type="button" aria-pressed={businessType === name} onClick={() => setBusinessType(name)} disabled={pending}>{name}</button>
                   ))}</div>}
                   <div className={styles.fields}>{contactFields.map((field) => <CheckoutField key={field.key} field={field} value={fields[field.key]} error={fieldErrors[field.key]} disabled={pending} onChange={updateField} />)}</div>
                 </section>
                 <section className={styles.section} aria-labelledby="checkout-address-title">
-                  <div className={styles.sectionHead}><span className={styles.step}>2</span><h2 id="checkout-address-title">{isSample ? "Delivery address for DHL" : "Delivery address"}</h2></div>
+                  <h2 id="checkout-address-title">{isSample ? "Delivery address for DHL" : "Delivery address"}</h2>
                   {isSample ? (
                     <label className={styles.field}><span>Country</span><input value={countryName} readOnly autoComplete="country-name" /></label>
                   ) : (
@@ -370,30 +369,25 @@ export function CheckoutPage() {
                     ))}</div></div>
                   )}
                   <div className={styles.fields}>{addressFields.map((field) => <CheckoutField key={field.key} field={field} value={fields[field.key]} error={fieldErrors[field.key]} disabled={pending} onChange={updateField} />)}</div>
-                  {!isSample && <label className={styles.field}><span>Note for courier (optional)</span><textarea name="notes" value={fields.notes} rows={2} maxLength={500} placeholder="Delivery hours, loading entrance" disabled={pending} onChange={(event) => updateField("notes", event.target.value)} /></label>}
                 </section>
-                <section className={styles.section} aria-labelledby="checkout-delivery-title">
-                  <div className={styles.sectionHead}><span className={styles.step}>3</span><h2 id="checkout-delivery-title">{isSample ? "DHL delivery payment" : "Delivery"}</h2></div>
-                  <div className={styles.choices}>
-                    {isSample ? DHL_OPTIONS.map((option) => (
-                      <label className={styles.choice} key={option.id}>
-                        <input type="radio" name="deliveryPayment" value={option.id} checked={deliveryPayment === option.id} disabled={pending} onChange={() => setDeliveryPayment(option.id)} />
-                        <span><strong>{option.name}</strong><span>{option.description}</span></span>
-                      </label>
-                    )) : SHIPPING_METHODS.map((option) => (
-                      <label className={styles.choice} key={option.id}>
-                        <input type="radio" name="shippingMethod" value={option.id} checked={shippingMethod === option.id} disabled={pending} onChange={() => setShippingMethod(option.id)} />
-                        <span><strong>{option.name}</strong><span>{option.description}</span></span>
-                      </label>
-                    ))}
-                  </div>
-                  {isSample && deliveryPayment === "dhl-account" && <CheckoutField field={DHL_FIELD} value={fields.dhlAccount} error={fieldErrors.dhlAccount} disabled={pending} onChange={updateField} />}
-                </section>
-                {!isSample && <section className={styles.section} aria-labelledby="checkout-payment-title">
-                  <div className={styles.sectionHead}><span className={styles.step}>4</span><h2 id="checkout-payment-title">Payment</h2></div>
-                  <div className={styles.payment}><strong>Secure card payment</strong><p>Card details are entered on Stripe’s hosted checkout after product prices and delivery are confirmed.</p></div>
-                </section>}
               </div>
+              <section className={styles.section} aria-labelledby="checkout-delivery-title">
+                <h2 id="checkout-delivery-title">{isSample ? "DHL delivery payment" : "Delivery"}</h2>
+                <div className={styles.choices}>
+                  {isSample ? DHL_OPTIONS.map((option) => (
+                    <label className={styles.choice} key={option.id}>
+                      <input type="radio" name="deliveryPayment" value={option.id} checked={deliveryPayment === option.id} disabled={pending} onChange={() => setDeliveryPayment(option.id)} />
+                      <span><strong>{option.name}</strong><span>{option.description}</span></span>
+                    </label>
+                  )) : SHIPPING_METHODS.map((option) => (
+                    <label className={styles.choice} key={option.id}>
+                      <input type="radio" name="shippingMethod" value={option.id} checked={shippingMethod === option.id} disabled={pending} onChange={() => setShippingMethod(option.id)} />
+                      <span><strong>{option.name}</strong><span>{option.description}</span></span>
+                    </label>
+                  ))}
+                </div>
+                {isSample && deliveryPayment === "dhl-account" && <CheckoutField field={DHL_FIELD} value={fields.dhlAccount} error={fieldErrors.dhlAccount} disabled={pending} onChange={updateField} />}
+              </section>
               <aside className={styles.summary} aria-labelledby="order-summary-title">
                 <div className={styles.summaryHead}><h2 id="order-summary-title">{isSample ? "Sample box" : "Your order"}</h2>{isSample && <span>{totalQuantity} {totalQuantity === 1 ? "sample" : "samples"}</span>}</div>
                 <dl className={styles.totals}>
@@ -402,19 +396,20 @@ export function CheckoutPage() {
                   <div><dt>VAT (5%)</dt><dd>{ownDhlAccount || quote.vat === null ? "To be confirmed" : formatShopMoney(quote.vat)}</dd></div>
                   <div className={styles.totalLine}><dt>{isSample ? "Delivery total" : "Total"}</dt><dd>{totalLabel}</dd></div>
                 </dl>
-                {country === "AE" && <p className={styles.quoteNote}>{isSample ? "Sample delivery: AED 30 + VAT for parcels up to 5 kg. Larger parcels are quoted separately." : "Free UAE delivery on products from AED 500 before VAT. Below AED 500: AED 30 + VAT. Samples travel with your order at no extra delivery charge."}</p>}
-                {country === "AE" && <p className={styles.quoteNote}>{UAE_DELIVERY_TIMING}</p>}
-                {!quote.ready && <p className={styles.quoteNote}>{quote.reason || "Product prices and delivery must be confirmed before payment. Request an exact quote below."}</p>}
-                {!quoteNeeded && paymentConfig.mode === "test" && <p className={styles.quoteNote}>Test checkout. Use a Stripe test card; no real payment is taken.</p>}
-                {!quoteNeeded && paymentConfig.loaded && !paymentConfig.ready && <p className={styles.quoteNote} role="status">Card payment is temporarily unavailable. Your basket has been kept.</p>}
-                <label className={styles.consent}>
-                  <input type="checkbox" name="consent" checked={consent} disabled={pending} required aria-invalid={fieldErrors.consent ? true : undefined} aria-describedby={fieldErrors.consent ? "checkout-consent-error" : undefined} onChange={(event) => { setConsent(event.target.checked); setFieldErrors((current) => ({ ...current, consent: undefined })); }} />
-                  <span>I agree to the <SiteLink href={`/${country.toLowerCase()}/privacy`}>Privacy Policy</SiteLink>.</span>
-                </label>
-                {fieldErrors.consent && <p id="checkout-consent-error" className={styles.fieldError}>{fieldErrors.consent}</p>}
-                {error && <p className={styles.error} role="alert">{error}</p>}
-                <button className={styles.submit} type="submit" disabled={pending || (!quoteNeeded && !paymentConfig.ready)}>{submitLabel}</button>
-                <p className={styles.caption}>{caption}</p>
+                <div className={styles.orderActions}>
+                  {isSample && country === "AE" && <p className={styles.quoteNote}>Sample delivery: AED 30 + VAT for parcels up to 5 kg. Larger parcels are quoted separately.</p>}
+                  {country === "AE" && <p className={styles.quoteNote}>{UAE_DELIVERY_TIMING}</p>}
+                  {!quote.ready && <p className={styles.quoteNote}>{quote.reason || "Product prices and delivery must be confirmed before payment. Request an exact quote below."}</p>}
+                  {!quoteNeeded && paymentConfig.loaded && !paymentConfig.ready && <p className={styles.quoteNote} role="status">Card payment is temporarily unavailable. Your basket has been kept.</p>}
+                  <label className={styles.consent}>
+                    <input type="checkbox" name="consent" checked={consent} disabled={pending} required aria-invalid={fieldErrors.consent ? true : undefined} aria-describedby={fieldErrors.consent ? "checkout-consent-error" : undefined} onChange={(event) => { setConsent(event.target.checked); setFieldErrors((current) => ({ ...current, consent: undefined })); }} />
+                    <span>I agree to the <SiteLink href={`/${country.toLowerCase()}/privacy`}>Privacy Policy</SiteLink>.</span>
+                  </label>
+                  {fieldErrors.consent && <p id="checkout-consent-error" className={styles.fieldError}>{fieldErrors.consent}</p>}
+                  {error && <p className={styles.error} role="alert">{error}</p>}
+                  <button className={styles.submit} type="submit" disabled={pending || (!quoteNeeded && !paymentConfig.ready)}>{submitLabel}</button>
+                  <p className={styles.caption}>{caption}</p>
+                </div>
               </aside>
             </form>
           )}

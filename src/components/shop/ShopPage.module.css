@@ -106,7 +106,7 @@
 .picker:focus, .pickerTitle:focus, .drawer:focus, .drawerTitle:focus { outline: none; }
 @media (max-width: 719px) {
   .page { background: #fff; }
-  .content { gap: 20px; padding: 108px 16px 64px; }
+  .content { gap: 20px; padding: calc(3.75rem + 24px) 16px 64px; }
   .intro { align-items: stretch; gap: 16px; }
   .introCopy { gap: 10px; }
   .intro .title { font-size: 56px; }
