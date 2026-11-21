@@ -8,7 +8,6 @@ import {
   Shelf,
   Stats,
   Steps,
-  productImage,
   productPageStyles as styles,
 } from "../blocks";
 import type { ProductPageProps } from "../types";
@@ -22,8 +21,6 @@ import { MADE_IN, PackFacts } from "./Milkshake";
  * The site's dose (15 g) and yield (25 cups from 500 g) disagree, so no
  * per-cup dose is printed until the owner confirms one.
  */
-
-const SLUG = "cream-latte";
 
 /** No flavour photography: the cards are the template's own, on one cream tone. */
 const FLAVOUR_TONE = "#EFE4D3";
@@ -59,8 +56,6 @@ const faq = [
 ];
 
 export function CreamLattePage({ product, assets }: ProductPageProps) {
-  const hero = productImage(SLUG, "hero", [600, 1000]);
-
   return (
     <main
       className={styles.page}
@@ -73,17 +68,13 @@ export function CreamLattePage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        productName={product.name}
+        slug={product.slug}
         title="Cream Latte"
         lead={{
           desktop:
             "Cream latte base for cafés and HoReCa. A rich, creamy latte without fresh cream: mix with milk, froth and add espresso.",
           mobile: "A creamy latte without fresh cream. Froth with milk, add espresso.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Iced cream latte with whipped cream and dried orange" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { BottleCards, RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { BottleCards, UseCards, rangeStyles } from "./Range";
 
 /**
  * Purées ("Puree Product Page Redesign", desktop 1440 / mobile 390). The mock
@@ -28,15 +28,12 @@ export function PureePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <Hero
-        className={rangeHeroClass}
-        style={heroSize(120, 56)}
-        productName={product.name}
+        slug={product.slug}
         title="Purées"
         lead={{
           desktop: "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts.",
           mobile: "Six fruit purées for smoothies, lemonades, cocktails and desserts.",
         }}
-        image={<RangePhotoPlaceholder />}
       />
 
       <Section title="Made for service" label="Made for service">

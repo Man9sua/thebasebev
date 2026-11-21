@@ -96,18 +96,13 @@ export function RafCoffeePage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={local.hero}
-        productName={product.name}
+        slug={product.slug}
         title="Raf coffee"
         lead={{
           desktop:
             "The velvety, ice-cream-like raf without fresh cream. Steam the base with milk and an espresso shot, ready in a minute.",
           mobile: "Velvety raf without fresh cream. Steam with milk and espresso, ready in a minute.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Raf coffee" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
 import { SiteLink } from "@/components/site/SiteLink";
-import { DistributorLink, Faq, SampleButton, Section, Stats, cx, productPageStyles as styles } from "../blocks";
+import { Faq, Section, Stats, cx, productPageStyles as styles } from "../blocks";
+import { ProductShopHero } from "../ProductShopHero";
 import type { ProductPageProps } from "../types";
 import { UseCards, rangeStyles } from "./Range";
 import local from "./Electrolyte.module.css";
@@ -47,17 +47,8 @@ const faq = [
 export function ElectrolytePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
-      <section className={local.hero} aria-labelledby="product-title" data-hero>
-        <div className={local.heroCopy}>
-          <h1 id="product-title">Electrolyte</h1>
-          <p>Electrolyte powder drink in five flavours. In single-serve sticks, bar packs and 25 kg bulk.</p>
-          <div className={local.heroActions}><SampleButton productName={product.name} /><DistributorLink /></div>
-        </div>
-        <div className={local.heroMedia}>
-          <Image src="/images/shop/electrolyte.webp" alt="The Base Electrolyte 5 g stick" fill
-            sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1440px) 38vw, 544px" loading="eager" />
-        </div>
-      </section>
+      <ProductShopHero slug={product.slug} title={product.name}
+        lead="Electrolyte powder drink in five flavours. In single-serve sticks, bar packs and 25 kg bulk." />
       <Section title="In every stick" label="In every stick">
         <Stats className={cx(rangeStyles.stats6, local.stickStats)} columns={6} items={stickStats} />
       </Section>
@@ -95,7 +86,7 @@ export function ElectrolytePage({ product }: ProductPageProps) {
       <Section title="How to prepare" label="How to prepare">
         <UseCards items={preparation} />
       </Section>
-      <Faq productName={product.name} items={faq} line={null} distributor={false} mobileLimit={99} />
+      <Faq productName={product.name} items={faq} line={null} mobileDistributor mobileLimit={99} />
     </main>
   );
 }

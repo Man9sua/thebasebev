@@ -1,6 +1,6 @@
-import Image from "next/image";
-import { AtHomePackImage } from "@/components/product/AtHomePackImage";
+import { ProductPackshot } from "@/components/product/ProductPackshot";
 import type { ShopProduct } from "@/data/shop";
+import styles from "./ShopPackImage.module.css";
 
 export function ShopPackImage({
   product,
@@ -8,11 +8,10 @@ export function ShopPackImage({
   eager = false,
   alt = "",
 }: {
-  product: Pick<ShopProduct, "slug" | "image">;
+  product: Pick<ShopProduct, "slug">;
   sizes: string;
   eager?: boolean;
   alt?: string;
 }) {
-  if (product.slug === "at-home") return <AtHomePackImage src={product.image ?? undefined} alt={alt} />;
-  return product.image ? <Image src={product.image} alt={alt} fill sizes={sizes} loading={eager ? "eager" : "lazy"} /> : null;
+  return <ProductPackshot slug={product.slug} className={styles.image} alt={alt} sizes={sizes} eager={eager} />;
 }

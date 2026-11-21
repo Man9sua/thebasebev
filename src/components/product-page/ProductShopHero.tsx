@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useCart } from "@/components/cart/useCart";
 import { SampleRequestModal } from "@/components/forms/SampleRequestModal";
+import { ProductPackshot } from "@/components/product/ProductPackshot";
 import { QuantityInput } from "@/components/shop/QuantityInput";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
@@ -10,17 +11,12 @@ import { getShopProduct, SHOP_MAX_QUANTITY } from "@/data/shop";
 import { getProduct } from "@/data/products";
 import { addCartItem } from "@/lib/cart-store";
 import { formatShopMoney, getShopPackLabel, getShopUnitAmount } from "@/lib/shop-payment";
-import galleries from "@/data/product-shop-gallery.json";
 import styles from "./ProductShopHero.module.css";
 
-const GALLERIES = galleries as Readonly<Record<string, readonly string[]>>;
-const NO_PHOTOS: readonly string[] = [];
-
-export function ProductShopHero({ slug, title, lead, image, specification }: {
+export function ProductShopHero({ slug, title, lead, specification }: {
   slug: string;
   title: ReactNode;
   lead: ReactNode;
-  image: ReactNode;
   specification?: string;
 }) {
   const product = getShopProduct(slug);
@@ -28,12 +24,10 @@ export function ProductShopHero({ slug, title, lead, image, specification }: {
   const cart = useCart();
   const [flavor, setFlavor] = useState(product?.flavors[0] ?? "");
   const [quantity, setQuantity] = useState(1);
-  const [photo, setPhoto] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   if (!product) return null;
   const amount = getShopUnitAmount(slug, undefined, flavor);
   const purchasable = country === "AE" && amount !== null;
-  const gallery = GALLERIES[slug] ?? NO_PHOTOS;
   const pack = getShopPackLabel(slug, flavor) ?? product.format;
 
   function add() {
@@ -48,20 +42,8 @@ export function ProductShopHero({ slug, title, lead, image, specification }: {
         <SiteLink href="/catalog">Shop</SiteLink><span aria-hidden="true">/</span>
         <span>{product.categoryLabel}</span><span aria-hidden="true">/</span><span>{product.name}</span>
       </nav>
-      <div className={styles.gallery}>
-        <div className={styles.mainPhoto}>
-          {photo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={photo} alt={`${product.name} prepared drink`} />
-          ) : image}
-        </div>
-        {gallery.length > 0 && <div className={styles.thumbnails} role="group" aria-label={`${product.name} photos`}>
-          <button type="button" aria-label="Show main product photo" aria-pressed={photo === null} onClick={() => setPhoto(null)}>{image}</button>
-          {gallery.map((src, i) => <button key={src} type="button" aria-label={`Show ${product.name} photo ${i + 2}`} aria-pressed={photo === src} onClick={() => setPhoto(src)}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt="" loading="lazy" />
-          </button>)}
-        </div>}
+      <div className={styles.mainPhoto}>
+        <ProductPackshot slug={slug} sizes="(max-width: 767px) min(76vw, 350px), (max-width: 1440px) 32vw, 500px" eager />
       </div>
       <div className={styles.copy}>
         <h1 className={styles.name} id="product-title">{title}</h1>

@@ -4,7 +4,6 @@ import { SiteLink } from "@/components/site/SiteLink";
 import { faqPage } from "@/lib/structured-data";
 import { NutritionTabs, type NutritionSet } from "./NutritionTabs";
 import { AnimatedDetails } from "./AnimatedDetails";
-import { PRODUCTS } from "@/data/products";
 import { ProductShopHero } from "./ProductShopHero";
 import styles from "./ProductPage.module.css";
 
@@ -18,7 +17,6 @@ import styles from "./ProductPage.module.css";
 export const cx = (...names: Array<string | false | null | undefined>) => names.filter(Boolean).join(" ");
 
 type WithClass = { className?: string; style?: CSSProperties };
-const PRODUCT_SLUGS_BY_NAME = new Map(PRODUCTS.map(product => [product.name, product.slug]));
 
 /** `/images/products/<slug>/<name>-<w>.webp` at every width that was generated. */
 export function productImage(slug: string, name: string, widths: number[]) {
@@ -90,22 +88,12 @@ export function Section({
   );
 }
 
-export function Hero({
-  productName,
-  title,
-  lead,
-  image,
-}: WithClass & {
-  productName: string;
+export function Hero({ slug, title, lead }: {
+  slug: string;
   title: ReactNode;
   lead: { desktop: ReactNode; mobile?: ReactNode };
-  image: ReactNode;
-  mediaClassName?: string;
 }) {
-  return (
-    <ProductShopHero slug={PRODUCT_SLUGS_BY_NAME.get(productName) ?? ""}
-      title={title} lead={<Responsive {...lead} />} image={image} />
-  );
+  return <ProductShopHero slug={slug} title={title} lead={<Responsive {...lead} />} />;
 }
 
 /* ---------------- 02 stats ---------------- */

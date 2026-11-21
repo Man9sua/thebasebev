@@ -1,7 +1,6 @@
-import { Faq, productImage, productPageStyles as styles } from "../blocks";
+import { Hero, Faq, productImage, productPageStyles as styles } from "../blocks";
 import {
   FamilyFlavours,
-  FamilyHero,
   FamilyInside,
   FamilyMenu,
   FamilyPage,
@@ -50,25 +49,19 @@ export function SugarSyrupPage({ product }: ProductPageProps) {
 
   return (
     <FamilyPage tint="#F0D9CF">
-      <FamilyHero
-        productName={product.name}
+      <Hero
+        slug={product.slug}
         title={
           <>
             Sugar
             <br className={styles.desktopOnly} /> syrup
           </>
         }
-        mobileTitleSize={60}
         lead={{
           desktop:
             "Flavoured syrup in powder, one sachet per drink. The same sweetness as a pump of liquid syrup, without bottles, pumps or sticky counters.",
           mobile: "Flavoured syrup in powder, one sachet per drink. No bottles, pumps or sticky counters.",
         }}
-        media={{ kind: "cover", width: 520, height: 640, mobileHeight: 380 }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 350px, 520px" alt="Iced rose latte with Sugar Syrup" fetchPriority="high" />
-        }
       />
 
       <FamilySection title="Made for service" label="Made for service">

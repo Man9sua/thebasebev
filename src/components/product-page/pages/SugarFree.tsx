@@ -34,13 +34,6 @@ const flavours = [
   { name: "Hazelnut", image: "hazelnut" },
 ];
 
-/** The hero collage, back to front. */
-const collage = [
-  { image: "mint", alt: "Mint sugar-free flavour sachet" },
-  { image: "cherry", alt: "Cherry sugar-free flavour sachet" },
-  { image: "peach", alt: "Peach sugar-free flavour sachet" },
-];
-
 const sachet = (name: string) => productImage(SLUG, name, [400, 715]);
 
 const facts: Fact[] = [
@@ -90,10 +83,7 @@ export function SugarFreePage({ product }: ProductPageProps) {
       }
     >
       <Hero
-        className={cx(j.hero, s.hero)}
-        style={{ "--hero-size": 160, "--hero-m": "64px" } as CSSProperties}
-        mediaClassName={s.collage}
-        productName={product.name}
+        slug={product.slug}
         title={
           <>
             Sugar
@@ -104,16 +94,6 @@ export function SugarFreePage({ product }: ProductPageProps) {
           desktop:
             "Ten flavours in single 1 g sachets. Add one to milk, coffee or tea for a flavoured drink with 0 g sugar and 1 kcal per serve.",
         }}
-        image={collage.map((item, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={item.image}
-            {...sachet(item.image)}
-            sizes="(max-width: 1023px) 190px, 330px"
-            alt={item.alt}
-            {...(i === 0 ? { fetchPriority: "high" as const } : { loading: "lazy" as const })}
-          />
-        ))}
       />
 
       <Section className={cx(j.gap40, s.closer)} title="Made for service" label="Made for service">

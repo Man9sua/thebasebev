@@ -101,17 +101,13 @@ export function CordialPage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        productName={product.name}
+        slug={product.slug}
         title="Cordial"
         lead={{
           desktop:
             "Mojitos, lemonades and mocktails without fresh fruit or house syrups. Add sparkling water and ice, ready in 30 seconds.",
           mobile: "Mojitos and lemonades without fresh fruit or syrups. Ready in 30 seconds.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Cordial mojito" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

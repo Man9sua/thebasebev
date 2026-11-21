@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useReducer, useRef, type CSSProperties, type TouchEvent } from "react";
+import { ProductPackshot } from "@/components/product/ProductPackshot";
 import { SiteLink } from "@/components/site/SiteLink";
 import { HOME_SLIDES } from "@/data/home-slides";
 import styles from "./HomeSlider.module.css";
@@ -119,23 +120,10 @@ export function HomeSlider() {
                   aria-hidden={!active}
                   tabIndex={active ? undefined : -1}
                 >
-                  <span className={styles.pictures} data-layered={slide.images.length > 2 || undefined} aria-hidden={slide.images.every((image) => !image.alt)}>
-                    {loaded.has(slideIndex) &&
-                      slide.images.map((image) => (
-                        // eslint-disable-next-line @next/next/no-img-element -- transparent cut-outs placed by percent; the files are already sized WebP
-                        <img
-                          key={image.src}
-                          src={image.src}
-                          alt={image.alt}
-                          className={styles.picture}
-                          // The first slide is the top of the page: it loads at once.
-                          loading={slideIndex === 0 ? "eager" : "lazy"}
-                          fetchPriority={slideIndex === 0 ? "high" : undefined}
-                          decoding="async"
-                          draggable={false}
-                          style={{ "--pic-left": image.left, "--pic-bottom": image.bottom, "--pic-height": image.height, "--pic-rotate": image.rotate } as CSSProperties}
-                        />
-                      ))}
+                  <span className={styles.pictures}>
+                    {loaded.has(slideIndex) && (
+                      <ProductPackshot slug={slide.slug} className={styles.picture} sizes="(max-width: 759px) 52vw, 30vw" eager={slideIndex === 0} />
+                    )}
                   </span>
                   <span className={styles.copy}>
                     <span className={styles.tag}>{slide.tag}</span>

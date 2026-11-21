@@ -94,18 +94,13 @@ export function ChocolatePage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={local.hero}
-        productName={product.name}
+        slug={product.slug}
         title="Hot chocolate"
         lead={{
           desktop:
             "Rich, creamy hot chocolate for cafés, hotels and vending. Steam with milk and serve in 40 seconds, hot or iced.",
           mobile: "Rich, creamy and ready in 40 seconds, hot or iced.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Hot chocolate" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

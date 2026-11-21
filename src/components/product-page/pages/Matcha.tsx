@@ -67,7 +67,6 @@ const faq = [
 ];
 
 export function MatchaPage({ product, assets }: ProductPageProps) {
-  const hero = productImage(SLUG, "hero", [600, 1002]);
   const serves = Array.from({ length: 10 }, (_, i) => ({
     ...productImage(SLUG, `serve-${i + 1}`, [640, 1000]),
     alt: "Matcha serve",
@@ -85,17 +84,13 @@ export function MatchaPage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        productName={product.name}
+        slug={product.slug}
         title="Matcha"
         lead={{
           desktop:
             "Matcha latte for cafés and franchises. Natural matcha with added vitamins: steam with milk and serve in 30 seconds, no whisk needed.",
           mobile: "Natural matcha with added vitamins. Steam with milk and serve in 30 seconds.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Matcha latte" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

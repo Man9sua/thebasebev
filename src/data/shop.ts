@@ -1,6 +1,6 @@
 import { CATALOG_PRODUCTS, type CatalogProduct } from "./catalog";
 import { SAMPLE_FLAVOURS } from "./sample-flavours";
-import catalogTiles from "./catalog-tiles.json";
+import { getProductPackshot } from "./product-packshots";
 
 export { SHOP_MAX_QUANTITY, SHOP_MAX_LINES } from "../lib/shop-limits";
 export type ShopKind = "products" | "samples";
@@ -8,7 +8,6 @@ export type ShopProduct = CatalogProduct & { flavors: readonly string[]; format:
 
 const featured = ["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"];
 const featuredRank = new Map(featured.map((slug, index) => [slug, index]));
-const tiles = catalogTiles as Record<string, { image: string; source: string }>;
 const formats: Readonly<Record<string, string>> = {
   tea: "100 × 1 g sachets", "sugar-free": "100 × 1 g sachets", puree: "950 ml bottle", sauce: "1.89 L bottle",
   "colour-collection": "100 g tin", "add-ons": "1–5 g sticks", electrolyte: "Sticks, packs and bulk", "at-home": "150 g pouch", garnish: "50 g pouch",
@@ -21,8 +20,7 @@ export const SHOP_PRODUCTS: readonly ShopProduct[] = [...CATALOG_PRODUCTS]
   .map((product) => ({
     ...product,
     name: names[product.slug] ?? product.name,
-    image: product.slug === "electrolyte" ? "/images/shop/electrolyte.webp" : product.slug === "at-home" ? "/images/shop/at-home.jpg" : featuredRank.has(product.slug) ? `/images/shop/${product.slug}.webp`
-      : tiles[product.slug]?.source === "illustration" ? product.image : tiles[product.slug]?.image ?? product.image,
+    image: getProductPackshot(product.slug)?.src ?? null,
     flavors: SAMPLE_FLAVOURS[product.slug] ?? [],
     format: formats[product.slug] ?? "500 g pouch",
   }));

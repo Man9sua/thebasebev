@@ -9,17 +9,6 @@ import local from "./Range.module.css";
  * here is built from the same type and spacing; only the cards are new.
  */
 
-/** Hero title sizes, desktop (mock px at 1440) and phone. */
-export function heroSize(desktop: number, mobile: number) {
-  return { "--range-hero": desktop, "--range-hero-m": `${mobile}px` } as CSSProperties;
-}
-
-export const rangeHeroClass = local.hero;
-
-export function RangePhotoPlaceholder() {
-  return <div className={local.photoPlaceholder} aria-hidden="true" />;
-}
-
 /* ---------------- three ways to use it ---------------- */
 
 export type Use = { label: ReactNode; value: ReactNode; text: ReactNode };

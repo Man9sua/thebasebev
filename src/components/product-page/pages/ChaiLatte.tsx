@@ -99,18 +99,13 @@ export function ChaiLattePage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={local.hero}
-        productName={product.name}
+        slug={product.slug}
         title="Chai latte"
         lead={{
           desktop:
             "Karak and masala chai for cafés. Black tea, milk and spice in one base: steam with milk and serve in 30 seconds.",
           mobile: "Black tea, milk and spice in one base. Steam with milk and serve in 30 seconds.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Chai latte" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

@@ -356,26 +356,10 @@ try {
     "reading: rail swallowed vertical scrolling",
   );
 
-  // The brand film, which is the whole reason this page came back. It is
-  // ambient — muted, looping, no controls — and it arms on intersection, so the
-  // source is only attached once the frame is approached; hence the scroll
-  // before the check rather than a look at the initial markup.
-  const film = page.locator("section#about video");
-  await film.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(900);
-  check((await film.count()) === 1, "home: the brand film is missing from About");
-  check(
-    (await film.getAttribute("src")) === "/video/base-film.mp4",
-    "home: the brand film never attached its source",
-  );
-  check(
-    (await film.getAttribute("poster")) === "/video/base-film-poster.jpg",
-    "home: the brand film has no frame to stand on until it arrives",
-  );
-  check(
-    (await film.evaluate((video) => video.loop && video.muted && !video.controls)) === true,
-    "home: the brand film should be an ambient loop, not a player",
-  );
+  const aboutTitle = page.locator("#about-title");
+  await aboutTitle.scrollIntoViewIfNeeded();
+  check(await aboutTitle.isVisible(), "home: About heading is missing");
+  check(await page.locator("main video").count() === 0, "home: video is still mounted");
 
   /*
    * The footer closes on the brand mark. The check that it fits stays — it
@@ -493,15 +477,16 @@ try {
     check(promptBox && headingBox && headingBox.y >= promptBox.y + promptBox.height,
       "Shop: market prompt overlaps the page heading");
   }
-  check((await page.locator("[data-shop-product]").getByText("Price on request", { exact: true }).count()) === 5, "Shop: ranges without approved matching prices remain on request");
+  check((await page.locator("[data-shop-product]").getByText("-", { exact: true }).count()) === 5, "Shop: ranges without approved matching prices remain on request");
   check((await page.locator("[data-shop-product]").getByText(/AED\s*[\d,.]+/).count()) === 17, "Shop: approved range prices are visible");
   check(!/\bVAT\b/i.test(await page.locator("main").innerText()), "Shop: VAT details only appear at checkout");
-  for (const slug of ["puree", "sauce", "add-ons"]) {
+  for (const slug of ["puree", "sauce"]) {
     check(
       (await page.locator(`[data-shop-product="${slug}"] img`).count()) === 0,
       `Shop: ${slug} shows an unconfirmed product image`,
     );
   }
+  check(await page.locator('[data-shop-product="add-ons"] img[src="/images/shop/electrolyte.webp"]').count() === 1, "Shop: Functional Add-ons stick is missing");
   check((await page.locator("[data-catalog-filters], [data-catalog-sort]").count()) === 0, "catalog: removed filter and sort controls remain");
   check(JSON.stringify(await page.locator("[data-shop-product]").evaluateAll((cards) => cards.slice(0, 6).map((card) => card.getAttribute("data-shop-product")))) === JSON.stringify(["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"]), "Shop: featured order differs from the approved reference");
   check(
@@ -828,6 +813,6 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("Browser smoke passed: home slider, header, distributor finder, menu, bestsellers, reading rail, the brand film, native Shop/search/pending prices, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution. No real lead or order was submitted.");
+  console.log("Browser smoke passed: home slider, header, distributor finder, menu, bestsellers, reading rail, About, native Shop/search/pending prices, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution. No real lead or order was submitted.");
   console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

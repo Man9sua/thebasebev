@@ -124,11 +124,12 @@ async function runViewport(label, viewport) {
     await checkFont(page.getByRole("heading", { name: "Shop", exact: true }), 900, "Shop heading");
     await checkFont(cards.first().locator("h2"), 800, "Shop range name");
     await checkFont(cards.first().locator("[data-shop-choose]"), 600, "Shop flavour action");
-    check(await cards.getByText("Price pending", { exact: true }).count() === 22, `${label} Shop: unapproved prices remain pending`);
+    check(await cards.getByText("-", { exact: true }).count() === 5, label + " Shop: ranges without prices display a dash");
+    check(await cards.locator("[data-shop-price]").filter({ hasText: /AED/ }).count() === 17, label + " Shop: approved range prices are visible");
     check(await page.locator("header [data-cart-control]").count() === 1, `${label} Shop: native header basket`);
-    const atHome = page.locator('[data-shop-product="at-home"] svg image');
-    check(await atHome.count() === 1 && (await atHome.getAttribute("href")) === "/images/shop/at-home.jpg",
-      `${label} Shop: supplied At Home photograph uses the clipped image renderer`);
+    const atHome = page.locator('[data-shop-product="at-home"] img');
+    check(await atHome.count() === 1 && (await atHome.getAttribute("src")) === "/images/packshots/at-home-640.png",
+      `${label} Shop: At Home uses the transparent Blue Matcha packshot`);
     await page.locator('[data-shop-choose="milkshake"]').click();
     const picker = page.locator('[data-shop-picker="milkshake"]');
     await picker.getByRole("dialog").waitFor();

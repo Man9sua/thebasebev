@@ -26,14 +26,6 @@ export const MARKETS: readonly Market[] = DISTRIBUTOR_MARKETS.map((market) => ({
 
 export const CURRENT_MARKET = MARKETS.find((market) => market.code === "AE")!;
 
-/**
- * The brand film. It is not the hero — the hero is a photograph — and it plays
- * inside the homepage's About frame, lazily and muted: see `BrandFilm`.
- *
- * 3.9 MB desktop and 1.8 MB mobile plus a poster, in `public/video/`. Only the
- * desktop encode is rendered today; the mobile one is here for whenever the
- * frame gets a source of its own on a small screen.
- */
 /** The native shop keeps the established catalogue URL and its incoming links. */
 export const SHOP_URL = "/catalog";
 
@@ -43,23 +35,6 @@ export const SHOP_URL = "/catalog";
  * Existing customers can still use their Odoo account beside the native basket.
  */
 export const ODOO_ACCOUNT_URL = "https://odoo.thebasebev.com/my";
-
-/**
- * The brand film and the frame that stands until it is played.
- *
- * One file, not two: art direction by viewport belonged to the ambient loop
- * this replaced, where a phone had no use for a 4 MB panorama it would see a
- * strip of. A film someone presses play on is the same film on every screen.
- *
- * The poster is cut from the film itself — see `BrandFilm` for why the block
- * is a player now. The previous loop and its own poster stay in `public/video`
- * under their own names; nothing links them, and they are what to put back if
- * ambient footage arrives.
- */
-export const BRAND_VIDEO = {
-  desktop: "/video/base-film.mp4",
-  poster: "/video/base-film-poster.jpg",
-} as const;
 
 /**
  * The menu's first level — the four the redesign sets in Black caps.

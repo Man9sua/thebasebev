@@ -1,4 +1,3 @@
-import { BrandFilm } from "@/components/home/BrandFilm";
 import { Reveal } from "@/components/motion/Reveal";
 import { CertificationMarks } from "@/components/quality/CertificationMarks";
 import { SiteLink } from "@/components/site/SiteLink";
@@ -13,11 +12,6 @@ const FACTS = [
 export function About() {
   return (
     <section id="about" className={styles.section} aria-labelledby="about-title">
-      <div className={styles.stage}>
-        <BrandFilm className={styles.film} />
-        <span className={styles.dissolve} aria-hidden="true" />
-      </div>
-
       <div className={styles.inner}>
         <Reveal>
           <h2 id="about-title" className={styles.title}>

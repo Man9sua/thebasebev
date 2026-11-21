@@ -1,5 +1,4 @@
 import { ProductShopHero } from "../ProductShopHero";
-import { AtHomePackImage } from "@/components/product/AtHomePackImage";
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, cx, productImage, productPageStyles as styles } from "../blocks";
@@ -79,8 +78,7 @@ export function AtHomePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <ProductShopHero slug={product.slug} title={<>Crafted for cafés,<br /> now at home</>}
-        lead="The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in a minute."
-        image={<AtHomePackImage src="/images/shop/at-home.jpg" alt="Blue Matcha 150 g pouch" />} />
+        lead="The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in a minute." />
 
       <AtHomeChips
         route={product.route}

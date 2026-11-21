@@ -87,31 +87,20 @@
   outline-offset: -6px;
 }
 
-/* The pictures, in their own box on the right; they drift in with the slide. */
 .pictures {
   position: absolute;
-  left: 52cqw;
-  top: 3cqw;
-  width: 42cqw;
-  height: 34.5cqw;
-  transform: scale(1) translateX(3%);
-  transform-origin: 50% 100%;
-  transition: transform 6s ease-out;
-}
-
-.slide[data-active] .pictures {
-  transform: scale(1.04) translateX(0);
+  inset: 3.2cqw 8cqw 4.8cqw 54cqw;
+  display: grid;
+  place-items: center;
 }
 
 .picture {
-  position: absolute;
-  left: var(--pic-left);
-  bottom: var(--pic-bottom);
-  height: var(--pic-height);
-  rotate: var(--pic-rotate);
-  width: auto;
-  max-width: none;
-  filter: drop-shadow(0 1cqw 1.4cqw rgb(0 0 0 / 18%));
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 .65cqw .8cqw rgb(0 0 0 / 16%));
   user-select: none;
 }
 
@@ -337,36 +326,14 @@
     font-size: 3.6cqw;
   }
 
-  .pictures, .slide[data-active] .pictures {
+  .pictures {
     position: relative;
     inset: auto;
     grid-row: 2;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
     justify-self: center;
-    gap: 4cqw;
-    width: 100%;
-    height: 100%;
+    width: 80%;
     min-height: 0;
-    transform: none;
   }
-
-  .pictures:not([data-layered]) .picture {
-    position: static;
-    height: 100%;
-    max-width: 54%;
-    object-fit: contain;
-    object-position: bottom center;
-    rotate: none;
-  }
-
-  .pictures:not([data-layered]) .picture:nth-child(2) {
-    max-width: 42%;
-    height: 91%;
-  }
-
-  .pictures[data-layered] { width: 68cqw; }
 
   .nav {
     left: 7cqw;
@@ -393,7 +360,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .track,
-  .pictures,
   .copy,
   .dot,
   .cta {

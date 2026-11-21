@@ -1,7 +1,6 @@
-import { Faq, productImage } from "../blocks";
+import { Hero, Faq, productImage } from "../blocks";
 import {
   FamilyFlavours,
-  FamilyHero,
   FamilyPage,
   FamilySection,
   FamilyStats,
@@ -44,20 +43,14 @@ export function GarnishPage({ product }: ProductPageProps) {
 
   return (
     <FamilyPage tint="#EFE6DA">
-      <FamilyHero
-        productName={product.name}
+      <Hero
+        slug={product.slug}
         title="Garnish"
-        top={40}
         lead={{
           desktop:
             "Freeze-dried fruit cubes that finish a drink in seconds. Real fruit colour and taste, the same size in every cup, no slicing and no waste.",
           mobile: "Freeze-dried fruit cubes that finish a drink in seconds. Real fruit colour and taste, no slicing and no waste.",
         }}
-        media={{ kind: "bare", width: 560, height: 560, mobileHeight: 300 }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...cubes} sizes="(max-width: 1023px) 300px, 560px" alt="Strawberry Cubes" fetchPriority="high" />
-        }
       />
 
       <FamilySection title="Made for service" label="Made for service">

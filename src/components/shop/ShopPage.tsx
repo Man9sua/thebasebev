@@ -69,7 +69,7 @@ const GROUPS = [
 export function unitLabel(product: ShopProduct, kind: ShopKind) {
   if (kind === "samples") return "Free sample";
   const range = getShopPriceRange(product.slug);
-  return range === null ? "Price on request" : `${range.min === range.max ? "" : "From "}${formatShopMoney(range.min)}`;
+  return range === null ? "-" : `${range.min === range.max ? "" : "From "}${formatShopMoney(range.min)}`;
 }
 
 function CloseIcon() {
@@ -94,16 +94,12 @@ function changeQuantity(kind: ShopKind, slug: string, flavor: string, quantity: 
 function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopProduct; kind: ShopKind; count: number; onChoose: () => void; eager: boolean }) {
   return (
     <article className={styles.card} data-shop-product={product.slug}>
-      <SiteLink className={styles.tile} style={{ backgroundColor: product.backgroundColor }} href={product.route} aria-label={`View more about ${product.name}`} tabIndex={-1}>
+      <SiteLink className={styles.tile} style={{ backgroundColor: product.backgroundColor }} href={product.route} aria-label={product.name} tabIndex={-1}>
         <ShopPackImage product={product} sizes="(max-width: 719px) calc((100vw - 44px) / 2), (max-width: 1100px) 28vw, 280px" eager={eager} />
-        <span className={styles.viewMore}>View more</span>
       </SiteLink>
       <div className={styles.info}>
-        <div className={styles.productCopy}>
-          <h2 className={styles.name}><SiteLink href={product.route}>{product.name}</SiteLink></h2>
-          <span className={styles.format}>{product.format}, {product.flavors.length} flavours</span>
-        </div>
-        <span className={styles.price}>{unitLabel(product, kind)}</span>
+        <h2 className={styles.name}><SiteLink href={product.route}>{product.name}</SiteLink></h2>
+        <span className={styles.price} data-shop-price>{unitLabel(product, kind)}</span>
       </div>
       <button className={`${styles.control} ${styles.cardAction} ${count > 0 ? styles.inCart : ""}`} type="button" aria-haspopup="dialog" data-shop-choose={product.slug} onClick={onChoose}>
         {count > 0 ? `${count} in ${kind === "samples" ? "sample box" : "cart"}, edit` : kind === "samples" ? "Add to sample box" : "Choose flavours"}
@@ -166,7 +162,7 @@ export function FlavourPicker({ product, kind, items, allowSamples, totalLines, 
                 const unit = getShopUnitAmount(product.slug, undefined, flavor);
                 return (
                   <li className={styles.flavourRow} key={flavor} data-shop-flavor={flavor}>
-                    <span className={styles.flavourName}>{flavor}{!samples && <small className={styles.flavourPrice}>{unit === null ? "Price on request" : formatShopMoney(unit)}</small>}</span>
+                    <span className={styles.flavourName}>{flavor}{!samples && <small className={styles.flavourPrice}>{unit === null ? "-" : formatShopMoney(unit)}</small>}</span>
                     <Quantity name={`${flavor} ${product.name}`} quantity={quantity} canAdd={!full || quantity > 0} onChange={(next) => changeQuantity(kind, product.slug, flavor, next, quantity)} />
                   </li>
                 );
@@ -218,7 +214,7 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
                   <Quantity name={`${item.flavor} ${product.name}${sample ? " sample" : ""}`} quantity={item.quantity} onChange={(next) => changeQuantity(item.kind, item.slug, item.flavor, next, item.quantity)} />
                   <button className={styles.remove} type="button" aria-label={`Remove ${item.flavor} ${product.name}${sample ? " sample" : ""}`} onClick={() => (sample ? removeSampleCartItem : removeCartItem)(item.slug, item.flavor)}>Remove</button>
                 </div>
-                <span className={styles.linePrice}>{sample ? "Free" : unit === null ? "Price on request" : formatShopMoney(unit * item.quantity)}</span>
+                <span className={styles.linePrice}>{sample ? "Free" : unit === null ? "-" : formatShopMoney(unit * item.quantity)}</span>
               </li>
             );
           })}
@@ -227,7 +223,7 @@ function CartDrawer({ kind, country, countryName, items, onClose }: { kind: Shop
         {total > 0 && (
           <div className={styles.drawerFoot}>
             <dl className={styles.summary}>
-              <div><dt>{samples ? "Samples" : "Subtotal"}</dt><dd>{samples ? "Free" : quote.subtotal === null ? "Price on request" : formatShopMoney(quote.subtotal)}</dd></div>
+              <div><dt>{samples ? "Samples" : "Subtotal"}</dt><dd>{samples ? "Free" : quote.subtotal === null ? "-" : formatShopMoney(quote.subtotal)}</dd></div>
               <div><dt>Delivery to {countryName}</dt><dd>{quote.shipping === null ? "To be confirmed" : quote.shipping === 0 ? "Free" : formatShopMoney(quote.shipping)}</dd></div>
               <div className={styles.total}><dt>Total</dt><dd>{quote.total === null ? "To be confirmed" : formatShopMoney(quote.total)}</dd></div>
             </dl>

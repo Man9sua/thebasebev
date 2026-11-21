@@ -190,18 +190,12 @@ export function JamPage({ product }: ProductPageProps) {
       }
     >
       <Hero
-        className={cx(s.hero, s.darkActions)}
-        mediaClassName={s.fill}
-        productName={product.name}
+        slug={product.slug}
         title="Jam"
         lead={{
           desktop:
             "A dry fruit tea base with real fruit juice and black tea. Add hot water and serve, then finish with fresh fruit or herbs for your own signature tea.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 366px, 560px" alt="Fruit tea made with the Jam base" fetchPriority="high" />
-        }
       />
 
       <Section className={s.gap40} title="Made for service" label="Made for service">

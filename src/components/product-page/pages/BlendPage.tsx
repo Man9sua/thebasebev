@@ -88,21 +88,12 @@ const menuPhotos: Record<Blend, ReturnType<typeof productImage>[]> = {
   frappe: Array.from({ length: 5 }, (_, i) => productImage("frappe", `menu-${i + 1}`, [320, 480])),
 };
 
-const heroMedia = {
-  milkshake: { ...productImage("milkshake", "hero-pouch", [400, 672]), width: 672, height: 780, alt: "Milkshake 500 g doypack" },
-  frappe: { ...productImage("frappe", "hero-pack-glass", [600, 822]), width: 822, height: 963, alt: "Frappe doypack with prepared drink" },
-};
-
 function BlendHero({ kind, product, assets }: ProductPageProps & { kind: Blend }) {
   const milkshake = kind === "milkshake";
   return <ProductShopHero slug={product.slug} title={product.name} specification={assets.specification}
     lead={milkshake
       ? "The body and taste of your milkshake in one scoop. Thick and creamy, with a foam that holds and does not separate. Works with any syrup or topping, on dairy or plant-based milk."
-      : "The body and taste of a café frappe in one scoop. Smooth and creamy, with a texture that holds in the cup. Add espresso, your syrup or purée and finish with a topping."}
-    image={
-      // eslint-disable-next-line @next/next/no-img-element
-      <img {...heroMedia[kind]} alt={heroMedia[kind].alt} fetchPriority="high" />
-    } />;
+      : "The body and taste of a café frappe in one scoop. Smooth and creamy, with a texture that holds in the cup. Add espresso, your syrup or purée and finish with a topping."} />;
 }
 
 const milkshakeRecipe = [

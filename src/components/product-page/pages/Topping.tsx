@@ -92,18 +92,13 @@ export function ToppingPage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={local.hero}
-        productName={product.name}
+        slug={product.slug}
         title="Toppings"
         lead={{
           desktop:
             "Whipped toppings and cheese foam without fresh cream. Whisk the base with milk for a stable topping in a minute.",
           mobile: "Whipped topping and cheese foam without fresh cream. Whisk with milk in a minute.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Whipped topping" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

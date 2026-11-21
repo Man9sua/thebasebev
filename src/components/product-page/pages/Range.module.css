@@ -3,20 +3,6 @@
  * times `--u` on desktop, plain px at ≤1023px.
  */
 
-/* Hero titles run longer than a product name ("Functional add-ons"), so each
-   page sets its own size from the mock. */
-.hero h1 {
-  font-size: calc(var(--range-hero, 136) * var(--u));
-}
-
-.photoPlaceholder {
-  width: 100%;
-  height: calc(560 * var(--u));
-  border: calc(1.5 * var(--u)) dashed #c9c4ba;
-  border-radius: calc(32 * var(--u));
-  background: #ece8e2;
-}
-
 /* ---- six figures in one row ----
    The shared stats are three to a row at 52px; six to a row the mocks set
    them at 28px on a tighter card. Children are the shared stat / value /
@@ -188,11 +174,6 @@
 }
 
 @media (max-width: 1023px) {
-  .photoPlaceholder {
-    height: 280px;
-    border-width: 1.5px;
-    border-radius: 24px;
-  }
   .stats6 {
     gap: 8px;
   }
@@ -209,10 +190,6 @@
   .stats6 > * > :last-child {
     font-size: 13px;
     line-height: 1.4;
-  }
-
-  .hero h1 {
-    font-size: var(--range-hero-m, 56px);
   }
 
   .uses {

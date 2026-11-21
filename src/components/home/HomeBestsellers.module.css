@@ -79,7 +79,6 @@
 }
 
 .tile img {
-  object-fit: cover;
   transition: transform var(--tbb-dur) var(--tbb-ease);
 }
 

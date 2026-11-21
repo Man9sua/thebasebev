@@ -227,7 +227,7 @@ try {
         bodyClasses: document.body.className,
         catalogCards: [...document.querySelectorAll("[data-shop-product]")].map((element) => ({
           name: element.querySelector("h2")?.textContent?.trim() ?? null,
-          price: /Price on request/.test(element.textContent ?? "") ? "pending" : /AED\s*[\d,.]+/.test(element.textContent ?? "") ? "approved" : null,
+          price: element.querySelector("[data-shop-price]")?.textContent?.trim() === "-" ? "pending" : /AED\s*[\d,.]+/.test(element.textContent ?? "") ? "approved" : null,
           href: element instanceof HTMLAnchorElement ? element.getAttribute("href") : null,
         })),
         controls,

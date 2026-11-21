@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { FlavourEnquiryLink, Hero, Responsive, cx, productPageStyles as styles } from "./blocks";
+import { FlavourEnquiryLink, Responsive, cx, productPageStyles as styles } from "./blocks";
 import fb from "./familyB.module.css";
 
 /**
@@ -24,31 +24,6 @@ export function FamilyPage({ tint, children }: { tint: string; children: ReactNo
       {children}
     </main>
   );
-}
-
-/* ---------------- hero ---------------- */
-
-export function FamilyHero({
-  productName,
-  title,
-  lead,
-  image,
-}: {
-  productName: string;
-  title: ReactNode;
-  lead: { desktop: ReactNode; mobile?: ReactNode };
-  image: ReactNode;
-  /**
-   * `bare`: a cut-out straight on the tint (garnish). `contain`: a white card
-   * with the picture inset. `cover`: a white card filled edge to edge.
-   * Sizes are mock px: card width/height on desktop, height on the phone.
-   */
-  media: { kind: "bare" | "contain" | "cover"; width: number; height: number; mobileHeight: number; inset?: string; mobileInset?: string };
-  /** Desktop top padding in mock px. */
-  top?: number;
-  mobileTitleSize?: number;
-}) {
-  return <Hero productName={productName} title={title} lead={lead} image={image} />;
 }
 
 /* ---------------- section shell ---------------- */

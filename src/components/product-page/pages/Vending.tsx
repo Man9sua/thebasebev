@@ -1,7 +1,6 @@
-import { Faq, productImage } from "../blocks";
+import { Faq, Hero } from "../blocks";
 import {
   FamilyFlavours,
-  FamilyHero,
   FamilyInside,
   FamilyPage,
   FamilySection,
@@ -16,8 +15,6 @@ import type { ProductPageProps } from "../types";
  * Vending ("Vending · страница продукта целиком", desktop 1440 / mobile 390),
  * family B. Nutrition is the Vending Chocolate label, the only one in hand.
  */
-
-const SLUG = "vending";
 
 const faq = [
   {
@@ -37,23 +34,16 @@ const faq = [
 ];
 
 export function VendingPage({ product }: ProductPageProps) {
-  const machine = productImage(SLUG, "hero", [600, 750]);
-
   return (
     <FamilyPage tint="#E7DCD3">
-      <FamilyHero
-        productName={product.name}
+      <Hero
+        slug={product.slug}
         title="Vending"
         lead={{
           desktop:
             "Drink powders for automatic machines. Free-flowing in the hopper, dissolves in hot water, the same cup from every unit without staff on site.",
           mobile: "Drink powders for automatic machines. The same cup from every unit, without staff on site.",
         }}
-        media={{ kind: "contain", width: 520, height: 600, mobileHeight: 340, inset: "92%", mobileInset: "90%" }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...machine} sizes="(max-width: 1023px) 315px, 480px" alt="Automatic drinks machine" fetchPriority="high" />
-        }
       />
 
       <FamilySection title="Made for machines" label="Made for machines">

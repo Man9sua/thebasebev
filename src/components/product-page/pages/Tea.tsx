@@ -16,12 +16,12 @@ import {
   type NutritionSet,
 } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { RndBand, jamStyles as j } from "./Jam";
+import { RndBand } from "./Jam";
 import s from "./Tea.module.css";
 
 /**
  * Tea ("Tea · страница продукта целиком", desktop 1440 / mobile 390).
- * Matcha's shape with a near-black hero and "Three teas" pack cards.
+ * Includes the "Three teas" pack cards.
  */
 
 const SLUG = "tea";
@@ -117,8 +117,7 @@ export function TeaPage({ product, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={cx(s.hero, j.darkActions)}
-        productName={product.name}
+        slug={product.slug}
         title="Tea"
         lead={{
           desktop:
@@ -126,15 +125,6 @@ export function TeaPage({ product, assets }: ProductPageProps) {
           mobile:
             "Instant black, green and jasmine tea. One gram, one cup, no brewing.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            {...hero}
-            sizes="(max-width: 1023px) 240px, 400px"
-            alt="Instant tea serve"
-            fetchPriority="high"
-          />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

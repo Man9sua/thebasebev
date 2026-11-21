@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, cx, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { UseCards, rangeStyles } from "./Range";
 import local from "./AddOns.module.css";
 
 /**
@@ -47,9 +47,7 @@ export function AddOnsPage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <Hero
-        className={rangeHeroClass}
-        style={heroSize(100, 48)}
-        productName={product.name}
+        slug={product.slug}
         title={
           <>
             Functional
@@ -61,7 +59,6 @@ export function AddOnsPage({ product }: ProductPageProps) {
             "Seven pre-dosed sticks for drinks already on your menu. One stick per drink, no new recipes.",
           mobile: "Seven pre-dosed sticks for drinks already on your menu. One stick per drink, no new recipes.",
         }}
-        image={<RangePhotoPlaceholder />}
       />
 
       <Section title="Made for service" label="Made for service">

@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { BottleCards, RangePhotoPlaceholder, UseCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { BottleCards, UseCards, rangeStyles } from "./Range";
 
 /**
  * Sauces ("Sauces Product Page Redesign", desktop 1440 / mobile 390). Like the
@@ -26,16 +26,13 @@ export function SaucePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
       <Hero
-        className={rangeHeroClass}
-        style={heroSize(120, 56)}
-        productName={product.name}
+        slug={product.slug}
         title="Sauces"
         lead={{
           desktop:
             "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts. One bottle flavours the cup and finishes the glass.",
           mobile: "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts.",
         }}
-        image={<RangePhotoPlaceholder />}
       />
 
       <Section title="Made for service" label="Made for service">

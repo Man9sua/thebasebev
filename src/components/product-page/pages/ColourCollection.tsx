@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, cx, productImage, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { Band, NoteCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { Band, NoteCards, rangeStyles } from "./Range";
 import local from "./ColourCollection.module.css";
 
 /**
@@ -50,9 +50,7 @@ export function ColourCollectionPage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#ECE8E2", "--pp-chip": "#ECE8E2", "--stat": 34 } as CSSProperties}>
       <Hero
-        className={cx(rangeHeroClass, local.hero)}
-        style={heroSize(96, 52)}
-        productName={product.name}
+        slug={product.slug}
         title={
           <>
             Colour
@@ -63,15 +61,6 @@ export function ColourCollectionPage({ product }: ProductPageProps) {
           desktop: "Five natural powders for beverage menus. One ingredient in every tin, nothing added. Colour, naturally.",
           mobile: "Five natural powders for beverage menus. One ingredient, nothing added.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            {...productImage(SLUG, "tin-butterfly-pea", [360, 560, 880])}
-            sizes="(max-width: 1023px) 180px, 320px"
-            alt="Butterfly Pea powder tin"
-            fetchPriority="high"
-          />
-        }
       />
 
       <Section title="Made for service" label="Made for service">
