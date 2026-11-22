@@ -3,6 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import { chromium } from "@playwright/test";
 
+const glossaryTerms = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8")).entries.length;
+
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const captureScreenshots = process.argv.includes("--screenshots");
 const chromePath =
@@ -87,7 +89,7 @@ async function auditViewport(browser, viewport) {
 
   await open(page, "/resources/glossary");
   check((await page.locator("[data-glossary-page]").count()) === 1, `${label}: glossary React page missing`);
-  check((await page.locator("[data-glossary-term]").count()) === 101, `${label}: glossary does not expose 101 terms`);
+  check((await page.locator("[data-glossary-term]").count()) === glossaryTerms, `${label}: glossary does not expose ${glossaryTerms} terms`);
   check(!(await page.locator("body").innerText()).includes("configured for another domain"), `${label}: Tilda domain error remains`);
   check((await page.locator("#rec2427859911, #rec2427859921, #rec2427859931").count()) === 0, `${label}: legacy glossary records remain`);
   await shellAndOverflow(page, "/resources/glossary", label);
@@ -100,13 +102,13 @@ async function auditViewport(browser, viewport) {
     await glossarySearch.fill("Brix");
     const exactBrixTitles = await page.locator("[data-glossary-term] h2").allTextContents();
     check(
-      exactBrixTitles.filter((title) => title.trim() === "Brix").length === 2,
-      `${label}: glossary search did not retain both Brix entries`,
+      exactBrixTitles.filter((title) => title.trim() === "Brix").length === 1,
+      `${label}: glossary search should show exactly one Brix entry`,
     );
     await glossarySearch.fill("");
     await page.getByRole("button", { name: "HoReCa & business" }).click();
     const businessCount = await page.locator("[data-glossary-term]").count();
-    check(businessCount > 0 && businessCount < 101, `${label}: category filter did not narrow results`);
+    check(businessCount > 0 && businessCount < glossaryTerms, `${label}: category filter did not narrow results`);
   }
 
   await open(page, "/wholesale-strategy");
