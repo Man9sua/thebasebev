@@ -28,7 +28,10 @@ export type GlossaryEntry = {
   sourceRobots: string;
   sourceTextHash: string;
   seo: {
+    /** Search-phrase title; see scripts/apply-glossary-search-titles.mjs. */
     title: string;
+    /** The bare term production published as the title before that change. */
+    sourceTitle?: string;
     description: string;
     canonical: string;
     openGraphTitle: string;
