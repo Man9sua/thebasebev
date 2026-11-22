@@ -1,183 +1,108 @@
-import { getCheckoutProductId } from "@/data/catalog";
+import { getShopProduct, SHOP_MAX_QUANTITY, SHOP_MAX_LINES } from "@/data/shop";
 
-/**
- * A line is a product **and a flavour**, not a product.
- *
- * Every product THE BASE sells comes in flavours — fourteen for Milkshake,
- * nineteen for Cordial — and an order that names only the product is an order
- * the factory cannot fill. So the flavour is part of a line's identity: two
- * flavours of one product are two lines, and stepping one does not touch the
- * other.
- */
-export type CartItem = Readonly<{
-  slug: string;
-  flavor: string;
-  quantity: number;
-}>;
-export type CartState = Readonly<{
-  ready: boolean;
-  items: readonly CartItem[];
-}>;
-
-/**
- * v2 because a v1 line has no flavour and there is no way to guess which one
- * the visitor had meant. Choosing for them would put a flavour in the cart that
- * nobody picked, so a cart saved before this is left behind rather than
- * migrated; the reader simply starts empty.
- */
-const STORAGE_KEY = "thebase:cart:v2";
-const MAX_QUANTITY = 10;
-/** Long enough for "Base No Added Sugar" and every other name on the pages. */
-const MAX_FLAVOR_LENGTH = 48;
+export type CartItem = Readonly<{ slug: string; flavor: string; quantity: number }>;
+export type CartState = Readonly<{ ready: boolean; items: readonly CartItem[] }>;
 const SERVER_STATE: CartState = Object.freeze({ ready: false, items: Object.freeze([]) });
 
-let state = SERVER_STATE;
-let hydrated = false;
-let storageListenerInstalled = false;
-const listeners = new Set<() => void>();
+export function cartLineKey(slug: string, flavor: string): string { return `${slug}::${flavor}`; }
+function sameLine(item: CartItem, slug: string, flavor: string) { return item.slug === slug && item.flavor === flavor; }
 
-/**
- * A line's identity, for keying React lists and for looking one up.
- *
- * The separator is a pair neither half can contain — slugs are kebab-case and
- * flavour names are words — so "Mango" on `iced-tea` cannot collide with some
- * other pair that happens to concatenate the same way.
- */
-export function cartLineKey(slug: string, flavor: string): string {
-  return `${slug}::${flavor}`;
-}
+/** Product and sample baskets share quantity rules but keep separate storage. */
+function createCartStore(storageKey: string) {
+  let state = SERVER_STATE;
+  let hydrated = false;
+  const listeners = new Set<() => void>();
 
-function sameLine(item: CartItem, slug: string, flavor: string): boolean {
-  return item.slug === slug && item.flavor === flavor;
-}
-
-function validItems(value: unknown): CartItem[] {
-  if (!Array.isArray(value)) return [];
-
-  const byLine = new Map<string, CartItem>();
-  for (const item of value) {
-    if (
-      typeof item !== "object" ||
-      item === null ||
-      !("slug" in item) ||
-      !("flavor" in item) ||
-      !("quantity" in item) ||
-      typeof item.slug !== "string" ||
-      typeof item.flavor !== "string" ||
-      typeof item.quantity !== "number" ||
-      !Number.isInteger(item.quantity) ||
-      item.flavor.length === 0 ||
-      item.flavor.length > MAX_FLAVOR_LENGTH ||
-      !getCheckoutProductId(item.slug)
-    ) {
-      continue;
+  function normalize(value: unknown): CartItem[] {
+    if (!Array.isArray(value)) return [];
+    const byLine = new Map<string, CartItem>();
+    for (const entry of value) {
+      if (!entry || typeof entry !== "object" || typeof entry.slug !== "string" ||
+        typeof entry.flavor !== "string" || !Number.isSafeInteger(entry.quantity) || entry.quantity < 1 ||
+        !getShopProduct(entry.slug)?.flavors.includes(entry.flavor)) continue;
+      const key = cartLineKey(entry.slug, entry.flavor);
+      if (!byLine.has(key) && byLine.size >= SHOP_MAX_LINES) continue;
+      byLine.set(key, { slug: entry.slug, flavor: entry.flavor,
+        quantity: Math.min((byLine.get(key)?.quantity ?? 0) + entry.quantity, SHOP_MAX_QUANTITY) });
     }
-
-    const key = cartLineKey(item.slug, item.flavor);
-    const quantity = Math.min(Math.max(item.quantity, 1), MAX_QUANTITY);
-    const existing = byLine.get(key);
-    byLine.set(key, {
-      slug: item.slug,
-      flavor: item.flavor,
-      quantity: Math.min((existing?.quantity ?? 0) + quantity, MAX_QUANTITY),
-    });
+    return [...byLine.values()];
   }
 
-  return Array.from(byLine.values());
-}
-
-function readStoredItems(): CartItem[] {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? validItems(JSON.parse(raw)) : [];
-  } catch {
-    return [];
+  function read(): CartItem[] {
+    try {
+      const stored = window.localStorage.getItem(storageKey);
+      return stored ? normalize(JSON.parse(stored)) : [];
+    } catch { return []; }
   }
-}
-
-function emit(nextItems: readonly CartItem[]) {
-  state = { ready: true, items: nextItems };
-  listeners.forEach((listener) => listener());
-}
-
-function hydrate() {
-  if (typeof window === "undefined" || hydrated) return;
-  hydrated = true;
-  emit(readStoredItems());
-
-  if (!storageListenerInstalled) {
-    storageListenerInstalled = true;
-    window.addEventListener("storage", (event) => {
-      if (event.key === STORAGE_KEY) emit(readStoredItems());
-    });
+  function emit(items: readonly CartItem[]) {
+    state = { ready: true, items };
+    listeners.forEach((listener) => listener());
   }
-}
-
-function persist(items: readonly CartItem[]) {
-  hydrate();
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    // Storage can be unavailable in hardened/private contexts. Keep the cart
-    // usable for the current document instead of turning an Add button into an
-    // uncaught exception; a reload simply returns to an empty cart.
+  function hydrate() {
+    if (typeof window === "undefined" || hydrated) return;
+    hydrated = true;
+    emit(read());
+    window.addEventListener("storage", (event) => { if (event.key === storageKey || event.key === null) emit(read()); });
   }
-  emit(items);
-}
-
-export function subscribeCart(listener: () => void) {
-  listeners.add(listener);
-  hydrate();
-  return () => listeners.delete(listener);
-}
-
-export function getCartSnapshot() {
-  return state;
-}
-
-export function getCartServerSnapshot() {
-  return SERVER_STATE;
-}
-
-/** Adds `quantity` of one flavour, up to the per-line ceiling. */
-export function addCartItem(slug: string, flavor: string, quantity = 1) {
-  if (!getCheckoutProductId(slug)) return;
-  if (flavor.length === 0 || flavor.length > MAX_FLAVOR_LENGTH) return;
-  if (!Number.isInteger(quantity) || quantity < 1) return;
-
-  hydrate();
-  const existing = state.items.find((item) => sameLine(item, slug, flavor));
-  const items = existing
-    ? state.items.map((item) =>
-        sameLine(item, slug, flavor)
-          ? { ...item, quantity: Math.min(item.quantity + quantity, MAX_QUANTITY) }
-          : item,
-      )
-    : [...state.items, { slug, flavor, quantity: Math.min(quantity, MAX_QUANTITY) }];
-  persist(items);
-}
-
-export function setCartItemQuantity(slug: string, flavor: string, quantity: number) {
-  hydrate();
-  if (!Number.isInteger(quantity) || quantity <= 0) {
-    removeCartItem(slug, flavor);
-    return;
+  function persist(items: readonly CartItem[]) {
+    hydrate();
+    try { window.localStorage.setItem(storageKey, JSON.stringify(items)); }
+    catch { /* Private browsing can deny storage; this document's basket still works. */ }
+    emit(items);
   }
-  persist(
-    state.items.map((item) =>
-      sameLine(item, slug, flavor)
-        ? { ...item, quantity: Math.min(quantity, MAX_QUANTITY) }
-        : item,
-    ),
-  );
+  function add(slug: string, flavor: string, quantity = 1): boolean {
+    if (!getShopProduct(slug)?.flavors.includes(flavor) || !Number.isSafeInteger(quantity) || quantity < 1) return false;
+    hydrate();
+    const existing = state.items.find((item) => sameLine(item, slug, flavor));
+    if (!existing && state.items.length >= SHOP_MAX_LINES) return false;
+    persist(existing ? state.items.map((item) => sameLine(item, slug, flavor)
+      ? { ...item, quantity: Math.min(item.quantity + quantity, SHOP_MAX_QUANTITY) } : item)
+      : [...state.items, { slug, flavor, quantity: Math.min(quantity, SHOP_MAX_QUANTITY) }]);
+    return true;
+  }
+  function remove(slug: string, flavor: string) {
+    hydrate();
+    persist(state.items.filter((item) => !sameLine(item, slug, flavor)));
+  }
+  function setQuantity(slug: string, flavor: string, quantity: number) {
+    hydrate();
+    if (!Number.isSafeInteger(quantity)) return;
+    if (quantity <= 0) return remove(slug, flavor);
+    persist(state.items.map((item) => sameLine(item, slug, flavor)
+      ? { ...item, quantity: Math.min(quantity, SHOP_MAX_QUANTITY) } : item));
+  }
+  function removeSubmitted(items: readonly CartItem[]) {
+    hydrate();
+    const sent = new Map(items.map((item) => [cartLineKey(item.slug, item.flavor), item.quantity]));
+    persist(state.items.flatMap((item) => {
+      const quantity = item.quantity - (sent.get(cartLineKey(item.slug, item.flavor)) ?? 0);
+      return quantity > 0 ? [{ ...item, quantity }] : [];
+    }));
+  }
+  return {
+    subscribe(listener: () => void) {
+      listeners.add(listener); hydrate();
+      return () => { listeners.delete(listener); };
+    },
+    getSnapshot: () => state, add, remove, setQuantity, removeSubmitted,
+    clear() { if (typeof window !== "undefined") persist([]); },
+  };
 }
 
-export function removeCartItem(slug: string, flavor: string) {
-  hydrate();
-  persist(state.items.filter((item) => !sameLine(item, slug, flavor)));
-}
-
-export function clearCart() {
-  if (typeof window === "undefined") return;
-  persist([]);
-}
+// Keep both existing storage keys so saved selections survive this change.
+const cart = createCartStore("thebase:cart:v2");
+const sampleCart = createCartStore("thebase:sample-cart:v1");
+export const subscribeCart = cart.subscribe;
+export const getCartSnapshot = cart.getSnapshot;
+export const getCartServerSnapshot = () => SERVER_STATE;
+export const addCartItem = cart.add;
+export const setCartItemQuantity = cart.setQuantity;
+export const removeCartItem = cart.remove;
+export const clearCart = cart.clear;
+export const subscribeSampleCart = sampleCart.subscribe;
+export const getSampleCartSnapshot = sampleCart.getSnapshot;
+export const addSampleCartItem = sampleCart.add;
+export const setSampleCartItemQuantity = sampleCart.setQuantity;
+export const removeSampleCartItem = sampleCart.remove;
+export const clearSampleCart = sampleCart.clear;
+export const removeSubmittedSamples = sampleCart.removeSubmitted;

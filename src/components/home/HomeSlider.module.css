@@ -1,0 +1,356 @@
+/*
+ * The homepage product slider, to "The Base Homepage Slider". Every size is
+ * the design's, in cqw — a percent of the slider's own width — so a slide
+ * keeps its composition at any width: 8:3 on a wide screen, 4:5 under 720px.
+ * Small type has a floor in px so it stays readable on a tablet.
+ *
+ * Headings and paragraphs answer the export's custom.css on retained pages,
+ * hence the doubled selectors and !important on the title.
+ */
+
+/* The first section of the page: it starts below the fixed header. */
+.section {
+  padding: calc(var(--tbb-header-h) + 24px) var(--tbb-gutter, 24px) 24px;
+}
+
+/* The container the cqw units measure: the slider's own width, up to 1920px. */
+.stage {
+  container-type: inline-size;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.frame {
+  --ink: #fff;
+  --ink-soft: rgb(255 255 255 / 40%);
+  position: relative;
+  width: 100%;
+  aspect-ratio: 8 / 3;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #1e1512;
+  font-family: var(--tbb-font-body);
+  touch-action: pan-y;
+}
+
+.frame[data-ink="dark"] {
+  --ink: #1e1512;
+  --ink-soft: rgb(30 21 18 / 25%);
+}
+
+.track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  transition: transform 0.75s cubic-bezier(0.75, 0, 0.2, 1);
+}
+
+/* ---- a slide ---- */
+
+.slide {
+  --slide-ink: #fff;
+  --cta-bg: #fff;
+  --cta-ink: #1e1512;
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--slide-bg);
+  color: var(--slide-ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.slide[data-ink="dark"] {
+  --slide-ink: #1e1512;
+  --cta-bg: #1e1512;
+  --cta-ink: #fff;
+}
+
+.slide:hover,
+.slide:focus {
+  color: var(--slide-ink);
+}
+
+.slide:focus-visible {
+  outline: 3px solid var(--slide-ink);
+  outline-offset: -6px;
+}
+
+/* The pictures, in their own box on the right; they drift in with the slide. */
+.pictures {
+  position: absolute;
+  left: 52cqw;
+  top: 3cqw;
+  width: 42cqw;
+  height: 34.5cqw;
+  transform: scale(1) translateX(3%);
+  transform-origin: 50% 100%;
+  transition: transform 6s ease-out;
+}
+
+.slide[data-active] .pictures {
+  transform: scale(1.04) translateX(0);
+}
+
+.picture {
+  position: absolute;
+  width: auto;
+  max-width: none;
+  filter: drop-shadow(0 1cqw 1.4cqw rgb(0 0 0 / 18%));
+  user-select: none;
+}
+
+.copy {
+  position: absolute;
+  left: 5cqw;
+  top: 3cqw;
+  bottom: 7cqw;
+  width: 46cqw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.1cqw;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s,
+    opacity 0.9s ease 0.15s;
+}
+
+.slide[data-active] .copy {
+  opacity: 1;
+  transform: none;
+}
+
+.tag {
+  align-self: flex-start;
+  padding: 0.45cqw 1.1cqw;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-size: max(0.95cqw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.slide .title {
+  margin: 0;
+  font-family: var(--tbb-font-slogan);
+  font-weight: 400 !important;
+  font-size: 7.6cqw;
+  line-height: 0.86 !important;
+  letter-spacing: 0 !important;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: inherit;
+}
+
+.text {
+  max-width: 24em;
+  font-size: max(1.45cqw, 14px);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.cta {
+  align-self: flex-start;
+  margin-top: 0.8cqw;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 1.1cqw 2.3cqw;
+  border-radius: 999px;
+  background: var(--cta-bg);
+  color: var(--cta-ink);
+  font-family: var(--tbb-font-button);
+  font-size: max(1.1cqw, 12px);
+  font-weight: var(--tbb-font-weight-button);
+  white-space: nowrap;
+  transition: transform var(--tbb-dur-fast, 160ms) var(--tbb-ease, ease);
+}
+
+.slide:hover .cta {
+  transform: translateX(4px);
+}
+
+.cta svg {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- dots and arrows ---- */
+
+.nav {
+  position: absolute;
+  left: 5cqw;
+  right: 5cqw;
+  bottom: 2.6cqw;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--ink);
+  pointer-events: none;
+}
+
+.dots,
+.arrows {
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.dots {
+  gap: 6px;
+}
+
+/* A 24px target around an 8px dot. */
+.dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ink-soft);
+  cursor: pointer;
+  transition:
+    width 0.4s ease,
+    background-color 0.4s ease;
+}
+
+.dot::before {
+  content: "";
+  position: absolute;
+  inset: -8px -3px;
+}
+
+.dot[data-active] {
+  width: 28px;
+  background: var(--ink);
+}
+
+.arrows {
+  gap: 8px;
+}
+
+.arrow {
+  width: max(2.6cqw, 36px);
+  height: max(2.6cqw, 36px);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 92%);
+  color: #1e1512;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--tbb-dur-fast, 160ms) var(--tbb-ease, ease);
+}
+
+.arrow:hover {
+  background: #fff;
+}
+
+.arrow svg {
+  width: 38%;
+  height: 38%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dot:focus-visible,
+.arrow:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ---- phone: 4:5, copy on top, pictures below, no arrows ---- */
+
+@container (max-width: 719px) {
+  .frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  .pictures {
+    left: 10cqw;
+    top: 62cqw;
+    width: 86cqw;
+    height: 58cqw;
+  }
+
+  .copy {
+    left: 7cqw;
+    top: 9cqw;
+    bottom: auto;
+    width: 86cqw;
+    justify-content: flex-start;
+    gap: 2.6cqw;
+  }
+
+  .tag {
+    padding: 1.2cqw 3cqw;
+    font-size: 3.2cqw;
+  }
+
+  .slide .title {
+    font-size: 16cqw;
+  }
+
+  .text {
+    font-size: 4.4cqw;
+  }
+
+  .cta {
+    margin-top: 1cqw;
+    padding: 2.8cqw 5.6cqw;
+    font-size: 3.6cqw;
+  }
+
+  .nav {
+    left: 7cqw;
+    right: 7cqw;
+    bottom: 5cqw;
+  }
+
+  .arrows {
+    display: none;
+  }
+}
+
+@media (max-width: 759px) {
+  .section {
+    padding-top: calc(var(--tbb-header-h) + 16px);
+    padding-bottom: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .pictures,
+  .copy {
+    transition-duration: 0.01s;
+  }
+}

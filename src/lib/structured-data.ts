@@ -42,7 +42,7 @@ export function productSchema({
   description: string;
   path: string;
   /** Site-relative, e.g. `/images/tile-matcha.webp`. */
-  image: string;
+  image?: string;
   /** "70.42 AED", or null when sold on quotation (no offer is published). */
   price: string | null;
 }) {
@@ -52,7 +52,7 @@ export function productSchema({
     name,
     description,
     url: absolute(path),
-    image: `${SITE_ORIGIN}${image}`,
+    ...(image && { image: `${SITE_ORIGIN}${image}` }),
     brand: { "@type": "Brand", name: "THE BASE" },
     manufacturer: { "@id": ORGANIZATION_ID },
     ...(Number.isFinite(amount) && {
@@ -60,7 +60,6 @@ export function productSchema({
         "@type": "Offer",
         price: amount.toFixed(2),
         priceCurrency: "AED",
-        availability: "https://schema.org/InStock",
         url: absolute(path),
         seller: { "@id": ORGANIZATION_ID },
       },

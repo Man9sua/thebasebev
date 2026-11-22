@@ -1,0 +1,810 @@
+{
+  "source": "BaseBev_Master_Price_List_to_01.09.2026 (1).xlsx",
+  "sha256": "8fd054d675414286f21a2e0e21d8fa6f6a233e130d36eccfb39af2df979b2c1c",
+  "sheet": "PRICE LIST",
+  "currency": "AED",
+  "vat": "exclusive",
+  "records": [
+    {
+      "slug": "milkshake",
+      "flavor": "Banana",
+      "sku": "MS-007-f500",
+      "unitAmount": 2706,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 102
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Mango",
+      "sku": "MS-005-f500",
+      "unitAmount": 2678,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 100
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Date",
+      "sku": "MS-014-f500",
+      "unitAmount": 3117,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 106
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Honey Dew",
+      "sku": "MS-006-f500",
+      "unitAmount": 2837,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 101
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Strawberry",
+      "sku": "MS-002-f500",
+      "unitAmount": 2835,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 99
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Vanilla",
+      "sku": "MS-001-f500",
+      "unitAmount": 2800,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 98
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Yogurt",
+      "sku": "MS-010-f500",
+      "unitAmount": 2992,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 103
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Cookies & Cream",
+      "sku": "MS-023-f500",
+      "unitAmount": 3733,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 113
+    },
+    {
+      "slug": "milkshake",
+      "flavor": "Rainbow Unicorn",
+      "sku": "MS-012-f500",
+      "unitAmount": 6040,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 104
+    },
+    {
+      "slug": "frappe",
+      "flavor": "Coffee",
+      "sku": "FR-018-f500",
+      "unitAmount": 3568,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 62
+    },
+    {
+      "slug": "frappe",
+      "flavor": "Salted Caramel",
+      "sku": "FR-008-f500",
+      "unitAmount": 3505,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 57
+    },
+    {
+      "slug": "frappe",
+      "flavor": "Vanilla",
+      "sku": "FR-009-f500",
+      "unitAmount": 2947,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 58
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Classic",
+      "sku": "MT-002-f500",
+      "unitAmount": 4445,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 79
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Pure",
+      "sku": "MT-011-f500",
+      "unitAmount": 13319,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 85
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Mango Coconut",
+      "sku": "MT-007-f500",
+      "unitAmount": 4295,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 82
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Anchan Blueberry",
+      "sku": "MT-001-f500",
+      "unitAmount": 3179,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 78
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Pink",
+      "sku": "MT-004-f500",
+      "unitAmount": 3081,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 81
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Raspberry",
+      "sku": "MT-008-f500",
+      "unitAmount": 4527,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 84
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Strawberry",
+      "sku": "MT-003-f500",
+      "unitAmount": 4677,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 80
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Purple Yum Ube",
+      "sku": "MT-012-f500",
+      "unitAmount": 3611,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 86
+    },
+    {
+      "slug": "matcha",
+      "flavor": "Hojicha",
+      "sku": "MT-028-f500",
+      "unitAmount": 3663,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 95
+    },
+    {
+      "slug": "chai-latte",
+      "flavor": "Karak",
+      "sku": "CL-001-f500",
+      "unitAmount": 4141,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 6
+    },
+    {
+      "slug": "chai-latte",
+      "flavor": "Masala",
+      "sku": "CL-002-f500",
+      "unitAmount": 4026,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 7
+    },
+    {
+      "slug": "chocolate",
+      "flavor": "Hot Chocolate",
+      "sku": "CC-006-f500",
+      "unitAmount": 2992,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 25
+    },
+    {
+      "slug": "chocolate",
+      "flavor": "Hot Chocolate No Sugar",
+      "sku": "CC-001-f500",
+      "unitAmount": 4070,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 20
+    },
+    {
+      "slug": "cordial",
+      "flavor": "Classic Mojito",
+      "sku": "CR-006-f500",
+      "unitAmount": 3655,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 38
+    },
+    {
+      "slug": "cordial",
+      "flavor": "Red Rose Lemon",
+      "sku": "CR-019-f500",
+      "unitAmount": 4772,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 40
+    },
+    {
+      "slug": "iced-tea",
+      "flavor": "Lemon",
+      "sku": "IT-002-f500",
+      "unitAmount": 3002,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 66
+    },
+    {
+      "slug": "iced-tea",
+      "flavor": "Peach",
+      "sku": "IT-001-f500",
+      "unitAmount": 2860,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 65
+    },
+    {
+      "slug": "iced-tea",
+      "flavor": "Green",
+      "sku": "IT-009-f500",
+      "unitAmount": 3042,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 68
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Vanilla",
+      "sku": "RF-011-f500",
+      "unitAmount": 2695,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 128
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Salted Caramel",
+      "sku": "RF-004-f500",
+      "unitAmount": 2907,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 123
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Pineapple Caramel",
+      "sku": "RF-009-f500",
+      "unitAmount": 3069,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 126
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Raspberry Coconut",
+      "sku": "RF-005-f500",
+      "unitAmount": 2940,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 124
+    },
+    {
+      "slug": "raf-coffee",
+      "flavor": "Spanish Peach",
+      "sku": "RF-015-f500",
+      "unitAmount": 3139,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 130
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Birds Dream",
+      "sku": "CRL-001-f500",
+      "unitAmount": 3612,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 47
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Citrus Sundae",
+      "sku": "CRL-003-f500",
+      "unitAmount": 3057,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 48
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Tropical Berry",
+      "sku": "CRL-004-f500",
+      "unitAmount": 2940,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 49
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Salty Caramel Sunset",
+      "sku": "CRL-005-f500",
+      "unitAmount": 2907,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 50
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Golden Caramel Banana",
+      "sku": "CRL-006-f500",
+      "unitAmount": 2850,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 51
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Vanilla Sky",
+      "sku": "CRL-007-f500",
+      "unitAmount": 2650,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 52
+    },
+    {
+      "slug": "cream-latte",
+      "flavor": "Nutty Pistachio",
+      "sku": "CRL-008-f500",
+      "unitAmount": 3002,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 53
+    },
+    {
+      "slug": "tea",
+      "flavor": "Black",
+      "sku": "TE-002-s1-dp100",
+      "unitAmount": 1725,
+      "packGrams": 100,
+      "sampleWeightGrams": 100,
+      "sourceRow": 187
+    },
+    {
+      "slug": "tea",
+      "flavor": "Green",
+      "sku": "TE-003-s1-dp100",
+      "unitAmount": 1388,
+      "packGrams": 100,
+      "sampleWeightGrams": 100,
+      "sourceRow": 188
+    },
+    {
+      "slug": "tea",
+      "flavor": "Jasmine",
+      "sku": "TE-001-s1-dp100",
+      "unitAmount": 1578,
+      "packGrams": 100,
+      "sampleWeightGrams": 100,
+      "sourceRow": 186
+    },
+    {
+      "slug": "topping",
+      "flavor": "Classic Cheese Cream",
+      "sku": "TP-001-f500",
+      "unitAmount": 3407,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 190
+    },
+    {
+      "slug": "topping",
+      "flavor": "Coffee Crème",
+      "sku": "TP-009-f500",
+      "unitAmount": 3772,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 193
+    },
+    {
+      "slug": "jam",
+      "flavor": "Strawberry Watermelon",
+      "sku": "JM-002-f500",
+      "unitAmount": 4515,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 75
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Amaretto",
+      "sku": "SF-001-s1-dp100",
+      "unitAmount": 1075,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 149
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Cherry",
+      "sku": "SF-007-s1-dp100",
+      "unitAmount": 1153,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 155
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Mango",
+      "sku": "SF-009-s1-dp100",
+      "unitAmount": 997,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 157
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Mint",
+      "sku": "SF-010-s1-dp100",
+      "unitAmount": 1057,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 158
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Black Currant",
+      "sku": "SF-011-s1-dp100",
+      "unitAmount": 1143,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 159
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Coconut",
+      "sku": "SF-012-s1-dp100",
+      "unitAmount": 1078,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 160
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Melon",
+      "sku": "SF-013-s1-dp100",
+      "unitAmount": 1067,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 161
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Peach",
+      "sku": "SF-014-s1-dp100",
+      "unitAmount": 1027,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 162
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Raspberry",
+      "sku": "SF-015-s1-dp100",
+      "unitAmount": 1102,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 163
+    },
+    {
+      "slug": "sugar-free",
+      "flavor": "Hazelnut",
+      "sku": "SF-004-s1-dp100",
+      "unitAmount": 1056,
+      "packGrams": 100,
+      "sampleWeightGrams": null,
+      "sourceRow": 152
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Vanilla",
+      "sku": "SS-007-f500",
+      "unitAmount": 2150,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 180
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Salted Caramel",
+      "sku": "SS-004-f500",
+      "unitAmount": 2180,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 177
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Hazelnut",
+      "sku": "SS-008-f500",
+      "unitAmount": 1686,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 181
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Raspberry",
+      "sku": "SS-002-f500",
+      "unitAmount": 2116,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 175
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Mango",
+      "sku": "SS-005-f500",
+      "unitAmount": 1744,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 178
+    },
+    {
+      "slug": "sugar-syrup",
+      "flavor": "Blueberry",
+      "sku": "SS-001-f500",
+      "unitAmount": 2400,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 174
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Strawberry Cubes",
+      "sku": "GR-003-f50",
+      "unitAmount": 883,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 202
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Banana Cubes",
+      "sku": "GR-012-f50",
+      "unitAmount": 842,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 208
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Dragon Fruit Cubes",
+      "sku": "GR-015-f50",
+      "unitAmount": 720,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 211
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Kiwi Cubes",
+      "sku": "GR-014-f50",
+      "unitAmount": 783,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 210
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Mango Cubes",
+      "sku": "GR-009-f50",
+      "unitAmount": 1056,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 205
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Blueberry Cubes",
+      "sku": "GR-013-f50",
+      "unitAmount": 1290,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 209
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Cherry Cubes",
+      "sku": "GR-006-f50",
+      "unitAmount": 1256,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 204
+    },
+    {
+      "slug": "garnish",
+      "flavor": "Raspberry Cubes",
+      "sku": "GR-010-f50",
+      "unitAmount": 1199,
+      "packGrams": 50,
+      "sampleWeightGrams": null,
+      "sourceRow": 206
+    },
+    {
+      "slug": "vending",
+      "flavor": "Chocolate",
+      "sku": "VD-002-f500",
+      "unitAmount": 4425,
+      "packGrams": 500,
+      "sampleWeightGrams": 50,
+      "sourceRow": 198
+    },
+    {
+      "slug": "vending",
+      "flavor": "Chocolate No Added Sugar",
+      "sku": "VD-000-f500",
+      "unitAmount": 2655,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 197
+    },
+    {
+      "slug": "vending",
+      "flavor": "Karak",
+      "sku": "VD-004-f500",
+      "unitAmount": 4027,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 199
+    },
+    {
+      "slug": "vending",
+      "flavor": "Banana Ice Cream Salted Caramel",
+      "sku": "VD-006-f500",
+      "unitAmount": 3602,
+      "packGrams": 500,
+      "sampleWeightGrams": null,
+      "sourceRow": 200
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Mango Coconut",
+      "sku": "MT-015-f150",
+      "unitAmount": 1486,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 88
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Blue",
+      "sku": "MT-016-f150",
+      "unitAmount": 1148,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 89
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Pink",
+      "sku": "MT-017-f150",
+      "unitAmount": 1118,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 90
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Raspberry",
+      "sku": "MT-008-f150",
+      "unitAmount": 1553,
+      "packGrams": 150,
+      "sampleWeightGrams": 50,
+      "sourceRow": 83
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Matcha Strawberry",
+      "sku": "MT-023-f150",
+      "unitAmount": 1598,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 93
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chocolate Strawberry",
+      "sku": "CC-011-f150",
+      "unitAmount": 1443,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 31
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chocolate Orange",
+      "sku": "CC-012-f150",
+      "unitAmount": 1436,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 32
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chocolate Mocha",
+      "sku": "CC-010-f150",
+      "unitAmount": 1266,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 30
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Iced Tea Lemon",
+      "sku": "IT-021-F150",
+      "unitAmount": 1096,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 69
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Iced Tea Peach",
+      "sku": "IT-022-f150",
+      "unitAmount": 1053,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 70
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Chai Latte Karak",
+      "sku": "CL-006-f150",
+      "unitAmount": 1437,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 11
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Milkshake Cookies & Cream",
+      "sku": "MS-023-f150",
+      "unitAmount": 1315,
+      "packGrams": 150,
+      "sampleWeightGrams": 50,
+      "sourceRow": 112
+    },
+    {
+      "slug": "at-home",
+      "flavor": "Cordial Dates Cola",
+      "sku": "CR-024-F150",
+      "unitAmount": 1066,
+      "packGrams": 150,
+      "sampleWeightGrams": null,
+      "sourceRow": 41
+    }
+  ]
+}

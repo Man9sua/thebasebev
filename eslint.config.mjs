@@ -16,5 +16,7 @@ export default defineConfig([
     "node_modules/**",
     "public/**",
     "tilda_export/**",
+    // Private reference extraction and browser captures are generated artifacts.
+    "output/**",
   ]),
 ]);
