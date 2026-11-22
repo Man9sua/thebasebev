@@ -420,7 +420,7 @@ const markdown = [
   `- Retired \`/tproduct\` aliases served as 301: **${productAliasRedirects.length}**`,
   `- Permanent redirects (not generated pages): **${redirectRows.length}**`,
   "",
-  "The active controlled route set is 37 friendly routes, 8 technical/checkout routes, 101 Glossary articles and 30 Blog articles. Historic aliases are preserved separately as 301 redirects and have no static HTML/RSC payloads.",
+  `The active controlled route set is 37 friendly routes, 8 technical/checkout routes, ${glossary.length} Glossary articles and ${blog.length} Blog articles. Historic aliases are preserved separately as 301 redirects and have no static HTML/RSC payloads.`,
   "",
   "## Highest-value optimization candidates",
   "",

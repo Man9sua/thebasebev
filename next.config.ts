@@ -68,6 +68,14 @@ const nextConfig: NextConfig = {
         destination: publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
         statusCode: 301,
       },
+
+      /*
+       * Two Glossary entries were both called Brix. The fuller one stays; the
+       * duplicate, under both its legacy and its /ae spelling, goes straight
+       * to it rather than through the /tpost to /ae hop.
+       */
+      { source: "/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
+      { source: "/ae/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
     ];
   },
 };
