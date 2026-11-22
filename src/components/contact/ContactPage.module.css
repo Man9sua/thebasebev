@@ -358,7 +358,50 @@
 
 /* Below about 1040 the fixed 600 card leaves the left column too narrow for
    the heading, so the card goes under it at full width. */
+/* ---- the facts under the first screen ---- */
+
+.facts {
+  width: 100%;
+  max-width: var(--tbb-measure);
+  margin: clamp(3rem, 6.6667vw, 6rem) auto 0;
+}
+
+.factsTitle {
+  margin: 0 0 clamp(1.25rem, 2.2222vw, 2rem) !important;
+  font-family: var(--tbb-font-display);
+  font-size: clamp(1.75rem, 3.3333vw, 3rem);
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-transform: uppercase;
+  color: var(--tbb-rd-paper);
+}
+
+.factsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 2.2222vw, 2rem);
+}
+
+.fact h3 {
+  margin: 0 0 0.75rem !important;
+  font-size: clamp(1rem, 1.3889vw, 1.25rem);
+  font-weight: 600 !important;
+  color: var(--tbb-rd-paper);
+}
+
+.fact p {
+  margin: 0 !important;
+  color: var(--tbb-rd-on-ink-soft);
+  font-size: 1rem;
+  line-height: 1.55 !important;
+  text-wrap: pretty;
+}
+
 @media (max-width: 64.9375rem) {
+  .factsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .inner {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -394,7 +437,8 @@
     font-weight: 600;
   }
 
-  .twoColumns {
+  .twoColumns,
+  .factsGrid {
     grid-template-columns: minmax(0, 1fr);
   }
 

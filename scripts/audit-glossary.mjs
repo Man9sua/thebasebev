@@ -2,7 +2,8 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-const EXPECTED_EMPTY_UID = "tfm5mybkl1";
+// Matcha (tfm5mybkl1) was the one empty production source; it now has copy.
+const EXPECTED_EMPTY_UIDS = new Set();
 const DATA_PATH = path.join(process.cwd(), "src", "data", "glossary-content.json");
 
 function hashText(value) {
@@ -170,7 +171,7 @@ for (const entry of entries) {
   assert(entry.sourceStatus === 200, `Production source is not HTTP 200 for ${entry.uid}`, failures);
   assert(!/noindex/i.test(entry.sourceRobots), `Production source is noindex for ${entry.uid}`, failures);
 
-  const isExpectedEmpty = entry.uid === EXPECTED_EMPTY_UID;
+  const isExpectedEmpty = EXPECTED_EMPTY_UIDS.has(entry.uid);
   assert(Boolean(entry.excerpt) || isExpectedEmpty, `Missing excerpt for ${entry.uid}`, failures);
   assert(entry.contentStatus === (isExpectedEmpty ? "empty-production-source" : "published"), `Unexpected content status for ${entry.uid}`, failures);
   assert(entry.body.length > 0 || isExpectedEmpty, `Missing article body for ${entry.uid}`, failures);

@@ -81,6 +81,31 @@ const INTERESTS = [
 
 const DEFAULT_INTEREST = "Wholesale";
 
+/**
+ * What a visitor needs before writing: where to come, when, what we can send
+ * and what we are certified for. The first screen keeps the phone and the
+ * form; these facts sit under it so the page answers the questions a search
+ * for "The Base Dubai contact" or "The Base showroom" is really asking.
+ */
+const FACTS = [
+  {
+    title: "Showroom in Al Quoz",
+    text: "Our showroom is in Al Quoz Industrial Area 2, Dubai. Come in to taste the bases, see the full range of packs and work through a drinks menu with our team. Open Monday to Saturday, 9:00 to 18:00 Dubai time, closed on Sunday.",
+  },
+  {
+    title: "Orders and free samples",
+    text: "Write to sales@thebasebev.com with the products, your market and the volume you expect. Free samples are available for cafés, chains and distributors, there is no minimum order, and production lead time starts from 15 days.",
+  },
+  {
+    title: "Certified production",
+    text: "Every base is made in our own factory in the UAE under a HACCP food safety system and ISO 22000 certification, and the range is Halal certified. Certificates and product specifications are sent on request for your order and destination market.",
+  },
+  {
+    title: "Where we supply",
+    text: "The Base supplies HoReCa, retail and distributors in 26 countries through more than 5,000 points of sale: over 600 flavours across 24 product lines, with menu development, private label and barista masterclasses for groups of 20 or more.",
+  },
+] as const;
+
 export function ContactPage() {
   return (
     <main className={styles.page} data-surface="dark">
@@ -227,6 +252,20 @@ export function ContactPage() {
           </div>
         </form>
       </div>
+
+      <section className={styles.facts} aria-labelledby="contact-facts-title">
+        <h2 id="contact-facts-title" className={styles.factsTitle}>
+          Visit the showroom or write to sales
+        </h2>
+        <div className={styles.factsGrid}>
+          {FACTS.map((fact) => (
+            <article key={fact.title} className={styles.fact}>
+              <h3>{fact.title}</h3>
+              <p>{fact.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
