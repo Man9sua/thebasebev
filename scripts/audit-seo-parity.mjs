@@ -285,6 +285,23 @@ const H1_NOT_PRESERVED = new Map([
   ],
 ]);
 
+/*
+ * Glossary metadata this branch changes on purpose: bare-term titles became
+ * search-phrase titles (production's own string is kept as `seo.sourceTitle`),
+ * and entries production published with no description now have one. Each is
+ * exempt only while production still shows exactly the old value, so the
+ * exemption ends by itself after the release goes out.
+ */
+const GLOSSARY_BY_ROUTE = new Map(glossaryContent.entries.map((entry) => [publicPath(entry.path), entry]));
+function declaredGlossaryChange(route, production, field, productionValue, targetValue) {
+  const entry = GLOSSARY_BY_ROUTE.get(route);
+  if (!entry || production.status !== 200) return false;
+  if (field === "title" || field === "og:title") {
+    return Boolean(entry.seo.sourceTitle) && productionValue === entry.seo.sourceTitle && targetValue === entry.seo.title;
+  }
+  return !productionValue && targetValue === entry.seo.description;
+}
+
 const criticalFailures = [];
 const warnings = [];
 const declared = [];
@@ -308,7 +325,12 @@ for (const { route, production, target } of results) {
   if (production.status !== 200) issues.push(`production status ${production.status}`);
   if (target.status !== 200) issues.push(`target status ${target.status}`);
   for (const field of ["title", "description", "canonical"]) {
-    if ((field === "canonical" ? publicUrl(production[field]) : production[field]) !== target[field]) issues.push(`${field} mismatch`);
+    if ((field === "canonical" ? publicUrl(production[field]) : production[field]) === target[field]) continue;
+    if (declaredGlossaryChange(route, production, field, production[field], target[field])) {
+      declared.push(`${route}: ${field} deliberately changed to "${target[field]}"`);
+    } else {
+      issues.push(`${field} mismatch`);
+    }
   }
 
   /*
@@ -338,7 +360,12 @@ for (const { route, production, target } of results) {
     declared.push(`${route}: added schema types ${target.jsonLdTypes.filter((type) => !production.jsonLdTypes.includes(type)).join(", ")}`);
   }
   for (const field of ["title", "url", "type"]) {
-    if ((field === "url" ? publicUrl(production.openGraph[field]) : production.openGraph[field]) !== target.openGraph[field]) issues.push(`og:${field} mismatch`);
+    if ((field === "url" ? publicUrl(production.openGraph[field]) : production.openGraph[field]) === target.openGraph[field]) continue;
+    if (field === "title" && declaredGlossaryChange(route, production, "og:title", production.openGraph.title, target.openGraph.title)) {
+      declared.push(`${route}: og:title deliberately changed`);
+    } else {
+      issues.push(`og:${field} mismatch`);
+    }
   }
   if (
     production.openGraph.description &&

@@ -82,6 +82,9 @@ const redirects = new Map([
     "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
     publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
   ],
+  // The duplicate Brix Glossary entry, under both spellings, to the one kept.
+  ["/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
+  ["/ae/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
 ]);
 
 const failures = [];
