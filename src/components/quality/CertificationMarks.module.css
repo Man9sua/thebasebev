@@ -1,0 +1,45 @@
+.marks {
+  display: grid;
+  grid-template-columns: 8rem repeat(2, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.5vw, 1rem);
+  width: 100%;
+  max-width: 32.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  height: 8rem;
+  padding: 0.625rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: #fff;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.halal {
+  transform: scale(1.6);
+}
+
+@media (max-width: 63.9375rem) {
+  .marks {
+    grid-template-columns: minmax(0, 0.8fr) repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    max-width: none;
+  }
+
+  .mark {
+    height: 6.125rem;
+    padding: 0.5rem;
+  }
+}

@@ -106,7 +106,31 @@ export function writeConsent(consent: Consent) {
   window.dispatchEvent(new Event(CONSENT_CHANGED));
 }
 
-/** Reopens the settings dialog from anywhere — see the footer's link. */
+let pendingSettingsRequest = false;
+
+/** Keep an early click until the settings component finishes mounting. */
 export function requestConsentSettings() {
+  pendingSettingsRequest = true;
   window.dispatchEvent(new Event(CONSENT_REQUESTED));
+}
+
+export function subscribeConsentSettings(onOpen: () => void) {
+  let active = true;
+  const open = () => {
+    if (!active) return;
+    pendingSettingsRequest = false;
+    onOpen();
+  };
+
+  window.addEventListener(CONSENT_REQUESTED, open);
+  if (pendingSettingsRequest) {
+    queueMicrotask(() => {
+      if (active && pendingSettingsRequest) open();
+    });
+  }
+
+  return () => {
+    active = false;
+    window.removeEventListener(CONSENT_REQUESTED, open);
+  };
 }

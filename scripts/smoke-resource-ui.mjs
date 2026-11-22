@@ -3,6 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import { chromium } from "@playwright/test";
 
+const glossaryTerms = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8")).entries.length;
+
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const captureScreenshots = process.argv.includes("--screenshots");
 const chromePath =
@@ -59,7 +61,7 @@ async function auditViewport(browser, viewport) {
   check((await page.locator("[data-tools-page]").count()) === 1, `${label}: tools React page missing`);
   check((await page.locator("#rec2429369331, #rec2430603261").count()) === 0, `${label}: legacy tool records remain`);
   check(
-    (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "3.92 AED",
+    (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "7.27 AED",
     `${label}: default calculator result changed`,
   );
   await shellAndOverflow(page, "/resources/tools", label);
@@ -68,26 +70,25 @@ async function auditViewport(browser, viewport) {
   }
 
   if (viewport.width === 390 || viewport.width === 1440) {
-    await page.getByLabel("Cost per kg (AED)").fill("160");
+    await page.getByLabel("Waste", { exact: true }).fill("10,0");
     check(
-      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "4.80 AED",
+      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "7.61 AED",
       `${label}: calculator did not recompute after input`,
     );
-    await page.getByRole("button", { name: "RU", exact: true }).click();
+    await page.getByRole("button", { name: "Matcha latte", exact: true }).click();
     check(
-      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "4.80 ₽",
-      `${label}: RU currency switch failed`,
+      (await page.locator('[data-calculator-result="cost"] strong').textContent())?.trim() === "6.09 AED",
+      `${label}: drink preset did not load`,
     );
-    await page.locator("[data-menu-picker] input[type='checkbox']").first().check();
-    await page.locator("[data-menu-generate]").click();
-    check((await page.locator("[data-menu-template]").count()) === 1, `${label}: menu was not generated`);
-    await page.locator("[data-menu-reset]").click();
-    check((await page.locator("[data-menu-template]").count()) === 0, `${label}: menu reset failed`);
+    check(
+      (await page.getByRole("button", { name: "Matcha latte", exact: true }).getAttribute("aria-pressed")) === "true",
+      `${label}: preset chip is not marked pressed`,
+    );
   }
 
   await open(page, "/resources/glossary");
   check((await page.locator("[data-glossary-page]").count()) === 1, `${label}: glossary React page missing`);
-  check((await page.locator("[data-glossary-term]").count()) === 101, `${label}: glossary does not expose 101 terms`);
+  check((await page.locator("[data-glossary-term]").count()) === glossaryTerms, `${label}: glossary does not expose ${glossaryTerms} terms`);
   check(!(await page.locator("body").innerText()).includes("configured for another domain"), `${label}: Tilda domain error remains`);
   check((await page.locator("#rec2427859911, #rec2427859921, #rec2427859931").count()) === 0, `${label}: legacy glossary records remain`);
   await shellAndOverflow(page, "/resources/glossary", label);
@@ -100,24 +101,20 @@ async function auditViewport(browser, viewport) {
     await glossarySearch.fill("Brix");
     const exactBrixTitles = await page.locator("[data-glossary-term] h2").allTextContents();
     check(
-      exactBrixTitles.filter((title) => title.trim() === "Brix").length === 2,
-      `${label}: glossary search did not retain both Brix entries`,
+      exactBrixTitles.filter((title) => title.trim() === "Brix").length === 1,
+      `${label}: glossary search should show exactly one Brix entry`,
     );
     await glossarySearch.fill("");
     await page.getByRole("button", { name: "HoReCa & business" }).click();
     const businessCount = await page.locator("[data-glossary-term]").count();
-    check(businessCount > 0 && businessCount < 101, `${label}: category filter did not narrow results`);
+    check(businessCount > 0 && businessCount < glossaryTerms, `${label}: category filter did not narrow results`);
   }
 
-  await open(page, "/wholesale-strategy");
-  check((await page.locator("#rec2361929781").count()) === 0, `${label}: wholesale attribution record remains`);
-  check(!(await page.locator("body").innerText()).includes("Mineragua Sparkling Water"), `${label}: wholesale attribution copy remains`);
-  await shellAndOverflow(page, "/wholesale-strategy", label);
 
   if (viewport.width === 390 || viewport.width === 1440) {
     const homePage = await browser.newPage({ viewport });
     await open(homePage, "/");
-    const homePresent = (await homePage.locator("[data-hero]").count()) === 1;
+    const homePresent = (await homePage.locator("[data-home-slider]").count()) === 1;
     check(homePresent, `${label}: homepage missing during the blog-link audit`);
     /*
      * The Blog index used to be an empty Tilda feed container — the posts were
@@ -128,7 +125,7 @@ async function auditViewport(browser, viewport) {
      * with articles on it.
      */
     check(
-      (await homePage.locator('a[href="/resources/blog"]').count()) > 0,
+      (await homePage.locator('a[href="/ae/resources/blog"]').count()) > 0,
       `${label}: the homepage no longer links to the Blog index`,
     );
     await homePage.close();
@@ -142,7 +139,7 @@ async function auditViewport(browser, viewport) {
       .first()
       .getAttribute("href");
     check(
-      Boolean(firstPost?.startsWith("/tpost/")),
+      Boolean(firstPost?.startsWith("/ae/tpost/")),
       `${label}: the Blog's first card points at ${firstPost}`,
     );
     await open(blogPage, firstPost ?? "/resources/blog");

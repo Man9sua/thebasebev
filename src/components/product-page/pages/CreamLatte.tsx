@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import {
   Faq,
+  Flavours,
   Hero,
   Info,
   Section,
@@ -12,7 +13,6 @@ import {
 } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { MADE_IN, PackFacts } from "./Milkshake";
-import { PhotoFlavours, type PhotoFlavour } from "./PhotoFlavours";
 
 /**
  * Cream Latte — no mock of its own: built on the Matcha reference, section for
@@ -25,18 +25,19 @@ import { PhotoFlavours, type PhotoFlavour } from "./PhotoFlavours";
 
 const SLUG = "cream-latte";
 
-/** Each flavour with its serve photo (`flavour-<image>-{320,480}.webp`). */
+/** No flavour photography: the cards are the template's own, on one cream tone. */
+const FLAVOUR_TONE = "#EFE4D3";
 const flavours = [
-  { name: "Birds Dream", image: "birds-dream", garnish: "a dusting of cinnamon" },
-  { name: "Blueberry", image: "blueberry", garnish: "blueberries and berry sauce" },
-  { name: "Cheesy Cream", image: "cheesy-cream", garnish: "a dusting of cinnamon" },
-  { name: "Citrus Sundae", image: "citrus-sundae", garnish: "candied citrus peel" },
-  { name: "Tropical Berry", image: "tropical-berry", garnish: "pineapple" },
-  { name: "Salty Caramel Sunset", image: "salty-caramel-sunset", garnish: "a caramel drizzle" },
-  { name: "Golden Caramel Banana", image: "golden-caramel-banana", garnish: "a dried banana slice" },
-  { name: "Vanilla Sky", image: "vanilla-sky", garnish: "white chocolate shavings" },
-  { name: "Nutty Pistachio", image: "nutty-pistachio", garnish: "a pistachio drizzle" },
-] satisfies PhotoFlavour[];
+  "Birds Dream",
+  "Blueberry",
+  "Cheesy Cream",
+  "Citrus Sundae",
+  "Tropical Berry",
+  "Salty Caramel Sunset",
+  "Golden Caramel Banana",
+  "Vanilla Sky",
+  "Nutty Pistachio",
+].map((name) => ({ name, color: FLAVOUR_TONE }));
 
 const faq = [
   {
@@ -57,7 +58,7 @@ const faq = [
   { q: "Where can I buy it in my country?", a: "Through our distributors. Find yours on the Distributors page." },
 ];
 
-export function CreamLattePage({ product, headline, assets }: ProductPageProps) {
+export function CreamLattePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
 
   return (
@@ -74,7 +75,6 @@ export function CreamLattePage({ product, headline, assets }: ProductPageProps) 
       <Hero
         productName={product.name}
         title="Cream Latte"
-        headline={headline}
         lead={{
           desktop:
             "Cream latte base for cafés and HoReCa. A rich, creamy latte without fresh cream: mix with milk, froth and add espresso.",
@@ -117,7 +117,7 @@ export function CreamLattePage({ product, headline, assets }: ProductPageProps) 
       </Section>
 
       <Section title="Nine flavours" label="Flavours">
-        <PhotoFlavours slug={SLUG} drink="cream latte" items={flavours} />
+        <Flavours items={flavours} />
       </Section>
 
       <PackFacts>

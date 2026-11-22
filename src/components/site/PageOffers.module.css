@@ -56,7 +56,7 @@
   align-self: start;
   font-family: var(--tbb-font-display);
   font-size: clamp(1rem, 1.3vw, 1.2rem);
-  font-weight: 700;
+  font-weight: var(--tbb-font-weight-subheading);
   line-height: 1.2;
   color: var(--tbb-ink);
 }

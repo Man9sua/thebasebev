@@ -4,6 +4,7 @@ import openNextWorker from "./.open-next/worker.js";
 import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
 import publicRoutePaths from "./src/data/public-route-paths.json";
 import { publicPath } from "./src/lib/site-paths";
+import { retiredRouteRedirect, toDefaultCountryPath } from "./src/lib/country-paths";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
@@ -57,6 +58,9 @@ const PERMANENT_REDIRECTS = new Map<string, string>([
     "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
     publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
   ],
+  // The duplicate Brix Glossary entry, under both spellings, to the one kept.
+  ["/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
+  ["/ae/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
 ]);
 
 function normalizePathname(pathname: string) {
@@ -147,7 +151,7 @@ async function staticFastPath(
     );
   }
 
-  const redirect = PERMANENT_REDIRECTS.get(pathname);
+  const redirect = PERMANENT_REDIRECTS.get(pathname) ?? retiredRouteRedirect(pathname);
   if (redirect) {
     return new Response(null, {
       status: 301,
@@ -160,6 +164,9 @@ async function staticFastPath(
   if (directAsset.status !== 404) return directAsset;
 
   if (pathname.startsWith("/api/")) return null;
+
+  // Country aliases use the same prebuilt documents; no new SSR or duplicated assets.
+  const documentPathname = toDefaultCountryPath(pathname);
 
   /**
    * The router's own request for a page.
@@ -180,7 +187,7 @@ async function staticFastPath(
     const segment = request.headers.get("Next-Router-Segment-Prefetch");
     if (segment && (!segment.startsWith("/") || segment.includes(".."))) return null;
 
-    const base = staticPageAssetPath(pathname).replace(/\.html$/, "");
+    const base = staticPageAssetPath(documentPathname).replace(/\.html$/, "");
     const payload = await environment.ASSETS.fetch(
       requestForAsset(request, segment ? `${base}.segments${segment}.segment.rsc` : `${base}.rsc`),
     );
@@ -196,7 +203,7 @@ async function staticFastPath(
   }
 
   const pageAsset = await environment.ASSETS.fetch(
-    requestForAsset(request, staticPageAssetPath(pathname)),
+    requestForAsset(request, staticPageAssetPath(documentPathname)),
   );
   if (pageAsset.status !== 404) {
     const status = pathname === "/_not-found" ? 404 : pageAsset.status;

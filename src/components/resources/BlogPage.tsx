@@ -1,5 +1,6 @@
 "use client";
 
+import { brandCase } from "@/lib/brand";
 import Image from "next/image";
 import { PublicLink as Link } from "@/components/site/PublicLink";
 import { useMemo, useState } from "react";
@@ -56,7 +57,6 @@ export function BlogPage() {
     <main className={styles.page} data-blog-page>
       <section className={styles.hero} aria-labelledby="blog-title">
         <div className={styles.heroInner}>
-          <span className="tbb-label">Resources / {BLOG_POSTS.length} articles</span>
           <h1 id="blog-title">Blog</h1>
           <p>
             Practical guidance on beverage bases and B2B supply for cafés, restaurants and
@@ -141,7 +141,7 @@ export function BlogPage() {
                 <time dateTime={lead.published}>{displayDate(lead.published)}</time>
               </span>
               <h2>{lead.title}</h2>
-              <span className={styles.excerpt}>{lead.excerpt}</span>
+              <span className={styles.excerpt}>{brandCase(lead.excerpt)}</span>
               <span className={styles.readMore}>
                 Read article <span aria-hidden="true">→</span>
               </span>
@@ -178,7 +178,7 @@ export function BlogPage() {
                     <time dateTime={post.published}>{displayDate(post.published)}</time>
                   </span>
                   <h2>{post.title}</h2>
-                  <span className={styles.excerpt}>{post.excerpt}</span>
+                  <span className={styles.excerpt}>{brandCase(post.excerpt)}</span>
                   <span className={styles.readMore}>
                     Read article <span aria-hidden="true">→</span>
                   </span>

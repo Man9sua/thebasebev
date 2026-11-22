@@ -1,3 +1,4 @@
+import { CopyButton } from "@/components/site/CopyButton";
 import { SiteLink } from "@/components/site/SiteLink";
 import { COMPANY } from "@/lib/site-config";
 import styles from "./ContactPage.module.css";
@@ -35,33 +36,25 @@ import styles from "./ContactPage.module.css";
  * kinds of lead.
  */
 
-/**
- * The department mailboxes. `short` is the label the card falls back to on a
- * phone, where four cards become a 2 × 2 grid of tiles — the full label and the
- * address do not fit, and the accessible name on the link carries both anyway.
- */
+/** Department labels and email addresses stay visible at every viewport. */
 const CHANNELS = [
   {
     label: "General enquiries",
-    short: "General",
     value: COMPANY.email,
     href: COMPANY.emailHref,
   },
   {
     label: "New wholesale accounts",
-    short: "Wholesale",
     value: "sales@thebasebev.com",
     href: "mailto:sales@thebasebev.com",
   },
   {
     label: "Retail and HoReCa orders",
-    short: "Orders",
     value: "retail@thebasebev.com",
     href: "mailto:retail@thebasebev.com",
   },
   {
     label: "Existing orders and logistics",
-    short: "Logistics",
     value: "supply@thebasebev.com",
     href: "mailto:supply@thebasebev.com",
   },
@@ -80,6 +73,31 @@ const INTERESTS = [
 ] as const;
 
 const DEFAULT_INTEREST = "Wholesale";
+
+/**
+ * What a visitor needs before writing: where to come, when, what we can send
+ * and what we are certified for. The first screen keeps the phone and the
+ * form; these facts sit under it so the page answers the questions a search
+ * for "The Base Dubai contact" or "The Base showroom" is really asking.
+ */
+const FACTS = [
+  {
+    title: "Showroom in Al Quoz",
+    text: "Our showroom is in Al Quoz Industrial Area 2, Dubai. Come in to taste the bases, see the full range of packs and work through a drinks menu with our team. Open Monday to Saturday, 9:00 to 18:00 Dubai time, closed on Sunday.",
+  },
+  {
+    title: "Orders and free samples",
+    text: "Write to sales@thebasebev.com with the products, your market and the volume you expect. Free samples are available for cafés, chains and distributors, there is no minimum order, and production lead time starts from 15 days.",
+  },
+  {
+    title: "Certified production",
+    text: "Every base is made in our own factory in the UAE under a HACCP food safety system and ISO 22000 certification, and the range is Halal certified. Certificates and product specifications are sent on request for your order and destination market.",
+  },
+  {
+    title: "Where we supply",
+    text: "The Base supplies HoReCa, retail and distributors in 26 countries through more than 5,000 points of sale: over 600 flavours across 24 product lines, with menu development, private label and barista masterclasses for groups of 20 or more.",
+  },
+] as const;
 
 export function ContactPage() {
   return (
@@ -102,24 +120,26 @@ export function ContactPage() {
           </p>
 
           <div className={styles.phoneBlock}>
-            <a className={styles.phone} href="tel:+97142800375">
-              +971 4 280 0375
-            </a>
+            {/* Tap to call; the copy button sits beside it, visible on touch too. */}
+            <div className={styles.phoneRow}>
+              <a className={styles.phone} href="tel:+97142800375">
+                +971 4 280 0375
+              </a>
+              <CopyButton className={styles.copyButton} value="+971 4 280 0375" label="Copy phone number" />
+            </div>
             <span className={styles.hours}>Monday to Saturday, 09:00–18:00 GST (UTC+4)</span>
           </div>
 
           <div className={styles.channels}>
             {CHANNELS.map((channel) => (
-              <a
-                key={channel.value}
-                className={styles.channel}
-                href={channel.href}
-                aria-label={`${channel.label}: ${channel.value}`}
-              >
-                <span className={styles.channelLabel}>{channel.label}</span>
-                <span className={styles.channelShort}>{channel.short}</span>
-                <span className={styles.channelValue}>{channel.value}</span>
-              </a>
+              <div key={channel.value} className={styles.channel}>
+                <a className={styles.channelLink} href={channel.href} aria-label={`${channel.label}: ${channel.value}`}>
+                  <span className={styles.channelLabel}>{channel.label}</span>
+                  <span className={styles.channelValue}>{channel.value}</span>
+                </a>
+                {/* Shown on hover or focus with a pointer; always on touch screens. */}
+                <CopyButton className={styles.copyButton} value={channel.value} label={`Copy ${channel.value}`} />
+              </div>
             ))}
           </div>
         </div>
@@ -223,10 +243,24 @@ export function ContactPage() {
             className={`js-successbox t-form__successbox ${styles.success}`}
             style={{ display: "none" }}
           >
-            Thank you. Your enquiry has been sent to THE BASE team.
+            Thank you. Your enquiry has been sent to the Base team.
           </div>
         </form>
       </div>
+
+      <section className={styles.facts} aria-labelledby="contact-facts-title">
+        <h2 id="contact-facts-title" className={styles.factsTitle}>
+          Visit the showroom or write to sales
+        </h2>
+        <div className={styles.factsGrid}>
+          {FACTS.map((fact) => (
+            <article key={fact.title} className={styles.fact}>
+              <h3>{fact.title}</h3>
+              <p>{fact.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
