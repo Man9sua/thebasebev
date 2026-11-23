@@ -156,6 +156,8 @@ async function shopBaskets(page) {
   check(await mixedSummary.getByText(/^AED\s*529\.20$/, { exact: true }).isVisible(), "Mixed checkout: 504 net goods qualify for free delivery; total is 529.20 AED");
   check(await mixedSummary.getByText(/Weekend orders are delivered in 1–2 days/).isVisible(), "Checkout displays the approved weekday and weekend delivery times");
   const emirate = page.getByRole("combobox", { name: "Emirate", exact: true });
+  const suggestedPrices = await page.getByRole("region", { name: "Suggested products" }).locator("[data-shop-price]").allTextContents();
+  check(suggestedPrices.length > 0 && suggestedPrices.every(price => price.includes("AED")), "Checkout suggests only ranges with an approved price");
   check(await emirate.inputValue() === "" && await emirate.locator('option:not([disabled])').count() === 7, "Checkout offers all seven emirates with no assumed address");
   await emirate.selectOption("Fujairah");
   picker = await openPicker(page, "matcha");

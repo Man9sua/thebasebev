@@ -99,7 +99,7 @@ export function SugarFreePage({ product }: ProductPageProps) {
       <Section className={cx(j.gap40, s.closer)} title="Made for service" label="Made for service">
         <Stats
           columns={6}
-          className={j.miniStats}
+          className={cx(j.miniStats, s.serviceFacts)}
           items={[
             { value: "1 g", label: "One sachet per drink" },
             { value: "1 kcal", label: "Per serve" },

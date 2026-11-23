@@ -4,6 +4,10 @@
  * section that sits closer to it, and white flavour cards with sachet photos.
  */
 
+.closer .serviceFacts > div {
+  justify-content: flex-start;
+}
+
 @media (min-width: 1024px) {
   .hero.hero {
     grid-template-columns: minmax(0, 1fr) calc(600 * var(--u));

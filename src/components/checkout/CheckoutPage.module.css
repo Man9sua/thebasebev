@@ -41,7 +41,8 @@
 .basket { display: grid; min-width: 0; gap: 32px; }
 .suggestions { display: grid; min-width: 0; gap: 16px; padding-top: 28px; }
 .suggestions > h2 { margin: 0; font-size: 18px; font-weight: var(--tbb-font-weight-subheading); }
-.productRail { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(168px, 19vw, 200px); gap: 14px; min-width: 0; padding: 4px 4px 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 4px; scrollbar-color: #b9b5ae #f5f3ef; }
+.productRail { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(168px, 19vw, 200px); gap: 14px; min-width: 0; padding: 4px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 4px; scrollbar-width: none; }
+.productRail::-webkit-scrollbar { display: none; }
 .section h2, .summary h2 { margin: 0 !important; font-family: var(--tbb-font-heading); font-size: 22px; font-weight: var(--tbb-font-weight-subheading); line-height: 1.15; }
 .fields { display: grid; gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; color: #55524c; font-size: 13px; font-weight: var(--tbb-font-weight-button); }

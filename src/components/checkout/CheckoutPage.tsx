@@ -22,7 +22,7 @@ import {
 } from "@/lib/cart-store";
 import { rememberPendingCheckout } from "@/lib/checkout-session";
 import { submitShopQuoteRequest, submitShopSampleRequest } from "@/lib/shop-lead";
-import { formatShopMoney, getShopQuote, getShopUnitAmount, getShopPackLabel, hasPayableVariants, SHOP_ORDER_PAYMENTS_READY, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
+import { formatShopMoney, getShopQuote, getShopUnitAmount, getShopPriceRange, getShopPackLabel, hasPayableVariants, SHOP_ORDER_PAYMENTS_READY, UAE_DELIVERY_TIMING } from "@/lib/shop-payment";
 import { combineShopBaskets, shopBasketKey } from "@/lib/shop-basket";
 import { getFirstTouchAttribution } from "@/components/forms/first-touch";
 import { stripeSessionMode } from "@/lib/stripe-mode";
@@ -87,7 +87,18 @@ const SAMPLE_ADDRESS_FIELDS: readonly FieldDefinition[] = [
 const DHL_FIELD: FieldDefinition = { key: "dhlAccount", label: "DHL account number", required: true, maxLength: 64 };
 const BUSINESS_TYPES = ["Café", "Restaurant", "Hotel", "Distributor", "Other"];
 const COUNTRY_NAMES = new Map(DISTRIBUTOR_MARKETS.map(({ code, name }) => [code, name]));
-const SUGGESTED_PRODUCTS = SHOP_PRODUCTS.filter(product => product.image && product.flavors.length);
+const SUGGESTED_PRODUCTS = SHOP_PRODUCTS.filter(product =>
+  product.image && product.flavors.length > 0 && getShopPriceRange(product.slug) !== null
+);
+
+function shuffleSuggestions() {
+  const products = [...SUGGESTED_PRODUCTS];
+  for (let index = products.length - 1; index > 0; index--) {
+    const other = Math.floor(Math.random() * (index + 1));
+    [products[index], products[other]] = [products[other], products[index]];
+  }
+  return products;
+}
 const SHIPPING_METHODS = [
   { id: "standard", name: "Standard", description: "Delivery time and cost confirmed before payment" },
   { id: "express", name: "Express", description: "Availability and cost confirmed for your address" },
@@ -178,6 +189,7 @@ export function CheckoutPage() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [completed, setCompleted] = useState(false);
+  const [suggestedProducts] = useState(shuffleSuggestions);
   const [suggestion, setSuggestion] = useState<ShopProduct | null>(null);
   const [pickerKind, setPickerKind] = useState<ShopKind>("products");
   const closeSuggestion = useCallback(() => setSuggestion(null), []);
@@ -358,7 +370,7 @@ export function CheckoutPage() {
                 {!isSample && <section className={styles.suggestions} aria-labelledby="checkout-suggestions-title">
                   <h2 id="checkout-suggestions-title">You can also add:</h2>
                   <div className={styles.productRail} tabIndex={0} role="region" aria-label="Suggested products">
-                    {SUGGESTED_PRODUCTS.map(product => <ProductCard key={product.slug} product={product} kind="products"
+                    {suggestedProducts.map(product => <ProductCard key={product.slug} product={product} kind="products"
                       count={quantities.get(product.slug) ?? 0} compact disabled={pending} onChoose={() => {
                         const firstLine = items.find(item => item.slug === product.slug);
                         setPickerKind(firstLine?.kind ?? "products");
