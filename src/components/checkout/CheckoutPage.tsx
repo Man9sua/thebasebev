@@ -5,14 +5,14 @@ import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import { useCart, useSampleCart } from "@/components/cart/useCart";
 import { ShopPackImage } from "@/components/shop/ShopPackImage";
 import { DeliveryProgress } from "@/components/shop/DeliveryProgress";
-import { FlavourPicker } from "@/components/shop/ShopPage";
+import { FlavourPicker, ProductCard } from "@/components/shop/ShopPage";
 import { QuantityInput } from "@/components/shop/QuantityInput";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { SiteLink } from "@/components/site/SiteLink";
 import { useCountryCode } from "@/components/site/useCountryCode";
 import { getCheckoutProductId } from "@/data/catalog";
 import { DISTRIBUTOR_MARKETS } from "@/data/distributor-markets";
-import { getShopProduct, SHOP_MAX_QUANTITY, type ShopProduct } from "@/data/shop";
+import { getShopProduct, SHOP_MAX_QUANTITY, SHOP_PRODUCTS, type ShopKind, type ShopProduct } from "@/data/shop";
 import {
   removeSubmittedSamples,
   removeCartItem,
@@ -35,6 +35,7 @@ type Fields = {
   email: string;
   company: string;
   website: string;
+  emirate: string;
   city: string;
   street: string;
   postalCode: string;
@@ -48,12 +49,13 @@ type FieldDefinition = {
   type?: "email" | "tel";
   autoComplete?: string;
   placeholder?: string;
+  options?: readonly string[];
   maxLength?: number;
 };
 type FieldErrors = Partial<Record<keyof Fields | "consent", string>>;
 
 const INITIAL_FIELDS: Fields = {
-  name: "", phone: "", email: "", company: "", website: "", city: "",
+  name: "", phone: "", email: "", company: "", website: "", emirate: "", city: "",
   street: "", postalCode: "", unit: "", dhlAccount: "",
 };
 const CONTACT_FIELDS: readonly FieldDefinition[] = [
@@ -70,6 +72,8 @@ const BUSINESS_FIELDS: readonly FieldDefinition[] = [
   { key: "email", label: "Email", type: "email", required: true, autoComplete: "email", maxLength: 254 },
 ];
 const ADDRESS_FIELDS: readonly FieldDefinition[] = [
+  { key: "emirate", label: "Emirate", required: true, autoComplete: "address-level1", placeholder: "Select an Emirate",
+    options: ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah", "Umm Al Quwain"] },
   { key: "city", label: "Area", required: true, placeholder: "Al Quoz", autoComplete: "address-level2" },
   { key: "street", label: "Street, building", required: true, autoComplete: "address-line1", maxLength: 240 },
   { key: "unit", label: "Unit or shop no. (optional)", autoComplete: "address-line2", maxLength: 120 },
@@ -81,10 +85,9 @@ const SAMPLE_ADDRESS_FIELDS: readonly FieldDefinition[] = [
   { key: "unit", label: "Unit, floor (optional)", autoComplete: "address-line2", maxLength: 120 },
 ];
 const DHL_FIELD: FieldDefinition = { key: "dhlAccount", label: "DHL account number", required: true, maxLength: 64 };
-const EMIRATES = ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah", "Umm Al Quwain"];
 const BUSINESS_TYPES = ["Café", "Restaurant", "Hotel", "Distributor", "Other"];
 const COUNTRY_NAMES = new Map(DISTRIBUTOR_MARKETS.map(({ code, name }) => [code, name]));
-const SAMPLE_SUGGESTIONS = ["chai-latte", "iced-tea", "cordial", "frappe", "sugar-free", "cream-latte"].map(getShopProduct).filter((product): product is ShopProduct => Boolean(product));
+const SUGGESTED_PRODUCTS = SHOP_PRODUCTS.filter(product => product.image && product.flavors.length);
 const SHIPPING_METHODS = [
   { id: "standard", name: "Standard", description: "Delivery time and cost confirmed before payment" },
   { id: "express", name: "Express", description: "Availability and cost confirmed for your address" },
@@ -129,23 +132,24 @@ function CheckoutField({ field, value, error, disabled, onChange }: {
   onChange: (key: keyof Fields, value: string) => void;
 }) {
   const id = `checkout-${field.key}`;
+  const controlProps = {
+    id, name: field.key, value, required: field.required, autoComplete: field.autoComplete, disabled,
+    "aria-invalid": Boolean(error),
+    "aria-describedby": error ? `${id}-error` : undefined,
+  };
   return (
     <label className={styles.field} htmlFor={id}>
       <span>{field.label}</span>
-      <input
-        id={id}
-        name={field.key}
+      {field.options ? <select {...controlProps} onChange={event => onChange(field.key, event.target.value)}>
+        <option value="" disabled>{field.placeholder}</option>
+        {field.options.map(option => <option key={option}>{option}</option>)}
+      </select> : <input
+        {...controlProps}
         type={field.type ?? "text"}
-        value={value}
-        required={field.required}
-        autoComplete={field.autoComplete}
         placeholder={field.placeholder}
         maxLength={field.maxLength ?? 160}
-        disabled={disabled}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${id}-error` : undefined}
         onChange={(event) => onChange(field.key, event.target.value)}
-      />
+      />}
       {error && <span id={`${id}-error`} className={styles.fieldError}>{error}</span>}
     </label>
   );
@@ -167,7 +171,6 @@ export function CheckoutPage() {
   const totalQuantity = cart.items.reduce((total, item) => total + item.quantity, 0);
   const [fields, setFields] = useState(INITIAL_FIELDS);
   const [businessType, setBusinessType] = useState("Café");
-  const [emirate, setEmirate] = useState("Dubai");
   const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
   const [deliveryPayment, setDeliveryPayment] = useState<"link" | "dhl-account">("link");
   const [consent, setConsent] = useState(false);
@@ -175,8 +178,14 @@ export function CheckoutPage() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [completed, setCompleted] = useState(false);
-  const [samplePicker, setSamplePicker] = useState<ShopProduct | null>(null);
-  const closeSamplePicker = useCallback(() => setSamplePicker(null), []);
+  const [suggestion, setSuggestion] = useState<ShopProduct | null>(null);
+  const [pickerKind, setPickerKind] = useState<ShopKind>("products");
+  const closeSuggestion = useCallback(() => setSuggestion(null), []);
+  const quantities = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const item of items) counts.set(item.slug, (counts.get(item.slug) ?? 0) + item.quantity);
+    return counts;
+  }, [items]);
   const checkoutAttempt = useRef<{ payload: string; key: string } | null>(null);
 
   const lines = useMemo(() => cart.items.flatMap((item) => {
@@ -240,7 +249,7 @@ export function CheckoutPage() {
       name: fields.name.trim(), phone: fields.phone.trim(), email: fields.email.trim(),
       company: fields.company.trim(), website: fields.website.trim(),
       businessType: isSample ? businessType : undefined,
-      emirate: isSample ? undefined : emirate, city: fields.city.trim(),
+      emirate: isSample ? undefined : fields.emirate, city: fields.city.trim(),
       street: fields.street.trim(), postalCode: fields.postalCode.trim(),
       unit: fields.unit.trim(),
     };
@@ -346,10 +355,17 @@ export function CheckoutPage() {
                     {!isSample && <strong className={styles.linePrice}>{line.kind === "samples" ? "Free" : line.unitAmount === null ? "Price to confirm" : formatShopMoney(line.unitAmount * line.quantity)}</strong>}
                   </article>
                 ); })}</div>
-                {!isSample && <div className={styles.sampleSuggestions}>
-                  <h2>Add free samples to this order</h2>
-                  <div className={styles.chips}>{SAMPLE_SUGGESTIONS.map(product => <button type="button" key={product.slug} aria-pressed={sampleCart.items.some(item => item.slug === product.slug)} disabled={pending} onClick={() => setSamplePicker(product)}>{product.name}</button>)}</div>
-                </div>}
+                {!isSample && <section className={styles.suggestions} aria-labelledby="checkout-suggestions-title">
+                  <h2 id="checkout-suggestions-title">You can also add:</h2>
+                  <div className={styles.productRail} tabIndex={0} role="region" aria-label="Suggested products">
+                    {SUGGESTED_PRODUCTS.map(product => <ProductCard key={product.slug} product={product} kind="products"
+                      count={quantities.get(product.slug) ?? 0} compact disabled={pending} onChoose={() => {
+                        const firstLine = items.find(item => item.slug === product.slug);
+                        setPickerKind(firstLine?.kind ?? "products");
+                        setSuggestion(product);
+                      }} />)}
+                  </div>
+                </section>}
               </section>
               <div className={styles.sections}>
                 <section className={styles.section} aria-labelledby="checkout-contact-title">
@@ -361,12 +377,8 @@ export function CheckoutPage() {
                 </section>
                 <section className={styles.section} aria-labelledby="checkout-address-title">
                   <h2 id="checkout-address-title">{isSample ? "Delivery address for DHL" : "Delivery address"}</h2>
-                  {isSample ? (
+                  {isSample && (
                     <label className={styles.field}><span>Country</span><input value={countryName} readOnly autoComplete="country-name" /></label>
-                  ) : (
-                    <div className={styles.field}><span>Emirate</span><div className={styles.chips} role="group" aria-label="Emirate">{EMIRATES.map((name) => (
-                      <button key={name} type="button" aria-pressed={emirate === name} onClick={() => setEmirate(name)} disabled={pending}>{name}</button>
-                    ))}</div></div>
                   )}
                   <div className={styles.fields}>{addressFields.map((field) => <CheckoutField key={field.key} field={field} value={fields[field.key]} error={fieldErrors[field.key]} disabled={pending} onChange={updateField} />)}</div>
                 </section>
@@ -415,8 +427,8 @@ export function CheckoutPage() {
           )}
         </main>
       )}
-      {samplePicker && <FlavourPicker product={samplePicker} kind="samples" items={sampleCart.items}
-        allowSamples={false} totalLines={items.length} onKindChange={() => {}} onClose={closeSamplePicker} />}
+      {suggestion && <FlavourPicker product={suggestion} kind={pickerKind} items={pickerKind === "samples" ? sampleCart.items : paidCart.items}
+        allowSamples totalLines={items.length} onKindChange={setPickerKind} onClose={closeSuggestion} />}
     </div>
   );
 }

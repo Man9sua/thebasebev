@@ -111,7 +111,7 @@ export function FlavorPicker({
               {name}
             </h2>
             <p className={styles.meta}>
-              {price ?? "Price on request"}
+              {price ?? "-"}
               {weight ? <span className={styles.metaDot}>·</span> : null}
               {weight ? `${weight} pouch` : null}
             </p>

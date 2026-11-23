@@ -53,7 +53,7 @@ export function ProductShopHero({ slug, title, lead, specification }: {
           <div className={styles.chips}>{product.flavors.map(name => <button type="button" key={name} aria-pressed={flavor === name} onClick={() => { setFlavor(name); setMessage(""); }}>{name}</button>)}</div>
         </fieldset>}
         <div className={styles.pack}><span>Pack</span><strong>{pack}</strong></div>
-        <div className={styles.price}>{purchasable ? formatShopMoney(amount) : country === "AE" ? "Price on request" : "Free samples available"}</div>
+        <div className={styles.price}>{purchasable ? formatShopMoney(amount) : country === "AE" ? "-" : "Free samples available"}</div>
         {purchasable && <div className={styles.purchase}>
           <div className={styles.quantity} role="group" aria-label={`${product.name} quantity`}>
             <button type="button" aria-label="Decrease quantity" disabled={quantity <= 1} onClick={() => setQuantity(quantity - 1)}>−</button>

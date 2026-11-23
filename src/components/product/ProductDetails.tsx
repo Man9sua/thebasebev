@@ -82,7 +82,7 @@ export function ProductDetails({ product }: { product: Product }) {
             {specs.map((spec) => {
               const label = spec.label === "Prep Time" ? "Preparation Time" : spec.label;
               const price = /packaging/i.test(spec.label)
-                ? (product.price ?? "Price on request")
+                ? (product.price ?? "-")
                 : null;
 
               return (

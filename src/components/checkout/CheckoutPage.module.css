@@ -39,14 +39,15 @@
 .sections, .grid > .section, .summary { padding-top: 28px; border-top: 1px solid #eeeae3; }
 .section, .orderActions { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 .basket { display: grid; min-width: 0; gap: 32px; }
-.sampleSuggestions { display: grid; gap: 16px; padding-top: 28px; }
-.sampleSuggestions h2 { font-size: 18px; font-weight: var(--tbb-font-weight-subheading); }
+.suggestions { display: grid; min-width: 0; gap: 16px; padding-top: 28px; }
+.suggestions > h2 { margin: 0; font-size: 18px; font-weight: var(--tbb-font-weight-subheading); }
+.productRail { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(168px, 19vw, 200px); gap: 14px; min-width: 0; padding: 4px 4px 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 4px; scrollbar-color: #b9b5ae #f5f3ef; }
 .section h2, .summary h2 { margin: 0 !important; font-family: var(--tbb-font-heading); font-size: 22px; font-weight: var(--tbb-font-weight-subheading); line-height: 1.15; }
-.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.fields { display: grid; gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; color: #55524c; font-size: 13px; font-weight: var(--tbb-font-weight-button); }
-.field input { box-sizing: border-box; width: 100%; min-width: 0; height: 52px; padding: 0 16px; border: 1.5px solid #e2ddd8; border-radius: 14px; background: #fff; color: #111; font: var(--tbb-font-weight-body) 16px / 1.4 var(--tbb-font-body); }
+.field :is(input, select) { box-sizing: border-box; width: 100%; min-width: 0; height: 52px; padding: 0 16px; border: 1.5px solid #e2ddd8; border-radius: 14px; background: #fff; color: #111; font: var(--tbb-font-weight-body) 16px / 1.4 var(--tbb-font-body); }
 .field input::placeholder { color: #8a867f; }
-.field input[aria-invalid="true"] { border-color: #e3141b; }
+.field [aria-invalid="true"] { border-color: #e3141b; }
 .field input[readonly] { color: #55524c; }
 .fieldError { margin: 0 !important; color: #bc1118; font-size: 13px; font-weight: var(--tbb-font-weight-medium); line-height: 1.4 !important; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -97,7 +98,7 @@
 .backButton:hover { background: #e3141b; color: #fff; }
 .empty { padding: 32px; border-radius: 24px; background: #fff; }
 .empty h2 { margin: 0 !important; font-size: 24px; font-weight: var(--tbb-font-weight-subheading); }
-.page :is(a, button, input, textarea):focus-visible { outline: 2px solid #e3141b; outline-offset: 4px; }
+.page :is(a, button, input, select, [tabindex="0"]):focus-visible { outline: 2px solid #e3141b; outline-offset: 3px; }
 .page button:disabled { cursor: not-allowed; }
 .page :is(label, input, textarea, button) { -webkit-tap-highlight-color: transparent; }
 
@@ -115,7 +116,7 @@
   .lineCopy h3 { font-size: 17px; }
   .lineCopy p { font-size: 13px; }
   .linePrice { grid-column: 2; max-width: none; text-align: left; }
-  .fields, .choices { grid-template-columns: minmax(0, 1fr); }
+  .choices { grid-template-columns: minmax(0, 1fr); }
   .choice { padding: 16px; }
   .totals { padding: 16px; }
   .totals .totalLine { font-size: 20px; }

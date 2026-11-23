@@ -155,6 +155,19 @@ async function shopBaskets(page) {
   await mixedLines.locator('[data-checkout-line-kind="products"]').getByRole("button", { name: "Increase Milkshake Vanilla quantity", exact: true }).click();
   check(await mixedSummary.getByText(/^AED\s*529\.20$/, { exact: true }).isVisible(), "Mixed checkout: 504 net goods qualify for free delivery; total is 529.20 AED");
   check(await mixedSummary.getByText(/Weekend orders are delivered in 1–2 days/).isVisible(), "Checkout displays the approved weekday and weekend delivery times");
+  const emirate = page.getByRole("combobox", { name: "Emirate", exact: true });
+  check(await emirate.inputValue() === "" && await emirate.locator('option:not([disabled])').count() === 7, "Checkout offers all seven emirates with no assumed address");
+  await emirate.selectOption("Fujairah");
+  picker = await openPicker(page, "matcha");
+  await picker.getByRole("button", { name: "Add one Classic Matcha", exact: true }).click();
+  await picker.getByRole("button", { name: "Free samples", exact: true }).click();
+  await picker.getByRole("button", { name: "Add one Classic Matcha", exact: true }).click();
+  await closePicker(page, picker);
+  for (const kind of ["products", "samples"]) {
+    const matcha = mixedLines.locator(`[data-checkout-line-kind="${kind}"]`).filter({has: page.getByRole("heading", {name: "Matcha", exact: true})});
+    check(await matcha.count() === 1, `Checkout suggestions add ${kind} to the matching basket`);
+  }
+  check(await emirate.inputValue() === "Fujairah", "Adding suggested packs and samples preserves the selected delivery emirate");
   check(checkoutAttempts === 0 && leadAttempts === 0, "Mixed basket editing makes no real request or payment");
 }
 

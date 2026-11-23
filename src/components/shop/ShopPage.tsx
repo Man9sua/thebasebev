@@ -91,17 +91,20 @@ function changeQuantity(kind: ShopKind, slug: string, flavor: string, quantity: 
   else (kind === "samples" ? setSampleCartItemQuantity : setCartItemQuantity)(slug, flavor, quantity);
 }
 
-function ProductCard({ product, kind, count, onChoose, eager }: { product: ShopProduct; kind: ShopKind; count: number; onChoose: () => void; eager: boolean }) {
+export function ProductCard({ product, kind, count, onChoose, eager = false, compact = false, disabled = false }: {
+  product: ShopProduct; kind: ShopKind; count: number; onChoose: () => void; eager?: boolean; compact?: boolean; disabled?: boolean;
+}) {
+  const image = <ShopPackImage product={product} sizes={compact ? "clamp(168px, 19vw, 200px)" : "(max-width: 719px) calc((100vw - 44px) / 2), (max-width: 1100px) 28vw, 280px"} eager={eager} />;
+  const tileStyle = { backgroundColor: product.backgroundColor };
   return (
-    <article className={styles.card} data-shop-product={product.slug}>
-      <SiteLink className={styles.tile} style={{ backgroundColor: product.backgroundColor }} href={product.route} aria-label={product.name} tabIndex={-1}>
-        <ShopPackImage product={product} sizes="(max-width: 719px) calc((100vw - 44px) / 2), (max-width: 1100px) 28vw, 280px" eager={eager} />
-      </SiteLink>
+    <article className={compact ? `${styles.card} ${styles.compactCard}` : styles.card} data-shop-product={product.slug}>
+      {compact ? <button type="button" className={styles.tile} style={tileStyle} aria-label={`Choose ${product.name} flavours`} tabIndex={-1} disabled={disabled} onClick={onChoose}>{image}</button>
+        : <SiteLink className={styles.tile} style={tileStyle} href={product.route} aria-label={product.name} tabIndex={-1}>{image}</SiteLink>}
       <div className={styles.info}>
-        <h2 className={styles.name}><SiteLink href={product.route}>{product.name}</SiteLink></h2>
+        {compact ? <h3 className={styles.name}>{product.name}</h3> : <h2 className={styles.name}><SiteLink href={product.route}>{product.name}</SiteLink></h2>}
         <span className={styles.price} data-shop-price>{unitLabel(product, kind)}</span>
       </div>
-      <button className={`${styles.control} ${styles.cardAction} ${count > 0 ? styles.inCart : ""}`} type="button" aria-haspopup="dialog" data-shop-choose={product.slug} onClick={onChoose}>
+      <button className={`${styles.control} ${styles.cardAction} ${count > 0 ? styles.inCart : ""}`} type="button" aria-haspopup="dialog" data-shop-choose={product.slug} disabled={disabled} onClick={onChoose}>
         {count > 0 ? `${count} in ${kind === "samples" ? "sample box" : "cart"}, edit` : kind === "samples" ? "Add to sample box" : "Choose flavours"}
       </button>
     </article>
