@@ -177,7 +177,7 @@ if (controlledRoutes.length !== expectedControlledRoutes) {
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
   );
 }
-if (redirectRows.length !== 77 + publicRoutePaths.length) throw new Error(`Expected ${77 + publicRoutePaths.length} redirects, received ${redirectRows.length}.`);
+if (redirectRows.length !== 79 + publicRoutePaths.length) throw new Error(`Expected ${79 + publicRoutePaths.length} redirects, received ${redirectRows.length}.`);
 
 /*
  * `worker.ts` restates the redirect table because its static fast path answers

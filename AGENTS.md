@@ -92,7 +92,7 @@ See `PAYMENT_PIPELINE.md` for the Test Mode receiver, durable order ledger and v
 
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 
-Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Before every deployment, verify that Wrangler selects account `mansua` and exact account ID `678720af4dded7d23aad4a859b6e5f3a`. Deploy staging only when the current task explicitly authorizes it; the prelaunch integration workflow is such authorization. Production-preview and the production domain require separate human approval. Never add a custom domain during migration preparation.
+Before changing Next.js APIs, read the relevant guide under `node_modules/next/dist/docs/`. Before every deployment, verify that Wrangler selects account `mansua` and exact account ID `678720af4dded7d23aad4a859b6e5f3a`. Deploy staging only when the current task explicitly authorizes it; the prelaunch integration workflow is such authorization. Production deploys happen only through a merge into `main` (see Git workflow); never run `deploy:production` by hand without explicit human approval. Never add a custom domain during migration preparation.
 
 ## Definition of done
 
@@ -100,7 +100,7 @@ Every generation task ends with these three steps, in this order. None of them i
 
 1. **Refactor what was just generated.** Re-read it before shipping. Hoist work that does not belong in a render, delete whatever the change made dead, collapse duplicated branches, and match the naming and comment density of the file it lives in. Then re-run the required checks above — a refactor that was not re-verified did not happen.
 2. **Push to GitHub.** Commit onto a `feature/*`, `fix/*` or `migration/*` branch — never straight onto `main` or `develop` — push to `origin`, and open a PR toward `develop`. One commit message that says what changed and why, per the Git workflow below.
-3. **Deploy to Cloudflare staging.** `npm run deploy:staging`, then verify with `npm run smoke:http`, `npm run smoke:browser` and `npm run audit:crawlers` against the URL wrangler prints. Staging must come back `noindex, nofollow` at the transport layer, and canonicals must still point at `https://thebasebev.com`.
+3. **Deploy to Cloudflare staging.** Pushes to `develop` deploy staging automatically. For a branch that is not merged yet, `npm run deploy:staging` only when the task authorizes it, then verify with `npm run smoke:http`, `npm run smoke:browser` and `npm run audit:crawlers` against the URL wrangler prints. Staging must come back `noindex, nofollow` at the transport layer, and canonicals must still point at `https://thebasebev.com`.
 
    The authoritative staging Worker is `the-base-staging.mansua.workers.dev`. The older `mnsdemo.workers.dev` Worker is rollback/reference only. The generated Static Assets document fast path is required because it resolved the target account's earlier Worker CPU-limit failures; do not remove it based on a local-only result.
 
@@ -108,7 +108,8 @@ Report each step's real outcome. A failed deploy or a failing check is reported 
 
 ## Git workflow
 
-- `main`: stable, production-ready branch.
-- `develop`: integration branch.
-- Work on `feature/*`, `fix/*`, or `migration/*`; open a PR toward `develop`, then promote reviewed releases to `main`.
+- `main`: the production branch. Every push to `main` runs CI and, if it passes, `.github/workflows/deploy.yml` deploys the `the-base-production` Worker that serves `https://thebasebev.com`. Merging a PR into `main` is the human approval for a production deploy.
+- `develop`: integration branch. Every push to `develop` runs CI and deploys the `the-base-staging` Worker on `workers.dev` only.
+- Work on `feature/*`, `fix/*`, `migration/*` or `content/*`; open a PR toward `develop`, then promote reviewed releases to `main`. Blog content PRs (`content/blog-*`) go straight to `main`, because their merge is what publishes them.
+- Agents never push to `main` or `develop` directly and never merge their own PRs. See `docs/AUTO_DEPLOY.md`.
 - Never force-push shared branches. Never commit build output, browser artifacts, credentials, tokens, or Cloudflare secrets.

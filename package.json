@@ -47,6 +47,7 @@
     "preview": "npm run cf:build && opennextjs-cloudflare preview",
     "deploy:staging": "npm run cf:build && opennextjs-cloudflare deploy --env staging",
     "deploy:production-preview": "npm run cf:build && opennextjs-cloudflare deploy --env production",
+    "deploy:production": "npm run cf:build && opennextjs-cloudflare deploy --env production",
     "deploy:staging-leads": "wrangler deploy --config wrangler.staging-leads.jsonc"
   },
   "dependencies": {

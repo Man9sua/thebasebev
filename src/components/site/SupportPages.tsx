@@ -16,9 +16,10 @@ export function RequestSamplesPage() {
 }
 
 const QUALITY_ITEMS = [
-  { title: "HACCP", text: "Food safety controls across production. Ask our team for current documentation relevant to your order." },
-  { title: "Halal", text: "Halal documentation is available on request. Confirm product and destination requirements with our team." },
-  { title: "Product specifications", text: "Request ingredients, allergens, nutrition and handling information for the exact product and flavour you need." },
+  { title: "HACCP", text: "Every base is made under a HACCP food safety plan: hazards are identified at each step from raw material intake to packing, and each critical control point is monitored and recorded batch by batch." },
+  { title: "ISO 22000", text: "Our food safety management system is certified to ISO 22000, the international standard that covers supplier approval, traceability, hygiene and recall procedures across the whole production chain." },
+  { title: "Halal", text: "The range is Halal certified, so cafés, hotels and chains across the UAE, the GCC and other Muslim markets can list our products without extra checks. Certificates are sent on request." },
+  { title: "Product specifications", text: "Request ingredients, allergens, nutrition, shelf life and handling information for the exact product and flavour you need." },
 ];
 
 export function CertificatesPage() {
@@ -26,6 +27,16 @@ export function CertificatesPage() {
     <h1>Quality, documented.</h1>
     <p className={styles.intro}>The right documentation for your product, your business and your market. Contact the Base for current certificates and product specifications.</p>
     <div className={styles.cards}>{QUALITY_ITEMS.map(({ title, text }) => <section key={title} className={styles.card}><h2>{title}</h2><p>{text}</p></section>)}</div>
+    {/* Facts a buyer or importer checks before listing a supplier: where the
+        product is made, what documents come with it and whom to ask. */}
+    <div className={styles.copy}>
+      <h2>Made in our own UAE factory</h2>
+      <p>The Base produces its dry beverage bases in its own factory in the UAE, so formulation, production and quality control stay under one roof. The same certified process supplies more than 5,000 points of sale in 26 countries, from single cafés to international chains and distributors.</p>
+      <h2>Documents for your market</h2>
+      <p>Import rules differ between markets. Tell us the products, the flavours and the destination country, and we send the matching set: HACCP and ISO 22000 certificates, Halal certificate and product specifications.</p>
+      <h2>Ask our team or visit the showroom</h2>
+      <p>Write to <a href="mailto:sales@thebasebev.com?subject=Product%20certificates%20and%20specifications">sales@thebasebev.com</a> for current certificates. You can also see and taste the range at our showroom in Al Quoz Industrial Area 2, Dubai, open Monday to Saturday, 9:00 to 18:00, closed on Sunday.</p>
+    </div>
     <a className={styles.button} href={`mailto:${COMPANY.email}?subject=Product%20certificates%20and%20specifications`}>Request documentation</a>
   </main>;
 }
