@@ -71,8 +71,6 @@
   },
   "overrides": {
     "fast-glob": "$fast-glob",
-    "@node-minify/core": {
-      "glob": "^10.5.0"
-    }
+    "glob@>=9 <14.0.2": "^14.0.2"
   }
 }
