@@ -35,8 +35,11 @@ for (const file of pageFiles) {
 const analyticsComponent = fs.readFileSync("src/components/analytics/Analytics.tsx", "utf8");
 const sitePages = fs.readFileSync("src/lib/site-pages.ts", "utf8");
 const failures = [];
-if (!analyticsComponent.includes("GTM is authoritative when configured")) {
-  failures.push("Controlled analytics layer does not document GTM precedence.");
+const gtmBranch = analyticsComponent.indexOf("if (gtmId &&");
+const gaBranch = analyticsComponent.indexOf("if (gaId &&");
+if (gtmBranch < 0 || gaBranch <= gtmBranch ||
+    !/"thebase-gtm",?\s*\);\s*return;\s*}\s*$/.test(analyticsComponent.slice(gtmBranch, gaBranch))) {
+  failures.push("The GTM branch must return after loading its script, before the direct GA fallback.");
 }
 for (const tracker of trackers) {
   if (!sitePages.includes(tracker.id)) failures.push(`Legacy marker ${tracker.id} is not isolated by the export sanitizer.`);
