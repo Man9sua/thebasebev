@@ -1,10 +1,3 @@
-/*
- * Hot chocolate: what its mock does differently from the matcha baseline.
- * Desktop values are mock px × --u, the phone (≤1023px) is plain px.
- */
-
-/* ---- 01 hero: dark band, 104px light title, light outline button ---- */
-
 .hero h1 {
   font-size: calc(104 * var(--u));
 }
@@ -18,8 +11,6 @@
   background: #f6f6f4;
   color: #4e3630;
 }
-
-/* ---- 03 menu: title (+ kit card) column beside three 260px tiles ---- */
 
 .menu {
   padding: calc(120 * var(--u)) var(--pp-inline) 0;
@@ -89,8 +80,6 @@
   display: contents;
 }
 
-/* ---- 05 three chocolates: large dark cards + own-flavour card ---- */
-
 .flavours {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -144,8 +133,6 @@
   line-height: 1.5;
   color: #55524c;
 }
-
-/* ================= mobile (390 design) ================= */
 
 @media (max-width: 1023px) {
   .hero h1 {

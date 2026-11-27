@@ -116,14 +116,6 @@ async function auditViewport(browser, viewport) {
     await open(homePage, "/");
     const homePresent = (await homePage.locator("[data-home-slider]").count()) === 1;
     check(homePresent, `${label}: homepage missing during the blog-link audit`);
-    /*
-     * The Blog index used to be an empty Tilda feed container — the posts were
-     * fetched in the browser from Tilda and never arrived here — so this
-     * asserted that nothing linked to it. The thirty posts are in the
-     * repository now and the page renders them, so the assertion is the other
-     * way round: the footer's link must be there, and it must reach a shelf
-     * with articles on it.
-     */
     check(
       (await homePage.locator('a[href="/ae/resources/blog"]').count()) > 0,
       `${label}: the homepage no longer links to the Blog index`,

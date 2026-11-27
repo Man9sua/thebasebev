@@ -1,15 +1,5 @@
 name: Deploy
 
-# Every push to main deploys production; every push to develop deploys staging.
-# Nothing deploys unless the full CI workflow passes first.
-#
-#   main    -> the-base-production  (the Worker routed on https://thebasebev.com)
-#   develop -> the-base-staging     (https://the-base-staging.mansua.workers.dev)
-#
-# wrangler.jsonc declares no routes or custom domains, so a deploy replaces the
-# Worker code only. The thebasebev.com route set up in the Cloudflare dashboard
-# is left as it is, and DNS is never touched from here.
-
 on:
   push:
     branches: [main, develop]
@@ -18,8 +8,6 @@ on:
 permissions:
   contents: read
 
-# One deploy per branch at a time; a newer push waits rather than cancelling a
-# deploy that is already running.
 concurrency:
   group: deploy-${{ github.ref_name }}
   cancel-in-progress: false
@@ -70,15 +58,12 @@ jobs:
 
       - run: npm ci
 
-      # cf:build (inside the deploy script) generates the static fast path the
-      # Workers Free CPU limit depends on.
       - name: Build and deploy the Worker
         run: npm run "$DEPLOY_SCRIPT"
 
       - name: Verify the deployment
         shell: bash
         run: |
-          # The edge can take a few seconds to serve the new version.
           sleep 20
           npm run smoke:http -- "$TARGET_URL"
           npm run audit:crawlers -- "$TARGET_URL"

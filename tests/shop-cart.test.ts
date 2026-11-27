@@ -32,7 +32,6 @@ class Browser extends EventTarget {
   }
 }
 
-/** Load the real module with fresh browser storage for each visitor. */
 function cartFor(browser?: Browser) {
   const moduleBox = { exports: {} as typeof import("../src/lib/cart-store") };
   vm.runInNewContext(compiled, {

@@ -1,13 +1,10 @@
 export type HomeSlide = Readonly<{
-  /** The product page the slide opens, without the country prefix. */
   slug: string;
-  /** The product, for the button and the slide's name. */
   product: string;
   tag: string;
   title: string;
   text: string;
   background: string;
-  /** Text colour: white on the darker slides, near-black on the light ones. */
   ink: "light" | "dark";
 }>;
 

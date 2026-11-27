@@ -19,11 +19,6 @@ import {
 import type { ProductPageProps } from "../types";
 import local from "./Topping.module.css";
 
-/**
- * Toppings ("Topping · страница продукта", desktop 1440 / mobile 390).
- * Matcha's shape, with dry-base nutrition and the prepared-serving card.
- */
-
 const SLUG = "topping";
 
 const nutrition: NutritionSet[] = [

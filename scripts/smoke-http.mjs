@@ -13,7 +13,7 @@ const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route
 const publicPath = (route) => route === "/" ? "/ae" : `/ae${route}`;
 const publicRoutePaths = JSON.parse(fs.readFileSync("src/data/public-route-paths.json", "utf8"));
 const nativeRoutes = readNativeRoutes();
-const expectedSitemapUrls = 28 /* audited */ + nativeRoutes.length + glossaryContent.entries.length + blogContent.posts.length;
+const expectedSitemapUrls = 28  + nativeRoutes.length + glossaryContent.entries.length + blogContent.posts.length;
 
 const publicRoutes = [
   "/",
@@ -64,12 +64,9 @@ const redirects = new Map([
   ["/raf-cofee", publicPath("/raf-coffee")],
   ["/functional-wellness", publicPath("/catalog")],
   ["/cabinet", publicPath("/")],
-  // Retired pages answer in every market with that market's replacement.
   ["/wholesale-strategy", "/ae/distributors"],
   ["/ae/wholesale-strategy", "/ae/distributors"],
   ["/sa/wholesale-strategy", "/sa/distributors"],
-  // Blog posts renamed after publication — Tilda resolved both spellings on
-  // the post id; every route here is generated, so the old one needs saying.
   [
     "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
     publicPath("/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi"),
@@ -82,7 +79,6 @@ const redirects = new Map([
     "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
     publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
   ],
-  // The duplicate Brix Glossary entry, under both spellings, to the one kept.
   ["/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
   ["/ae/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
 ]);
@@ -161,8 +157,6 @@ if (
 const lead = await fetch(`${baseUrl}/api/leads`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  // Intentionally invalid: smoke/readiness must never create a CRM record,
-  // even when the target has a real LEAD_API_URL configured.
   body: JSON.stringify({}),
 });
 if (lead.status !== 400) failures.push(`/api/leads: expected safe validation 400, received ${lead.status}`);

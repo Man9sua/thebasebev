@@ -1,10 +1,3 @@
-/*
- * Request samples, Certificates, FAQ, Cookie policy and Careers: short pages
- * in the house style (the home page's scale) — paper background, uppercase 900
- * title, muted 18px lede, white cards, uppercase pill buttons. Spacing is gap
- * and padding: `.tbb h1, p { margin: 0 }` would otherwise win.
- */
-
 .page {
   display: flex;
   flex-direction: column;
@@ -32,7 +25,6 @@
   color: var(--tbb-rd-body);
 }
 
-/* Four quality cards: two by two reads better than three plus an orphan. */
 .cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -115,7 +107,6 @@
   padding-top: 0.5rem;
 }
 
-/* Text links keep the ink colour, never the browser's visited purple. */
 .links a:not(.button),
 .links a:not(.button):visited {
   color: var(--tbb-rd-ink);

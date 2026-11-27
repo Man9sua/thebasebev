@@ -69,7 +69,7 @@ Do not delete old GoDaddy records, Tilda, or rollback evidence.
 - Monitor HTTP 5xx, 404s, Worker errors, latency, cache behavior, form delivery, analytics, and crawler responses continuously during the first hours.
 - Compare Search Console coverage and organic landing pages over subsequent days; do not use removals.
 - Keep Tilda and the rollback path available until the owner closes the observation window.
-- Trigger `ROLLBACK_PLAN.md` if an agreed threshold is exceeded.
+- Trigger `context/ROLLBACK_PLAN.md` if an agreed threshold is exceeded.
 
 ## Completion evidence
 

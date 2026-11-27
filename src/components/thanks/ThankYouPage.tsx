@@ -2,21 +2,6 @@ import { SiteLink } from "@/components/site/SiteLink";
 import { ZOOM_BOOKING_URL } from "@/components/site/ZoomCallBlock";
 import styles from "./ThankYouPage.module.css";
 
-/**
- * `/thank-you-form` — where every lead form on the site lands.
- *
- * It replaces the exported Tilda page, which put a dark card with a fixed
- * height over a stock photograph of an empty meeting room: on a phone the
- * heading, the sentence under it and the button all overlapped inside a box
- * that could not grow.
- *
- * It stays a small page on purpose. Someone reading it has just finished
- * filling in a form, so it owes them three things and nothing else: that it
- * arrived, what happens next, and somewhere to go.
- *
- * `noindex` is the route's own, from `site-pages.ts`, and stays that way — a
- * confirmation page has no business in search results.
- */
 export function ThankYouPage() {
   return (
     <main className={styles.page}>

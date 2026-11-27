@@ -60,10 +60,6 @@ const friendlyRoutes: RouteDefinition[] = [
 
 export type ProductSpec = { label: string; value: string; icon?: string };
 
-/**
- * The comparative table, rebuilt from the coordinates the zero block drew it
- * at. A cell is a figure, a tick or a cross, or nothing at all.
- */
 export type ProductCalculation = {
   title: string;
   columns: string[];
@@ -72,11 +68,6 @@ export type ProductCalculation = {
 
 export type ProductDetail = {
   h1: string | null;
-  /**
-   * The exported records React now renders itself, by name. Every one of them
-   * is cut out of the served markup — see `dropReplacedRecords` — so the page
-   * never carries both versions of the same copy.
-   */
   records: Record<string, string | null>;
   tagline: string | null;
   weight: string | null;
@@ -95,10 +86,8 @@ export type ProductDetail = {
 
 export const productDetails = productDetailsJson as Record<string, ProductDetail>;
 
-/** Catalogue tile per product — see `scripts/build-catalog-tiles.mjs`. */
 const catalogTiles = catalogTilesJson as Record<string, { image: string }>;
 
-/** Product slug -> the exported page it is served from. Derived, not repeated. */
 const PRODUCT_PAGE_FILES: Record<string, string> = Object.fromEntries(
   friendlyRoutes
     .filter((definition) => productDetails[definition.route.slice(1)])
@@ -106,7 +95,6 @@ const PRODUCT_PAGE_FILES: Record<string, string> = Object.fromEntries(
 );
 
 const exportRoot = path.join(process.cwd(), "tilda_export", "project12027355");
-// Retired aliases are declared once in src/data/legacy-route-redirects.json and answered as 301 by the Worker.
 
 const routeDefinitions: RouteDefinition[] = [
   ...friendlyRoutes,
@@ -185,7 +173,6 @@ function removeLegacyAnalyticsRuntime(source: string) {
   );
 }
 
-/** The root layout self-hosts Exo 2; exported font links would load duplicate faces. */
 function removeLegacyFontLinks(source: string) {
   return source.replace(/<link\b[^>]*>/gi, (tag) => {
     const href = tag.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2] ?? "";
@@ -193,25 +180,6 @@ function removeLegacyFontLinks(source: string) {
   });
 }
 
-/**
- * Exported runtimes whose markup this project no longer serves.
- *
- * `stripShellRecords` takes the old header, the old footer nav and the dead
- * duplicate menus out of every parity body, and there is no Tilda cart left on
- * the site at all. Their scripts kept loading regardless: six files of
- * jQuery-era code fetched, parsed and run against markup that is not there.
- *
- * Measured on a phone at a quarter of its CPU, `/resources` reached interactive
- * at 2363ms where the rebuilt homepage takes 239ms, and it was pulling 28
- * script files to the homepage's 9. Dropping these does not close that gap —
- * the zero blocks need the rest of the runtime, and closing it means rebuilding
- * the page — but six requests and six parses that buy nothing is where to
- * start.
- *
- * Each is listed with the markup it drives, and the drop is conditional on that
- * markup being absent: a route that still carries one of these blocks keeps its
- * script, so this cannot break a page by being wrong about one.
- */
 const deadLegacyRuntimes = [
   { file: "tilda-cart-1.1.min.js", drives: /t706|t-store__|tn-atom__store/ },
   { file: "tilda-menu-1.0.min.js", drives: /t-menu__|t-menuburger|t228__/ },
@@ -245,12 +213,6 @@ function setHtmlAttribute(tag: string, name: string, value: string) {
   return tag.replace(/>$/, ` ${name}="${value}">`);
 }
 
-/**
- * Promote only the first local images that the exported document considers
- * lazy. Tilda normally copies `data-original` into `src` after first paint;
- * doing that for the small above-the-fold set on the server avoids visible
- * assembly while keeping every later image lazy.
- */
 function promoteCriticalImages(source: string, limit = 4) {
   let promoted = 0;
 
@@ -269,36 +231,6 @@ function promoteCriticalImages(source: string, limit = 4) {
   });
 }
 
-/**
- * Keep the export's own image pass inside the exported document.
- *
- * The body of 36 of the 39 exported pages carries a hand-written block — the one
- * that guards on `window.__tbAnchorsBooted` — with two passes that walk the
- * whole document:
- *
- * - `tuneImages()` takes `document.querySelectorAll("img")` and writes
- *   `decoding`, and then either `loading="lazy"` or `fetchpriority="high"`
- *   depending on where the image sits, onto every one it finds;
- * - `nameLinkedImages()` takes `document.querySelectorAll('a img[alt=""]')` and
- *   labels the link around each.
- *
- * On Tilda that document is the whole page and both are right. Here the export
- * is one element among React's own, and both passes run at `DOMContentLoaded` —
- * a different task from React's hydration, and one that can land before it. When
- * it does, React finds attributes on nodes it owns that its markup never wrote
- * and reports the tree as mismatched, which is what every product page was
- * logging: the hero's pack shot and glass and the four spec icons all came back
- * with a `decoding` and a `fetchpriority` the server never sent.
- *
- * Scoping the two queries to the exported document leaves every legacy image
- * tuned exactly as before and stops the passes reaching React's nodes — which
- * declare these attributes themselves where they want them. The `|| document`
- * fallback keeps the old behaviour if the wrapper class is ever renamed, rather
- * than silently tuning nothing.
- *
- * The other half of the same mismatch is Tilda's own `tilda-popup`, which is not
- * scoped and must not be — see `lib/legacy-popups.ts`.
- */
 const legacyImageRoot = '(document.querySelector(".legacy-document") || document)';
 
 function scopeLegacyImagePasses(source: string) {
@@ -329,10 +261,6 @@ const catalogPriceFallback = {
 function preserveCatalogPrices(source: string, file: string) {
   if (file !== "page114743626.html") return source;
 
-  // The exported catalogue has the current product/price table for cart
-  // actions, but its visible prices were populated only by a Tilda feed that
-  // is not part of the static export. Seed the same lookup locally; if a store
-  // feed is connected later, the existing scards.forEach block overrides it.
   return source
     .replace(
       /var store=\{\};\s*var scards=/,
@@ -344,21 +272,12 @@ function preserveCatalogPrices(source: string, file: string) {
 function stabilizeCatalogRuntime(source: string, file: string) {
   if (file !== "page114743626.html") return source;
 
-  // The visible catalogue has its own local filters. Keeping Tilda's hidden
-  // store filters enabled makes the legacy runtime request getfilters(), whose
-  // current response is non-JSON error text; product loading/cart still use the
-  // store record and are intentionally left enabled.
   return source.replace(/hideFilters:false/g, "hideFilters:true");
 }
 
 function installCatalogFilterShim(source: string, file: string) {
   if (file !== "page114743626.html") return source;
 
-  // `t_store_init` calls the remote filter endpoint even with hideFilters=true.
-  // The visible catalogue has its own local filters, so resolve that optional
-  // legacy step with an empty result. DOMContentLoaded covers a warm async
-  // script; the short poll covers the same script arriving afterwards, before
-  // Tilda's own 100 ms t_onFuncLoad retry.
   return `${source}<script>(function(){
 function disable(){
 if(typeof window.t_store_init!=="function")return false;
@@ -370,29 +289,6 @@ var tries=0,timer=setInterval(function(){if(disable()||++tries>200)clearInterval
 })();</script>`;
 }
 
-/**
- * Re-plate the catalogue grid.
- *
- * Two things happen to every card, and both need the HTML rather than a
- * stylesheet:
- *
- * The picture is repointed. The export names sixteen unrelated renders, at
- * three different scales on three different baselines, and three of them are a
- * background image rather than the product — which is why the row looked ragged
- * whatever the cards were styled like. `scripts/build-catalog-tiles.mjs` cuts
- * one square tile per product out of the client's own key visuals, and the
- * card's own `href` is the slug those are named after, so the swap needs no
- * second table to fall out of date. `catg-img--adj` goes with it: it scaled
- * three cards up by 3% to paper over exactly the mismatch the tiles remove.
- *
- * And the card is told its product colour, as `--tile`, which is what the
- * stylesheet marks the current filter and the rules with. It cannot look the
- * colour up itself, and `products.ts` stays the one place a product colour is
- * written down.
- *
- * Done here rather than by editing the export, because the export is the
- * parity reference and stays as exported.
- */
 function replateCatalogCards(source: string, file: string) {
   if (file !== "page114743626.html") return source;
 
@@ -408,14 +304,6 @@ function replateCatalogCards(source: string, file: string) {
   );
 }
 
-/**
- * Cut one record out of the served markup.
- *
- * Depth-counted from the opening tag rather than matched: a Tilda record is a
- * couple of hundred kilobytes of nested markup and a regex cannot see its end.
- * Unbalanced markup leaves the page exactly as exported rather than cutting it
- * off at the wrong place.
- */
 function dropRecord(source: string, recordId: string) {
   const start = source.search(new RegExp(`<div[^>]*id="${recordId}"`));
   if (start < 0) return source;
@@ -432,69 +320,27 @@ function dropRecord(source: string, recordId: string) {
   return source;
 }
 
-/**
- * Tilda template debris, by exported page.
- *
- * Four of the parity pages were built on stock Tilda themes and were still
- * carrying pieces of the theme rather than pieces of the site. None of it is
- * content anybody wrote for THE BASE, and two of the entries were actively
- * damaging:
- *
- * `/rnd` ended in a full calorie calculator in Russian — "Узнай свою дневную
- * норму за 30 секунд" — and, because the theme set it as a heading, that
- * calculator was the page's only `h1`. An English R&D page for Dubai was
- * telling Google its subject was daily calorie intake, in another language.
- * `PageIntro` gives the page a heading of its own; the wording is in
- * `data/page-intros.ts`.
- *
- * `/private-labeling` carried its `h1` at the foot of the page, under nothing,
- * followed by two blocks that are empty in the export. Its opening block is
- * dropped too and reappears as `PageIntro`, because the theme set both headings
- * in a serif no other page on this site uses.
- *
- * `/garnish` ended with the theme's sample paragraph about visual aids in
- * speeches, unrelated to the product, after its FAQ.
- *
- * Everything here is a removal from the served markup only. The export on disk
- * is the parity reference and stays as exported.
- */
 const REMOVED_BODY_RECORDS: Record<string, readonly string[]> = {
-  // /rnd
   "page155598016.html": [
-    "rec2493779621", // Russian calorie calculator, and the page's only h1
-    "rec2493750131", // Russian Unsplash credit block
-    "rec2493746891", // the theme's own burger menu, a second header
-    "rec2496175441", // empty in the export, and a white band between two dark ones
+    "rec2493779621",
+    "rec2493750131",
+    "rec2493746891",
+    "rec2496175441",
   ],
-  // /private-labeling
   "page120311356.html": [
-    "rec2507342601", // serif opening block — PageIntro replaces it
-    "rec1937225061", // the four services — PageOffers replaces it
-    "rec1937227721", // the h1, orphaned at the foot of the page
-    "rec1937217991", // empty in the export
-    "rec2360860451", // empty in the export
+    "rec2507342601",
+    "rec1937225061",
+    "rec1937227721",
+    "rec1937217991",
+    "rec2360860451",
   ],
-  // /garnish
-  "page62576005.html": ["rec2489072221"], // theme placeholder about visual aids
+  "page62576005.html": ["rec2489072221"],
 };
 
 function dropTemplateDebris(source: string, file: string) {
   return (REMOVED_BODY_RECORDS[file] ?? []).reduce(dropRecord, source);
 }
 
-/**
- * Blog links inside the export, pointed at the paths this site serves.
- *
- * Tilda routes a `/tpost/` URL on the post id alone and ignores the slug after
- * it, so a link written when an article had a different title keeps working
- * there for ever. Next.js does not work that way: every route is generated,
- * and an old spelling is a 404. `/resources` carries three of them, in the
- * three-card "Our news" block, and they are the reason those cards led nowhere.
- *
- * Rewritten here rather than listed as redirects so the reader never takes the
- * extra hop; `next.config.ts` still redirects the same three URLs, for links
- * that were indexed or shared before the migration.
- */
 function relinkBlogPosts(source: string) {
   return source.replace(/\/tpost\/([a-z0-9]+)-[a-z0-9-]+/gi, (match, uid: string) => {
     const post = BLOG_POSTS.find((candidate) => candidate.uid === uid);
@@ -502,30 +348,11 @@ function relinkBlogPosts(source: string) {
   });
 }
 
-/**
- * Drop every block on a product page that React now renders itself.
- *
- * All of them are Tilda "zero blocks": the hero, the four figures, the
- * comparative table, the flavour list and the usage note are absolutely
- * positioned atoms on a fixed-height artboard, held back behind Tilda's own
- * scroll-animation script — which is why the top of every product page was a
- * blank coloured rectangle. The tab strip above them scrolled sideways and
- * switched nothing, and the FAQ was Tilda's own accordion.
- *
- * They are removed rather than hidden. Left in place they would put every line
- * of the page in the document twice, including a second `h1` and a second copy
- * of each question — and `audit:seo-parity` reads the first `h1` it finds.
- *
- * `scripts/build-product-details.mjs` records which block is which per product.
- */
 function dropReplacedRecords(source: string, file: string) {
   const slug = Object.entries(PRODUCT_PAGE_FILES).find(([, value]) => value === file)?.[0];
   const records = slug ? productDetails[slug]?.records : null;
   if (!records) return source;
 
-  // The same legacy booking CTA follows every exported product body. The new
-  // body already provides the inline partnership form, so retaining this
-  // record would append an obsolete second CTA after the FAQ.
   const sharedRecords = ["rec2503542591"];
 
   return [...Object.values(records), ...sharedRecords]
@@ -533,18 +360,6 @@ function dropReplacedRecords(source: string, file: string) {
     .reduce(dropRecord, source);
 }
 
-/**
- * Point the parity pages at the delivery-sized copies of their images.
- *
- * `scripts/build-legacy-image-variants.mjs` writes a WebP beside every heavy
- * original — 87 MB of plates become 7.7 MB — and leaves the originals in place,
- * because nothing in `public/images` may be renamed. The swap happens here, as
- * the page is served, so the export on disk stays the parity reference.
- *
- * Both the markup and the head assets go through it: more than half the weight
- * of a product page was `background-image: url(...)` in the export's own inline
- * CSS, not `<img>` at all.
- */
 function useResizedLegacyImages(source: string) {
   return source.replace(
     /images\/([A-Za-z0-9._-]+\.(?:png|jpe?g|webp))/gi,
@@ -555,25 +370,6 @@ function useResizedLegacyImages(source: string) {
   );
 }
 
-/**
- * Defer the parity pages' images.
- *
- * A product page ships 14.7 MB over 97 requests and takes about four seconds to
- * reach `load` — measured on the deployed Worker — because the export asks for
- * every image at full size and asks for all of them at once. Nearly all of it
- * is below the fold: `/milkshake` alone pulls a 1680x1951 plate to show it 596px
- * wide, and another at 1170x1703 to show it at 390.
- *
- * Marking them `lazy` does not make the bytes smaller, but it stops them
- * competing with the ones the visitor is actually looking at, which is the part
- * that reads as "the page will not load". The real fix is to serve these at the
- * size they are displayed; this is the safe half of it, and it changes no URL.
- *
- * The first two images are left eager on purpose — one of them is the page's
- * LCP, and lazy-loading that would trade a slow page for a blank one. Anything
- * that already declares its own `loading` or `fetchpriority` is left alone,
- * because the export meant something by it.
- */
 function deferLegacyImages(source: string) {
   let seen = 0;
 
@@ -585,38 +381,14 @@ function deferLegacyImages(source: string) {
   });
 }
 
-/**
- * Tilda shell records dropped from every parity page.
- *
- * The exported body of 37 of the 39 pages carries the whole Tilda site chrome:
- * `<!--header--> <header id="t-header">…` and the matching footer. The shared
- * React header and footer now render around that document, so the old chrome
- * has to go — but it cannot simply be cut out wholesale, because those two
- * elements also carry things the site still depends on:
- *
- * - all of the page's JSON-LD (`rec2483211811`);
- * - four of the nine owned lead forms (`rec861442702`, `rec1855213141`,
- *   `rec1855223381`, `rec1855232921`) and their popup triggers.
- *
- * So the removal is per record, and only of the parts the new shell replaces.
- * Note that four of these were already `display:none` in the export — the
- * client had replaced them with the `.tbh-wrap` header long ago — so they were
- * dead weight that still shipped a duplicate navigation to crawlers.
- *
- * The cookie banner used to be on that keep-list. It is not any more: the T972
- * widget existed only here, on the 37 legacy routes, so half the site never
- * asked at all — and it offered no way to refuse. `CookieConsent`, mounted in
- * the root layout, replaces it on every route. Leaving the record in place
- * would put two banners on the same page.
- */
 const REMOVED_SHELL_RECORDS = new Set([
-  "rec2676415503", // .tbh-wrap header, ticker and spacer — SiteHeader replaces it
-  "rec1842546651", // old Tilda menu, already display:none, duplicate nav links
-  "rec913703869", //  hidden strapline, already display:none
-  "rec860980632", //  old nav column, already display:none, duplicate nav links
-  "rec859870796", //  visible footer nav — SiteFooter replaces it
-  "rec2989879303", // legacy Tilda cart/form — native /checkout replaces it
-  "rec913700125", // T972 cookie banner — CookieConsent replaces it, site-wide
+  "rec2676415503",
+  "rec1842546651",
+  "rec913703869",
+  "rec860980632",
+  "rec859870796",
+  "rec2989879303",
+  "rec913700125",
 ]);
 
 const SHELL_CONTAINERS = [
@@ -624,18 +396,10 @@ const SHELL_CONTAINERS = [
   { marker: "<!--footer-->", tag: "footer" },
 ] as const;
 
-/** How far the marker comment may sit from its element before we distrust it. */
 const MARKER_PROXIMITY = 40;
 
 type ShellRecord = { id: string; html: string };
 
-/**
- * Splits a shell container into its top-level Tilda records.
- *
- * Records are siblings, so each one runs from its own opening `<div id="recN">`
- * to the next one — no balanced-tag parsing, which would be unreliable against
- * minified markup where `<div` also appears inside inline scripts.
- */
 function splitShellRecords(inner: string): ShellRecord[] {
   const expression = /<div id="(rec\d+)"[^>]*class="[^"]*\bt-rec\b/g;
   const starts: Array<{ id: string; at: number }> = [];
@@ -656,7 +420,6 @@ function splitShellRecords(inner: string): ShellRecord[] {
   ];
 }
 
-/** True when this page carries the shared Tilda chrome we know how to replace. */
 export function hasLegacyShell(bodyHtml: string) {
   return SHELL_CONTAINERS.every(({ marker, tag }) => {
     const commentAt = bodyHtml.indexOf(marker);
@@ -685,10 +448,6 @@ function stripShellRecords(bodyHtml: string) {
       .map((record) => record.html)
       .join("");
 
-    // Retagged to a plain div. The page already has one <header> and one
-    // <footer> landmark from the shared shell, and a second of each would be
-    // announced twice; the id and classes stay untouched so the legacy cart
-    // script, which looks its container up by id, still finds it.
     const openTag = result.slice(openAt, openEnd + 1).replace(`<${tag}`, "<div");
 
     result =
@@ -709,10 +468,6 @@ function stripLegacyRecordsHtml(source: string, recordIds: ReadonlySet<string>) 
     .map((record) => {
       if (!recordIds.has(record.id)) return record.html;
 
-      // A record slice ends where the next record begins. When the removed
-      // record is the last page-content block, that slice also contains the
-      // opening tag of the retained footer runtime. Preserve that structural
-      // tail or the browser repairs the malformed tree before React hydrates.
       const footerAt = record.html.indexOf('<div id="t-footer"');
       return footerAt >= 0 ? record.html.slice(footerAt) : "";
     })
@@ -722,8 +477,6 @@ function stripLegacyRecordsHtml(source: string, recordIds: ReadonlySet<string>) 
 function normalizeContentLandmarks(source: string, file: string) {
   if (file !== "page68443503.html") return source;
 
-  // The application already provides the page landmark. This is a visual
-  // heading wrapper inside the Privacy article, not a second site header.
   return source
     .replace('<header class="privacy-header">', '<div class="privacy-header">')
     .replace("</header>", "</div>");
@@ -743,24 +496,10 @@ export type SitePage = RouteDefinition & {
   };
   bodyHtml: string;
   headAssetsHtml: string;
-  /** Served by React alone: there is no exported document behind it. */
   native?: boolean;
-  /**
-   * Whether the shared React header/footer should render around this document.
-   * False only for the two standalone header/footer aliases, which are the
-   * exported chrome itself and would otherwise be framed by a copy of itself.
-   */
   usesSharedShell: boolean;
 };
 
-/**
- * Note: `legacyRecordHtml` used to sit here — the counterpart to the function
- * below, keeping one exported record and dropping the document around it. Its
- * only caller was `/distributors`, which kept its Tilda hero that way; that
- * page is React top to bottom now and nothing else ever wanted a single
- * record, so the helper went with it. `splitShellRecords` is what it was built
- * on and is still used by everything below.
- */
 export function withoutLegacyRecords(page: SitePage, recordIds: readonly string[]): SitePage {
   return {
     ...page,
@@ -780,11 +519,6 @@ export function normalizeSitePath(parts?: string[]) {
   return routeParts?.length ? `/${routeParts.map(decodeURIComponent).join("/")}` : "/";
 }
 
-/**
- * Native product and business pages with no Tilda export. Existing migration
- * routes stay in `friendlyRoutes`; all native pages have production canonicals
- * and enter the sitemap, with preview indexing blocked by the Worker.
- */
 type NativeRoute = { route: string; title: string; description: string };
 
 const NATIVE_ROUTES: NativeRoute[] = [
@@ -863,11 +597,6 @@ export function getSitePage(route: string): SitePage | undefined {
   const rawBody = extractBody(source, definition.file);
   const usesSharedShell = true;
 
-  /**
-   * What the export is put through on its way out, in order. Written as a list
-   * rather than as nested calls: there are seven passes over the body now, and
-   * read inside-out they stopped being followable.
-   */
   const applyAll = (input: string, passes: ((value: string) => string)[]) =>
     passes.reduce((value, pass) => pass(value), input);
 
@@ -888,7 +617,6 @@ export function getSitePage(route: string): SitePage | undefined {
     scopeLegacyImagePasses,
     localizePageLinks,
     (value) => rewriteLegacyStructuredData(value, Boolean(getProduct(route.slice(1)))),
-    // Running copy only: "the Base", never "THE BASE" (titles and h1 untouched).
     brandCaseHtml,
   ]);
 
@@ -901,8 +629,6 @@ export function getSitePage(route: string): SitePage | undefined {
     (value) => preserveCatalogPrices(value, definition.file),
     (value) => stabilizeCatalogRuntime(value, definition.file),
     (value) => installCatalogFilterShim(value, definition.file),
-    // Last, and read against the body this page actually serves rather than
-    // the export's: the stripped records are already gone by here.
     (value) => removeDeadLegacyRuntime(value, bodyHtml),
   ]);
 
@@ -933,7 +659,6 @@ export function getSitePage(route: string): SitePage | undefined {
 
 export const sitemapRoutes = friendlyRoutes.filter((definition) => definition.indexable);
 
-/** The native routes, listed in the sitemap after the audited ones. */
 export const nativeSitemapRoutes = NATIVE_ROUTES.map((definition) => definition.route);
 
 export function getStaticSiteParams() {

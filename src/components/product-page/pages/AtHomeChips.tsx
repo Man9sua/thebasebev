@@ -4,17 +4,9 @@ import { useEffect, useState } from "react";
 import { PageAnchor } from "@/components/site/PageAnchor";
 import local from "./AtHome.module.css";
 
-/**
- * The shelf index under the hero. The chip of the shelf being read is the
- * dark one, so the row says where on the page you are as well as where you
- * can go; before anything has scrolled, that is the first shelf, as drawn.
- */
 export function AtHomeChips({ route, shelves }: { route: string; shelves: readonly { id: string; label: string }[] }) {
   const [active, setActive] = useState(shelves[0]?.id);
 
-  /* The live shelf is the last one whose top has passed 40% of the viewport,
-     read on scroll rather than from intersections so that scrolling back up
-     past the first shelf hands the mark back to it. */
   useEffect(() => {
     let frame = 0;
     const update = () => {

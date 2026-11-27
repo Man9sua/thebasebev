@@ -1,14 +1,3 @@
-/**
- * One Glossary term, in the house style of the redesigned pages.
- *
- * The sibling of the Blog article: warm paper, a breadcrumb back to the shelf,
- * an uppercase Exo 900 title (larger than a post's, because a term is one or
- * two words, but well under hero size), a 17-18px body on a ~68ch measure and
- * related terms as white rounded cards.
- *
- * `!important` on headings' and paragraphs' margins for the `.tbb` reset.
- */
-
 .page {
   --term-paper: var(--tbb-rd-paper);
   --term-ink: var(--tbb-rd-ink);
@@ -32,8 +21,6 @@
   max-width: var(--tbb-measure);
   margin-inline: auto;
 }
-
-/* ---- breadcrumb and back links ---- */
 
 .backLink,
 .bottomBackLink {
@@ -84,8 +71,6 @@
   background: var(--term-ink);
   color: #fff !important;
 }
-
-/* ---- head ---- */
 
 .header {
   max-width: 54rem;
@@ -140,10 +125,6 @@
   text-wrap: pretty;
 }
 
-/* ---- body ---- */
-
-/* The definition sits on a white card: a short text on bare paper read as a
-   page that had not finished loading. */
 .body {
   width: min(100%, 42rem);
   margin-block: clamp(2rem, 4vw, 3rem) clamp(3rem, 6vw, 4.5rem);
@@ -165,7 +146,6 @@
   margin-top: 1.1em !important;
 }
 
-/* No underlines on this site: an inline link is told apart by colour. */
 .body a {
   color: var(--term-red) !important;
   font-weight: var(--tbb-font-weight-medium);
@@ -187,8 +167,6 @@
 .unavailable p {
   margin-top: 0.75rem !important;
 }
-
-/* ---- foot ---- */
 
 .articleFooter {
   display: grid;

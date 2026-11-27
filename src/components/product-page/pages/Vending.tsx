@@ -11,11 +11,6 @@ import {
 } from "../familyB";
 import type { ProductPageProps } from "../types";
 
-/**
- * Vending ("Vending · страница продукта целиком", desktop 1440 / mobile 390),
- * family B. Nutrition is the Vending Chocolate label, the only one in hand.
- */
-
 const faq = [
   {
     q: "Does it work in automatic machines?",

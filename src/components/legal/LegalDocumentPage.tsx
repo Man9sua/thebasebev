@@ -3,15 +3,6 @@ import { ZoomCallBlock } from "@/components/site/ZoomCallBlock";
 import type { LegalBlock, LegalDocument, LegalText } from "./legal-content";
 import styles from "./LegalDocumentPage.module.css";
 
-/**
- * `/privacy` and `/terms` — the exported legal text in the house layout.
- *
- * The words, headings and anchors come from `legal-content.ts` unchanged; this
- * component only decides how they sit on the page: paper, Exo 2, an uppercase
- * Black title and a reading column of roughly seventy characters, closing on
- * the shared Zoom call block the export ended with.
- */
-
 function Text({ runs }: { runs: LegalText[] }) {
   return (
     <>

@@ -1,10 +1,6 @@
-/* Design: About Us · block 1 · 1a desktop 1440 / 1b mobile 390. */
-
 .hero {
   background: var(--about-bg);
   color: var(--about-ink);
-  /* The design puts the h1 184px from the top of the page (112px header +
-     72px); the bar here is fixed, so the offset lives on the section. */
   padding-top: min(184px, 12.778vw);
 }
 
@@ -80,7 +76,6 @@
 
 @media (max-width: 1023px) {
   .hero {
-    /* 80px header + 32px in the design. */
     padding-top: 112px;
   }
 

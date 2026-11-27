@@ -20,8 +20,6 @@ export function removeCopiedEnvironmentFiles(directory = ".open-next") {
   return removed;
 }
 
-// OpenNext embeds every local .env mode as a fallback. Only public build values
-// belong there; server secrets must come from the selected Worker's bindings.
 export function sanitizeCloudflareEnvironment(file = ".open-next/cloudflare/next-env.mjs") {
   const source = fs.readFileSync(file, "utf8");
   const entries = [...source.matchAll(/^export const (production|development|test) = (.+);$/gm)];

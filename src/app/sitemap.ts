@@ -62,7 +62,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
-  // Ranges added after the export, served by React alone; dated by their launch.
   const nativePages = nativeSitemapRoutes.map((route) => ({
     url: `${SITE_ORIGIN}${publicPath(route)}`,
     lastModified: UPDATED_LAST_MODIFIED,

@@ -95,7 +95,7 @@ Adding any of the following is forbidden during preparation:
 - Cloudflare nameservers at GoDaddy;
 - an apex/`www` DNS change.
 
-Every such action is `HUMAN APPROVAL REQUIRED` and belongs only in `PRODUCTION_CUTOVER.md`.
+Every such action is `HUMAN APPROVAL REQUIRED` and belongs only in `context/PRODUCTION_CUTOVER.md`.
 
 ## Verification after every preview deployment
 

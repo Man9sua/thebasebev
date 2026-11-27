@@ -18,12 +18,6 @@ import {
 import type { ProductPageProps } from "../types";
 import local from "./Chocolate.module.css";
 
-/**
- * Hot chocolate ("Hot Chocolate · страница продукта", desktop 1440 / mobile 390).
- * Matcha's shape; the menu (title + kit beside three tiles) and the
- * three-chocolates cards are local because their layout differs.
- */
-
 const SLUG = "chocolate";
 
 const nutrition: NutritionSet[] = [

@@ -18,21 +18,10 @@ import {
 import type { ProductPageProps } from "../types";
 import s from "./Jam.module.css";
 
-/**
- * Jam ("Jam · страница продукта целиком", desktop 1440 / mobile 390).
- * A newer design generation than matcha: six small service cards, tall
- * prepare cards, colour flavour cards with "New" badges, a simplified
- * "Inside the pack", a plain FAQ and a closing "Try it on your menu" band.
- * Sugar free shares that generation, so its pieces are exported from here.
- */
-
 const SLUG = "jam";
 
 export { s as jamStyles };
 
-/* ---------------- shared pieces of this generation ---------------- */
-
-/** The black "Your own flavour / blend" band links to the R&D brief. */
 export function RndBand({ name, text }: { name: ReactNode; text: ReactNode }) {
   return (
     <div className={s.band}>
@@ -47,7 +36,6 @@ export function RndBand({ name, text }: { name: ReactNode; text: ReactNode }) {
 
 export type Fact = { label: string; value: string };
 
-/** "Inside the pack" without tabs or %DV: a caption, two-column facts and the side cards. */
 export function SimpleInside({
   caption,
   mobileCaption,
@@ -95,7 +83,6 @@ export function ShelfCard({ value = "18 months", text, mobileText }: { value?: R
   );
 }
 
-/** The FAQ of this generation: the heading alone on the left, every question on the phone, no buttons. */
 export function PlainFaq({ items }: { items: Question[] }) {
   return (
     <section className={s.faq} aria-labelledby="product-faq-title">
@@ -116,7 +103,6 @@ export function PlainFaq({ items }: { items: Question[] }) {
   );
 }
 
-/** The closing band: sample + distributor on desktop, the sample button alone on the phone. */
 export function TryBand({ productName, text, style }: { productName: string; text: ReactNode; style?: CSSProperties }) {
   return (
     <section className={s.try} style={style} aria-labelledby="product-try-title">
@@ -135,8 +121,6 @@ export function TryBand({ productName, text, style }: { productName: string; tex
     </section>
   );
 }
-
-/* ---------------- jam ---------------- */
 
 const flavours = [
   { name: "Strawberry Watermelon", color: "#E8B4B0" },

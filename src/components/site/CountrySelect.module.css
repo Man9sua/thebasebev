@@ -124,7 +124,6 @@
 
 @media (max-width: 767px) {
   .trigger { line-height: 19px; }
-  /* Anchor the dropdown to the actions row so it stays inside narrow screens. */
   .root { position: static; }
 }
 

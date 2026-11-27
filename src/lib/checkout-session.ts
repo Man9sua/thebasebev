@@ -9,11 +9,10 @@ function signature(items: readonly CartItem[]) {
     .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right))));
 }
 
-/** A verified return may clear only the unchanged basket sent to that session. */
 export function rememberPendingCheckout(sessionId: string, kind: ShopKind, items: readonly CartItem[]) {
   if (!stripeSessionMode(sessionId)) return;
   try { window.sessionStorage.setItem(KEY, JSON.stringify({ sessionId, kind, items: signature(items) })); }
-  catch { /* Payment can proceed without browser storage; the return keeps the basket. */ }
+  catch {  }
 }
 
 export function consumePendingCheckout(sessionId: string, kind: ShopKind, items: readonly CartItem[]): boolean {

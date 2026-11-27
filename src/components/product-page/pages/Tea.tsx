@@ -19,17 +19,8 @@ import type { ProductPageProps } from "../types";
 import { RndBand } from "./Jam";
 import s from "./Tea.module.css";
 
-/**
- * Tea ("Tea · страница продукта целиком", desktop 1440 / mobile 390).
- * Includes the "Three teas" pack cards.
- */
-
 const SLUG = "tea";
 
-/*
- * The mock draws Black / Green tabs, but only the Black label (TE-002) has
- * been read; the Green table follows once its label arrives.
- */
 const nutrition: NutritionSet[] = [
   {
     name: "Black",

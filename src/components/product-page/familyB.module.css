@@ -1,24 +1,11 @@
-/*
- * Family B product pages (garnish, vending, sugar-syrup).
- * Desktop values are mock px × --u (set by the shared `.page`), the phone
- * (≤1023px) is plain px. Spacing comes from padding-bottom only: every
- * section has no top padding and 120 (phone 64) at the bottom.
- *
- * Class names avoid "title", "card", "tile", "btn", "number", "descr" and
- * "heading": the export's custom.css restyles any class containing them.
- */
-
 .page {
   --fb-muted: #55524c;
   --fb-paper: #f6f6f4;
 }
 
-/* Buttons: the family pads pills 30px, not 32px. */
 .page .cta {
   padding: 0 calc(30 * var(--u));
 }
-
-/* ---------------- hero ---------------- */
 
 .hero {
   padding: calc(var(--fb-hero-top) * var(--u)) var(--pp-inline) calc(120 * var(--u));
@@ -81,8 +68,6 @@
   overflow: visible;
 }
 
-/* ---------------- sections ---------------- */
-
 .section {
   padding: 0 var(--pp-inline) calc(120 * var(--u));
   display: flex;
@@ -94,8 +79,6 @@
   font-size: calc(72 * var(--u));
   text-wrap: wrap;
 }
-
-/* ---------------- stats ---------------- */
 
 .stats {
   display: grid;
@@ -124,8 +107,6 @@
   line-height: normal;
   color: var(--fb-muted);
 }
-
-/* ---------------- steps ---------------- */
 
 .steps {
   display: grid;
@@ -179,8 +160,6 @@
   color: #c9c6c0;
 }
 
-/* ---------------- flavours ---------------- */
-
 .flavours {
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
@@ -216,8 +195,6 @@
   line-height: var(--fb-name-lh);
 }
 
-/* ---------------- R&D band ---------------- */
-
 .band {
   background: var(--pp-ink);
   border-radius: calc(28 * var(--u));
@@ -247,8 +224,6 @@
   color: #b5b1aa;
 }
 
-/* ---------------- ready for your menu ---------------- */
-
 .menuTrack {
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
@@ -268,8 +243,6 @@
   height: 100%;
   object-fit: cover;
 }
-
-/* ---------------- inside the pack ---------------- */
 
 .inside {
   display: grid;
@@ -329,10 +302,6 @@
   color: var(--fb-muted);
 }
 
-/* ---------------- FAQ (on the shared Faq block) ----------------
-   The block's own classes are module-scoped, so it is reached by structure:
-   aside (h2 + button row), list of <details>, and the phone CTA <button>. */
-
 .page .faq {
   padding: 0 var(--pp-inline) calc(144 * var(--u));
 }
@@ -377,8 +346,6 @@
   padding: 0 calc(40 * var(--u)) calc(28 * var(--u)) 0;
   font-size: calc(17 * var(--u));
 }
-
-/* ================= phone (390 design) ================= */
 
 @media (max-width: 1023px) {
   .page .cta {
@@ -531,7 +498,6 @@
     height: 52px;
   }
 
-  /* The photos scroll sideways, keeping the 20px gutter. */
   .section.menu {
     padding: 0 0 64px;
   }

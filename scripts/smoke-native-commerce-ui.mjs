@@ -43,9 +43,6 @@ try {
 
   await page.locator('[data-catalog-filters] button[data-f="Cold & Refreshing"]').click();
   check((await page.locator("[data-catalog-card]").count()) === 4, "cold filter did not render four products");
-  // Two steps: the button opens the flavour picker, the picker adds the line.
-  // It moved to the product's own page when the shelf's Buy became a link into
-  // the Odoo shop.
   await page.goto(`${baseUrl}/milkshake`, { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Add to cart" }).first().click();
   const flavorGroup = page.locator('[data-flavor-picker] [role="radiogroup"]');
@@ -103,9 +100,6 @@ try {
   await page.getByRole("button", { name: "Send enquiry" }).click();
   await page.waitForURL(`${baseUrl}/thank-you-form`);
 
-  // Reproduce the intermittent failure path: a client-side navigation from a
-  // legacy Tilda product document into the native catalogue. Native data hooks
-  // deliberately do not overlap the old `.catg-*` observer selectors.
   await page.goto(`${baseUrl}/matcha`, { waitUntil: "networkidle" });
   await page.locator('section[aria-labelledby="product-title"] a[href="/catalog"]').click();
   await page.waitForURL(`${baseUrl}/catalog`);

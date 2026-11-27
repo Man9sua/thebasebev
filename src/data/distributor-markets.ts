@@ -11,7 +11,6 @@ export type DistributorMarket = {
   languages: string;
 };
 
-/** Market list supplied with the distributor design. Only UAE contacts are confirmed. */
 export const DISTRIBUTOR_MARKETS: readonly DistributorMarket[] = [
   { code: "AE", name: "UAE", group: "Gulf", languages: "EN · AR" },
   { code: "SA", name: "Saudi Arabia", group: "Gulf", languages: "EN · AR" },

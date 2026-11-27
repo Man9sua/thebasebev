@@ -17,7 +17,6 @@ function CheckIcon() {
   );
 }
 
-/** Keyboard-accessible country list beside search, restored from the previous header. */
 export function CountrySelect({
   triggerClassName = "",
   overlayOpen = false,

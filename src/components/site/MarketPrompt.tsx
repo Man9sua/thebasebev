@@ -10,19 +10,6 @@ const SESSION_KEY = "tb_market_session";
 const marketName = (code: string) => DISTRIBUTOR_MARKETS.find((market) => market.code === code)?.name ?? code;
 const here = () => `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
-/**
- * Market on arrival.
- *
- * A returning visitor who chose a market opens in it: once per browser
- * session, the first page they land on moves to their market's prefix. A
- * visitor who has not chosen is never moved — redirecting on location would
- * confuse crawlers and annoy people — they are asked instead, from the
- * country Cloudflare reports (`/api/geo`), with "Yes" and "Stay". Either
- * answer is remembered as their choice.
- *
- * It also hands the page's market and language to the data layer, so every
- * analytics event after it carries them.
- */
 export function MarketPrompt() {
   const [suggested, setSuggested] = useState<string | null>(null);
   const bar = useRef<HTMLDivElement>(null);
@@ -48,7 +35,6 @@ export function MarketPrompt() {
     };
   }, [suggested]);
 
-  // Market and language on the data layer, and on every Shop / Buy click.
   useEffect(() => {
     const layer = ((window as { dataLayer?: unknown[] }).dataLayer ??= []);
     layer.push(pageMarket(window.location.pathname));
@@ -70,7 +56,6 @@ export function MarketPrompt() {
       firstPage = !window.sessionStorage.getItem(SESSION_KEY);
       window.sessionStorage.setItem(SESSION_KEY, "1");
     } catch {
-      // Storage blocked: treat every page as already seen; nothing moves.
     }
 
     if (preferred) {

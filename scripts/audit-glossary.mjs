@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-// Matcha (tfm5mybkl1) was the one empty production source; it now has copy.
 const EXPECTED_EMPTY_UIDS = new Set();
 const DATA_PATH = path.join(process.cwd(), "src", "data", "glossary-content.json");
 

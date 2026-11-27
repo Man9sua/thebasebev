@@ -13,16 +13,6 @@ import {
 import type { ProductPageProps } from "../types";
 import { MADE_IN, PackFacts } from "./Milkshake";
 
-/**
- * Cream Latte — no mock of its own: built on the Matcha reference, section for
- * section, from the facts the current site states (product-details.json,
- * products.ts). No serve photos exist, so "Ready for your menu" is left out;
- * no nutrition label exists, so "Inside the pack" shows only its side cards.
- * The site's dose (15 g) and yield (25 cups from 500 g) disagree, so no
- * per-cup dose is printed until the owner confirms one.
- */
-
-/** No flavour photography: the cards are the template's own, on one cream tone. */
 const FLAVOUR_TONE = "#EFE4D3";
 const flavours = [
   "Birds Dream",

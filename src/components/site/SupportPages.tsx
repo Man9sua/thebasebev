@@ -27,8 +27,6 @@ export function CertificatesPage() {
     <h1>Quality, documented.</h1>
     <p className={styles.intro}>The right documentation for your product, your business and your market. Contact the Base for current certificates and product specifications.</p>
     <div className={styles.cards}>{QUALITY_ITEMS.map(({ title, text }) => <section key={title} className={styles.card}><h2>{title}</h2><p>{text}</p></section>)}</div>
-    {/* Facts a buyer or importer checks before listing a supplier: where the
-        product is made, what documents come with it and whom to ask. */}
     <div className={styles.copy}>
       <h2>Made in our own UAE factory</h2>
       <p>The Base produces its dry beverage bases in its own factory in the UAE, so formulation, production and quality control stay under one roof. The same certified process supplies more than 5,000 points of sale in 26 countries, from single cafés to international chains and distributors.</p>

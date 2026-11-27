@@ -11,8 +11,6 @@ export type StripeSessionDependencies = StripePolicy & Readonly<{
   orders?: OrderStore;
 }>;
 
-// A redirect/query string is not payment confirmation. Return only verified
-// financial state; delivery details and the customer's identity stay private.
 export async function handleStripeSession(request: Request, dependencies: StripeSessionDependencies) {
   const url = new URL(request.url);
   const mode = dependencies.mode ?? "test";

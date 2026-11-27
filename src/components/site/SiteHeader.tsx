@@ -12,7 +12,6 @@ import { shopKindForCountry } from "@/data/shop";
 import { ODOO_ACCOUNT_URL, SHOP_URL } from "@/lib/site-config";
 import styles from "./SiteHeader.module.css";
 
-/** Existing Odoo accounts remain available beside the native shopping basket. */
 function AccountIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">

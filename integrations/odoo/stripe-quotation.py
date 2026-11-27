@@ -1,6 +1,3 @@
-# Runs as one Odoo transaction. The transaction lock also covers retries after
-# a network timeout, so two deliveries cannot create two quotations.
-# The installer fixes this literal per action; the payload cannot select a mode.
 receiver_test_mode = True
 payload = env.context.get('tb_stripe_order') or {}
 session = payload.get('session_id', '')
@@ -89,7 +86,6 @@ else:
         raise UserError('Paid website orders must remain draft quotations without invoices or transfers.')
     if int(round(order.amount_untaxed * 100)) != expected.get('subtotal') + expected.get('shipping') or int(round(order.amount_tax * 100)) != expected.get('vat') or int(round(order.amount_total * 100)) != total:
         raise UserError('Odoo totals differ from the verified Stripe payment. Transaction rolled back.')
-    # Record the internal annotation directly, without an email/recipient fan-out.
     env['mail.message'].create({'model': 'sale.order', 'res_id': order.id, 'body': note,
         'subject': 'STRIPE TEST — verified payment' if receiver_test_mode else 'Stripe — verified payment', 'message_type': 'comment',
         'subtype_id': env.ref('mail.mt_note').id, 'author_id': env.user.partner_id.id,

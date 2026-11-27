@@ -6,8 +6,6 @@
   flex-direction: column;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
-  /* Clipped rather than faded: the panel wipes down from the header line, which
-     reads as one motion with the bar instead of a generic modal fade. */
   clip-path: inset(0 0 100% 0);
   transition:
     clip-path var(--tbb-dur) var(--tbb-ease),
@@ -39,18 +37,11 @@
   overscroll-behavior: contain;
 }
 
-/*
- * The menu is ink, the search is paper. Applied by the panel that wants it
- * rather than assumed here, because the two overlays no longer agree — see
- * `SiteMenu.module.css` and the `menuOpen` branch of `SiteHeader.tsx`, which
- * inverts the bar to match.
- */
 .ink {
   background: var(--tbb-rd-ink);
   color: var(--tbb-rd-paper);
 }
 
-/* Children stagger in only once the panel itself has opened. */
 .item {
   opacity: 0;
   transform: translate3d(0, 22px, 0);
@@ -63,8 +54,6 @@
   opacity: 1;
   transform: none;
 }
-
-/* ---- search ---- */
 
 .searchField {
   display: flex;
@@ -127,8 +116,6 @@
   background: var(--tbb-sand);
 }
 
-/* A page has no picture, so its row is held open by a plain tile — the list
-   reads as a list only while every row starts at the same place. */
 .swatch {
   width: 2.75rem;
   height: 2.75rem;
@@ -137,10 +124,6 @@
   background: var(--tbb-sand);
 }
 
-/* The product rows: a cut-out pouch, and nothing behind it. It used to stand
-   on a white tile, which on the row's own warm paper read as a second card
-   inside the first. `contain` rather than `cover`, because `cover` on a cut-out
-   crops the pouch and leaves its transparent margin filling the square. */
 .pouch {
   width: 2.75rem;
   height: 2.75rem;

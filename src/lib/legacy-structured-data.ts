@@ -8,7 +8,6 @@ const exportRoot = path.join(process.cwd(), "tilda_export", "project12027355");
 function publicize(value: unknown): unknown {
   if (typeof value === "string") {
     if (/^\/?images\//.test(value)) return `${SITE_ORIGIN}/${value.replace(/^\//, "")}`;
-    // Identity fragments describe the company/site, not a regional page.
     if (value.startsWith(`${SITE_ORIGIN}/#`)) return value;
     return publicUrl(value);
   }
@@ -64,8 +63,6 @@ export function getLegacyStructuredData(file: string): string[] {
     const raw = match[1].trim();
     if (!raw) continue;
 
-    // Only pass through what actually parses — a malformed block is worse for
-    // crawlers than none, and it would fail silently in production.
     try {
       blocks.push(JSON.stringify(publicize(JSON.parse(raw))).replace(/</g, "\\u003c"));
     } catch {

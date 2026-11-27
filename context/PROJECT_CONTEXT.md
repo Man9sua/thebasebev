@@ -14,7 +14,7 @@ It includes catalogue/cart presentation, but it is not merely an e-commerce stor
 
 ## Why the migration exists
 
-The current public site is built in Tilda. It is being migrated to Next.js, TypeScript, OpenNext, and Cloudflare Workers to enable maintainable components, Git and code review, preview/staging environments, controlled deployment and rollback, API integrations, a future Odoo connection, and a future Partner Hub.
+The public site uses Next.js, TypeScript, OpenNext and Cloudflare Workers. The migration from Tilda was undertaken to enable maintainable components, Git and code review, preview/staging environments, controlled deployment and rollback, API integrations, the Odoo integration, and a future Partner Hub.
 
 This is a parity migration, not a redesign. Existing URLs, content, design behavior, metadata, redirects, forms, and attribution remain the source of truth until the migration stabilizes.
 
@@ -36,13 +36,13 @@ OpenNext for Cloudflare
 Cloudflare Workers
 ```
 
-- Production: `https://thebasebev.com` — still Tilda.
+- Production: `https://thebasebev.com`, served by the `the-base-production` Worker.
 - Cloudflare account: `mansua`, dedicated to THE BASE.
 - Staging: `https://the-base-staging.mansua.workers.dev`.
-- Production preview: `https://the-base-production.mansua.workers.dev`, with no custom domain.
+- Production preview: `https://the-base-production.mansua.workers.dev`, on the same Worker as the live site.
 - Personal Cloudflare account `indukok667` is not THE BASE infrastructure and must never receive future THE BASE deployments. Its legacy previews are retained temporarily only as rollback/reference.
 - Local Tilda export: technical content/design/asset source of truth.
-- Live Tilda site: read-only reference for current production parity.
+- Tilda source account: read-only rollback reference.
 
 ## Intended future architecture
 
@@ -88,15 +88,8 @@ partners.thebasebev.com
 → Odoo
 ```
 
-See `AGENTS.md`, `CLOUDFLARE_MIGRATION.md`, `PRODUCTION_CUTOVER.md`, and `ROLLBACK_PLAN.md` before infrastructure work.
+See `AGENTS.md`, `context/CLOUDFLARE_MIGRATION.md`, `context/PRODUCTION_CUTOVER.md`, and `context/ROLLBACK_PLAN.md` before infrastructure work.
 
-## Stripe Test staging status
+## Checkout
 
-The isolated Stripe proof of concept has a verified Test Mode Checkout and
-signed staging webhook path. One AED test payment completed successfully, and
-both the real `checkout.session.completed` delivery and one duplicate resend
-returned HTTP 200. It creates no Odoo order, invoice, payment transaction, or
-Telegram message and must not be treated as production payment architecture.
-The native `/checkout` page now uses this Test Mode endpoint as its secure
-payment handoff: THE BASE reviews trusted catalogue items and quantities first,
-then Stripe collects billing/delivery details, card data and authentication.
+Staging uses Stripe Test Mode and production uses Live Mode. The payment receiver records verified website payments as draft Sales Quotations in Odoo. See [the payment pipeline](PAYMENT_PIPELINE.md) for the receiver contract and verification record.

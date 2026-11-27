@@ -1,4 +1,3 @@
-// Shared transport bounds for Stripe Checkout and the lead API, not a sample-box policy.
 export const SHOP_MAX_LINES = 100;
 export const SHOP_MAX_QUANTITY = 999_999;
 

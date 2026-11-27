@@ -9,7 +9,7 @@ export function validLiveOrigin(value: string | undefined): string | undefined {
     const url = new URL(value ?? "");
     if (url.protocol === "https:" && url.origin === value && !url.username && !url.password
       && !url.port && !LOCAL_HOSTS.has(url.hostname) && url.origin !== STRIPE_STAGING_ORIGIN) return url.origin;
-  } catch { /* An absent or invalid origin keeps Live checkout closed. */ }
+  } catch {  }
 }
 
 export function isAllowedStripeHost(url: URL, policy: StripePolicy) {

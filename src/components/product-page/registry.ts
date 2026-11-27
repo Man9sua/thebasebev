@@ -23,10 +23,6 @@ import { ToppingPage } from "./pages/Topping";
 import { VendingPage } from "./pages/Vending";
 import type { ProductPageAssets, ProductPageProps } from "./types";
 
-/**
- * Products that render the redesigned page instead of ProductHero +
- * ProductDetails. A slug missing here keeps the previous design.
- */
 export const PRODUCT_PAGES: Record<string, ComponentType<ProductPageProps>> = {
   "add-ons": AddOnsPage,
   "at-home": AtHomePage,
@@ -52,8 +48,4 @@ export const PRODUCT_PAGES: Record<string, ComponentType<ProductPageProps>> = {
   matcha: MatchaPage,
 };
 
-/**
- * Real files behind "Download kit" / "Download specification (PDF)". The
- * mocks draw both links; each stays hidden until its file is added here.
- */
 export const PRODUCT_PAGE_ASSETS: Record<string, ProductPageAssets> = {};

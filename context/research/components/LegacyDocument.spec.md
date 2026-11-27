@@ -19,4 +19,4 @@ Render audited Tilda page markup as crawler-visible server HTML during the first
 
 ## Boundary
 
-Tilda scripts retained inside this boundary are temporary and classified in `MIGRATION_NOTES.md`. New business integrations, metadata, robots, sitemap, redirects, and attribution are owned by Next.js.
+Tilda scripts retained inside this boundary are temporary and classified in `context/MIGRATION_NOTES.md`. New business integrations, metadata, robots, sitemap, redirects, and attribution are owned by Next.js.

@@ -84,7 +84,6 @@ test("Next beforeFiles rewrites compile and match country documents, never liter
 type WorkerEnvironment = { APP_ENV: "staging"; ASSETS: { fetch(request: Request): Promise<Response> } };
 type TestWorker = { fetch(request: Request, environment: WorkerEnvironment, context: object): Promise<Response> };
 
-/** Load the real wrapper with a fail-fast OpenNext stub: a document must stay on Static Assets. */
 function workerForTest(): TestWorker {
   const source = fs.readFileSync(new URL("../worker.ts", import.meta.url), "utf8");
   const compiled = ts.transpileModule(source, {

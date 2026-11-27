@@ -75,7 +75,6 @@ async function font(locator, weight, label, { uppercase = false, tracking = fals
 
 async function screenshot(locator, name) {
   await locator.scrollIntoViewIfNeeded();
-  // A section can use content-visibility:auto. Paint it before taking its box.
   await locator.page().evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const file = path.join(output, `${name}.png`);
   await locator.screenshot({ path: file, animations: "disabled", style: "header { visibility: hidden !important; }" });
@@ -120,7 +119,6 @@ async function typography(page, slug, label) {
     const rect = element.getBoundingClientRect();
     return { left: rect.left, right: rect.right, viewport: innerWidth };
   });
-  // Measure the native product frame, not translated menus or scrolling galleries.
   check(geometry.left >= -2 && geometry.right <= geometry.viewport + 2, `${label} ${slug}: native frame fits viewport`, geometry);
   return main;
 }
@@ -284,13 +282,11 @@ async function run(label, viewport) {
     return route.fulfill({ status: 503, contentType: "application/json",
       body: JSON.stringify({ ok: false, error: "product_reference_mocked" }) });
   });
-  // This audit never enters checkout. Block an accidental order mutation too.
   await context.route("**/api/checkout**", (route) => route.abort());
   await context.route(/^https:\/\/[^/]*(?:googletagmanager\.com|google-analytics\.com|doubleclick\.net|facebook\.net)\//,
     (route) => route.fulfill({ status: 204, body: "" }));
   const page = await context.newPage();
   page.setDefaultTimeout(12_000);
-  // Network load uses Playwright's usual budget; DOM/control assertions stay at 12 s.
   page.setDefaultNavigationTimeout(30_000);
   page.on("pageerror", (error) => failures.push(`${label}: JavaScript ${error.message}`));
   const externalFonts = new Set();
@@ -317,7 +313,6 @@ async function run(label, viewport) {
     await privacyCookies(page, context, label);
   } catch (error) {
     failures.push(`${label} Privacy cookies: ${error.message}`);
-    // Continue product inspection even if cookie appearance has regressed.
     await context.addCookies([{ name: "tbb-consent", value: encodeURIComponent(JSON.stringify({ analytics: false, marketing: false })), url: baseUrl }]);
   }
   for (const slug of slugs) {
@@ -333,8 +328,6 @@ async function run(label, viewport) {
       await page.screenshot({ path: path.join(output, `${label}-${slug}-failure.png`) }).catch(() => {});
     }
   }
-  // Use real SiteLinks after retained Tilda pages; record whether the document
-  // is retained instead of pretending a plain anchor is a client transition.
   if (label === "desktop") for (const [legacy, target] of [["terms", "frappe"], ["privacy", "jam"], ["retail", "puree"]]) {
     try {
       await visit(legacy);

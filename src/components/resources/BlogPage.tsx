@@ -7,19 +7,6 @@ import { useMemo, useState } from "react";
 import { BLOG_POSTS, BLOG_TOPICS } from "@/data/blog";
 import styles from "./BlogPage.module.css";
 
-/**
- * `/resources/blog`.
- *
- * Built on the Glossary's shelf — the same paper, the same control panel, the
- * same card rhythm — because the two are siblings under Resources and the
- * owner asked for this one to read like that one. What it does not borrow is
- * the Glossary's card: a Blog post has a photograph, a date and a length, and
- * hiding those behind a title would make thirty articles look like one wall.
- *
- * The newest post is set as the lead card and drops back into the grid the
- * moment a filter is on, so the shelf never shows the same article twice.
- */
-
 type TopicFilter = "all" | string;
 
 function displayDate(value: string) {

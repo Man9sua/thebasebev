@@ -5,13 +5,6 @@ import type { ProductPageProps } from "../types";
 import { UseCards, rangeStyles } from "./Range";
 import local from "./AddOns.module.css";
 
-/**
- * Functional add-ons ("Add-ons Product Page Redesign", desktop 1440 / mobile
- * 390). The mock reserves a photo slot until approved pack shots arrive. The custom
- * blend card goes to the R&D page, which carries its own lead form: this
- * route has no exported page and so none of the export's popups.
- */
-
 const addOns = [
   { name: "Electrolyte", color: "#E9A1A8", stick: "5 g", dose: "Sodium 1000 mg, potassium 200 mg, magnesium 60 mg", taste: "Moderate, raspberry salt", best: "Smoothies, iced espresso, cold brew" },
   { name: "Prebiotic fiber", color: "#D9CBA8", stick: "5 g", dose: "4000 mg fiber", taste: "Neutral", best: "Smoothies, blended drinks" },

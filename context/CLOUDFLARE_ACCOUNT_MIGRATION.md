@@ -31,7 +31,7 @@ Only these resources are approved for replication:
 - `ASSETS` and `APP_ENV` bindings;
 - equivalent Worker observability settings.
 
-There are no THE BASE secrets, R2 buckets, D1 databases, KV namespaces, Queues, Durable Objects, Hyperdrive, Vectorize, cron triggers, service bindings, or custom domains to migrate. See `CLOUDFLARE_RESOURCE_INVENTORY.md` and `SOURCE_WORKER_CONFIG.md` for evidence.
+There are no THE BASE secrets, R2 buckets, D1 databases, KV namespaces, Queues, Durable Objects, Hyperdrive, Vectorize, cron triggers, service bindings, or custom domains to migrate. See `context/CLOUDFLARE_RESOURCE_INVENTORY.md` and `context/SOURCE_WORKER_CONFIG.md` for evidence.
 
 ## Hard exclusions
 

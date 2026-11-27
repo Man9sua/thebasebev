@@ -19,12 +19,6 @@ function appendScript(src: string, id: string) {
   document.head.append(script);
 }
 
-/**
- * Google's own `gtag` shim: a function that pushes its `arguments` object — not
- * an array of them — onto the data layer. The distinction matters to the tag
- * platform, which reads `consent` commands out of the layer by shape, so this is
- * written the documented way rather than a convenient way.
- */
 function gtagFor(window: AnalyticsWindow) {
   const layer = (window.dataLayer = window.dataLayer ?? []);
   if (!window.gtag) {
@@ -36,29 +30,8 @@ function gtagFor(window: AnalyticsWindow) {
   return window.gtag;
 }
 
-/** Whether the denied-by-default state has been stated on this document yet. */
 let defaultsDeclared = false;
 
-/**
- * Analytics, and nothing before consent.
- *
- * Three gates, in this order:
- *
- * 1. the production hostname, so staging and every `workers.dev` preview stay
- *    out of the numbers;
- * 2. Consent Mode v2, declared denied before a tag can read it — the container
- *    is authoritative and a container holds advertising tags as readily as
- *    measurement ones, so telling it what it may do is not optional once the
- *    site asks the question at all;
- * 3. the visitor's answer. Until analytics is granted, no container, no GA4 and
- *    no Meta or Google pixel is fetched — which is what `CookieConsent`
- *    promises on the visitor's behalf, and what the exported T972 widget it
- *    replaces never actually did.
- *
- * GTM is authoritative when configured; direct GA is only a fallback, because
- * the container may already own the GA4 page_view event. (`audit:analytics`
- * reads that sentence out of this file, so it stays worded as it is.)
- */
 export function Analytics() {
   const consent = useSyncExternalStore(
     subscribeConsent,
@@ -83,8 +56,6 @@ export function Analytics() {
       });
     }
 
-    // An already-loaded container is told about a changed answer rather than
-    // loaded a second time — this effect reruns on every consent change.
     gtag("consent", "update", {
       analytics_storage: consent.analytics ? "granted" : "denied",
       ad_storage: consent.marketing ? "granted" : "denied",

@@ -1,13 +1,3 @@
-/*
- * Drink cost calculator — the owner's design (`products/calc/template.html`).
- * Sizes and colours are the design's own; font families and the heading/CTA
- * weights come from the shared typography tokens.
- *
- * The legacy `public/css/custom.css` forces `line-height`/`font-weight` on
- * every `p` with !important and restyles any class containing "card" or
- * "tile" — hence the few !important paragraph rules below and the class
- * names that avoid those words.
- */
 .page {
   --calc-ink: #0e0e0e;
   --calc-soft: #55524c;
@@ -60,7 +50,6 @@
   outline-offset: 2px;
 }
 
-/* Intro */
 .intro {
   display: flex;
   flex-direction: column;
@@ -87,7 +76,6 @@
   text-wrap: pretty;
 }
 
-/* Presets */
 .start {
   display: flex;
   flex-direction: column;
@@ -129,7 +117,6 @@
   color: #ffffff;
 }
 
-/* Layout */
 .workspace {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr));
@@ -144,7 +131,6 @@
   min-width: 0;
 }
 
-/* Ingredient table: options on phones, a table from 760px */
 .table {
   display: flex;
   flex-direction: column;
@@ -370,7 +356,6 @@
   }
 }
 
-/* Waste and delivery */
 .options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
@@ -475,7 +460,6 @@
   left: 21px;
 }
 
-/* Results panel */
 .panel {
   position: sticky;
   top: calc(var(--tbb-header-h) + 24px);
@@ -652,7 +636,6 @@
   background: var(--calc-red);
 }
 
-/* Comparison */
 .compare {
   display: flex;
   flex-direction: column;

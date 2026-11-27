@@ -1,14 +1,4 @@
-/**
- * Global footer — the redesign.
- *
- * Three bands: the statement and the two direct channels beside the three link
- * columns; one line of legal, cookie and social; and the mark as a watermark
- * closing the page.
- */
-
 .footer {
-  /* Neutral greys on the ink. The shared warm greys read as red or yellow at
-     this size against black, so the footer keeps its own. */
   --footer-text: #c8c8c8;
   --footer-soft: #b4b4b4;
   --footer-dim: #8f8f8f;
@@ -28,19 +18,6 @@
   padding: 0 clamp(1.25rem, 6.6667vw, 6rem);
 }
 
-/*
- * The brand column is held to its measure and the three link columns take the
- * slack, rather than the other way round.
- *
- * It used to be `1fr` against three 200s, which on a 1920 page handed the brand
- * cell 916 and then capped what stands in it at 448 — the empty half of that
- * cell was the hole in the middle of the footer. Columns that share what is
- * left spread across the width instead, and the row reads as a row.
- *
- * Four of them, because the two ways to reach a person are one of them. Hung
- * under the statement on the left they left the right of the band empty from
- * the last link down to the legal line.
- */
 .top {
   display: grid;
   grid-template-columns: minmax(0, 24rem) repeat(4, minmax(0, 1fr));
@@ -48,9 +25,6 @@
   padding-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
-/* ---- the statement and the two channels ---- */
-
-/* The cap lives on the column now — see `.top`. */
 .brand {
   display: flex;
   flex-direction: column;
@@ -61,22 +35,12 @@
   margin: 0 !important;
   color: var(--footer-soft);
   font-size: clamp(1rem, 1.25vw, 1.125rem);
-  /* Important for the same reason as the wordmark below — Tilda's stylesheets
-     force 1.7 on every `p` of a parity page, which opened this block up by
-     60px there and nowhere else. */
   line-height: 1.55 !important;
   text-wrap: pretty;
 }
 
 
 
-/*
- * The two things someone opens a footer to find, at the size that says so. They
- * used to be the same 15px as every link beside them, which made the footer a
- * wall of equal grey.
- */
-/* Bigger and brighter than the links above them, because they are what someone
-   opens a footer to find — but a column's width now, not a headline's. */
 .contactLink {
   width: fit-content;
   color: var(--tbb-rd-paper);
@@ -87,14 +51,10 @@
   transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
-/* White, not red: on a ground this dark red is the loudest thing on the page,
-   and red is what marks the page you are on rather than what a pointer does. */
 .contactLink:hover,
 .contactLink:focus-visible {
   color: #fff;
 }
-
-/* ---- the three columns ---- */
 
 .column {
   display: flex;
@@ -110,9 +70,6 @@
   font-weight: 400;
 }
 
-/* Shared by the anchors and by the legal row's one button — the reset is what
-   lets `CookieSettingsButton` sit beside Terms and Privacy without looking like
-   a control that wandered in. */
 .link {
   appearance: none;
   padding: 0;
@@ -132,8 +89,6 @@
 .link:focus-visible {
   color: var(--tbb-rd-paper);
 }
-
-/* ---- one line of legal, cookies and accounts ---- */
 
 .legal {
   display: flex;
@@ -205,26 +160,11 @@
   color: var(--tbb-rd-ink);
 }
 
-/* --- the closing mark --- */
-
-/* At the head of the brand column, not on a band under the page. The drawing
-   is square, so it can never be laid across the foot the way a house wordmark
-   is — and a band holding one square and nothing else is the emptiness this
-   footer kept being asked about. Up here it has three columns beside it. */
 .wordmarkWrap {
   margin-bottom: clamp(0.5rem, 1.5vw, 1.25rem);
   overflow: clip;
 }
 
-/*
- * The lockup as a watermark closing the page — `BrandMarkStacked`, the owner's
- * stacked artwork, in which the letters are cut out of the block rather than
- * painted on it.
- *
- * One grey off the ground, so the ground is what reads as BASE — a watermark
- * standing behind the footer's own words rather than a second red mark under
- * the one in the bar.
- */
 .wordmark {
   display: block;
   width: clamp(10rem, 18vw, 20rem);
@@ -251,7 +191,6 @@
 }
 
 @media (max-width: 63.9375rem) {
-  /* The columns drop under the statement rather than beside it. */
   .top {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     row-gap: clamp(2.5rem, 6vw, 4rem);
@@ -264,17 +203,6 @@
 }
 
 @media (max-width: 39.9375rem) {
-  /*
-   * The mark closes the footer on a phone instead of heading it — a watermark
-   * is the last thing on a page, not its opening, and here that means below
-   * the legal line as well.
-   *
-   * Getting it there takes three `display: contents`: the mark lives inside the
-   * brand column inside `.top`, and the line it has to fall under is `.legal`,
-   * a sibling of `.top`. Flattening both hands every piece to one grid on
-   * `.inner`, where `order` can put them in any sequence. `.top` loses its own
-   * padding with its box, so the spacing moves onto the pieces.
-   */
   .inner {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -291,10 +219,6 @@
     grid-column: 1 / -1;
   }
 
-  /* Stacked, and in the design's own order: the legal links, then the
-     copyright last. The accounts moved up into the Contact column, and the
-     `order: -2` that used to lift them here was pulling them above that
-     column's own heading. */
   .legal {
     order: 8;
     grid-column: 1 / -1;
@@ -313,8 +237,6 @@
     width: clamp(8rem, 40vw, 13rem);
   }
 
-  /* The contact column takes the width: an email address does not fit in half
-     a phone, and the accounts want one row rather than two. */
   .column:last-child {
     grid-column: 1 / -1;
   }

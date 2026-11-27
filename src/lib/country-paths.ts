@@ -13,7 +13,6 @@ const reservedSegments = "api|_next|__static_pages|images|css|js|video|files|fon
 const reservedFiles = "robots\\.txt|sitemap\\.xml|rss\\.xml|favicon\\.ico";
 const reservedPath = new RegExp(`^/(?:${reservedSegments})(?:/|$)|^/(?:${reservedFiles})$`, "i");
 
-/** Public media, APIs and the standalone checkout keep their original paths. */
 export const COUNTRY_DOCUMENT_PATH_PATTERN = `(?!(?:${reservedSegments})(?:/|$)|(?:${reservedFiles})$).+`;
 
 function splitHref(href: string) {
@@ -33,7 +32,6 @@ function pathCountry(pathname: string) {
 function documentPath(pathname: string) {
   const country = pathCountry(pathname);
   const route = country ? pathname.slice(country.prefix.length) || "/" : pathname;
-  // Encoded separators must not turn a country document request into an asset/API alias.
   let decodedRoute: string;
   try {
     decodedRoute = decodeURIComponent(route);
@@ -44,12 +42,10 @@ function documentPath(pathname: string) {
   return { country, route };
 }
 
-/** The visible URL is authoritative; shared English documents default to UAE. */
 export function countryCodeFromPath(pathname: string) {
   return pathCountry(splitHref(pathname).pathname)?.code ?? DEFAULT_COUNTRY_CODE;
 }
 
-/** Explicit cross-country links keep their destination; ordinary links follow the visitor. */
 export function countryPath(href: string, code: string) {
   if (!href.startsWith("/") || href.startsWith("//")) return href;
   const { pathname } = splitHref(href);
@@ -58,7 +54,6 @@ export function countryPath(href: string, code: string) {
   return switchCountryPath(href, code);
 }
 
-/** Country selector: replace the prefix while preserving the route, query and fragment. */
 export function switchCountryPath(href: string, code: string) {
   if (!href.startsWith("/") || href.startsWith("//")) return href;
   const { pathname, suffix } = splitHref(href);
@@ -71,11 +66,6 @@ export function switchCountryPath(href: string, code: string) {
 
 const RETIRED_ROUTES = retiredRoutes as Readonly<Record<string, string>>;
 
-/**
- * A retired page, in any market: `/sa/wholesale-strategy` → `/sa/distributors`.
- * The country prefix is kept, so a visitor stays on their market's site; a
- * bare route without a prefix goes to the default market.
- */
 export function retiredRouteRedirect(pathname: string) {
   const country = pathCountry(pathname);
   const route = country ? pathname.slice(country.prefix.length) || "/" : pathname;
@@ -84,7 +74,6 @@ export function retiredRouteRedirect(pathname: string) {
   return `/${(country?.code ?? DEFAULT_COUNTRY_CODE).toLowerCase()}${replacement}`;
 }
 
-/** Every retired route with every market prefix, for build-time redirect lists. */
 export const RETIRED_ROUTE_REDIRECTS = Object.entries(RETIRED_ROUTES).flatMap(([route, replacement]) => [
   { source: route, destination: `/${DEFAULT_COUNTRY_CODE.toLowerCase()}${replacement}` },
   ...COUNTRY_CODES.map((code) => ({
@@ -93,7 +82,6 @@ export const RETIRED_ROUTE_REDIRECTS = Object.entries(RETIRED_ROUTES).flatMap(([
   })),
 ]);
 
-/** Reuse the generated English HTML/RSC document, without redirecting the visible URL. */
 export function toDefaultCountryPath(pathname: string) {
   if (!pathname.startsWith("/") || pathname.startsWith("//")) return pathname;
   const parsed = documentPath(pathname);

@@ -204,4 +204,4 @@ in Odoo.
 ## Telegram
 
 Tilda delivers leads to Telegram separately from the Odoo webhook. The Next.js
-pipeline does not reproduce that. See `TELEGRAM_MIGRATION.md`.
+pipeline does not reproduce that. See `context/TELEGRAM_MIGRATION.md`.

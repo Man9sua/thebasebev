@@ -23,7 +23,6 @@ function check(ok, message, detail) {
 
 async function request(route) {
   const start = performance.now();
-  // GET only. Redirects remain observable; this never posts a lead or order.
   const response = await fetch(new URL(route, baseUrl), {
     method: "GET",
     redirect: "manual",
@@ -70,8 +69,6 @@ async function caseOf(label, run) {
   }
 }
 
-// Read the three AE documents once. Every country alias must serve these exact
-// generated files; country selection is a browser concern, not a second build.
 for (const suffix of documents) {
   await caseOf(`/ae${suffix}`, async () => {
     const result = await request(`/ae${suffix}`);
@@ -92,8 +89,6 @@ for (const code of codes.filter((value) => value !== "AE")) {
   console.log(`Country routing: ${code}, three documents checked`);
 }
 
-// Keep APIs and static files outside country document rewrites. Representative
-// pairs cover the dynamic API, image and CSS paths without a reserved-path grid.
 for (const [route, type] of [["/api/health", /application\/json/i],
   ["/images/certifications/halal.jpg", /image\/jpeg/i], ["/css/tbs-tailwind.css", /text\/css/i]]) {
   await caseOf(route, async () => {
@@ -115,9 +110,6 @@ for (const [route, type] of [["/api/health", /application\/json/i],
   }
 }
 
-// Ten sequential document requests with distinct queries exercise the changed
-// Worker fast path after the route matrix. These timings include network and
-// body transfer; they are not measurements of Worker CPU time.
 for (let index = 0; index < 10; index++) {
   const code = index % 2 ? "kw" : "qa";
   const route = `/${code}/milkshake?utm_source=chatgpt.com&utm_campaign=country-routing-audit&probe=${index}`;

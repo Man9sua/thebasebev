@@ -2,12 +2,6 @@ import { BrandLogo } from "@/components/site/BrandLogo";
 import { COMPANY } from "@/lib/site-config";
 import { T, lineCost, type Row } from "./calc-model";
 
-/*
- * "Download PDF" is the browser's own print dialog (Save as PDF): no library,
- * nothing sent anywhere. The summary is portalled straight under <body>, so
- * the print sheet can hide every other body child and print one clean page.
- * It is plain global CSS because a CSS module cannot target `body > *`.
- */
 export const PRINT_CSS = `
 [data-calc-print]{display:none}
 @media print{

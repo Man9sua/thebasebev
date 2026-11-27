@@ -7,18 +7,10 @@ import { AnimatedDetails } from "./AnimatedDetails";
 import { ProductShopHero } from "./ProductShopHero";
 import styles from "./ProductPage.module.css";
 
-/**
- * Building blocks of the redesigned product pages. Each product composes its
- * page from these in `pages/<Product>.tsx`; anything a single mock does
- * differently is passed in as a class or a CSS variable from that page's own
- * module, so the shared defaults stay the matcha baseline.
- */
-
 export const cx = (...names: Array<string | false | null | undefined>) => names.filter(Boolean).join(" ");
 
 type WithClass = { className?: string; style?: CSSProperties };
 
-/** `/images/products/<slug>/<name>-<w>.webp` at every width that was generated. */
 export function productImage(slug: string, name: string, widths: number[]) {
   const base = `/images/products/${slug}/${name}`;
   const sorted = [...widths].sort((a, b) => a - b);
@@ -28,7 +20,6 @@ export function productImage(slug: string, name: string, widths: number[]) {
   };
 }
 
-/** Desktop copy and the mock's shorter phone copy, from one DOM. */
 export function Responsive({ desktop, mobile }: { desktop: ReactNode; mobile?: ReactNode }) {
   if (mobile === undefined) return <>{desktop}</>;
   return (
@@ -39,9 +30,6 @@ export function Responsive({ desktop, mobile }: { desktop: ReactNode; mobile?: R
   );
 }
 
-/* ---------------- actions ---------------- */
-
-/** The free-sample form: the shared native modal and lead pipeline. */
 export function SampleButton({ productName, className }: { productName: string; className?: string }) {
   return <SampleRequestModal className={cx(styles.button, styles.red, className)} productName={productName} />;
 }
@@ -54,7 +42,6 @@ export function DistributorLink({ className, children = "Find your distributor" 
   );
 }
 
-/** Open the R&D brief, rather than the legacy custom-flavour popup. */
 export function FlavourEnquiryLink({ className, children = "Talk to R&D →" }: { className?: string; children?: ReactNode }) {
   return (
     <SiteLink href="/rnd#rnd-form" className={className ?? styles.textLink}>
@@ -62,8 +49,6 @@ export function FlavourEnquiryLink({ className, children = "Talk to R&D →" }: 
     </SiteLink>
   );
 }
-
-/* ---------------- structure ---------------- */
 
 export function Section({
   title,
@@ -96,8 +81,6 @@ export function Hero({ slug, title, lead }: {
   return <ProductShopHero slug={slug} title={title} lead={<Responsive {...lead} />} />;
 }
 
-/* ---------------- 02 stats ---------------- */
-
 export type Stat = { value: ReactNode; label: ReactNode };
 
 export function Stats({ items, columns = 3, className }: { items: Stat[]; columns?: number; className?: string }) {
@@ -112,8 +95,6 @@ export function Stats({ items, columns = 3, className }: { items: Stat[]; column
     </div>
   );
 }
-
-/* ---------------- 03 menu ---------------- */
 
 export type Tile = { src: string; srcSet?: string; alt: string };
 
@@ -137,7 +118,6 @@ export function Tiles({ items, columns = 5, sizes, className }: { items: Tile[];
   );
 }
 
-/** A real download when supplied; otherwise a request to the team. */
 export function MarketingKitAction({ href, className }: { href?: string; className?: string }) {
   const actionClass = cx(styles.button, styles.red, className);
   return href ? (
@@ -149,7 +129,6 @@ export function MarketingKitAction({ href, className }: { href?: string; classNa
   );
 }
 
-/** Preserve the mock's marketing-kit band without promising an absent file. */
 export function Kit({ href, title = "Marketing kit", text, className }: { href?: string; title?: ReactNode; text: ReactNode; className?: string }) {
   return (
     <div className={cx(styles.kit, className)}>
@@ -161,8 +140,6 @@ export function Kit({ href, title = "Marketing kit", text, className }: { href?:
     </div>
   );
 }
-
-/* ---------------- 04 prepare ---------------- */
 
 export type Step = { label: ReactNode; value: ReactNode; dark?: boolean };
 
@@ -179,8 +156,6 @@ export function Steps({ items, columns, className }: { items: Step[]; columns?: 
   );
 }
 
-/* ---------------- 05 flavours ---------------- */
-
 export type Flavour = { name: ReactNode; color: string; ink?: string };
 
 export function Flavours({
@@ -191,7 +166,6 @@ export function Flavours({
 }: {
   items: Flavour[];
   columns?: number;
-  /** The "Your own flavour / Talk to R&D" card at the end of the grid. */
   own?: boolean;
   className?: string;
 }) {
@@ -219,8 +193,6 @@ export function Flavours({
   );
 }
 
-/* ---------------- 06 inside the pack ---------------- */
-
 export type { NutritionSet };
 
 export function Info({
@@ -233,7 +205,6 @@ export function Info({
 }: {
   title: ReactNode;
   text: ReactNode;
-  /** The phone's one-line version, e.g. "<b>Allergens:</b> contains milk protein." */
   mobile?: ReactNode;
   background: string;
   titleColor: string;
@@ -268,7 +239,6 @@ export function Shelf({
   text: ReactNode;
   mobileText?: ReactNode;
   certifications?: ReactNode;
-  /** Shown only when the PDF exists. */
   specHref?: string;
   className?: string;
 }) {
@@ -308,11 +278,8 @@ export function Inside({
   );
 }
 
-/* ---------------- 07 FAQ ---------------- */
-
 export type Question = { q: ReactNode; a: ReactNode };
 
-/** Keep structured answers identical to the visible FAQ. */
 export function FaqSchema({ items }: { items: Question[] }) {
   if (!items.every((item) => typeof item.q === "string" && typeof item.a === "string")) return null;
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqPage(items as { q: string; a: string }[]) }} />;
@@ -333,10 +300,8 @@ export function Faq({
   productName: string;
   items: Question[];
   line?: ReactNode;
-  /** The phone shows the first few questions only. */
   mobileLimit?: number;
   distributor?: boolean;
-  /** False drops both sample buttons, for a page that sells nothing to sample. */
   sample?: boolean;
   className?: string;
   title?: ReactNode;

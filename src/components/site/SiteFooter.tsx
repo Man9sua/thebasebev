@@ -60,25 +60,6 @@ const COLUMNS = [
   { title: "Resources", links: FOOTER_LINKS.resources },
 ] as const;
 
-/**
- * Global footer, rebuilt to the redesign.
- *
- * The sentence and the two ways to reach a person lead, at the size someone
- * actually looks for them — the email and the phone used to be the same 15px as
- * every link beside them, which made the footer a wall of equal grey. The three
- * link columns sit to the right of them rather than around them.
- *
- * Along the bottom: the copyright, then Sitemap, Terms, Privacy, the cookie
- * dialog and the social accounts, all on one line. Social had its own "Follow"
- * heading inside the Resources column, which read as a fourth kind of resource.
- *
- * Then the mark, as a watermark: the same lockup the header carries, run to the
- * width of the page in two greys a shade off the ground. It used to close the
- * page in paper and brand red at that scale, which is a billboard rather than a
- * signature — see the `--tbb-logo-*` overrides in the stylesheet.
- *
- * Contacts and social accounts are the real ones from the existing site.
- */
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
@@ -87,8 +68,6 @@ export function SiteFooter() {
       <div className={styles.inner}>
         <div className={styles.top}>
           <div className={styles.brand}>
-            {/* The mark heads its own column, level with the column headings
-                beside it, rather than closing the page on a band of its own. */}
             <div className={styles.wordmarkWrap} aria-hidden="true">
               <BrandMarkStacked className={styles.wordmark} />
             </div>
@@ -98,9 +77,6 @@ export function SiteFooter() {
             </p>
           </div>
 
-          {/* Direct children of the top grid, not wrapped: the row is four
-              columns beside the brand, and a wrapper would take one cell and
-              then have to re-divide it. */}
           {COLUMNS.map((column) => (
             <div key={column.title} className={styles.column}>
               <span className={styles.columnTitle}>{column.title}</span>
@@ -112,12 +88,6 @@ export function SiteFooter() {
             </div>
           ))}
 
-          {/*
-            The two ways to reach a person, and the accounts, as the row's
-            fourth column. They used to hang under the statement on the left,
-            which left the right of the band empty from the last link down to
-            the legal line.
-          */}
           <div className={styles.column}>
             <span className={styles.columnTitle}>Contact</span>
             <a className={styles.contactLink} href={COMPANY.emailHref}>
@@ -165,8 +135,6 @@ export function SiteFooter() {
                 {item.label}
               </SiteLink>
             ))}
-            {/* The one way back to a choice already made. A consent banner that
-                cannot be reopened is a consent banner that cannot be withdrawn. */}
             <CookieSettingsButton className={styles.link} />
           </span>
 

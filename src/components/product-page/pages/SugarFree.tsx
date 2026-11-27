@@ -13,12 +13,6 @@ import type { ProductPageProps } from "../types";
 import { PlainFaq, RndBand, ShelfCard, SimpleInside, TryBand, jamStyles as j, type Fact } from "./Jam";
 import s from "./SugarFree.module.css";
 
-/**
- * Sugar free ("Sugar free · страница продукта целиком", desktop 1440 / mobile 390).
- * Same design generation as jam, whose shared pieces it reuses; it has no
- * "Ready for your menu" section (no serve photos yet).
- */
-
 const SLUG = "sugar-free";
 
 const flavours = [

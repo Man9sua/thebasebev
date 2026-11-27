@@ -5,10 +5,6 @@ import {
   type LeadFormType,
 } from "@/lib/lead-forms";
 
-/**
- * Name of the decoy field rendered off-screen in every lead form. Real users
- * never fill it in; bots that auto-complete every input do.
- */
 export const LEAD_HONEYPOT_FIELD = "company_website";
 
 export const LEAD_UTM_KEYS = [
@@ -59,7 +55,6 @@ export type LeadPayload = FirstTouchAttribution & {
   submissionPage: string;
   order?: LeadOrderContext;
   clientTimestamp: string;
-  /** True when the decoy field was filled — the caller drops the submission. */
   honeypotTripped: boolean;
 };
 
@@ -327,8 +322,6 @@ export function validateLeadPayload(input: unknown): LeadValidationResult {
     MAX_SHORT_TEXT_LENGTH,
     issues,
   ).toLowerCase();
-  // The browser may send a form type, but it only ever selects from the
-  // allowlist — it can never introduce an internal form name of its own.
   const requestedType = input.formType;
   const formId = readOptionalString(input, "formId", MAX_SHORT_TEXT_LENGTH, issues);
   const requestedName = readOptionalString(

@@ -1,39 +1,9 @@
-/**
- * Page heads for the two parity pages whose own opening block had to go.
- *
- * Both are Tilda template pages whose top was template debris rather than
- * content — see `REMOVED_BODY_RECORDS` in `lib/site-pages.ts` for what was
- * dropped and why. Dropping it took each page's `h1` with it, so the heading
- * is written down here and rendered by `PageIntro` instead.
- *
- * The wording is the page's own wherever the page had any: `/private-labeling`
- * keeps its heading and its opening sentence character for character, and only
- * moves them to the top of the page from the bottom, where they were sitting
- * under nothing. `/rnd` is the one place a heading is new — its only `h1` was
- * the Russian calorie calculator that came with the template, and the wording
- * below is that page's own `<title>`, which is the phrase it has been
- * optimised for all along.
- *
- * Anything here is SEO surface. Change it deliberately, not in passing.
- */
-
 export type PageIntro = {
-  /** The page's `h1`. */
   title: string;
-  /**
-   * Exact legacy H1 retained only when parity and the visible page title
-   * conflict. The replacement title remains the first visible heading.
-   */
   legacyH1?: string;
-  /** Optional statement between the heading and the lead. */
   tagline?: string;
   lead: string;
-  /** Optional background film, muted and looping. */
   video?: string;
-  /**
-   * Set on a page whose own first block is dark, so the head reads as the top
-   * of that page rather than as a white strip resting on it.
-   */
   tone?: "dark";
 };
 
@@ -49,19 +19,6 @@ export const PAGE_INTROS: Record<string, PageIntro> = {
   "/rnd": {
     tone: "dark",
     title: "Beverage R&D and Product Development in Dubai",
-    /*
-     * No `legacyH1`. Production serves this route under "Узнай свою дневную
-     * норму за 30 секунд" -- the heading of a calorie calculator sitting on the
-     * page in Tilda block #rec2493779621, describing neither the page nor the
-     * business. It was being reproduced here as a hidden h1 for parity, which
-     * meant hiding a sentence from readers and showing it to crawlers. The
-     * route is named in `H1_NOT_PRESERVED` in `scripts/audit-seo-parity.mjs`
-     * instead, by its exact string, so the exemption expires the moment
-     * production is corrected.
-     *
-     * Dead either way today: /rnd renders `RndPage`, which returns before this
-     * file is reached.
-     */
     lead:
       "Custom beverage R&D in Dubai: recipe development, flavour matching and pilot batches " +
       "for HORECA and private label brands across the UAE and GCC.",
@@ -72,23 +29,13 @@ export function getPageIntro(route: string) {
   return PAGE_INTROS[route];
 }
 
-/** One thing the company sells, with what it costs to start. */
 export type PageOffer = {
   title: string;
-  /** The entry point — a minimum order, or a price floor. */
   from: string;
   description: string;
   image: string;
 };
 
-/**
- * `/private-labeling`'s four services.
- *
- * Lifted verbatim out of the block they were in — another zero block, laid out
- * as four rounded grey panels each holding a rounded photograph, with the
- * titles running one to three lines so no two cards agreed on where the price
- * sat. `PageOffers` sets the same copy as a row that lines up.
- */
 export const PAGE_OFFERS: Record<string, PageOffer[]> = {
   "/private-labeling": [
     {

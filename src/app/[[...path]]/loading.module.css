@@ -11,8 +11,6 @@
   background: var(--tbb-grey-lightest);
 }
 
-/* One sweep across the whole page rather than a per-block animation with its
-   own phase: separate shimmers read as noise, a single pass reads as loading. */
 .block::after {
   content: "";
   position: absolute;
@@ -70,8 +68,6 @@
   aspect-ratio: 1 / 1.24;
 }
 
-/* The sweep is decoration; the layout already communicates that content is on
-   its way. */
 @media (prefers-reduced-motion: reduce) {
   .block::after {
     animation: none;

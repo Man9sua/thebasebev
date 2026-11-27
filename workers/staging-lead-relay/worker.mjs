@@ -11,11 +11,6 @@ function json(body, status) {
   });
 }
 
-/**
- * Compare a bearer value without an early-exit byte comparison. The relay is
- * public on workers.dev, but it must only forward requests from our staging
- * website which owns the matching server-only secret.
- */
 function tokenMatches(received, expected) {
   const encoder = new TextEncoder();
   const left = encoder.encode(received);
@@ -34,7 +29,6 @@ function requestId() {
   return crypto.randomUUID();
 }
 
-/** Keep observability useful without putting personal data in Worker logs. */
 function logDelivery(id, outcome, upstreamStatus = null) {
   console.info(
     JSON.stringify({

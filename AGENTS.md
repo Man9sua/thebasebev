@@ -32,7 +32,7 @@ The migration must preserve SEO, organic Google traffic, AI/Search referrals, ex
 ## Typography rules
 
 - The main page is the typography reference for every page and future edit.
-- Follow `TYPOGRAPHY_CONTRACT.md` and the shared font roles in
+- Follow `context/TYPOGRAPHY_CONTRACT.md` and the shared font roles in
   `src/styles/design-tokens.css`: Exo 2; display headings 900, smaller headings
   800, body 400/500 and CTA/control labels 600. Headings are uppercase; CTA
   labels are uppercase with 0.1em tracking. Preserve responsive sizes and semantic
@@ -50,7 +50,7 @@ The migration must preserve SEO, organic Google traffic, AI/Search referrals, ex
 - Never report a successful submission when the upstream delivery failed.
 - Field names sent upstream are Tilda's, not ours. Map them in `src/lib/lead-forms.ts` only — do not rename fields at a call site.
 
-See `LEAD_PIPELINE.md` for the full contract and `TELEGRAM_MIGRATION.md` for the open Telegram question.
+See `context/LEAD_PIPELINE.md` for the full contract and `context/TELEGRAM_MIGRATION.md` for the open Telegram question.
 
 The custom Worker wrapper in `worker.ts` only removes preview `X-Robots-Tag` when `APP_ENV=production` and the exact request hostname is `thebasebev.com` or `www.thebasebev.com`. Canonicals always remain on `https://thebasebev.com`.
 
@@ -88,7 +88,7 @@ receiver. This payment approval does not authorize DNS, domain-route or Tilda ch
 For paid website orders, the agreed Odoo destination is Sales **Quotation**
 (`sale.order`, state `draft`) with a verified Stripe payment reference and amount.
 Do not automatically confirm it, create invoices, or post accounting entries.
-See `PAYMENT_PIPELINE.md` for the Test Mode receiver, durable order ledger and verification status.
+See `context/PAYMENT_PIPELINE.md` for the Test Mode receiver, durable order ledger and verification status.
 
 `npm run audit:production-readiness -- <target-url>` is the sequential full orchestrator. It performs remote read-only tests and does not submit a lead or order. The HTTP audit sends only an invalid lead payload, and browser smoke mocks `/api/leads`.
 
@@ -111,5 +111,5 @@ Report each step's real outcome. A failed deploy or a failing check is reported 
 - `main`: the production branch. Every push to `main` runs CI and, if it passes, `.github/workflows/deploy.yml` deploys the `the-base-production` Worker that serves `https://thebasebev.com`. Merging a PR into `main` is the human approval for a production deploy.
 - `develop`: integration branch. Every push to `develop` runs CI and deploys the `the-base-staging` Worker on `workers.dev` only.
 - Work on `feature/*`, `fix/*`, `migration/*` or `content/*`; open a PR toward `develop`, then promote reviewed releases to `main`. Blog content PRs (`content/blog-*`) go straight to `main`, because their merge is what publishes them.
-- Agents never push to `main` or `develop` directly and never merge their own PRs. See `docs/AUTO_DEPLOY.md`.
+- Agents never push to `main` or `develop` directly and never merge their own PRs. See `context/AUTO_DEPLOY.md`.
 - Never force-push shared branches. Never commit build output, browser artifacts, credentials, tokens, or Cloudflare secrets.

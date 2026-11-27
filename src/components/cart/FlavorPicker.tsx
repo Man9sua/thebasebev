@@ -6,19 +6,6 @@ import { useOverlay } from "@/components/site/useOverlay";
 import { addCartItem, type CartItem } from "@/lib/cart-store";
 import styles from "./FlavorPicker.module.css";
 
-/**
- * The step between "Add to cart" and the cart.
- *
- * Every product is sold in flavours, so a cart line naming only the product is
- * an order nobody can fill. This asks for the one thing the shelf cannot: which
- * flavour, and how many. Nothing is preselected — a default here would put a
- * flavour in the cart that the buyer never chose, which is the whole fault it
- * exists to fix — so the button stays inert until a chip is pressed.
- *
- * Behaviour it does not own: Escape, the scroll lock, the focus trap and
- * returning focus to the card's button are `useOverlay`, the same hook the menu
- * and the search panel use.
- */
 const EXIT_MS = 260;
 
 function prefersReducedMotion(): boolean {
@@ -42,7 +29,6 @@ export function FlavorPicker({
   price: string | null;
   weight: string | null;
   flavors: readonly string[];
-  /** This product's lines already in the cart, so a chip can say so. */
   lines: readonly CartItem[];
   onClose: () => void;
 }) {
@@ -57,8 +43,6 @@ export function FlavorPicker({
       onClose();
       return;
     }
-    // Let the panel play out before it leaves the tree. The timer is the only
-    // thing that has to agree with the stylesheet; everything else is CSS.
     setLeaving(true);
     window.setTimeout(onClose, EXIT_MS);
   }, [onClose]);
@@ -80,16 +64,11 @@ export function FlavorPicker({
   return (
     <div
       className={`${styles.root} ${leaving ? styles.leaving : ""}`}
-      /* The menu and the search panel are dialogs too and both stay mounted,
-         so this carries a hook of its own for the smoke and the audit rather
-         than leaving them to guess which dialog is which. */
       data-flavor-picker={slug}
       role="dialog"
       aria-modal="true"
       aria-labelledby={`flavor-picker-${slug}`}
     >
-      {/* The backdrop is the dismiss target as well as the dimmer, which is why
-          it is a button rather than a div with a click handler. */}
       <button
         type="button"
         className={styles.scrim}
@@ -140,11 +119,6 @@ export function FlavorPicker({
             {total > 0 ? ` · ${total} in cart` : ""}
           </p>
 
-          {/*
-            A radiogroup rather than a listbox: one of a small set, all of them
-            visible, and the arrow keys are the browser's own once the chips are
-            radios. Painted as chips; the input itself is the accessible control.
-          */}
           <div
             className={styles.flavors}
             role="radiogroup"

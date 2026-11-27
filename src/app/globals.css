@@ -15,8 +15,6 @@ body.t-body {
   font-weight: var(--tbb-font-weight-body);
 }
 
-/* Native controls otherwise use the browser's Arial/system font. Preserve
-   their component sizes, weights and line heights while sharing the family. */
 button {
   font-family: var(--tbb-font-button);
   font-weight: var(--tbb-font-weight-button);
@@ -28,9 +26,6 @@ textarea {
   font-family: inherit;
 }
 
-/* Tilda's zoom runtime can leave fixed controls mounted after client
-   navigation. These are the stray +/- and close controls that appeared at the
-   left edge of native pages. */
 body > .t-zoomer__container,
 body > .t-zoomer__wrapper,
 .t-zoomer__container:not(.t-zoomer__active) {
@@ -42,8 +37,6 @@ body > .t-zoomer__wrapper,
   display: contents;
 }
 
-/* No underlined links anywhere on the site, at rest or hovered: the exported
-   Tilda CSS adds them to every link, native pages included. */
 a,
 a:hover,
 a:focus,
@@ -56,8 +49,6 @@ a:focus-visible {
   right: 100% !important;
 }
 
-/* Components supply pressed/selected feedback; Safari's tap overlay flashes
-   rectangular backgrounds behind links and form chips. */
 a,
 button,
 summary,

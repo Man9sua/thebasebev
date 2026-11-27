@@ -2,11 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-/**
- * Copies a value (an email address, a phone number) and says so for a moment.
- * The label is visually hidden; the icon swaps to a tick while "Copied" is
- * announced to assistive technology.
- */
 export function CopyButton({ value, label, className }: { value: string; label: string; className?: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -20,7 +15,6 @@ export function CopyButton({ value, label, className }: { value: string; label: 
     try {
       await navigator.clipboard.writeText(value);
     } catch {
-      // Older browsers and insecure contexts: fall back to a selection copy.
       const field = document.createElement("textarea");
       field.value = value;
       field.setAttribute("readonly", "");

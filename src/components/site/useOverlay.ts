@@ -2,10 +2,6 @@
 
 import { useEffect, type RefObject } from "react";
 
-/**
- * Shared behaviour for the menu and search panels: close on Escape, lock the
- * page behind them without the usual scroll jump, and move focus in and back.
- */
 export function useOverlay(
   open: boolean,
   onClose: () => void,
@@ -17,8 +13,6 @@ export function useOverlay(
 
     const opener = document.activeElement as HTMLElement | null;
 
-    // Compensating for the scrollbar keeps the page from shifting sideways
-    // when it locks — a layout shift the user would see behind the panel.
     const scrollbar = window.innerWidth - document.documentElement.clientWidth;
     const { overflow, paddingRight } = document.body.style;
     document.body.style.overflow = "hidden";
@@ -33,7 +27,6 @@ export function useOverlay(
 
       if (event.key !== "Tab") return;
 
-      // Keep tabbing inside the panel while it is open.
       const panel = panelRef.current;
       if (!panel) return;
 
@@ -56,8 +49,6 @@ export function useOverlay(
 
     document.addEventListener("keydown", onKeyDown);
 
-    // Wait for the wipe before focusing, so the panel is not announced while
-    // it is still clipped out of view.
     const focusTimer = window.setTimeout(() => {
       const panel = panelRef.current;
       if (panel && !panel.contains(document.activeElement)) {

@@ -1,10 +1,5 @@
 import { PRODUCTS } from "@/data/products";
 
-/**
- * The flavours the sample form offers, per product: the same names, in the
- * same order, as the product's own page lists them. A product missing here
- * cannot be asked for as a sample.
- */
 export const SAMPLE_FLAVOURS: Readonly<Record<string, readonly string[]>> = {
   milkshake: ["Banana", "Mango", "Date", "Honey Dew", "Strawberry", "Vanilla", "Yogurt", "Cookies & Cream", "Rainbow Unicorn"],
   frappe: ["Coffee", "Salted Caramel", "Vanilla"],
@@ -37,13 +32,11 @@ export const SAMPLE_FLAVOURS: Readonly<Record<string, readonly string[]>> = {
 
 export type SampleProduct = Readonly<{ slug: string; name: string; flavours: readonly string[] }>;
 
-/** Every product a sample can be asked for, in catalogue order. */
 export const SAMPLE_PRODUCTS: readonly SampleProduct[] = PRODUCTS.flatMap((product) => {
   const flavours = SAMPLE_FLAVOURS[product.slug];
   return flavours ? [{ slug: product.slug, name: product.name, flavours }] : [];
 });
 
-/** The product a form was opened from, by its display name. */
 export function sampleProductFor(productName: string | undefined): SampleProduct | undefined {
   return productName ? SAMPLE_PRODUCTS.find((product) => product.name === productName) : undefined;
 }

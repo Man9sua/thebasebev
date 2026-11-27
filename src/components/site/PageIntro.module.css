@@ -1,11 +1,3 @@
-/**
- * Page head for parity pages.
- *
- * Two states: on paper, and over a film. The ink flips as a pair of variables
- * rather than as a second copy of every rule, so the two only differ where they
- * have to.
- */
-
 .intro {
   position: relative;
   overflow: clip;
@@ -15,8 +7,6 @@
   --ink-muted: var(--tbb-muted);
 }
 
-/* Set when there is a film behind the copy, and on a page whose own first block
-   is dark — a white strip resting on it reads as a different site. */
 .dark {
   background: var(--tbb-ink-black);
   --ink: var(--tbb-on-dark);
@@ -34,8 +24,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Dimmed from the left, where the copy sits, and left alone on the right so
-     the film is still a picture rather than a texture. */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 55%);
   mask-image: linear-gradient(to right, transparent 0%, #000 55%);
   opacity: 0.75;
@@ -80,8 +68,6 @@
 }
 
 @media (max-width: 899px) {
-  /* At this width the copy fills the box, so the film would be behind the text
-     end to end rather than beside it. Fade it down from the top instead. */
   .film {
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 70%);
     mask-image: linear-gradient(to bottom, transparent 0%, #000 70%);

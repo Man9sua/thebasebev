@@ -12,7 +12,6 @@ function subscribe(change: () => void) {
 const browserCountry = () => countryCodeFromPath(window.location.pathname);
 const serverCountry = () => "AE";
 
-/** Country aliases share the English SSG document; hydrate its AE snapshot first. */
 export function useCountryCode() {
   usePathname();
   return useSyncExternalStore(subscribe, browserCountry, serverCountry);

@@ -18,12 +18,6 @@ import {
 import type { ProductPageProps } from "../types";
 import local from "./Cordial.module.css";
 
-/**
- * Cordial ("Cordial · страница продукта", desktop 1440 / mobile 390).
- * Matcha's shape plus the mock's extra "Sweet and sour mix" formula band;
- * on the phone that band becomes a card under the flavours.
- */
-
 const SLUG = "cordial";
 
 const nutrition: NutritionSet[] = [

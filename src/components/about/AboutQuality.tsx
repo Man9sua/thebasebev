@@ -1,12 +1,5 @@
 import styles from "./AboutQuality.module.css";
 
-/**
- * About Us, block 2: production and quality control.
- *
- * The figure sits on the real warehouse photo (the Base boxes, the branded
- * tape); the four checks follow the order of production.
- */
-
 const CHECKS = [
   { title: "Raw materials", text: "Every incoming ingredient is inspected." },
   { title: "Manufacturing", text: "The process is controlled on the line." },

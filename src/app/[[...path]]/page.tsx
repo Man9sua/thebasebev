@@ -91,8 +91,6 @@ function glossaryMetadata(entry: GlossaryEntry): Metadata {
     },
     robots: { index: true, follow: true },
     openGraph: {
-      // Production Tilda exposes these detail pages as `website`; keep that
-      // exact SEO contract during migration even though the body is an article.
       type: "website",
       url: canonical,
       title: entry.seo.openGraphTitle || title,
@@ -108,17 +106,6 @@ function glossaryMetadata(entry: GlossaryEntry): Metadata {
   };
 }
 
-/**
- * A Blog article's metadata, against production's own contract for these URLs.
- *
- * Two things here are deliberate and look wrong at a glance. The type is
- * `website`, not `article` — Tilda publishes every `/tpost/` page that way and
- * parity is the rule during migration, exactly as the Glossary entries above
- * do. And the `og:image` is this site's own copy of the cover rather than the
- * `static.tildacdn.com` URL production points at: the image has to be served
- * from the canonical host, which is what `audit:seo-parity` checks and what
- * stops the migrated site depending on Tilda for a share card.
- */
 function blogMetadata(post: BlogPost): Metadata {
   const title = post.seo.title || post.title;
   const description = post.seo.description || post.excerpt || undefined;
@@ -209,10 +196,8 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   };
 }
 
-/** The export's closing Zoom-call record, replaced by `ZoomCallBlock`. */
 const ZOOM_CALL_RECORD = "rec2503542591";
 
-/** Short names for the trail; anything not listed falls back to its title. */
 const CRUMB_NAMES: Record<string, string> = {
   "/catalog": "Shop",
   "/about-us": "About Us",
@@ -236,7 +221,6 @@ function crumbName(route: string) {
   return CRUMB_NAMES[route] ?? getSitePage(route)?.title.split(" | ")[0] ?? route;
 }
 
-/** Where a route sits, for `BreadcrumbList`. The home page has no trail. */
 function breadcrumbsFor(route: string): Crumb[] | null {
   if (route === "/") return null;
 
@@ -261,7 +245,6 @@ function breadcrumbsFor(route: string): Crumb[] | null {
   return [HOME, ...parent, { name: crumbName(route), path: route }];
 }
 
-/** The product's own schema block, on pages that render the redesigned body. */
 function productStructuredData(route: string) {
   const product = getProduct(route.slice(1));
   if (!product || !PRODUCT_PAGES[product.slug]) return null;
@@ -276,10 +259,6 @@ function productStructuredData(route: string) {
   });
 }
 
-/**
- * Every route, with the two schema blocks React owns on top of whatever the
- * page itself carries: its `BreadcrumbList`, and on a product its `Product`.
- */
 export default async function SiteRoute({ params }: RouteProps) {
   const route = normalizeSitePath((await params).path);
   const crumbs = breadcrumbsFor(route);
@@ -329,8 +308,6 @@ async function RouteBody({ params }: RouteProps) {
   const page = getSitePage(route);
   if (!page) notFound();
 
-  // `generateMetadata` above is shared, so every route keeps its existing
-  // title, description and canonical whichever branch renders it.
   if (route === "/") return <HomePage />;
 
   if (route === "/private-labeling" || route === "/resources") {
@@ -372,9 +349,6 @@ async function RouteBody({ params }: RouteProps) {
     );
   }
 
-  // The two standalone aliases are the exported header and footer records
-  // themselves. Framing them in the shared shell would wrap a copy of the site
-  // chrome around the site chrome, so they keep rendering exactly as exported.
   if (!page.usesSharedShell) return <LegacyDocument page={page} />;
 
   if (
@@ -413,11 +387,6 @@ async function RouteBody({ params }: RouteProps) {
     );
   }
 
-  // Where every lead form lands. React, and deliberately small — see the note
-  // in the component for what the exported version was doing on a phone. The
-  // export's Organization graph is carried over: it is the site-wide one, on
-  // every page including this one, and dropping it here would make this the
-  // only route without it.
   if (route === "/thank-you-form") {
     const structuredData = getLegacyStructuredData(page.file);
     return (
@@ -480,10 +449,6 @@ async function RouteBody({ params }: RouteProps) {
     );
   }
 
-  // Privacy and Terms: the exported legal text in the house layout, followed
-  // by the native Zoom call block. Only the legal record and the export's own
-  // Zoom block are cut; the rest stays as runtime — including the record
-  // carrying the page's JSON-LD and the popup lead forms.
   if (route === "/privacy" || route === "/terms") {
     const legalRecord = route === "/privacy" ? "rec2430715951" : "rec2546753201";
     const runtimePage = withoutLegacyRecords(page, [legalRecord, ZOOM_CALL_RECORD]);
@@ -497,33 +462,16 @@ async function RouteBody({ params }: RouteProps) {
     );
   }
 
-  // A product page is React down to the FAQ and the export from there on. The
-  // eight blocks React replaces — the hero, the tab strip, the four figures,
-  // the comparative table, the flavours, the usage note, the FAQ and its
-  // heading — are all cut out of the markup below by `site-pages.ts`, so the
-  // two never both claim the copy or the `h1`. What the export still owns is
-  // what no React section has replaced yet: the cookie banner and the four
-  // popup lead forms opened by the buttons above.
   const product = getProduct(route.slice(1));
 
-  // Two pages open with a React head instead, and one of them carries its four
-  // services in React as well. Both were built on stock Tilda themes and were
-  // still opening with the theme rather than with themselves — `site-pages.ts`
-  // says exactly what was dropped, and `data/page-intros.ts` holds the copy
-  // each page carries in its place.
   const intro = getPageIntro(route);
   const offers = getPageOffers(route);
 
-  // Redesigned products own the visible hero copy; SEO metadata stays above.
   const RedesignedProduct = product ? PRODUCT_PAGES[product.slug] : undefined;
 
-  // The export's closing Zoom-call card is drawn natively, to the new design,
-  // wherever a retained page still carries it.
   const zoomCall = !page.native && page.bodyHtml.includes(`id="${ZOOM_CALL_RECORD}"`);
   const shellPage = zoomCall ? withoutLegacyRecords(page, [ZOOM_CALL_RECORD]) : page;
 
-  // Everything else: one shared header and footer, with the old Tilda chrome
-  // already removed from the markup server-side.
   return (
     <div className="tbb">
       <SiteHeader overHero={route === "/private-labeling"} productPage={Boolean(product)} />
@@ -542,7 +490,6 @@ async function RouteBody({ params }: RouteProps) {
           </>
         )
       )}
-      {/* A native route has no export behind it, so nothing to carry over. */}
       {!page.native && <LegacyPageShell page={shellPage} opensPage={!intro && !product} />}
       {zoomCall && <ZoomCallBlock />}
       <SiteFooter />

@@ -3,11 +3,6 @@ import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../block
 import type { ProductPageProps } from "../types";
 import { BottleCards, UseCards, rangeStyles } from "./Range";
 
-/**
- * Purées ("Puree Product Page Redesign", desktop 1440 / mobile 390). The mock
- * has no photography yet; the bottles are neutral photo slots until approved pack shots arrive.
- */
-
 const flavours = [
   { name: "Raspberry", text: "Bright and tart. Lemonades, mojitos, smoothies.", code: "950 ml · PR-001-C950", color: "#C2304A" },
   { name: "Peach", text: "Soft and juicy. Iced teas, bellinis, smoothies.", code: "950 ml · PR-002-C950", color: "#F2A65A" },

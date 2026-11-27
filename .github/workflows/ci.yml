@@ -3,8 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [main, develop]
-  # Pushes to main and develop run these same checks through deploy.yml, which
-  # deploys only when they pass.
   workflow_call:
 
 permissions:
@@ -55,7 +53,3 @@ jobs:
           npm run smoke:http -- http://127.0.0.1:3000
           npm run audit:routes -- http://127.0.0.1:3000 /tmp/route-indexability-audit.md
           npm run audit:analytics -- http://127.0.0.1:3000 /tmp/analytics-audit.md
-
-# No deployment here. deploy.yml calls this workflow on every push to main or
-# develop and deploys only after it passes: main to the-base-production (the
-# Worker routed on thebasebev.com), develop to the-base-staging on workers.dev.

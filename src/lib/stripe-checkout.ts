@@ -12,7 +12,6 @@ import { isAllowedStripeHost, isStripeKey, isStripeSessionId, stripeIntegration,
 
 const MAX_CHECKOUT_BODY_BYTES = 16 * 1024;
 
-// Keep existing public product IDs while accepting slugs for the new ranges.
 export const STRIPE_CATALOG = Object.freeze(Object.fromEntries(SAMPLE_PRODUCTS.map(product => [
   getCheckoutProductId(product.slug) ?? product.slug,
   { slug: product.slug, name: product.name, flavors: product.flavours },
@@ -179,8 +178,6 @@ export async function handleStripeCheckout(request: Request, dependencies: Strip
       if (!existing || existing.id !== order.sessionId || existing.livemode !== live || !isStripeSessionId(existing.id, mode) || !validCheckoutUrl(existing.url)) throw new Error("CHECKOUT_SESSION_INVALID");
       return checkoutResponse(existing);
     }
-    // Stripe can prune idempotency keys after 24 hours. An unbound old attempt
-    // needs reconciliation, rather than silently creating a second session.
     if (Date.now() - order.createdAt > 23 * 60 * 60 * 1000) return stripeApiError(409, "CHECKOUT_REVIEW_REQUIRED", "Please contact the team to check your previous checkout attempt.");
     const metadata = { tb_request_id: requestId, integration: stripeIntegration(mode), tb_protocol: "2", tb_order_id: order.id, tb_snapshot_hash: order.hash,
       kind: data.kind, country: data.country, shipping_method: data.shippingMethod, utm_source: data.attribution?.utm_source ?? "",

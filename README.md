@@ -1,17 +1,6 @@
-# THE BASE website migration
+# THE BASE website
 
-This repository is the first-stage migration of [thebasebev.com](https://thebasebev.com/) from a local Tilda export to Next.js. The current implementation deliberately prioritizes URL, content, metadata, and visual compatibility before component extraction.
-
-## Current stage
-
-The redesigned homepage is implemented as React components. The remaining site
-uses a server-rendered compatibility layer: a catch-all App Router page maps
-known production and legacy URLs to the corresponding exported HTML, extracts
-page metadata, and emits the exported body on the server. This keeps meaningful
-content available in the initial HTML while Tilda blocks are replaced section by
-section.
-
-This is not yet a Tilda-free implementation. The compatibility document executes the retained export scripts in the initial server response, and the critical homepage/header/catalog/cart/product-order/form paths are covered by browser smoke tests. Those tests are evidence for the audited paths, not a claim that every legacy popup, calculator, or product interaction has already been ported. A typed lead bridge/API boundary replaces opaque Tilda submission for allowlisted lead forms. Staging lead delivery has one controlled Odoo proof; order delivery remains outside the migration contract.
+[thebasebev.com](https://thebasebev.com/) runs on Next.js and Cloudflare Workers. The homepage, catalogue and checkout use React components. The compatibility layer serves the remaining Tilda pages from the local export and preserves their URLs and metadata.
 
 ## Stack
 
@@ -20,7 +9,7 @@ This is not yet a Tilda-free implementation. The compatibility document executes
 - TypeScript
 - Global/exported CSS during the compatibility phase
 - OpenNext for Cloudflare
-- Cloudflare Workers staging and isolated production-preview environments
+- Separate staging and production Workers
 - Dedicated Cloudflare account `mansua`; personal account `indukok667` is excluded
 
 ## Requirements
@@ -51,7 +40,7 @@ npm.cmd run build
 npm.cmd run check:assets
 ```
 
-Stripe checkout uses Test Mode on staging and separately configured Live Mode only on owner-approved origins. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `PAYMENT_PIPELINE.md` for setup and verification status.
+Stripe checkout uses Test Mode on staging and separately configured Live Mode only on owner-approved origins. Approved Excel prices, 5% VAT and UAE delivery rules are configured; unresolved variants remain on quotation. Paid events are verified against durable order snapshots before creating an Odoo Sales draft quotation. Stripe checks are included in CI and the readiness audit. See `context/PAYMENT_PIPELINE.md` for setup and verification status.
 
 ### Shop and checkout
 
@@ -67,7 +56,7 @@ Approved variant prices are in `src/data/shop-prices.json`, in AED minor units
 calculates 5% additional VAT and one UAE delivery charge: AED 30 before VAT below
 AED 500 in paid goods, free from AED 500 before VAT. Samples do not increase that
 threshold. Sample-only parcels cost AED 30 before VAT up to 5 kg; unknown weights
-and heavier parcels require a quote. See `SHOP_PRICING.md` for unmatched variants.
+and heavier parcels require a quote. See `context/SHOP_PRICING.md` for unmatched variants.
 HTML demo prices and legacy prices are never substituted. `/api/leads` remains
 the request path for unresolved variants and delivery quotes.
 
@@ -82,7 +71,7 @@ quotation commits. Durable snapshots live in mode-specific D1 databases; a trans
 lock in Odoo prevents duplicate quotations after concurrent deliveries or timeouts.
 
 The destination is a paid **draft quotation in Odoo Sales**, without automatic
-confirmation or invoicing. See [PAYMENT_PIPELINE.md](./PAYMENT_PIPELINE.md) for the
+confirmation or invoicing. See [PAYMENT_PIPELINE.md](context/PAYMENT_PIPELINE.md) for the
 Test Mode evidence and Live setup/verification requirements. Live is approved on
 `https://the-base-production.mansua.workers.dev` and, since 2026-11-05, the already
 routed `https://thebasebev.com` domain and its `www` alias. Exact server-configured
@@ -129,15 +118,7 @@ npx.cmd wrangler whoami --json
 npm.cmd run deploy:staging
 ```
 
-Deploy the same reviewed build to the isolated production-preview Worker:
-
-```powershell
-npm.cmd run deploy:production-preview
-```
-
-This command targets `the-base-production` on `workers.dev` only. It does not attach `thebasebev.com`.
-
-The configured staging Worker name is `the-base-staging`. The repository does not configure the production domain and this workflow must not be used to change `thebasebev.com`, its DNS, or the existing Tilda project. The approved Live payment preview has its own order database and credentials; see `PAYMENT_PIPELINE.md` for the rollout and verification procedure.
+The `the-base-production` Worker serves both `https://thebasebev.com` and its Workers preview. A deployment to that Worker updates the live site. Merges to `main` run CI and then deploy to production. See [the deployment workflow](./context/AUTO_DEPLOY.md).
 
 Current verified staging deployment:
 
@@ -220,41 +201,18 @@ These hashes validate the export as a visual reference. The Next.js build now ha
 
 ## Documentation
 
-- [Route mapping](./ROUTE_MAP.md)
-- [SEO parity inventory](./SEO_PARITY.md)
-- [Migration status, blockers, and extraction plan](./MIGRATION_NOTES.md)
-- [Human project context](./PROJECT_CONTEXT.md)
-- [Cloudflare migration plan](./CLOUDFLARE_MIGRATION.md)
-- [DNS snapshot and future migration](./DNS_MIGRATION.md)
-- [Crawler policy](./CRAWLER_POLICY.md)
-- [Caching policy](./CLOUDFLARE_CACHE.md)
-- [Security headers audit](./SECURITY_HEADERS.md)
-- [Missing credentials](./NEEDS_CREDENTIALS.md)
-- [Rollback plan](./ROLLBACK_PLAN.md)
-- [Future production cutover](./PRODUCTION_CUTOVER.md)
+Project context, runbooks and component specifications live in [context](./context/). Audit commands write their Markdown reports to `.audit-artifacts/`.
+
+- [Route mapping](context/ROUTE_MAP.md)
+- [SEO parity inventory](context/SEO_PARITY.md)
+- [Migration status, blockers, and extraction plan](context/MIGRATION_NOTES.md)
+- [Human project context](context/PROJECT_CONTEXT.md)
+- [Cloudflare migration plan](context/CLOUDFLARE_MIGRATION.md)
+- [DNS snapshot and future migration](context/DNS_MIGRATION.md)
+- [Crawler policy](context/CRAWLER_POLICY.md)
+- [Caching policy](context/CLOUDFLARE_CACHE.md)
+- [Security headers audit](context/SECURITY_HEADERS.md)
+- [Missing credentials](context/NEEDS_CREDENTIALS.md)
+- [Rollback plan](context/ROLLBACK_PLAN.md)
+- [Future production cutover](context/PRODUCTION_CUTOVER.md)
 - [Contributor workflow](./CONTRIBUTING.md)
-- [Generated route/indexability report](./ROUTE_INDEXABILITY_AUDIT.md)
-- [Generated SEO comparison report](./SEO_PARITY_REPORT.md)
-- [Generated analytics audit](./ANALYTICS_AUDIT.md)
-- [Prelaunch merge matrix](./PRELAUNCH_MERGE_MATRIX.md)
-- [Prelaunch QA record](./MANUAL_QA.md)
-- [Stripe Test Mode POC](./STRIPE_TEST_POC.md)
-
-## Delivery status
-
-| Area | Status | Current evidence / next gate |
-| --- | --- | --- |
-| Export inventory and route registry | DONE | Local export and public/legacy mappings were inventoried. |
-| Next.js and Cloudflare foundation | DONE | App Router and OpenNext configuration exist. |
-| Server-rendered legacy content | DONE | Known routes render export content through the catch-all compatibility layer. |
-| SEO parity | DONE | Production build and HTTP smoke verify 39 routes, five exact 301 redirects, canonical sitemap/robots, branded 404, and server HTML. |
-| Visual parity of Next.js output | PARTIAL | Nine target widths are captured and representative layouts were reviewed; exhaustive page-by-page pixel diffs remain. |
-| Interactive parity | PARTIAL | Hero, header/menu/region, mobile menu, catalogue filters/prices, add-to-cart, checkout dialog, product-order popup, and honest form failure UX pass browser smoke; remaining legacy surfaces still need route-level tests/React extraction. |
-| Lead delivery and attribution | STAGING VERIFIED | Typed bridge/API exist; one controlled Odoo lead preserved request ID and full first-touch attribution. Production enablement remains human-controlled. |
-| Checkout/order delivery | PRICES CONFIGURED; FULFILLMENT PENDING | 89 variant prices, 5% VAT and UAE delivery calculations are configured. Unmatched prices, Stripe tax setup, a durable Odoo Sales receiver and separate Live approval remain required. |
-| Dynamic recipes/catalog feed | BLOCKED | Upstream feed data is not contained in the export. |
-| OpenNext Worker bundle | DONE | `npm run cf:build` completes locally; Windows emits the upstream WSL recommendation. |
-| Cloudflare staging deployment | PARTIAL | Version `daa6c072-728d-4c24-9e96-7856b048b41f` is deployed in `mansua`; post-deploy remote smoke is blocked by account-wide Error 1027 until the Free quota resets. |
-| Cloudflare production preview | DONE | Separate `the-base-production.mansua.workers.dev` Worker exists in `mansua` with preview noindex and no custom domain. |
-| GitHub CI/CD | DONE | Pull requests and shared-branch pushes run verification only. A separate manual workflow can deploy `workers.dev` previews only after enforcing the `mansua` account ID; GitHub environment credentials still need owner configuration. |
-| Production cutover | HUMAN APPROVAL REQUIRED | Runbooks are prepared; domain, DNS, Tilda, and Search Console remain untouched. |

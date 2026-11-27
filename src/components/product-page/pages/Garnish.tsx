@@ -10,12 +10,6 @@ import {
 } from "../familyB";
 import type { ProductPageProps } from "../types";
 
-/**
- * Garnish ("Garnish · страница продукта целиком", desktop 1440 / mobile 390),
- * family B. No "Inside the pack" and no "Ready for your menu" yet: the
- * designer is waiting for nutrition data and drink photos.
- */
-
 const SLUG = "garnish";
 
 const faq = [

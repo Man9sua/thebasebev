@@ -118,7 +118,6 @@ export function FlavourPicker({ product, kind, items, allowSamples, totalLines, 
   const id = useId();
   useOverlay(true, onClose, panel, dismiss);
   useEffect(() => {
-    // iOS resizes the visual viewport when the numeric keyboard opens.
     const viewport = window.visualViewport;
     const element = overlay.current;
     if (!viewport || !element) return;

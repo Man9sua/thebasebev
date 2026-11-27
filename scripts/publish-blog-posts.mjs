@@ -1,31 +1,4 @@
 #!/usr/bin/env node
-/**
- * Publishes native Blog articles written as Markdown.
- *
- * Every file in `content/blog/*.md` becomes one entry in
- * `src/data/blog-content.json`, the same data the imported Tilda posts live in,
- * so the listing, article page, related posts, sitemap and audits pick it up
- * with no component changes. Re-running is safe: a post is matched on its
- * `uid` and replaced in place.
- *
- * Front matter (all required except `uid` and `coverAlt`):
- *
- *   ---
- *   title: Ube Is the Next Matcha
- *   slug: ube-is-the-next-matcha
- *   excerpt: One or two sentences; also the meta description.
- *   topic: product | economics | operations | supply | compliance
- *   published: 2026-11-13
- *   cover: content/blog/images/ube.jpg
- *   coverAlt: Ube Premium tin
- *   ---
- *
- * Body: `## ` / `### ` headings, paragraphs, `- ` and `1. ` lists,
- * `**bold**`, `*italic*`, `[text](href)` and `![alt](path)` images.
- *
- * Usage: node scripts/publish-blog-posts.mjs [--check]
- *   --check  validate and report, write nothing.
- */
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
@@ -49,8 +22,6 @@ const TOPICS = {
   product: "Product & formulation",
 };
 
-/* ---- front matter ------------------------------------------------------- */
-
 function parseFile(source, file) {
   const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(source.replace(/\r\n/g, "\n"));
   if (!match) throw new Error(`${file}: missing front matter`);
@@ -69,12 +40,9 @@ function parseFile(source, file) {
   return { meta, body: match[2].trim() };
 }
 
-/** Stable 10-character id in the shape Tilda uses, derived from the slug. */
 function uidFor(slug) {
   return `tb${createHash("sha256").update(slug).digest("hex").slice(0, 8)}`;
 }
-
-/* ---- markdown → blocks -------------------------------------------------- */
 
 function inline(text) {
   const parts = [];
@@ -122,8 +90,6 @@ function blockText(block) {
   return block.content.map((part) => part.text).join("");
 }
 
-/* ---- images ------------------------------------------------------------- */
-
 async function storeImage(source, name, file) {
   if (source.startsWith("/images/")) {
     if (!existsSync(path.join(ROOT, "public", source))) throw new Error(`${file}: ${source} not found in public/`);
@@ -139,8 +105,6 @@ async function storeImage(source, name, file) {
   }
   return `/images/blog/${fileName}`;
 }
-
-/* ---- run ---------------------------------------------------------------- */
 
 const data = JSON.parse(await readFile(DATA_PATH, "utf8"));
 const files = (await readdir(SOURCE_DIR).catch(() => [])).filter((name) => name.endsWith(".md")).sort();
@@ -187,7 +151,6 @@ for (const file of files) {
   report.push(`${existing >= 0 ? "updated" : "added  "} ${postPath} (${words} words)`);
 }
 
-// Newest first, as the feed has always published; ties keep their order.
 data.posts = data.posts
   .map((post, order) => ({ post, order }))
   .sort((a, b) => b.post.published.localeCompare(a.post.published) || a.order - b.order)
@@ -196,8 +159,6 @@ data.posts = data.posts
 const paths = new Set(data.posts.map((post) => post.path));
 if (paths.size !== data.posts.length) throw new Error("Two posts share a path");
 
-// The Worker and next.config only route paths listed in this manifest; a post
-// missing from it renders on /ae/ but 404s on its bare /tpost/ URL.
 const routes = JSON.parse(await readFile(ROUTES_PATH, "utf8"));
 for (const postPath of paths) {
   if (routes.includes(postPath)) continue;

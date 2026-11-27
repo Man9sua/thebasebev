@@ -15,13 +15,6 @@ const PRODUCTS = BESTSELLER_SLUGS.map((slug) => getShopProduct(slug)).filter(
   (product): product is ShopProduct => Boolean(product),
 );
 
-/**
- * The homepage bestsellers, to the owner's reference: six shop cards in a
- * grid, each with its price and an "Add" that opens the shop's own flavour
- * picker, so a café can fill its cart (or, outside the UAE, its sample box)
- * without leaving the homepage. It replaced the five-slide bestseller
- * carousel.
- */
 export function HomeBestsellers() {
   const country = useCountryCode();
   const kind = shopKindForCountry(country);

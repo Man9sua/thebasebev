@@ -3,49 +3,12 @@ import { PageAnchor } from "@/components/site/PageAnchor";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./RndPage.module.css";
 
-/**
- * R&D and product development, rebuilt to the redesign document.
- *
- * The page it replaces said most things twice — three product families once as
- * "16 Product Lines" and again under "Our Beverage Development Services", the
- * fourteen-day timeline once as "14 Days to Commercial Reality" and again as
- * "Your Journey From Concept to Commercialization" — and the redesign folds
- * each pair into one block. Six blocks now where there were eight, and the
- * page is two screens shorter.
- *
- * Three changes matter beyond layout:
- *
- * - **The page says development is paid.** The old one offered a complimentary
- *   sample box and a free R&D audit on the same page it sold formulation work.
- *   The two are separated now: the call is free, the range's samples are free,
- *   the development is quoted, and the fee is credited to the first production
- *   order. That is said in the hero, again in the process block, and again
- *   above the form, so nobody reaches a call expecting otherwise.
- * - **The invented percentages are gone.** "40% cost reduction", "50% savings
- *   on logistics", "60% time saved" had no measurement behind them, and one
- *   unverifiable figure costs a B2B reader the whole page. What replaces them
- *   is three things the lab actually hands over: a cost per cup, a one-step
- *   build, and storage without a cold chain. The document's note says to bring
- *   figures back when there are two or three client measurements to cite.
- * - **The `h1` is short.** "Your recipe. Our lab." rather than the keyword
- *   phrase, which stays in the `<title>` and in the lede. See the entry in
- *   `H1_NOT_PRESERVED` in `scripts/audit-seo-parity.mjs`.
- *
- * The form keeps its id and its `tildaspec-formname`, so leads from here reach
- * the sales team under the name `LEGACY_FORM_NAMES` already routes them by.
- *
- * The hero retains the reference microscope photograph. The supplied branded
- * laboratory render fills the lab block; its alt text identifies it as artwork.
- */
-
-/** The three conditions under the hero's buttons. */
 const HERO_TERMS = [
   { title: "Paid development", body: "Fee credited to your first order" },
   { title: "You own the formula", body: "Full rights after sign-off" },
   { title: "Made in our plant", body: "From lab batch to production" },
 ];
 
-/** What every formula leaves the lab with. Replaces the three percentages. */
 const VALUE = [
   {
     title: "Cost per cup",
@@ -62,10 +25,6 @@ const VALUE = [
   },
 ];
 
-/**
- * The three platforms development starts from — the reason it takes weeks
- * rather than months, and the reason it can be quoted at all.
- */
 const BASES = [
   {
     title: "Powder bases",
@@ -106,7 +65,6 @@ const PROCESS = [
   },
 ];
 
-/** The compliance block, folded into the lab block as four checkable facts. */
 const LAB_FACTS = [
   { value: "Halal", body: "Certified across the full range" },
   { value: "HACCP", body: "Audited food safety system" },
@@ -114,14 +72,12 @@ const LAB_FACTS = [
   { value: "Export", body: "Documents for 26 markets" },
 ];
 
-/** What happens after the brief is sent. */
 const BRIEF_STEPS = [
   { title: "Brief call", body: "30 minutes with a technologist, free of charge." },
   { title: "Proposal", body: "Scope, development fee and timeline in writing." },
   { title: "Lab work", body: "Starts after sign-off. The fee is credited to your first order." },
 ];
 
-/** The project-type chips on the form. The first is selected by default. */
 const PROJECT_TYPES = ["Custom formula", "Private label", "Reformulation"];
 
 export function RndPage() {
@@ -149,8 +105,6 @@ export function RndPage() {
           </p>
 
           <div className={styles.heroActions}>
-            {/* A bare `#rnd-form` resolved against `<base href="/">` and sent
-                the reader to the home page — see `PageAnchor`. */}
             <PageAnchor route="/rnd" target="rnd-form" className={styles.primary}>
               Start a brief
             </PageAnchor>
@@ -230,9 +184,6 @@ export function RndPage() {
         </div>
       </section>
 
-      {/* One process block where the page had a timeline and a services list
-          saying the same four things. The banner at its foot is where the page
-          states the commercial terms. */}
       <section className={styles.process} id="rnd-process" aria-labelledby="rnd-process-title">
         <div className={styles.inner}>
           <div className={styles.sectionHead}>
@@ -274,9 +225,6 @@ export function RndPage() {
         </div>
       </section>
 
-      {/* The lab and what certifies it, in one block — the page used to carry
-          them as two, and the second was four sentences of "highest standards"
-          with no standard named. */}
       <section className={styles.lab} aria-labelledby="rnd-lab">
         <div className={styles.labInner}>
           <span className={styles.labMedia}>
@@ -335,22 +283,12 @@ export function RndPage() {
               ))}
             </ol>
 
-            {/*
-              The one place the free sample box still lives, and it is the
-              existing range rather than a development project — which is the
-              distinction the old page collapsed.
-            */}
             <SiteLink href="/request-samples" className={styles.briefAside}>
               Only need samples of our existing range? Request a sample box{" "}
               <span aria-hidden="true">→</span>
             </SiteLink>
           </div>
 
-          {/*
-            The page's own form, kept whole: same id and same
-            `tildaspec-formname`, so a lead from here reaches the sales team
-            under the name it always has — see `LEGACY_FORM_NAMES`.
-          */}
           <form
             id="form861442702"
             className={`t-form js-form-proccess ${styles.formCard}`}
@@ -386,12 +324,6 @@ export function RndPage() {
                 <input name="country" type="text" autoComplete="country-name" required />
               </label>
 
-              {/*
-                The project type rides `product` — the field the lead pipeline
-                already carries for "what is this enquiry about", validated in
-                `lib/leads.ts` and mapped in `lib/lead-forms.ts`. Same treatment
-                as the tier chips on `/distributors`.
-              */}
               <fieldset className={styles.chips}>
                 <legend>Project type</legend>
                 <div className={styles.chipRow}>

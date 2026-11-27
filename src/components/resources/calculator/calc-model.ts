@@ -1,11 +1,3 @@
-/**
- * Drink cost calculator: presets, English copy and the owner's formulas.
- *
- * Lifted from the owner's design (`template.html`, the `text/x-dc` script).
- * Only EN is wired; the design's RU/AR strings are not shipped yet.
- * The brand is written "the Base" in every string, as the owner asked.
- */
-
 export type Unit = "g" | "ml" | "pc";
 
 export type Row = {
@@ -114,7 +106,6 @@ export const T = {
   remove: "Remove",
 } as const;
 
-/** Accepts "7,5" as well as "7.5"; anything unreadable counts as 0. */
 export function num(value: string | number): number {
   const parsed = Number.parseFloat(String(value).replace(",", "."));
   return Number.isFinite(parsed) ? parsed : 0;
@@ -139,7 +130,6 @@ export type CalcInput = {
   altSec: string;
 };
 
-/** The design's `renderVals` arithmetic, unchanged. */
 export function calculate(s: CalcInput) {
   const raw = s.rows.reduce((sum, row) => sum + lineCost(row), 0);
   const cost = raw * (1 + num(s.waste) / 100);
@@ -168,7 +158,6 @@ export const wholeAed = (value: number) => `${(Math.round(value) || 0).toLocaleS
 export const signed = (value: number, text: string) => `${value >= 0 ? "+" : ""}${text}`;
 
 let addedRows = 0;
-/** A stable key for a row the user adds; called from event handlers only. */
 export function newRowId(): string {
   addedRows += 1;
   return `added-${addedRows}`;

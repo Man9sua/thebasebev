@@ -1,12 +1,3 @@
-/**
- * The confirmation page.
- *
- * One left-aligned column on paper, vertically centred in the viewport under
- * the fixed header and sized by its content — which is what broke the
- * exported version on a phone. Colours come from the redesign palette in
- * `design-tokens.css`; type roles from the typography contract.
- */
-
 .page {
   display: flex;
   min-height: 100vh;
@@ -113,8 +104,6 @@
   border-color: var(--tbb-rd-red);
   color: var(--tbb-rd-red);
 }
-
-/* ---- foot ---- */
 
 .foot {
   display: flex;

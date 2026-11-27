@@ -2,17 +2,6 @@ import { toTildaLeadPayload } from "@/lib/lead-forms";
 import { validateLeadPayload } from "@/lib/leads";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
 
-/**
- * Server-side proxy from the Next.js clone to the existing Odoo pipeline.
- *
- *   Next.js form → POST /api/leads → LEAD_API_URL (server-side relay) → Odoo
- *
- * `LEAD_API_URL` is server-only and never reaches the browser. Staging uses a
- * dedicated relay so delivery only succeeds when the Odoo webhook confirms it.
- * Production may continue using its existing Tilda relay until a separately
- * approved migration.
- */
-
 const FORWARD_TIMEOUT_MS = 10_000;
 const MAX_BODY_BYTES = 64 * 1024;
 
@@ -30,7 +19,6 @@ const USER_MESSAGES: Record<ErrorCode, string> = {
   payload_too_large: "Your message is too long. Please shorten it.",
   invalid_payload: "Please check the required fields.",
   rate_limited: "Too many attempts. Please wait a moment and try again.",
-  // Wording matches the existing site copy asserted by `smoke:browser`.
   lead_backend_unavailable:
     "Lead delivery is temporarily unavailable. Please contact us directly.",
   lead_delivery_failed: "Something went wrong. Please try again.",
@@ -41,10 +29,6 @@ function newRequestId(): string {
   return crypto.randomUUID();
 }
 
-/**
- * Diagnostic log line. Deliberately carries no name, email, phone or message —
- * only the routing and outcome fields needed to trace a submission.
- */
 function logLead(entry: {
   requestId: string;
   formType: string | null;
@@ -77,7 +61,6 @@ function fail(
   );
 }
 
-/** Only same-origin form posts belong here; nothing else is routed through. */
 function methodNotAllowed() {
   return Response.json(
     { ok: false, error: "method_not_allowed" },
@@ -153,8 +136,6 @@ export async function POST(request: Request) {
   const lead = validation.data;
   const route = new URL(lead.submissionPage).pathname;
 
-  // A filled decoy field means a bot. Accept the request so it learns nothing,
-  // but never forward it to Odoo.
   if (lead.honeypotTripped) {
     done("honeypot", null, lead.formType, route);
     return Response.json(
@@ -191,7 +172,6 @@ export async function POST(request: Request) {
     return fail(503, "lead_backend_unavailable", requestId);
   }
 
-  // Translate to the legacy Tilda field names the Odoo webhook already parses.
   const upstreamPayload = toTildaLeadPayload(lead, { requestId, receivedAt });
 
   const headers: Record<string, string> = {
@@ -199,9 +179,6 @@ export async function POST(request: Request) {
     "Content-Type": "application/json",
   };
 
-  // The tilda-odoo Worker accepts unauthenticated posts today. A key is sent
-  // only when one is configured, so a future authenticated upstream needs no
-  // code change here.
   const apiKey = process.env.LEAD_API_KEY?.trim();
   if (apiKey) {
     headers.Authorization = `Bearer ${apiKey}`;

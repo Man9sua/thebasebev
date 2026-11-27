@@ -1,15 +1,8 @@
 import Image from "next/image";
 import styles from "./ZoomCallBlock.module.css";
 
-/** The presentation booking page every "Book a Zoom call" button opens. */
 export const ZOOM_BOOKING_URL = "https://calendly.com/thebasebev/the-base-presentation";
 
-/**
- * "Product overview & partnership call" — the native replacement for the
- * exported `rec2503542591` block that closes the retained Tilda pages. Same
- * copy, same booking link and the same meeting-room photograph, set to the
- * house type and spacing instead of the export's card.
- */
 export function ZoomCallBlock({ headingLevel = "h2" }: { headingLevel?: "h2" | "h3" }) {
   const Heading = headingLevel;
   return (

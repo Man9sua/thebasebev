@@ -7,15 +7,6 @@ import { SITE_NAV, SITE_NAV_SECONDARY } from "@/lib/site-config";
 import { useOverlay } from "./useOverlay";
 import styles from "./Overlay.module.css";
 
-/**
- * Site search.
- *
- * Real, working search over what the site actually has — the product registry
- * and the top-level pages — rather than a decorative field. It is client-side
- * because the corpus is small and fixed; nothing is fetched, so results are
- * instant and there is no empty loading state to design around.
- */
-
 type Hit = {
   href: string;
   name: string;
@@ -23,9 +14,6 @@ type Hit = {
   image: string | null;
 };
 
-/* Both levels of the menu: the split is a matter of typographic weight in the
-   panel, and search has no use for it — all seven are pages someone may look
-   for by name. */
 const PAGE_HITS: Hit[] = [...SITE_NAV, ...SITE_NAV_SECONDARY].map((item) => ({
   href: item.href,
   name: item.label,
@@ -33,15 +21,6 @@ const PAGE_HITS: Hit[] = [...SITE_NAV, ...SITE_NAV_SECONDARY].map((item) => ({
   image: null,
 }));
 
-/**
- * The pouch on its own, on nothing — not the product's photographed plate.
- *
- * The plate was a 44px square holding a full styled shot: six of them at around
- * 1.1 MB each, fetched on every page of the site because this overlay is
- * mounted everywhere. That was 6.8 MB of the 14.7 MB a product page weighed,
- * and none of it was on screen. The cut-out is a twentieth of that, and at this
- * size a pouch is legible where a plated drink is a smudge.
- */
 const PRODUCT_HITS: Hit[] = PRODUCTS.map((product) => ({
   href: product.route,
   name: product.name,
@@ -157,8 +136,6 @@ export function SiteSearch({
                   />
                   <span>
                     <span className={styles.resultName}>{hit.name}</span>
-                    {/* A pouch is already the word "product". The label earns its
-                        place only where the row is something else. */}
                     {hit.kind !== "Product" && (
                       <span className={styles.resultKind}>{hit.kind}</span>
                     )}

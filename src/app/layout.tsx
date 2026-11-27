@@ -8,21 +8,6 @@ import { MarketPrompt } from "@/components/site/MarketPrompt";
 import { FIRST_TOUCH_SCRIPT } from "@/components/forms/first-touch";
 import "./globals.css";
 
-/**
- * Exo 2 — the brand face, per Guidebook p.16: "EXO 2.0 font looks technical
- * and friendly, free font with open license".
- *
- * The shared contract uses 900 for display headings, 800 for subheadings,
- * 400/500 for body copy and 600 for controls.
- *
- * next/font self-hosts the files at build time — no runtime request to Google —
- * and reserves metrics up front, so the swap causes no shift.
- *
- * The variable class goes on <html>, not <body>: the design tokens compose it
- * inside `:root`, and a var() that is undefined at :root makes the whole
- * declaration invalid at computed-value time — which silently dropped the font
- * stack to Times New Roman.
- */
 const exo2 = Exo_2({
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -30,11 +15,6 @@ const exo2 = Exo_2({
   variable: "--tbb-font-exo",
 });
 
-/**
- * Big Noodle Titling, the guidebook's slogan face (free for commercial use,
- * per the notice in the file). Not preloaded: the browser fetches it only on
- * a page that sets a slogan.
- */
 const noodle = localFont({
   src: "../fonts/big-noodle-titling.ttf",
   display: "swap",
@@ -68,24 +48,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${exo2.variable} ${noodle.variable}`} suppressHydrationWarning>
       <head>
-        {/*
-          The exported pages reference their assets relatively — `images/…`,
-          `css/…` — and four routes are nested (`/resources/blog`,
-          `/resources/glossary`, `/resources/tools`, `/catalog/tproduct/…`),
-          where a relative path would resolve one directory too deep. This is
-          what keeps them resolving from the root.
-
-          The cost is that a bare `#fragment` anchor resolves against the root
-          too, so an in-page link must carry its own route: `/rnd#rnd-form`,
-          not `#rnd-form`.
-        */}
         <base href="/" />
-        {/* Also blocking, and for the same reason: the first touch must be
-            recorded before a click can navigate away from the landing page. */}
         <script dangerouslySetInnerHTML={{ __html: FIRST_TOUCH_SCRIPT }} />
-        {/* React streams the resolved static route into an S:* container and
-            swaps it over the route fallback with an inline script. If scripts
-            are disabled, reveal that already-rendered document directly. */}
         <noscript>
           <style>{`
             [data-route-loading-fallback] { display: none !important; }
@@ -98,10 +62,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <LeadAttributionBridge />
         <MarketPrompt />
-        {/* In the layout, not in a page: the widget it replaces only existed on
-            the routes served through the legacy shell, so the site asked some
-            visitors for consent and not others. Above `Analytics`, which reads
-            the answer it stores. */}
         <CookieConsent />
         <Analytics />
       </body>

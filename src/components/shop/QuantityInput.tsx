@@ -11,7 +11,6 @@ export function QuantityInput({ label, value, onChange, min = 0, disabled = fals
   min?: 0 | 1;
   disabled?: boolean;
 }) {
-  // An empty field or a leading zero must not remove a cart row mid-edit.
   const [draft, setDraft] = useState<string | null>(null);
   const displayed = draft ?? String(value);
 

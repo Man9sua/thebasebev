@@ -55,7 +55,7 @@ The 29 canonical indexable friendly routes plus 101 audited Glossary articles ar
 
 ## Glossary article routes
 
-All 101 production `/tpost/<uid>-<slug>` Glossary URLs are preserved 1:1 as statically generated, indexable pages. The complete title-to-URL audit is maintained in `docs/research/glossary/PRODUCTION_GLOSSARY_INVENTORY.md`; all entries return 200 and retain their production canonical. The one empty production source article (`Matcha`, UID `tfm5mybkl1`) remains a valid 200 route without invented copy.
+All 101 production `/tpost/<uid>-<slug>` Glossary URLs are preserved 1:1 as statically generated, indexable pages. The complete title-to-URL audit is maintained in `context/research/glossary/PRODUCTION_GLOSSARY_INVENTORY.md`; all entries return 200 and retain their production canonical. The one empty production source article (`Matcha`, UID `tfm5mybkl1`) remains a valid 200 route without invented copy.
 
 ## Legacy HTML aliases
 
@@ -100,7 +100,7 @@ All 101 production `/tpost/<uid>-<slug>` Glossary URLs are preserved 1:1 as stat
 | `/checkout` | 200 when populated; empty cart client-redirects to `/catalog` | NO | NO | DONE — native cart review and Stripe Test Mode handoff; no Tilda cart modal |
 | unknown path | branded 404 | NO | NO | DONE — native not-found boundary |
 
-`ROUTE_INDEXABILITY_AUDIT.md` accounts for the existing 113 controlled routes plus 101 Glossary article routes and records why each item is or is not indexable.
+`.audit-artifacts/ROUTE_INDEXABILITY_AUDIT.md` accounts for the existing 113 controlled routes plus 101 Glossary article routes and records why each item is or is not indexable.
 
 ## Deployment and integration gates
 

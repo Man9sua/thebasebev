@@ -60,6 +60,6 @@ Every action below is `HUMAN APPROVAL REQUIRED`:
 5. Keep mail, verification, and non-HTTP services DNS-only.
 6. Validate SPF syntax, all DKIM selectors, DMARC, MX priority, and CAA policy.
 7. Record the Tilda rollback origin and current website records.
-8. Only after two-person review, schedule the nameserver change from `PRODUCTION_CUTOVER.md`.
+8. Only after two-person review, schedule the nameserver change from `context/PRODUCTION_CUTOVER.md`.
 
 Do not delete GoDaddy records or the Tilda project during or immediately after nameserver cutover.

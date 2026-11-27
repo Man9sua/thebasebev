@@ -123,8 +123,6 @@ function buildLeadPayload(
     ]),
     formId: form.id || undefined,
     formName,
-    // The server re-derives and re-checks this against its allowlist; sending it
-    // only saves a lookup, it is never trusted as-is.
     formType: resolveLeadFormType(form.id, formName) ?? undefined,
     consent: getConsent(form),
     [LEAD_HONEYPOT_FIELD]: getFormValue(formData, [LEAD_HONEYPOT_FIELD]) ?? "",
@@ -154,9 +152,6 @@ function isOwnedTildaLeadForm(form: HTMLFormElement): boolean {
     ?.value.trim()
     .toLowerCase();
 
-  // Tilda uses data-formactiontype=2 for both Zero Block lead forms and carts,
-  // so it is not a safe ownership signal. Audited cart form names/IDs are not
-  // in either allowlist and continue through the legacy payment pipeline.
   return formName ? OWNED_TILDA_FORM_NAMES.has(formName) : false;
 }
 
@@ -207,8 +202,6 @@ function showLegacyError(form: HTMLFormElement, message: string) {
     form.append(errorBox);
   }
 
-  // Tilda ships its own error box without a live-region role, so announce it
-  // whether we created the element or inherited it.
   errorBox.setAttribute("role", "alert");
 
   let messageNode = errorBox.querySelector<HTMLElement>(".js-rule-error-all");
@@ -262,7 +255,6 @@ function completeLegacySuccess(form: HTMLFormElement) {
         destination = countryPath(`${url.pathname}${url.search}${url.hash}`, countryCodeFromPath(window.location.pathname));
       }
     } catch {
-      // Preserve the existing destination if an exported form supplies an unusual URL.
     }
     window.setTimeout(() => window.location.assign(destination), 500);
     return;
@@ -296,12 +288,6 @@ function getApiErrorMessage(body: unknown): string {
   return "Something went wrong. Please try again.";
 }
 
-/**
- * Add the decoy field to an owned form. It is visually hidden and removed from
- * the tab order and accessibility tree. The field is also read-only and opted
- * out of common password-manager autofill so a visitor's saved profile cannot
- * accidentally be treated as spam.
- */
 function attachHoneypot(form: HTMLFormElement) {
   if (form.querySelector(`input[name="${LEAD_HONEYPOT_FIELD}"]`)) {
     return;
@@ -338,8 +324,6 @@ export function LeadAttributionBridge() {
 
     armOwnedForms();
 
-    // Tilda injects Zero Block popup forms after hydration, so watch for them
-    // instead of assuming the first pass saw every form.
     const observer = new MutationObserver(armOwnedForms);
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -395,17 +379,11 @@ export function LeadAttributionBridge() {
         return;
       }
 
-      // Once this allowlisted form is owned, prevent the legacy Tilda handler
-      // from submitting a second copy to opaque receiver hashes.
       event.preventDefault();
       event.stopImmediatePropagation();
       submitOwnedForm(form);
     };
 
-    // Tilda's form script calls preventDefault() on the submit button's click,
-    // so on most pages no `submit` event is ever dispatched and a submit-only
-    // listener never runs. Claim the click first — window capture is the
-    // earliest phase, ahead of Tilda's element and document handlers.
     const handleClick = (event: MouseEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) {
@@ -429,8 +407,6 @@ export function LeadAttributionBridge() {
       submitOwnedForm(form);
     };
 
-    // Keyboard submits (Enter inside a field) still arrive as `submit`, and
-    // some forms are not driven by the Tilda script at all.
     window.addEventListener("click", handleClick, true);
     window.addEventListener("submit", handleSubmit, true);
     return () => {

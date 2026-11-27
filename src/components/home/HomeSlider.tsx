@@ -12,7 +12,6 @@ const wrap = (index: number) => (index + COUNT) % COUNT;
 
 type Position = Readonly<{ index: number; loaded: ReadonlySet<number> }>;
 
-/** Moving to a slide also lets it and its two neighbours load their pictures. */
 function moveTo(position: Position, next: number | "next" | "previous"): Position {
   const index = wrap(typeof next === "number" ? next : position.index + (next === "next" ? 1 : -1));
   const wanted = [index, wrap(index + 1), wrap(index - 1)];
@@ -20,15 +19,6 @@ function moveTo(position: Position, next: number | "next" | "previous"): Positio
   return { index, loaded: new Set([...position.loaded, ...wanted]) };
 }
 
-/**
- * The homepage's first section, to the design ("The Base Homepage Slider"):
- * one product a slide, each in its own colour, each opening its product page.
- * Visible banners turn every five seconds, including after manual navigation.
- * Reduced-motion visitors get the same slides with instantaneous transitions.
- *
- * Only the slide on screen and its two neighbours load their pictures; the
- * rest follow as the slider reaches them.
- */
 export function HomeSlider() {
   const frameRef = useRef<HTMLDivElement>(null);
   const [{ index, loaded }, move] = useReducer(moveTo, 0, (first) => moveTo({ index: -1, loaded: new Set() }, first));
@@ -89,8 +79,6 @@ export function HomeSlider() {
       aria-labelledby="home-title"
       data-home-slider
     >
-      {/* The page's h1, kept from the hero the slider replaced: the slides
-          carry the visible copy, this keeps the page's headline for search. */}
       <h1 id="home-title" className={styles.hidden}>
         Premium Beverage Bases
       </h1>

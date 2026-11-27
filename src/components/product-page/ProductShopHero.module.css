@@ -7,7 +7,6 @@
 .hero[data-product-shop-hero="add-ons"] .mainPhoto { display: block; border: 1.5px dashed #c9c4ba; border-radius: 32px; background: #ece8e2; }
 .hero[data-product-shop-hero="electrolyte"] .mainPhoto { justify-self: center; width: 100%; height: auto; aspect-ratio: 896 / 1200; max-height: min(680px, var(--photo-height, 680px)); padding: 0; overflow: hidden; border-radius: 28px; background: #dedede; }
 @media (min-width: 768px) {
-  /* The legacy horizontal overflow rule otherwise makes the body the sticky scroll container. */
   :global(body):has(.hero) { overflow-x: clip !important; }
   .mainPhoto {
     --photo-top: calc(var(--tbb-header-h) + var(--tbb-market-prompt-height, 0px) + 16px);

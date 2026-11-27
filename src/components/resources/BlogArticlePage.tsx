@@ -6,15 +6,6 @@ import { Fragment } from "react";
 import { resolveBlogHref, type BlogBlock, type BlogInline, type BlogPost } from "@/data/blog";
 import styles from "./BlogArticlePage.module.css";
 
-/**
- * One Blog article.
- *
- * The body is rendered from the block model the importer writes, not from
- * markup: nothing on this page is `dangerouslySetInnerHTML`, so Tilda's
- * redactor classes and inline styles never reach the document and the article
- * inherits this site's type scale instead of that one's.
- */
-
 function displayDate(value: string) {
   const [year, month, day] = value.split("-");
   return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString("en-GB", {
@@ -52,8 +43,6 @@ function Inline({ content }: { content: BlogInline[] }) {
 function Block({ block, index }: { block: BlogBlock; index: number }) {
   switch (block.type) {
     case "heading": {
-      // The article's own `h1` is the title above, so the body starts at h2 and
-      // the source's h2/h3/h4 keep their relative depth.
       const Tag = (block.level === 2 ? "h2" : block.level === 3 ? "h3" : "h4") as
         | "h2"
         | "h3"

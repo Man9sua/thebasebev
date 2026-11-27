@@ -38,8 +38,6 @@ function withStorage(run: (storage: MemoryStorage) => void) {
   }
 }
 
-// Server payment verification is the caller's responsibility. These tests only
-// exercise the browser marker that protects the basket after a verified return.
 test("matching session, kind and basket consume the pending marker once", () => {
   withStorage((storage) => {
     rememberPendingCheckout(SESSION, "products", basket);

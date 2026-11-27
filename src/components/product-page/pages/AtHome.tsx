@@ -6,14 +6,6 @@ import type { ProductPageProps } from "../types";
 import { AtHomeChips } from "./AtHomeChips";
 import local from "./AtHome.module.css";
 
-/**
- * At home ("At Home Retail Page", desktop 1440 / mobile 390): the café
- * recipes in 150 g retail pouches. Not a single product but a shelf, so it
- * has its own hero — two ways to buy instead of a sample — and the pouches
- * laid out by range. "Buy online" is the same shop the catalogue sells
- * through.
- */
-
 const SLUG = "at-home";
 
 type Pouch = { name: string; text: string; code: string; image?: string };
@@ -38,7 +30,6 @@ const shelves: readonly { id: string; title: string; note: string; pouches: read
     pouches: [
       { name: "Chocolate Strawberry", text: "Choco berry", code: "150 g · CC-011-F150", image: "chocolate-strawberry" },
       { name: "Chocolate Orange", text: "Citrus and cocoa", code: "150 g · CC-012-F150", image: "chocolate-orange" },
-      // No pack shot yet: the plate stands empty in the shelf's colour.
       { name: "Chocolate Mocha", text: "Cocoa and coffee", code: "150 g · CC-010-F150" },
     ],
   },

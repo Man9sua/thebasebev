@@ -54,7 +54,6 @@ async function mockLeadDelivery(context, leads) {
     failures.push("A checkout API request was blocked during SEO/UI review");
     return route.abort();
   });
-  // This boundary is mocked before any page is opened. No lead reaches CRM.
   await context.route("**/api/leads", async (route) => {
     leads.push(route.request().postDataJSON());
     await route.fulfill({
@@ -85,8 +84,6 @@ async function runViewport(label, viewport) {
   });
 
   async function visit(route) {
-    // Static preview HTML can arrive before its deferred client scripts. Wait
-    // for those scripts before exercising React controls after a hard navigation.
     const response = await page.goto(`${baseUrl}/ae${route}`, { waitUntil: "load" });
     await page.locator("main h1").first().waitFor();
     check(response?.status() === 200, `${label} ${route}: HTTP 200`);
@@ -147,7 +144,6 @@ async function runViewport(label, viewport) {
   if (await banner.count()) await banner.getByRole("button", { name: "Reject", exact: true }).click();
 
   async function waitForLeadBridge(form) {
-    // The bridge adds this readonly spam field when it arms the form handlers.
     await form.locator('input[name="company_website"][readonly]').waitFor({ state: "attached" });
   }
 
@@ -156,8 +152,6 @@ async function runViewport(label, viewport) {
     await form.locator('input[name="name"]').fill("SEO Review");
     await form.locator('input[name="email"]').fill("seo-review@example.com");
     await form.locator('input[name="Phone"]').fill("+971500000000");
-    // The sample drawer asks for company and city and has no consent box (its
-    // footer states the terms); the other forms keep a required checkbox.
     for (const [name, value] of [["company", "SEO Review LLC"], ["city", "Dubai"]]) {
       const field = form.locator(`input[name="${name}"]`);
       if (await field.count()) await field.fill(value);
@@ -236,8 +230,6 @@ async function runViewport(label, viewport) {
       for (const title of ["Made for service", slug === "milkshake" ? "One cup, one recipe" : "How to prepare", `${count} flavours`, "Inside the pack"]) {
         check(await page.getByRole("heading", { name: title, exact: true }).isVisible(), `${label} ${slug}: ${title} visible`);
       }
-      // The photo-removal message concerns the Purée bottle mockup. The latest
-      // Milkshake/Frappe HTML still includes these supplied menu photographs.
       const gallery = page.locator('section[aria-label="Ready for your menu"]');
       const shots = gallery.locator("img");
       const expectedShots = slug === "milkshake" ? 8 : 5;
@@ -412,10 +404,8 @@ async function runViewport(label, viewport) {
     const form = page.locator("#sample-request-modal-form");
     await completeIdentity(form);
 
-    // Country and city suggest as you type; the city list follows the country.
     const country = form.getByRole("combobox", { name: "Country" });
     const city = form.getByRole("combobox", { name: "City" });
-    // A click waits for the drawer to finish sliding in, so the list stays put.
     await country.click();
     await country.fill("Kaz");
     await form.getByRole("option", { name: "Kazakhstan" }).click();
@@ -551,9 +541,7 @@ async function runShortViewport() {
     await page.locator("main").getByRole("button", { name: "Request samples", exact: true }).click();
     const panel = page.getByRole("dialog", { name: /Request a sample/ });
     await panel.waitFor();
-    // The drawer slides in; until it lands, the pointer is over the scrim.
     await panel.evaluate((element) => Promise.all(element.getAnimations().map((animation) => animation.finished)));
-    // The drawer scrolls its fields and keeps the send button in a fixed foot.
     const scroller = panel.locator("form .t-form__inputsbox > div").first();
     const metrics = await scroller.evaluate((element) => ({
       clientHeight: element.clientHeight,

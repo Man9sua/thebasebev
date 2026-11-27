@@ -65,8 +65,6 @@ export function SiteMenu({
         <div className={styles.layout}>
           <div className={styles.main}>
             <nav className={`${styles.nav} ${overlay.item}`} aria-label="Main">
-              {/* No per-link delay: the nav enters as one block, and a delay on the
-                  link itself held back its hover colour, unlike the Shop pill. */}
               {SITE_NAV.map((item) => (
                 <SiteLink
                   key={item.href}

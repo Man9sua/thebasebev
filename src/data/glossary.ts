@@ -28,9 +28,7 @@ export type GlossaryEntry = {
   sourceRobots: string;
   sourceTextHash: string;
   seo: {
-    /** Search-phrase title; see scripts/apply-glossary-search-titles.mjs. */
     title: string;
-    /** The bare term production published as the title before that change. */
     sourceTitle?: string;
     description: string;
     canonical: string;
@@ -71,12 +69,6 @@ export function findGlossaryEntryByPath(value: string) {
   return ENTRY_BY_PATH.get(normalizePath(value));
 }
 
-/**
- * Keep migrated Glossary and existing application routes local. A small number
- * of source articles link to Blog posts that have not been migrated yet; those
- * links must continue to reach the live source instead of becoming staging
- * 404s.
- */
 export function resolveGlossaryHref(href: string) {
   if (!href.startsWith("/tpost/") || ENTRY_BY_PATH.has(normalizePath(href))) return href;
   return `${PRODUCTION_ORIGIN}${href}`;

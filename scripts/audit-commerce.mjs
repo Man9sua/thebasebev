@@ -1,6 +1,5 @@
 import { chromium } from "@playwright/test";
 
-/** The account link has to leave for Odoo and nowhere else. */
 const ODOO_ORIGIN = "https://odoo.";
 
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
@@ -180,7 +179,6 @@ try {
   await context.route("**/*", (route) => {
     const request = route.request();
     const url = new URL(request.url());
-    // Neutralize Cloudflare's production performance beacon without sending it.
     if (request.method() === "POST" && url.origin === baseOrigin && url.pathname === "/cdn-cgi/rum") return route.fulfill({ status: 204, body: "" });
     if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
       blockedMutations.push(`${request.method()} ${url.pathname}`);
@@ -275,7 +273,6 @@ try {
       check(await page.locator("[data-cart-add]").count() === 1,
         "/matcha: product purchase panel must keep its native add-to-cart control");
 
-      // Sample enquiries keep the existing lead form and product context.
       for (const action of [
         { label: "Request a free sample", form: "#sample-request-modal-form", formName: "Free Sample" },
       ]) {

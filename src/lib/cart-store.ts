@@ -7,7 +7,6 @@ const SERVER_STATE: CartState = Object.freeze({ ready: false, items: Object.free
 export function cartLineKey(slug: string, flavor: string): string { return `${slug}::${flavor}`; }
 function sameLine(item: CartItem, slug: string, flavor: string) { return item.slug === slug && item.flavor === flavor; }
 
-/** Product and sample baskets share quantity rules but keep separate storage. */
 function createCartStore(storageKey: string) {
   let state = SERVER_STATE;
   let hydrated = false;
@@ -47,7 +46,7 @@ function createCartStore(storageKey: string) {
   function persist(items: readonly CartItem[]) {
     hydrate();
     try { window.localStorage.setItem(storageKey, JSON.stringify(items)); }
-    catch { /* Private browsing can deny storage; this document's basket still works. */ }
+    catch {  }
     emit(items);
   }
   function add(slug: string, flavor: string, quantity = 1): boolean {
@@ -89,7 +88,6 @@ function createCartStore(storageKey: string) {
   };
 }
 
-// Keep both existing storage keys so saved selections survive this change.
 const cart = createCartStore("thebase:cart:v2");
 const sampleCart = createCartStore("thebase:sample-cart:v1");
 export const subscribeCart = cart.subscribe;

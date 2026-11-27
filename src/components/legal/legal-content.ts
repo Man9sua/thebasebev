@@ -1,14 +1,3 @@
-/**
- * The two legal documents, word for word as the Tilda export carries them
- * (`page68443503.html` record `rec2430715951` for Privacy,
- * `page68443067.html` record `rec2546753201` for Terms). Only the markup
- * around the words changed; the text, the headings, their numbering (gaps
- * included) and the Privacy in-page anchors (`#section-1` …) are the source's.
- *
- * Do not edit the copy here without the owner's legal sign-off.
- */
-
-/** A run of text, optionally with a bold lead-in (`<strong>` in the source). */
 export type LegalText = { strong?: string; text: string };
 
 export type LegalBlock =

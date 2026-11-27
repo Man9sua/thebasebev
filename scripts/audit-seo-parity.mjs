@@ -1,9 +1,10 @@
 import fs from "node:fs";
+import path from "node:path";
 import { readNativeRoutes } from "./native-routes.mjs";
 
 const productionOrigin = "https://thebasebev.com";
 const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
-const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
+const reportPath = process.argv[3] ?? path.join(".audit-artifacts", "SEO_PARITY_REPORT.md");
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
@@ -20,13 +21,6 @@ const expectedSitemapRoutes =
   28 + readNativeRoutes().length + glossaryContent.entries.length + blogContent.posts.length;
 const addedRoutes = new Set(["/electrolyte", "/find-your-distributor", "/careers", "/request-samples", "/certificates", "/faq", "/cookie-policy"]);
 
-/*
- * Numeric character references are decoded generically rather than one by one.
- * The hand-written list missed `&#x27;` and `&#039;` — the two spellings of an
- * apostrophe that Next.js and Tilda respectively emit — so every Blog title
- * with one in it was reported as a mismatch against a string it matched
- * character for character once decoded.
- */
 function decodeHtml(value = "") {
   return value
     .replace(/<[^>]+>/g, " ")
@@ -102,8 +96,6 @@ function normalizeInternalLinks(html, responseOrigin) {
       const pathname = url.pathname !== "/" ? url.pathname.replace(/\/$/, "") : "/";
       links.add(`${responseOrigin === productionOrigin ? publicPath(pathname) : pathname}${url.search}`);
     } catch {
-      // Invalid source links are reported by the set difference below only
-      // when one side can normalize them.
     }
   }
   return [...links].sort();
@@ -214,12 +206,6 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: 1 }, () => worker()));
 
-/*
- * The pages whose production h1 is deliberately not carried over, each named
- * with production's exact string and the reason. The string is the guard: if
- * production is ever corrected or redesigned, the entry stops matching and the
- * route comes back under the ordinary rule instead of staying quietly exempt.
- */
 const H1_NOT_PRESERVED = new Map([
   ["/catalog", {
     h1: "Catalogue",
@@ -285,13 +271,6 @@ const H1_NOT_PRESERVED = new Map([
   ],
 ]);
 
-/*
- * Glossary metadata this branch changes on purpose: bare-term titles became
- * search-phrase titles (production's own string is kept as `seo.sourceTitle`),
- * and entries production published with no description now have one. Each is
- * exempt only while production still shows exactly the old value, so the
- * exemption ends by itself after the release goes out.
- */
 const GLOSSARY_BY_ROUTE = new Map(glossaryContent.entries.map((entry) => [publicPath(entry.path), entry]));
 function declaredGlossaryChange(route, production, field, productionValue, targetValue) {
   const entry = GLOSSARY_BY_ROUTE.get(route);
@@ -333,13 +312,6 @@ for (const { route, production, target } of results) {
     }
   }
 
-  /*
-   * The product pages deliberately lead with the product's name and carry
-   * production's own h1 as the h2 under it — the owner's call, taken knowing
-   * this file is what guards it. So a differing h1 is allowed only while
-   * production's wording is still on the page as a heading. Drop the phrase
-   * altogether and this is a critical failure again.
-   */
   if (production.h1 !== target.h1) {
     const exempt = H1_NOT_PRESERVED.get(legacyPath(route));
     if (exempt && exempt.h1 === production.h1 && (!exempt.target || exempt.target === target.h1)) {
@@ -441,6 +413,7 @@ ${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 ${warnings.length ? warnings.map((item) => `- ${item}`).join("\n") : "- None."}
 `;
 
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (criticalFailures.length) {

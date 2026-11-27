@@ -1,7 +1,3 @@
-/* Chai latte: the places its mock differs from the matcha baseline. */
-
-/* ---- 03 menu: title and kit card in the first column, two photos beside ---- */
-
 section.menu {
   display: grid;
   grid-template-columns: minmax(0, 1fr) calc(340 * var(--u)) calc(340 * var(--u));
@@ -60,8 +56,6 @@ section.menu {
   font-size: calc(13 * var(--u));
 }
 
-/* ---- 05 flavours: three columns of tall cards with a line of copy ---- */
-
 .flavours {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -116,19 +110,16 @@ section.menu {
 }
 
 @media (min-width: 1024px) {
-  /* "Creamy" is set at 28px beside the 40px values. */
   .steps > div:nth-child(4) > span:last-child {
     font-size: calc(28 * var(--u));
   }
 }
 
 @media (max-width: 1023px) {
-  /* The phone title is 56px (baseline 60). */
   .hero h1 {
     font-size: 56px;
   }
 
-  /* Both photos sit in a two-column grid under the title; no scroller. */
   section.menu {
     grid-template-columns: 1fr 1fr;
     column-gap: 8px;

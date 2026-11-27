@@ -1,14 +1,5 @@
 import styles from "./AboutHero.module.css";
 
-/**
- * About Us, block 1: first screen and advantages.
- *
- * Carries the page `h1`. The showroom photo is the wall with the logo, cropped
- * to the top on desktop and slightly left of centre on mobile, as designed.
- * A plain <img> with a hand-made srcset: `next/image` is unoptimized on this
- * site, so it would ship a single full-size file.
- */
-
 const FEATURES = [
   {
     title: "Own lab and factory",

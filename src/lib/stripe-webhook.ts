@@ -93,7 +93,6 @@ export async function handleStripeWebhook(
     return apiError(413, "STRIPE_WEBHOOK_TOO_LARGE", "The webhook body is too large.");
   }
 
-  // Signature verification requires the exact raw request body.
   const payload = await request.text();
   if (new TextEncoder().encode(payload).byteLength > MAX_WEBHOOK_BODY_BYTES) {
     return apiError(413, "STRIPE_WEBHOOK_TOO_LARGE", "The webhook body is too large.");
@@ -138,7 +137,6 @@ export async function handleStripeWebhook(
     const result = await dependencies.processSession(event.sessionId);
     return Response.json({ ok: true, received: true, testMode: !live, ...result }, { headers: { "Cache-Control": "no-store" } });
   } catch {
-    // Stripe retries a failed delivery. Never consume an event before Odoo commits.
     return apiError(503, "ORDER_DELIVERY_RETRY_REQUIRED", "The paid order is awaiting processing. Retry this event.");
   }
 }

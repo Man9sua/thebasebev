@@ -1,21 +1,3 @@
-/**
- * Search-phrase titles for the Glossary.
- *
- * Production imported each term with its bare name as the <title> ("Premix",
- * "MOQ", "Frappe"). One word says nothing about the question a reader types
- * into Google or an AI assistant, so every term gets a question-shaped title:
- *
- *   What is a Premix? Dry Beverage Base Explained | The Base
- *
- * The rule is a template ("What is {term}? {category phrase} | The Base") with
- * hand-written overrides for the terms people search by their full name or
- * acronym. The H1, description and canonical are not touched.
- *
- * The term's original title is kept as `seo.sourceTitle`, so the script is
- * idempotent and `audit:seo-parity` can tell this deliberate change from drift.
- *
- * Run: node scripts/apply-glossary-search-titles.mjs
- */
 import fs from "node:fs";
 
 const DATA_PATH = "src/data/glossary-content.json";
@@ -28,7 +10,6 @@ const CATEGORY_PHRASE = {
   business: "HoReCa Term Explained",
 };
 
-/** Full titles (without the brand) for terms searched by name or acronym. */
 const OVERRIDES = {
   Premix: "What is a Premix? Dry Beverage Base Explained",
   MOQ: "What is MOQ? Minimum Order Quantity Explained",
@@ -73,7 +54,6 @@ const OVERRIDES = {
   "Danger Zone": "What is the Food Danger Zone? 4 to 60 °C",
 };
 
-/** Countable terms that read naturally with an article. */
 const ARTICLE = new Set([
   "Crossover Drink",
   "Category Anchor",
@@ -95,7 +75,6 @@ const ARTICLE = new Set([
   "Lotus Drink",
 ]);
 
-/** Plural terms take "are". */
 const PLURAL = new Set(["Tapioca Pearls", "Tannins", "Theaflavins", "Volatile Terpenes"]);
 
 function question(term) {

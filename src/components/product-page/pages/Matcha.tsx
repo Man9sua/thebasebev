@@ -17,12 +17,6 @@ import {
 } from "../blocks";
 import type { ProductPageProps } from "../types";
 
-/**
- * Matcha — the reference build of the product-page redesign
- * ("Matcha · страница продукта целиком", desktop 1440 / mobile 390).
- * Every other product page follows this file's shape.
- */
-
 const SLUG = "matcha";
 
 const nutrition: NutritionSet[] = [

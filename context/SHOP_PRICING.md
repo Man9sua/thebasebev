@@ -30,7 +30,7 @@ flavour selection, the floating cart control and the basket drawer show no VAT
 annotation. Their prices remain the source net prices; the final tax-inclusive
 total is presented at checkout.
 
-Mapped UAE variants support Stripe Test Mode when the durable ledger, approved VAT rate and Odoo receiver are configured. 88 paid variants and 52 sample variants have an unambiguous Odoo mapping. Rainbow Unicorn's full pack has several Odoo recipes and remains on quotation. Unknown variants, sample weights and delivery rates keep the request flow. No invoice, order confirmation or accounting payment is created. See `PAYMENT_PIPELINE.md`.
+Mapped UAE variants support Stripe Test Mode when the durable ledger, approved VAT rate and Odoo receiver are configured. 88 paid variants and 52 sample variants have an unambiguous Odoo mapping. Rainbow Unicorn's full pack has several Odoo recipes and remains on quotation. Unknown variants, sample weights and delivery rates keep the request flow. No invoice, order confirmation or accounting payment is created. See `context/PAYMENT_PIPELINE.md`.
 
 ## Unresolved variants
 

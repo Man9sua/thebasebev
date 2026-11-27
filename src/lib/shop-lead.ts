@@ -16,7 +16,6 @@ export type ShopQuoteRequest = {
   deliveryPayment?: "link" | "dhl-account"; dhlAccount?: string; shippingMethod?: "standard" | "express";
 };
 
-/** Checkout enquiries share the lead API and its sole server-side Tilda field mapper. */
 export async function submitShopQuoteRequest(input: ShopQuoteRequest): Promise<{ ok: boolean; message?: string }> {
   if (!input.consent) return { ok: false, message: "Please agree to the Privacy Policy." };
   if (!input.items.length || input.items.length > SHOP_MAX_LINES) {
@@ -47,7 +46,6 @@ export async function submitShopQuoteRequest(input: ShopQuoteRequest): Promise<{
   ].filter(Boolean).join("\n");
   const selection = items.map(({ item, product }) => `${product!.name} — ${item.flavor}${shopItemKind(input.kind, item) === "samples" ? " (free sample)" : ""} × ${item.quantity}`).join("\n");
   const detailedMessage = [introduction, selection, details].join("\n");
-  // Large baskets retain every line in order_json without exceeding the lead note limit.
   const message = detailedMessage.length <= MAX_MESSAGE_LENGTH ? detailedMessage : [
     introduction,
     `${items.length} flavours, ${input.items.reduce((total, item) => total + item.quantity, 0)} units. Full selection and quantities are included in the order details.`,

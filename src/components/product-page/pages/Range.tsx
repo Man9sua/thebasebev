@@ -2,15 +2,6 @@ import type { CSSProperties, ReactNode } from "react";
 import { cx, productPageStyles as styles } from "../blocks";
 import local from "./Range.module.css";
 
-/**
- * Pieces shared by the ranges added after the export — purées, sauces,
- * functional add-ons, the colour collection and the at-home pouches. Their
- * mocks are drawn on the same grid as the other product pages, so everything
- * here is built from the same type and spacing; only the cards are new.
- */
-
-/* ---------------- three ways to use it ---------------- */
-
 export type Use = { label: ReactNode; value: ReactNode; text: ReactNode };
 
 export function UseCards({ items }: { items: readonly Use[] }) {
@@ -27,12 +18,9 @@ export function UseCards({ items }: { items: readonly Use[] }) {
   );
 }
 
-/* ---------------- bottle cards (purées, sauces) ---------------- */
-
 export type Bottle = {
   name: string;
   text: string;
-  /** "950 ml · PR-001-C950" */
   code: string;
   color: string;
 };
@@ -42,7 +30,6 @@ export function BottleCards({
   single = false,
 }: {
   items: readonly Bottle[];
-  /** One card to a row on a phone, larger — for a range of three. */
   single?: boolean;
 }) {
   return (
@@ -61,8 +48,6 @@ export function BottleCards({
   );
 }
 
-/* ---------------- dark band with one action ---------------- */
-
 export function Band({ title, text, action }: { title: ReactNode; text: ReactNode; action: ReactNode }) {
   return (
     <div className={local.band}>
@@ -74,8 +59,6 @@ export function Band({ title, text, action }: { title: ReactNode; text: ReactNod
     </div>
   );
 }
-
-/* ---------------- plain text cards ---------------- */
 
 export function NoteCards({ items, columns = 3 }: { items: readonly { title: ReactNode; text: ReactNode }[]; columns?: number }) {
   return (

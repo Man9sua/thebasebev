@@ -45,14 +45,6 @@ const nextConfig: NextConfig = {
       { source: "/functional-wellness", destination: publicPath("/catalog"), statusCode: 301 },
       { source: "/cabinet", destination: publicPath("/"), statusCode: 301 },
 
-      /*
-       * Blog posts whose title changed after they were published. Tilda routes
-       * `/tpost/` on the id and ignores the slug, so both spellings resolve
-       * there; here every route is generated, so the old spelling needs saying.
-       * These three are the ones `/resources` linked to — see
-       * `relinkBlogPosts` in `lib/site-pages.ts`, which stops the page itself
-       * from taking the hop.
-       */
       {
         source: "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
         destination: publicPath("/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi"),
@@ -69,11 +61,6 @@ const nextConfig: NextConfig = {
         statusCode: 301,
       },
 
-      /*
-       * Two Glossary entries were both called Brix. The fuller one stays; the
-       * duplicate, under both its legacy and its /ae spelling, goes straight
-       * to it rather than through the /tpost to /ae hop.
-       */
       { source: "/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
       { source: "/ae/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
     ];

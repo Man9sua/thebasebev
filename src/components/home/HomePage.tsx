@@ -8,8 +8,6 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
 
 export function HomePage() {
-  // The old homepage's JSON-LD travels with the redesign unchanged: FAQPage,
-  // WebSite, ContactPoint and the OfferCatalog entries all keep working.
   const structuredData = getLegacyStructuredData("page62361237.html");
 
   return (

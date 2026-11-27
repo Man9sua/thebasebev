@@ -4,11 +4,6 @@ import { Faq, Hero, Section, Stats, productPageStyles as styles } from "../block
 import type { ProductPageProps } from "../types";
 import { BottleCards, UseCards, rangeStyles } from "./Range";
 
-/**
- * Sauces ("Sauces Product Page Redesign", desktop 1440 / mobile 390). Like the
- * purées, the mock reserves neutral photo slots until approved pack shots arrive.
- */
-
 const flavours = [
   { name: "Caramel", text: "Buttery, rounded caramel. Lattes, frappes, milkshakes and desserts.", code: "1.89 L · SA-001-C950", color: "#C98A3E" },
   { name: "Chocolate", text: "Deep cocoa with a clean finish. Mochas, hot chocolate, ice cream.", code: "1.89 L · SA-002-C950", color: "#4A2A20" },

@@ -1,6 +1,3 @@
-/* Design: About Us · block 2 · 2a desktop 1440 / 2b mobile 390. */
-
-/* Follows the dark Team band, so it opens with its own gap. */
 .section {
   background: var(--about-bg);
   color: var(--about-ink);
@@ -67,8 +64,6 @@
   gap: 40px;
 }
 
-/* Leading 1, not the design's 0.88: the heading breaks as FOUR QUALITY /
-   CHECKS, and at 0.88 the tail of the Q cuts into the K below it. */
 .title {
   font-weight: var(--tbb-font-weight-heading);
   font-size: min(72px, 5vw);
@@ -156,7 +151,6 @@
     display: contents;
   }
 
-  /* `.copy >` outranks `.tbb h2 { margin: 0 }` from the design tokens. */
   .copy > .title {
     margin-top: 16px;
   }

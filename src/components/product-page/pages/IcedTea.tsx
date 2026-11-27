@@ -18,17 +18,9 @@ import {
 import type { ProductPageProps } from "../types";
 import local from "./IcedTea.module.css";
 
-/**
- * Iced tea ("Iced tea · страница продукта целиком", desktop 1440 / mobile 390).
- * Differs from matcha in the menu grid (the kit is its 10th cell), the
- * five-column flavour cards with copy, and an Inside column with the shelf
- * card only.
- */
-
 const SLUG = "iced-tea";
 const KIT_TEXT = "Menu photos, delivery-app formats, descriptions in English and Arabic.";
 
-/* Only the Peach label is in hand; Lemon, Mango and Green tabs follow when theirs arrive. */
 const nutrition: NutritionSet[] = [
   {
     name: "Peach",
@@ -79,7 +71,6 @@ const faq = [
 
 export function IcedTeaPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
-  // The first menu photo is the hero shot.
   const serves = [hero, ...Array.from({ length: 8 }, (_, i) => productImage(SLUG, `serve-${i + 2}`, [640, 1000]))];
 
   return (
@@ -127,7 +118,6 @@ export function IcedTeaPage({ product, assets }: ProductPageProps) {
         side="One base, nine serves. Rims, citrus, spice and herbs turn the same cup into a signature drink."
         label="Ready for your menu"
       >
-        {/* The baseline photo grid, with the kit as its 10th cell on desktop. */}
         <div className={styles.tiles} style={{ "--cols": 5 } as CSSProperties}>
           {serves.map((tile, i) => (
             <div key={i} className={styles.tile}>

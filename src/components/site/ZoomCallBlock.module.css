@@ -1,8 +1,3 @@
-/**
- * Zoom call block — copy on the left, the meeting-room photograph on the
- * right, folding to one column when the two can no longer sit 420px apiece.
- */
-
 .section {
   padding: clamp(3.5rem, 8vw, 7.5rem) clamp(1.25rem, 6vw, 7.5rem);
   background: var(--tbb-paper);

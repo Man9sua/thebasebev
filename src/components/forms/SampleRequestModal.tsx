@@ -11,22 +11,6 @@ import { Autocomplete } from "./Autocomplete";
 import { MARKETS } from "@/lib/site-config";
 import styles from "./SampleRequestModal.module.css";
 
-/**
- * "Request a sample", to the design ("Request a Sample Form"): a drawer from
- * the right with the samples, the kind of business and the contact fields,
- * then a confirmation in the same drawer. Samples come from any product: the
- * one the drawer was opened from is on it already, and "Add another product"
- * puts more beside it, up to six flavours in all.
- *
- * It is still the export's "Free Sample" lead form underneath, sent by
- * `LeadAttributionBridge` to `/api/leads`, so it keeps that form's field
- * names: `product` carries the chosen products' names and `country` the
- * market code. The samples by product, business, city, country name and
- * note travel in `text`, which is what the CRM shows as the customer's
- * message. Email stays required because
- * the lead contract requires it.
- */
-
 const MAX_SAMPLES = 6;
 const BUSINESSES = ["Café", "Restaurant", "Hotel", "Distributor", "Other"] as const;
 
@@ -45,7 +29,6 @@ type Fields = {
 const FIELDS: readonly {
   key: Exclude<keyof Fields, "note">;
   label: string;
-  /** The lead bridge reads these names; the rest only feed `text`. */
   name: string;
   type?: string;
   placeholder?: string;
@@ -108,8 +91,6 @@ function SampleDrawer({
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
-  // The products on the form, in the order they were added; the one the
-  // drawer was opened from comes first, with its first flavour picked.
   const [shown, setShown] = useState<string[]>(origin ? [origin.slug] : []);
   const [picked, setPicked] = useState<Sample[]>(origin ? [{ slug: origin.slug, flavour: origin.flavours[0] }] : []);
   const [adding, setAdding] = useState(!origin);
@@ -128,8 +109,6 @@ function SampleDrawer({
 
   useOverlay(true, onClose, panelRef, closeRef);
 
-  // The bridge reports success by showing the form's success box; the drawer
-  // follows it into its confirmation step rather than guessing at the result.
   useEffect(() => {
     const box = successRef.current;
     if (!box) return;
@@ -183,13 +162,10 @@ function SampleDrawer({
   };
   const set = (key: keyof Fields) => (value: string) => setFields((current) => ({ ...current, [key]: value }));
 
-  // Country and city suggest as the visitor types; the city list follows
-  // the country in the field.
   const countries = useMemo(() => countryOptions(), []);
   const markets = useMemo(() => marketCountryOptions(), []);
   const cities = useMemo(() => cityOptions(fields.countryName), [fields.countryName]);
 
-  // Picks grouped by product, in the order the products were added.
   const groups = shown.flatMap((slug) => {
     const product = SAMPLE_PRODUCTS.find((item) => item.slug === slug);
     const flavours = picked.filter((sample) => sample.slug === slug).map((sample) => sample.flavour);
@@ -207,7 +183,6 @@ function SampleDrawer({
   ]
     .filter(Boolean)
     .join("\n");
-  // The CRM's product field: every product with a pick, by name.
   const products = groups.map((group) => group.product.name).join(", ") || productName;
 
   const firstName = fields.name.trim().split(/\s+/)[0];

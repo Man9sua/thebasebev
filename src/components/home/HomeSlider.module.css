@@ -1,19 +1,7 @@
-/*
- * The homepage product slider, to "The Base Homepage Slider". Every size is
- * the design's, in cqw — a percent of the slider's own width — so a slide
- * keeps its composition at any width, from a wide banner to a portrait card.
- * Small type has a floor in px so it stays readable on a tablet.
- *
- * Headings and paragraphs answer the export's custom.css on retained pages,
- * hence the doubled selectors and !important on the title.
- */
-
-/* The first section of the page: it starts below the fixed header. */
 .section {
   padding: calc(var(--tbb-header-h) + 24px) var(--tbb-gutter, 24px) 24px;
 }
 
-/* The container the cqw units measure: the slider's own width, up to 1920px. */
 .stage {
   container-type: inline-size;
   max-width: 1920px;
@@ -54,8 +42,6 @@
   display: flex;
   transition: transform 0.75s cubic-bezier(0.75, 0, 0.2, 1);
 }
-
-/* ---- a slide ---- */
 
 .slide {
   --slide-ink: #fff;
@@ -188,8 +174,6 @@
   stroke-linejoin: round;
 }
 
-/* ---- dots and arrows ---- */
-
 .nav {
   position: absolute;
   left: 5cqw;
@@ -215,7 +199,6 @@
   gap: 6px;
 }
 
-/* A 24px target around an 8px dot. */
 .dot {
   position: relative;
   width: 8px;
@@ -279,8 +262,6 @@
   outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
-
-/* The copy sets its own height. The pictures share the remaining row. */
 
 @container (max-width: 719px) {
   .frame {

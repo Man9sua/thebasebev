@@ -1,9 +1,3 @@
-/*
- * Sugar free: what it does beyond the jam generation (see Jam.module.css) —
- * a hero without a band and with a 600px collage of three sachets, a service
- * section that sits closer to it, and white flavour cards with sachet photos.
- */
-
 .closer .serviceFacts > div {
   justify-content: flex-start;
 }
@@ -21,8 +15,6 @@
     max-width: calc(400 * var(--u));
   }
 }
-
-/* ---------------- hero collage ---------------- */
 
 .collage.collage {
   display: block;
@@ -55,8 +47,6 @@
   bottom: calc(40 * var(--u));
   transform: rotate(-2deg);
 }
-
-/* ---------------- ten flavours ---------------- */
 
 .flavours {
   display: grid;
@@ -95,14 +85,11 @@
   color: var(--pp-muted);
 }
 
-/* ================= mobile (390 design) ================= */
-
 @media (max-width: 1023px) {
   .hero.hero {
     padding-bottom: 0;
   }
 
-  /* the phone stacks the two buttons closer than the shared hero does */
   .hero > div:first-child > div:last-child {
     gap: 8px;
   }

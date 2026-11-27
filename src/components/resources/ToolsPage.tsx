@@ -25,7 +25,6 @@ import styles from "./ToolsPage.module.css";
 
 const subscribeNoop = () => () => {};
 
-/** "Download PDF": the print dialog, and an analytics event with the market. */
 function printSummary() {
   ((window as { dataLayer?: unknown[] }).dataLayer ??= []).push({ event: "calculator_pdf", ...pageMarket(window.location.pathname) });
   window.print();

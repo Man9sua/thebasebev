@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 
-/** Native, crawlable answers with reversible height transitions on touch and keyboard. */
 export function AnimatedDetails({
   summary,
   children,
@@ -53,7 +52,6 @@ export function AnimatedDetails({
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !details.animate) return;
 
-    // Keep the answer rendered during closing; release the fixed height afterwards.
     details.open = true;
     details.style.height = `${startHeight}px`;
     details.style.overflow = "hidden";

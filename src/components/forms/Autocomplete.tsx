@@ -6,14 +6,6 @@ import styles from "./Autocomplete.module.css";
 
 const LIMIT = 8;
 
-/**
- * A text field with suggestions under it as the visitor types (the ARIA
- * combobox pattern): arrows move through them, Enter or a tap takes one,
- * Escape closes them. The value stays free text — a suggestion only fills it
- * in — so a place missing from the list can still be typed.
- *
- * `initial` is what to offer before anything is typed, if anything.
- */
 export function Autocomplete({
   className,
   label,
@@ -44,16 +36,13 @@ export function Autocomplete({
 
   const query = fold(value);
   const matches = useMemo(() => suggest(query, options, initial), [query, options, initial]);
-  // Nothing left to suggest once the field already holds the one match.
   const shown = matches.length === 1 && fold(matches[0].value) === query ? [] : matches;
   const expanded = open && shown.length > 0;
 
-  // In a scrolling form the list can open below the visible part; bring it in.
   useEffect(() => {
     if (expanded) listRef.current?.scrollIntoView({ block: "nearest" });
   }, [expanded]);
 
-  // Keep the option chosen with the arrows in view inside the list.
   useEffect(() => {
     if (active >= 0) listRef.current?.children[active]?.scrollIntoView({ block: "nearest" });
   }, [active]);
@@ -80,9 +69,6 @@ export function Autocomplete({
     }
   };
 
-  // Escape closes the suggestions only, not the drawer around the field. The
-  // drawer listens on the document, so the field stops the key on itself,
-  // before it gets there; with the list closed, Escape passes as usual.
   useEffect(() => {
     const input = inputRef.current;
     if (!input || !expanded) return;
@@ -110,7 +96,6 @@ export function Autocomplete({
         aria-expanded={expanded}
         aria-controls={listId}
         aria-activedescendant={expanded && active >= 0 ? `${id}-${active}` : undefined}
-        // The browser's own autofill list would open over these suggestions.
         autoComplete="off"
         placeholder={placeholder}
         required={required}
@@ -137,7 +122,6 @@ export function Autocomplete({
               role="option"
               aria-selected={index === active}
               className={index === active ? styles.optionActive : styles.option}
-              // Keep the focus in the field, so it does not blur and close first.
               onMouseDown={(event) => event.preventDefault()}
               onMouseEnter={() => setActive(index)}
               onClick={() => choose(option)}
@@ -151,10 +135,6 @@ export function Autocomplete({
   );
 }
 
-/**
- * Starts of the name first, then starts of a later word, then anywhere; an
- * alias counts as a start. Each name once, at its best place.
- */
 function suggest(query: string, options: readonly PlaceOption[], initial: readonly PlaceOption[]) {
   if (!query) return initial.slice(0, LIMIT);
   const ranked: { option: PlaceOption; rank: number }[] = [];
@@ -177,9 +157,7 @@ function suggest(query: string, options: readonly PlaceOption[], initial: readon
   return result;
 }
 
-/** The typed part of a suggestion in bold. */
 function Highlight({ text, query }: { text: string; query: string }) {
-  // Folding keeps the length for these names, so positions carry over.
   const at = fold(text).indexOf(query);
   if (!query || at < 0 || fold(text).length !== text.length) return <span>{text}</span>;
   return (

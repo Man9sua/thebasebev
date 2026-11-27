@@ -36,8 +36,6 @@ type ShopVariantPrice = Readonly<{
   packGrams: number | null; sampleWeightGrams: number | null;
 }>;
 
-// The owner supplied these AED prices and confirmed VAT is additional.
-// Unmatched variants keep the quotation path; never borrow another flavour's price.
 export const SHOP_PAYMENT_PRICING: ShopPaymentPricing = Object.freeze({
   productUnitAmounts: Object.freeze({}),
   shipping: Object.freeze({}),
@@ -46,7 +44,6 @@ export const SHOP_PAYMENT_PRICING: ShopPaymentPricing = Object.freeze({
   uaeDelivery: Object.freeze({ amount: 3000, freeFromSubtotal: 50_000, maxSampleWeightGrams: 5000 }),
 });
 
-// The server separately verifies its mode-specific secrets, ledger and receiver.
 export const SHOP_ORDER_PAYMENTS_READY = true;
 export const UAE_DELIVERY_TIMING = "Orders placed on weekdays are delivered the next day. Weekend orders are delivered in 1–2 days.";
 
@@ -147,7 +144,6 @@ export function getShopQuote(input: ShopQuoteInput, pricing: ShopPaymentPricing 
   }
   const rate = pricing.vatRateBps ?? 0;
   if (!Number.isSafeInteger(rate) || rate < 0 || rate > 10_000) return pending("Tax needs to be confirmed before payment.", subtotal);
-  // Round once per order line, plus delivery, using exact minor-unit arithmetic.
   const vatRate = BigInt(rate);
   const vat = [...lineAmounts, shipping].reduce((sum, amount) => sum + Number((BigInt(amount) * vatRate + VAT_HALF_SCALE) / VAT_SCALE), 0);
   const total = subtotal + shipping + vat;

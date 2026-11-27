@@ -24,6 +24,6 @@ export function resolveShopPaymentRuntime(environment: Record<string, unknown>) 
 
 export async function getShopPaymentRuntime() {
   let environment: Record<string, unknown> = process.env;
-  try { environment = (await getCloudflareContext({ async: true })).env as unknown as Record<string, unknown>; } catch { /* Node-only checks have no Worker bindings. */ }
+  try { environment = (await getCloudflareContext({ async: true })).env as unknown as Record<string, unknown>; } catch {  }
   return resolveShopPaymentRuntime(environment);
 }

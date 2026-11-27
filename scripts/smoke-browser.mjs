@@ -9,7 +9,6 @@ const chromePath =
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const artifactRoot = path.resolve(".visual-artifacts");
 const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
-/** The homepage's first section below the hero — what "the page has arrived". */
 const BESTSELLERS = "#bestsellers";
 const failures = [];
 const pageErrors = [];
@@ -27,7 +26,6 @@ async function readOnlyContext(options) {
   await context.route("**/*", (route) => {
     const request = route.request();
     const url = new URL(request.url());
-    // Neutralize Cloudflare's production performance beacon without sending it.
     if (request.method() === "POST" && url.origin === baseOrigin && url.pathname === "/cdn-cgi/rum") return route.fulfill({ status: 204, body: "" });
     if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
       failures.push(`Unmocked mutation blocked: ${request.method()} ${url.pathname}`);
@@ -35,8 +33,6 @@ async function readOnlyContext(options) {
     }
     return route.fallback();
   });
-  // Explicit page mocks below own intentional submissions. This default also
-  // protects the early navigation and responsive-only phases.
   await context.route("**/api/leads", (route) => {
     failures.push("An unmocked lead attempt was blocked");
     return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
@@ -49,11 +45,6 @@ async function readOnlyContext(options) {
   return context;
 }
 
-// React reports a hydration mismatch through `console.error`, not as a page
-// error, so nothing here used to see it: every product page logged one for
-// months while this smoke passed. The cause is always the same shape — the
-// exported Tilda runtime rewriting a node React owns before React reaches it —
-// and the report names the attributes, so it is worth failing on.
 const hydrationMarkers = [
   "hydrated but some attributes",
   "Hydration failed",
@@ -157,7 +148,6 @@ async function checkDistributorFinder(page, label, countryName, countryCode) {
     (await form.locator('input[name="country"]').inputValue()) === countryCode,
     `${label}: sample form lost the selected market`,
   );
-  // Opened from the finder, the drawer has no product yet: samples from two.
   await form.getByRole("combobox", { name: "Product" }).selectOption("matcha");
   await form.getByText("Hojicha", { exact: true }).click();
   await form.getByText("Purple Yum Ube", { exact: true }).click();
@@ -225,16 +215,9 @@ try {
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage: the product slider, then the bestsellers grid.
-  // Navigation and the product grid moved out of the old hover mega-menu into
-  // the full-screen menu panel, so they are asserted there rather than on hover.
   await page.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
   await page.locator(BESTSELLERS).waitFor();
 
-  // The homepage opens with the product slider, which replaced the
-  // photographic hero at the owner's request. It keeps the page's h1 for
-  // search, starts below the fixed header, shows one slide at a time and
-  // links every slide to its product page in the visitor's market.
   const slider = page.locator("[data-home-slider]");
   check(((await slider.locator("h1").textContent()) ?? "").trim() === "Premium Beverage Bases", "home: the slider lost the page's h1");
   const slides = slider.locator("[aria-roledescription='slide']");
@@ -248,10 +231,6 @@ try {
   await slider.getByRole("button", { name: "Next slide" }).click();
   check((await slides.nth(1).getAttribute("data-active")) !== null, "home: the next arrow did not move the slider");
   await page.waitForFunction(() => !document.querySelector('button[aria-label="Show Matcha"]')?.hasAttribute("aria-current"), undefined, { timeout: 6500 });
-  // The bar carries the vertical mark — the near-square one the design file
-  // draws — rather than the landscape lockup the live site still uses. It
-  // carries its own two colours, so it no longer takes part in the bar's colour
-  // interpolation; what it has to be is present, and at the file's own height.
   const headerMark = await page.evaluate(() => {
     const el = document.querySelector('header a[href="/ae"] svg[data-brand-mark="vertical"]');
     return el ? el.getBoundingClientRect().height : 0;
@@ -262,8 +241,6 @@ try {
     `header: the mark collapsed (height ${Math.round(headerMark)})`,
   );
 
-  // Bestsellers: six shop cards, each with a price and an Add that opens the
-  // shop's flavour picker, and a link to the whole catalogue.
   check(
     (await page.locator(`${BESTSELLERS} [data-bestseller]`).count()) === 6,
     "home: expected six bestseller cards",
@@ -281,8 +258,6 @@ try {
     "home: h1 must keep the production wording (Premium … Bases)",
   );
 
-  // The homepage uses the browser's natural document scroll. Verify that a
-  // desktop wheel actually moves it before bringing the carousel into view.
   const initialScrollY = await page.evaluate(() => window.scrollY);
   await page.mouse.wheel(0, 600);
   await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
@@ -298,9 +273,6 @@ try {
   await page.keyboard.press("Escape");
   await bestsellerPicker.waitFor({ state: "detached" });
 
-  // Guides and tools: a native overflow scroller, so the arrows move it and a
-  // vertical wheel over it must still scroll the page. It carries the five
-  // pages the design names, with the newest article behind them.
   const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
   await rail.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
@@ -340,13 +312,11 @@ try {
     "reading: left arrow should enable once scrolled",
   );
 
-  // The progress thumb tracks the rail rather than sitting still.
   const thumbShift = await page
     .locator("section[aria-labelledby='reading-title'] [class*='thumb']")
     .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
   check(thumbShift > 5, "reading: progress indicator did not follow the rail");
 
-  // A vertical wheel over the rail must scroll the page, not be swallowed.
   const beforeY = await page.evaluate(() => window.scrollY);
   await rail.hover();
   await page.mouse.wheel(0, 400);
@@ -361,18 +331,6 @@ try {
   check(await aboutTitle.isVisible(), "home: About heading is missing");
   check(await page.locator("main video").count() === 0, "home: video is still mounted");
 
-  /*
-   * The footer closes on the brand mark. The check that it fits stays — it
-   * began as the word BASE sized in `vw`, which includes the scrollbar, and its
-   * final E ran off the right edge on desktop only.
-   *
-   * What it is has changed twice. It is now `BrandMarkStacked`, a portrait
-   * block with BASE broken across two rows, standing at the head of the brand
-   * column rather than closing the page on a band of its own. The share of the
-   * viewport it takes is the measure's business; what this asserts is that it
-   * is there, that it does not spill past the page, and that it is a watermark
-   * rather than a few collapsed pixels.
-   */
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(900);
   const closingMark = await page.evaluate(() => {
@@ -399,13 +357,9 @@ try {
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
     "home: horizontal overflow on the page",
   );
-  // Walking the sections scrolled the page; come back to the top so the header
-  // is over the hero and in the state the checks below expect. The bar itself
-  // no longer moves — it is fixed once it has turned to paper.
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
-  // Country selection must reach existing destinations and retain campaign data.
   check(
     (await page.locator("header button[aria-label^='Region:']").count()) === 0,
     "header: the old region picker is back in the bar",
@@ -429,9 +383,7 @@ try {
     "home: the page links to a market that has no routes",
   );
 
-  // Everything the old mega-menu linked to now lives in the menu panel.
   const menu = page.locator("#site-menu");
-  // Country-route navigation can finish before the header hydrates.
   for (let attempt = 0; attempt < 6; attempt++) {
     await page.locator("header button[aria-label='Open menu']").click();
     await page.waitForTimeout(900);
@@ -453,14 +405,12 @@ try {
   await page.waitForTimeout(600);
 
   await page.evaluate(() => window.scrollTo(0, 1200));
-  // The bar cross-fades over --tbb-dur (720ms); sample after it settles.
   await page.waitForTimeout(1_100);
   const headerState = await page.locator("header").evaluate((el) => ({
     color: getComputedStyle(el).color,
     panel: getComputedStyle(el, "::after").transform,
   }));
   check(
-    // Guidebook p.15: ink is 000000.
     headerState.color === "rgb(0, 0, 0)",
     `header: scrolled state was not applied (${JSON.stringify(headerState)})`,
   );
@@ -535,11 +485,6 @@ try {
     /Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""),
     "matcha: product content failed after a hard refresh",
   );
-  // The purchase panel's sample enquiry keeps the existing lead form.
-  // What has to hold is not that a dialog opens but that the form inside it is
-  // one the lead bridge owns: `tildaspec-formname` is how
-  // `LeadAttributionBridge` decides to post a submission to `/api/leads`
-  // instead of leaving it to a Tilda runtime that is not on this page.
   await page.getByRole("button", { name: "Request a free sample", exact: true }).click();
   await page.locator("#sample-request-modal-form").waitFor({ state: "visible" });
   check(
@@ -559,7 +504,6 @@ try {
     "matcha: the sample modal left the page scroll locked",
   );
 
-  // Product enquiry forms remain in place beside the native Shop basket.
   check(
     (await page.locator("[data-cart-add]").count()) === 1,
     "matcha: native purchase panel is missing its add-to-cart control",
@@ -574,9 +518,6 @@ try {
     ).startsWith("https://odoo."),
     "matcha: the bar's account link does not lead to Odoo",
   );
-  // The product-page redesign drops "Request pricing" (prices and the pricing
-  // form are gone from the mocks) for "Find your distributor", a plain link.
-  // The sample request above stays the page's lead form.
   check(
     (await page.getByRole("button", { name: "Request pricing" }).count()) === 0,
     "matcha: the redesigned page still offers the removed pricing form",
@@ -586,9 +527,6 @@ try {
       "/ae/find-your-distributor",
     "matcha: Find your distributor does not lead to the finder page",
   );
-  // Browser smoke must be safe against a credentialed staging environment.
-  // Mock only the same-origin lead boundary so the UX and attribution path are
-  // exercised without creating a real CRM lead or contacting any recipient.
   await page.route("**/api/leads", async (route) => {
     await route.fulfill({
       status: 503,
@@ -609,19 +547,11 @@ try {
   });
   await page.locator(BESTSELLERS).waitFor();
 
-  /*
-   * The homepage carried a distributor form while it was the eight-section
-   * redesign, and this is where its failure path was exercised. The page has
-   * no form of its own again, so the mocked 503 is proved against /contacts
-   * below instead — the landing is still loaded here, because the first touch
-   * it records is what the attribution check at the end reads.
-   */
   await page.goto(`${baseUrl}/ae/contacts`, {
     waitUntil: "domcontentloaded",
   });
   const contactForm = page.locator("#form860957415");
   await contactForm.waitFor();
-  // LeadAttributionBridge adds this readonly field when it arms the native form.
   await contactForm.locator('input[name="company_website"][readonly]').waitFor({ state: "attached" });
   await contactForm.locator('input[name="name"]').fill("Browser Smoke");
   await contactForm.locator('input[name="company"]').fill("THE BASE QA");
@@ -639,10 +569,6 @@ try {
   const contactResponse = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/leads");
   await contactForm.evaluate((form) => form.requestSubmit());
   await contactResponse;
-  // Waited for rather than slept through: the message arrives when the lead
-  // round-trip fails, and against a deployed Worker that is sometimes longer
-  // than a fixed pause. One run in four failed here on a site whose forms had
-  // not been touched.
   const contactError = contactForm.locator(".js-rule-error-all");
   await contactError
     .filter({ hasText: /temporarily unavailable/i })
@@ -672,9 +598,6 @@ try {
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
   await mobilePage.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
-  // On a remote Worker the static HTML can arrive before its client chunks.
-  // The attribution bridge writes this key from a React effect, giving the
-  // smoke test a deterministic hydration signal before it clicks the menu.
   await mobilePage.waitForFunction(
     (storageKey) => sessionStorage.getItem(storageKey) !== null,
     firstTouchStorageKey,
@@ -682,19 +605,11 @@ try {
   await checkCountrySelector(mobilePage, "mobile");
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
-  // The button ships in the server HTML, so it is clickable well before React
-  // has hydrated and an early click is simply dropped. On localhost hydration
-  // wins that race every time; against a deployed Worker it loses it every
-  // time, which read as a broken menu rather than as a test clicking too soon.
-  // So click until the menu answers, giving each click room to finish its
-  // transition before deciding it went nowhere.
   const mobileMenu = mobilePage.locator("#site-menu");
   const menuIsOpen = () =>
     mobileMenu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)");
   let mobileMenuOpen = false;
   for (let attempt = 0; attempt < 6 && !mobileMenuOpen; attempt += 1) {
-    // Once it opens the button relabels itself to "Close menu" and this locator
-    // stops matching — which only happens after the loop has already won.
     await mobileBurger.click({ timeout: 5_000 }).catch(() => {});
     for (let tick = 0; tick < 8 && !mobileMenuOpen; tick += 1) {
       await mobilePage.waitForTimeout(250);
@@ -702,7 +617,6 @@ try {
     }
   }
   check(mobileMenuOpen, "mobile: burger menu did not open");
-  // Cabinet is no longer public.
   check(
     (await mobilePage.locator("a[href='/cabinet']").count()) === 0,
     "mobile: cabinet link leaked into public navigation",
@@ -774,11 +688,6 @@ try {
   });
   const reducedPage = await reduced.newPage();
   observe(reducedPage, "reduced-motion");
-  // These fallbacks are CSS-driven. On a remote origin DOMContentLoaded can
-  // precede the last render-blocking stylesheet in Playwright's no-JS context,
-  // which observes a transient browser-default `display: block` that a real
-  // painted frame never exposes. Assert once the document and its styles are
-  // render-ready instead of racing the stylesheet response.
   await reducedPage.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
   check(
     await reducedPage.locator("[data-home-slider] [data-active] h3").isVisible(),

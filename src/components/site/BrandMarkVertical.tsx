@@ -1,21 +1,3 @@
-/**
- * THE BASE, vertical: `the` turned on its side beside a tall block with BASE
- * broken across two rows, BA over SE.
- *
- * The owner's own artwork — `SITE/Vector.svg` from `THE_BASE (11).zip`, the
- * near-square mark the design file draws at 77.95 x 82.13 and the one the bar
- * carries. It is two colours rather than one: the block and the `the` are the
- * brand red, and the letters are painted rather than cut out of the block, so
- * they hold on any ground instead of taking the colour of whatever is behind.
- *
- * Both are custom properties with the file's own values as defaults, so a
- * surface that needs the mark quiet can recolour it without a second asset.
- * Nothing that leaves them alone sees any change.
- *
- * This is not `BrandMarkStacked`, which is the same lockup drawn as a single
- * cut-out shape on a 416 canvas. That one is what the footer's watermark wants
- * — the ground reads as the letterforms — and this one is what the bar wants.
- */
 export function BrandMarkVertical({ className }: { className?: string }) {
   return (
     <svg

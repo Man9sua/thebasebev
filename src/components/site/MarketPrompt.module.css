@@ -1,5 +1,3 @@
-/* The location prompt: one quiet line under the fixed header, never a modal. */
-
 .bar {
   position: fixed;
   top: var(--tbb-market-prompt-top, var(--tbb-header-h));

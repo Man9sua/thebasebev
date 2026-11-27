@@ -21,7 +21,6 @@ import type { OrderSnapshot } from "../src/lib/shop-order";
 const ENDPOINT =
   "https://the-base-staging.mansua.workers.dev/api/checkout/stripe";
 const TEST_SECRET_KEY = "sk_test_unit_test_only";
-// Explicit zero-tax fixtures keep provider checks independent of the owner price list.
 const PRICING: ShopPaymentPricing = {
   productUnitAmounts: Object.fromEntries(SAMPLE_PRODUCTS.map(product => [product.slug, product.slug === "milkshake" ? 4538 : 6788])),
   shipping: { products: { AE: { standard: 1234, express: 2345 } }, samples: { AE: { standard: 1234, express: 2345 }, KW: { standard: 3456 } } },
@@ -639,7 +638,7 @@ test("sample Stripe session charges only its separately configured shipping fee"
   assert.deepEqual(captured?.shipping_address_collection?.allowed_countries, ["KW"]);
   assert.equal(captured?.payment_intent_data?.shipping, undefined);
   assert.equal(captured?.metadata?.kind, "samples");
-  assert.equal(captured?.automatic_tax, undefined); // No prototype 5% VAT is silently added.
+  assert.equal(captured?.automatic_tax, undefined);
 });
 
 test("several products accept current slug aliases including new ranges", async () => {

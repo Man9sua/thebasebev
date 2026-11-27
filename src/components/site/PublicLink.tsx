@@ -27,7 +27,6 @@ export function PublicLink({ href, onClick, prefetch, replace, ...props }: Props
         const anchor = event.currentTarget;
         if ((anchor.target && anchor.target.toLowerCase() !== "_self")
           || anchor.hasAttribute("download") || anchor.origin !== window.location.origin) return;
-        // Alias documents share an AE RSC tree; keep their visible country on a full load.
         event.preventDefault();
         if (replace) window.location.replace(anchor.href);
         else window.location.assign(anchor.href);

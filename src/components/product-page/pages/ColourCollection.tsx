@@ -5,11 +5,6 @@ import type { ProductPageProps } from "../types";
 import { Band, NoteCards, rangeStyles } from "./Range";
 import local from "./ColourCollection.module.css";
 
-/**
- * Colour collection ("Colour Collection Page Redesign", desktop 1440 / mobile
- * 390): five single-ingredient powders in tins, photographed.
- */
-
 const SLUG = "colour-collection";
 
 const colours = [

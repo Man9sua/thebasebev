@@ -1,8 +1,9 @@
 import fs from "node:fs";
+import path from "node:path";
 import { readNativeRoutes } from "./native-routes.mjs";
 
 const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
-const reportPath = process.argv[3] ?? "ROUTE_INDEXABILITY_AUDIT.md";
+const reportPath = process.argv[3] ?? path.join(".audit-artifacts", "ROUTE_INDEXABILITY_AUDIT.md");
 const siteSource = fs.readFileSync("src/lib/site-pages.ts", "utf8");
 const nativeRoutes = readNativeRoutes(siteSource);
 const nextConfig = fs.readFileSync("next.config.ts", "utf8");
@@ -31,9 +32,6 @@ if (expectedPublicPaths.size !== publicRoutePaths.length || publicRoutePaths.som
 const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
 const legacyPageRedirects = retiredLegacyRedirects.filter((entry) => entry.source.startsWith("/page"));
 const productAliasRedirects = retiredLegacyRedirects.filter((entry) => entry.source.includes("/tproduct/"));
-// Whitespace-tolerant: the Blog's three legacy-slug redirects are too long to
-// sit on one line, and a redirect this audit cannot see is a redirect nothing
-// checks.
 const configuredRedirectRows = [...nextConfig.matchAll(
   /\{\s*source:\s*"([^"]+)",\s*destination:\s*publicPath\("([^"]+)"\),\s*statusCode:\s*301,?\s*\}/g,
 )].map(
@@ -179,12 +177,6 @@ if (controlledRoutes.length !== expectedControlledRoutes) {
 }
 if (redirectRows.length !== 79 + publicRoutePaths.length) throw new Error(`Expected ${79 + publicRoutePaths.length} redirects, received ${redirectRows.length}.`);
 
-/*
- * `worker.ts` restates the redirect table because its static fast path answers
- * document requests itself and never reaches the Next router — a redirect
- * declared only in `next.config.ts` works under `next start` and 404s on
- * Cloudflare. The duplication is allowed; drifting apart is not.
- */
 const workerSource = fs.readFileSync("worker.ts", "utf8");
 if (!["legacy-route-redirects.json", "public-route-paths.json"].every((manifest) => nextConfig.includes(manifest) && workerSource.includes(manifest))) {
   throw new Error("The retired-route redirect manifest must be imported by both Next.js and the static Worker path.");
@@ -232,7 +224,7 @@ const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
-const expectedSitemapRoutes = 28 /* audited */ + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
+const expectedSitemapRoutes = 28  + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== expectedSitemapRoutes) {
   throw new Error(
     `Expected HTTP 200 with ${expectedSitemapRoutes} target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,
@@ -351,6 +343,7 @@ ${redirectTable.join("\n")}
 ${failures.length ? failures.map((entry) => `- FAIL \`${entry.route}\`: ${entry.issues.join("; ")}`).join("\n") : "- PASS: all controlled routes and redirects match the declared indexability contract."}
 `;
 
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (failures.length) {

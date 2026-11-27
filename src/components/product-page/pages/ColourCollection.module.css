@@ -1,6 +1,3 @@
-/* Colour collection: the tin plates, the numbered steps and the recipes. */
-
-/* The tin is drawn smaller than a pouch: 440 of the card's 560. */
 .hero > :last-child {
   height: calc(560 * var(--u));
 }

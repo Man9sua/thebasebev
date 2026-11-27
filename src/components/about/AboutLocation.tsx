@@ -1,15 +1,6 @@
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./AboutLocation.module.css";
 
-/**
- * The lab and showroom: Warehouse 50, 26th Street, Al Quoz Industrial Area 2
- * (the address in the Organization JSON-LD). `directionsHref` is the Google
- * Maps share link for the "The Base Beverage LLC" listing; the embed is the
- * key-less `output=embed` view pinned on the coordinates that link resolves
- * to (25.1244211, 55.2445616), so it needs no API key. `hl=en` holds the map
- * in English whatever the visitor's browser language; the `pb=` embed ignored
- * its own language field and followed the browser instead.
- */
 const LAB_LOCATION = {
   label: "Lab and showroom",
   city: "Dubai, UAE",
@@ -18,18 +9,6 @@ const LAB_LOCATION = {
   embedSrc:
     "https://www.google.com/maps?q=25.1244211,55.2445616&z=12&hl=en&output=embed",
 } as const;
-
-/**
- * About Us, block 3: the lab and showroom on a map.
- *
- * The map is Google's key-less embed in greyscale, so its own chrome — "Open in
- * Maps", the layer thumbnail, the camera control — is part of the design. The
- * "Dubai, UAE" chip is ours and lets clicks through to the map underneath.
- *
- * On desktop the copy is a column beside the map, vertically centred on it; on
- * mobile it stacks heading, text, map, then full-width buttons. One DOM order
- * serves both through grid areas.
- */
 
 function ArrowUpRight() {
   return (

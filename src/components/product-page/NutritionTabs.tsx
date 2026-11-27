@@ -6,18 +6,13 @@ import styles from "./ProductPage.module.css";
 export type NutritionRow = {
   label: string;
   value: string;
-  /** % daily value; empty for calories. */
   dv?: string;
-  /** Left out of the phone's shorter table, as the mobile mock does. */
   desktopOnly?: boolean;
 };
 
 export type NutritionSet = {
-  /** Flavour the label was read from, e.g. "Mango Coconut". */
   name: string;
-  /** "Per serving 20 g" on the desktop table head. */
   caption: string;
-  /** The phone's shorter serving caption. */
   mobileCaption: string;
   rows: NutritionRow[];
   note?: string;
@@ -29,13 +24,6 @@ function servingCaption(caption: string, flavour: string) {
     .filter((part) => part && part.toLowerCase() !== sourceName).join(" · ");
 }
 
-/**
- * "Inside the pack": the nutrition table beside the side cards.
- *
- * The mocks draw flavour tabs over it. They are real tabs here, so they only
- * appear when there is more than one label to switch between — a tab with no
- * table behind it would be a control that does nothing.
- */
 export function NutritionTabs({
   title,
   sets,

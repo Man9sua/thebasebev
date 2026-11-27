@@ -4,8 +4,6 @@ const path = require("node:path");
 const tinyglobby = require("tinyglobby");
 const SUPPORTED_OPTIONS = new Set(["onlyDirectories", "cwd"]);
 
-// This intentionally implements only the directory lookup used by Next ESLint.
-// tinyglobby's directory expansion and trailing slashes differ from fast-glob.
 function globSync(pattern, options = {}) {
   if (typeof pattern !== "string" || !pattern.length || options.onlyDirectories !== true ||
     Object.keys(options).some((option) => !SUPPORTED_OPTIONS.has(option))) {

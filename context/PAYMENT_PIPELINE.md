@@ -19,7 +19,7 @@ Stripe line items. Both baskets share only the transport bounds in `shop-limits.
 - Native baskets and checkout exist at the established catalogue URLs.
 - The owner supplied `BaseBev_Master_Price_List_to_01.09.2026 (1).xlsx` and
   confirmed 5% VAT is additional. 89 product/flavour/pack prices are mapped;
-  43 site variants remain unresolved and use the quotation path. See `SHOP_PRICING.md`.
+  43 site variants remain unresolved and use the quotation path. See `context/SHOP_PRICING.md`.
 - UAE delivery is AED 30 before VAT, free for paid goods from AED 500 before VAT.
   Goods and free samples share one delivery. Sample-only parcels cost AED 30
   before VAT through 5 kg; unknown weights and heavier parcels require a quote.

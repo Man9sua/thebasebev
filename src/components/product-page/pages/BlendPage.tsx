@@ -35,8 +35,6 @@ const frappeFaq = [
   { q: "Where can I buy it in my country?", a: "Through your local the Base distributor. Use Find your distributor to see contacts for your country." },
 ];
 
-// Only the labels actually supplied in the design are published. Other flavours
-// must not inherit these numbers, so there are no placeholder nutrition tabs.
 const nutrition: Record<Blend, NutritionSet[]> = {
   milkshake: [{
     name: "Vanilla", caption: "per 30 g serving · 17 per pack",

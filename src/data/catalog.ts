@@ -38,10 +38,6 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = CATALOG_GROUPS.flatMap((group)
   }),
 );
 
-/**
- * Public product identifiers accepted by the Test Mode checkout endpoint.
- * They are identifiers, not prices or secrets; the server owns the AED amount.
- */
 export const CHECKOUT_PRODUCT_IDS = Object.freeze({
   "sugar-free": "194500823312",
   frappe: "207187094752",

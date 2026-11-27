@@ -14,7 +14,6 @@ const formats: Readonly<Record<string, string>> = {
 };
 const names: Readonly<Record<string, string>> = { jam: "Jam", garnish: "Garnish", topping: "Topping", "sugar-syrup": "Syrup" };
 
-/** The supplied packshots lead the full existing range; approved prices live in shop-payment. */
 export const SHOP_PRODUCTS: readonly ShopProduct[] = [...CATALOG_PRODUCTS]
   .sort((left, right) => (featuredRank.get(left.slug) ?? featured.length) - (featuredRank.get(right.slug) ?? featured.length))
   .map((product) => ({

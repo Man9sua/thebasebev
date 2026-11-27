@@ -1,17 +1,3 @@
-/**
- * Contact us — the redesign.
- *
- * One block, on the same 1440 grid as Distributors and R&D: 96 of gutter, a
- * 1248 measure, the form card a fixed 600 beside a fluid column. The numbers
- * are that grid expressed fluidly, so the proportions hold from 320 up rather
- * than snapping at a breakpoint.
- *
- * Type and colour come from the same two places as the other two redesigned
- * pages: Exo 2 Black caps at −2% for the heading, ExtraBold for the card title,
- * SemiBold caps at 0.1em for the buttons, and the `--tbb-rd-*` palette in
- * `design-tokens.css`.
- */
-
 .page {
   --pad-y: clamp(3.5rem, 8.3333vw, 7.5rem);
   --gutter: clamp(1.25rem, 6.6667vw, 6rem);
@@ -39,9 +25,6 @@
   gap: clamp(1.25rem, 2.2222vw, 2rem);
 }
 
-/* The page's one display line. `!important` answers the same exported Tilda
-   rule the other two redesigned pages answer — `html body h1 { font-weight:
-   300 }` carries it, and a single class does not outrank that. */
 .title {
   margin: 0 !important;
   font-family: var(--tbb-font-heading);
@@ -62,8 +45,6 @@
   text-wrap: pretty;
 }
 
-/* ---- the number ---- */
-
 .phoneBlock {
   display: flex;
   flex-direction: column;
@@ -77,8 +58,6 @@
   gap: 0.75rem;
 }
 
-/* No hover. It is a telephone number, not a place to go: the only thing a
-   pointer over it can do is dial, and it says that by being a number. */
 .phone {
   width: fit-content;
   color: var(--tbb-rd-paper);
@@ -92,8 +71,6 @@
   color: var(--tbb-rd-dim);
   font-size: 0.9375rem;
 }
-
-/* ---- the department mailboxes ---- */
 
 .channels {
   display: flex;
@@ -129,8 +106,6 @@
   text-decoration: none;
 }
 
-/* Copy: a quiet round button. With a mouse it appears on hover or focus of
-   its row; on touch screens, where there is no hover, it is always there. */
 .copyButton {
   flex: none;
   width: 2.25rem;
@@ -184,8 +159,6 @@
   font-size: clamp(1rem, 1.1806vw, 1.0625rem);
   font-weight: 600;
 }
-
-/* ---- the form card ---- */
 
 .card {
   display: flex;
@@ -267,14 +240,6 @@
   background: #fff;
 }
 
-/* ---- the interest chips ---- */
-
-/*
- * The label is the chip and the radio inside it is the control, so the whole
- * chip is the hit area and the keyboard still gets a radio group. The input is
- * taken out of the paint rather than out of the tree — `display: none` would
- * take it off the arrow keys with it.
- */
 .chips {
   display: flex;
   flex-direction: column;
@@ -344,8 +309,6 @@
   outline-offset: 2px;
 }
 
-/* ---- consent, submit, errors, success ---- */
-
 .consent {
   display: flex;
   gap: 0.75rem;
@@ -411,11 +374,6 @@
   line-height: 1.5;
 }
 
-/* ---- narrower than the design's own frame ---- */
-
-/* Below about 1040 the fixed 600 card leaves the left column too narrow for
-   the heading, so the card goes under it at full width. */
-/* ---- the facts under the first screen ---- */
 
 .facts {
   width: 100%;
@@ -439,7 +397,6 @@
   gap: clamp(1rem, 2.2222vw, 2rem);
 }
 
-/* Card names: subheading weight, reference casing, per TYPOGRAPHY_CONTRACT. */
 .fact h3 {
   margin: 0 0 0.75rem !important;
   font-family: var(--tbb-font-heading);

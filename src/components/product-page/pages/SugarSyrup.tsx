@@ -12,11 +12,6 @@ import {
 } from "../familyB";
 import type { ProductPageProps } from "../types";
 
-/**
- * Sugar syrup ("Sugar syrup · страница продукта целиком", desktop 1440 / mobile 390),
- * family B. Nutrition is the Blueberry label, the only one in hand.
- */
-
 const SLUG = "sugar-syrup";
 
 const faq = [
