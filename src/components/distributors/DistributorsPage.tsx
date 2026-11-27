@@ -5,39 +5,6 @@ import catalogTiles from "@/data/catalog-tiles.json";
 import { CATALOG_PRODUCTS } from "@/data/catalog";
 import styles from "./DistributorsPage.module.css";
 
-/**
- * Become a distributor, rebuilt to the redesign document.
- *
- * The page is now React top to bottom. The exported Tilda hero it used to open
- * with — `rec3169672103`, a hand-written `<section class="dsth">` carrying its
- * own stylesheet — is gone: the redesign draws that screen itself, so keeping
- * the record would have meant two heroes arguing about the top of the page.
- * The pack shots it used are the ones this hero uses, so nothing of the
- * picture is lost; only the markup around it.
- *
- * What the document changed, block by block, and why it is worth knowing here:
- *
- * - **The hero** loses the "WHOLESALE PARTNERSHIP" eyebrow and the run-on
- *   "600+ flavours · 16 product lines · …" strip. The three facts it kept are
- *   set as figures instead, and "16 product lines" is dropped because it
- *   contradicts the full catalogue the same page sells.
- * - **Built for distribution** is one block where the source had two. The four
- *   reasons the old page carried and the two from the Figma file's "Why
- *   Distributors Choose THE BASE" are the same argument told twice; they are
- *   six cards now, and the second block is gone.
- * - **The tiers** carry an entry line each — MOQ, volume plan, sales
- *   department — so the ladder says what it costs to stand on each rung.
- * - **The range** presents rather than sells: no price, no cart, each card a
- *   link into the catalogue.
- * - **The form** gains the tier chips. They ride the lead pipeline's `product`
- *   field, which is what the pipeline has for "what is this enquiry about" —
- *   see the note above the group.
- *
- * Several figures in here are the document's and are marked in the report as
- * needing the owner's confirmation: the 40% margin, the 500 kg MOQ, the one
- * business day reply and the full catalogue.
- */
-
 const tiles = catalogTiles as Record<string, { image: string; source: string }>;
 
 const REASONS = [
@@ -124,7 +91,6 @@ const TIERS = [
   },
 ];
 
-/** The six the document shows, in the order it shows them. */
 const STRIP_SLUGS = ["milkshake", "raf-coffee", "iced-tea", "matcha", "cordial", "chocolate"];
 const STRIP_PRODUCTS = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((product) => product.slug === slug))
   .filter((product) => product !== undefined)
@@ -135,11 +101,6 @@ const STRIP_PRODUCTS = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((product)
       : tiles[product.slug]?.image ?? product.image,
   }));
 
-/**
- * The tier chips on the form, in the ladder's own order. Regional is the one
- * that starts selected — it is the tier the block above marks "most chosen",
- * so it is also the safest default for someone who has not decided.
- */
 const FORM_TIERS = ["Starter", "Regional", "Strategic"];
 const DEFAULT_TIER = "Regional";
 
@@ -169,22 +130,7 @@ const FAQ = [
 export function DistributorsPage() {
   return (
     <main className={styles.page}>
-      {/*
-        The truck, full bleed, with the copy on the dark half of the frame —
-        the document's second first-screen rather than its first. The three
-        figures the other version carried are in the sentence instead, which is
-        what that version does with them.
-      */}
       <section className={styles.hero} aria-labelledby="dist-title" data-hero>
-        {/*
-          A plain `img` rather than `next/image`.
-
-          `images.unoptimized` is on, so `next/image` would serve one file at
-          every size anyway — and with `fill` it writes `inset` and `height`
-          inline, which beat the stylesheet and made the phone's band
-          impossible to size. Two widths in a `srcset` do the job it would
-          have done: 1280 for phones, 2400 for desktops, 67 and 128 KB.
-        */}
         <span className={styles.heroFrame} aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -227,9 +173,6 @@ export function DistributorsPage() {
         </div>
       </section>
 
-      {/* Heading and calls to action on the left, the six reasons on the right.
-          The left column is sticky on desktop, so the offer stays on screen for
-          the length of the scroll through the cards. */}
       <section className={styles.reasons} aria-labelledby="dist-reasons">
         <div className={styles.reasonsInner}>
           <div className={styles.reasonsAside}>
@@ -342,9 +285,6 @@ export function DistributorsPage() {
         </div>
       </section>
 
-      {/* A window onto the catalogue rather than a second version of it: the
-          same artwork and the same 4:5 frame `/catalog` uses, no price, no
-          cart, every card a link into the product page. */}
       <section className={styles.range} aria-labelledby="dist-range">
         <div className={styles.inner}>
           <div className={styles.rangeHead}>
@@ -415,37 +355,43 @@ export function DistributorsPage() {
         <div className={styles.formInner}>
           <div className={styles.formCopy}>
             <h2 id="dist-form-title" className={styles.sectionTitle}>
-              Tell us
-              <br />
-              your market
+              Tell us <br className={styles.desktopOnly} />your market
             </h2>
             <p className={styles.sectionLede}>
-              Territory, the lines you want to carry and the volume you expect. We come back within
-              one business day with wholesale terms, documentation and a sample kit.
+              <span className={styles.desktopOnly}>
+                Territory, the lines you want to carry and the volume you expect.{" "}
+              </span>
+              We come back within one business day with wholesale terms, documentation and a sample kit.
             </p>
 
             <div className={styles.formDirect}>
-              <span className={styles.formDirectLabel}>Prefer to talk?</span>
-              <a className={styles.formPhone} href="tel:+971509890429">
-                +971 50 989 0429
-              </a>
-              <a
-                className={styles.formCall}
-                href="https://calendly.com/thebasebev/the-base-presentation"
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                Book a short call <span aria-hidden="true">→</span>
-              </a>
+              <div className={styles.formContact}>
+                <Image src="/images/gaukhar-ismailova.webp" alt="" width={72} height={72} />
+                <div>
+                  <strong>Gaukhar Ismailova</strong>
+                  <span>Business Developer</span>
+                </div>
+              </div>
+              <div className={styles.formLinks}>
+                <span className={styles.desktopOnly}>Prefer to talk?</span>
+                <a className={styles.formPhone} href="tel:+971586071080">
+                  +971 58 607 1080
+                </a>
+                <a
+                  className={styles.formCall}
+                  href="https://calendly.com/thebasebev/the-base-presentation"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 2 1.9 5.6 5.6 1.9-5.6 1.9L12 17l-1.9-5.6-5.6-1.9 5.6-1.9Zm7 12 .9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9Z" />
+                  </svg>
+                  Book a short call
+                </a>
+              </div>
             </div>
           </div>
 
-          {/*
-            The form the page's "Apply for distribution" button has always
-            opened: same id and same `tildaspec-formname`, so a lead from here
-            reaches the sales team under the name `LEGACY_FORM_NAMES` routes it
-            by, and the field names are the ones `lib/lead-forms.ts` maps.
-          */}
           <form
             id="form861442702"
             className={`t-form js-form-proccess ${styles.formCard}`}
@@ -487,13 +433,6 @@ export function DistributorsPage() {
                 <input name="country" type="text" autoComplete="country-name" required />
               </label>
 
-              {/*
-                The tier rides `product`. That is the field the lead pipeline
-                already carries for "what is this enquiry about" — validated in
-                `lib/leads.ts`, mapped in `lib/lead-forms.ts`, read by
-                `LeadAttributionBridge` — so the chips reach Odoo without a new
-                field and without a call site inventing one.
-              */}
               <fieldset className={styles.chips}>
                 <legend>Tier you are interested in</legend>
                 <div className={styles.chipRow}>
@@ -524,8 +463,7 @@ export function DistributorsPage() {
               <label className={styles.consent}>
                 <input name="privacy-consent" type="checkbox" required />
                 <span>
-                  I consent to the Base processing this inquiry as described in the{" "}
-                  <SiteLink href="/privacy">Privacy Policy</SiteLink>.
+                  I agree to the <SiteLink href="/privacy">Privacy Policy</SiteLink>.
                 </span>
               </label>
 
