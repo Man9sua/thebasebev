@@ -1,8 +1,10 @@
 import fs from "node:fs";
+import path from "node:path";
+import { readNativeRoutes } from "./native-routes.mjs";
 
 const productionOrigin = "https://thebasebev.com";
 const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
-const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
+const reportPath = process.argv[3] ?? path.join(".audit-artifacts", "SEO_PARITY_REPORT.md");
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
@@ -16,15 +18,9 @@ function publicUrl(value) {
   } catch { return value; }
 }
 const expectedSitemapRoutes =
-  29 + glossaryContent.entries.length + blogContent.posts.length;
+  28 + readNativeRoutes().length + glossaryContent.entries.length + blogContent.posts.length;
+const addedRoutes = new Set(["/electrolyte", "/find-your-distributor", "/careers", "/request-samples", "/certificates", "/faq", "/cookie-policy"]);
 
-/*
- * Numeric character references are decoded generically rather than one by one.
- * The hand-written list missed `&#x27;` and `&#039;` — the two spellings of an
- * apostrophe that Next.js and Tilda respectively emit — so every Blog title
- * with one in it was reported as a mismatch against a string it matched
- * character for character once decoded.
- */
 function decodeHtml(value = "") {
   return value
     .replace(/<[^>]+>/g, " ")
@@ -100,8 +96,6 @@ function normalizeInternalLinks(html, responseOrigin) {
       const pathname = url.pathname !== "/" ? url.pathname.replace(/\/$/, "") : "/";
       links.add(`${responseOrigin === productionOrigin ? publicPath(pathname) : pathname}${url.search}`);
     } catch {
-      // Invalid source links are reported by the set difference below only
-      // when one side can normalize them.
     }
   }
   return [...links].sort();
@@ -130,7 +124,15 @@ const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
 
 async function fetchWithRetry(url, options = {}) {
   for (let attempt = 1; attempt <= 5; attempt += 1) {
-    const response = await fetch(url, options);
+    let response;
+    try {
+      response = await fetch(url, options);
+    } catch (error) {
+      if (error?.cause?.code !== "ECONNRESET" || attempt === 5) throw error;
+      console.warn(`Retrying connection reset (${attempt}/5): ${url}`);
+      await delay(attempt * 1_000);
+      continue;
+    }
     const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
     if (!retryable || attempt === 5) return response;
     await response.arrayBuffer();
@@ -195,7 +197,7 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const production = await fetchSnapshot(productionOrigin, legacyPath(route));
+    const production = addedRoutes.has(legacyPath(route)) ? null : await fetchSnapshot(productionOrigin, route);
     await delay(500);
     const target = await fetchSnapshot(targetOrigin, route);
     results[index] = { route, production, target };
@@ -204,13 +206,27 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: 1 }, () => worker()));
 
-/*
- * The pages whose production h1 is deliberately not carried over, each named
- * with production's exact string and the reason. The string is the guard: if
- * production is ever corrected or redesigned, the entry stops matching and the
- * route comes back under the ordinary rule instead of staying quietly exempt.
- */
 const H1_NOT_PRESERVED = new Map([
+  ["/catalog", {
+    h1: "Catalogue",
+    target: "Shop",
+    reason: "The supplied shop HTML replaces the catalogue heading; its established URL, title, description and canonical are preserved",
+  }],
+  ["/private-labeling", {
+    h1: "Wholesale and Private Labeling",
+    target: "Your brand. Our craft.",
+    reason: "Latest supplied private-label design uses Your brand. Our craft.; title, description and canonical are preserved",
+  }],
+  ["/resources/tools", {
+    h1: "Tools for Menu Planning",
+    target: "Drink cost calculator",
+    reason: "Supplied cost calculator design uses Drink cost calculator; title, description and canonical are preserved",
+  }],
+  ["/resources", {
+    h1: "Resources for HORECA Professionals",
+    target: "Resources",
+    reason: "Supplied Resources hub uses the shorter Resources heading; existing article URLs and metadata are preserved",
+  }],
   [
     "/rnd",
     {
@@ -255,6 +271,16 @@ const H1_NOT_PRESERVED = new Map([
   ],
 ]);
 
+const GLOSSARY_BY_ROUTE = new Map(glossaryContent.entries.map((entry) => [publicPath(entry.path), entry]));
+function declaredGlossaryChange(route, production, field, productionValue, targetValue) {
+  const entry = GLOSSARY_BY_ROUTE.get(route);
+  if (!entry || production.status !== 200) return false;
+  if (field === "title" || field === "og:title") {
+    return Boolean(entry.seo.sourceTitle) && productionValue === entry.seo.sourceTitle && targetValue === entry.seo.title;
+  }
+  return !productionValue && targetValue === entry.seo.description;
+}
+
 const criticalFailures = [];
 const warnings = [];
 const declared = [];
@@ -262,22 +288,33 @@ const rows = [];
 
 for (const { route, production, target } of results) {
   const issues = [];
+  if (!production) {
+    if (target.status !== 200) issues.push(`target status ${target.status}`);
+    if (!target.title || !target.description || !target.h1) issues.push("missing new-page metadata or h1");
+    if (target.canonical !== `${productionOrigin}${route}`) issues.push("new-page canonical mismatch");
+    if (/noindex/i.test(target.robots)) issues.push("public page has meta noindex");
+    if (previewTarget && !/noindex/i.test(target.xRobots)) issues.push("preview transport lacks noindex");
+    if (!target.jsonLdTypes.includes("BreadcrumbList") || !target.jsonLdTypes.includes("Organization")) issues.push("missing new-page structured data");
+    if (target.alt.missing) issues.push("missing image alt");
+    if (issues.length) criticalFailures.push(`${route}: ${issues.join(", ")}`);
+    declared.push(`${route}: new page supplied for this SEO review; not yet published in production`);
+    rows.push(`| \`${route}\` | new | ${target.status} | ${issues.length ? "FAIL" : "PASS"} | —/${target.links.length} | ${target.alt.total}/${target.alt.missing}/${target.alt.empty} | ${issues.join("; ") || "New-page SEO checks pass"} |`);
+    continue;
+  }
   if (production.status !== 200) issues.push(`production status ${production.status}`);
   if (target.status !== 200) issues.push(`target status ${target.status}`);
   for (const field of ["title", "description", "canonical"]) {
-    if ((field === "canonical" ? publicUrl(production[field]) : production[field]) !== target[field]) issues.push(`${field} mismatch`);
+    if ((field === "canonical" ? publicUrl(production[field]) : production[field]) === target[field]) continue;
+    if (declaredGlossaryChange(route, production, field, production[field], target[field])) {
+      declared.push(`${route}: ${field} deliberately changed to "${target[field]}"`);
+    } else {
+      issues.push(`${field} mismatch`);
+    }
   }
 
-  /*
-   * The product pages deliberately lead with the product's name and carry
-   * production's own h1 as the h2 under it — the owner's call, taken knowing
-   * this file is what guards it. So a differing h1 is allowed only while
-   * production's wording is still on the page as a heading. Drop the phrase
-   * altogether and this is a critical failure again.
-   */
   if (production.h1 !== target.h1) {
     const exempt = H1_NOT_PRESERVED.get(legacyPath(route));
-    if (exempt && exempt.h1 === production.h1) {
+    if (exempt && exempt.h1 === production.h1 && (!exempt.target || exempt.target === target.h1)) {
       declared.push(`${route}: ${exempt.reason}`);
     } else if (production.h1 && target.h2.includes(production.h1)) {
       declared.push(`${route}: h1 is now "${target.h1}"; production wording kept as h2`);
@@ -288,11 +325,19 @@ for (const { route, production, target } of results) {
   if (normalizeRobots(production.robots) !== normalizeRobots(target.robots)) {
     issues.push("robots/indexability mismatch");
   }
-  if (JSON.stringify(production.jsonLdTypes) !== JSON.stringify(target.jsonLdTypes)) {
-    issues.push("JSON-LD type mismatch");
+  const droppedTypes = production.jsonLdTypes.filter((type) => !target.jsonLdTypes.includes(type));
+  if (droppedTypes.length) {
+    issues.push(`JSON-LD types missing: ${droppedTypes.join(", ")}`);
+  } else if (JSON.stringify(production.jsonLdTypes) !== JSON.stringify(target.jsonLdTypes)) {
+    declared.push(`${route}: added schema types ${target.jsonLdTypes.filter((type) => !production.jsonLdTypes.includes(type)).join(", ")}`);
   }
   for (const field of ["title", "url", "type"]) {
-    if ((field === "url" ? publicUrl(production.openGraph[field]) : production.openGraph[field]) !== target.openGraph[field]) issues.push(`og:${field} mismatch`);
+    if ((field === "url" ? publicUrl(production.openGraph[field]) : production.openGraph[field]) === target.openGraph[field]) continue;
+    if (field === "title" && declaredGlossaryChange(route, production, "og:title", production.openGraph.title, target.openGraph.title)) {
+      declared.push(`${route}: og:title deliberately changed`);
+    } else {
+      issues.push(`og:${field} mismatch`);
+    }
   }
   if (
     production.openGraph.description &&
@@ -340,7 +385,7 @@ Generated: ${new Date().toISOString()}
 - Target: \`${targetOrigin}\`
 - Canonical public routes: ${routes.length}
 - Critical failures: ${criticalFailures.length}
-- Declared h1 changes: ${declared.length}
+- Declared page/schema changes: ${declared.length}
 - Non-blocking link/alt observations: ${warnings.length}
 - Preview transport noindex expected: ${previewTarget ? "yes" : "no"}
 
@@ -354,13 +399,12 @@ ${rows.join("\n")}
 
 ${criticalFailures.length ? criticalFailures.map((item) => `- ${item}`).join("\n") : "- None."}
 
-## Declared h1 changes
+## Declared page/schema changes
 
-Product pages lead with the product's name and carry production's wording as
-the h2 under it; the check still fails if that wording leaves the page. Two
-routes are exempt outright and are listed with their reason -- see
-\`H1_NOT_PRESERVED\` in this script. Each exemption names production's exact
-h1, so a change on production ends the exemption rather than hiding behind it.
+Existing routes retain strict metadata, canonical and indexability comparison.
+H1 exceptions name the exact production text; new routes are checked independently
+because this branch publishes them only to staging. Added structured-data types
+are recorded; removal of any production schema type remains a failure.
 
 ${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 
@@ -369,6 +413,7 @@ ${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
 ${warnings.length ? warnings.map((item) => `- ${item}`).join("\n") : "- None."}
 `;
 
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (criticalFailures.length) {

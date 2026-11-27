@@ -2,18 +2,6 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-/**
- * Scroll parallax.
- *
- * One shared rAF loop and one shared IntersectionObserver for every instance on
- * the page: elements register themselves, and only the ones currently on screen
- * are measured or written to. A per-element scroll listener would do the same
- * work N times and force a layout read each time.
- *
- * The transform is written straight to `style`, never through React state, so a
- * scroll never triggers a render.
- */
-
 type Item = {
   el: HTMLElement;
   speed: number;
@@ -32,7 +20,6 @@ function tick() {
     if (!item.visible) continue;
 
     const rect = item.el.getBoundingClientRect();
-    // -1 when the element is just below the fold, +1 when just above it.
     const progress = (rect.top + rect.height / 2 - viewport / 2) / viewport;
     const shift = -progress * item.speed * 100;
     item.el.style.transform = `translate3d(0, ${shift.toFixed(2)}px, 0)`;
@@ -62,7 +49,6 @@ function getObserver() {
 
 type ParallaxProps = {
   children: ReactNode;
-  /** Fraction of viewport height travelled across the full scroll-through. */
   speed?: number;
   className?: string;
 };

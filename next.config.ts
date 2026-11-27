@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
 import publicRoutePaths from "./src/data/public-route-paths.json";
 import { publicPath } from "./src/lib/site-paths";
+import { COUNTRY_ALIAS_PREFIXES, COUNTRY_DOCUMENT_PATH_PATTERN, RETIRED_ROUTE_REDIRECTS } from "./src/lib/country-paths";
 
 const retiredLegacyRedirects = legacyRouteRedirects as ReadonlyArray<{
   source: string;
@@ -18,6 +19,16 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return {
+      beforeFiles: COUNTRY_ALIAS_PREFIXES.flatMap((country) => [
+        { source: `/${country}`, destination: "/ae" },
+        { source: `/${country}/:path(${COUNTRY_DOCUMENT_PATH_PATTERN})`, destination: "/ae/:path" },
+      ]),
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async redirects() {
     return [
       ...publicRoutePaths.map((route) => ({ source: route, destination: publicPath(route), statusCode: 301 })),
@@ -26,6 +37,7 @@ const nextConfig: NextConfig = {
         destination: publicPath(destination),
         statusCode: 301,
       })),
+      ...RETIRED_ROUTE_REDIRECTS.map(({ source, destination }) => ({ source, destination, statusCode: 301 })),
       { source: "/page65953477.html", destination: publicPath("/"), statusCode: 301 },
       { source: "/page65953593.html", destination: publicPath("/"), statusCode: 301 },
       { source: "/raf-cofeee", destination: publicPath("/raf-coffee"), statusCode: 301 },
@@ -33,14 +45,6 @@ const nextConfig: NextConfig = {
       { source: "/functional-wellness", destination: publicPath("/catalog"), statusCode: 301 },
       { source: "/cabinet", destination: publicPath("/"), statusCode: 301 },
 
-      /*
-       * Blog posts whose title changed after they were published. Tilda routes
-       * `/tpost/` on the id and ignores the slug, so both spellings resolve
-       * there; here every route is generated, so the old spelling needs saying.
-       * These three are the ones `/resources` linked to — see
-       * `relinkBlogPosts` in `lib/site-pages.ts`, which stops the page itself
-       * from taking the hop.
-       */
       {
         source: "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
         destination: publicPath("/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi"),
@@ -56,6 +60,9 @@ const nextConfig: NextConfig = {
         destination: publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
         statusCode: 301,
       },
+
+      { source: "/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
+      { source: "/ae/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
     ];
   },
 };

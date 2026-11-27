@@ -1,63 +1,16 @@
-/**
- * The drink standing in front of the pouch in the product hero.
- *
- * A layer of its own in the owner's Figma frame — every one of them is an image
- * the design calls `Milkshake I 1`, whatever the product — rather than part of
- * the pack shot, which is why it is measured and placed separately here instead
- * of being baked into `pack-<slug>.webp`.
- *
- * `left`, `top`, `width` and `height` are that layer's own numbers in the
- * 1200-wide frame, counted from the top of the page exactly like every other
- * measurement in `ProductHero.module.css`.
- *
- * `image` is `null` while the artwork has not been supplied, and the drink
- * simply does not render. It cannot be cut out of anything already in this
- * repository: the client's key visuals have the glass composited onto the wash
- * and overlapping the pouch, and a translucent glass of drink does not separate
- * cleanly from a ground of its own colour. It has to come out of the design
- * file — export the layer as PNG at 2x on transparency, convert it to WebP as
- * `public/images/glass-<slug>.webp`, and name it here.
- *
- * Export the layer whole rather than trimmed to the drink: Figma's box includes
- * the transparent margin around it, and it is that box these numbers describe.
- * Every file below came in at twice its measured box to within a pixel, so each
- * dropped into place with nothing to align — and, since the exports all carry
- * the same layer name, that is also what identified which drink was which.
- */
-
-/**
- * The pouch's own group in that same frame, which is what the numbers below are
- * measured against — the drink's box is only meaningful beside it.
- *
- * Exported because two surfaces stand the drink on the pouch and both have to
- * read the relationship the same way: the product hero and the homepage
- * carousel. Written once here rather than copied into each stylesheet, where
- * the two copies would drift the first time either is re-measured.
- */
 export type Box = { left: number; top: number; width: number; height: number };
 
-/**
- * Matcha's group, and the box any product without one of its own stands in.
- *
- * The design does not draw one pouch box thirteen times: each product's group
- * carries its own, and they are not close enough to share — Cream Latte's is
- * 567.36 x 710.03 against Matcha's 529.27 x 676.55, and Raf Coffee's is smaller
- * again at 446.13 x 492.26. Every one of them is in `pack` below.
- */
 export const PACK_BOX: Box = { left: 106.85, top: 137.73, width: 529.27, height: 676.55 };
 
 export type ProductGlass = {
-  /** `/images/glass-<slug>.webp`, or null until the artwork exists. */
   image: string | null;
   left: number;
   top: number;
   width: number;
   height: number;
-  /** The pouch's own group in the same frame. `PACK_BOX` where unmeasured. */
   pack?: Box;
 };
 
-/** The group this product's pouch is drawn in, or Matcha's as the fallback. */
 export function packBox(slug: string): Box {
   return productGlass[slug]?.pack ?? PACK_BOX;
 }
@@ -77,16 +30,4 @@ export const productGlass: Record<string, ProductGlass> = {
   vending: { image: "/images/glass-vending.webp", left: 313.56, top: 282.91, width: 321.55, height: 525.04, pack: { left: 106.15, top: 132.7, width: 536.33, height: 675.25 } },
   jam: { image: "/images/glass-jam.webp", left: 312.82, top: 307.38, width: 319.4, height: 521.5, pack: { left: 106.85, top: 137.73, width: 532.69, height: 691.17 } },
 
-  /*
-   * Sugar Free, Garnish and Tea are not waiting on a measurement: their frames
-   * have no drink layer at all. Sugar Free is built from sachets and fruit
-   * cut-outs, Garnish from the pouch alone, and Tea from a cup photograph with
-   * loose leaves around it — three compositions rather than the pouch-and-glass
-   * the other thirteen share. There is nothing here for them to carry.
-   *
-   * Jam above is the one card the file draws shifted, its whole group starting
-   * at -164.77, 55.35 where every other starts near 106, 137. Both boxes are
-   * translated by that one delta, so the drink keeps its place on the pouch and
-   * the pouch stands where the other twelve stand.
-   */
 };

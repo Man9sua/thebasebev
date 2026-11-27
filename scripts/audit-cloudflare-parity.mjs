@@ -22,7 +22,7 @@ const publicCanonical = (canonical) => {
 };
 
 const routes = [
-  "/", "/main", "/wholesale-strategy", "/contacts", "/about-us", "/resources",
+  "/", "/main", "/contacts", "/about-us", "/resources",
   "/distributors", "/resources/blog", "/private-labeling", "/sitemap",
   "/resources/glossary", "/resources/tools", "/rnd", "/raf-coffee", "/cream-latte",
   "/chai-latte", "/milkshake", "/frappe", "/iced-tea", "/cordial", "/topping",
@@ -42,28 +42,19 @@ const redirects = new Map([
 const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
 const targetOnlyRedirects = new Map([...retiredLegacyRedirects.map(({ source, destination }) => [source, destination]), ["/cabinet", "/"]]);
 
-// These routes intentionally no longer render the source account's Tilda
-// `<main>` byte-for-byte. They are the native resource pages and the design
-// surfaces migrated by the current feature branch. HTTP status, metadata,
-// canonical, robots, H1 and structured-data parity remain strict below; only
-// the obsolete legacy-fragment signature is recorded as an intentional
-// observation for this explicit list.
 const intentionalContentMigrations = new Set([
   "/",
   "/about-us",
   "/catalog",
   "/contacts",
   "/distributors",
-  "/wholesale-strategy",
   "/private-labeling",
   "/sitemap",
   "/resources/glossary",
-  // The Blog index was a Tilda feed container that fetched its posts in the
-  // browser; the thirty posts are in the repository now and the page renders
-  // them itself. The confirmation page was a fixed-height artboard over a
-  // stock photograph and is now a React page that fits a phone.
   "/resources/blog",
   "/thank-you-form",
+  "/privacy",
+  "/terms",
   "/resources/tools",
   "/rnd",
   "/raf-coffee",

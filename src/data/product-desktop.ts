@@ -1,75 +1,17 @@
 import type { Box } from "./product-glass";
 
-/**
- * The desktop product card, as `forme.fig` draws it.
- *
- * The hero used to be laid out against the pouch's *group* — 446 x 492 on Raf
- * Coffee — and then pulled about by hand until it looked right, which is where
- * `--group-shift`, `--pack-scale`, `--glass-drop` and `--seals-drop` came from.
- * None of them were in the design. What was actually wrong is that the pouch's
- * layer is smaller than its group and its image fill is cropped, so the pack
- * shot came out at two thirds the size and everything measured against it had
- * to be nudged back into place.
- *
- * `pouch` is that layer — the box the file draws the pack shot in — and the
- * stylesheet takes the crop off it to find the standing pouch. The drink beside
- * it is in `product-glass.ts`, the ground shadows are shares of `pouch`, and
- * the seals are the same two coordinates on every card. Nothing is nudged.
- *
- * Coordinates are the file's own: `left` from the frame's left edge, `top` from
- * the top of the page, in the 1200-wide frame.
- *
- * The wash is a radial, not the vertical ramp sampled off the key visual, and
- * `edge` is the product's own colour laid over the left of it — which is what
- * gives that half of the card its depth. Three cards have no wash rectangle at
- * all: Garnish, Sugar Free and Tea are built differently, and they keep the
- * ramp their banner or their frame fill already gives them.
- */
-
 export type DesktopCard = {
-  /** The pack shot's own layer, before the crop its image fill carries. */
   pouch: Box;
-  /** The radial wash: its inner colour, then its outer. */
   washIn?: string;
   washOut?: string;
-  /** Where the file draws that radial, when not the common one. */
   washShape?: string;
-  /** The colour laid over the left of the wash, opaque at its foot. */
   edge?: string;
-  /** The panel the four features stand on, under the hero. */
   panel?: string;
-  /**
-   * How strongly the brand mark reads behind the artwork.
-   *
-   * Only the three collages carry it. The other thirteen stand on a wash, and
-   * one weight for the dark ones and another for the pale ones covers them; a
-   * collage's ground is a photograph, and the design answers each of those
-   * separately. Measured off its own export: the solid part of the word lifts
-   * Garnish's beige a little under half the way to white and Tea's black
-   * barely a sixth.
-   */
   mark?: number;
-  /**
-   * How far in from the frame's left edge the mark starts, where the design
-   * masks it.
-   *
-   * Sugar Free's collage is drawn inside a mask, and the mark is inside it
-   * too — so the B's stem, which falls outside, is not drawn at all there.
-   * Without this it stands as a white bar down the band's left edge.
-   */
   markClip?: number;
-  /**
-   * What the mark is painted in, when white is wrong.
-   *
-   * Tea's is the one that crosses a photograph. White can only lighten, so at
-   * any opacity it lands on the footage as pale blocks; the grey the design
-   * uses lightens the black ground and darkens the white cup, which is what
-   * reads as a watermark rather than as a patch.
-   */
   markFill?: string;
 };
 
-/** Where the file puts the light on all but three of the sixteen. */
 export const WASH_SHAPE = "49.2% 33.5% at 76.6% 35.8%";
 
 export const productDesktop: Record<string, DesktopCard> = {
@@ -88,7 +30,5 @@ export const productDesktop: Record<string, DesktopCard> = {
   vending: { pouch: { left: 106.15, top: 132.35, width: 390.87, height: 569.06 }, washIn: "#c5a880", washOut: "#4e342e", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#4e342e" },
   jam: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, washIn: "#973139", washOut: "#3d060a", washShape: "51.8% 46.4% at 75.2% 85.6%", edge: "#3d060a" },
   "sugar-free": { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, panel: "#acc4b2", mark: 0.69, markClip: 46.91 },
-  /* Tea needs a subdued grey mark behind the cup: a brighter fill exposed
-     the word as a rectangular patch and made the saucer look detached. */
   tea: { pouch: { left: 106.85, top: 137.38, width: 385.73, height: 561.57 }, mark: 0.18, markFill: "#9b9b9b" },
 };

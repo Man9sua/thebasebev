@@ -16,20 +16,11 @@ import {
   type NutritionSet,
 } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { RndBand, jamStyles as j } from "./Jam";
+import { RndBand } from "./Jam";
 import s from "./Tea.module.css";
-
-/**
- * Tea ("Tea · страница продукта целиком", desktop 1440 / mobile 390).
- * Matcha's shape with a near-black hero and "Three teas" pack cards.
- */
 
 const SLUG = "tea";
 
-/*
- * The mock draws Black / Green tabs, but only the Black label (TE-002) has
- * been read; the Green table follows once its label arrives.
- */
 const nutrition: NutritionSet[] = [
   {
     name: "Black",
@@ -94,7 +85,7 @@ const faq = [
   },
 ];
 
-export function TeaPage({ product, headline, assets }: ProductPageProps) {
+export function TeaPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     { ...hero, alt: "Tea serve" },
@@ -117,25 +108,14 @@ export function TeaPage({ product, headline, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={cx(s.hero, j.darkActions)}
-        productName={product.name}
+        slug={product.slug}
         title="Tea"
-        headline={headline}
         lead={{
           desktop:
             "Instant black, green and jasmine tea in single sachets. One gram, one cup: no brewing, no steeping, the same taste every time.",
           mobile:
             "Instant black, green and jasmine tea. One gram, one cup, no brewing.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            {...hero}
-            sizes="(max-width: 1023px) 240px, 400px"
-            alt="Instant tea serve"
-            fetchPriority="high"
-          />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

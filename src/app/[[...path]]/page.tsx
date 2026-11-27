@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/about/AboutPage";
-import { CatalogPage } from "@/components/catalog/CatalogPage";
+import { AboutFaq } from "@/components/about/AboutFaq";
+import { CareersSection } from "@/components/about/CareersSection";
+import { ABOUT_FAQS } from "@/components/about/about-faqs";
+import { DistributorFinderPage } from "@/components/distributor-finder/DistributorFinderPage";
+import { PrivateLabelPage } from "@/components/private-label/PrivateLabelPage";
+import { ResourcesPage } from "@/components/resources/ResourcesPage";
+import { CertificatesPage, CookiePolicyPage, RequestSamplesPage } from "@/components/site/SupportPages";
+import { ShopPage } from "@/components/shop/ShopPage";
 import { DistributorsPage } from "@/components/distributors/DistributorsPage";
 import { RndPage } from "@/components/rnd/RndPage";
 import { ContactPage } from "@/components/contact/ContactPage";
@@ -22,6 +29,9 @@ import { PageOffers } from "@/components/site/PageOffers";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SitemapPage } from "@/components/sitemap/SitemapPage";
 import { ThankYouPage } from "@/components/thanks/ThankYouPage";
+import { LegalDocumentPage } from "@/components/legal/LegalDocumentPage";
+import { ZoomCallBlock } from "@/components/site/ZoomCallBlock";
+import { PRIVACY_POLICY, TERMS_AND_CONDITIONS } from "@/components/legal/legal-content";
 import { getPageIntro, getPageOffers } from "@/data/page-intros";
 import { getProduct } from "@/data/products";
 import {
@@ -37,8 +47,10 @@ import {
   type BlogPost,
 } from "@/data/blog";
 import catalogTiles from "@/data/catalog-tiles.json";
-import { getLegacyStructuredData } from "@/lib/legacy-structured-data";
-import { breadcrumbList, productSchema, type Crumb } from "@/lib/structured-data";
+import { getLegacyStructuredData, getOrganizationStructuredData } from "@/lib/legacy-structured-data";
+import { breadcrumbList, faqPage, productSchema, type Crumb } from "@/lib/structured-data";
+import fs from "node:fs";
+import path from "node:path";
 import { publicPath, publicUrl } from "@/lib/site-paths";
 import {
   getSitePage,
@@ -46,9 +58,6 @@ import {
   normalizeSitePath,
   SITE_ORIGIN,
   withoutLegacyRecords,
-  catalogWeights,
-  catalogFlavors,
-  productDetails,
 } from "@/lib/site-pages";
 
 type RouteProps = {
@@ -82,8 +91,6 @@ function glossaryMetadata(entry: GlossaryEntry): Metadata {
     },
     robots: { index: true, follow: true },
     openGraph: {
-      // Production Tilda exposes these detail pages as `website`; keep that
-      // exact SEO contract during migration even though the body is an article.
       type: "website",
       url: canonical,
       title: entry.seo.openGraphTitle || title,
@@ -99,17 +106,6 @@ function glossaryMetadata(entry: GlossaryEntry): Metadata {
   };
 }
 
-/**
- * A Blog article's metadata, against production's own contract for these URLs.
- *
- * Two things here are deliberate and look wrong at a glance. The type is
- * `website`, not `article` — Tilda publishes every `/tpost/` page that way and
- * parity is the rule during migration, exactly as the Glossary entries above
- * do. And the `og:image` is this site's own copy of the cover rather than the
- * `static.tildacdn.com` URL production points at: the image has to be served
- * from the canonical host, which is what `audit:seo-parity` checks and what
- * stops the migrated site depending on Tilda for a share card.
- */
 function blogMetadata(post: BlogPost): Metadata {
   const title = post.seo.title || post.title;
   const description = post.seo.description || post.excerpt || undefined;
@@ -185,12 +181,9 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     twitter: {
       card: "summary_large_image",
       site: "@thebasebev",
-      title: "Dry Beverage Premix Manufacturer | Global HoReCa Supply",
-      description:
-        "The Base Beverage manufactures dry beverage bases and instant premixes in Dubai, UAE. 600+ flavours, private label and custom R&D for HoReCa, retail and distributors.",
-      images: [
-        `${SITE_ORIGIN}/images/tild3435-6364-4232-a539-303363373037__frame_1413375666_1.jpg`,
-      ],
+      title,
+      description,
+      images: page.openGraph.image ? [page.openGraph.image] : undefined,
     },
     authors: [{ name: "The Base Beverage LLC" }],
     other: {
@@ -203,15 +196,15 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   };
 }
 
-/** Short names for the trail; anything not listed falls back to its title. */
+const ZOOM_CALL_RECORD = "rec2503542591";
+
 const CRUMB_NAMES: Record<string, string> = {
-  "/catalog": "Catalogue",
+  "/catalog": "Shop",
   "/about-us": "About Us",
   "/contacts": "Contacts",
   "/distributors": "Distributors",
   "/rnd": "R&D",
   "/private-labeling": "Private Labeling",
-  "/wholesale-strategy": "Wholesale Strategy",
   "/resources": "Resources",
   "/resources/blog": "Blog",
   "/resources/glossary": "Glossary",
@@ -228,7 +221,6 @@ function crumbName(route: string) {
   return CRUMB_NAMES[route] ?? getSitePage(route)?.title.split(" | ")[0] ?? route;
 }
 
-/** Where a route sits, for `BreadcrumbList`. The home page has no trail. */
 function breadcrumbsFor(route: string): Crumb[] | null {
   if (route === "/") return null;
 
@@ -253,30 +245,29 @@ function breadcrumbsFor(route: string): Crumb[] | null {
   return [HOME, ...parent, { name: crumbName(route), path: route }];
 }
 
-/** The product's own schema block, on pages that render the redesigned body. */
 function productStructuredData(route: string) {
   const product = getProduct(route.slice(1));
   if (!product || !PRODUCT_PAGES[product.slug]) return null;
+  const tile = (catalogTiles as Record<string, { image?: string; source?: string }>)[product.slug];
+  const image = tile?.source === "illustration" ? product.image : tile?.image ?? product.image;
   return productSchema({
     name: product.name,
     description: getSitePage(route)?.description || product.description,
     path: product.route,
-    image: (catalogTiles as Record<string, { image: string }>)[product.slug]?.image ?? `/images/pack-${product.slug}.webp`,
+    image: image && fs.existsSync(path.join(process.cwd(), "public", image)) ? image : undefined,
     price: product.price,
   });
 }
 
-/**
- * Every route, with the two schema blocks React owns on top of whatever the
- * page itself carries: its `BreadcrumbList`, and on a product its `Product`.
- */
 export default async function SiteRoute({ params }: RouteProps) {
   const route = normalizeSitePath((await params).path);
   const crumbs = breadcrumbsFor(route);
   const product = productStructuredData(route);
+  const needsOrganization = getSitePage(route)?.native || findBlogPostByPath(route) || findGlossaryEntryByPath(route);
 
   return (
     <>
+      {needsOrganization && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: getOrganizationStructuredData() }} />}
       {crumbs && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbList(crumbs) }} />
       )}
@@ -317,9 +308,28 @@ async function RouteBody({ params }: RouteProps) {
   const page = getSitePage(route);
   if (!page) notFound();
 
-  // `generateMetadata` above is shared, so every route keeps its existing
-  // title, description and canonical whichever branch renders it.
   if (route === "/") return <HomePage />;
+
+  if (route === "/private-labeling" || route === "/resources") {
+    const structuredData = getLegacyStructuredData(page.file);
+    return <div className="tbb">
+      {structuredData.map((block, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: block }} />)}
+      <SiteHeader />
+      {route === "/private-labeling" ? <PrivateLabelPage /> : <ResourcesPage />}
+      <SiteFooter />
+    </div>;
+  }
+
+  const supportPage = route === "/find-your-distributor" ? <DistributorFinderPage />
+    : route === "/careers" ? <main><CareersSection standalone /></main>
+    : route === "/request-samples" ? <RequestSamplesPage />
+    : route === "/certificates" ? <CertificatesPage />
+    : route === "/faq" ? <main><AboutFaq standalone /></main>
+    : route === "/cookie-policy" ? <CookiePolicyPage /> : null;
+  if (supportPage) return <div className="tbb">
+    {route === "/faq" && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqPage(ABOUT_FAQS.map(({ question, answer }) => ({ q: question, a: answer }))) }} />}
+    <SiteHeader />{supportPage}<SiteFooter />
+  </div>;
 
   if (route === "/about-us") {
     const structuredData = getLegacyStructuredData(page.file);
@@ -339,9 +349,6 @@ async function RouteBody({ params }: RouteProps) {
     );
   }
 
-  // The two standalone aliases are the exported header and footer records
-  // themselves. Framing them in the shared shell would wrap a copy of the site
-  // chrome around the site chrome, so they keep rendering exactly as exported.
   if (!page.usesSharedShell) return <LegacyDocument page={page} />;
 
   if (
@@ -367,7 +374,7 @@ async function RouteBody({ params }: RouteProps) {
           darkHero={route === "/rnd" || route === "/distributors"}
         />
         {route === "/catalog" ? (
-          <CatalogPage weights={catalogWeights()} flavors={catalogFlavors()} />
+          <ShopPage />
         ) : route === "/rnd" ? (
           <RndPage />
         ) : route === "/distributors" ? (
@@ -380,11 +387,6 @@ async function RouteBody({ params }: RouteProps) {
     );
   }
 
-  // Where every lead form lands. React, and deliberately small — see the note
-  // in the component for what the exported version was doing on a phone. The
-  // export's Organization graph is carried over: it is the site-wide one, on
-  // every page including this one, and dropping it here would make this the
-  // only route without it.
   if (route === "/thank-you-form") {
     const structuredData = getLegacyStructuredData(page.file);
     return (
@@ -404,12 +406,13 @@ async function RouteBody({ params }: RouteProps) {
   }
 
   if (route === "/resources/tools") {
-    const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261"]);
+    const runtimePage = withoutLegacyRecords(page, ["rec2429369331", "rec2430603261", ZOOM_CALL_RECORD]);
     return (
       <div className="tbb">
         <SiteHeader />
         <ToolsPage />
         <LegacyPageShell page={runtimePage} runtimeOnly />
+        <ZoomCallBlock />
         <SiteFooter />
       </div>
     );
@@ -434,50 +437,41 @@ async function RouteBody({ params }: RouteProps) {
   }
 
   if (route === "/sitemap") {
-    const runtimePage = withoutLegacyRecords(page, [
-      "rec2493125951",
-      "rec2503542591",
-    ]);
+    return (
+      <div className="tbb">
+        {getLegacyStructuredData(page.file).map((json, index) => (
+          <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />
+        ))}
+        <SiteHeader />
+        <SitemapPage />
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  if (route === "/privacy" || route === "/terms") {
+    const legalRecord = route === "/privacy" ? "rec2430715951" : "rec2546753201";
+    const runtimePage = withoutLegacyRecords(page, [legalRecord, ZOOM_CALL_RECORD]);
     return (
       <div className="tbb">
         <SiteHeader />
-        <SitemapPage />
+        <LegalDocumentPage content={route === "/privacy" ? PRIVACY_POLICY : TERMS_AND_CONDITIONS} />
         <LegacyPageShell page={runtimePage} runtimeOnly />
         <SiteFooter />
       </div>
     );
   }
 
-  // A product page is React down to the FAQ and the export from there on. The
-  // eight blocks React replaces — the hero, the tab strip, the four figures,
-  // the comparative table, the flavours, the usage note, the FAQ and its
-  // heading — are all cut out of the markup below by `site-pages.ts`, so the
-  // two never both claim the copy or the `h1`. What the export still owns is
-  // what no React section has replaced yet: the cookie banner and the four
-  // popup lead forms opened by the buttons above.
   const product = getProduct(route.slice(1));
 
-  // Two pages open with a React head instead, and one of them carries its four
-  // services in React as well. Both were built on stock Tilda themes and were
-  // still opening with the theme rather than with themselves — `site-pages.ts`
-  // says exactly what was dropped, and `data/page-intros.ts` holds the copy
-  // each page carries in its place.
   const intro = getPageIntro(route);
   const offers = getPageOffers(route);
 
-  // Products with a redesigned page (components/product-page) render it in
-  // place of the hero and details above. The sentence production ranks on
-  // stays on the page as a small h2 under the name.
   const RedesignedProduct = product ? PRODUCT_PAGES[product.slug] : undefined;
-  const productHeadline = product
-    ? (() => {
-        const headline = productDetails[product.slug]?.h1 ?? product.headline;
-        return headline !== product.name ? headline : undefined;
-      })()
-    : undefined;
 
-  // Everything else: one shared header and footer, with the old Tilda chrome
-  // already removed from the markup server-side.
+  const zoomCall = !page.native && page.bodyHtml.includes(`id="${ZOOM_CALL_RECORD}"`);
+  const shellPage = zoomCall ? withoutLegacyRecords(page, [ZOOM_CALL_RECORD]) : page;
+
   return (
     <div className="tbb">
       <SiteHeader overHero={route === "/private-labeling"} productPage={Boolean(product)} />
@@ -486,7 +480,6 @@ async function RouteBody({ params }: RouteProps) {
       {RedesignedProduct && product ? (
         <RedesignedProduct
           product={product}
-          headline={productHeadline}
           assets={PRODUCT_PAGE_ASSETS[product.slug] ?? {}}
         />
       ) : (
@@ -497,8 +490,8 @@ async function RouteBody({ params }: RouteProps) {
           </>
         )
       )}
-      {/* A native route has no export behind it, so nothing to carry over. */}
-      {!page.native && <LegacyPageShell page={page} opensPage={!intro && !product} />}
+      {!page.native && <LegacyPageShell page={shellPage} opensPage={!intro && !product} />}
+      {zoomCall && <ZoomCallBlock />}
       <SiteFooter />
     </div>
   );

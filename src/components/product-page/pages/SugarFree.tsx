@@ -13,12 +13,6 @@ import type { ProductPageProps } from "../types";
 import { PlainFaq, RndBand, ShelfCard, SimpleInside, TryBand, jamStyles as j, type Fact } from "./Jam";
 import s from "./SugarFree.module.css";
 
-/**
- * Sugar free ("Sugar free · страница продукта целиком", desktop 1440 / mobile 390).
- * Same design generation as jam, whose shared pieces it reuses; it has no
- * "Ready for your menu" section (no serve photos yet).
- */
-
 const SLUG = "sugar-free";
 
 const flavours = [
@@ -32,13 +26,6 @@ const flavours = [
   { name: "Peach", image: "peach" },
   { name: "Raspberry", image: "raspberry" },
   { name: "Hazelnut", image: "hazelnut" },
-];
-
-/** The hero collage, back to front. */
-const collage = [
-  { image: "mint", alt: "Mint sugar-free flavour sachet" },
-  { image: "cherry", alt: "Cherry sugar-free flavour sachet" },
-  { image: "peach", alt: "Peach sugar-free flavour sachet" },
 ];
 
 const sachet = (name: string) => productImage(SLUG, name, [400, 715]);
@@ -76,7 +63,7 @@ const faq: Question[] = [
   },
 ];
 
-export function SugarFreePage({ product, headline }: ProductPageProps) {
+export function SugarFreePage({ product }: ProductPageProps) {
   return (
     <main
       className={styles.page}
@@ -90,37 +77,23 @@ export function SugarFreePage({ product, headline }: ProductPageProps) {
       }
     >
       <Hero
-        className={cx(j.hero, s.hero)}
-        style={{ "--hero-size": 160, "--hero-m": "64px" } as CSSProperties}
-        mediaClassName={s.collage}
-        productName={product.name}
+        slug={product.slug}
         title={
           <>
             Sugar
             <br className={styles.desktopOnly} /> free
           </>
         }
-        headline={headline}
         lead={{
           desktop:
             "Ten flavours in single 1 g sachets. Add one to milk, coffee or tea for a flavoured drink with 0 g sugar and 1 kcal per serve.",
         }}
-        image={collage.map((item, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={item.image}
-            {...sachet(item.image)}
-            sizes="(max-width: 1023px) 190px, 330px"
-            alt={item.alt}
-            {...(i === 0 ? { fetchPriority: "high" as const } : { loading: "lazy" as const })}
-          />
-        ))}
       />
 
       <Section className={cx(j.gap40, s.closer)} title="Made for service" label="Made for service">
         <Stats
           columns={6}
-          className={j.miniStats}
+          className={cx(j.miniStats, s.serviceFacts)}
           items={[
             { value: "1 g", label: "One sachet per drink" },
             { value: "1 kcal", label: "Per serve" },

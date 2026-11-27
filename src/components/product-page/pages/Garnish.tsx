@@ -1,7 +1,6 @@
-import { Faq, productImage } from "../blocks";
+import { Hero, Faq, productImage } from "../blocks";
 import {
   FamilyFlavours,
-  FamilyHero,
   FamilyPage,
   FamilySection,
   FamilyStats,
@@ -10,12 +9,6 @@ import {
   familyFaqClass,
 } from "../familyB";
 import type { ProductPageProps } from "../types";
-
-/**
- * Garnish ("Garnish · страница продукта целиком", desktop 1440 / mobile 390),
- * family B. No "Inside the pack" and no "Ready for your menu" yet: the
- * designer is waiting for nutrition data and drink photos.
- */
 
 const SLUG = "garnish";
 
@@ -39,26 +32,19 @@ const faq = [
   },
 ];
 
-export function GarnishPage({ product, headline }: ProductPageProps) {
+export function GarnishPage({ product }: ProductPageProps) {
   const cubes = productImage(SLUG, "hero", [320, 491]);
 
   return (
     <FamilyPage tint="#EFE6DA">
-      <FamilyHero
-        productName={product.name}
+      <Hero
+        slug={product.slug}
         title="Garnish"
-        headline={headline}
-        top={40}
         lead={{
           desktop:
             "Freeze-dried fruit cubes that finish a drink in seconds. Real fruit colour and taste, the same size in every cup, no slicing and no waste.",
           mobile: "Freeze-dried fruit cubes that finish a drink in seconds. Real fruit colour and taste, no slicing and no waste.",
         }}
-        media={{ kind: "bare", width: 560, height: 560, mobileHeight: 300 }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...cubes} sizes="(max-width: 1023px) 300px, 560px" alt="Strawberry Cubes" fetchPriority="high" />
-        }
       />
 
       <FamilySection title="Made for service" label="Made for service">

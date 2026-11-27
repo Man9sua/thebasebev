@@ -3,19 +3,6 @@
 import { useState } from "react";
 import styles from "./ProductFaq.module.css";
 
-/**
- * The questions each product page answers.
- *
- * The export had a working Tilda accordion here — the only block below the hero
- * that was not a zero block — but it came with Tilda's own grey panels, its own
- * type and its own icon set, so it was the last thing on the page that did not
- * look like the rest of the site.
- *
- * One panel open at a time, as before. The answer is always in the document,
- * only its row is collapsed, so it is there for crawlers and for find-on-page
- * whether or not it is open.
- */
-
 export type FaqEntry = { question: string; answer: string };
 
 function Chevron() {
@@ -55,9 +42,6 @@ export function ProductFaq({ entries }: { entries: FaqEntry[] }) {
               id={`faq-answer-${index}`}
               className={styles.answer}
               data-open={expanded}
-              // Collapsed rather than removed, so the answer stays selectable
-              // and searchable; `inert` keeps it out of the tab order while it
-              // is closed.
               inert={!expanded}
             >
               <div className={styles.answerInner}>

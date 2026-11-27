@@ -2,13 +2,8 @@ import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
 import { Faq, Hero, Section, Stats, cx, productImage, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
-import { Band, NoteCards, heroSize, rangeHeroClass, rangeStyles } from "./Range";
+import { Band, NoteCards, rangeStyles } from "./Range";
 import local from "./ColourCollection.module.css";
-
-/**
- * Colour collection ("Colour Collection Page Redesign", desktop 1440 / mobile
- * 390): five single-ingredient powders in tins, photographed.
- */
 
 const SLUG = "colour-collection";
 
@@ -16,7 +11,7 @@ const colours = [
   { name: "Matcha", tin: "matcha", text: "Stone-ground Japanese green tea.", taste: "Grassy, umami, gentle bitterness.", best: "Lattes, iced matcha, lemonade." },
   { name: "Hojicha", tin: "hojicha", text: "Roasted Japanese green tea.", taste: "Roasted, caramel, nutty, low bitterness.", best: "Hot lattes, affogato, the evening menu." },
   { name: "Butterfly Pea", tin: "butterfly-pea", text: "Blue flower extract. Turns violet with citrus.", taste: "Neutral, lightly floral.", best: "Lemonades, mocktails, blue lattes." },
-  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract.", taste: "Mild, fresh, lightly sweet.", best: "Pink lattes, smoothies, cocktails." },
+  { name: "Dragon Fruit", tin: "dragon-fruit", text: "Natural pitaya extract.", taste: "Mild, fresh, lightly sweet.", best: "Pink lattes, smoothies, iced tea." },
   { name: "Ube", tin: "ube", text: "Purple yam from the Philippines.", taste: "Vanilla-like, nutty, sweet and earthy.", best: "Lattes, frappes, desserts." },
 ];
 
@@ -46,33 +41,21 @@ const faq = [
   },
 ];
 
-export function ColourCollectionPage({ product, headline }: ProductPageProps) {
+export function ColourCollectionPage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#ECE8E2", "--pp-chip": "#ECE8E2", "--stat": 34 } as CSSProperties}>
       <Hero
-        className={cx(rangeHeroClass, local.hero)}
-        style={heroSize(96, 52)}
-        productName={product.name}
+        slug={product.slug}
         title={
           <>
             Colour
             <br /> collection
           </>
         }
-        headline={headline}
         lead={{
           desktop: "Five natural powders for beverage menus. One ingredient in every tin, nothing added. Colour, naturally.",
           mobile: "Five natural powders for beverage menus. One ingredient, nothing added.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            {...productImage(SLUG, "tin-butterfly-pea", [360, 560, 880])}
-            sizes="(max-width: 1023px) 180px, 320px"
-            alt="Butterfly Pea powder tin"
-            fetchPriority="high"
-          />
-        }
       />
 
       <Section title="Made for service" label="Made for service">
@@ -121,7 +104,7 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
           title="Your own colour menu"
           text="Signature drinks with the collection, developed by our lab in Dubai."
           action={
-            <SiteLink href="/rnd" className={cx(styles.button, styles.red)}>
+            <SiteLink href="/rnd#rnd-form" className={cx(styles.button, styles.red)}>
               Talk to R&amp;D
             </SiteLink>
           }
@@ -162,7 +145,7 @@ export function ColourCollectionPage({ product, headline }: ProductPageProps) {
         />
       </Section>
 
-      <Faq productName={product.name} items={faq} line={null} distributor={false} />
+      <Faq className={local.faq} productName={product.name} items={faq} line={null} distributor={false} />
     </main>
   );
 }

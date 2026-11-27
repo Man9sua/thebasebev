@@ -324,9 +324,6 @@ async function importGlossary() {
         description: page?.description ?? "",
         canonical: page?.canonical || sourceUrl,
         openGraphTitle: page?.openGraphTitle ?? "",
-        // Tilda intentionally publishes escaped line-break markup in many
-        // og:description values. Keep the decoded value verbatim so Next.js
-        // re-escapes it to the exact production metadata contract.
         openGraphDescription: page?.openGraphDescription ?? "",
       },
     };
@@ -350,7 +347,7 @@ async function importGlossary() {
 
   const root = process.cwd();
   const dataPath = path.join(root, "src", "data", "glossary-content.json");
-  const inventoryPath = path.join(root, "docs", "research", "glossary", "PRODUCTION_GLOSSARY_INVENTORY.md");
+  const inventoryPath = path.join(root, "context", "research", "glossary", "PRODUCTION_GLOSSARY_INVENTORY.md");
   await mkdir(path.dirname(dataPath), { recursive: true });
   await mkdir(path.dirname(inventoryPath), { recursive: true });
   await writeFile(dataPath, `${JSON.stringify(content, null, 2)}\n`, "utf8");

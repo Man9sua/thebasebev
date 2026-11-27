@@ -1,32 +1,9 @@
-/**
- * Lift each product page's own copy out of the export.
- *
- * The exported product pages are Tilda "zero blocks": every line is an
- * absolutely positioned `tn-atom` whose position is applied by script at
- * runtime. On the migrated site that script does not finish, so the whole hero
- * — name, tagline, weight, both paragraphs, the price buttons and the four
- * selling points — is present in the DOM at full height and paints nothing.
- * That is the blank pink rectangle at the top of every product page.
- *
- * The copy itself is good and it is what the pages rank on, so it is lifted out
- * here rather than rewritten, and `ProductHero` renders it as ordinary markup.
- *
- * Run once and read the result: this writes `src/data/product-details.json`,
- * which is committed and reviewed, not generated during a build. The atom order
- * is not identical from page to page — some put the buttons before the name —
- * so everything below matches on content rather than on position, and anything
- * it cannot place is left out of the file rather than guessed at.
- *
- * Run: node scripts/build-product-details.mjs
- */
-
 import fs from "node:fs";
 import path from "node:path";
 
 const EXPORT = path.resolve("tilda_export/project12027355/files");
 const OUT = path.resolve("src/data/product-details.json");
 
-/** Product slug -> the exported page that describes it. */
 const PAGES = {
   milkshake: "page62508381",
   frappe: "page62510271",
@@ -47,7 +24,6 @@ const PAGES = {
 };
 
 const SPEC_LABELS = ["Prep Time", "Packaging", "Proportions", "Per Serving"];
-/** Display names, read from the registry so they stay written down in one place. */
 const NAMES = Object.fromEntries(
   [
     ...fs
@@ -56,7 +32,6 @@ const NAMES = Object.fromEntries(
   ].map((match) => [match[1], match[2]]),
 );
 
-/** Chrome and controls that live in the same block but are not product copy. */
 const NOISE = /^(\+971|Catalog\b|Pricing$|Place order$|Get A Sample$|Read more$)/i;
 
 function text(html) {
@@ -76,26 +51,11 @@ function bodyOf(file) {
   return fs.readFileSync(path.join(EXPORT, `${file}body.html`), "utf8");
 }
 
-/**
- * The page's own `h1`, verbatim.
- *
- * It has to be verbatim: `audit:seo-parity` compares it against the live site
- * character for character, and it is not the same string as the registry's
- * `headline` — production says "Easy to Blend" where the registry says "Easy to
- * Prepare", and uses an en dash where the registry uses an em dash.
- */
 function headingOf(file) {
   const match = bodyOf(file).match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
   return match ? text(match[1]) : null;
 }
 
-/**
- * The page's own records, in order, each sliced from its id to the next one.
- *
- * Records are siblings, so no balanced-tag parsing is needed — and none would
- * be reliable here anyway, against minified markup where `<div` also occurs
- * inside inline scripts.
- */
 function recordsOf(file) {
   const source = bodyOf(file);
   const after = source.slice(source.indexOf("</header>"));
@@ -108,14 +68,6 @@ function recordsOf(file) {
   }));
 }
 
-/**
- * The positioned elements of a zero block, with the coordinates it was drawn at.
- *
- * Those coordinates are the only record of what the block was meant to look
- * like: nothing in the markup says which atom is a column header and which is a
- * cell, only that one sits above the other. Everything below rebuilds structure
- * out of `top` and `left`.
- */
 function elementsOf(html) {
   const clean = html
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
@@ -142,19 +94,10 @@ function elementsOf(html) {
   });
 }
 
-/**
- * The elements that are actually on the artboard.
- *
- * `.t396__artboard` clips its overflow, so anything dragged above the top edge
- * has never been on the published page. Several products keep a superseded
- * flavour list up there, and taking it would put copy on the migrated page that
- * production does not show.
- */
 function onArtboard(elements) {
   return elements.filter((element) => element.top !== null && element.top >= 0);
 }
 
-/** Groups elements into the rows they were drawn on, each ordered left to right. */
 function rowsOf(elements, gap = 24) {
   const rows = [];
 
@@ -168,7 +111,6 @@ function rowsOf(elements, gap = 24) {
   return rows;
 }
 
-/** Index of the column this element was drawn under. */
 function nearestColumn(lefts, left) {
   let best = 0;
   for (let index = 1; index < lefts.length; index += 1) {
@@ -177,14 +119,6 @@ function nearestColumn(lefts, left) {
   return best;
 }
 
-/**
- * A tick or a cross, read from the icon itself.
- *
- * The table marks each ingredient with one of four near-identical 20px SVGs —
- * two greens and two reds, duplicated because the block was edited over time.
- * Matching on the fill rather than on the file name means a fifth copy would
- * still be read correctly.
- */
 function isTick(file) {
   const svg = fs.readFileSync(path.resolve("public/images", path.basename(file)), "utf8");
   return /#52A866/i.test(svg);
@@ -194,9 +128,6 @@ function atomsOf(file) {
   const source = bodyOf(file);
   const body = source
     .slice(source.indexOf("</header>"))
-    // Every block carries its own stylesheet and its own scripts inline, and
-    // stripped of their tags a rule set is just a very long line of text — long
-    // enough to beat the real body copy at being the longest thing on the page.
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ");
 
@@ -205,10 +136,6 @@ function atomsOf(file) {
     .filter((atom) => atom && !/[{}]|@media|px;/.test(atom));
 }
 
-/**
- * "Creamy. Convenient. Thick." over "500g" — one atom, split by a line break.
- * Three or four one-word sentences is the shape every page uses.
- */
 function takeTagline(atoms) {
   const index = atoms.findIndex((atom) => /^(?:[\w-]+\.\s*){2,4}\n/.test(atom));
   if (index < 0) return null;
@@ -218,32 +145,16 @@ function takeTagline(atoms) {
   return { tagline: tagline.trim(), weight: rest.join(" ").trim() || null };
 }
 
-/**
- * The body copy opens by naming the product — "Milkshake is a classic treat…"
- * Length alone is not enough to find it: the custom-flavours block carries a
- * longer paragraph, and on eight of the sixteen pages that one won.
- */
 function takeDescription(atoms, name) {
   const best = atoms.findIndex(
     (atom) => atom.length > 80 && atom.toLowerCase().startsWith(name.toLowerCase()),
   );
-  // Nothing else is accepted. Every product page also carries three shared
-  // pitches — custom flavours, distributor enquiry, free sample — and each of
-  // them is longer than the product copy, so "the longest paragraph" picked the
-  // wrong one on half the pages. Where the copy does not name its own product,
-  // the page falls back to the registry's description instead of guessing.
   if (best < 0) return null;
 
   const [description] = atoms.splice(best, 1);
   return description.split("\n").map((line) => line.trim()).filter(Boolean);
 }
 
-/**
- * Selling points are a label ending in a colon and a value beside it — but
- * "beside" is sometimes the atom before and sometimes the one after, because
- * the block was laid out by dragging. So each label takes its nearest unclaimed
- * neighbour, looking back first.
- */
 function takeFeatures(atoms) {
   const features = [];
   const claimed = new Set();
@@ -271,7 +182,6 @@ function takeFeatures(atoms) {
   return features;
 }
 
-/** The four figures under the tabs, each label followed by its value. */
 function takeSpecs(atoms) {
   const specs = [];
   for (const label of SPEC_LABELS) {
@@ -282,13 +192,6 @@ function takeSpecs(atoms) {
   return specs;
 }
 
-/**
- * Which record is which.
- *
- * Recognised by what each one contains rather than by position: the six blocks
- * below the hero are in the same order on all sixteen pages, but their record
- * ids are per page and two products have an extra block in the middle.
- */
 function sectionsOf(file) {
   const records = recordsOf(file);
   const zero = (pattern) =>
@@ -300,8 +203,6 @@ function sectionsOf(file) {
     specs: zero(/>Prep Time</),
     calculation: zero(/Comparative Calculation/),
     flavors: zero(/Custom Flavors/),
-    // Named last so the two headings above, which also contain the word, do not
-    // claim it: this is the block whose own first line is exactly "Usage".
     usage: records.find(
       (record) =>
         record.type === "396" &&
@@ -314,15 +215,6 @@ function sectionsOf(file) {
   };
 }
 
-/**
- * The comparative table.
- *
- * There is no table in the markup — there are two dozen absolutely positioned
- * atoms and four SVGs. Tops cluster into rows, and every cell takes the column
- * whose header it was drawn under, so the table comes back out whatever the
- * page calls its columns: half the products compare against "Actual Recipe" and
- * half against "<product> with Syrup".
- */
 function takeCalculation(record) {
   if (!record) return null;
 
@@ -346,18 +238,8 @@ function takeCalculation(record) {
   };
 }
 
-/**
- * One atom the export has lost the line break inside.
- *
- * Jam's flavour column reads `StrawberryWatermelon` in the source — the two
- * names ran together when the block was last edited, and nothing in the markup
- * says where one ends. Nobody has ever seen it, because that block has never
- * painted. It is named here rather than split by rule, because a rule that cuts
- * on a capital would also cut `HoneyDew` and `Purple Yum UBE` in half.
- */
 const RUN_TOGETHER = { StrawberryWatermelon: ["Strawberry", "Watermelon"] };
 
-/** The flavour columns, the custom-flavour pitch beside them, and its button. */
 function takeFlavors(record) {
   if (!record) return null;
 
@@ -366,10 +248,6 @@ function takeFlavors(record) {
   const texts = elements.filter((element) => element.type === "text");
   const headings = texts.filter((element) => /^(?:Custom )?Flavors$/i.test(element.text));
 
-  // The pitch is found by where it sits, not by how long it is: it is the line
-  // under the "Custom Flavors" heading, in that panel's own column. Length does
-  // not separate it from a flavour list — six of the products have a column
-  // longer than the sentence.
   const panel = texts.find((element) => /^Custom Flavors$/i.test(element.text));
   const note = panel
     ? texts
@@ -394,7 +272,6 @@ function takeFlavors(record) {
   };
 }
 
-/** "Simply mix with milk…", and the diagram drawn under it. */
 function takeUsage(record) {
   if (!record) return null;
 
@@ -411,13 +288,6 @@ function takeUsage(record) {
   return { lines, image: image ? `/${image.replace(/^\/+/, "")}` : null };
 }
 
-/**
- * The three questions each product answers.
- *
- * This one block is not a zero block — it is a working Tilda accordion — so it
- * is read straight out of the markup. It is replaced anyway, because the
- * accordion is the last piece of Tilda chrome on the page.
- */
 function takeFaq(record) {
   if (!record) return [];
 
@@ -432,7 +302,6 @@ function takeFaq(record) {
     .filter((entry) => entry.question && entry.answer);
 }
 
-/** The pictogram drawn above each figure, paired to it by the column it is in. */
 function specIconsOf(record, specs) {
   if (!record) return specs;
 
@@ -470,8 +339,6 @@ for (const [slug, file] of Object.entries(PAGES)) {
 
   details[slug] = {
     h1,
-    // Every record React now renders itself, so `site-pages.ts` has one list to
-    // cut out of the export rather than a rule per block.
     records: Object.fromEntries(
       Object.entries(sections).map(([name, record]) => [name, record?.id ?? null]),
     ),

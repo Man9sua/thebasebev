@@ -1,18 +1,10 @@
+import { ProductShopHero } from "../ProductShopHero";
 import type { CSSProperties } from "react";
 import { SiteLink } from "@/components/site/SiteLink";
-import { SHOP_URL } from "@/lib/site-config";
-import { Breadcrumbs, DistributorLink, Faq, cx, productImage, productPageStyles as styles } from "../blocks";
+import { Faq, cx, productImage, productPageStyles as styles } from "../blocks";
 import type { ProductPageProps } from "../types";
 import { AtHomeChips } from "./AtHomeChips";
 import local from "./AtHome.module.css";
-
-/**
- * At home ("At Home Retail Page", desktop 1440 / mobile 390): the café
- * recipes in 150 g retail pouches. Not a single product but a shelf, so it
- * has its own hero — two ways to buy instead of a sample — and the pouches
- * laid out by range. "Buy online" is the same shop the catalogue sells
- * through.
- */
 
 const SLUG = "at-home";
 
@@ -38,7 +30,6 @@ const shelves: readonly { id: string; title: string; note: string; pouches: read
     pouches: [
       { name: "Chocolate Strawberry", text: "Choco berry", code: "150 g · CC-011-F150", image: "chocolate-strawberry" },
       { name: "Chocolate Orange", text: "Citrus and cocoa", code: "150 g · CC-012-F150", image: "chocolate-orange" },
-      // No pack shot yet: the plate stands empty in the shelf's colour.
       { name: "Chocolate Mocha", text: "Cocoa and coffee", code: "150 g · CC-010-F150" },
     ],
   },
@@ -63,60 +54,22 @@ const shelves: readonly { id: string; title: string; note: string; pouches: read
   },
 ];
 
-const heroPouches = ["matcha-blue", "chocolate-strawberry", "iced-tea-peach", "milkshake-cookies-cream"];
 
 const faq = [
   {
     q: "How do I make it at home?",
     a: "Each pouch has the recipe on the back and a QR code with video instructions. Most drinks need only milk or water.",
   },
-  { q: "Can my café sell these?", a: "Yes. Order through your local the Base distributor; the display kit comes with the first order." },
+  { q: "Can my café sell these?", a: "Yes. Order through your local the Base distributor and ask about shelf displays and price cards." },
   { q: "Where can I buy online?", a: "In the the Base online shop." },
 ];
 
-const pouchName = (image: string) =>
-  shelves.flatMap((shelf) => shelf.pouches).find((pouch) => pouch.image === image)?.name ?? "";
 
-export function AtHomePage({ product, headline }: ProductPageProps) {
+export function AtHomePage({ product }: ProductPageProps) {
   return (
     <main className={styles.page} style={{ "--pp-bg": "#F6F4F0" } as CSSProperties}>
-      <section className={local.hero} aria-labelledby="product-title">
-        <div className={local.heroCopy}>
-          <Breadcrumbs current="At home" />
-          <h1 id="product-title" className={cx(styles.heroTitle, local.heroTitle)}>
-            Crafted for cafés,
-            <br /> now at home
-          </h1>
-          {headline && <h2 className={styles.heroHeadline}>{headline}</h2>}
-          <p className={styles.heroLead}>
-            <span className={styles.desktopOnly}>
-              The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in
-              a minute.
-            </span>
-            <span className={styles.mobileOnly}>The same café recipes in 150 g pouches, to make at home in a minute.</span>
-          </p>
-          <div className={styles.heroActions}>
-            {/* Out of the app: the shop is another platform, as on the catalogue. */}
-            <a className={cx(styles.button, styles.red)} href={SHOP_URL} data-shop-link>
-              Buy online ↗
-            </a>
-            <DistributorLink>Stock it in your café</DistributorLink>
-          </div>
-        </div>
-        <div className={local.heroGrid}>
-          {heroPouches.map((image, i) => (
-            <div key={image} className={cx(local.plate, i > 1 && styles.desktopOnly)}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                {...productImage(SLUG, image, [400, 600])}
-                sizes="(max-width: 1023px) 45vw, 300px"
-                alt={`${pouchName(image)} 150 g pouch`}
-                fetchPriority={i < 2 ? "high" : undefined}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+      <ProductShopHero slug={product.slug} title={<>Crafted for cafés,<br /> now at home</>}
+        lead="The same café recipes in 150 g pouches. Guests pick one up with their coffee and make the drink at home in a minute." />
 
       <AtHomeChips
         route={product.route}
@@ -164,7 +117,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
               A shelf by
               <br /> the till
             </h2>
-            <SiteLink href="/distributors" className={cx(styles.button, styles.red, local.tillButton, styles.desktopOnly)}>
+            <SiteLink href="/find-your-distributor" className={cx(styles.button, styles.red, local.tillButton, styles.desktopOnly)}>
               Stock it in your café
             </SiteLink>
           </div>
@@ -172,7 +125,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
             {[
               { title: "For guests", text: "Take the café drink home. One pouch makes 5–10 drinks." },
               { title: "For your café", text: "A shelf next to the till. No extra staff, extra revenue per guest." },
-              { title: "Display kit", text: "Shelf stand and price cards come with the first order." },
+              { title: "Display kit", text: "Ask your distributor about shelf stands and price cards." },
             ].map((card) => (
               <div key={card.title} className={local.tillCard}>
                 <span className={local.tillCardTitle}>{card.title}</span>
@@ -180,7 +133,7 @@ export function AtHomePage({ product, headline }: ProductPageProps) {
               </div>
             ))}
           </div>
-          <SiteLink href="/distributors" className={cx(styles.button, styles.red, local.tillButton, styles.mobileOnly)}>
+          <SiteLink href="/find-your-distributor" className={cx(styles.button, styles.red, local.tillButton, styles.mobileOnly)}>
             Stock it in your café
           </SiteLink>
         </div>

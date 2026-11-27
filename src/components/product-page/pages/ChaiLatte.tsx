@@ -6,6 +6,7 @@ import {
   Info,
   Inside,
   Kit,
+  MarketingKitAction,
   Section,
   Shelf,
   Stats,
@@ -18,16 +19,9 @@ import {
 import type { ProductPageProps } from "../types";
 import local from "./ChaiLatte.module.css";
 
-/**
- * Chai latte ("Chai latte · страница продукта целиком", desktop 1440 / mobile 390).
- * Differs from matcha in the menu (title and kit card beside two photos), the
- * three-column flavour cards with copy, no vitamins card and a 56px phone title.
- */
-
 const SLUG = "chai-latte";
 const KIT_TEXT = "Menu photos, delivery-app formats, descriptions in English and Arabic.";
 
-/* Only the Karak label is in hand; the Masala tab follows when its label arrives. */
 const nutrition: NutritionSet[] = [
   {
     name: "Karak",
@@ -81,9 +75,8 @@ const faq = [
   },
 ];
 
-export function ChaiLattePage({ product, headline, assets }: ProductPageProps) {
+export function ChaiLattePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
-  // The first menu photo is the hero shot.
   const serves = [hero, productImage(SLUG, "serve-2", [640, 1000])];
 
   return (
@@ -98,19 +91,13 @@ export function ChaiLattePage({ product, headline, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={local.hero}
-        productName={product.name}
+        slug={product.slug}
         title="Chai latte"
-        headline={headline}
         lead={{
           desktop:
             "Karak and masala chai for cafés. Black tea, milk and spice in one base: steam with milk and serve in 30 seconds.",
           mobile: "Black tea, milk and spice in one base. Steam with milk and serve in 30 seconds.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Chai latte" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">
@@ -132,15 +119,11 @@ export function ChaiLattePage({ product, headline, assets }: ProductPageProps) {
             Ready for
             <br /> your menu
           </h2>
-          {assets.marketingKit && (
-            <div className={cx(local.kitCard, styles.desktopOnly)}>
-              <span className={local.kitCardTitle}>Marketing kit</span>
-              <span className={local.kitCardText}>{KIT_TEXT}</span>
-              <a href={assets.marketingKit} className={cx(styles.button, styles.red, local.kitCardButton)} download>
-                Download kit
-              </a>
-            </div>
-          )}
+          <div className={cx(local.kitCard, styles.desktopOnly)}>
+            <span className={local.kitCardTitle}>Marketing kit</span>
+            <span className={local.kitCardText}>{KIT_TEXT}</span>
+            <MarketingKitAction href={assets.marketingKit} className={local.kitCardButton} />
+          </div>
         </div>
         {serves.map((tile, i) => (
           <div key={i} className={local.tile}>

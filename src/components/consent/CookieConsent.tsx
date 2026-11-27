@@ -5,49 +5,15 @@ import { SiteLink } from "@/components/site/SiteLink";
 import {
   CONSENT_DENIED,
   CONSENT_GRANTED,
-  CONSENT_REQUESTED,
   type Consent,
   consentSnapshot,
   serverConsentSnapshot,
   subscribeConsent,
+  subscribeConsentSettings,
   writeConsent,
 } from "@/lib/consent";
 import styles from "./CookieConsent.module.css";
 
-/**
- * Cookie consent, built to the redesign document.
- *
- * It replaces the exported Tilda T972 widget (`rec913700125`), which had three
- * problems the document names and one it does not:
- *
- * - it sat across the middle of the screen and covered the footer;
- * - it offered "Accept All" and "Cookie Settings" and no way to refuse, which is
- *   not a lawful choice for a visitor in the EU and not an honest one for
- *   anybody else;
- * - its buttons were square, which nothing else on the site is any more;
- * - and it only existed on the thirty-seven routes served through the legacy
- *   shell. The homepage, Distributors, R&D, Contacts, the Blog and the Glossary
- *   are React, so on those it was simply absent — the site asked some visitors
- *   for consent and not others.
- *
- * So: a 400px card in the bottom-left corner on a desktop and a sheet along the
- * bottom edge on a phone, both clear of the chat and WhatsApp buttons on the
- * right; "Accept all" and "Reject" the same size; "Settings" a third-level text
- * link; the choice remembered for twelve months; and nothing measuring anything
- * until it is given — `Analytics.tsx` is the other half of that last point.
- *
- * Rising "плавно снизу через 1 секунду после загрузки" is deliberate rather than
- * decorative: the banner is the first thing that moves on the page, and a second
- * is long enough for the page itself to have finished arriving.
- *
- * The card is in the server-rendered document, transparent and clear of the
- * pointer until the timer lifts it. That is what lets a statically generated
- * page hydrate without a mismatch: the server cannot know one visitor's answer,
- * so it renders the question, and a visitor who has already answered has it
- * removed on the first client render — before the timer, so never on screen.
- */
-
-/** The document's own delay before the card rises. */
 const REVEAL_DELAY = 1_000;
 
 const CATEGORIES = [
@@ -88,22 +54,13 @@ export function CookieConsent() {
     setSettingsOpen(true);
   }, []);
 
-  /** The footer's "Cookie settings" link, and anything else that asks. */
-  useEffect(() => {
-    window.addEventListener(CONSENT_REQUESTED, openSettings);
-    return () => window.removeEventListener(CONSENT_REQUESTED, openSettings);
-  }, [openSettings]);
+  useEffect(() => subscribeConsentSettings(openSettings), [openSettings]);
 
   const store = useCallback((next: Consent) => {
     writeConsent(next);
     setSettingsOpen(false);
   }, []);
 
-  /*
-   * Escape closes the dialog without storing anything: a dismissed dialog
-   * leaves the previous answer standing, and on a first visit it leaves the
-   * banner to ask again.
-   */
   useEffect(() => {
     if (!settingsOpen) return;
 
@@ -132,17 +89,17 @@ export function CookieConsent() {
             <span className={styles.title}>Cookies</span>
             <p className={styles.text}>
               We use cookies to run the site and, with your consent, to measure traffic.{" "}
-              <SiteLink href="/privacy" className={styles.policy}>
+              <SiteLink href="/cookie-policy" className={styles.policy}>
                 Cookie policy
               </SiteLink>
             </p>
           </div>
 
           <div className={styles.buttons}>
-            <button type="button" className={styles.accept} onClick={() => store(CONSENT_GRANTED)}>
+            <button type="button" className={styles.primaryAction} onClick={() => store(CONSENT_GRANTED)}>
               Accept all
             </button>
-            <button type="button" className={styles.reject} onClick={() => store(CONSENT_DENIED)}>
+            <button type="button" className={styles.secondaryAction} onClick={() => store(CONSENT_DENIED)}>
               Reject
             </button>
           </div>
@@ -192,21 +149,11 @@ export function CookieConsent() {
                     <span className={styles.rowTitle}>{category.title}</span>
                     <span className={styles.rowBody}>{category.body}</span>
                   </span>
-                  {/*
-                    A real checkbox, painted as the design's pill switch: it keeps
-                    the keyboard, the label association and the form semantics
-                    that a pair of divs would have to reimplement.
-                  */}
                   <span className={styles.switch}>
                     <input
                       type="checkbox"
                       checked={draft[category.key]}
                       onChange={(event) => {
-                        // Read before the updater, not inside it. React clears
-                        // `currentTarget` on a synthetic event the moment the
-                        // handler returns, and the updater runs after that — so
-                        // reading it there threw on every toggle and took the
-                        // dialog down with it.
                         const { checked } = event.currentTarget;
                         setDraft((current) => ({ ...current, [category.key]: checked }));
                       }}
@@ -218,12 +165,12 @@ export function CookieConsent() {
             </div>
 
             <div className={styles.dialogButtons}>
-              <button type="button" className={styles.accept} onClick={() => store(draft)}>
+              <button type="button" className={styles.primaryAction} onClick={() => store(draft)}>
                 Save choices
               </button>
               <button
                 type="button"
-                className={styles.reject}
+                className={styles.secondaryAction}
                 onClick={() => store(CONSENT_GRANTED)}
               >
                 Accept all

@@ -18,12 +18,6 @@ import {
 import type { ProductPageProps } from "../types";
 import local from "./Cordial.module.css";
 
-/**
- * Cordial ("Cordial · страница продукта", desktop 1440 / mobile 390).
- * Matcha's shape plus the mock's extra "Sweet and sour mix" formula band;
- * on the phone that band becomes a card under the flavours.
- */
-
 const SLUG = "cordial";
 
 const nutrition: NutritionSet[] = [
@@ -82,7 +76,7 @@ const faq = [
   },
 ];
 
-export function CordialPage({ product, headline, assets }: ProductPageProps) {
+export function CordialPage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     hero,
@@ -101,18 +95,13 @@ export function CordialPage({ product, headline, assets }: ProductPageProps) {
       }
     >
       <Hero
-        productName={product.name}
+        slug={product.slug}
         title="Cordial"
-        headline={headline}
         lead={{
           desktop:
             "Mojitos, lemonades and mocktails without fresh fruit or house syrups. Add sparkling water and ice, ready in 30 seconds.",
           mobile: "Mojitos and lemonades without fresh fruit or syrups. Ready in 30 seconds.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Cordial mojito" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

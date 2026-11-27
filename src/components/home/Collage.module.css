@@ -1,16 +1,9 @@
-/**
- * From base to cup — 10a / 10b of the redesign.
- *
- * 120 of vertical padding, 96 of gutter, the heading at 80 in a 1fr column
- * against a 440 sentence, then four 400-tall frames in one row.
- */
-
 .section {
   --gutter: clamp(1.25rem, 6.6667vw, 6rem);
 
   background: var(--tbb-rd-paper);
   padding: clamp(3.5rem, 8.3333vw, 7.5rem) 0;
-  font-family: var(--tbb-font-sans);
+  font-family: var(--tbb-font-body);
   overflow: clip;
 }
 
@@ -30,10 +23,9 @@
 
 .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
-  /* 80 at 1440. */
+  font-family: var(--tbb-font-heading);
   font-size: clamp(2.25rem, 5.5556vw, 5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.9 !important;
   letter-spacing: -0.02em !important;
   text-transform: uppercase;
@@ -48,8 +40,6 @@
   line-height: 1.55 !important;
   text-wrap: pretty;
 }
-
-/* ---- the four steps ---- */
 
 .steps {
   list-style: none;
@@ -70,8 +60,6 @@
 .frame {
   position: relative;
   display: block;
-  /* 400 tall against a 288 column at 1440 — kept as a ratio so the row holds
-     its proportion at every width instead of four fixed rectangles. */
   aspect-ratio: 288 / 400;
   border-radius: clamp(0.875rem, 1.3889vw, 1.25rem);
   overflow: hidden;
@@ -98,7 +86,7 @@
 .label {
   color: var(--tbb-rd-ink);
   font-size: clamp(1rem, 1.25vw, 1.125rem);
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-subheading);
 }
 
 @media (max-width: 63.9375rem) {
@@ -110,19 +98,12 @@
 }
 
 @media (max-width: 47.9375rem) {
-  /*
-   * A rail rather than a 2 × 2 grid: four frames stacked two-up on a phone are
-   * four small rectangles, and the sequence is the point. Native overflow
-   * scroll with snap points, so the trackpad, the finger, the keyboard and
-   * find-on-page all keep working and a vertical swipe still scrolls the page.
-   */
   .steps {
     display: flex;
     padding-right: 0;
     gap: 0.75rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    /* Same reason as the guides rail: the snapport starts at the content. */
     scroll-padding-left: var(--gutter);
     scrollbar-width: none;
     overscroll-behavior-x: contain;
@@ -138,8 +119,6 @@
     scroll-snap-align: start;
   }
 
-  /* The last frame gets the gutter back as trailing space, so the rail ends
-     where the text column does. */
   .step:last-child {
     margin-right: var(--gutter);
   }

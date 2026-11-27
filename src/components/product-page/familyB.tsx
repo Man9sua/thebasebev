@@ -1,20 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
-import { Breadcrumbs, DistributorLink, FlavourEnquiryLink, Responsive, SampleButton, cx, productPageStyles as styles } from "./blocks";
+import { FlavourEnquiryLink, Responsive, cx, productPageStyles as styles } from "./blocks";
 import fb from "./familyB.module.css";
-
-/**
- * "Family B" product pages (garnish, vending, sugar-syrup): the whole page sits
- * on one tint, numbered step cards with the second one black, white flavour
- * cards with a colour swatch, a black R&D band and a two-column "Inside the
- * pack" without tabs. The pieces live here once; each page passes its values.
- *
- * Class names here avoid "title", "card", "tile", "btn", "number", "descr" and
- * "heading": the export's custom.css restyles any class containing them.
- */
 
 type Vars = CSSProperties & Record<`--${string}`, string | number>;
 
-/** Page root: the tint is the page background and the FAQ "+" circles. */
 export function FamilyPage({ tint, children }: { tint: string; children: ReactNode }) {
   return (
     <main
@@ -25,71 +14,6 @@ export function FamilyPage({ tint, children }: { tint: string; children: ReactNo
     </main>
   );
 }
-
-/* ---------------- hero ---------------- */
-
-export function FamilyHero({
-  productName,
-  title,
-  headline,
-  lead,
-  image,
-  media,
-  top = 24,
-  mobileTitleSize = 64,
-}: {
-  productName: string;
-  title: ReactNode;
-  /** Production's ranking sentence, kept as a small h2 under the name. */
-  headline?: string;
-  lead: { desktop: ReactNode; mobile?: ReactNode };
-  image: ReactNode;
-  /**
-   * `bare`: a cut-out straight on the tint (garnish). `contain`: a white card
-   * with the picture inset. `cover`: a white card filled edge to edge.
-   * Sizes are mock px: card width/height on desktop, height on the phone.
-   */
-  media: { kind: "bare" | "contain" | "cover"; width: number; height: number; mobileHeight: number; inset?: string; mobileInset?: string };
-  /** Desktop top padding in mock px. */
-  top?: number;
-  mobileTitleSize?: number;
-}) {
-  return (
-    <section
-      className={fb.hero}
-      aria-labelledby="product-title"
-      style={
-        {
-          "--fb-hero-top": top,
-          "--fb-media-w": media.width,
-          "--fb-media-h": media.height,
-          "--fb-media-mh": `${media.mobileHeight}px`,
-          "--fb-inset": media.inset ?? "100%",
-          "--fb-inset-m": media.mobileInset ?? media.inset ?? "100%",
-          "--fb-hero-m": `${mobileTitleSize}px`,
-        } as Vars
-      }
-    >
-      <div className={fb.heroCopy}>
-        <Breadcrumbs current={productName} />
-        <h1 id="product-title" className={cx(styles.heroTitle, fb.heroName)}>
-          {title}
-        </h1>
-        {headline && <h2 className={styles.heroHeadline}>{headline}</h2>}
-        <p className={fb.heroLead}>
-          <Responsive {...lead} />
-        </p>
-        <div className={fb.heroActions}>
-          <SampleButton productName={productName} className={fb.cta} />
-          <DistributorLink className={fb.cta} />
-        </div>
-      </div>
-      <div className={cx(fb.heroMedia, fb[media.kind])}>{image}</div>
-    </section>
-  );
-}
-
-/* ---------------- section shell ---------------- */
 
 export function FamilySection({
   title,
@@ -102,7 +26,6 @@ export function FamilySection({
   label: string;
   children?: ReactNode;
   className?: string;
-  /** Phone gap between the heading and the content (20 by default). */
   gap?: number;
 }) {
   return (
@@ -117,8 +40,6 @@ export function FamilySection({
   );
 }
 
-/* ---------------- stats (6-up) ---------------- */
-
 export type FamilyStat = { value: ReactNode; label: ReactNode };
 
 export function FamilyStats({
@@ -128,10 +49,8 @@ export function FamilyStats({
   padX = 24,
 }: {
   items: FamilyStat[];
-  /** Value size in mock px, desktop and phone. */
   valueSize: number;
   mobileValueSize: number;
-  /** Desktop side padding of a card. */
   padX?: number;
 }) {
   return (
@@ -149,8 +68,6 @@ export function FamilyStats({
   );
 }
 
-/* ---------------- steps (4-up, the second one black) ---------------- */
-
 export type FamilyStep = { name: ReactNode; text: ReactNode };
 
 export function FamilySteps({ items, nameSize, mobileNameWidth }: { items: FamilyStep[]; nameSize: number; mobileNameWidth: number }) {
@@ -167,8 +84,6 @@ export function FamilySteps({ items, nameSize, mobileNameWidth }: { items: Famil
   );
 }
 
-/* ---------------- flavours + R&D band ---------------- */
-
 export type FamilyFlavour = { name: ReactNode; color: string; image?: ReactNode };
 
 export function FamilyFlavours({
@@ -180,7 +95,6 @@ export function FamilyFlavours({
 }: {
   items: FamilyFlavour[];
   columns: number;
-  /** Desktop swatch aspect ratio; the phone is always square. */
   ratio: string;
   nameSize?: number;
   nameLeading?: string;
@@ -202,7 +116,6 @@ export function FamilyFlavours({
   );
 }
 
-/** The black "Your own …" band with the custom-flavour lead form. */
 export function RndBand({ title, text }: { title: ReactNode; text: { desktop: ReactNode; mobile?: ReactNode } }) {
   return (
     <div className={fb.band}>
@@ -216,8 +129,6 @@ export function RndBand({ title, text }: { title: ReactNode; text: { desktop: Re
     </div>
   );
 }
-
-/* ---------------- ready for your menu (photo row) ---------------- */
 
 export type FamilyPhoto = { src: string; srcSet?: string; alt: string };
 
@@ -246,8 +157,6 @@ export function FamilyMenu({ title, items }: { title: ReactNode; items: FamilyPh
   );
 }
 
-/* ---------------- inside the pack ---------------- */
-
 export type FamilyRow = { label: ReactNode; value: ReactNode };
 
 export function FamilyInside({
@@ -256,12 +165,9 @@ export function FamilyInside({
   notes,
   mobileNote,
 }: {
-  /** Nutrition card head, desktop and phone. */
   caption: { desktop: ReactNode; mobile?: ReactNode };
   rows: FamilyRow[];
-  /** The desktop column of white text cards. */
   notes: Array<{ head: ReactNode; text: ReactNode }>;
-  /** The phone's single merged card. */
   mobileNote: ReactNode;
 }) {
   return (
@@ -292,5 +198,4 @@ export function FamilyInside({
   );
 }
 
-/** Class for the shared `Faq` block: one auto-width button, tinted "+" circles. */
 export const familyFaqClass = fb.faq;

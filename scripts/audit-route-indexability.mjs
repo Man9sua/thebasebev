@@ -1,8 +1,11 @@
 import fs from "node:fs";
+import path from "node:path";
+import { readNativeRoutes } from "./native-routes.mjs";
 
 const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
-const reportPath = process.argv[3] ?? "ROUTE_INDEXABILITY_AUDIT.md";
+const reportPath = process.argv[3] ?? path.join(".audit-artifacts", "ROUTE_INDEXABILITY_AUDIT.md");
 const siteSource = fs.readFileSync("src/lib/site-pages.ts", "utf8");
+const nativeRoutes = readNativeRoutes(siteSource);
 const nextConfig = fs.readFileSync("next.config.ts", "utf8");
 const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
 const glossaryRoutes = glossaryContent.entries.map((entry) => entry.path);
@@ -22,16 +25,13 @@ const friendlyBlock = block(siteSource, "const friendlyRoutes: RouteDefinition[]
 const friendlyRoutes = [...friendlyBlock.matchAll(/\{ route: "([^"]+)", file: "([^"]+)", indexable: (true|false) \}/g)].map(
   (match) => ({ route: match[1], file: match[2], indexable: match[3] === "true" }),
 );
-const expectedPublicPaths = new Set([...friendlyRoutes.map(({ route }) => route), ...glossaryRoutes, ...blogRoutes]);
+const expectedPublicPaths = new Set([...friendlyRoutes.map(({ route }) => route), ...nativeRoutes, ...glossaryRoutes, ...blogRoutes]);
 if (expectedPublicPaths.size !== publicRoutePaths.length || publicRoutePaths.some((route) => !expectedPublicPaths.has(route))) {
   throw new Error("Public redirect manifest differs from generated site routes.");
 }
 const retiredLegacyRedirects = JSON.parse(fs.readFileSync("src/data/legacy-route-redirects.json", "utf8"));
 const legacyPageRedirects = retiredLegacyRedirects.filter((entry) => entry.source.startsWith("/page"));
 const productAliasRedirects = retiredLegacyRedirects.filter((entry) => entry.source.includes("/tproduct/"));
-// Whitespace-tolerant: the Blog's three legacy-slug redirects are too long to
-// sit on one line, and a redirect this audit cannot see is a redirect nothing
-// checks.
 const configuredRedirectRows = [...nextConfig.matchAll(
   /\{\s*source:\s*"([^"]+)",\s*destination:\s*publicPath\("([^"]+)"\),\s*statusCode:\s*301,?\s*\}/g,
 )].map(
@@ -53,6 +53,15 @@ const controlledRoutes = [
     reason: entry.indexable
       ? `Canonical production page from ${entry.file}`
       : `Preserved non-indexable route from ${entry.file}`,
+  })),
+  ...nativeRoutes.map((route) => ({
+    route: publicPath(route),
+    type: "native public page",
+    expectedStatus: 200,
+    indexable: true,
+    canonical: true,
+    sitemap: true,
+    reason: "Native page registered for public generation after the Tilda export",
   })),
   ...glossaryRoutes.map((route) => ({
     route: publicPath(route),
@@ -127,6 +136,15 @@ const controlledRoutes = [
     reason: "POST-only Stripe Test checkout boundary; GET is intentionally rejected",
   },
   {
+    route: "/api/checkout/stripe/session",
+    type: "dynamic API",
+    expectedStatus: 400,
+    indexable: false,
+    canonical: false,
+    sitemap: false,
+    reason: "Read-only Stripe verification requires a valid session; a bare GET is rejected before contacting Stripe",
+  },
+  {
     route: "/api/stripe/webhook",
     type: "dynamic API",
     expectedStatus: 405,
@@ -146,25 +164,19 @@ const controlledRoutes = [
   },
 ];
 
-if (friendlyRoutes.length !== 37 || legacyPageRedirects.length !== 41 || productAliasRedirects.length !== 26) {
+if (friendlyRoutes.length !== 36 || legacyPageRedirects.length !== 41 || productAliasRedirects.length !== 26) {
   throw new Error(
     `Unexpected route source counts: friendly=${friendlyRoutes.length}, legacyPages=${legacyPageRedirects.length}, productAliases=${productAliasRedirects.length}.`,
   );
 }
-const expectedControlledRoutes = 45 + glossaryRoutes.length + blogRoutes.length;
+const expectedControlledRoutes = 45 + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (controlledRoutes.length !== expectedControlledRoutes) {
   throw new Error(
     `Expected ${expectedControlledRoutes} controlled routes, received ${controlledRoutes.length}.`,
   );
 }
-if (redirectRows.length !== 77 + publicRoutePaths.length) throw new Error(`Expected ${77 + publicRoutePaths.length} redirects, received ${redirectRows.length}.`);
+if (redirectRows.length !== 79 + publicRoutePaths.length) throw new Error(`Expected ${79 + publicRoutePaths.length} redirects, received ${redirectRows.length}.`);
 
-/*
- * `worker.ts` restates the redirect table because its static fast path answers
- * document requests itself and never reaches the Next router — a redirect
- * declared only in `next.config.ts` works under `next start` and 404s on
- * Cloudflare. The duplication is allowed; drifting apart is not.
- */
 const workerSource = fs.readFileSync("worker.ts", "utf8");
 if (!["legacy-route-redirects.json", "public-route-paths.json"].every((manifest) => nextConfig.includes(manifest) && workerSource.includes(manifest))) {
   throw new Error("The retired-route redirect manifest must be imported by both Next.js and the static Worker path.");
@@ -212,7 +224,7 @@ const sitemapXml = await sitemapResponse.text();
 const sitemapPaths = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => new URL(match[1]).pathname.replace(/\/$/, "") || "/"),
 );
-const expectedSitemapRoutes = 29 /* audited */ + 5 /* native ranges */ + glossaryRoutes.length + blogRoutes.length;
+const expectedSitemapRoutes = 28  + nativeRoutes.length + glossaryRoutes.length + blogRoutes.length;
 if (sitemapResponse.status !== 200 || sitemapPaths.size !== expectedSitemapRoutes) {
   throw new Error(
     `Expected HTTP 200 with ${expectedSitemapRoutes} target sitemap URLs; received HTTP ${sitemapResponse.status} with ${sitemapPaths.size}.`,
@@ -304,9 +316,10 @@ Target: \`${targetOrigin}\`
 ## Accounting
 
 - Friendly routes: ${friendlyRoutes.length} (${friendlyRoutes.filter((route) => route.indexable).length} canonical/indexable + ${friendlyRoutes.filter((route) => !route.indexable).length} excluded).
+- Native public routes: ${nativeRoutes.length} (canonical/indexable and included in the sitemap).
 - Retired \`pageNNNN.html\` aliases served as permanent redirects: ${legacyPageRedirects.length}.
 - Retired Tilda product aliases served as permanent redirects: ${productAliasRedirects.length}.
-- Technical/metadata/API routes: 8.
+- Technical/metadata/API routes: 9.
 - **Controlled route total: ${controlledRoutes.length}.**
 - Permanent redirects (not generated pages): ${redirectRows.length}.
 - Sitemap members: ${sitemapPaths.size}.
@@ -330,6 +343,7 @@ ${redirectTable.join("\n")}
 ${failures.length ? failures.map((entry) => `- FAIL \`${entry.route}\`: ${entry.issues.join("; ")}`).join("\n") : "- PASS: all controlled routes and redirects match the declared indexability contract."}
 `;
 
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (failures.length) {

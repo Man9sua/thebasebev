@@ -1,9 +1,9 @@
-// The OpenNext bundle is generated before Wrangler bundles this entrypoint.
 // @ts-expect-error -- generated module intentionally has no checked-in types.
 import openNextWorker from "./.open-next/worker.js";
 import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
 import publicRoutePaths from "./src/data/public-route-paths.json";
 import { publicPath } from "./src/lib/site-paths";
+import { retiredRouteRedirect, toDefaultCountryPath } from "./src/lib/country-paths";
 
 type WorkerEnvironment = {
   APP_ENV?: "staging" | "production";
@@ -20,17 +20,6 @@ type WorkerExecutionContext = {
 
 const PRODUCTION_HOSTS = new Set(["thebasebev.com", "www.thebasebev.com"]);
 
-/**
- * The same redirects `next.config.ts` declares, restated.
- *
- * The fast path below answers every document request itself and falls back to
- * its own 404 page rather than to the OpenNext worker, so a redirect that only
- * exists in the Next config is never reached — it 404s in production and works
- * in `next start`, which is the worst way for a redirect to be wrong.
- *
- * The duplication is deliberate and it is checked: `audit:route-indexability`
- * reads both lists and fails if they disagree, so this cannot quietly drift.
- */
 const RETIRED_LEGACY_REDIRECTS = legacyRouteRedirects as ReadonlyArray<{
   source: string;
   destination: string;
@@ -57,6 +46,8 @@ const PERMANENT_REDIRECTS = new Map<string, string>([
     "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
     publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
   ],
+  ["/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
+  ["/ae/tpost/je9sca5h71-brix", publicPath("/tpost/j6bavd35i1-brix")],
 ]);
 
 function normalizePathname(pathname: string) {
@@ -96,9 +87,6 @@ function withDeploymentHeaders(
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   headers.set("X-Frame-Options", "SAMEORIGIN");
 
-  // Every staging or workers.dev response must remain a non-indexable preview.
-  // Only the explicitly approved production environment on the real hostname
-  // can omit this transport-level directive after a human-controlled cutover.
   if (!isApprovedProductionHost) {
     headers.set("X-Robots-Tag", "noindex, nofollow");
   } else {
@@ -108,19 +96,6 @@ function withDeploymentHeaders(
   if (new URL(request.url).pathname.startsWith("/api/")) {
     headers.set("Cache-Control", "no-store");
   } else if (!isApprovedProductionHost) {
-    /**
-     * A preview must never be a stale preview.
-     *
-     * `workers.dev` caches at the edge, in front of this Worker, and it kept
-     * serving one page for hours after three deploys had replaced it — the
-     * version's own preview URL had the new page the whole time, so nothing
-     * inside the Worker could see the difference, let alone fix it. Reviewing a
-     * change against a copy of the change before it is worse than not being
-     * able to review it at all.
-     *
-     * Only previews. The real hostname keeps its caching, which is most of what
-     * makes the static fast path worth having.
-     */
     headers.set("Cache-Control", "no-store");
   }
 
@@ -147,7 +122,7 @@ async function staticFastPath(
     );
   }
 
-  const redirect = PERMANENT_REDIRECTS.get(pathname);
+  const redirect = PERMANENT_REDIRECTS.get(pathname) ?? retiredRouteRedirect(pathname);
   if (redirect) {
     return new Response(null, {
       status: 301,
@@ -155,32 +130,18 @@ async function staticFastPath(
     });
   }
 
-  // Let Workers Static Assets serve hashed chunks and exported media directly.
   const directAsset = await environment.ASSETS.fetch(request);
   if (directAsset.status !== 404) return directAsset;
 
   if (pathname.startsWith("/api/")) return null;
 
-  /**
-   * The router's own request for a page.
-   *
-   * Next asks for an RSC payload on every in-page navigation and prefetch — the
-   * same URL as the document, with an `RSC` header — and OpenNext cannot answer
-   * those here: it looks them up in an incremental cache the prerendered
-   * payloads are not in, so all of them came back 404 and the router fell back
-   * to a full page load every time. `prepare-static-fast-path.mjs` now copies
-   * the payloads beside the documents, so they are served the same way.
-   *
-   * A hovered link asks for a slice of the route tree instead, naming it in
-   * `Next-Router-Segment-Prefetch`; the build writes those beside the page as
-   * `<route>.segments/<slice>.segment.rsc`, so the header is the file name. It
-   * is used as a path, so it is checked like one.
-   */
+  const documentPathname = toDefaultCountryPath(pathname);
+
   if (request.headers.has("RSC")) {
     const segment = request.headers.get("Next-Router-Segment-Prefetch");
     if (segment && (!segment.startsWith("/") || segment.includes(".."))) return null;
 
-    const base = staticPageAssetPath(pathname).replace(/\.html$/, "");
+    const base = staticPageAssetPath(documentPathname).replace(/\.html$/, "");
     const payload = await environment.ASSETS.fetch(
       requestForAsset(request, segment ? `${base}.segments${segment}.segment.rsc` : `${base}.rsc`),
     );
@@ -196,7 +157,7 @@ async function staticFastPath(
   }
 
   const pageAsset = await environment.ASSETS.fetch(
-    requestForAsset(request, staticPageAssetPath(pathname)),
+    requestForAsset(request, staticPageAssetPath(documentPathname)),
   );
   if (pageAsset.status !== 404) {
     const status = pathname === "/_not-found" ? 404 : pageAsset.status;

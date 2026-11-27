@@ -18,18 +18,10 @@ import {
 import type { ProductPageProps } from "../types";
 import local from "./RafCoffee.module.css";
 
-/**
- * Raf coffee ("Raf coffee · страница продукта целиком", desktop 1440 / mobile 390).
- * Closest to the matcha baseline: taller flavour cards, no vitamins card, a
- * 56px phone title.
- */
-
 const SLUG = "raf-coffee";
 
-/* The larger rendition is capped at the source width (serve-2 is 975 wide, serve-3 982). */
 const SERVE_MAX: Record<number, number> = { 2: 975, 3: 982 };
 
-/* Only the Raspberry Coconut label is in hand; Vanilla and Salted Caramel tabs follow when theirs arrive. */
 const nutrition: NutritionSet[] = [
   {
     name: "Raspberry Coconut",
@@ -73,9 +65,8 @@ const faq = [
   },
 ];
 
-export function RafCoffeePage({ product, headline, assets }: ProductPageProps) {
+export function RafCoffeePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
-  // The first menu photo is the hero shot.
   const serves = [
     { ...hero, alt: "Raf coffee serve" },
     ...Array.from({ length: 9 }, (_, i) => ({
@@ -96,19 +87,13 @@ export function RafCoffeePage({ product, headline, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={local.hero}
-        productName={product.name}
+        slug={product.slug}
         title="Raf coffee"
-        headline={headline}
         lead={{
           desktop:
             "The velvety, ice-cream-like raf without fresh cream. Steam the base with milk and an espresso shot, ready in a minute.",
           mobile: "Velvety raf without fresh cream. Steam with milk and espresso, ready in a minute.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Raf coffee" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">

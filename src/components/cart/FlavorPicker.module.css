@@ -1,28 +1,6 @@
-/**
- * The flavour picker.
- *
- * A sheet from the foot of the screen on a phone and a card in the middle of it
- * from 720 up — the same panel, anchored where the thumb is on one and where
- * the eye is on the other. Nothing here invents a colour: the paper, the ink,
- * the hairline and the warm card wash are the site's own tokens, and the pill
- * and the label sizes are the catalogue card's.
- *
- * Everything moves on opacity and transform only, so the whole thing stays on
- * the compositor, and every animation is off under `prefers-reduced-motion` at
- * the foot of this file.
- *
- * The `!important` on the paragraph margins is not decoration. `design-tokens`
- * zeroes them for every redesigned surface with `.tbb p`, which is two
- * selectors deep and beats a single class — so a margin set here without it is
- * simply dropped, and the label ends up sitting on the row of chips it is meant
- * to be heading. The catalogue card's copy carries the same flag for the same
- * reason.
- */
-
 .root {
   position: fixed;
   inset: 0;
-  /* Over the header, which is 40, and over the menu's 80. */
   z-index: 90;
   display: flex;
   align-items: flex-end;
@@ -47,11 +25,7 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: min(100%, 34rem);
   max-height: min(86vh, 42rem);
-  /* A sheet keeps its square corners on the edge it rises from. */
   border-radius: var(--tbb-card-radius) var(--tbb-card-radius) 0 0;
-  /* The foot carries a background of its own, so without this it paints its
-     square corners straight over the panel's rounded ones — which is only
-     visible from 720 up, where the panel is a card and rounded all round. */
   overflow: hidden;
   background: var(--tbb-paper);
   color: var(--tbb-ink);
@@ -63,8 +37,6 @@
   outline: none;
 }
 
-/* ---- head ---- */
-
 .head {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -74,8 +46,6 @@
   border-bottom: 1px solid var(--tbb-line);
 }
 
-/* The catalogue's own artwork, at the size of a thumbnail. The tile carries its
-   own 270:413, so only the width is set. */
 .art {
   width: clamp(3.75rem, 16vw, 4.75rem);
 }
@@ -96,7 +66,7 @@
 
 .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
   font-size: clamp(1.25rem, 5vw, 1.625rem);
   font-weight: 500 !important;
   line-height: 1.1 !important;
@@ -148,20 +118,12 @@
   color: var(--tbb-on-dark);
 }
 
-/* ---- flavours ---- */
-
-/* One inset all round rather than a narrower one top and bottom: the chips fill
-   this box edge to edge, so an inset that differs by side is the thing the eye
-   reads as the chips being crowded. */
 .body {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: clamp(1.15rem, 4vw, 1.75rem);
 }
 
-/* The gap under this has to read as a heading's, which means clearly more than
-   the one between the rows of chips under it — at 16 against their 10 the label
-   sat on the first row rather than over the whole cloud. */
 .count {
   margin: 0 0 1.5rem !important;
   color: var(--tbb-muted);
@@ -172,20 +134,12 @@
   text-transform: uppercase;
 }
 
-/* A little more between the rows than between the chips: a wrapped row of pills
-   reads as a list when it is, and as a block of text when it is not. */
 .flavors {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem 0.5rem;
 }
 
-/*
- * The chip is the label and the radio inside it is the control, so the whole
- * chip is the hit area and the keyboard still gets a radio group. The input is
- * taken out of the paint rather than out of the tree — `display: none` would
- * take it off the arrow keys with it.
- */
 .chip {
   position: relative;
   display: inline-flex;
@@ -236,8 +190,6 @@
   white-space: nowrap;
 }
 
-/* How many of this flavour are in the cart already — the one thing the shelf
-   cannot show, since the card has no room for nineteen counts. */
 .chipCount {
   display: grid;
   place-items: center;
@@ -255,8 +207,6 @@
 .chipOn .chipCount {
   background: var(--tbb-on-dark);
 }
-
-/* ---- foot ---- */
 
 .foot {
   display: grid;
@@ -314,7 +264,7 @@
   border-radius: 999px;
   background: var(--tbb-ink);
   color: var(--tbb-on-dark);
-  font: 600 0.6875rem / 1 var(--tbb-font-sans);
+  font: var(--tbb-font-weight-button) 0.6875rem / 1 var(--tbb-font-button);
   letter-spacing: var(--tbb-tracking-label);
   text-transform: uppercase;
   cursor: pointer;
@@ -332,16 +282,12 @@
   transform: translateY(-1px);
 }
 
-/* Inert until a flavour is chosen, and it says which state it is in rather
-   than looking pressable and doing nothing. */
 .submit:disabled {
   border-color: var(--tbb-line);
   background: transparent;
   color: var(--tbb-muted);
   cursor: default;
 }
-
-/* ---- the card, from 720 up ---- */
 
 @media (min-width: 720px) {
   .root {
@@ -356,15 +302,12 @@
   }
 }
 
-/* ---- motion ---- */
-
 @keyframes scrimIn {
   from {
     opacity: 0;
   }
 }
 
-/* Up from the edge it is anchored to. */
 @keyframes sheetIn {
   from {
     opacity: 0;
@@ -372,8 +315,6 @@
   }
 }
 
-/* In place, from just under its final size — a card is not coming from an
-   edge, so it should not travel like one. */
 @keyframes cardIn {
   from {
     opacity: 0;
@@ -388,11 +329,6 @@
   }
 }
 
-/*
- * Leaving. The component keeps itself mounted for the length of this and then
- * drops out — `EXIT_MS` in the component is the one number that has to agree
- * with these.
- */
 .leaving .scrim,
 .leaving .panel {
   animation: none;

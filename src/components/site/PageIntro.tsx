@@ -2,20 +2,6 @@ import { Reveal } from "@/components/motion/Reveal";
 import type { PageIntro as PageIntroContent } from "@/data/page-intros";
 import styles from "./PageIntro.module.css";
 
-/**
- * The top of a parity page that lost its own.
- *
- * Two pages open with a React head now, because what the export opened them
- * with was template debris: `/rnd` began with nothing of its own and carried
- * its `h1` a page and a half down, inside a Russian calorie calculator that
- * came with the Tilda theme, and `/private-labeling` set its heading in a serif
- * no other page on the site uses and then put it at the bottom under an empty
- * block.
- *
- * So this is a page head and nothing more — label, heading, statement, lead —
- * on the site's own type and spacing. Where the page had a film of its own it
- * runs behind, muted and looping, which is how it was used before.
- */
 export function PageIntro({ intro }: { intro: PageIntroContent }) {
   return (
     <section
@@ -31,8 +17,6 @@ export function PageIntro({ intro }: { intro: PageIntroContent }) {
             muted
             loop
             playsInline
-            // Four megabytes. The poster frame is worth the round trip; the
-            // rest of the file can arrive while the heading is already read.
             preload="metadata"
           />
         </div>
@@ -40,10 +24,6 @@ export function PageIntro({ intro }: { intro: PageIntroContent }) {
 
       <div className={styles.inner}>
         {intro.legacyH1 && <h1 className="tbb-visually-hidden">{intro.legacyH1}</h1>}
-
-        <Reveal as="p" className={`tbb-label ${styles.eyebrow}`} distance={12}>
-          {intro.eyebrow}
-        </Reveal>
 
         <Reveal delay={60} distance={20}>
           {intro.legacyH1 ? (

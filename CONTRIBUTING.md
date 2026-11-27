@@ -36,7 +36,7 @@ The workflow file is version-controlled, but branch protection is a GitHub repos
 - require at least one approval when a second reviewer is available;
 - dismiss stale approvals after material changes;
 - allow emergency bypass only for named repository owners and record its use;
-- keep automatic production deployment disabled during migration.
+- require passing CI before a reviewed release deploys from `main`.
 
 Apply a lighter equivalent to `develop` if direct integration pushes should also be prevented. Do not claim branch protection is active until GitHub's Rules/Branches page confirms it.
 
@@ -59,7 +59,7 @@ Cloudflare deployment is a separate manual GitHub Actions workflow. Select `stag
 - Copy variable names from `.env.example`; never commit values.
 - Never put credentials in source, issue text, screenshots, URLs, or test fixtures.
 - Use Cloudflare environment secrets only for approved preview/production integration tests.
-- Configure `CLOUDFLARE_API_TOKEN` as a GitHub environment secret and `CLOUDFLARE_ACCOUNT_ID` as a GitHub environment variable for both `staging` and `production`; the account ID must identify `mansua`.
+- Configure `CLOUDFLARE_API_TOKEN` as a GitHub environment secret and `CLOUDFLARE_ACCOUNT_ID` as a GitHub environment secret for both `staging` and `production`; the account ID must identify `mansua`.
 - Never copy a personal `indukok667` token into this repository or its GitHub environments.
 - Do not enable all analytics IDs found in the export.
 
@@ -72,4 +72,4 @@ Cloudflare deployment is a separate manual GitHub Actions workflow. Select `stag
 - Staging and production-preview must remain noindex; the eventual real production hostname must be indexable.
 - Never deploy THE BASE to personal Cloudflare account `indukok667`. Invite teammates only to `mansua`.
 
-Read `PROJECT_CONTEXT.md`, `CLOUDFLARE_RESOURCE_INVENTORY.md`, `CLOUDFLARE_ACCOUNT_MIGRATION.md`, `CLOUDFLARE_MIGRATION.md`, and `PRODUCTION_CUTOVER.md` before infrastructure changes.
+Read `context/PROJECT_CONTEXT.md`, `context/CLOUDFLARE_RESOURCE_INVENTORY.md`, `context/CLOUDFLARE_ACCOUNT_MIGRATION.md`, `context/CLOUDFLARE_MIGRATION.md`, and `context/PRODUCTION_CUTOVER.md` before infrastructure changes.

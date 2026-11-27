@@ -1,49 +1,13 @@
-/**
- * Editorial entries for the homepage carousel.
- *
- * ## Why these are not blog posts
- *
- * The site's blog is a Tilda `t-feed` (`feeduid: 699537006591`). Its posts live
- * on Tilda's servers and are injected into the page at runtime — the export
- * contains only the empty feed container and its preloader skeletons. On the
- * migrated clone the feed fetches nothing at all: `/resources/blog` renders zero
- * posts today. That is a pre-existing gap in the migration, not something the
- * redesign introduced.
- *
- * Rather than invent articles, the carousel is seeded with pages that genuinely
- * exist and already rank. Every title and summary below is that page's own
- * `<title>` and meta description, copied verbatim from the export.
- *
- * ## Replacing this with the real feed
- *
- * `HOMEPAGE_ENTRIES` is the only thing `BlogCarousel` reads. When posts become
- * available — a CMS, a Tilda feed export, or an API — map them to `Entry` and
- * export them from here. No component changes.
- *
- * `date` is optional and deliberately unset: these pages carry no publication
- * date, and inventing one would put a false signal in front of readers and
- * crawlers alike.
- */
-
 export type Entry = {
   href: string;
   category: string;
   title: string;
   summary: string;
   image: string;
-  /** ISO date, when the source actually has one. */
   date?: string;
 };
 
 export const HOMEPAGE_ENTRIES: Entry[] = [
-  {
-    href: "/wholesale-strategy",
-    category: "Market",
-    title: "Wholesale Strategy and Market Insights",
-    summary:
-      "Wholesale beverage distribution in the GCC: margins, MOQ, supplier checklist and the mistakes that cost money.",
-    image: "/images/tild3935-6337-4533-a633-643534346539__photo-1590497008432-.jpg",
-  },
   {
     href: "/rnd",
     category: "R&D",

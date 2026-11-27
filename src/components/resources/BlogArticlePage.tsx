@@ -1,18 +1,10 @@
+import { brandCase } from "@/lib/brand";
 import { publicUrl } from "@/lib/site-paths";
 import Image from "next/image";
 import { PublicLink as Link } from "@/components/site/PublicLink";
 import { Fragment } from "react";
 import { resolveBlogHref, type BlogBlock, type BlogInline, type BlogPost } from "@/data/blog";
 import styles from "./BlogArticlePage.module.css";
-
-/**
- * One Blog article.
- *
- * The body is rendered from the block model the importer writes, not from
- * markup: nothing on this page is `dangerouslySetInnerHTML`, so Tilda's
- * redactor classes and inline styles never reach the document and the article
- * inherits this site's type scale instead of that one's.
- */
 
 function displayDate(value: string) {
   const [year, month, day] = value.split("-");
@@ -26,17 +18,17 @@ function displayDate(value: string) {
 function Inline({ content }: { content: BlogInline[] }) {
   return content.map((part, index) => {
     const key = `${part.type}-${index}`;
-    let node = <>{part.text}</>;
+    let node = <>{brandCase(part.text)}</>;
 
     if (part.type === "link") {
       const href = resolveBlogHref(part.href);
       node = href.startsWith("/") ? (
         <Link href={href} prefetch={false}>
-          {part.text}
+          {brandCase(part.text)}
         </Link>
       ) : (
         <a href={href} rel="noreferrer noopener">
-          {part.text}
+          {brandCase(part.text)}
         </a>
       );
     }
@@ -51,8 +43,6 @@ function Inline({ content }: { content: BlogInline[] }) {
 function Block({ block, index }: { block: BlogBlock; index: number }) {
   switch (block.type) {
     case "heading": {
-      // The article's own `h1` is the title above, so the body starts at h2 and
-      // the source's h2/h3/h4 keep their relative depth.
       const Tag = (block.level === 2 ? "h2" : block.level === 3 ? "h3" : "h4") as
         | "h2"
         | "h3"
@@ -91,7 +81,7 @@ function Block({ block, index }: { block: BlogBlock; index: number }) {
             alt={block.alt}
             width={1440}
             height={900}
-            sizes="(max-width: 47.9375rem) 92vw, 46rem"
+            sizes="(max-width: 47.9375rem) 92vw, 38rem"
             loading={index < 2 ? "eager" : "lazy"}
           />
         </figure>
@@ -132,20 +122,13 @@ export function BlogArticlePage({
         <meta itemProp="mainEntityOfPage" content={publicUrl(post.seo.canonical)} />
         <meta itemProp="author" content="The Base Beverage LLC" />
 
-        <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-          <Link href="/resources">Resources</Link>
-          <span aria-hidden="true">/</span>
-          <Link href="/resources/blog">Blog</Link>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{post.title}</span>
-        </nav>
-
         <Link className={styles.backLink} href="/resources/blog">
           <span aria-hidden="true">←</span>
           Back to Blog
         </Link>
 
         <header className={styles.header}>
+          <h1 itemProp="headline">{post.title}</h1>
           <div className={styles.meta}>
             <span>{post.topic.label}</span>
             <time itemProp="datePublished" dateTime={post.published}>
@@ -153,10 +136,9 @@ export function BlogArticlePage({
             </time>
             <span>{post.readingMinutes} min read</span>
           </div>
-          <h1 itemProp="headline">{post.title}</h1>
           {post.excerpt && (
             <p className={styles.standfirst} itemProp="description">
-              {post.excerpt}
+              {brandCase(post.excerpt)}
             </p>
           )}
         </header>
@@ -168,7 +150,7 @@ export function BlogArticlePage({
               alt={post.cover.alt}
               width={1440}
               height={900}
-              sizes="(max-width: 47.9375rem) 100vw, 64rem"
+              sizes="(max-width: 47.9375rem) 92vw, 54rem"
               priority
               itemProp="image"
             />

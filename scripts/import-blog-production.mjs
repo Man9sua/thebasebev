@@ -1,31 +1,3 @@
-/**
- * Blog importer.
- *
- * `/resources/blog` is the last page on the site whose content never left
- * Tilda: the export ships the feed's container and nothing else, because the
- * posts were fetched in the browser from `feeds.tildaapi.one` at render time.
- * A migrated site that still calls Tilda for its copy is not migrated, so this
- * reads the public feed once, here, and writes the result into the repository
- * as data — the same contract `import-glossary-production.mjs` established for
- * the Glossary, and the same one the application reads at build time.
- *
- * Two things it does that the Glossary importer did not have to:
- *
- * - Blog bodies are structured. The Glossary's are a run of sentences; these
- *   carry headings, ordered lists, figures and one video, so the body model is
- *   a list of blocks rather than a list of paragraphs.
- * - Blog posts carry photography, served from `static.tildacdn.com`. Every one
- *   is downloaded into `public/images/blog/` under the export's own
- *   `<bucket>__<file>` naming, so no page on the migrated site asks Tilda for a
- *   byte at runtime. The originals are unprocessed uploads — 25 MB across the
- *   set, with single PNGs near three — so each is re-encoded to WebP at the
- *   width the layout actually paints it. Nothing is cropped.
- *
- * Read-only against production. Run it again whenever the feed changes:
- *
- *   npm run import:blog
- */
-
 import { createHash } from "node:crypto";
 import { mkdir, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -39,16 +11,8 @@ const FEED_URL = "https://feeds.tildaapi.one/api/getfeed/";
 const POST_URL = "https://feeds.tildaapi.one/api/getpost/";
 const REQUEST_HEADERS = { "user-agent": "THE-BASE-blog-migration/1.0" };
 
-/** Reading speed used for the "N min read" line on the card and the article. */
 const WORDS_PER_MINUTE = 220;
 
-/**
- * Topics, as the shelf's filter offers them.
- *
- * Derived from the post rather than written down per post: a list keyed by uid
- * would go stale the first time the feed gains an entry, and this file is the
- * only thing standing between the feed and the site.
- */
 const TOPICS = [
   {
     id: "supply",
@@ -84,8 +48,6 @@ function topicFor(title, excerpt) {
   const hit = TOPICS.find((topic) => topic.match.test(haystack));
   return hit ? { id: hit.id, label: hit.label } : FALLBACK_TOPIC;
 }
-
-/* ---- transport ---------------------------------------------------------- */
 
 async function fetchWithRetry(url, { responseType = "json", attempts = 5 } = {}) {
   let lastError;
@@ -131,8 +93,6 @@ async function mapConcurrent(items, concurrency, mapper) {
   await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, worker));
   return results;
 }
-
-/* ---- text --------------------------------------------------------------- */
 
 const NAMED_ENTITIES = {
   amp: "&",
@@ -195,19 +155,8 @@ function hashText(value) {
   return createHash("sha256").update(value, "utf8").digest("hex");
 }
 
-/* ---- markup ------------------------------------------------------------- */
-
 const VOID_TAGS = new Set(["img", "br", "hr", "input", "source", "meta", "link"]);
 
-/**
- * The redactor's markup as a tree.
- *
- * Tilda's editor emits well-formed markup from a closed vocabulary — the
- * survey that drove this model found eleven tags in thirty posts — so a stack
- * walk is enough and a parser dependency is not. Anything unbalanced is
- * ignored rather than guessed at, and `assertKnownTags` below fails the import
- * if the vocabulary ever grows.
- */
 function parseFragment(html) {
   const root = { tag: "#root", attrs: {}, children: [] };
   const stack = [root];
@@ -249,14 +198,11 @@ function assertKnownTags(node, uid) {
   for (const child of node.children ?? []) assertKnownTags(child, uid);
 }
 
-/** Inline runs, with the two marks the redactor actually uses. */
 function collectInline(node, marks = {}, out = []) {
   for (const child of node.children ?? []) {
     if (child.tag === "#text") {
       const text = child.text.replace(/\s+/g, " ");
       if (!text.trim()) {
-        // A single space between two marked runs is meaningful; a run of
-        // whitespace around a block boundary is not.
         if (out.length && !/\s$/.test(out.at(-1).text)) out.at(-1).text += " ";
         continue;
       }
@@ -325,20 +271,12 @@ function normalizeInternalHref(href) {
   }
 }
 
-/**
- * `https://static.tildacdn.com/<bucket>/<file>` -> the export's own filename,
- * re-extensioned: everything is re-encoded to WebP on the way in.
- */
 function localImageName(src) {
   const match = /tildacdn\.com\/([^/]+)\/([^/?#]+)/i.exec(src);
   if (!match) return null;
   return `${match[1]}__${match[2].replace(/\.[a-z0-9]+$/i, "")}.webp`;
 }
 
-/**
- * The widest the article body or the shelf card ever paints one, doubled for a
- * 2x screen. The sources run to 2048 and wider and are never shown that large.
- */
 const IMAGE_WIDTH = 1440;
 const IMAGE_QUALITY = 74;
 
@@ -405,9 +343,6 @@ function toBlocks(node, uid, images) {
         case "div":
         case "p":
         case "span": {
-          // A redactor paragraph can hold a list, and the list is the block —
-          // so descend when the node wraps block content and treat it as a
-          // paragraph only when it does not.
           const holdsBlocks = child.children.some((grandchild) =>
             ["ul", "ol", "figure", "img", "iframe", "h2", "h3", "h4", "div"].includes(grandchild.tag),
           );
@@ -441,8 +376,6 @@ function bodyTextFrom(blocks) {
 function readingMinutes(text) {
   return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / WORDS_PER_MINUTE));
 }
-
-/* ---- inventory ---------------------------------------------------------- */
 
 function escapeTable(value) {
   return String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
@@ -484,8 +417,6 @@ TITLE | UID | TOPIC | PUBLISHED | PRODUCTION URL | STATUS | STAGING ROUTE | BLOC
 ${rows.join("\n")}
 `;
 }
-
-/* ---- import ------------------------------------------------------------- */
 
 function feedRequestUrl() {
   const url = new URL(FEED_URL);
@@ -555,7 +486,6 @@ async function importBlog() {
       sourceUrl,
       title,
       excerpt,
-      // The feed dates are Dubai wall-clock, already the site's own zone.
       published: String(post.date || post.published || "").slice(0, 10),
       topic: topicFor(title, excerpt),
       cover: coverName
@@ -611,7 +541,7 @@ async function importBlog() {
   };
 
   const dataPath = path.join(root, "src", "data", "blog-content.json");
-  const inventoryPath = path.join(root, "docs", "research", "blog", "PRODUCTION_BLOG_INVENTORY.md");
+  const inventoryPath = path.join(root, "context", "research", "blog", "PRODUCTION_BLOG_INVENTORY.md");
   await mkdir(path.dirname(dataPath), { recursive: true });
   await mkdir(path.dirname(inventoryPath), { recursive: true });
   await writeFile(dataPath, `${JSON.stringify(content, null, 2)}\n`, "utf8");

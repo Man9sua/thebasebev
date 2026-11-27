@@ -1,75 +1,19 @@
-/**
- * THE BASE product registry.
- *
- * Routes and copy come from the existing product pages, so every card links to
- * a URL that already ranks. Never rename a `route` — it is live.
- *
- * `backgroundColor` drives the Bestsellers colour field and the product page's.
- * Most values were sampled from that product's own pack shot, so the artwork
- * blends into the field with no visible edge. Three are hand-set because the
- * product's largest artwork is a dark banner rather than a coloured pack shot;
- * they are marked and are the ones worth reviewing first.
- *
- * `price` is a snapshot of what /catalog shows. That page still fetches live
- * prices at runtime — these are here so the homepage can show a real number
- * instead of a placeholder, and they are safe to duplicate only because
- * `scripts/smoke-browser.mjs` asserts the same strings against the running
- * catalog. If a price changes, that test fails rather than the two quietly
- * disagreeing.
- */
-
 import { onColor } from "@/lib/contrast";
 
 export type Product = {
   slug: string;
-  /** Live URL. Never rename. */
   route: string;
-  /** Short display name for cards and the carousel. */
   name: string;
-  /**
-   * `name` with soft hyphens (U+00AD) marking where it may break when it is set
-   * at display size. Only needed for single words long enough to outrun their
-   * column — anything with a space in it already has somewhere to break.
-   *
-   * Set explicitly rather than left to `hyphens: auto`, which needs a
-   * hyphenation dictionary the browser may simply not have: Chromium ships them
-   * as a downloadable component, and without one the property does nothing at
-   * all. A soft hyphen needs no dictionary.
-   */
   hyphenatedName?: string;
-  /** The product page's H1, reused so wording stays consistent across the site. */
   headline: string;
   description: string;
   image: string | null;
-  /**
-   * Retail price as shown on /catalog, or null for "Price on request".
-   *
-   * A snapshot, not a source of truth — the catalog page still fetches live
-   * prices at runtime. It is safe to keep here because
-   * `scripts/smoke-browser.mjs` asserts these exact strings against the running
-   * catalog, so any drift fails a test rather than going unnoticed.
-   */
   price: string | null;
-  /**
-   * The product's colour field. Swap freely — no component hard-codes a
-   * product colour anywhere.
-   */
   backgroundColor: string;
-  /**
-   * Accent for small emphasis: the product name in the hero, the active
-   * indicator, rules. Optional — falls back to the brand red until the real
-   * palette arrives.
-   */
   accentColor?: string;
-  /**
-   * Ink for anything sitting on `backgroundColor`. Optional — when absent it is
-   * measured from the background so it always clears WCAG AA. Set it only to
-   * override that.
-   */
   textColor?: string;
 };
 
-/** Used when a product has no accent of its own. */
 export const DEFAULT_ACCENT = "#e11b22";
 
 export type ResolvedProductColors = {
@@ -78,13 +22,6 @@ export type ResolvedProductColors = {
   text: string;
 };
 
-/**
- * The one place product colours become what components render.
- *
- * Components call this and never read the raw fields, so filling in
- * `accentColor` / `textColor` later changes the whole site without touching a
- * single component.
- */
 export function resolveProductColors(product: Product): ResolvedProductColors {
   return {
     background: product.backgroundColor,
@@ -203,7 +140,7 @@ export const PRODUCTS: Product[] = [
       "Raf coffee base — the signature creamy, lightly sweet profile, ready in one step.",
     image: "/images/tild3465-3139-4036-b037-343164383039__group_798.png",
     price: "38.74 AED",
-    backgroundColor: "#c8a887" /* hand-set — verify */,
+    backgroundColor: "#c8a887" ,
   },
   {
     slug: "cream-latte",
@@ -225,7 +162,7 @@ export const PRODUCTS: Product[] = [
       "Tea-based drink powders for cafés, bars and OEM projects, from classic black to green and herbal profiles.",
     image: "/images/tild3836-3861-4566-b132-313163316566__group_946.png",
     price: null,
-    backgroundColor: "#b7c9a6" /* hand-set — verify */,
+    backgroundColor: "#b7c9a6" ,
   },
   {
     slug: "topping",
@@ -241,9 +178,6 @@ export const PRODUCTS: Product[] = [
   {
     slug: "garnish",
     route: "/garnish",
-    /* The design names it in the singular and so does the pouch, where
-       GARNISH is printed across the front. The plural is production's own
-       heading, which stays whole one level down as `headline`. */
     name: "Garnish",
     headline: "Professional Garnishes for Beverages and Desserts",
     description:
@@ -274,12 +208,6 @@ export const PRODUCTS: Product[] = [
     price: null,
     backgroundColor: "#583d35",
   },
-  /*
-   * New ranges, with no Tilda page behind them: their routes are served by
-   * React alone (see `NATIVE_ROUTES` in `site-pages.ts`). The headline repeats
-   * the name, so no ranking sentence is drawn under it — there is none to keep.
-   * Colours are the catalogue plate's own wash (`tile-<slug>.webp`).
-   */
   {
     slug: "puree",
     route: "/puree",
@@ -287,7 +215,7 @@ export const PRODUCTS: Product[] = [
     headline: "Purées",
     description:
       "Six fruit purées for smoothies, lemonades, iced teas, cocktails and desserts. Real fruit texture, ready to pour.",
-    image: "/images/pack-puree.webp",
+    image: null,
     price: null,
     backgroundColor: "#edb48c",
   },
@@ -298,7 +226,7 @@ export const PRODUCTS: Product[] = [
     headline: "Sauces",
     description:
       "Caramel, chocolate and white chocolate sauces for coffee, cold drinks and desserts.",
-    image: "/images/pack-sauce.webp",
+    image: null,
     price: null,
     backgroundColor: "#d3a877",
   },
@@ -309,7 +237,7 @@ export const PRODUCTS: Product[] = [
     headline: "Colour Collection",
     description:
       "Five natural powders for beverage menus. One ingredient in every tin, nothing added.",
-    image: "/images/pack-colour-collection.webp",
+    image: "/images/products/colour-collection/tin-butterfly-pea-560.webp",
     price: null,
     backgroundColor: "#afbaeb",
   },
@@ -320,9 +248,19 @@ export const PRODUCTS: Product[] = [
     headline: "Functional Add-ons",
     description:
       "Seven pre-dosed sticks that turn drinks already on your menu into functional ones.",
-    image: "/images/pack-add-ons.webp",
+    image: null,
     price: null,
     backgroundColor: "#c9c0e6",
+  },
+  {
+    slug: "electrolyte",
+    route: "/electrolyte",
+    name: "Electrolyte",
+    headline: "Electrolyte",
+    description: "Electrolyte powder drink in five flavours, no added sugar. Sticks, bar packs and 25 kg bulk.",
+    image: null,
+    price: null,
+    backgroundColor: "#F6F4F0",
   },
   {
     slug: "at-home",
@@ -331,28 +269,21 @@ export const PRODUCTS: Product[] = [
     headline: "At Home",
     description:
       "The same café recipes in 150 g pouches, for guests to make the drink at home.",
-    image: "/images/pack-at-home.webp",
+    image: "/images/products/at-home/matcha-blue-600.webp",
     price: null,
     backgroundColor: "#e5c3aa",
   },
 ];
 
-/**
- * Featured in the Bestsellers carousel, in order.
- *
- * Same five products, in the same order, as the hero slider running on
- * production today — the homepage changes how they are presented, not which
- * products it promotes.
- */
 export const BESTSELLER_SLUGS = [
-  "cream-latte",
-  "milkshake",
   "matcha",
+  "milkshake",
+  "raf-coffee",
   "iced-tea",
-  "cordial",
+  "chocolate",
+  "cream-latte",
 ] as const;
 
-/** The homepage mini-catalog shows at most four. */
 export const CATALOG_SLUGS = [
   "chai-latte",
   "cordial",

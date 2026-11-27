@@ -5,6 +5,7 @@ import {
   Hero,
   Info,
   Inside,
+  MarketingKitAction,
   Section,
   Shelf,
   Stats,
@@ -16,12 +17,6 @@ import {
 } from "../blocks";
 import type { ProductPageProps } from "../types";
 import local from "./Chocolate.module.css";
-
-/**
- * Hot chocolate ("Hot Chocolate · страница продукта", desktop 1440 / mobile 390).
- * Matcha's shape; the menu (title + kit beside three tiles) and the
- * three-chocolates cards are local because their layout differs.
- */
 
 const SLUG = "chocolate";
 
@@ -72,7 +67,7 @@ const faq = [
   },
 ];
 
-export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
+export function ChocolatePage({ product, assets }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 1000]);
   const serves = [
     { ...hero, alt: "Hot chocolate serve" },
@@ -93,19 +88,13 @@ export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
       }
     >
       <Hero
-        className={local.hero}
-        productName={product.name}
+        slug={product.slug}
         title="Hot chocolate"
-        headline={headline}
         lead={{
           desktop:
             "Rich, creamy hot chocolate for cafés, hotels and vending. Steam with milk and serve in 40 seconds, hot or iced.",
           mobile: "Rich, creamy and ready in 40 seconds, hot or iced.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 240px, 400px" alt="Hot chocolate" fetchPriority="high" />
-        }
       />
 
       <Section title="Made for service" label="Made for service">
@@ -128,16 +117,11 @@ export function ChocolatePage({ product, headline, assets }: ProductPageProps) {
             Ready for
             <br /> your menu
           </h2>
-          {assets.marketingKit && (
-            <div className={local.kit}>
-              <span className={local.kitTitle}>Marketing kit</span>
-              <span className={local.kitText}>Menu photos, delivery-app formats, descriptions in English and Arabic.</span>
-              <a href={assets.marketingKit} className={cx(styles.button, styles.red, local.kitButton)} download>
-                <span className={styles.desktopOnly}>Download kit</span>
-                <span className={styles.mobileOnly}>Download marketing kit</span>
-              </a>
-            </div>
-          )}
+          <div className={local.kit}>
+            <span className={local.kitTitle}>Marketing kit</span>
+            <span className={local.kitText}>Menu photos, delivery-app formats, descriptions in English and Arabic.</span>
+            <MarketingKitAction href={assets.marketingKit} className={local.kitButton} />
+          </div>
         </div>
         <div className={local.tiles}>
           {serves.map((tile, i) => (

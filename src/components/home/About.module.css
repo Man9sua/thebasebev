@@ -7,41 +7,7 @@
 
   padding: 0 0 clamp(4rem, 10vw, 9rem);
   overflow: clip;
-  font-family: var(--tbb-font-sans);
-}
-
-.stage {
-  --fade: clamp(3rem, 7vh, 5rem);
-
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1.903;
-  overflow: hidden;
-  background: var(--tbb-rd-ink);
-}
-
-.film {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  display: block;
-  width: 100%;
-  height: calc(100% / 0.934);
-  transform: translateY(-50%);
-  object-fit: cover;
-}
-
-.dissolve {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: var(--fade);
-  background: linear-gradient(
-    to bottom,
-    rgba(246, 246, 244, 0) 0%,
-    rgba(246, 246, 244, 0.55) 45%,
-    var(--tbb-rd-paper) 100%
-  );
-  pointer-events: none;
+  font-family: var(--tbb-font-body);
 }
 
 .inner {
@@ -53,10 +19,10 @@
 
 .title {
   margin: 0 !important;
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
 
   font-size: clamp(2.75rem, 8.3333vw, 7.5rem);
-  font-weight: 900 !important;
+  font-weight: var(--tbb-font-weight-heading) !important;
   line-height: 0.86 !important;
   letter-spacing: -0.02em !important;
   text-transform: uppercase;
@@ -105,13 +71,14 @@
   background: var(--tbb-rd-ink);
   color: #fff !important;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: var(--tbb-font-weight-button);
   letter-spacing: 0.1em;
   line-height: 1.1;
   text-transform: uppercase;
   text-decoration: none !important;
   white-space: nowrap;
   transition: background-color var(--tbb-dur-fast) var(--tbb-ease);
+  font-family: var(--tbb-font-button);
 }
 
 .cta:hover,
@@ -119,8 +86,14 @@
   background: var(--tbb-rd-red);
 }
 
-.facts {
+.factsBlock {
   grid-area: facts;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: clamp(1.5rem, 3.3333vw, 3rem);
@@ -135,10 +108,10 @@
 }
 
 .factValue {
-  font-family: var(--tbb-font-display);
+  font-family: var(--tbb-font-heading);
 
   font-size: clamp(2.25rem, 4.4444vw, 4rem);
-  font-weight: 900;
+  font-weight: var(--tbb-font-weight-heading);
   line-height: 0.9;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -155,7 +128,7 @@
   .body {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "copy" "facts" "cta";
-    row-gap: 4rem;
+    row-gap: 3rem;
   }
 
   .copy,
@@ -166,5 +139,11 @@
   .cta,
   .ctaBlock {
     width: 100%;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .section {
+    --gutter: 1.25rem;
   }
 }

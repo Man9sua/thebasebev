@@ -1,23 +1,11 @@
 "use client";
 
+import { brandCase } from "@/lib/brand";
 import Image from "next/image";
 import { PublicLink as Link } from "@/components/site/PublicLink";
 import { useMemo, useState } from "react";
 import { BLOG_POSTS, BLOG_TOPICS } from "@/data/blog";
 import styles from "./BlogPage.module.css";
-
-/**
- * `/resources/blog`.
- *
- * Built on the Glossary's shelf — the same paper, the same control panel, the
- * same card rhythm — because the two are siblings under Resources and the
- * owner asked for this one to read like that one. What it does not borrow is
- * the Glossary's card: a Blog post has a photograph, a date and a length, and
- * hiding those behind a title would make thirty articles look like one wall.
- *
- * The newest post is set as the lead card and drops back into the grid the
- * moment a filter is on, so the shelf never shows the same article twice.
- */
 
 type TopicFilter = "all" | string;
 
@@ -56,7 +44,6 @@ export function BlogPage() {
     <main className={styles.page} data-blog-page>
       <section className={styles.hero} aria-labelledby="blog-title">
         <div className={styles.heroInner}>
-          <span className="tbb-label">Resources / {BLOG_POSTS.length} articles</span>
           <h1 id="blog-title">Blog</h1>
           <p>
             Practical guidance on beverage bases and B2B supply for cafés, restaurants and
@@ -141,7 +128,7 @@ export function BlogPage() {
                 <time dateTime={lead.published}>{displayDate(lead.published)}</time>
               </span>
               <h2>{lead.title}</h2>
-              <span className={styles.excerpt}>{lead.excerpt}</span>
+              <span className={styles.excerpt}>{brandCase(lead.excerpt)}</span>
               <span className={styles.readMore}>
                 Read article <span aria-hidden="true">→</span>
               </span>
@@ -178,7 +165,7 @@ export function BlogPage() {
                     <time dateTime={post.published}>{displayDate(post.published)}</time>
                   </span>
                   <h2>{post.title}</h2>
-                  <span className={styles.excerpt}>{post.excerpt}</span>
+                  <span className={styles.excerpt}>{brandCase(post.excerpt)}</span>
                   <span className={styles.readMore}>
                     Read article <span aria-hidden="true">→</span>
                   </span>

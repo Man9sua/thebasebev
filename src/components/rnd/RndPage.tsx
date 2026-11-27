@@ -1,51 +1,14 @@
+import Image from "next/image";
 import { PageAnchor } from "@/components/site/PageAnchor";
 import { SiteLink } from "@/components/site/SiteLink";
 import styles from "./RndPage.module.css";
 
-/**
- * R&D and product development, rebuilt to the redesign document.
- *
- * The page it replaces said most things twice — three product families once as
- * "16 Product Lines" and again under "Our Beverage Development Services", the
- * fourteen-day timeline once as "14 Days to Commercial Reality" and again as
- * "Your Journey From Concept to Commercialization" — and the redesign folds
- * each pair into one block. Six blocks now where there were eight, and the
- * page is two screens shorter.
- *
- * Three changes matter beyond layout:
- *
- * - **The page says development is paid.** The old one offered a complimentary
- *   sample box and a free R&D audit on the same page it sold formulation work.
- *   The two are separated now: the call is free, the range's samples are free,
- *   the development is quoted, and the fee is credited to the first production
- *   order. That is said in the hero, again in the process block, and again
- *   above the form, so nobody reaches a call expecting otherwise.
- * - **The invented percentages are gone.** "40% cost reduction", "50% savings
- *   on logistics", "60% time saved" had no measurement behind them, and one
- *   unverifiable figure costs a B2B reader the whole page. What replaces them
- *   is three things the lab actually hands over: a cost per cup, a one-step
- *   build, and storage without a cold chain. The document's note says to bring
- *   figures back when there are two or three client measurements to cite.
- * - **The `h1` is short.** "Your recipe. Our lab." rather than the keyword
- *   phrase, which stays in the `<title>` and in the lede. See the entry in
- *   `H1_NOT_PRESERVED` in `scripts/audit-seo-parity.mjs`.
- *
- * The form keeps its id and its `tildaspec-formname`, so leads from here reach
- * the sales team under the name `LEGACY_FORM_NAMES` already routes them by.
- *
- * The photography is the page's own, still stock and still flagged by the
- * document as needing a real shoot of the Dubai lab. It is kept rather than
- * removed so the layout can be judged with pictures in it.
- */
-
-/** The three conditions under the hero's buttons. */
 const HERO_TERMS = [
   { title: "Paid development", body: "Fee credited to your first order" },
   { title: "You own the formula", body: "Full rights after sign-off" },
   { title: "Made in our plant", body: "From lab batch to production" },
 ];
 
-/** What every formula leaves the lab with. Replaces the three percentages. */
 const VALUE = [
   {
     title: "Cost per cup",
@@ -62,10 +25,6 @@ const VALUE = [
   },
 ];
 
-/**
- * The three platforms development starts from — the reason it takes weeks
- * rather than months, and the reason it can be quoted at all.
- */
 const BASES = [
   {
     title: "Powder bases",
@@ -106,7 +65,6 @@ const PROCESS = [
   },
 ];
 
-/** The compliance block, folded into the lab block as four checkable facts. */
 const LAB_FACTS = [
   { value: "Halal", body: "Certified across the full range" },
   { value: "HACCP", body: "Audited food safety system" },
@@ -114,29 +72,27 @@ const LAB_FACTS = [
   { value: "Export", body: "Documents for 26 markets" },
 ];
 
-/** What happens after the brief is sent. */
 const BRIEF_STEPS = [
   { title: "Brief call", body: "30 minutes with a technologist, free of charge." },
   { title: "Proposal", body: "Scope, development fee and timeline in writing." },
   { title: "Lab work", body: "Starts after sign-off. The fee is credited to your first order." },
 ];
 
-/** The project-type chips on the form. The first is selected by default. */
 const PROJECT_TYPES = ["Custom formula", "Private label", "Reformulation"];
 
 export function RndPage() {
   return (
     <main className={styles.page}>
       <section className={styles.hero} aria-labelledby="rnd-title" data-hero>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className={styles.heroPhoto}
+        <Image
+          className={styles.heroMedia}
           src="/images/tild3065-6636-4439-a430-386130353062__photo-1630959305790-.jpg"
-          alt="Technician at a microscope in THE BASE laboratory"
-          fetchPriority="high"
+          alt="Laboratory technician examining a sample through a microscope"
+          width={1680}
+          height={1092}
+          sizes="(max-width: 1023px) 100vw, 75vw"
+          preload
         />
-        <span className={styles.heroVeil} aria-hidden="true" />
-
         <div className={styles.heroInner}>
           <h1 id="rnd-title" className={styles.heroTitle}>
             Your recipe.
@@ -149,8 +105,6 @@ export function RndPage() {
           </p>
 
           <div className={styles.heroActions}>
-            {/* A bare `#rnd-form` resolved against `<base href="/">` and sent
-                the reader to the home page — see `PageAnchor`. */}
             <PageAnchor route="/rnd" target="rnd-form" className={styles.primary}>
               Start a brief
             </PageAnchor>
@@ -230,9 +184,6 @@ export function RndPage() {
         </div>
       </section>
 
-      {/* One process block where the page had a timeline and a services list
-          saying the same four things. The banner at its foot is where the page
-          states the commercial terms. */}
       <section className={styles.process} id="rnd-process" aria-labelledby="rnd-process-title">
         <div className={styles.inner}>
           <div className={styles.sectionHead}>
@@ -274,21 +225,14 @@ export function RndPage() {
         </div>
       </section>
 
-      {/* The lab and what certifies it, in one block — the page used to carry
-          them as two, and the second was four sentences of "highest standards"
-          with no standard named. */}
       <section className={styles.lab} aria-labelledby="rnd-lab">
         <div className={styles.labInner}>
           <span className={styles.labMedia}>
-            {/* Stock, and flagged as such in the design document: a bottling
-                line is the wrong picture for a powder plant. Kept until the
-                real shoot of the Dubai lab exists. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/tild6565-3533-4465-b561-303337656436__photo-1530037335614-.jpg"
-              alt="THE BASE production facility in Dubai"
-              loading="lazy"
-              decoding="async"
+            <Image
+              src="/images/tild6261-3964-4535-b037-643166626332__rectangle_1134_1.jpg"
+              alt="the Base branded laboratory room render with tasting workstations"
+              fill
+              sizes="(max-width: 63.9375rem) 92vw, 35rem"
             />
           </span>
 
@@ -339,22 +283,12 @@ export function RndPage() {
               ))}
             </ol>
 
-            {/*
-              The one place the free sample box still lives, and it is the
-              existing range rather than a development project — which is the
-              distinction the old page collapsed.
-            */}
-            <SiteLink href="/contacts" className={styles.briefAside}>
+            <SiteLink href="/request-samples" className={styles.briefAside}>
               Only need samples of our existing range? Request a sample box{" "}
               <span aria-hidden="true">→</span>
             </SiteLink>
           </div>
 
-          {/*
-            The page's own form, kept whole: same id and same
-            `tildaspec-formname`, so a lead from here reaches the sales team
-            under the name it always has — see `LEGACY_FORM_NAMES`.
-          */}
           <form
             id="form861442702"
             className={`t-form js-form-proccess ${styles.formCard}`}
@@ -390,12 +324,6 @@ export function RndPage() {
                 <input name="country" type="text" autoComplete="country-name" required />
               </label>
 
-              {/*
-                The project type rides `product` — the field the lead pipeline
-                already carries for "what is this enquiry about", validated in
-                `lib/leads.ts` and mapped in `lib/lead-forms.ts`. Same treatment
-                as the tier chips on `/distributors`.
-              */}
               <fieldset className={styles.chips}>
                 <legend>Project type</legend>
                 <div className={styles.chipRow}>
@@ -426,7 +354,7 @@ export function RndPage() {
               <label className={styles.consent}>
                 <input name="privacy-consent" type="checkbox" required />
                 <span>
-                  I consent to THE BASE processing this inquiry as described in the{" "}
+                  I consent to the Base processing this inquiry as described in the{" "}
                   <SiteLink href="/privacy">Privacy Policy</SiteLink>.
                 </span>
               </label>
@@ -447,7 +375,7 @@ export function RndPage() {
               className={`js-successbox t-form__successbox ${styles.success}`}
               style={{ display: "none" }}
             >
-              Thank you. Your brief has been sent to THE BASE R&amp;D team.
+              Thank you. Your brief has been sent to the Base R&amp;D team.
             </div>
           </form>
         </div>

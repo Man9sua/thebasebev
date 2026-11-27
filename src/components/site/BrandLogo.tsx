@@ -1,18 +1,3 @@
-/**
- * THE BASE lockup: the small  in , the block and the
- * letters cut out of it. The mark's own two colours are variables with the
- * brand's values as defaults, so a surface that needs the lockup quiet — the
- * footer's closing watermark — can recolour all three without a second asset.
- */
-/**
- * THE BASE lockup: the small `the` drawn in `currentColor`, the red block, and
- * the letters cut out of it.
- *
- * The mark's own two colours are custom properties with the brand's values as
- * defaults, so a surface that needs the lockup quiet — the footer closes on it
- * as a watermark — can recolour all three without a second asset. Nothing that
- * does not set them sees any change.
- */
 export function BrandLogo({ className }: { className?: string }) {
   return (
     <svg

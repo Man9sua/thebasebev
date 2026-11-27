@@ -1,6 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
+import { AnimatedDetails } from "../AnimatedDetails";
 import {
   DistributorLink,
+  FaqSchema,
   FlavourEnquiryLink,
   Hero,
   SampleButton,
@@ -16,21 +18,10 @@ import {
 import type { ProductPageProps } from "../types";
 import s from "./Jam.module.css";
 
-/**
- * Jam ("Jam · страница продукта целиком", desktop 1440 / mobile 390).
- * A newer design generation than matcha: six small service cards, tall
- * prepare cards, colour flavour cards with "New" badges, a simplified
- * "Inside the pack", a plain FAQ and a closing "Try it on your menu" band.
- * Sugar free shares that generation, so its pieces are exported from here.
- */
-
 const SLUG = "jam";
 
 export { s as jamStyles };
 
-/* ---------------- shared pieces of this generation ---------------- */
-
-/** The black "Your own flavour / blend" band under a flavour grid; opens the custom-flavour form. */
 export function RndBand({ name, text }: { name: ReactNode; text: ReactNode }) {
   return (
     <div className={s.band}>
@@ -45,7 +36,6 @@ export function RndBand({ name, text }: { name: ReactNode; text: ReactNode }) {
 
 export type Fact = { label: string; value: string };
 
-/** "Inside the pack" without tabs or %DV: a caption, two-column facts and the side cards. */
 export function SimpleInside({
   caption,
   mobileCaption,
@@ -93,31 +83,26 @@ export function ShelfCard({ value = "18 months", text, mobileText }: { value?: R
   );
 }
 
-/** The FAQ of this generation: the heading alone on the left, every question on the phone, no buttons. */
 export function PlainFaq({ items }: { items: Question[] }) {
   return (
     <section className={s.faq} aria-labelledby="product-faq-title">
+      <FaqSchema items={items} />
       <h2 id="product-faq-title" className={styles.title}>
         Questions
       </h2>
       <div className={s.faqList}>
         {items.map((item, i) => (
-          <details key={i} className={s.faqItem} open={i === 0}>
-            <summary className={s.faqQ}>
-              {item.q}
-              <span className={s.plus} aria-hidden="true">
-                +
-              </span>
-            </summary>
+          <AnimatedDetails key={i} className={s.faqItem} summaryClassName={s.faqQ} initiallyOpen={i === 0}
+            summary={<>{item.q}<span className={s.plus} aria-hidden="true">+</span></>}
+          >
             <p className={s.faqA}>{item.a}</p>
-          </details>
+          </AnimatedDetails>
         ))}
       </div>
     </section>
   );
 }
 
-/** The closing band: sample + distributor on desktop, the sample button alone on the phone. */
 export function TryBand({ productName, text, style }: { productName: string; text: ReactNode; style?: CSSProperties }) {
   return (
     <section className={s.try} style={style} aria-labelledby="product-try-title">
@@ -136,8 +121,6 @@ export function TryBand({ productName, text, style }: { productName: string; tex
     </section>
   );
 }
-
-/* ---------------- jam ---------------- */
 
 const flavours = [
   { name: "Strawberry Watermelon", color: "#E8B4B0" },
@@ -171,7 +154,7 @@ const faq: Question[] = [
   { q: "Can you develop a flavour only for us?", a: "Yes. Our R&D lab develops flavours for your menu or your own label." },
 ];
 
-export function JamPage({ product, headline }: ProductPageProps) {
+export function JamPage({ product }: ProductPageProps) {
   const hero = productImage(SLUG, "hero", [600, 800]);
   const serves = [
     { ...hero, alt: "Fruit tea made with the Jam base" },
@@ -191,19 +174,12 @@ export function JamPage({ product, headline }: ProductPageProps) {
       }
     >
       <Hero
-        className={cx(s.hero, s.darkActions)}
-        mediaClassName={s.fill}
-        productName={product.name}
+        slug={product.slug}
         title="Jam"
-        headline={headline}
         lead={{
           desktop:
             "A dry fruit tea base with real fruit juice and black tea. Add hot water and serve, then finish with fresh fruit or herbs for your own signature tea.",
         }}
-        image={
-          // eslint-disable-next-line @next/next/no-img-element
-          <img {...hero} sizes="(max-width: 1023px) 366px, 560px" alt="Fruit tea made with the Jam base" fetchPriority="high" />
-        }
       />
 
       <Section className={s.gap40} title="Made for service" label="Made for service">
@@ -246,7 +222,7 @@ export function JamPage({ product, headline }: ProductPageProps) {
         <div className={s.flavours}>
           {flavours.map((flavour) => (
             <div key={flavour.name} className={s.flavour} style={{ background: flavour.color }}>
-              {flavour.isNew ? <span className={s.badge}>New</span> : <span />}
+              {flavour.isNew && <span className={s.badge}>New</span>}
               <span className={s.flavourName}>{flavour.name}</span>
             </div>
           ))}
@@ -255,7 +231,7 @@ export function JamPage({ product, headline }: ProductPageProps) {
       </Section>
 
       <SimpleInside
-        caption="Per 15 g serve · Strawberry Watermelon"
+        caption="Per 15 g serve"
         mobileCaption="Per 15 g serve"
         facts={facts}
         side={

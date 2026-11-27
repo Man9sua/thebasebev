@@ -1,18 +1,3 @@
-/**
- * THE BASE, stacked: `the` turned on its side beside a tall block with BASE
- * broken across two rows, BA over SE.
- *
- * The owner's own artwork — `SITE/Vector.svg` from `THE_BASE (10).zip` —
- * replacing the reconstruction this file used to carry, which arranged the
- * landscape lockup's paths under transforms because an SVG path cannot reflow.
- * The real drawing is not that: the block is one shape with the letters and
- * the sweep cut out of it, so there is nothing to recolour separately and
- * nothing that has to be stretched to fit.
- *
- * One colour, from `currentColor`. Whatever is behind shows through the
- * letters, which is exactly what the footer's watermark wants — the ground
- * reads as the letterforms, with no second fill to keep in step.
- */
 export function BrandMarkStacked({ className }: { className?: string }) {
   return (
     <svg

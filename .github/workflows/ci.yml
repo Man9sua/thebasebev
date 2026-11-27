@@ -3,8 +3,7 @@ name: CI
 on:
   pull_request:
     branches: [main, develop]
-  push:
-    branches: [main, develop]
+  workflow_call:
 
 permissions:
   contents: read
@@ -27,10 +26,13 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm run check:eslint-glob
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run audit:leads
       - run: npm run test:stripe
+      - run: npm run test:shop
+      - run: npm run test:country-routing
       - run: npm run build
       - run: npm run check:assets
       - run: npm audit --audit-level=high
@@ -51,6 +53,3 @@ jobs:
           npm run smoke:http -- http://127.0.0.1:3000
           npm run audit:routes -- http://127.0.0.1:3000 /tmp/route-indexability-audit.md
           npm run audit:analytics -- http://127.0.0.1:3000 /tmp/analytics-audit.md
-
-# Deliberately no deployment job. Staging and production-preview deployment are
-# human-controlled until the migration and custom-domain cutover are approved.
