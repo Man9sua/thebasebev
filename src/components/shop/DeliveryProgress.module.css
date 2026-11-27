@@ -1,0 +1,5 @@
+.progress { padding: 20px 24px; border-radius: 18px; background: #f4f1ee; }
+.progress p { margin: 0 0 12px !important; color: #141212; font-size: 15px; font-weight: var(--tbb-font-weight-button); line-height: 1.4 !important; }
+.track { height: 7px; overflow: hidden; border-radius: 999px; background: #e2ddda; }
+.track span { display: block; height: 100%; border-radius: inherit; background: #326b43; transition: width 180ms ease; }
+@media (prefers-reduced-motion: reduce) { .track span { transition: none; } }

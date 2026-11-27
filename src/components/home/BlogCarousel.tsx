@@ -1,24 +1,66 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HOMEPAGE_ENTRIES } from "@/data/posts";
+import { SiteLink } from "@/components/site/SiteLink";
+import { BLOG_POSTS } from "@/data/blog";
+import { PRODUCTS } from "@/data/products";
 import styles from "./BlogCarousel.module.css";
 
-/**
- * Horizontal editorial rail.
- *
- * Built on a native `overflow-x` scroller with snap points rather than a
- * transform-driven track. Trackpad, touch, keyboard, scrollbar and browser
- * find-on-page all keep working, and — importantly — a vertical wheel over the
- * rail still scrolls the page instead of being captured. `data-native-scroll`
- * additionally tells SmoothScroll to leave this element alone.
- *
- * Drag-to-scroll is layered on top for mouse users, and is careful to let a
- * click through when the pointer barely moved.
- */
+type Entry = {
+  href: string;
+  category: string;
+  title: string;
+  summary: string;
+  image: string | null;
+  imageAlt?: string;
+};
 
-/** Beyond this, a press counts as a drag and the click is suppressed. */
+const GUIDES: Entry[] = [
+  {
+    href: "/rnd",
+    category: "R&D",
+    title: "Beverage R&D and Product Development",
+    summary:
+      "Custom beverage R&D in Dubai: recipe development, flavour matching and pilot batches for HoReCa and private label.",
+    image: "/images/about/showroom-1312.webp",
+  },
+  {
+    href: "/resources/tools",
+    category: "Tools",
+    title: "HoReCa Cost Calculator",
+    summary:
+      "Estimate ingredient costs, portion pricing and margins for cafés and restaurants.",
+    image: "/images/blog/tild3033-6163-4366-b233-623166643334__468dc009fff526f3ac11.webp",
+    imageAlt: "Barista working at a point-of-sale terminal in a café",
+  },
+  {
+    href: "/private-labeling",
+    category: "Service",
+    title: "Private Label & Wholesale Premixes",
+    summary:
+      `Beverage premixes under your own brand: ${PRODUCTS.length} product lines, custom development and contract manufacturing.`,
+    image: "/images/tild3061-3436-4265-b762-383638623261__apron.jpg",
+  },
+  {
+    href: "/resources/glossary",
+    category: "Reference",
+    title: "Beverage Glossary",
+    summary:
+      "Definitions of key beverage and HoReCa supply terms, from base powders to garnishes.",
+    image: "/images/tild3161-3138-4736-b333-353231303039__photo-1447933601403-.jpg",
+  },
+];
+
+const LATEST: Entry[] = BLOG_POSTS.slice(0, 1).map((post) => ({
+  href: post.path,
+  category: post.topic.label,
+  title: post.title,
+  summary: post.excerpt,
+  image: post.cover?.src ?? null,
+}));
+
+const ENTRIES: Entry[] = [...GUIDES, ...LATEST];
+
 const DRAG_THRESHOLD_PX = 6;
 
 function Arrow({ back = false }: { back?: boolean }) {
@@ -51,12 +93,6 @@ export function BlogCarousel() {
     if (thumbRef.current) {
       const visible = rail.clientWidth / rail.scrollWidth;
       const offset = max > 0 ? rail.scrollLeft / max : 0;
-      // The thumb is full-width and scaled down, so it shows how much of the
-      // list is on screen. A percentage translate resolves against the
-      // unscaled box, which is the full track — so the travel is simply the
-      // share of the track the thumb does not occupy.
-      // Written straight to style: this runs on every scroll frame and must
-      // not re-render the list.
       thumbRef.current.style.transform = `translate3d(${(
         offset *
         (1 - visible) *
@@ -88,11 +124,9 @@ export function BlogCarousel() {
     rail.scrollBy({ left: step * direction, behavior: "smooth" });
   };
 
-  // --- drag to scroll ---
   const drag = useRef({ active: false, startX: 0, startLeft: 0, moved: 0 });
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    // Touch already scrolls natively; hijacking it would fight the browser.
     if (event.pointerType === "touch") return;
     const rail = railRef.current;
     if (!rail) return;
@@ -103,10 +137,6 @@ export function BlogCarousel() {
       startLeft: rail.scrollLeft,
       moved: 0,
     };
-    // Deliberately no setPointerCapture here. Capturing on pointerdown
-    // retargets the following `click` to the rail instead of the card, so
-    // every blog link silently stopped navigating. Capture is taken below,
-    // only once the pointer has actually moved far enough to be a drag.
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -121,9 +151,6 @@ export function BlogCarousel() {
     if (!rail.hasPointerCapture(event.pointerId)) {
       rail.setPointerCapture(event.pointerId);
       setDragging(true);
-      // Snapping has to be off *this frame*. Waiting for the state-driven
-      // class meant mandatory snap pulled every scrollLeft write straight back
-      // to the nearest card, so the rail never moved.
       rail.style.scrollSnapType = "none";
     }
     rail.scrollLeft = drag.current.startLeft - delta;
@@ -138,11 +165,9 @@ export function BlogCarousel() {
     if (rail?.hasPointerCapture(event.pointerId)) {
       rail.releasePointerCapture(event.pointerId);
     }
-    // Hand snapping back so the rail settles on a card.
     if (rail) rail.style.scrollSnapType = "";
   };
 
-  // A drag that ends over a card must not also open it.
   const onClickCapture = (event: React.MouseEvent) => {
     if (drag.current.moved > DRAG_THRESHOLD_PX) {
       event.preventDefault();
@@ -154,32 +179,34 @@ export function BlogCarousel() {
   return (
     <section className={styles.section} aria-labelledby="reading-title">
       <div className={styles.head}>
-        <div>
-          <span className="tbb-label">Reading</span>
-          <h2 id="reading-title" className={styles.title}>
-            Guides, tools and market notes
-          </h2>
-        </div>
+        <h2 id="reading-title" className={styles.title}>
+          Guides and tools
+        </h2>
 
         <div className={styles.controls}>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => scrollByCard(-1)}
-            disabled={atStart}
-            aria-label="Scroll left"
-          >
-            <Arrow back />
-          </button>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => scrollByCard(1)}
-            disabled={atEnd}
-            aria-label="Scroll right"
-          >
-            <Arrow />
-          </button>
+          <SiteLink href="/resources" className={styles.all}>
+            All resources
+          </SiteLink>
+          <div className={styles.arrows}>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => scrollByCard(-1)}
+              disabled={atStart}
+              aria-label="Scroll left"
+            >
+              <Arrow back />
+            </button>
+            <button
+              type="button"
+              className={styles.arrow}
+              onClick={() => scrollByCard(1)}
+              disabled={atEnd}
+              aria-label="Scroll right"
+            >
+              <Arrow />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -187,9 +214,6 @@ export function BlogCarousel() {
         ref={railRef}
         className={`${styles.rail} ${dragging ? styles.dragging : ""}`}
         data-native-scroll
-        // Cards are links, and pressing then moving on a link starts a native
-        // link drag, which kills the pointer stream mid-gesture. Suppressing
-        // dragstart keeps drag-to-scroll alive without touching click.
         onDragStart={(event) => event.preventDefault()}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -197,38 +221,28 @@ export function BlogCarousel() {
         onPointerCancel={endDrag}
         onClickCapture={onClickCapture}
       >
-        {HOMEPAGE_ENTRIES.map((entry) => (
-          <Link key={entry.href} href={entry.href} className={styles.card} data-card>
+        {ENTRIES.map((entry) => (
+          <SiteLink key={entry.href} href={entry.href} className={styles.card} data-card>
             <span className={styles.frame}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className={styles.media}
-                src={entry.image}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-              />
-              <span className={styles.scrim} aria-hidden="true" />
-              <span className={styles.overlay}>
-                <span className={`tbb-label ${styles.category}`}>{entry.category}</span>
-                <span className={styles.cardTitle}>{entry.title}</span>
-              </span>
-            </span>
-
-            <span className={styles.summary}>
-              {entry.summary}
-              {entry.date && (
-                <time className={`tbb-label ${styles.date}`} dateTime={entry.date}>
-                  {new Date(entry.date).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </time>
+              {entry.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className={styles.media}
+                  src={entry.image}
+                  alt={entry.imageAlt ?? ""}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                />
               )}
             </span>
-          </Link>
+
+            <span className={styles.copy}>
+              <span className={styles.category}>{entry.category}</span>
+              <span className={styles.cardTitle}>{entry.title}</span>
+              <span className={styles.summary}>{entry.summary}</span>
+            </span>
+          </SiteLink>
         ))}
       </div>
 

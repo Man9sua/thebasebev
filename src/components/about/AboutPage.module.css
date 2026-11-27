@@ -1,0 +1,88 @@
+.page {
+  --about-bg: var(--tbb-rd-paper);
+  --about-ink: var(--tbb-rd-ink);
+  --about-body: var(--tbb-rd-body);
+  --about-muted: #55524c;
+  --about-card: var(--tbb-rd-card);
+  --about-accent: var(--tbb-rd-red);
+  --about-map-fill: #e5e3df;
+  --about-max: 1440px;
+  --about-pad: min(96px, 6.667vw);
+  --about-section-gap: min(144px, 10vw);
+  overflow-x: clip;
+  background: var(--about-bg);
+  color: var(--about-ink);
+}
+.section { padding: clamp(72px, 10vw, 144px) var(--about-pad); }
+.inner { position: relative; z-index: 1; width: min(100%, 1248px); margin-inline: auto; }
+.section h2 { margin: 0; font-family: var(--tbb-font-heading); font-weight: var(--tbb-font-weight-heading); font-size: clamp(54px, 7.1vw, 104px); line-height: .9; letter-spacing: -.035em; text-transform: uppercase; }
+.section h3 { margin: 0; font-family: var(--tbb-font-heading); font-size: clamp(25px, 2.5vw, 36px); font-weight: var(--tbb-font-weight-subheading); line-height: 1; text-transform: uppercase; }
+.section p { color: #aaa8a2; font-size: 18px; line-height: 1.55; }
+.lab { background: #0e0e0e; color: #f6f6f4; }
+.labIntro { display: grid; grid-template-columns: 1.4fr .8fr; gap: 80px; align-items: end; }
+.labIntro h2 { max-width: 10ch; }
+.labPhotos { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-top: 64px; }
+.labPhotos img { display: block; width: 100%; height: 560px; object-fit: cover; border-radius: 28px; }
+.checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 64px; }
+.lab .checks > div { padding-top: 26px; border-top: 1px solid #292929; }
+.checks p { margin-top: 14px; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 28px; margin-top: 56px; }
+.primaryButton { display: inline-flex; min-height: 56px; align-items: center; justify-content: center; padding: 16px 32px; border-radius: 999px; background: #e3141b; color: #fff !important; font-size: 13px; font-weight: var(--tbb-font-weight-button); letter-spacing: .1em; line-height: 1.35; text-align: center; text-transform: uppercase; text-decoration: none; }
+.textLink { color: inherit !important; font-size: 14px; font-weight: 600; text-decoration: none; }
+.primaryButton:hover { background: #bc1016; }
+.primaryButton:focus-visible,.textLink:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.logistics { position: relative; overflow: hidden; background: #0b1018; color: #f6f6f4; }
+.truck { object-fit: cover; object-position: center; }
+.logistics::after { position: absolute; inset: 0; content: ''; background: linear-gradient(90deg, rgba(9,14,21,.9), rgba(9,14,21,.15)), linear-gradient(0deg, #0b1018, transparent 70%); }
+.logistics h2 { max-width: 11ch; }
+.logisticsLead { max-width: 48ch; margin-top: 32px; font-size: 21px !important; color: #c9c8c4 !important; }
+.logistics .checks { margin-top: 136px; }
+.logistics .checks p { color: #c9c8c4; }
+.manufacturing { background: #dedddd; }
+.manufacturing p { color: #55524c; }
+.manufacturingLead { max-width: 58ch; margin-top: 30px; font-size: 20px !important; }
+.packs { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 22px 32px; margin: 64px -40px; padding: 42px 64px; background: #d9d7d7; }
+.packs img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: contain; }
+.manufacturingDetails { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 48px; align-items: center; }
+.manufacturingDetails p { margin-top: 18px; }
+.brandImage { overflow: hidden; border-radius: 28px; background: #fff; }
+.brandImage img { display: block; width: 100%; height: 300px; object-fit: cover; }
+.partner { background: var(--tbb-rd-paper); }
+.partnerInner { display: grid; width: min(100%, 1248px); grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-inline: auto; }
+.partner h2 { font-size: clamp(42px, 5vw, 72px); }
+.partner p { color: #55524c; margin: 24px 0 30px; }
+.partner img { display: block; width: 100%; height: auto; border-radius: 28px; }
+@media(max-width:1023px) {
+  .page { --about-pad: clamp(20px, 5.128vw, 48px); --about-section-gap: 72px; }
+  .labIntro { gap: 40px; }
+  .labPhotos img { height: 420px; }
+  .packs { margin-inline: 0; padding: 24px; gap: 18px; }
+}
+@media(max-width:767px) {
+  .section h2 { font-size: clamp(42px, 12vw, 58px); }
+  .section h3 { font-size: 27px; }
+  .section p { font-size: 16px; }
+  .labIntro,.labPhotos,.checks,.manufacturingDetails,.partnerInner { grid-template-columns: 1fr; gap: 28px; }
+  .labIntro h2 { max-width: 11ch; }
+  .labPhotos { margin-top: 36px; }
+  .labPhotos img { height: auto; aspect-ratio: 1.15; border-radius: 22px; }
+  .checks { margin-top: 42px; }
+  .lab .checks > div { border: 0; padding: 0; }
+  .checks p { margin-top: 10px; }
+  .actions { margin-top: 38px; }
+  .actions .primaryButton { width: 100%; }
+  .actions .textLink { display: none; }
+  .logistics { padding-top: 370px; }
+  .truck { height: 440px !important; object-position: center top; }
+  .logistics::after { background: linear-gradient(0deg, #0b1018 calc(100% - 320px), transparent calc(100% - 480px)); }
+  .logistics h2 { max-width: 12ch; }
+  .logisticsLead { margin-top: 24px; font-size: 18px !important; }
+  .logistics .checks { margin-top: 48px; }
+  .packs { grid-template-columns: repeat(3,minmax(0,1fr)); margin: 36px -20px; padding: 24px; gap: 24px; }
+  .manufacturingLead { font-size: 17px !important; }
+  .brandImage { grid-row: 3; }
+  .brandImage img { height: 280px; }
+  .manufacturingDetails { gap: 32px; }
+  .manufacturingDetails p { margin-top: 12px; }
+  .partner h2 { font-size: 42px; }
+}

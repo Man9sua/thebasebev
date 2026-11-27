@@ -6,10 +6,14 @@ export default defineConfig([
   ...nextVitals,
   ...nextTypeScript,
   globalIgnores([
+    ".claude/worktrees/**",
     ".next/**",
     ".open-next/**",
+    ".wrangler/**",
+    ".audit-artifacts/**",
     "node_modules/**",
     "public/**",
     "tilda_export/**",
+    "output/**",
   ]),
 ]);

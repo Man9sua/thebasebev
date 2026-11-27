@@ -1,0 +1,46 @@
+.shell {
+  display: block;
+}
+
+.opensPage {
+  padding-top: var(--tbb-header-h);
+  font-family: var(--tbb-font-body);
+  color: var(--tbb-ink);
+  background: var(--tbb-paper);
+
+  --t-headline-font: var(--tbb-font-heading);
+  --t-text-font: var(--tbb-font-body);
+}
+
+.shell :global(.t-rec) {
+  scroll-margin-top: var(--tbb-header-h);
+}
+
+.runtimeOnly {
+  padding-top: 0;
+}
+
+main.shell.shell :global(.t-animate),
+main.shell.shell :global(.t-animate_wait),
+main.shell.shell :global(.t-animate_started) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  transition-delay: 0ms !important;
+}
+
+.product :global(h1),
+.product :global(h2),
+.product :global(h3),
+.product :global(.t-title),
+.product :global(.t-name) {
+  font-family: var(--tbb-font-heading) !important;
+}
+
+.product :global(.t-text),
+.product :global(.t-descr),
+.product :global(button),
+.product :global(input),
+.product :global(textarea) {
+  font-family: var(--tbb-font-body) !important;
+}

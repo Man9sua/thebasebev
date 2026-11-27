@@ -1,0 +1,16 @@
+export const productShadows: Record<string, string> = {
+  "raf-coffee": "#ccc4a7",
+  "cream-latte": "#ceaaa7",
+  "chai-latte": "#c2a899",
+  milkshake: "#dfa8b5",
+  frappe: "#996538",
+  "iced-tea": "#d6ba61",
+  cordial: "#8398b2",
+  topping: "#e9e6d9",
+  matcha: "#52a866",
+  chocolate: "#421f1b",
+  "sugar-syrup": "#dca597",
+  garnish: "#d8cab6",
+  vending: "#4e342e",
+  jam: "#3d060b",
+};

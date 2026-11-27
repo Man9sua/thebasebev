@@ -1,0 +1,11 @@
+@media (min-width: 1024px) {
+  .flavours > div {
+    min-height: calc(170 * var(--u));
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero h1 {
+    font-size: 56px;
+  }
+}

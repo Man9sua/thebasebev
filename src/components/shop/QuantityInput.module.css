@@ -1,0 +1,19 @@
+.input {
+  appearance: none;
+  box-sizing: content-box;
+  min-width: 0;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: var(--tbb-font-weight-button) 16px / 1 var(--tbb-font-body);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.input:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}

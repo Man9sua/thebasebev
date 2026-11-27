@@ -1,21 +1,43 @@
 import fs from "node:fs";
+import path from "node:path";
+import { readNativeRoutes } from "./native-routes.mjs";
 
 const productionOrigin = "https://thebasebev.com";
-const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
-const reportPath = process.argv[3] ?? "SEO_PARITY_REPORT.md";
+const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
+const reportPath = process.argv[3] ?? path.join(".audit-artifacts", "SEO_PARITY_REPORT.md");
 const previewTarget = new URL(targetOrigin).hostname.endsWith(".workers.dev");
+const glossaryContent = JSON.parse(fs.readFileSync("src/data/glossary-content.json", "utf8"));
+const blogContent = JSON.parse(fs.readFileSync("src/data/blog-content.json", "utf8"));
+const publicPath = (route) => route === "/" ? "/ae" : route.startsWith("/ae/") || route === "/ae" ? route : `/ae${route}`;
+const legacyPath = (route) => route === "/ae" ? "/" : route.replace(/^\/ae(?=\/)/, "");
+function publicUrl(value) {
+  try {
+    const url = new URL(value);
+    if (url.origin === productionOrigin) url.pathname = publicPath(url.pathname);
+    return url.toString();
+  } catch { return value; }
+}
+const expectedSitemapRoutes =
+  28 + readNativeRoutes().length + glossaryContent.entries.length + blogContent.posts.length;
+const addedRoutes = new Set(["/electrolyte", "/find-your-distributor", "/careers", "/request-samples", "/certificates", "/faq", "/cookie-policy"]);
 
 function decodeHtml(value = "") {
   return value
     .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&#x([\da-f]+);/gi, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, decimal) => String.fromCodePoint(Number(decimal)))
+    .replace(/&nbsp;/gi, " ")
     .replace(/&amp;/gi, "&")
-    .replace(/&quot;|&#34;/gi, '"')
-    .replace(/&#39;|&apos;/gi, "'")
-    .replace(/&ndash;|&#8211;/gi, "–")
-    .replace(/&mdash;|&#8212;/gi, "—")
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&ndash;/gi, "–")
+    .replace(/&mdash;/gi, "—")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function all(html, expression) {
+  return [...html.matchAll(expression)].map((match) => decodeHtml(match[1])).filter(Boolean);
 }
 
 function first(html, expression) {
@@ -72,10 +94,8 @@ function normalizeInternalLinks(html, responseOrigin) {
       const url = new URL(href, responseOrigin);
       if (!["thebasebev.com", "www.thebasebev.com", new URL(targetOrigin).hostname].includes(url.hostname)) continue;
       const pathname = url.pathname !== "/" ? url.pathname.replace(/\/$/, "") : "/";
-      links.add(`${pathname}${url.search}`);
+      links.add(`${responseOrigin === productionOrigin ? publicPath(pathname) : pathname}${url.search}`);
     } catch {
-      // Invalid source links are reported by the set difference below only
-      // when one side can normalize them.
     }
   }
   return [...links].sort();
@@ -100,8 +120,29 @@ function normalizeRobots(value) {
   return [...normalized].sort().join(",");
 }
 
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function fetchWithRetry(url, options = {}) {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    let response;
+    try {
+      response = await fetch(url, options);
+    } catch (error) {
+      if (error?.cause?.code !== "ECONNRESET" || attempt === 5) throw error;
+      console.warn(`Retrying connection reset (${attempt}/5): ${url}`);
+      await delay(attempt * 1_000);
+      continue;
+    }
+    const retryable = response.status === 404 || response.status === 429 || response.status >= 500;
+    if (!retryable || attempt === 5) return response;
+    await response.arrayBuffer();
+    await delay(attempt * 1_000);
+  }
+  throw new Error(`Unreachable retry state for ${url}`);
+}
+
 async function fetchSnapshot(origin, route) {
-  const response = await fetch(`${origin}${route === "/" ? "/" : route}`, {
+  const response = await fetchWithRetry(`${origin}${route === "/" ? "/" : route}`, {
     redirect: "manual",
     headers: {
       "User-Agent": "THE-BASE-SEO-Parity-Audit/1.0",
@@ -115,6 +156,7 @@ async function fetchSnapshot(origin, route) {
     title: first(html, /<title[^>]*>([\s\S]*?)<\/title>/i),
     description: meta(html, "description"),
     h1: first(html, /<h1\b[^>]*>([\s\S]*?)<\/h1>/i),
+    h2: all(html, /<h2\b[^>]*>([\s\S]*?)<\/h2>/gi),
     canonical: canonical(html),
     robots: meta(html, "robots"),
     jsonLdTypes: structuredDataTypes(html),
@@ -130,7 +172,7 @@ async function fetchSnapshot(origin, route) {
   };
 }
 
-const sitemapResponse = await fetch(`${targetOrigin}/sitemap.xml`, {
+const sitemapResponse = await fetchWithRetry(`${targetOrigin}/sitemap.xml`, {
   headers: { "User-Agent": "THE-BASE-SEO-Parity-Audit/1.0" },
 });
 const sitemapXml = await sitemapResponse.text();
@@ -139,8 +181,14 @@ const routes = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => 
   return url.pathname !== "/" ? url.pathname.replace(/\/$/, "") : "/";
 });
 
-if (sitemapResponse.status !== 200 || routes.length !== 29 || new Set(routes).size !== 29) {
-  throw new Error(`Expected 29 unique target sitemap URLs, received ${routes.length}.`);
+if (
+  sitemapResponse.status !== 200 ||
+  routes.length !== expectedSitemapRoutes ||
+  new Set(routes).size !== expectedSitemapRoutes
+) {
+  throw new Error(
+    `Expected ${expectedSitemapRoutes} unique target sitemap URLs, received ${routes.length}.`,
+  );
 }
 
 const results = new Array(routes.length);
@@ -149,34 +197,147 @@ async function worker() {
   while (cursor < routes.length) {
     const index = cursor++;
     const route = routes[index];
-    const [production, target] = await Promise.all([
-      fetchSnapshot(productionOrigin, route),
-      fetchSnapshot(targetOrigin, route),
-    ]);
+    const production = addedRoutes.has(legacyPath(route)) ? null : await fetchSnapshot(productionOrigin, route);
+    await delay(500);
+    const target = await fetchSnapshot(targetOrigin, route);
     results[index] = { route, production, target };
+    await delay(500);
   }
 }
-await Promise.all(Array.from({ length: 4 }, () => worker()));
+await Promise.all(Array.from({ length: 1 }, () => worker()));
+
+const H1_NOT_PRESERVED = new Map([
+  ["/catalog", {
+    h1: "Catalogue",
+    target: "Shop",
+    reason: "The supplied shop HTML replaces the catalogue heading; its established URL, title, description and canonical are preserved",
+  }],
+  ["/private-labeling", {
+    h1: "Wholesale and Private Labeling",
+    target: "Your brand. Our craft.",
+    reason: "Latest supplied private-label design uses Your brand. Our craft.; title, description and canonical are preserved",
+  }],
+  ["/resources/tools", {
+    h1: "Tools for Menu Planning",
+    target: "Drink cost calculator",
+    reason: "Supplied cost calculator design uses Drink cost calculator; title, description and canonical are preserved",
+  }],
+  ["/resources", {
+    h1: "Resources for HORECA Professionals",
+    target: "Resources",
+    reason: "Supplied Resources hub uses the shorter Resources heading; existing article URLs and metadata are preserved",
+  }],
+  [
+    "/rnd",
+    {
+      h1: "Узнай свою дневную норму за 30 секунд",
+      reason:
+        "production h1 is a stray widget line, deliberately not carried over",
+    },
+  ],
+  [
+    "/",
+    {
+      h1: "Premium Cream Latte Bases",
+      reason:
+        'h1 is "Premium Beverage Bases"; production names one of sixteen ' +
+        "products in the homepage headline, and the ranking phrase " +
+        "Premium ... Bases is kept. The exemption ends by itself if " +
+        "production ever carries this wording too",
+    },
+  ],
+  [
+    "/about-us",
+    {
+      h1: "Who we are",
+      reason:
+        'h1 is the About redesign\'s "Ingredients for HoReCa"; production\'s ' +
+        '"Who we are" names nothing the page is found for, and the new line ' +
+        "names the category and the audience instead. " +
+        "Declared rather than kept as an h2: the redesign has no such heading, " +
+        "and a hidden one would be an exemption dressed up as markup",
+    },
+  ],
+  [
+    "/distributors",
+    {
+      h1: "Become a distributor of The Base",
+      reason:
+        'h1 is the Distributors redesign\'s "Become a distributor"; the brand ' +
+        "is in the logo two inches above it and in the title tag, so the " +
+        "trailing three words were repeating what the page already says. The " +
+        "ranking phrase — Become a distributor — is unchanged",
+    },
+  ],
+]);
+
+const GLOSSARY_BY_ROUTE = new Map(glossaryContent.entries.map((entry) => [publicPath(entry.path), entry]));
+function declaredGlossaryChange(route, production, field, productionValue, targetValue) {
+  const entry = GLOSSARY_BY_ROUTE.get(route);
+  if (!entry || production.status !== 200) return false;
+  if (field === "title" || field === "og:title") {
+    return Boolean(entry.seo.sourceTitle) && productionValue === entry.seo.sourceTitle && targetValue === entry.seo.title;
+  }
+  return !productionValue && targetValue === entry.seo.description;
+}
 
 const criticalFailures = [];
 const warnings = [];
+const declared = [];
 const rows = [];
 
 for (const { route, production, target } of results) {
   const issues = [];
+  if (!production) {
+    if (target.status !== 200) issues.push(`target status ${target.status}`);
+    if (!target.title || !target.description || !target.h1) issues.push("missing new-page metadata or h1");
+    if (target.canonical !== `${productionOrigin}${route}`) issues.push("new-page canonical mismatch");
+    if (/noindex/i.test(target.robots)) issues.push("public page has meta noindex");
+    if (previewTarget && !/noindex/i.test(target.xRobots)) issues.push("preview transport lacks noindex");
+    if (!target.jsonLdTypes.includes("BreadcrumbList") || !target.jsonLdTypes.includes("Organization")) issues.push("missing new-page structured data");
+    if (target.alt.missing) issues.push("missing image alt");
+    if (issues.length) criticalFailures.push(`${route}: ${issues.join(", ")}`);
+    declared.push(`${route}: new page supplied for this SEO review; not yet published in production`);
+    rows.push(`| \`${route}\` | new | ${target.status} | ${issues.length ? "FAIL" : "PASS"} | —/${target.links.length} | ${target.alt.total}/${target.alt.missing}/${target.alt.empty} | ${issues.join("; ") || "New-page SEO checks pass"} |`);
+    continue;
+  }
   if (production.status !== 200) issues.push(`production status ${production.status}`);
   if (target.status !== 200) issues.push(`target status ${target.status}`);
-  for (const field of ["title", "description", "h1", "canonical"]) {
-    if (production[field] !== target[field]) issues.push(`${field} mismatch`);
+  for (const field of ["title", "description", "canonical"]) {
+    if ((field === "canonical" ? publicUrl(production[field]) : production[field]) === target[field]) continue;
+    if (declaredGlossaryChange(route, production, field, production[field], target[field])) {
+      declared.push(`${route}: ${field} deliberately changed to "${target[field]}"`);
+    } else {
+      issues.push(`${field} mismatch`);
+    }
+  }
+
+  if (production.h1 !== target.h1) {
+    const exempt = H1_NOT_PRESERVED.get(legacyPath(route));
+    if (exempt && exempt.h1 === production.h1 && (!exempt.target || exempt.target === target.h1)) {
+      declared.push(`${route}: ${exempt.reason}`);
+    } else if (production.h1 && target.h2.includes(production.h1)) {
+      declared.push(`${route}: h1 is now "${target.h1}"; production wording kept as h2`);
+    } else {
+      issues.push("h1 mismatch");
+    }
   }
   if (normalizeRobots(production.robots) !== normalizeRobots(target.robots)) {
     issues.push("robots/indexability mismatch");
   }
-  if (JSON.stringify(production.jsonLdTypes) !== JSON.stringify(target.jsonLdTypes)) {
-    issues.push("JSON-LD type mismatch");
+  const droppedTypes = production.jsonLdTypes.filter((type) => !target.jsonLdTypes.includes(type));
+  if (droppedTypes.length) {
+    issues.push(`JSON-LD types missing: ${droppedTypes.join(", ")}`);
+  } else if (JSON.stringify(production.jsonLdTypes) !== JSON.stringify(target.jsonLdTypes)) {
+    declared.push(`${route}: added schema types ${target.jsonLdTypes.filter((type) => !production.jsonLdTypes.includes(type)).join(", ")}`);
   }
   for (const field of ["title", "url", "type"]) {
-    if (production.openGraph[field] !== target.openGraph[field]) issues.push(`og:${field} mismatch`);
+    if ((field === "url" ? publicUrl(production.openGraph[field]) : production.openGraph[field]) === target.openGraph[field]) continue;
+    if (field === "title" && declaredGlossaryChange(route, production, "og:title", production.openGraph.title, target.openGraph.title)) {
+      declared.push(`${route}: og:title deliberately changed`);
+    } else {
+      issues.push(`og:${field} mismatch`);
+    }
   }
   if (
     production.openGraph.description &&
@@ -224,6 +385,7 @@ Generated: ${new Date().toISOString()}
 - Target: \`${targetOrigin}\`
 - Canonical public routes: ${routes.length}
 - Critical failures: ${criticalFailures.length}
+- Declared page/schema changes: ${declared.length}
 - Non-blocking link/alt observations: ${warnings.length}
 - Preview transport noindex expected: ${previewTarget ? "yes" : "no"}
 
@@ -237,11 +399,21 @@ ${rows.join("\n")}
 
 ${criticalFailures.length ? criticalFailures.map((item) => `- ${item}`).join("\n") : "- None."}
 
+## Declared page/schema changes
+
+Existing routes retain strict metadata, canonical and indexability comparison.
+H1 exceptions name the exact production text; new routes are checked independently
+because this branch publishes them only to staging. Added structured-data types
+are recorded; removal of any production schema type remains a failure.
+
+${declared.length ? declared.map((item) => `- ${item}`).join("\n") : "- None."}
+
 ## Non-blocking observations
 
 ${warnings.length ? warnings.map((item) => `- ${item}`).join("\n") : "- None."}
 `;
 
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (criticalFailures.length) {
@@ -250,5 +422,6 @@ if (criticalFailures.length) {
   process.exitCode = 1;
 } else {
   console.log(`SEO parity audit passed for ${routes.length} canonical routes; report written to ${reportPath}.`);
+  if (declared.length) console.log(`${declared.length} declared h1 changes; each is listed with its reason in the report.`);
   if (warnings.length) console.log(`${warnings.length} non-blocking link/alt observations are documented.`);
 }

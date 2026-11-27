@@ -1,0 +1,493 @@
+import Image from "next/image";
+import { PageAnchor } from "@/components/site/PageAnchor";
+import { SiteLink } from "@/components/site/SiteLink";
+import catalogTiles from "@/data/catalog-tiles.json";
+import { CATALOG_PRODUCTS } from "@/data/catalog";
+import styles from "./DistributorsPage.module.css";
+
+const tiles = catalogTiles as Record<string, { image: string; source: string }>;
+
+const REASONS = [
+  {
+    title: "Up to 40% margin",
+    body: "Distributor pricing on a range cafés reorder every week.",
+  },
+  {
+    title: "No cold chain",
+    body: "Ships and stores at room temperature. Lower logistics cost and no spoilage on the shelf.",
+  },
+  {
+    title: "18 months shelf life",
+    body: "Plan orders around your season, not around expiry dates.",
+  },
+  {
+    title: "Sales and marketing support",
+    body: "Digital materials, product training for your team and help with your first clients.",
+  },
+  {
+    title: "Certified",
+    body: "HACCP audited and Halal approved, with full export documentation.",
+  },
+  {
+    title: "Easy to use",
+    body: "Just add milk and espresso. Any barista gets it right on day one.",
+  },
+];
+
+const STEPS = [
+  {
+    title: "Place your first order",
+    body: "Get wholesale pricing and pick the product lines that fit your market.",
+  },
+  {
+    title: "Receive sales materials",
+    body: "Brochures, recipe cards and staff training: everything your team needs to sell.",
+  },
+  {
+    title: "Start selling",
+    body: "Supply cafés, restaurants, hotels and vending operators in your territory.",
+  },
+  {
+    title: "Grow your business",
+    body: "Move up the partnership tiers as volume grows and unlock better terms.",
+  },
+];
+
+const TIERS = [
+  {
+    name: "Starter",
+    entryLabel: "Minimum order",
+    entryValue: "MOQ 500 kg",
+    featured: false,
+    cta: "Apply",
+    items: ["Wholesale pricing", "Digital brochures", "Sample kit", "Email support"],
+  },
+  {
+    name: "Regional",
+    entryLabel: "Minimum order",
+    entryValue: "On volume plan",
+    featured: true,
+    cta: "Apply",
+    items: [
+      "Volume-based pricing",
+      "Full sales toolkit",
+      "Staff training included",
+      "Flexible order schedule",
+    ],
+  },
+  {
+    name: "Strategic",
+    entryLabel: "Requirement",
+    entryValue: "Your own sales department",
+    featured: false,
+    cta: "Apply for exclusivity",
+    items: [
+      "Territory rights by agreement",
+      "Best wholesale pricing",
+      "Priority production slots",
+      "Co-branded marketing",
+      "Dedicated manager",
+    ],
+  },
+];
+
+const STRIP_SLUGS = ["milkshake", "raf-coffee", "iced-tea", "matcha", "cordial", "chocolate"];
+const STRIP_PRODUCTS = STRIP_SLUGS.map((slug) => CATALOG_PRODUCTS.find((product) => product.slug === slug))
+  .filter((product) => product !== undefined)
+  .map((product) => ({
+    ...product,
+    rangeImage: tiles[product.slug]?.source === "illustration"
+      ? product.image
+      : tiles[product.slug]?.image ?? product.image,
+  }));
+
+const FORM_TIERS = ["Starter", "Regional", "Strategic"];
+const DEFAULT_TIER = "Regional";
+
+const FAQ = [
+  {
+    q: "What is the minimum first order?",
+    a: "MOQ is 500 kg, and you can mix it across product lines.",
+  },
+  {
+    q: "Do you offer exclusive territory rights?",
+    a: "Territory rights may be agreed on the Strategic tier after a pilot. We agree the territory, channels and product lines, alongside sales commitments and regular performance reviews.",
+  },
+  {
+    q: "Which documents come with a shipment?",
+    a: "Halal and HACCP certificates, certificate of origin, invoice and packing list for every shipment.",
+  },
+  {
+    q: "How long does delivery take?",
+    a: "It depends on your market. We confirm production and delivery time together with your wholesale quote.",
+  },
+  {
+    q: "Can we get samples before committing?",
+    a: "Yes. Every approved application receives a sample kit before the first order.",
+  },
+];
+
+export function DistributorsPage() {
+  return (
+    <main className={styles.page}>
+      <section className={styles.hero} aria-labelledby="dist-title" data-hero>
+        <span className={styles.heroFrame} aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className={styles.heroPhoto}
+            src="/images/distributors-hero-truck.webp"
+            srcSet="/images/distributors-hero-truck.webp 1280w, /images/distributors-hero-truck-2x.webp 2400w"
+            sizes="100vw"
+            alt=""
+            width={2400}
+            height={1696}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </span>
+        <span className={styles.heroVeil} aria-hidden="true" />
+
+        <div className={styles.heroInner}>
+          <h1 id="dist-title" className={styles.heroTitle}>
+            Become a distributor
+          </h1>
+
+          <div className={styles.heroFoot}>
+            <p className={styles.heroLede}>
+              {CATALOG_PRODUCTS.length} categories from our own plant in the UAE, 18 months shelf life, no
+              refrigeration. Built to move across 26 markets.
+            </p>
+            <div className={styles.heroActions}>
+              <PageAnchor
+                route="/distributors"
+                target="distributor-form"
+                className={styles.primary}
+              >
+                Apply for distribution
+              </PageAnchor>
+              <SiteLink href="/catalog" className={styles.ghost}>
+                View catalogue
+              </SiteLink>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.reasons} aria-labelledby="dist-reasons">
+        <div className={styles.reasonsInner}>
+          <div className={styles.reasonsAside}>
+            <h2 id="dist-reasons" className={styles.sectionTitle}>
+              Built for
+              <br />
+              distribution
+            </h2>
+            <div className={styles.reasonsActions}>
+              <PageAnchor
+                route="/distributors"
+                target="distributor-form"
+                className={styles.primary}
+              >
+                Apply for distribution
+              </PageAnchor>
+              <a
+                className={styles.outline}
+                href="https://calendly.com/thebasebev/the-base-presentation"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                Book a call
+              </a>
+            </div>
+          </div>
+
+          <ol className={styles.reasonGrid}>
+            {REASONS.map((reason, index) => (
+              <li key={reason.title} className={styles.reason}>
+                <span className={styles.reasonNumber} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className={styles.reasonTitle}>{reason.title}</h3>
+                <p className={styles.reasonBody}>{reason.body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className={styles.steps} aria-labelledby="dist-steps">
+        <div className={styles.inner}>
+          <h2 id="dist-steps" className={styles.sectionTitle}>
+            Four steps
+            <br />
+            to your first sale
+          </h2>
+
+          <ol className={styles.stepGrid}>
+            {STEPS.map((step, index) => (
+              <li key={step.title} className={styles.step}>
+                <span className={styles.stepNumber} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className={styles.stepTitle}>{step.title}</h3>
+                <p className={styles.stepBody}>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className={styles.tiers} aria-labelledby="dist-tiers">
+        <div className={styles.inner}>
+          <div className={styles.tiersHead}>
+            <h2 id="dist-tiers" className={styles.sectionTitle}>
+              Terms that grow
+              <br />
+              with your volume
+            </h2>
+            <p className={styles.sectionLede}>
+              Start where you are and move up when you are ready. Every tier includes wholesale
+              pricing and full documentation.
+            </p>
+          </div>
+
+          <div className={styles.tierGrid}>
+            {TIERS.map((tier) => (
+              <article
+                key={tier.name}
+                className={`${styles.tier} ${tier.featured ? styles.tierFeatured : ""}`}
+              >
+                <h3 className={styles.tierName}>{tier.name}</h3>
+
+                <div className={styles.tierEntry}>
+                  <span className={styles.tierEntryLabel}>{tier.entryLabel}</span>
+                  <span className={styles.tierEntryValue}>{tier.entryValue}</span>
+                </div>
+
+                <ul className={styles.tierItems}>
+                  {tier.items.map((item) => (
+                    <li key={item}>
+                      <span aria-hidden="true" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <PageAnchor
+                  route="/distributors"
+                  target="distributor-form"
+                  className={tier.featured ? styles.tierCtaFeatured : styles.tierCta}
+                >
+                  {tier.cta}
+                </PageAnchor>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.range} aria-labelledby="dist-range">
+        <div className={styles.inner}>
+          <div className={styles.rangeHead}>
+            <h2 id="dist-range" className={styles.sectionTitle}>
+              The range
+              <br />
+              you will carry
+            </h2>
+            <SiteLink href="/catalog" className={styles.rangeLink}>
+              See all {CATALOG_PRODUCTS.length} categories <span aria-hidden="true">→</span>
+            </SiteLink>
+          </div>
+
+          <div className={styles.rangeGrid}>
+            {STRIP_PRODUCTS.map((product) => (
+              <SiteLink key={product.slug} className={styles.rangeCard} href={product.route}>
+                <span className={styles.rangeMedia}>
+                  {product.rangeImage && <Image
+                    src={product.rangeImage}
+                    alt={`${product.name} beverage base by the Base`}
+                    fill
+                    sizes="(max-width: 47.9375rem) 46vw, (max-width: 63.9375rem) 31vw, 25vw"
+                    loading="lazy"
+                  />}
+                </span>
+                <span className={styles.rangeCategory}>{product.categoryLabel}</span>
+                <span className={styles.rangeName}>{product.name}</span>
+              </SiteLink>
+            ))}
+          </div>
+
+          <SiteLink href="/catalog" className={styles.rangeButton}>
+            See all {CATALOG_PRODUCTS.length} categories
+          </SiteLink>
+        </div>
+      </section>
+
+      <section className={styles.faq} aria-labelledby="dist-faq">
+        <div className={styles.faqInner}>
+          <div className={styles.faqCopy}>
+            <h2 id="dist-faq" className={styles.sectionTitle}>
+              Questions
+            </h2>
+            <p className={styles.sectionLede}>
+              Supply terms, minimums, certification and delivery. If your question is not here,
+              write to us and we will answer directly.
+            </p>
+            <a className={styles.faqLink} href="mailto:info@thebasebev.com">
+              Write to us <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <div className={styles.faqList}>
+            {FAQ.map((item, index) => (
+              <details key={item.q} className={styles.faqItem} open={index === 0}>
+                <summary className={styles.faqQuestion}>
+                  {item.q}
+                  <span className={styles.faqMark} aria-hidden="true" />
+                </summary>
+                <p className={styles.faqAnswer}>{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.form} id="distributor-form" aria-labelledby="dist-form-title">
+        <div className={styles.formInner}>
+          <div className={styles.formCopy}>
+            <h2 id="dist-form-title" className={styles.sectionTitle}>
+              Tell us <br className={styles.desktopOnly} />your market
+            </h2>
+            <p className={styles.sectionLede}>
+              <span className={styles.desktopOnly}>
+                Territory, the lines you want to carry and the volume you expect.{" "}
+              </span>
+              We come back within one business day with wholesale terms, documentation and a sample kit.
+            </p>
+
+            <div className={styles.formDirect}>
+              <div className={styles.formContact}>
+                <Image src="/images/gaukhar-ismailova.webp" alt="" width={72} height={72} />
+                <div>
+                  <strong>Gaukhar Ismailova</strong>
+                  <span>Business Developer</span>
+                </div>
+              </div>
+              <div className={styles.formLinks}>
+                <span className={styles.desktopOnly}>Prefer to talk?</span>
+                <a className={styles.formPhone} href="tel:+971586071080">
+                  +971 58 607 1080
+                </a>
+                <a
+                  className={styles.formCall}
+                  href="https://calendly.com/thebasebev/the-base-presentation"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 2 1.9 5.6 5.6 1.9-5.6 1.9L12 17l-1.9-5.6-5.6-1.9 5.6-1.9Zm7 12 .9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9Z" />
+                  </svg>
+                  Book a short call
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <form
+            id="form861442702"
+            className={`t-form js-form-proccess ${styles.formCard}`}
+            data-success-url="/thank-you-form"
+          >
+            <input type="hidden" name="tildaspec-formname" value="Partner with Us" />
+
+            <div className={`t-form__inputsbox ${styles.inputs}`}>
+              <div className={styles.twoColumns}>
+                <label className={styles.field}>
+                  <span>Full name</span>
+                  <input name="name" type="text" autoComplete="name" required />
+                </label>
+                <label className={styles.field}>
+                  <span>Company</span>
+                  <input name="company" type="text" autoComplete="organization" />
+                </label>
+              </div>
+
+              <div className={styles.twoColumns}>
+                <label className={styles.field}>
+                  <span>Email</span>
+                  <input name="email" type="email" autoComplete="email" required />
+                </label>
+                <label className={styles.field}>
+                  <span>Phone / WhatsApp</span>
+                  <input
+                    name="Phone"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder="+971"
+                    required
+                  />
+                </label>
+              </div>
+
+              <label className={styles.field}>
+                <span>Country / territory</span>
+                <input name="country" type="text" autoComplete="country-name" required />
+              </label>
+
+              <fieldset className={styles.chips}>
+                <legend>Tier you are interested in</legend>
+                <div className={styles.chipRow}>
+                  {FORM_TIERS.map((tier) => (
+                    <label key={tier} className={styles.chip}>
+                      <input
+                        type="radio"
+                        name="product"
+                        value={tier}
+                        defaultChecked={tier === DEFAULT_TIER}
+                      />
+                      <span>{tier}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
+              <label className={styles.field}>
+                <span>Lines and expected volume</span>
+                <textarea
+                  name="text"
+                  rows={4}
+                  required
+                  placeholder="Which products, the channels you supply and the volume per month."
+                />
+              </label>
+
+              <label className={styles.consent}>
+                <input name="privacy-consent" type="checkbox" required />
+                <span>
+                  I agree to the <SiteLink href="/privacy">Privacy Policy</SiteLink>.
+                </span>
+              </label>
+
+              <div
+                className={`js-errorbox-all t-form__errorbox-wrapper ${styles.error}`}
+                style={{ display: "none" }}
+              >
+                <span className="js-rule-error js-rule-error-all" />
+              </div>
+
+              <button type="submit" className={styles.submit}>
+                Apply for distribution
+              </button>
+            </div>
+
+            <div
+              className={`js-successbox t-form__successbox ${styles.success}`}
+              style={{ display: "none" }}
+            >
+              Thank you. We will reply within one business day.
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  );
+}

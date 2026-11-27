@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=optional');
 .t450__menu_show {
 max-width: 100% !important;
 }
@@ -13,7 +12,7 @@ border: 1px solid #e5e5e5 !important;
 border-radius: 0px !important;
 padding: 24px 32px !important;
 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif !important;
+font-family:var(--tbb-font-body)!important;
 position: fixed !important;
 bottom: 32px !important;
 right: 32px !important;
@@ -401,7 +400,7 @@ background:transparent !important;
 color:#FF5A5A !important;
 border:1px solid rgba(255,0,0,.32) !important;
 border-radius:3px !important;
-font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace !important;
+font-family:var(--tbb-font-body) !important;
 font-size:9px !important;
 font-weight:500 !important;
 letter-spacing:.1em !important;
@@ -976,7 +975,7 @@ html body #rec909008440 #form909008440 button[type="submit"]{
 background-color:#FFFFFF !important;
 background-image:none !important;
 color:#000000 !important;
-font-weight:700 !important;
+font-weight:var(--tbb-font-weight-button)!important;
 border:1px solid #FFFFFF !important;
 border-radius:100px !important;
 padding:18px 40px !important;
@@ -1151,7 +1150,7 @@ background-image:none !important;
 color:#000000 !important;
 border:1px solid #FFFFFF !important;
 border-radius:100px !important;
-font-weight:700 !important;
+font-weight:var(--tbb-font-weight-button)!important;
 transition:transform .25s ease, box-shadow .25s ease !important;
 }
 html body #rec913700125 .t-btn:hover{
@@ -1225,23 +1224,21 @@ html body .t-feed__post-popup__text a{transition:none !important;}
 --tb-grey:#9A8F86;
 }
 
-html body *:not(i):not([class*="icon"]){
-font-family:'Exo 2', -apple-system, sans-serif !important;
-}
 
-html body h1, html body h2, html body h3,
-html body [class*="title"], html body [class*="heading"],
-html body [class*="number"], html body [class*="percent"],
-html body .bwho-stat-num{
-font-weight:300 !important;
+
+html body .legacy-document h1, html body .legacy-document h2, html body .legacy-document h3,
+html body .legacy-document [class*="title"], html body .legacy-document [class*="heading"],
+html body .legacy-document [class*="number"], html body .legacy-document [class*="percent"],
+html body .legacy-document .bwho-stat-num{
+font-weight:var(--tbb-font-weight-heading) !important;
 letter-spacing:-0.02em !important;
 }
 html body p, html body [class*="descr"]{
 font-weight:400 !important;
 line-height:1.7 !important;
 }
-html body .t-btn, html body [class*="btn"]{
-font-weight:500 !important;
+html body .legacy-document .t-btn, html body .legacy-document [class*="btn"]{
+font-weight:var(--tbb-font-weight-button) !important;
 letter-spacing:.06em !important;
 border-radius:4px !important;
 }
@@ -1758,16 +1755,16 @@ mix-blend-mode:normal !important;
 #allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec2503542591 .t396__artboard{background:#fff!important}
 #allrecords:not(.avx1):not(.avx2) .bwho-wrap{background:#151516!important}
 #allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .bchm-wrap *,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap *,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap *,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap *,#allrecords:not(.avx1):not(.avx2) .bwho-wrap,#allrecords:not(.avx1):not(.avx2) .bwho-wrap *,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap *{
-font-family:'Jost','Exo 2',sans-serif!important}
+font-family:var(--tbb-font-body)!important}
 #allrecords:not(.avx1):not(.avx2) .bchm-wrap,#allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap{color:#5A5B5F!important}
 #allrecords:not(.avx1):not(.avx2) .bben-card-text,#allrecords:not(.avx1):not(.avx2) .bpro-text,#allrecords:not(.avx1):not(.avx2) .bcta-text,#allrecords:not(.avx1):not(.avx2) .catg-sub,#allrecords:not(.avx1):not(.avx2) .bchm-card-text{
 font-weight:300!important;color:#5A5B5F!important;line-height:1.65!important}
 #allrecords:not(.avx1):not(.avx2) .catg-main-heading,#allrecords:not(.avx1):not(.avx2) .bben-title{
-font-family:'Source Serif 4',Georgia,serif!important;font-weight:400!important;font-size:38px!important;
+font-family:var(--tbb-font-heading)!important;font-weight:var(--tbb-font-weight-heading)!important;font-size:38px!important;
 text-translate:0 0!important;letter-spacing:0!important;color:#323338!important;
 text-align:center!important;margin:0 auto 46px!important;display:block!important;width:100%!important}
 #allrecords:not(.avx1):not(.avx2) .bpro-title,#allrecords:not(.avx1):not(.avx2) .bwho-title,#allrecords:not(.avx1):not(.avx2) .bcta-title,#allrecords:not(.avx1):not(.avx2) .bben-card-title,#allrecords:not(.avx1):not(.avx2) .bwho-card-title,#allrecords:not(.avx1):not(.avx2) .bchm-card-title{
-font-family:'Source Serif 4',Georgia,serif!important;text-translate:0 0!important;letter-spacing:0!important}
+font-family:var(--tbb-font-heading)!important;text-translate:0 0!important;letter-spacing:0!important}
 #allrecords:not(.avx1):not(.avx2) .bpro-title,#allrecords:not(.avx1):not(.avx2) .bcta-title{font-size:30px!important;font-weight:400!important;color:#323338!important;line-height:1.2!important}
 #allrecords:not(.avx1):not(.avx2) .bwho-title{font-size:38px!important;font-weight:400!important;color:#F2F2F2!important;line-height:1.2!important}
 #allrecords:not(.avx1):not(.avx2) .bben-card-title,#allrecords:not(.avx1):not(.avx2) .bchm-card-title{font-weight:500!important;color:#323338!important}
@@ -1804,17 +1801,15 @@ box-shadow:none!important;display:inline-block!important}
 #allrecords:not(.avx1):not(.avx2) .bwho-btn:hover{background:transparent!important;color:#fff!important}
 #allrecords:not(.avx1):not(.avx2) .bpro-btn-arrow,#allrecords:not(.avx1):not(.avx2) .bwho-btn-arrow,#allrecords:not(.avx1):not(.avx2) .bcta-btn-arrow{display:none!important}
 
-/* ================= /AVANTCHA LAYER ================= */
-
-#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-name,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .t-uptitle,#allrecords:not(.avx1):not(.avx2) .t-btntext,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-input,#allrecords:not(.avx1):not(.avx2) .t-redactor__text,#allrecords:not(.avx1):not(.avx2) .t-store__card__title,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name,#allrecords:not(.avx1):not(.avx2) .tn-atom,#allrecords:not(.avx1):not(.avx2) .bchf-wrap,#allrecords:not(.avx1):not(.avx2) .bchf-wrap *,#allrecords:not(.avx1):not(.avx2) .tbh-nav a,#allrecords:not(.avx1):not(.avx2) .tbh-nav__btn,#allrecords:not(.avx1):not(.avx2) .tbh-mega__t,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) h4,#allrecords:not(.avx1):not(.avx2) h5,#allrecords:not(.avx1):not(.avx2) p,#allrecords:not(.avx1):not(.avx2) li{font-family:'Jost','Exo 2',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-name,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .t-uptitle,#allrecords:not(.avx1):not(.avx2) .t-btntext,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-input,#allrecords:not(.avx1):not(.avx2) .t-redactor__text,#allrecords:not(.avx1):not(.avx2) .t-store__card__title,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name,#allrecords:not(.avx1):not(.avx2) .tn-atom,#allrecords:not(.avx1):not(.avx2) .bchf-wrap,#allrecords:not(.avx1):not(.avx2) .bchf-wrap *,#allrecords:not(.avx1):not(.avx2) .tbh-nav a,#allrecords:not(.avx1):not(.avx2) .tbh-nav__btn,#allrecords:not(.avx1):not(.avx2) .tbh-mega__t,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) h4,#allrecords:not(.avx1):not(.avx2) h5,#allrecords:not(.avx1):not(.avx2) p,#allrecords:not(.avx1):not(.avx2) li{font-family:var(--tbb-font-body)!important}
 #allrecords:not(.avx1):not(.avx2) h1,#allrecords:not(.avx1):not(.avx2) h2,#allrecords:not(.avx1):not(.avx2) h3,#allrecords:not(.avx1):not(.avx2) .t-title,#allrecords:not(.avx1):not(.avx2) .t-heading,#allrecords:not(.avx1):not(.avx2) .bchf-heading,#allrecords:not(.avx1):not(.avx2) .t-store__prod-popup__name{
-font-family:'Source Serif 4',Georgia,serif!important;font-weight:400!important;
+font-family:var(--tbb-font-heading)!important;font-weight:var(--tbb-font-weight-heading)!important;
 text-translate:0 0!important;letter-spacing:0!important}
 #allrecords:not(.avx1):not(.avx2) .t-descr,#allrecords:not(.avx1):not(.avx2) .t-text,#allrecords:not(.avx1):not(.avx2) .t-store__card__descr{font-weight:300!important}
 #allrecords:not(.avx1):not(.avx2) a.tn-atom,#allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-store__card__btn,#allrecords:not(.avx1):not(.avx2) .t-store__btn,#allrecords:not(.avx1):not(.avx2) .bchf-pill,#allrecords:not(.avx1):not(.avx2) .tbh-cta,#allrecords:not(.avx1):not(.avx2) .t-inputbutton,#allrecords:not(.avx1):not(.avx2) .t1281__wrapper,#allrecords:not(.avx1):not(.avx2) .t1281__item,#allrecords:not(.avx1):not(.avx2) .t1281__slider{border-radius:0!important}
 #allrecords:not(.avx1):not(.avx2) .t-btn,#allrecords:not(.avx1):not(.avx2) .t-submit,#allrecords:not(.avx1):not(.avx2) .t-store__btn,#allrecords:not(.avx1):not(.avx2) .t-inputbutton{
 background-color:#151516!important;color:#E9E9E9!important;border:1px solid #151516!important;
-font-size:12px!important;font-weight:400!important;letter-spacing:.1em!important;
+font-size:12px!important;font-weight:var(--tbb-font-weight-button)!important;letter-spacing:.1em!important;
 text-transform:uppercase!important;box-shadow:none!important}
 #allrecords:not(.avx1):not(.avx2) .t1281__title,#allrecords:not(.avx1):not(.avx2) .t1281__title-text{font-size:12px!important;letter-spacing:.08em!important;text-transform:uppercase!important}
 
@@ -1822,10 +1817,7 @@ text-transform:uppercase!important;box-shadow:none!important}
 #allrecords:not(.avx1):not(.avx2) .bchf-heading{font-size:19px!important;color:#F2F2F2!important}
 #allrecords:not(.avx1):not(.avx2) .bchf-links a,#allrecords:not(.avx1):not(.avx2) .bchf-pill,#allrecords:not(.avx1):not(.avx2) .bchf-contact-row{font-weight:300!important;letter-spacing:.01em!important}
 
-#allrecords #rec2772565803,#allrecords #rec2772565803 *{font-family:'Exo 2',sans-serif!important}
-/* ============ /AVANTCHA LAYER 2 ============ */
-
-/* ============ AVANTCHA LAYER 3 — фон страницы, футер, тикер ============ */
+#allrecords #rec2772565803,#allrecords #rec2772565803 *{font-family:var(--tbb-font-body)!important}
 
 html body,html body #allrecords,html body .t-records,html body .t-body{background-color:#fff!important}
 
@@ -1840,17 +1832,10 @@ color:#fff!important;-webkit-text-fill-color:#fff!important}
 color:#F2F2F2!important;-webkit-text-fill-color:#F2F2F2!important}
 #allrecords:not(.avx1) .bchf-bottom,#allrecords:not(.avx1) .bchf-bottom *{
 color:#7E7E7E!important;-webkit-text-fill-color:#7E7E7E!important}
-/* ============ /AVANTCHA LAYER 3 ============ */
-
-/* ============ AVANTCHA LAYER 4 — лишние рамки и подрезанная шапка ============ */
 
 #allrecords:not(.avx1) .bcta-card,#allrecords:not(.avx1) .bpro-card{border:0!important}
 
 html body .tbh-bar{border-bottom:0!important;box-shadow:none!important}
-
-/* ============ /AVANTCHA LAYER 4 ============ */
-
-/* ============ AVANTCHA LAYER 5 — посещённые ссылки в шапке и каталоге ============ */
 
 html body .tbh-nav a,html body .tbh-nav a:link,html body .tbh-nav a:visited,
 html body .tbh-nav__btn,html body .tbh-mob a,html body .tbh-mob a:visited,
@@ -1872,13 +1857,6 @@ html body .tbh-cta,html body .tbh-cta:visited{color:#fff!important;-webkit-text-
 #allrecords:not(.avx1) .bpro-btn:hover,#allrecords:not(.avx1) .bcta-btn:hover{-webkit-text-fill-color:#151516!important}
 #allrecords:not(.avx1) .bwho-btn,#allrecords:not(.avx1) .bwho-btn:visited{-webkit-text-fill-color:#151516!important}
 #allrecords a:visited{color:inherit}
-/* ============ /AVANTCHA LAYER 5 ============ */
-
-/* ============ AVANTCHA LAYER 6 — кнопка CATALOG при скролле ============ */
-
-/* ============ /AVANTCHA LAYER 6 ============ */
-
-/* ============ AVANTCHA LAYER 7 — шапка вообще не двигается при скролле ============ */
 
 html body .tbh-wrap.is-scrolled .tbh-bar{box-shadow:none!important;background:#fff!important;}
 html body .tbh-wrap.is-scrolled .tbh-in,
@@ -1889,9 +1867,6 @@ html body .tbh-wrap.is-scrolled .tbh-drop > *,
 html body .tbh-wrap.is-scrolled .tbh-nav__btn{height:72px!important}
 
 html body .tbh-bar,html body .tbh-in,html body .tbh-logo img{transition:none!important}
-/* ============ /AVANTCHA LAYER 7 ============ */
-
-/* ============ AVANTCHA LAYER 8 — футер: 4 колонки + значки оплаты ============ */
 
 @media(max-width:1100px){html body .bchf-inner{grid-template-columns:1fr 1fr!important}}
 @media(max-width:600px){html body .bchf-inner{grid-template-columns:1fr!important}}
@@ -1901,7 +1876,6 @@ border-top:1px solid rgba(255,255,255,.12);
 }
 
 html body .bchf-inner .bchf-pill{margin-top:18px!important;display:inline-flex!important}
-/* ============ /AVANTCHA LAYER 8 ============ */
 
 html body .bchf-logopanel-img{
 max-width:none!important;
@@ -1918,7 +1892,6 @@ html body .avx-pay__img{height:26px;width:auto;display:block;opacity:.95}
 html body .bchf-logopanel-img{width:200px!important;height:200px!important}
 html body .avx-pay{margin:14px 0 0 0}
 }
-/* ============ /AVANTCHA LAYER 9 ============ */
 
 html body .bchf-inner,html body .bchf-bottom{max-width:none!important;width:calc(100% - 140px)!important;margin-left:auto!important;margin-right:auto!important}
 html body .bchf-inner{grid-template-columns:260px 1fr 1fr 1fr 1.2fr!important;gap:30px!important;align-items:start!important}
@@ -1933,7 +1906,6 @@ html body .avx-pay__img,html body .avx-pay__svg{height:26px;width:auto;display:b
 html body .bchf-inner,html body .bchf-bottom{width:calc(100% - 60px)!important}
 html body .bchf-logopanel-img{width:200px!important;height:200px!important;transform:none!important;margin-left:0!important}
 }
-/* ============ /AVANTCHA LAYER 10 ============ */
 
 #allrecords:not(.avx1):not(.avx2) .bchf-pill{border:0!important;padding:0!important;background:transparent!important;min-width:0!important}
 @media(max-width:1100px){
@@ -1941,7 +1913,6 @@ html body .bchf-logopanel-img{width:200px!important;height:200px!important;trans
 #allrecords:not(.avx1):not(.avx2) .bchf-logopanel{display:flex!important;justify-content:center!important;align-items:center!important;width:100%!important;overflow:hidden!important;padding:0!important}
 #allrecords:not(.avx1):not(.avx2) .bchf-logopanel-img{width:150px!important;height:150px!important;transform:none!important;margin:0 auto!important;position:static!important;left:auto!important;right:auto!important}
 }
-/* ============ /AVANTCHA LAYER 11 ============ */
 
 @media(max-width:900px){
 #allrecords:not(.avx1):not(.avx2) .bchf-wrap{padding-top:34px!important}
@@ -1966,9 +1937,7 @@ flex:0 0 auto!important;
 }
 #allrecords:not(.avx1):not(.avx2) .bchf-bottom{padding:18px 0 10px!important}
 }
-/* ============ /AVANTCHA LAYER 12 ============ */
 
-/* ============ AVANTCHA LAYER 13 — мобильный низ футера по левому краю ============ */
 @media(max-width:900px){
 #allrecords:not(.avx1):not(.avx2) .bchf-inner{width:calc(100% - 48px)!important;margin-left:auto!important;margin-right:auto!important}
 
@@ -1981,17 +1950,12 @@ justify-content:flex-start!important;
 }
 
 }
-/* ============ /AVANTCHA LAYER 13 ============ */
-
-/* ============ AVANTCHA LAYER 14 — логотип налезал на значки оплаты ============ */
 
 @media(max-width:900px){
 #allrecords:not(.avx1):not(.avx2) .bchf-logopanel{height:270px!important;min-height:270px!important;margin-top:20px!important;align-items:flex-end!important}
 #allrecords:not(.avx1):not(.avx2) .bchf-logopanel-img{width:250px!important;height:250px!important;margin-left:-10px!important}
 }
-/* ============ /AVANTCHA LAYER 14 ============ */
 
-/* ============ AVANTCHA LAYER 15 — стрелка ↗ на карточках-ссылках ============ */
 #allrecords:not(.avx1):not(.avx2) .catg-card{position:relative!important}
 #allrecords:not(.avx1):not(.avx2) .catg-card::after{
 content:"";
@@ -2008,15 +1972,9 @@ pointer-events:none;
 z-index:3;
 }
 #allrecords:not(.avx1):not(.avx2) .catg-card:hover::after{opacity:1;border-color:#151516;transform:rotate(45deg) translate(3px,-3px)}
-/* ============ /AVANTCHA LAYER 15 ============ */
-
-/* ============ AVANTCHA LAYER 16 — секции съезжали влево на мобильном ============ */
 
 #allrecords:not(.avx1):not(.avx2) .catg-wrap,#allrecords:not(.avx1):not(.avx2) .bben-wrap,#allrecords:not(.avx1):not(.avx2) .bpro-wrap,#allrecords:not(.avx1):not(.avx2) .bwho-wrap,#allrecords:not(.avx1):not(.avx2) .bcta-wrap,#allrecords:not(.avx1):not(.avx2) .bchm-wrap{
 width:100%!important;left:auto!important;right:auto!important;margin-left:0!important;margin-right:0!important}
-/* ============ /AVANTCHA LAYER 16 ============ */
-
-/* ============ AVANTCHA LAYER 17 — мега-меню и кнопка Shop Now ============ */
 
 html body .tbh-drop .tbh-mega,
 html body .tbh-wrap.is-scrolled .tbh-drop .tbh-mega,
@@ -2028,45 +1986,29 @@ html body .tbs__slide a.bg-ink:visited{color:#fff!important;-webkit-text-fill-co
 html body .tbs__slide a:not(.bg-ink),
 html body .tbs__slide a:not(.bg-ink):link,
 html body .tbs__slide a:not(.bg-ink):visited{color:#1A1311!important;-webkit-text-fill-color:#1A1311!important}
-/* ============ /AVANTCHA LAYER 17 ============ */
-
-/* ============ AVANTCHA LAYER 18 — бежевые полосы по бокам секций ============ */
 
 #allrecords:not(.avx1):not(.avx2) #rec1851190051,#allrecords:not(.avx1):not(.avx2) #rec859275495,#allrecords:not(.avx1):not(.avx2) #rec859191909,#allrecords:not(.avx1):not(.avx2) #rec2503542591,
 #allrecords:not(.avx1):not(.avx2) #rec1851190051 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__artboard,
 #allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec2503542591 .t396__artboard{background-color:#fff!important}
-/* ============ /AVANTCHA LAYER 18 ============ */
 
 @media(max-width:900px){
 
 #allrecords:not(.avx1):not(.avx2) #rec1851190051 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard{height:auto!important;min-height:0!important}
 #allrecords:not(.avx1):not(.avx2) #rec1851190051 .t396__elem,#allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__elem,#allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__elem{position:static!important;height:auto!important;top:auto!important;left:auto!important}
 }
-/* ============ /AVANTCHA LAYER 19 ============ */
-
-/* ============ AVANTCHA LAYER 20 — продукты героя по центру надписи BASE ============ */
 
 @media(min-width:1024px){
 #allrecords #rec2772565803 .tbs__shot{transform:translate(-8.5%,-7.15%) scale(.85)!important;transform-origin:0 0!important}
 }
-/* ============ /AVANTCHA LAYER 20 ============ */
-
-/* ============ AVANTCHA LAYER 21 — насыщенные градиенты слайдов героя ============ */
 
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(1){background:linear-gradient(150deg,#E9C89F 0%,#DDB07C 46%,#C99459 100%)!important}
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(2){background:linear-gradient(150deg,#F2B2AE 0%,#E88D87 46%,#D4736C 100%)!important}
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(3){background:linear-gradient(150deg,#8CCB8A 0%,#5FBE72 46%,#3FA95C 100%)!important}
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(4){background:linear-gradient(150deg,#F5D69B 0%,#E9C071 46%,#D3A54F 100%)!important}
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(5){background:linear-gradient(150deg,#EBB0BB 0%,#DA8D9C 46%,#C47183 100%)!important}
-/* ============ /AVANTCHA LAYER 21 ============ */
-
-/* ============ AVANTCHA LAYER 22 — мягкая тень под продуктами героя ============ */
 
 #allrecords #rec2772565803 .tbs__glass{filter:drop-shadow(14px 22px 22px rgba(60,40,25,.28))!important}
 #allrecords #rec2772565803 .tbs__pouch{filter:drop-shadow(10px 18px 20px rgba(60,40,25,.18))!important}
-/* ============ /AVANTCHA LAYER 22 ============ */
-
-/* ============ AVANTCHA LAYER 23 — заголовок слайда RAF ============ */
 
 html body #rec2772565803 .tbs__slide h1,
 html body #rec2772565803 .tbs__slide h1.font-extrabold{
@@ -2076,7 +2018,6 @@ font-size:68px!important;line-height:.92!important;letter-spacing:-0.015em!impor
 html body #rec2772565803 .tbs__slide h1,
 html body #rec2772565803 .tbs__slide h1.font-extrabold{font-size:38px!important}
 }
-/* ============ /AVANTCHA LAYER 23 ============ */
 
 @media(min-width:1024px){
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(1) .tbs__pouch{height:141%!important;margin-top:-124px!important}
@@ -2087,14 +2028,10 @@ html body #rec2772565803 .tbs__slide h1.font-extrabold{font-size:38px!important}
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(1) .tbs__pouch{margin-top:-39px!important}
 #allrecords #rec2772565803 .tbs__slide:nth-of-type(1) .tbs__glass{margin-top:-34px!important}
 }
-/* ============ /AVANTCHA LAYER 24 ============ */
 
 #allrecords #rec2772565803 .tbs__mark{font-size:0!important;color:transparent!important;line-height:0!important}
 #allrecords #rec2772565803 .tbs__mark > *:not(.tbs__svgmark){display:none!important}
 #allrecords #rec2772565803 .tbs__svgmark{font-size:initial!important;line-height:normal!important}
-/* ============ /AVANTCHA LAYER 25 ============ */
-
-/* ============ AVANTCHA LAYER 26 — убрать красную подсветку при фокусе ============ */
 
 html body button:focus,
 html body input:focus,
@@ -2108,21 +2045,15 @@ html body .t-submit:focus,
 html body .tbsr-pop input:focus,
 html body .tbc-drawer input:focus,
 html body .bfaq-btn:focus{box-shadow:none!important;outline-color:transparent!important}
-/* ============ /AVANTCHA LAYER 26 ============ */
-
-/* ============ AVANTCHA LAYER 27 — цены в плитках каталога ============ */
 
 #allrecords:not(.avx1):not(.avx2) .catg-price{margin-top:6px;font-size:14px;font-weight:500;color:#151516;letter-spacing:.01em}
 #allrecords:not(.avx1):not(.avx2) .catg-price--req{color:#9A8F86;font-size:12px;font-weight:400}
 @media(max-width:900px){#allrecords:not(.avx1):not(.avx2) .catg-price{font-size:13px}}
-/* ============ /AVANTCHA LAYER 27 ============ */
 
-/* ============ AVANTCHA LAYER 28 — оформление корзины Tilda (.t706) ============ */
-
-#allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{border-radius:0!important;padding:36px 34px 34px!important;font-family:'Jost',sans-serif!important}
-#allrecords:not(.avx1):not(.avx2) .t706__cartwin-heading{font-family:'Source Serif 4',Georgia,serif!important;font-size:26px!important;font-weight:500!important;color:#151516!important;letter-spacing:0!important;margin-bottom:22px!important}
-#allrecords:not(.avx1):not(.avx2) .t706__product-title{font-family:'Jost',sans-serif!important;font-size:15px!important;font-weight:500!important;color:#151516!important}
-#allrecords:not(.avx1):not(.avx2) .t706__product-title__option{font-family:'Jost',sans-serif!important;font-size:12px!important;color:#8A8A8A!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{border-radius:0!important;padding:36px 34px 34px!important;font-family:var(--tbb-font-body)!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin-heading{font-family:var(--tbb-font-heading)!important;font-size:26px!important;font-weight:var(--tbb-font-weight-subheading)!important;color:#151516!important;letter-spacing:0!important;margin-bottom:22px!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-title{font-family:var(--tbb-font-body)!important;font-size:15px!important;font-weight:500!important;color:#151516!important}
+#allrecords:not(.avx1):not(.avx2) .t706__product-title__option{font-family:var(--tbb-font-body)!important;font-size:12px!important;color:#8A8A8A!important}
 #allrecords:not(.avx1):not(.avx2) .t706__product{border-bottom:1px solid #ECECEC!important;padding:16px 0!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-prodamount,
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-prodamount-price,
@@ -2132,33 +2063,17 @@ html body .bfaq-btn:focus{box-shadow:none!important;outline-color:transparent!im
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount,
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount-info{font-size:18px!important;font-weight:600!important;color:#151516!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-input,
-#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-inputtext{border:1px solid #DCDCDC!important;border-radius:0!important;height:46px!important;font-size:14px!important;font-family:'Jost',sans-serif!important}
+#allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-inputtext{border:1px solid #DCDCDC!important;border-radius:0!important;height:46px!important;font-size:14px!important;font-family:var(--tbb-font-body)!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-input-title{font-size:12px!important;color:#5A5B5F!important;letter-spacing:.04em!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin .t-submit{background:#151516!important;color:#fff!important;border:0!important;border-radius:0!important;
-height:52px!important;font-size:13px!important;letter-spacing:.12em!important;text-transform:uppercase!important;font-weight:500!important}
+height:52px!important;font-size:13px!important;letter-spacing:.12em!important;text-transform:uppercase!important;font-weight:var(--tbb-font-weight-button)!important}
 #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close{opacity:.5!important}
 #allrecords:not(.avx1):not(.avx2) .t706__product-del{color:#9A9A9A!important}
-/* ============ /AVANTCHA LAYER 28 ============ */
 
-/* ============ AVANTCHA LAYER 29 — единый шрифт Roboto ============ */
 
-html body *:not([class*="t-icon"]):not([class*="icon"]):not(i):not(.t-store__card__mark),
-html body,
-html body h1, html body h2, html body h3, html body h4, html body p, html body a,
-html body .t-title, html body .t-heading, html body .t-name, html body .t-text, html body .t-descr,
-html body .t-btn, html body .t-submit, html body .t-input, html body .tn-atom,
-html body #rec2772565803, html body #rec2772565803 *,
-html body .t706__cartwin, html body .t706__cartwin *,
-html body .tbh-nav a, html body .bchf-wrap, html body .bchf-wrap *,
-html body .catg-name, html body .catg-price, html body .bfaq-wrap *{
-font-family:'Roboto',-apple-system,Arial,sans-serif!important}
-
-html body .t706__cartwin-heading,
-html body h1, html body h2{letter-spacing:0!important}
-/* ============ /AVANTCHA LAYER 29 ============ */
 
 #allrecords:not(.avx1):not(.avx2) *:not([class*="t-icon"]):not([class*="icon"]):not(i),
-#allrecords:not(.avx1):not(.avx2){font-family:'Roboto',-apple-system,Arial,sans-serif!important}
+#allrecords:not(.avx1):not(.avx2){font-family:var(--tbb-font-body)!important}
 
 #allrecords #rec2544308101,
 #allrecords #rec2544308101 .t396__artboard{background-color:#000!important;height:auto!important;min-height:0!important;overflow:visible!important}
@@ -2166,16 +2081,12 @@ html body h1, html body h2{letter-spacing:0!important}
 #allrecords:not(.avx1):not(.avx2) .bfaq-wrap{width:100%!important;max-width:none!important;margin:0!important;padding:64px 70px!important;box-sizing:border-box!important}
 #allrecords:not(.avx1):not(.avx2) .bfaq-inner{max-width:1240px!important;margin:0 auto!important}
 @media(max-width:900px){#allrecords:not(.avx1):not(.avx2) .bfaq-wrap{padding:48px 20px!important}}
-/* ============ /AVANTCHA LAYER 30 ============ */
 
 #allrecords #rec860957415,
 #allrecords #rec860957415 .t396__artboard{background-color:#121212!important}
 
 #allrecords #rec859870796,
 #allrecords #rec859870796 .t396__artboard{background-color:#151516!important}
-/* ============ /AVANTCHA LAYER 31 ============ */
-
-/* ============ AVANTCHA LAYER 32 — единый вертикальный ритм секций ============ */
 
 #allrecords:not(.avx1):not(.avx2) .bchm-wrap,
 #allrecords:not(.avx1):not(.avx2) .catg-wrap,
@@ -2191,22 +2102,13 @@ html body h1, html body h2{letter-spacing:0!important}
 #allrecords:not(.avx1):not(.avx2) .bcta-wrap,
 #allrecords:not(.avx1):not(.avx2) .bwho-wrap{padding-top:64px!important;padding-bottom:64px!important}
 }
-/* ============ /AVANTCHA LAYER 32 ============ */
-
-/* ============ AVANTCHA LAYER 33 — FAQ на телефоне ============ */
 
 #allrecords #rec2544308101 .t396__elem,
 #allrecords #rec2544308101 .tn-atom{width:100%!important;max-width:100%!important}
 #allrecords:not(.avx1):not(.avx2) .bfaq-inner{width:100%!important;box-sizing:border-box!important}
-/* ============ /AVANTCHA LAYER 33 ============ */
-
-/* ============ AVANTCHA LAYER 34 — одна корзина вместо двух ============ */
 
 html body .t706__carticon,
 html body .t706__carticon_showed{display:none!important}
-/* ============ /AVANTCHA LAYER 34 ============ */
-
-/* ============ AVANTCHA LAYER 35 — флаг страны в шапке ============ */
 
 #allrecords:not(.avx1):not(.avx2) .tbh-reg__flag,
 #allrecords:not(.avx1):not(.avx2) .tbh-reg__panel li span:first-child,
@@ -2214,9 +2116,6 @@ html body .t706__carticon_showed{display:none!important}
 font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important;
 line-height:1!important;display:inline-flex!important;align-items:center!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{align-items:center!important}
-/* ============ /AVANTCHA LAYER 35 ============ */
-
-/* ============ AVANTCHA LAYER 36 — правки по замечаниям ============ */
 
 #allrecords:not(.avx1):not(.avx2) .bchm-card,
 #allrecords:not(.avx1):not(.avx2) .bben-card{border-top:0!important}
@@ -2248,16 +2147,11 @@ text-decoration:none!important;white-space:nowrap!important;transition:backgroun
 @media(min-width:1024px){
 #allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__shot{transform:translate(-8.5%,5.4%) scale(.85)!important;transform-origin:0 0!important}
 }
-/* ============ /AVANTCHA LAYER 36 ============ */
 
-/* ============ AVANTCHA LAYER 37 - RAF pouch up, level with other slides ============ */
 @media (min-width:1024px){
 #allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__slide:first-child .tbs__pouch{bottom:31.8px!important}
 #allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__slide:first-child .tbs__glass{bottom:31.8px!important}
 }
-/* ============ /AVANTCHA LAYER 37 ============ */
-
-/* ============ AVANTCHA LAYER 38 ============ */
 
 #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-badge,#allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-btn,#allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-btn-arrow{text-transform:none!important}
 
@@ -2274,26 +2168,18 @@ text-decoration:none!important;white-space:nowrap!important;transition:backgroun
 
 #allrecords:not(.avx1):not(.avx2) #rec860957415 .t396__artboard{height:auto!important;min-height:0!important;overflow:visible!important}
 #allrecords:not(.avx1):not(.avx2) #rec860957415 .t396__elem{position:static!important;height:auto!important;width:100%!important;top:auto!important;left:auto!important}
-/* ============ /AVANTCHA LAYER 38 ============ */
 
-/* ============ AVANTCHA LAYER 39 - promo titles: sentence case ============ */
 #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-title{text-transform:lowercase!important}
 #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-title::first-letter{text-transform:uppercase!important}
-/* ============ /AVANTCHA LAYER 39 ============ */
 
-/* ============ AVANTCHA LAYER 40 - hero: slide indicator dots ============ */
 #allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dots{gap:12px;align-items:center;height:auto;margin-bottom:18px}
 #allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dot{flex:0 0 auto!important;width:11px!important;min-width:11px!important;max-width:11px!important;height:11px!important;border-radius:50%!important;border:0!important;background-color:rgba(26,19,17,.32)!important;transition:background-color .3s,transform .3s!important}
 #allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dot.bg-ink{background-color:#1A1311!important;transform:scale(1.2)}
 
 @media(max-width:900px){#allrecords:not(.avx1):not(.avx2) #rec2772565803 .tbs__dots{bottom:16px!important;margin-bottom:0!important;gap:10px!important}}
-/* ============ /AVANTCHA LAYER 40 ============ */
 
-/* ============ AVANTCHA LAYER 41 - Learn More hover ============ */
 html body .tbs__slide a:not(.bg-ink):hover{color:#fff!important;-webkit-text-fill-color:#fff!important}
-/* ============ /AVANTCHA LAYER 41 ============ */
 
-/* ============ AVANTCHA LAYER 42 - header polish ============ */
 #allrecords:not(.avx1):not(.avx2) .tbh-in{max-width:1600px!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-reg__flag{display:none!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{gap:6px!important}
@@ -2302,9 +2188,7 @@ html body .tbs__slide a:not(.bg-ink):hover{color:#fff!important;-webkit-text-fil
 #allrecords:not(.avx1):not(.avx2) .tbh-wa svg{width:21px!important;height:21px!important;fill:#25D366!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-wa svg path{fill:#25D366!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-wa:hover svg,#allrecords:not(.avx1):not(.avx2) .tbh-wa:hover svg path{fill:#1DA851!important}
-/* ============ /AVANTCHA LAYER 42 ============ */
 
-/* ============ AVANTCHA LAYER 43 - header layout (avantcha-style) ============ */
 @media (min-width:1440px){
 #allrecords:not(.avx1):not(.avx2) .tbh-in{grid-template-columns:1fr auto 1fr!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-logo{order:2!important;justify-self:center!important}
@@ -2314,22 +2198,15 @@ html body .tbs__slide a:not(.bg-ink):hover{color:#fff!important;-webkit-text-fil
 }
 
 #allrecords:not(.avx1):not(.avx2) .tbh-ticker{height:20px!important}
-/* ============ /AVANTCHA LAYER 43 ============ */
 
-/* ============ AVANTCHA LAYER 44 - header type (znakfood-style) ============ */
 #allrecords:not(.avx1):not(.avx2) .tbh-nav a,#allrecords:not(.avx1):not(.avx2) .tbh-nav__btn{text-transform:none!important;font-size:14px!important;font-weight:400!important;letter-spacing:0!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-cta{border-radius:999px!important;padding:0 24px!important;height:46px!important;font-size:13px!important;text-transform:none!important;letter-spacing:.01em!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-cta::after{content:"\2197";margin-left:8px;font-size:14px}
 
-/* ============ /AVANTCHA LAYER 44 ============ */
-
-/* ============ AVANTCHA LAYER 45 - mega menu fix after nav moved left ============ */
 @media (min-width:1440px){
 #allrecords:not(.avx1):not(.avx2) .tbh-drop .tbh-mega{left:0!important;transform:none!important}
 }
-/* ============ /AVANTCHA LAYER 45 ============ */
 
-/* ============ AVANTCHA LAYER 46 - header like znakfood (opaque) ============ */
 @media(min-width:1440px){
 #allrecords:not(.avx1):not(.avx2) .tbh-in{grid-template-columns:auto 1fr auto!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-logo{order:1!important;justify-self:start!important}
@@ -2338,23 +2215,17 @@ html body .tbs__slide a:not(.bg-ink):hover{color:#fff!important;-webkit-text-fil
 }
 #allrecords:not(.avx1):not(.avx2) .tbh-ico{border:1px solid rgba(26,19,17,.18)!important;border-radius:999px!important;width:40px!important;height:40px!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{border:1px solid rgba(26,19,17,.18)!important;border-radius:999px!important;padding:0 14px!important;height:40px!important}
-/* ============ /AVANTCHA LAYER 46 ============ */
 
-/* ============ AVANTCHA LAYER 48 - ticker off + spacer ============ */
 #allrecords:not(.avx1):not(.avx2) .tbh-ticker{display:none!important}
 #allrecords #rec2676415503{height:84px!important;min-height:0!important}
-/* ============ /AVANTCHA LAYER 48 ============ */
 
-/* ============ AVANTCHA LAYER 49 - mobile header fits ============ */
 @media(max-width:900px){
 #allrecords:not(.avx1):not(.avx2) .tbh-cta{display:none!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-ico{width:38px!important;height:38px!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-reg__btn{height:38px!important;padding:0 10px!important;font-size:12px!important}
 #allrecords:not(.avx1):not(.avx2) .tbh-util{gap:6px!important}
 }
-/* ============ /AVANTCHA LAYER 49 ============ */
 
-/* ============ AVANTCHA LAYER 50 - header height locked + no white gap ============ */
 @media(max-width:900px){
 html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar,html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{height:61px!important}
 
@@ -2364,7 +2235,6 @@ html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar,html 
 html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar,html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{height:73px!important}
 #allrecords #rec2676415503{height:73px!important}
 }
-/* ============ /AVANTCHA LAYER 50 ============ */
 
 @media(max-width:900px){
 #allrecords:not(.avx1):not(.avx2) .tbh-reg{position:static!important}
@@ -2375,9 +2245,7 @@ html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar,html 
 #allrecords #rec1937227721 .t396__elem{position:static!important;top:auto!important;left:auto!important;width:100%!important;height:auto!important}
 #allrecords #rec1937217991 .t396__artboard,#allrecords #rec1937217991 .t396__filter,#allrecords #rec1937217991 .t396__carrier{height:24px!important;min-height:0!important}
 }
-/* ============ /AVANTCHA LAYER 51 ============ */
 
-/* ============ AVANTCHA LAYER 52 - about-us fixes + mobile catalog cards ============ */
 @media(max-width:900px){
 #allrecords #rec909008440 .t396__artboard,#allrecords #rec909008440 .t396__filter,#allrecords #rec909008440 .t396__carrier{height:920px!important}
 #allrecords #rec1862296951 .t396__artboard,#allrecords #rec1862296951 .t396__filter,#allrecords #rec1862296951 .t396__carrier{height:24px!important;min-height:0!important}
@@ -2414,9 +2282,7 @@ border:0!important;
 }
 #allrecords:not(.avx1):not(.avx2) .catg-card::after{opacity:0!important}
 }
-/* ============ /AVANTCHA LAYER 52 ============ */
 
-/* ============ AVANTCHA LAYER 53 - empty cart: EN text + no black bars ============ */
 html body .t706__cartpage-products_empty{font-size:0!important;line-height:0!important}
 html body .t706__cartpage-products_empty::after{content:"Your cart is empty. Add at least one product";font-size:15px;line-height:1.5;color:#1A1311;display:block}
 @media(max-width:900px){
@@ -2424,12 +2290,9 @@ html body .t706__cartwin-close{background:#fff!important;height:56px!important;b
 html body .t706__cartwin-close-text,html body .t706__cartwin-close *{color:#1A1311!important;-webkit-text-fill-color:#1A1311!important}
 html body .t706__cartwin-content{min-height:calc(100vh - 56px)!important;margin-top:56px!important}
 }
-/* ============ /AVANTCHA LAYER 53 ============ */
 
-/* ============ AVANTCHA LAYER 54 - empty spacer blocks off (all widths) ============ */
 #allrecords #rec1862296951,#allrecords #rec1937217991{display:none!important}
 #allrecords #rec2519851201{padding-bottom:0!important}
-/* ============ /AVANTCHA LAYER 54 ============ */
 
 html body,#allrecords{background:#FDFAF5!important}
 #allrecords:not(.avx1):not(.avx2) #rec859191909 .t396__artboard,#allrecords:not(.avx1):not(.avx2) #rec859191909{background:#FDFAF5!important;background-color:#FDFAF5!important}
@@ -2460,9 +2323,7 @@ html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap,html body #allrecords:not
 
 html body #allrecords:not(.avx1):not(.avx2) .bpro-card,html body #allrecords:not(.avx1):not(.avx2) .bcta-card{border-radius:20px!important;overflow:hidden!important;background:#FFFDFA!important;border:1px solid #EFE7DA!important}
 html body #allrecords:not(.avx1):not(.avx2) .bcta-media{border-radius:20px!important}
-/* ============ /AVANTCHA LAYER 58 ============ */
 
-/* ============ AVANTCHA LAYER 59 - product tabs like znakfood ============ */
 html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper{display:inline-flex!important;width:auto!important;background:#F2EADD!important;border-radius:18px!important;padding:6px!important;gap:2px!important;margin:0 auto!important}
 html body #allrecords:not(.avx1):not(.avx2) .t1281__slider{text-align:center!important}
 html body #allrecords:not(.avx1):not(.avx2) .t1281__item{width:auto!important;background:transparent!important;border:0!important;border-radius:14px!important;transition:background .2s!important}
@@ -2471,7 +2332,6 @@ html body #allrecords:not(.avx1):not(.avx2) .t1281__item.t1281__tab_active{backg
 html body #allrecords:not(.avx1):not(.avx2) .t1281__item.t1281__tab_active .t1281__title{color:#2B2320!important;-webkit-text-fill-color:#2B2320!important;font-weight:600!important}
 html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281),html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281) .t396__artboard,html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281)+.r,html body #allrecords:not(.avx1):not(.avx2) .r:has(.t1281)+.r .t396__artboard{background:#FDFAF5!important;background-color:#FDFAF5!important}
 @media(max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .t1281__title{padding:8px 12px!important;font-size:11.5px!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper{padding:4px!important;border-radius:16px!important}}
-/* ============ /AVANTCHA LAYER 59 ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card{background:transparent!important;border:0!important;box-shadow:none!important;padding:0 0 8px!important;border-radius:0!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{
@@ -2515,9 +2375,7 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{
 font-size:9.5px!important;
 }
 }
-/* ============ /AVANTCHA LAYER 60 ============ */
 
-/* ============ AVANTCHA LAYER 61 - colour background per product ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/milkshake"] .catg-img-wrap{background:#C9BFD8!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"] .catg-img-wrap{background:#C8A98A!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"] .catg-img-wrap{background:#E0B36A!important}
@@ -2535,7 +2393,6 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .catg-img-wr
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] .catg-img-wrap{background:#AEC3CC!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .catg-img-wrap{background:#B0AEC4!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{filter:brightness(.95)!important;background-color:inherit}
-/* ============ /AVANTCHA LAYER 61 ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card img{
 position:absolute!important;
@@ -2550,9 +2407,7 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card{display:flex!important;fl
 html body #allrecords:not(.avx1):not(.avx2) .catg-text{flex:1 1 auto!important}
 
 @media(max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-card img{padding:10px!important}}
-/* ============ /AVANTCHA LAYER 62 ============ */
 
-/* ============ AVANTCHA LAYER 63 - equal product image size ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card img{
 transform:scale(1.16)!important;
 }
@@ -2565,9 +2420,6 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/cream-latte"]:hove
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"]:hover img{transform:scale(0.92)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"]:hover img{transform:scale(0.92)!important}
 
-/* ============ /AVANTCHA LAYER 63 ============ */
-
-/* ============ AVANTCHA LAYER 64 - align packs + polish ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card img{object-position:50% 50%!important;padding:14px 16px!important;transform-origin:center center!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"] img{transform:scale(0.88) translateY(-3%)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/chocolate"] img{transform:scale(0.90) translateY(-1%)!important}
@@ -2582,9 +2434,7 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"]:hover i
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-eyebrow{font-size:10.5px!important;letter-spacing:.12em!important;color:#A79C90!important;-webkit-text-fill-color:#A79C90!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{letter-spacing:.1em!important;font-weight:600!important}
-/* ============ /AVANTCHA LAYER 64 ============ */
 
-/* ============ AVANTCHA LAYER 65 - catalog polish ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-img-wrap{border-radius:18px!important;box-shadow:0 1px 2px rgba(90,70,45,.05)!important;transition:box-shadow .3s ease,background .3s ease!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{box-shadow:0 14px 34px rgba(90,70,45,.14)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card{transition:transform .3s cubic-bezier(.22,.61,.36,1)!important}
@@ -2599,9 +2449,7 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-sub{font-size:12px!important;c
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{background:#F2EADD!important;border:0!important;color:#2B2320!important;-webkit-text-fill-color:#2B2320!important;height:40px!important;border-radius:12px!important;margin-top:14px!important;font-size:10.5px!important;transition:background .25s,color .25s!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add:hover{background:#2B2320!important;color:#FFF!important;-webkit-text-fill-color:#FFF!important}
 @media(max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-img-wrap{border-radius:14px!important}html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{height:38px!important}}
-/* ============ /AVANTCHA LAYER 65 ============ */
 
-/* ============ AVANTCHA LAYER 66 - hover fix + mobile type ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card.in-view:hover .catg-img-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{transform:none!important;border-radius:18px!important;border-color:transparent!important;box-shadow:0 14px 34px rgba(90,70,45,.14)!important}
 @media(max-width:900px){
 html body #allrecords:not(.avx1):not(.avx2) .catg-name{font-size:13.5px!important;margin-top:6px!important}
@@ -2611,15 +2459,10 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card.in-view:hover .catg-img-w
 html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{transform:none!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover img{transform:scale(1.16)!important}
 }
-/* ============ /AVANTCHA LAYER 66 ============ */
 
-/* ============ AVANTCHA LAYER 67 - hide eyebrow + sub in cards ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-eyebrow,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{display:none!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-text{padding-top:14px!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-name{margin-top:0!important}
-/* ============ /AVANTCHA LAYER 67 ============ */
-
-/* ============ AVANTCHA LAYER 68 - sachet shots not cropped ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"] img{transform:scale(0.98)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"] img{transform:scale(0.98)!important}
@@ -2635,18 +2478,14 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/jam"]:hover img{tr
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/garnish"]:hover img{transform:scale(0.98)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"]:hover img{transform:scale(0.98)!important}
 }
-/* ============ /AVANTCHA LAYER 68 ============ */
 
-/* ============ AVANTCHA LAYER 69 - hide group titles + crop sachet shots ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-group-title{display:none!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-group{margin-top:0!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] img{object-fit:cover!important;object-position:50% 78%!important;padding:0!important;transform:scale(1)!important;border-radius:18px!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] img{object-fit:cover!important;object-position:50% 78%!important;padding:0!important;transform:scale(1)!important;border-radius:18px!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"]:hover img{transform:scale(1.04)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"]:hover img{transform:scale(1.04)!important}
-/* ============ /AVANTCHA LAYER 69 ============ */
 
-/* ============ AVANTCHA LAYER 70 - catalog intro ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-wrap{background:#FDFAF5!important;padding-top:56px!important;padding-bottom:72px!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-inner{max-width:1240px!important;margin:0 auto!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-h1{text-align:left!important;font-size:clamp(32px,3.2vw,46px)!important;line-height:1.08!important;font-weight:600!important;color:#2B2320!important;letter-spacing:-.02em!important;max-width:none!important;width:auto!important;margin:0!important;text-wrap:balance}
@@ -2658,16 +2497,13 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-h1{font-size:28px!important;ma
 html body #allrecords:not(.avx1):not(.avx2) .catg-lede{font-size:13.5px!important;margin-top:12px!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-grid{margin-top:28px!important}
 }
-/* ============ /AVANTCHA LAYER 70 ============ */
 
 @keyframes catgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card{opacity:1!important;visibility:visible!important;animation:catgIn .38s cubic-bezier(.22,.61,.36,1) both!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{animation:none!important;transform:translateY(-4px)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card.is-hidden{display:none!important}
 @media(prefers-reduced-motion:reduce){html body #allrecords:not(.avx1):not(.avx2) .catg-card{animation:none!important}}
-/* ============ /AVANTCHA LAYER 71 ============ */
 
-/* ============ AVANTCHA LAYER 72: catalog card ============ */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-name{font-size:17px!important;letter-spacing:.5px!important;margin:0 0 6px!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal!important;text-transform:none!important;letter-spacing:0!important;font-size:13.5px!important;line-height:1.55!important;font-weight:400!important;color:#8a8177!important;margin:0 0 14px!important;min-height:3.1em}
 @media (max-width:1199px){html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{-webkit-line-clamp:3;min-height:4.65em}}
@@ -2693,15 +2529,11 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"] .cat
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .catg-img-wrap{background:rgb(0,0,0)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] .catg-img-wrap{background:rgb(232,242,233)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .catg-img-wrap{background:rgb(77,51,45)!important}
-/* ============ /AVANTCHA LAYER 72 ============ */
 
-/* ============ AVANTCHA LAYER 73: плавное появление карточек ============ */
 html.catg-rv body #allrecords:not(.avx1):not(.avx2) .catg-card{opacity:0!important;transform:translateY(22px)!important;animation:none!important;transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1)!important;will-change:opacity,transform}
 html.catg-rv body #allrecords:not(.avx1):not(.avx2) .catg-card.in-view{opacity:1!important;transform:none!important}
 @media (prefers-reduced-motion:reduce){html.catg-rv body #allrecords:not(.avx1):not(.avx2) .catg-card{opacity:1!important;transform:none!important;transition:none!important}}
-/* ============ /AVANTCHA LAYER 73 ============ */
 
-/* ============ AVANTCHA LAYER 74: шапка ============ */
 html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{border-bottom:1px solid rgba(26,19,17,.07)!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a{font-weight:500!important;letter-spacing:.2px!important;position:relative!important;color:#2b2320!important;transition:color .25s!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a::after{content:""!important;position:absolute!important;left:0;right:0;bottom:22px;height:1px;background:#2b2320;transform:scaleX(0);transform-origin:left;transition:transform .32s cubic-bezier(.22,.61,.36,1)}
@@ -2711,9 +2543,7 @@ html body #allrecords:not(.avx1):not(.avx2) .tbh-ico:hover{background-color:rgba
 html body #allrecords:not(.avx1):not(.avx2) .tbh-cta{font-size:12.5px!important;font-weight:600!important;letter-spacing:.4px!important;box-shadow:0 1px 2px rgba(26,19,17,.10),0 6px 18px rgba(26,19,17,.13)!important;transition:transform .25s,box-shadow .25s,background-color .25s!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover{transform:translateY(-1px)!important;box-shadow:0 2px 6px rgba(26,19,17,.12),0 12px 28px rgba(26,19,17,.20)!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-wrap.is-scrolled .tbh-bar{background:rgba(255,255,255,.82)!important;-webkit-backdrop-filter:saturate(180%) blur(14px)!important;backdrop-filter:saturate(180%) blur(14px)!important;box-shadow:0 1px 0 rgba(26,19,17,.06),0 10px 30px rgba(26,19,17,.06)!important}
-/* ============ /AVANTCHA LAYER 74 ============ */
 
-/* ============ AVANTCHA LAYER 75: меню, сжатие шапки, активный раздел ============ */
 html body #allrecords:not(.avx1):not(.avx2) .tbh-drop .tbh-mega{border-radius:0 0 20px 20px!important;box-shadow:0 20px 50px rgba(26,19,17,.10),0 2px 8px rgba(26,19,17,.05)!important;top:64px!important;transition:opacity .28s cubic-bezier(.22,.61,.36,1),visibility .28s,top .28s cubic-bezier(.22,.61,.36,1)!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-drop:hover .tbh-mega{top:72px!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-bar{transition:height .3s cubic-bezier(.22,.61,.36,1),background-color .3s,box-shadow .3s!important}
@@ -2735,9 +2565,7 @@ html body #allrecords:not(.avx1):not(.avx2) .tbh-wa:hover svg,html body #allreco
 html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover,html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover *{color:#121212!important;-webkit-text-fill-color:#121212!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover svg,html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover svg path{fill:#121212!important;stroke:#121212!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbh-cta:hover{border-color:#121212!important}
-/* ============ /AVANTCHA LAYER 75 ============ */
 
-/* ============ AVANTCHA LAYER 76: окно корзины ============ */
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin{background:rgba(26,19,17,.5)!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{border-radius:24px!important;box-shadow:0 30px 80px rgba(26,19,17,.28)!important;padding:34px 32px 32px!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-top{padding:0 0 22px!important;border-bottom:1px solid rgba(26,19,17,.09)!important;font-size:22px!important;font-weight:600!important;letter-spacing:-.2px!important;color:#1a1311!important}
@@ -2752,7 +2580,7 @@ html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount-wrap{padd
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-totalamount{font-size:22px!important;font-weight:700!important;color:#1a1311!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=text],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=email],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=tel],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea{border-radius:12px!important;border:1px solid rgba(26,19,17,.14)!important;padding:14px 16px!important;font-size:15px!important;transition:border-color .2s,box-shadow .2s!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input:focus,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea:focus{border-color:#2b2320!important;box-shadow:0 0 0 3px rgba(43,35,32,.08)!important;outline:none!important}
-html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit{border-radius:999px!important;height:54px!important;font-size:12.5px!important;font-weight:600!important;letter-spacing:1.2px!important;transition:transform .2s,box-shadow .2s!important;box-shadow:0 2px 6px rgba(26,19,17,.12),0 10px 26px rgba(26,19,17,.16)!important}
+html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit{border-radius:999px!important;height:54px!important;font-size:12.5px!important;font-weight:var(--tbb-font-weight-button)!important;letter-spacing:1.2px!important;transition:transform .2s,box-shadow .2s!important;box-shadow:0 2px 6px rgba(26,19,17,.12),0 10px 26px rgba(26,19,17,.16)!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-submit:hover{transform:translateY(-1px)!important;box-shadow:0 4px 10px rgba(26,19,17,.14),0 16px 34px rgba(26,19,17,.22)!important}
 
 @media (min-width:901px){
@@ -2760,20 +2588,16 @@ html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close{border-radius:9
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close:hover{transform:scale(1.06)!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg g,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg rect,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close svg path{fill:#1a1311!important}
 }
-/* ============ /AVANTCHA LAYER 76 ============ */
-/* ============ AVANTCHA LAYER 77: качество текста в плитках ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card{will-change:auto!important}
 
-html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text *{font-family:Roboto,-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important;-moz-osx-font-smoothing:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-text *{font-family:var(--tbb-font-body)!important;-webkit-font-smoothing:auto!important;-moz-osx-font-smoothing:auto!important}
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{color:#6f6862!important}
-/* ============ /AVANTCHA LAYER 77 ============ */
 
-/* ============ AVANTCHA LAYER 78: блок преимуществ (40/50/60/100%) ============ */
-html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card *{font-family:Roboto,-apple-system,Arial,sans-serif!important;-webkit-font-smoothing:auto!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card *{font-family:var(--tbb-font-body)!important;-webkit-font-smoothing:auto!important}
 
-html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-number.bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-percent.bchm-percent{font-family:Roboto,-apple-system,Arial,sans-serif!important}
+html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-number.bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-wrap .bchm-grid .bchm-card .bchm-number-row .bchm-percent.bchm-percent{font-family:var(--tbb-font-body)!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-number{font-weight:300!important;letter-spacing:-1.5px!important;line-height:1!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-percent{font-weight:300!important;color:#b4a99e!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchm-eyebrow{font-size:10px!important;letter-spacing:1.6px!important;color:#a79c90!important;margin-bottom:4px!important}
@@ -2786,32 +2610,20 @@ html body #allrecords:not(.avx1):not(.avx2) .bchm-card:first-child{border-left:0
 
 html body #allrecords:not(.avx1):not(.avx2) .bchm-card:not(:has(.bchm-eyebrow)){padding-top:17px!important}
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .bchm-card{border-left:0!important;border-top:0!important;border-radius:0!important;padding:18px 2px 14px!important}html body #allrecords:not(.avx1):not(.avx2) .bchm-card:first-child{padding-top:6px!important}html body #allrecords:not(.avx1):not(.avx2) .bchm-card:not(:has(.bchm-eyebrow)){padding-top:18px!important}html body #allrecords:not(.avx1):not(.avx2) .bchm-grid{gap:0!important}}
-/* ============ /AVANTCHA LAYER 78 ============ */
-
-/* ============ AVANTCHA LAYER 79: товары без цены ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .tbc-add{pointer-events:none!important;font-size:0!important;line-height:0!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/topping"] .tbc-add::after,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .tbc-add::after,html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .tbc-add::after{content:"Request price"!important;font-size:11px!important;line-height:1!important;letter-spacing:1.3px!important;font-weight:600!important;display:inline-block!important}
-/* ============ /AVANTCHA LAYER 79 ============ */
-
-/* ============ AVANTCHA LAYER 80: юридические ссылки в подвале ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .bchf-legal{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px 18px!important;font-size:13px!important;color:#7e7e7e!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a{color:#9a9a9a!important;text-decoration:none!important;position:relative!important;transition:color .2s!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a:hover{color:#fff!important}
 html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a+a::before{content:"·"!important;position:absolute!important;left:-11px!important;color:#5a5a5a!important}
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .bchf-legal{gap:4px 14px!important;font-size:12px!important}html body #allrecords:not(.avx1):not(.avx2) .bchf-legal a+a::before{display:none!important}}
-/* ============ /AVANTCHA LAYER 80 ============ */
-
-/* ============ AVANTCHA LAYER 81: без прыжка шапки при загрузке ============ */
 
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{content:""!important;flex:0 0 44px!important;height:44px!important;order:9!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util:has(.tbh-wa)::after{display:none!important}}
 @media (min-width:901px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{content:""!important;flex:0 0 40px!important;height:40px!important;order:9!important;border:1px solid rgba(37,211,102,.45)!important;border-radius:999px!important;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231faa4f' d='M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29z'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:19px 19px!important;align-self:center!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util:has(.tbh-wa)::after{display:none!important}}
-/* ============ /AVANTCHA LAYER 81 ============ */
 
 
-
-/* ============ AVANTCHA LAYER 84: каталог на телефоне ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-name{color:#201A17!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-price{color:#201A17!important;font-weight:600!important}
@@ -2820,24 +2632,12 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{color:#6F6862!i
 @media (hover:none){html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .tbc-add:hover{background:transparent!important;background-color:transparent!important;color:#2B2320!important;border-color:#D8CFC2!important}html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover,html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover{transform:none!important}html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover .catg-img-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-card:hover .catg-img-wrap{transform:none!important;box-shadow:0 1px 2px rgba(43,35,32,.04),0 8px 24px rgba(43,35,32,.07)!important;filter:none!important}html body #allrecords:not(.avx1):not(.avx2) a.catg-card:hover .catg-img-wrap img{transform:scale(1.16)!important}}
 
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap img{transform:none!important;object-fit:contain!important;padding:6px!important}}
-/* ============ /AVANTCHA LAYER 84 ============ */
-
-/* ============ AVANTCHA LAYER 85: промо-карточки на телефоне ============ */
 
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .t396__elem{width:100%!important;left:0!important}html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-wrap{width:100%!important;padding:56px 16px 60px!important}html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-card,html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bcta-card{background-color:#F5EFE6!important;border-color:#E7DCCB!important;padding:26px 20px 24px!important}html body #allrecords:not(.avx1):not(.avx2) #rec859275495 .bpro-card .bpro-img{width:auto!important;height:136px!important;left:auto!important;right:-6px!important;top:auto!important;bottom:8px!important;object-fit:contain!important}}
-/* ============ /AVANTCHA LAYER 85 ============ */
-
-/* ============ AVANTCHA LAYER 86: подвал на телефоне ============ */
 
 @media (max-width:900px){html{background-color:#000!important}html body #allrecords:not(.avx1):not(.avx2) .bchf-logopanel{overflow:hidden!important;height:auto!important;min-height:200px!important}html body #allrecords:not(.avx1):not(.avx2) .bchf-logopanel-img{margin:0!important;bottom:0!important;height:auto!important;width:200px!important;max-width:60%!important;object-fit:contain!important}}
-/* ============ /AVANTCHA LAYER 86 ============ */
-
-/* ============ AVANTCHA LAYER 87: вкладки на товарной, телефон ============ */
 
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .t1281{padding-top:24px!important;padding-bottom:18px!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper_mobile{display:none!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__slider{justify-content:center!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__wrapper.t1281__wrapper{display:flex!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:4px!important;gap:0!important;justify-content:space-between!important;overflow:hidden!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__item.t1281__item{flex:0 1 auto!important;min-width:0!important;padding:9px 0!important;text-align:center!important}html body #allrecords:not(.avx1):not(.avx2) .t1281__item .t1281__title.t1281__title{font-size:9.5px!important;white-space:nowrap!important;padding:6px!important;justify-content:center!important;letter-spacing:0!important}}
-/* ============ /AVANTCHA LAYER 87 ============ */
-
-/* ============ AVANTCHA LAYER 88: FAQ на товарных по образцу с /about-us ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(.t668__accordion){background-image:none!important;padding:56px 0 64px!important}
 html body #allrecords:not(.avx1):not(.avx2) .t668__accordion{margin-bottom:14px!important}
@@ -2845,50 +2645,28 @@ html body #allrecords:not(.avx1):not(.avx2) .t668__wrapper.t668__wrapper{backgro
 html body #allrecords:not(.avx1):not(.avx2) .t668__title.t668__title{color:#fff!important;font-size:16px!important;line-height:1.4!important}
 html body #allrecords:not(.avx1):not(.avx2) .t668__icon svg *{stroke:rgba(255,255,255,.75)!important;fill:none!important}
 html body #allrecords:not(.avx1):not(.avx2) .t668__textwrapper,html body #allrecords:not(.avx1):not(.avx2) .t668__text{color:#B9B9B9!important;font-size:14px!important}
-/* ============ /AVANTCHA LAYER 88 ============ */
-
-/* ============ AVANTCHA LAYER 89: поле телефона в корзине ============ */
 
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-input-phonemask__wrap{border:1px solid rgba(26,19,17,.14)!important;border-radius:12px!important;background:#fff!important;padding:0 12px!important;overflow:hidden!important;transition:border-color .2s,box-shadow .2s!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-input-phonemask__wrap:focus-within{border-color:#2b2320!important;box-shadow:0 0 0 3px rgba(43,35,32,.08)!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=tel].t-input-phonemask.t-input-phonemask{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:13px 8px!important;height:auto!important}
 html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content .t-input-phonemask__wrap .t-input-phonemask__select{border:0!important;background:transparent!important}
-/* ============ /AVANTCHA LAYER 89 ============ */
-
-/* ============ AVANTCHA LAYER 90: формы не «гуляют» на iPhone ============ */
 
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) input[type=text],html body #allrecords:not(.avx1):not(.avx2) input[type=email],html body #allrecords:not(.avx1):not(.avx2) input[type=tel],html body #allrecords:not(.avx1):not(.avx2) input[type=number],html body #allrecords:not(.avx1):not(.avx2) input[type=search],html body #allrecords:not(.avx1):not(.avx2) textarea,html body #allrecords:not(.avx1):not(.avx2) select{font-size:16px!important}html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin{height:100dvh!important;max-height:100dvh!important;overscroll-behavior:contain!important}html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content{max-height:calc(100dvh - 24px)!important;overflow-y:auto!important;overscroll-behavior:contain!important}}
 
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=text],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=email],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content input[type=tel],html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-content textarea{font-size:16px!important}}
-/* ============ /AVANTCHA LAYER 90 ============ */
-
-/* ============ AVANTCHA LAYER 91: калькуляторы на телефоне ============ */
 
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-elem__24293693311470209944682,html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-elem__24293693311470210128180,html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-elem__24293693311470233923389{display:none!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .t396__artboard{height:auto!important;min-height:0!important;padding:24px 0 8px!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .t396__elem{position:relative!important;left:0!important;top:0!important;width:100%!important;max-width:100%!important;margin:0!important;transform:none!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tn-atom{width:100%!important;max-width:100%!important;height:auto!important;white-space:normal!important}html body #allrecords:not(.avx1):not(.avx2) #rec2429369331 .tb-calculator-container{width:100%!important;max-width:100%!important;padding:0 16px!important;box-sizing:border-box!important}}
-/* ============ /AVANTCHA LAYER 91 ============ */
 
 
-/* ============ AVANTCHA LAYER 92: заголовок FAQ на товарных ============ */
-/* Заголовок был 48px КАПСОМ, у образца (/about-us) — 34px обычным начертанием.
-   Блок заголовка опознаём структурно: запись, ЗА КОТОРОЙ идёт запись со списком t668. */
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom{font-size:30px!important;font-weight:400!important;line-height:1.15!important;text-transform:lowercase!important;letter-spacing:0!important}
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom::first-letter{text-transform:uppercase!important}
 
-/* ============ /AVANTCHA LAYER 92 ============ */
 
-
-/* ============ AVANTCHA LAYER 93: шапка без прыжка, жёсткая сетка ============ */
-/* Заглушка из слоя 81 держала общую ширину, но на телефоне пользователя иконки всё равно ехали:
-   при загрузке группа начиналась с 174, после появления кнопки — со 131. Теперь пять фиксированных мест,
-   бургер всегда в пятом, WhatsApp в четвёртом — ничто не двигается, когда кнопка появляется. */
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util{display:grid!important;grid-template-columns:44px 54px 44px 44px 44px!important;gap:6px!important;align-items:center!important;justify-content:end!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{display:none!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-burger{grid-column:5!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-wa{grid-column:4!important}}
-/* ============ /AVANTCHA LAYER 93 ============ */
 
 
-/* ============ AVANTCHA LAYER 94: значок WhatsApp сразу, плавная надпись, мягкий герой ============ */
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::before{content:""!important;grid-column:4!important;grid-row:1!important;width:44px!important;height:44px!important;border:1px solid rgba(37,211,102,.45)!important;border-radius:999px!important;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231faa4f' d='M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm4.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.16 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29z'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:21px 21px!important;align-self:center!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util:has(.tbh-wa)::before{display:none!important}}
 
-/* ============ /AVANTCHA LAYER 94 ============ */
 
 
 
@@ -2896,14 +2674,9 @@ html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__acc
 
 
 
-
-/* ============ AVANTCHA LAYER 96: FAQ — точки в шапке блока ============ */
-/* Точки убирались только со списка вопросов, а фон в точку лежит и на записи ЗАГОЛОВКА над ним */
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion){background-image:none!important}
-/* ============ /AVANTCHA LAYER 96 ============ */
 
 
-/* ============ AVANTCHA LAYER 97: FAQ товарных один в один с образцом ============ */
 html body #allrecords:not(.avx1):not(.avx2) .t668__circle{display:none!important}
 html body #allrecords:not(.avx1):not(.avx2) .t668__icon{width:24px!important;height:24px!important}
 html body #allrecords:not(.avx1):not(.avx2) .t668__accordion{margin-bottom:14px!important}
@@ -2913,106 +2686,52 @@ html body #allrecords:not(.avx1):not(.avx2) .t668__title.t668__title{font-size:1
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom{font-size:34px!important}
 
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .tn-atom::after{content:"Supply terms, samples, certification and distribution. If your question is not here, write to us and we will answer directly."!important;display:block!important;margin-top:18px!important;font-size:16px!important;line-height:1.5!important;color:#8e8e8e!important;text-transform:none!important;font-weight:400!important;letter-spacing:0!important}
-/* ============ /AVANTCHA LAYER 97 ============ */
 
 
-/* ============ AVANTCHA LAYER 98: FAQ — ровный заголовок, без скруглений, без пустоты ============ */
-/* Скругление верха убрано по просьбе. Заголовок переведён в поток: раньше при height:auto блок
-   схлопывался (дети абсолютные) и текст вылезал. Отступы списка ужаты — было 56 сверху и 64 снизу. */
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion){border-radius:0!important;overflow:visible!important}
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .t396__artboard{height:auto!important;min-height:250px!important;padding:0!important}
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(+ [id^=rec] .t668__accordion) .t396__elem{position:relative!important;top:0!important;left:0!important;margin:34px 20px 24px!important;width:auto!important}
 html body #allrecords:not(.avx1):not(.avx2) [id^=rec]:has(.t668__accordion){padding:0 0 36px!important}
-/* каталог: у описания была минимальная высота под 4 строки — на телефоне это давало пустоту до кнопки */
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-sub{min-height:0!important;margin-bottom:10px!important}html body #allrecords:not(.avx1):not(.avx2) .catg-card .tbc-add{margin-top:12px!important}}
-/* ============ /AVANTCHA LAYER 98 ============ */
 
 
-/* ============ AVANTCHA LAYER 99: единая система движения ============ */
-/* На сайте было 74 разных описания перехода — отсюда ощущение разнобоя. У avantcha по сути одно.
-   Всё, что реагирует на касание, теперь движется одинаково: 0.3с и одна кривая ускорения.
-   Только для устройств с мышью, чтобы на телефоне не залипали наведения. */
 @media (hover:hover){html body #allrecords:not(.avx1):not(.avx2) a,html body #allrecords:not(.avx1):not(.avx2) button,html body #allrecords:not(.avx1):not(.avx2) input,html body #allrecords:not(.avx1):not(.avx2) textarea,html body #allrecords:not(.avx1):not(.avx2) select,html body #allrecords:not(.avx1):not(.avx2) .t-btn,html body #allrecords:not(.avx1):not(.avx2) .t-submit,html body #allrecords:not(.avx1):not(.avx2) [class*="btn"],html body #allrecords:not(.avx1):not(.avx2) [class*="button"],html body #allrecords:not(.avx1):not(.avx2) .tbh-ico,html body #allrecords:not(.avx1):not(.avx2) .tbh-nav a,html body #allrecords:not(.avx1):not(.avx2) .tbh-cta,html body #allrecords:not(.avx1):not(.avx2) .tbh-wa,html body #allrecords:not(.avx1):not(.avx2) .tbh-burger,html body #allrecords:not(.avx1):not(.avx2) .tbh-reg__btn,html body #allrecords:not(.avx1):not(.avx2) .tbc-badge,html body #allrecords:not(.avx1):not(.avx2) .tbc-add,html body #allrecords:not(.avx1):not(.avx2) .catg-card,html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap,html body #allrecords:not(.avx1):not(.avx2) .catg-card img,html body #allrecords:not(.avx1):not(.avx2) .bpro-card,html body #allrecords:not(.avx1):not(.avx2) .bcta-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-card,html body #allrecords:not(.avx1):not(.avx2) .bchm-number,html body #allrecords:not(.avx1):not(.avx2) .bchm-title,html body #allrecords:not(.avx1):not(.avx2) .bchm-desc,html body #allrecords:not(.avx1):not(.avx2) .bben-card,html body #allrecords:not(.avx1):not(.avx2) .bben-card-title,html body #allrecords:not(.avx1):not(.avx2) .bfaq-item,html body #allrecords:not(.avx1):not(.avx2) .tn-atom,html body #allrecords:not(.avx1):not(.avx2) .tn-molecule,html body #allrecords:not(.avx1):not(.avx2) .tbs__lift,html body #allrecords:not(.avx1):not(.avx2) .t-input,html body #allrecords:not(.avx1):not(.avx2) .t668__wrapper,html body #allrecords:not(.avx1):not(.avx2) .t668__icon,html body #allrecords:not(.avx1):not(.avx2) .t706__product,html body #allrecords:not(.avx1):not(.avx2) .t706__cartwin-close{transition-duration:.3s!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important}}
-/* ⛔ ПЕРВЫЙ ЭКРАН ИСКЛЮЧЁН: его картинки двигает скрипт слайдера, любой переход = «полёты» */
 html body #allrecords:not(.avx1):not(.avx2) .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__mark{transition-duration:0s!important}
-/* ============ /AVANTCHA LAYER 99 ============ */
 
 
-/* ============ AVANTCHA LAYER 100: появление первого экрана ============ */
-/* Упаковка, стакан и фоновая надпись выезжают слева при заходе на сайт, по очереди.
-   Только первый слайд: у остальных своя анимация при переключении.
-   ⛔ Это АНИМАЦИЯ (одноразовая), а не переход — переходы на геометрии дают «полёты» при смене слайда. */
 @keyframes tbsHeroIn{from{opacity:0;translate:-80px 0}to{opacity:1;translate:0 0}}
 html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch{animation:tbsHeroIn .9s cubic-bezier(.16,.84,.44,1) .05s both!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass{animation:tbsHeroIn .9s cubic-bezier(.16,.84,.44,1) .2s both!important}
 html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation:tbsHeroIn 1.1s cubic-bezier(.16,.84,.44,1) .35s both!important}
 @media (prefers-reduced-motion:reduce){html body #allrecords:not(.avx1):not(.avx2) .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__svgmark{animation:none!important;opacity:1!important;translate:0 0!important}}
-/* ============ /AVANTCHA LAYER 100 ============ */
 
 
-/* ============ AVANTCHA LAYER 101: снятие нагрузки при прокрутке ============ */
-/* 1) У СКРЫТОЙ панели тёмной темы стоит backdrop-filter blur(14px) во весь артборд —
-   элемент невидим, а браузер продолжает считать размытие на каждый кадр прокрутки. */
 html body #allrecords:not(.avx1):not(.avx2) #rec1842546651 .t396__artboard{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-/* 2) drop-shadow висел на ВСЕХ 10 упаковках и стаканах, а видны только два — оставляем тень активному слайду */
-
-/* ============ /AVANTCHA LAYER 101 ============ */
 
 
-/* ============ AVANTCHA LAYER 102: шапка — шрифт каталога, линия в мегаменю, место под WhatsApp ============ */
-/* 1) «Catalog» — ЭТО BUTTON, а оформление пунктов было написано только для ссылок: вес 400 вместо 500, без разрядки */
 html body #allrecords:not(.avx1):not(.avx2) .tbh-nav .tbh-nav__btn{font-weight:500!important;letter-spacing:.2px!important;font-size:14px!important}
-/* 2) Подчёркивание рассчитано на пункты высотой 72 (отступ снизу 22px).
-   В мегаменю пункты высотой 17 — тот же отступ выносил линию ВЫШЕ текста. Ставим её под текст. */
 html body #allrecords:not(.avx1):not(.avx2) .tbh-mega a::after{bottom:-3px!important}
-/* ============ /AVANTCHA LAYER 102 ============ */
 
 
 
 
 
-/* ============ AVANTCHA LAYER 104: телефон — скачок масштаба спрятан за появлением ============ */
-/* Скрипты героя расставляют картинки в проходы 0 / 60 / 400 мс, и на телефоне видно, как упаковка
-   после появления меняет размер. Сдвигаем начало анимации за последний ранний проход:
-   до 0.45с картинка не показана, а когда выезжает — размер уже окончательный. */
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation-delay:2.6s!important}html.hro body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch{animation-delay:0s!important}html.hro body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass{animation-delay:.15s!important}html.hro body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation-delay:.3s!important}}
-/* ============ /AVANTCHA LAYER 104 ============ */
 
 
-/* ============ AVANTCHA LAYER 105: заглушка WhatsApp стоит ПЕРЕД Contact Us ============ */
-/* Заглушка `::after` имеет order:9 и без этого правила вставала ПОСЛЕ кнопки Contact Us,
-   и та уезжала влево на 44px, пока скрипт не создаст настоящую кнопку. */
 @media (min-width:901px){html body #allrecords:not(.avx1):not(.avx2) .tbh-util::after{order:4!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-burger{order:5!important}html body #allrecords:not(.avx1):not(.avx2) .tbh-util>.tbh-cta{order:10!important}}
-/* ============ /AVANTCHA LAYER 105 ============ */
 
 
-/* ============ AVANTCHA LAYER 106: одинаковый размер дойпаков в каталоге ============ */
-/* Были пер-товарные масштабы 1.16 / 0.88 / 0.98 из старых слоёв — на телефоне я их уже снял,
-   на десктопе оставались: одни упаковки крупнее, другие мельче, сетка выглядела неровной */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card .catg-img-wrap img{transform:none!important;object-fit:contain!important;padding:8px!important}
-/* ============ /AVANTCHA LAYER 106 ============ */
 
 
-/* ============ AVANTCHA LAYER 107: на телефоне — только мягкое проявление ============ */
-/* На узком экране выезд слева совпадал с движением слайдера — читалось как рывок справа.
-   Оставляем только проявление на месте, без сдвига. */
 @keyframes tbsFadeIn{from{opacity:0}to{opacity:1}}
 @media (max-width:900px){html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__pouch,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__glass,html body #allrecords:not(.avx1):not(.avx2) .tbs__slide:first-child .tbs__mark .tbs__svgmark{animation-name:tbsFadeIn!important;animation-duration:.6s!important;animation-timing-function:ease-out!important}}
-/* ============ /AVANTCHA LAYER 107 ============ */
 
 
-/* ============ AVANTCHA LAYER 108: значок не мелькает в Contact Us ============ */
-/* НАШЁЛ ПОЛЬЗОВАТЕЛЬ: значок WhatsApp изначально лежит ВНУТРИ кнопки Contact Us,
-   а скрипт потом вынимает его в отдельную круглую кнопку. Замерено: со значком кнопка 165px, без него 142px —
-   вот откуда сдвиг шапки на 23px при каждой загрузке. Прячем значок, пока он внутри кнопки. */
 html body #allrecords:not(.avx1):not(.avx2) .tbh-cta>svg{display:none!important}
-/* ============ /AVANTCHA LAYER 108 ============ */
 
 
-/* ============ AVANTCHA LAYER 109: упаковки одного видимого размера ============ */
-/* Коробки плиток одинаковы, НО в САМИХ ФАЙЛАХ разные поля: у Frappe упаковка занимает 91% кадра,
-   у Garnish — 54%, у большинства 67%. Оттого одни казались крупнее других.
-   Доля измерена по пикселям каждого файла, масштаб = 0.72 / доля — видимая высота стала равной */
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/milkshake"] .catg-img-wrap img{transform:scale(1.065)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/frappe"] .catg-img-wrap img{transform:scale(0.788)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/iced-tea"] .catg-img-wrap img{transform:scale(1.079)!important}
@@ -3029,10 +2748,5 @@ html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-syrup"] .cat
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/tea"] .catg-img-wrap img{transform:scale(0.822)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/sugar-free"] .catg-img-wrap img{transform:scale(0.853)!important}
 html body #allrecords:not(.avx1):not(.avx2) .catg-card[href="/vending"] .catg-img-wrap img{transform:scale(0.788)!important}
-/* ============ /AVANTCHA LAYER 109 ============ */
 
-/* ============ AVANTCHA LAYER 110 — ПОДВАЛ: убран большой логотип над аккордеоном ============ */
-/* На телефоне в подвале было ДВА логотипа: .bchf-mobile-logo (375x430) над колонками
-   и .bchf-logopanel в самом низу. Оставлен только нижний. */
 #allrecords:not(.avx1):not(.avx2) .bchf-mobile-logo{display:none!important}
-/* ============ /AVANTCHA LAYER 110 ============ */

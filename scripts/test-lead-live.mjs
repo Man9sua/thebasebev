@@ -1,15 +1,3 @@
-/**
- * Live staging lead test — sends ONE real submission through the full pipeline:
- *
- *   staging /api/leads → tilda-odoo Worker → Odoo
- *
- * This creates a real record a human has to look at. It is opt-in on purpose
- * and must never run in CI: without LEAD_LIVE_TEST=1 it refuses to do anything.
- *
- * Usage:
- *   LEAD_LIVE_TEST=1 npm run test:lead-live -- https://the-base-staging.mnsdemo.workers.dev
- */
-
 if (process.env.CI) {
   console.error("Refusing to run a live lead test in CI.");
   process.exit(1);

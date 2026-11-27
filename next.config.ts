@@ -1,4 +1,13 @@
 import type { NextConfig } from "next";
+import legacyRouteRedirects from "./src/data/legacy-route-redirects.json";
+import publicRoutePaths from "./src/data/public-route-paths.json";
+import { publicPath } from "./src/lib/site-paths";
+import { COUNTRY_ALIAS_PREFIXES, COUNTRY_DOCUMENT_PATH_PATTERN, RETIRED_ROUTE_REDIRECTS } from "./src/lib/country-paths";
+
+const retiredLegacyRedirects = legacyRouteRedirects as ReadonlyArray<{
+  source: string;
+  destination: string;
+}>;
 
 const nextConfig: NextConfig = {
   agentRules: false,
@@ -10,13 +19,50 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return {
+      beforeFiles: COUNTRY_ALIAS_PREFIXES.flatMap((country) => [
+        { source: `/${country}`, destination: "/ae" },
+        { source: `/${country}/:path(${COUNTRY_DOCUMENT_PATH_PATTERN})`, destination: "/ae/:path" },
+      ]),
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async redirects() {
     return [
-      { source: "/page65953477.html", destination: "/", statusCode: 301 },
-      { source: "/page65953593.html", destination: "/", statusCode: 301 },
-      { source: "/raf-cofeee", destination: "/raf-coffee", statusCode: 301 },
-      { source: "/raf-cofee", destination: "/raf-coffee", statusCode: 301 },
-      { source: "/functional-wellness", destination: "/catalog", statusCode: 301 },
+      ...publicRoutePaths.map((route) => ({ source: route, destination: publicPath(route), statusCode: 301 })),
+      ...retiredLegacyRedirects.map(({ source, destination }) => ({
+        source,
+        destination: publicPath(destination),
+        statusCode: 301,
+      })),
+      ...RETIRED_ROUTE_REDIRECTS.map(({ source, destination }) => ({ source, destination, statusCode: 301 })),
+      { source: "/page65953477.html", destination: publicPath("/"), statusCode: 301 },
+      { source: "/page65953593.html", destination: publicPath("/"), statusCode: 301 },
+      { source: "/raf-cofeee", destination: publicPath("/raf-coffee"), statusCode: 301 },
+      { source: "/raf-cofee", destination: publicPath("/raf-coffee"), statusCode: 301 },
+      { source: "/functional-wellness", destination: publicPath("/catalog"), statusCode: 301 },
+      { source: "/cabinet", destination: publicPath("/"), statusCode: 301 },
+
+      {
+        source: "/tpost/vb9gvbp5m1-the-unmanned-cafe-is-already-here-its-we",
+        destination: publicPath("/tpost/vb9gvbp5m1-unmanned-cafs-have-one-weak-link-ingredi"),
+        statusCode: 301,
+      },
+      {
+        source: "/tpost/gflfp1fx41-why-matcha-belongs-on-your-menu-the-numb",
+        destination: publicPath("/tpost/gflfp1fx41-the-numbers-behind-matchas-green-rush"),
+        statusCode: 301,
+      },
+      {
+        source: "/tpost/eljzud0n91-karak-and-masala-are-different-builds-on",
+        destination: publicPath("/tpost/eljzud0n91-one-sku-two-builds-30-seconds"),
+        statusCode: 301,
+      },
+
+      { source: "/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
+      { source: "/ae/tpost/je9sca5h71-brix", destination: publicPath("/tpost/j6bavd35i1-brix"), statusCode: 301 },
     ];
   },
 };

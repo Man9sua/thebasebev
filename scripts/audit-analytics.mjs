@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const exportRoot = path.resolve("tilda_export/project12027355");
-const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mnsdemo.workers.dev").replace(/\/$/, "");
-const reportPath = process.argv[3] ?? "ANALYTICS_AUDIT.md";
+const targetOrigin = (process.argv[2] ?? "https://the-base-staging.mansua.workers.dev").replace(/\/$/, "");
+const reportPath = process.argv[3] ?? path.join(".audit-artifacts", "ANALYTICS_AUDIT.md");
 const pageFiles = fs.readdirSync(exportRoot).filter((file) => /^page\d+\.html$/.test(file));
 
 const trackers = [
@@ -35,8 +35,11 @@ for (const file of pageFiles) {
 const analyticsComponent = fs.readFileSync("src/components/analytics/Analytics.tsx", "utf8");
 const sitePages = fs.readFileSync("src/lib/site-pages.ts", "utf8");
 const failures = [];
-if (!analyticsComponent.includes("GTM is authoritative when configured")) {
-  failures.push("Controlled analytics layer does not document GTM precedence.");
+const gtmBranch = analyticsComponent.indexOf("if (gtmId &&");
+const gaBranch = analyticsComponent.indexOf("if (gaId &&");
+if (gtmBranch < 0 || gaBranch <= gtmBranch ||
+    !/"thebase-gtm",?\s*\);\s*return;\s*}\s*$/.test(analyticsComponent.slice(gtmBranch, gaBranch))) {
+  failures.push("The GTM branch must return after loading its script, before the direct GA fallback.");
 }
 for (const tracker of trackers) {
   if (!sitePages.includes(tracker.id)) failures.push(`Legacy marker ${tracker.id} is not isolated by the export sanitizer.`);
@@ -106,6 +109,7 @@ No new analytics property or ID was created.
 ${failures.length ? failures.map((failure) => `- FAIL: ${failure}`).join("\n") : "- PASS: preview isolation and the controlled deduplication boundary are present."}
 `;
 
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (failures.length) {

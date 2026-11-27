@@ -3,12 +3,16 @@ import path from "node:path";
 import { chromium } from "@playwright/test";
 
 const baseUrl = (process.argv[2] ?? "http://127.0.0.1:3000").replace(/\/$/, "");
+const baseOrigin = new URL(baseUrl).origin;
 const chromePath =
   process.env.CHROME_PATH ??
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const artifactRoot = path.resolve(".visual-artifacts");
+const firstTouchStorageKey = "thebase:first-touch-attribution:v1";
+const BESTSELLERS = "#bestsellers";
 const failures = [];
 const pageErrors = [];
+const hydrationErrors = [];
 const localResponseErrors = [];
 
 fs.mkdirSync(artifactRoot, { recursive: true });
@@ -17,7 +21,44 @@ function check(condition, message) {
   if (!condition) failures.push(message);
 }
 
+async function readOnlyContext(options) {
+  const context = await browser.newContext(options);
+  await context.route("**/*", (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (request.method() === "POST" && url.origin === baseOrigin && url.pathname === "/cdn-cgi/rum") return route.fulfill({ status: 204, body: "" });
+    if (!["GET", "HEAD", "OPTIONS"].includes(request.method())) {
+      failures.push(`Unmocked mutation blocked: ${request.method()} ${url.pathname}`);
+      return route.abort();
+    }
+    return route.fallback();
+  });
+  await context.route("**/api/leads", (route) => {
+    failures.push("An unmocked lead attempt was blocked");
+    return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
+  });
+  await context.route("**/api/checkout**", (route) => {
+    if (route.request().method() === "GET" && new URL(route.request().url()).pathname === "/api/checkout/stripe/config") return route.fallback();
+    failures.push("A checkout API request was blocked");
+    return route.abort();
+  });
+  return context;
+}
+
+const hydrationMarkers = [
+  "hydrated but some attributes",
+  "Hydration failed",
+  "did not match",
+];
+
 function observe(page, label) {
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const text = message.text();
+    if (hydrationMarkers.some((marker) => text.includes(marker))) {
+      hydrationErrors.push(`${label}: ${text.split("\n")[0]}`);
+    }
+  });
   page.on("pageerror", (error) => pageErrors.push(`${label}: ${error.message}`));
   page.on("response", (response) => {
     const url = new URL(response.url());
@@ -31,90 +72,231 @@ function observe(page, label) {
   });
 }
 
+async function checkCountrySelector(page, label) {
+  for (const country of ["qa", "kw"]) {
+    await page.goto(`${baseUrl}/${country}/catalog?utm_source=chatgpt.com`, { waitUntil: "domcontentloaded" });
+    await page.locator("[data-shop-product]").first().waitFor();
+    check((await page.locator("header button[aria-label^='Country:']").count()) === 0, `${label}: country dropdown should be removed`);
+    check(new URL(page.url()).pathname === `/${country}/catalog`, `${label}: country subfolder was lost`);
+    check(new URL(page.url()).searchParams.get("utm_source") === "chatgpt.com", `${label}: country route lost attribution`);
+  }
+  await page.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
+}
+
+async function checkDistributorFinder(page, label, countryName, countryCode) {
+  let capturedLead;
+  await page.route("**/api/leads", async (route) => {
+    capturedLead = route.request().postDataJSON();
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: false,
+        error: "lead_backend_unavailable",
+        message: "Lead delivery is temporarily unavailable. Please contact us directly.",
+        requestId: "finder-smoke-mocked",
+      }),
+    });
+  });
+  await page.goto(`${baseUrl}/ae/find-your-distributor?market=AE`, { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(
+    (storageKey) => sessionStorage.getItem(storageKey) !== null,
+    firstTouchStorageKey,
+  );
+  const countries = page.locator('button[aria-controls="distributor-details"]');
+  check((await countries.count()) === 17, `${label}: finder does not list all 17 markets`);
+  const details = page.locator("#distributor-details");
+  check(
+    (await details.locator('a[href="tel:+971509890429"]').count()) === 1,
+    `${label}: UAE contact phone missing`,
+  );
+  await page.goto(`${baseUrl}/ae/find-your-distributor?market=${countryCode}`, { waitUntil: "domcontentloaded" });
+  await details.getByRole("heading", { name: "Partner details coming soon", exact: true }).waitFor();
+  check(
+    (await countries.filter({ hasText: countryName }).getAttribute("aria-pressed")) === "true",
+    `${label}: market query did not preselect its country`,
+  );
+  const search = page.getByRole("searchbox", { name: "Search country" });
+  await search.fill(countryName);
+  check((await countries.count()) === 1, `${label}: country search did not narrow the list`);
+  await countries.first().click();
+  await details.getByRole("heading", { name: "Partner details coming soon", exact: true }).waitFor();
+  check((await page.getByRole("navigation", { name: "Breadcrumb", exact: true }).count()) === 0, `${label}: finder breadcrumb row is still visible`);
+  check((await details.getByText(/Official partner|Distribution in /).count()) === 0, `${label}: finder partner eyebrow is still present`);
+  check(
+    (await details.locator('a[href^="tel:"], a[href^="mailto:"]').count()) === 0,
+    `${label}: pending market exposes unconfirmed contact details`,
+  );
+  check(
+    ((await details.getByRole("link", { name: "WhatsApp UAE team" }).getAttribute("href")) ?? "")
+      .startsWith("https://wa.me/971509890429?text="),
+    `${label}: pending market does not offer the confirmed UAE contact fallback`,
+  );
+  await search.fill("No such country");
+  check(await page.getByRole("status").isVisible(), `${label}: no-result search has no feedback`);
+  await search.fill("");
+  check((await countries.count()) === 17, `${label}: clearing country search did not restore the list`);
+  const sampleButton = details.getByRole("button", { name: "Request samples", exact: true });
+  check(await sampleButton.evaluate((button) => {
+    const styles = getComputedStyle(button);
+    return styles.backgroundColor === "rgba(0, 0, 0, 0)" && styles.color !== getComputedStyle(button.closest("section")).backgroundColor;
+  }), `${label}: Request samples text is unreadable against its background`);
+  await sampleButton.click();
+  const form = page.locator("#sample-request-modal-form");
+  await form.waitFor({ state: "visible" });
+  check(
+    (await form.locator('input[name="country"]').inputValue()) === countryCode,
+    `${label}: sample form lost the selected market`,
+  );
+  await form.getByRole("combobox", { name: "Product" }).selectOption("matcha");
+  await form.getByText("Hojicha", { exact: true }).click();
+  await form.getByText("Purple Yum Ube", { exact: true }).click();
+  await form.getByRole("button", { name: "+ Add another product" }).click();
+  await form.getByRole("combobox", { name: "Another product" }).selectOption("milkshake");
+  await form.getByText("Banana", { exact: true }).click();
+  check(
+    (await form.locator('input[name="product"]').inputValue()) === "Matcha, Milkshake",
+    `${label}: sample form did not carry both products`,
+  );
+  await form.locator('input[name="name"]').fill("Browser Smoke");
+  await form.locator('input[name="email"]').fill("smoke@example.com");
+  await form.locator('input[name="Phone"]').fill("+971500000000");
+  await form.locator('input[name="company"]').fill("Browser Smoke LLC");
+  await form.locator('input[name="city"]').fill("Dubai");
+  const request = page.waitForRequest((candidate) => new URL(candidate.url()).pathname === "/api/leads");
+  await form.evaluate((element) => element.requestSubmit());
+  await request;
+  await form.locator(".js-rule-error-all").filter({ hasText: /temporarily unavailable/i }).waitFor();
+  check(
+    capturedLead?.country === countryCode && capturedLead?.formType === "sample",
+    `${label}: submitted sample lead lost its market or form type`,
+  );
+  check(
+    /- Matcha: Hojicha, Purple Yum Ube\n- Milkshake: Banana/.test(capturedLead?.message ?? ""),
+    `${label}: submitted sample lead lost its samples: ${capturedLead?.message}`,
+  );
+  check(
+    await form.locator(".js-successbox").isHidden(),
+    `${label}: failed delivery displayed a false success`,
+  );
+  await page.keyboard.press("Escape");
+  check((await page.locator("#sample-request-modal-form").count()) === 0, `${label}: finder sample form did not close`);
+  check(
+    await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
+    `${label}: finder has horizontal overflow`,
+  );
+}
+
 const browser = await chromium.launch({
   executablePath: chromePath,
   headless: true,
-  args: ["--disable-background-networking", "--disable-component-update", "--disable-sync"],
 });
 
 try {
-  const desktop = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const history = await readOnlyContext({ viewport: { width: 390, height: 844 } });
+  const historyPage = await history.newPage();
+  observe(historyPage, "history");
+  await historyPage.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
+  await historyPage.goto(`${baseUrl}/ae/matcha`, { waitUntil: "domcontentloaded" });
+  await Promise.all([
+    historyPage.waitForURL(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" }),
+    historyPage.evaluate(() => window.history.back()),
+  ]);
+  check(historyPage.url().endsWith("/catalog"), "navigation: browser Back did not restore catalog");
+  await Promise.all([
+    historyPage.waitForURL(`${baseUrl}/ae/matcha`, { waitUntil: "domcontentloaded" }),
+    historyPage.evaluate(() => window.history.forward()),
+  ]);
+  check(historyPage.url().endsWith("/matcha"), "navigation: browser Forward did not restore product route");
+  await history.close();
+  console.log("Browser smoke phase passed: history");
+
+  const desktop = await readOnlyContext({ viewport: { width: 1440, height: 1000 } });
   const page = await desktop.newPage();
   observe(page, "desktop");
 
-  // The homepage is the redesigned surface: a video hero, then the Bestsellers
-  // carousel. Navigation, product grid and the region picker moved out of the
-  // old hover mega-menu into the full-screen menu panel, so they are asserted
-  // there rather than on hover.
-  await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-  await page.locator("#bestsellers").waitFor();
-  await page.waitForTimeout(900);
+  await page.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
+  await page.locator(BESTSELLERS).waitFor();
 
-  // The hero is product-first: no video, and the pack shot is the dominant
-  // object in the first viewport.
-  const hero = page.locator("section[data-hero]");
-  check((await hero.locator("video").count()) === 0, "home: hero must not use video");
-  const heroShot = hero.locator("[aria-roledescription='slide']:not([aria-hidden='true']) img").first();
-  check(await heroShot.count() === 1, "home: expected one visible hero product");
-  const heroBox = await heroShot.boundingBox();
-  const view = page.viewportSize();
+  const slider = page.locator("[data-home-slider]");
+  check(((await slider.locator("h1").textContent()) ?? "").trim() === "Premium Beverage Bases", "home: the slider lost the page's h1");
+  const slides = slider.locator("[aria-roledescription='slide']");
+  check((await slides.count()) === 15, "home: the slider does not carry its fifteen slides");
+  check((await slides.first().getAttribute("href")) === "/ae/raf-coffee", "home: the first slide must open Raf Coffee in the market");
+  check((await slider.locator("[aria-roledescription='slide'][data-active]").count()) === 1, "home: exactly one slide must be on screen");
+  const frameBox = await slider.locator("[data-ink]").first().boundingBox();
+  const headerBox = await page.locator("header").first().boundingBox();
+  check(!!frameBox && !!headerBox && frameBox.y >= headerBox.y + headerBox.height, "home: the slider starts under the fixed header");
+  await slider.getByRole("button", { name: "Show Raf Coffee", exact: true }).click();
+  await slider.getByRole("button", { name: "Next slide" }).click();
+  check((await slides.nth(1).getAttribute("data-active")) !== null, "home: the next arrow did not move the slider");
+  await page.waitForFunction(() => !document.querySelector('button[aria-label="Show Matcha"]')?.hasAttribute("aria-current"), undefined, { timeout: 6500 });
+  const headerMark = await page.evaluate(() => {
+    const el = document.querySelector('header a[href="/ae"] svg[data-brand-mark="vertical"]');
+    return el ? el.getBoundingClientRect().height : 0;
+  });
+  check(headerMark > 0, "header: stacked BASE mark missing");
   check(
-    !!heroBox && heroBox.height > view.height * 0.4,
-    `home: hero product is not dominant (${Math.round(heroBox?.height ?? 0)}px of ${view.height})`,
-  );
-  check(
-    !!heroBox && Math.abs(heroBox.x + heroBox.width / 2 - view.width / 2) < 60,
-    "home: hero product is not centred",
-  );
-  // The header must carry the original Tilda lockup, not a text substitute.
-  check(
-    (await page.locator("header a[href='/'] img[src$='base-logo.svg']").count()) === 1,
-    "header: original BASE logo asset missing",
+    headerMark >= 36,
+    `header: the mark collapsed (height ${Math.round(headerMark)})`,
   );
 
   check(
-    (await page.locator("#bestsellers [aria-roledescription='slide']").count()) === 5,
-    "home: expected five bestseller slides",
+    (await page.locator(`${BESTSELLERS} [data-bestseller]`).count()) === 6,
+    "home: expected six bestseller cards",
   );
   check(
-    (await page.locator("#bestsellers [aria-current]").count()) === 5,
-    "home: expected five bestseller dots",
+    (await page.locator(`${BESTSELLERS} a`).filter({ hasText: /^All \d+ categories$/ }).getAttribute("href")) === "/ae/catalog",
+    "home: the bestsellers must link to the whole catalogue",
   );
   check(
     (await page.locator("h1").count()) === 1,
     "home: expected exactly one h1",
   );
   check(
-    /^Premium\s+.+\s+Bases$/.test(((await page.locator("h1").textContent()) ?? "").trim()),
+    /^Premium\s+.+\s+Bases\b/.test(((await page.locator("h1").textContent()) ?? "").trim()),
     "home: h1 must keep the production wording (Premium … Bases)",
   );
 
-  await page.locator("#bestsellers [aria-label='Next product']").click();
-  await page.waitForTimeout(900);
+  const initialScrollY = await page.evaluate(() => window.scrollY);
+  await page.mouse.wheel(0, 600);
+  await page.waitForFunction((start) => window.scrollY > start + 4, initialScrollY);
+  await page.locator(BESTSELLERS).scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await page.locator(`${BESTSELLERS} [data-bestseller='matcha'] button`).click();
+  const bestsellerPicker = page.locator("[data-shop-picker='matcha']");
+  await bestsellerPicker.waitFor();
   check(
-    (await page.locator("#bestsellers .is-active, #bestsellers [aria-hidden='false'][aria-roledescription='slide']")
-      .first()
-      .getAttribute("aria-label"))?.startsWith("2 of 5"),
-    "home: next arrow did not activate slide two",
+    (await bestsellerPicker.locator("[data-shop-flavor]").count()) > 0,
+    "home: Add did not open the Matcha flavour picker",
   );
+  await page.keyboard.press("Escape");
+  await bestsellerPicker.waitFor({ state: "detached" });
 
-  // Horizontal reading rail: a native overflow scroller, so the arrows move it
-  // and vertical wheel over it must still scroll the page.
   const rail = page.locator("section[aria-labelledby='reading-title'] [data-native-scroll]");
   await rail.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
   check(
-    (await rail.locator("[data-card]").count()) === 7,
-    "reading: expected seven cards in the rail",
+    (await rail.locator("[data-card]").count()) === 5,
+    "reading: expected five cards on the rail",
+  );
+  check(
+    (await rail.locator("a[href='/ae/rnd']").count()) === 1 &&
+      (await rail.locator("a[href^='/ae/tpost/']").count()) === 1,
+    "reading: the rail lost either its guides or its article",
   );
   check(
     await rail.evaluate((el) => el.scrollWidth > el.clientWidth + 100),
     "reading: rail is not horizontally scrollable",
   );
 
-  const railNext = page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll right']");
+  const railNext = page.locator(
+    "section[aria-labelledby='reading-title'] button[aria-label='Scroll right']",
+  );
   check(
-    await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled(),
+    await page
+      .locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']")
+      .isDisabled(),
     "reading: left arrow should start disabled",
   );
   await railNext.click();
@@ -124,16 +306,17 @@ try {
     "reading: right arrow did not advance the rail",
   );
   check(
-    !(await page.locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']").isDisabled()),
+    !(await page
+      .locator("section[aria-labelledby='reading-title'] button[aria-label='Scroll left']")
+      .isDisabled()),
     "reading: left arrow should enable once scrolled",
   );
 
-  // The progress thumb tracks the rail rather than sitting still.
-  const thumbShift = await page.locator("section[aria-labelledby='reading-title'] [class*='thumb']")
+  const thumbShift = await page
+    .locator("section[aria-labelledby='reading-title'] [class*='thumb']")
     .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
   check(thumbShift > 5, "reading: progress indicator did not follow the rail");
 
-  // A vertical wheel over the rail must scroll the page, not be swallowed.
   const beforeY = await page.evaluate(() => window.scrollY);
   await rail.hover();
   await page.mouse.wheel(0, 400);
@@ -143,28 +326,32 @@ try {
     "reading: rail swallowed vertical scrolling",
   );
 
-  // The footer wordmark must fit. It was sized in `vw`, which includes the
-  // scrollbar, so the final E ran off the right edge on desktop only.
+  const aboutTitle = page.locator("#about-title");
+  await aboutTitle.scrollIntoViewIfNeeded();
+  check(await aboutTitle.isVisible(), "home: About heading is missing");
+  check(await page.locator("main video").count() === 0, "home: video is still mounted");
+
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(900);
-  const wordmark = await page.evaluate(() => {
-    const el = [...document.querySelectorAll("footer *")]
-      .find((e) => e.textContent.trim() === "BASE" && e.children.length === 0);
+  const closingMark = await page.evaluate(() => {
+    const el = document.querySelector('footer svg[data-brand-mark="stacked"]');
     if (!el) return null;
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const box = range.getBoundingClientRect();
-    const cw = document.documentElement.clientWidth;
-    return { left: box.left, right: box.right, cw, share: box.width / cw };
+    const box = el.getBoundingClientRect();
+    return {
+      left: box.left,
+      right: box.right,
+      height: box.height,
+      cw: document.documentElement.clientWidth,
+    };
   });
-  check(!!wordmark, "footer: BASE wordmark not found");
+  check(!!closingMark, "footer: stacked brand mark not found");
   check(
-    !!wordmark && wordmark.left >= -2 && wordmark.right <= wordmark.cw + 2,
-    `footer: BASE wordmark overflows (${Math.round(wordmark?.left ?? 0)}..${Math.round(wordmark?.right ?? 0)} of ${wordmark?.cw})`,
+    !!closingMark && closingMark.left >= -2 && closingMark.right <= closingMark.cw + 2,
+    `footer: brand mark overflows (${Math.round(closingMark?.left ?? 0)}..${Math.round(closingMark?.right ?? 0)} of ${closingMark?.cw})`,
   );
   check(
-    !!wordmark && wordmark.share > 0.7,
-    "footer: BASE wordmark should span most of the width",
+    !!closingMark && closingMark.height > 90,
+    `footer: brand mark collapsed (height ${Math.round(closingMark?.height ?? 0)})`,
   );
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1),
@@ -173,30 +360,35 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(700);
 
-  // Clicking a carousel control scrolls the page, and the bar hides on
-  // scroll-down by design, so come back to the top before touching the header.
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(700);
-
-  // Region picker — ported from production, still display-only.
-  const region = page.locator("header button[aria-label^='Region:']");
-  await region.click();
-  await page.waitForTimeout(200);
   check(
-    (await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").count()) === 5,
-    "header: region panel did not list five regions",
+    (await page.locator("header button[aria-label^='Region:']").count()) === 0,
+    "header: the old region picker is back in the bar",
   );
-  await page.locator("header [role='listbox'][aria-label='Regions'] [role='option']").nth(2).click();
-  await page.waitForTimeout(200);
   check(
-    ((await region.textContent()) ?? "").includes("KZ"),
-    "header: region selection did not update",
+    (await page.locator("header button[aria-label^='Country:']").count()) === 0,
+    "header: removed country dropdown is present",
+  );
+  check(
+    (await page.locator('header a[href="/ae/find-your-distributor"]').count()) === 0,
+    "header: country selector was not restored in place of the finder button",
   );
 
-  // Everything the old mega-menu linked to now lives in the menu panel.
-  await page.locator("header button[aria-label='Open menu']").click();
-  await page.waitForTimeout(900);
+  await checkCountrySelector(page, "desktop");
+  check(
+    (await page.evaluate(() =>
+      [...document.querySelectorAll("a[href]")].filter((a) =>
+        /^\/(?:sa|kz|ru|uk)(?:[/?#]|$)/.test(a.getAttribute("href") ?? ""),
+      ).length,
+    )) === 0,
+    "home: the page links to a market that has no routes",
+  );
+
   const menu = page.locator("#site-menu");
+  for (let attempt = 0; attempt < 6; attempt++) {
+    await page.locator("header button[aria-label='Open menu']").click();
+    await page.waitForTimeout(900);
+    if (await menu.evaluate(el => getComputedStyle(el).clipPath === "inset(0px)")) break;
+  }
   check(
     await menu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
     "header: menu panel did not open",
@@ -205,176 +397,331 @@ try {
     (await menu.locator("a[href^='/']").evaluateAll((links) => new Set(links.map((a) => a.getAttribute("href"))).size)) >= 24,
     "header: menu lost links the mega-menu used to expose",
   );
+  check(
+    (await menu.locator("a[href='/cabinet']").count()) === 0,
+    "header: cabinet link leaked into desktop navigation",
+  );
   await page.keyboard.press("Escape");
   await page.waitForTimeout(600);
 
   await page.evaluate(() => window.scrollTo(0, 1200));
-  // The bar cross-fades over --tbb-dur (720ms); sample after it settles.
   await page.waitForTimeout(1_100);
   const headerState = await page.locator("header").evaluate((el) => ({
     color: getComputedStyle(el).color,
     panel: getComputedStyle(el, "::after").transform,
   }));
   check(
-    // Guidebook p.15: ink is 000000.
     headerState.color === "rgb(0, 0, 0)",
     `header: scrolled state was not applied (${JSON.stringify(headerState)})`,
   );
 
-  await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
-  await page.locator(".catg-card").first().waitFor();
+  await page.goto(`${baseUrl}/ae/catalog`, { waitUntil: "domcontentloaded" });
+  await page.locator("[data-shop-product]").first().waitFor();
   await page.waitForTimeout(1_200);
-  check((await page.locator(".catg-card").count()) === 16, "catalog: expected 16 product cards");
-  check((await page.locator(".catg-price").count()) === 16, "catalog: expected a price or request label on every card");
-  const catalogPrices = await page.locator(".catg-card").evaluateAll((cards) =>
-    Object.fromEntries(
-      cards.map((card) => [
-        card.querySelector(".catg-name")?.textContent?.trim() ?? "",
-        card.querySelector(".catg-price")?.textContent?.trim() ?? "",
-      ]),
-    ),
-  );
-  const expectedCatalogPrices = {
-    Milkshake: "45.38 AED",
-    Frappe: "49.40 AED",
-    "Iced Tea": "42.81 AED",
-    Cordial: "50.15 AED",
-    "Raf Coffee": "38.74 AED",
-    "Chai Latte": "52.05 AED",
-    Matcha: "70.42 AED",
-    Chocolate: "67.88 AED",
-    "Cream Latte": "38.76 AED",
-    Jam: "64.94 AED",
-    Topping: "Price on request",
-    Garnish: "4.91 AED",
-    Syrup: "48.82 AED",
-    Tea: "Price on request",
-    "Sugar Free": "14.22 AED",
-    Vending: "Price on request",
-  };
-  for (const [name, expectedPrice] of Object.entries(expectedCatalogPrices)) {
-    check(catalogPrices[name] === expectedPrice, `catalog: ${name} price changed`);
+  check((await page.locator("[data-shop-product]").count()) === 22, "Shop: expected 22 product cards");
+  check((await page.getByRole("heading", { name: "Shop", exact: true }).count()) === 1, "Shop: visible heading matches the approved reference");
+  const marketPrompt = page.getByRole("region", { name: "Your country", exact: true });
+  if (await marketPrompt.isVisible()) {
+    const promptBox = await marketPrompt.boundingBox();
+    const headingBox = await page.getByRole("heading", { name: "Shop", exact: true }).boundingBox();
+    check(promptBox && headingBox && headingBox.y >= promptBox.y + promptBox.height,
+      "Shop: market prompt overlaps the page heading");
   }
-  check((await page.locator(".catg-flt button").count()) === 5, "catalog: expected All plus four filters");
-  await page.locator('.catg-flt button[data-f="Cold & Refreshing"]').click();
-  check((await page.locator(".catg-card:not(.is-hidden)").count()) === 4, "catalog: cold filter did not leave four cards");
-
-  await page.locator(".catg-card:not(.is-hidden) .tbc-add").first().click();
-  await page.waitForTimeout(200);
-  const cartProducts = await page.evaluate(() =>
-    Array.isArray(window.tcart?.products) ? window.tcart.products : [],
-  );
-  check(cartProducts.length === 1, "catalog: add-to-cart did not create one cart item");
-  check(cartProducts[0]?.name === "Milkshake", "catalog: unexpected cart product");
-  check(Number(cartProducts[0]?.price) === 45.38, "catalog: cart product price changed");
-  await page.waitForTimeout(900);
-  await page.locator('.tbh-ico[aria-label="Cart"]').first().click();
-  await page.waitForTimeout(500);
-  const openCartText = await page.evaluate(() => {
-    const cart = [...document.querySelectorAll('[class*="t706__cartwin"]')].find((element) => {
-      const style = getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
-    });
-    return cart?.textContent ?? "";
-  });
-  check(/Milkshake/.test(openCartText), "catalog: cart dialog did not open with the selected product");
-  check(/45\.38/.test(openCartText), "catalog: cart dialog did not preserve the selected price");
-
-  await page.goto(`${baseUrl}/matcha`, { waitUntil: "domcontentloaded" });
-  await page.locator("h1").first().waitFor();
-  check(/Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""), "matcha: unexpected H1");
-  check((await page.locator("img").count()) > 10, "matcha: expected product imagery");
-  await page.locator('a[href="#sample"]').first().click();
-  await page.waitForTimeout(500);
+  check((await page.locator("[data-shop-product]").getByText("-", { exact: true }).count()) === 5, "Shop: ranges without approved matching prices remain on request");
+  check((await page.locator("[data-shop-product]").getByText(/AED\s*[\d,.]+/).count()) === 17, "Shop: approved range prices are visible");
+  check(!/\bVAT\b/i.test(await page.locator("main").innerText()), "Shop: VAT details only appear at checkout");
+  for (const slug of ["puree", "sauce", "add-ons"]) {
+    check(
+      (await page.locator(`[data-shop-product="${slug}"] img`).count()) === 0,
+      `Shop: ${slug} shows an unconfirmed product image`,
+    );
+  }
+  check(await page.locator('[data-shop-product="electrolyte"] img[src="/images/shop/electrolyte.webp"]').count() === 1, "Shop: Electrolyte stick is missing");
+  check((await page.locator("[data-catalog-filters], [data-catalog-sort]").count()) === 0, "catalog: removed filter and sort controls remain");
+  check(JSON.stringify(await page.locator("[data-shop-product]").evaluateAll((cards) => cards.slice(0, 6).map((card) => card.getAttribute("data-shop-product")))) === JSON.stringify(["milkshake", "iced-tea", "cordial", "matcha", "raf-coffee", "chocolate"]), "Shop: featured order differs from the approved reference");
   check(
-    await page.locator("#form1855223381").isVisible(),
-    "matcha: Place order did not open the shared Free Sample form",
+    !(await page.locator("#rec2839951603 .js-store-grid-cont-preloader").isVisible()),
+    "catalog: hidden Tilda store preloader leaked into the public grid",
+  );
+  const catalogSearch = page.getByRole("searchbox", { name: "Search products or flavours" });
+  await catalogSearch.fill("matcha");
+  check(await page.locator('[data-shop-product="matcha"]').isVisible(), "Shop: search did not find Matcha");
+  await catalogSearch.fill("Vanilla");
+  check(await page.locator('[data-shop-product="milkshake"]').isVisible(), "Shop: search does not include product flavours");
+  await catalogSearch.fill("no-such-product");
+  check((await page.locator("[data-shop-product]").count()) === 0, "catalog: no-match search returned cards");
+  check(await page.getByText(/Nothing matches/).isVisible(), "catalog: no-match explanation is missing");
+  await catalogSearch.fill("");
+  check((await page.locator("[data-shop-product]").count()) === 22, "catalog: clearing search did not restore all ranges");
+
+  check((await page.locator('[data-shop-choose][aria-haspopup="dialog"]').count()) === 22, "Shop: each range opens its native flavour picker");
+  check((await page.locator("header [data-cart-control]").count()) === 1, "Shop: native basket control is missing");
+
+  await page.goto(`${baseUrl}/ae/matcha`, { waitUntil: "domcontentloaded" });
+  await page.locator("h1").first().waitFor();
+  await page.waitForTimeout(1_200);
+  check(/Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""), "matcha: unexpected H1");
+  const productImage = page.locator("main img").first();
+  check(await productImage.isVisible(), "matcha: supplied product hero image is not visible");
+  check(
+    await productImage.evaluate((image) => image.complete && image.naturalWidth > 0),
+    "matcha: supplied product hero image failed to load",
+  );
+  const hiddenProductContent = await page.locator("main .t-animate").evaluateAll((elements) =>
+    elements.filter((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return rect.width > 24 && rect.height > 24 &&
+        (style.opacity === "0" || style.visibility === "hidden");
+    }).length,
+  );
+  check(
+    hiddenProductContent === 0,
+    `matcha: ${hiddenProductContent} meaningful product elements stayed hidden`,
+  );
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator("h1").first().waitFor();
+  check(
+    /Matcha/i.test((await page.locator("h1").first().textContent()) ?? ""),
+    "matcha: product content failed after a hard refresh",
+  );
+  await page.getByRole("button", { name: "Request a free sample", exact: true }).click();
+  await page.locator("#sample-request-modal-form").waitFor({ state: "visible" });
+  check(
+    (await page
+      .locator('#sample-request-modal-form input[name="tildaspec-formname"]')
+      .inputValue()) === "Free Sample",
+    "matcha: the sample modal carries a form name the lead bridge does not own",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
+  check(
+    (await page.locator("#sample-request-modal-form").count()) === 0,
+    "matcha: the sample modal did not close on Escape",
+  );
+  check(
+    (await page.evaluate(() => document.documentElement.style.overflow)) !== "hidden",
+    "matcha: the sample modal left the page scroll locked",
   );
 
-  await page.evaluate(() => sessionStorage.removeItem("thebase:first-touch-attribution:v1"));
-  await page.goto(`${baseUrl}/contacts?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+  check(
+    (await page.locator("[data-cart-add]").count()) === 1,
+    "matcha: native purchase panel is missing its add-to-cart control",
+  );
+  check(
+    (await page.locator("header [data-cart-control]").count()) === 1,
+    "matcha: native header basket is missing",
+  );
+  check(
+    (
+      (await page.locator('header a[aria-label="Your account"]').first().getAttribute("href")) ?? ""
+    ).startsWith("https://odoo."),
+    "matcha: the bar's account link does not lead to Odoo",
+  );
+  check(
+    (await page.getByRole("button", { name: "Request pricing" }).count()) === 0,
+    "matcha: the redesigned page still offers the removed pricing form",
+  );
+  check(
+    (await page.getByRole("link", { name: "Find your distributor" }).first().getAttribute("href")) ===
+      "/ae/find-your-distributor",
+    "matcha: Find your distributor does not lead to the finder page",
+  );
+  await page.route("**/api/leads", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      headers: { "Cache-Control": "no-store" },
+      body: JSON.stringify({
+        ok: false,
+        error: "lead_backend_unavailable",
+        message: "Lead delivery is temporarily unavailable. Please contact us directly.",
+        requestId: "browser-smoke-mocked",
+      }),
+    });
+  });
+
+  await page.evaluate((storageKey) => sessionStorage.removeItem(storageKey), firstTouchStorageKey);
+  await page.goto(`${baseUrl}/ae/?utm_source=chatgpt.com&utm_campaign=browser-smoke`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.locator(BESTSELLERS).waitFor();
+
+  await page.goto(`${baseUrl}/ae/contacts`, {
     waitUntil: "domcontentloaded",
   });
   const contactForm = page.locator("#form860957415");
   await contactForm.waitFor();
+  await contactForm.locator('input[name="company_website"][readonly]').waitFor({ state: "attached" });
   await contactForm.locator('input[name="name"]').fill("Browser Smoke");
+  await contactForm.locator('input[name="company"]').fill("THE BASE QA");
   await contactForm.locator('input[name="email"]').fill("smoke@example.com");
-  const consent = contactForm.locator('input[name="bch_privacy_agreement"]');
+  await contactForm.locator('input[name="Phone"]').fill("500000000");
+  await contactForm.locator('input[name="country"]').fill("United Arab Emirates");
+  await contactForm.locator('textarea[name="text"]').fill("Browser-safe form error UX check.");
+  const consent = contactForm.locator('input[name="privacy-consent"]');
   if (await consent.count()) {
     await consent.evaluate((input) => {
       input.checked = true;
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
+  const contactResponse = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/leads");
   await contactForm.evaluate((form) => form.requestSubmit());
-  await page.waitForTimeout(700);
+  await contactResponse;
+  const contactError = contactForm.locator(".js-rule-error-all");
+  await contactError
+    .filter({ hasText: /temporarily unavailable/i })
+    .waitFor({ state: "attached", timeout: 10_000 })
+    .catch(() => {});
   check(
-    /temporarily unavailable/i.test((await contactForm.locator(".js-rule-error-all").textContent()) ?? ""),
+    /temporarily unavailable/i.test((await contactError.textContent()) ?? ""),
     "contacts: unconfigured lead backend did not show an honest error",
   );
-  const attribution = await page.evaluate(() =>
-    JSON.parse(sessionStorage.getItem("thebase:first-touch-attribution:v1") ?? "null"),
+  const attribution = await page.evaluate(
+    (storageKey) => JSON.parse(sessionStorage.getItem(storageKey) ?? "null"),
+    firstTouchStorageKey,
   );
   check(attribution?.utm_source === "chatgpt.com", "contacts: chatgpt.com attribution was not retained");
   check(
     (await page.locator('link[rel="canonical"]').first().getAttribute("href")) ===
-      "https://thebasebev.com/contacts",
+      "https://thebasebev.com/ae/contacts",
     "contacts: canonical was changed after hydration",
   );
 
-  await desktop.close();
+  await checkDistributorFinder(page, "desktop", "Saudi Arabia", "SA");
 
-  const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  await desktop.close();
+  console.log("Browser smoke phase passed: desktop interactions");
+
+  const mobile = await readOnlyContext({ viewport: { width: 390, height: 844 } });
   const mobilePage = await mobile.newPage();
   observe(mobilePage, "mobile");
-  await mobilePage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  await mobilePage.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
+  await mobilePage.waitForFunction(
+    (storageKey) => sessionStorage.getItem(storageKey) !== null,
+    firstTouchStorageKey,
+  );
+  await checkCountrySelector(mobilePage, "mobile");
   const mobileBurger = mobilePage.locator("header button[aria-label='Open menu']");
   await mobileBurger.waitFor();
-  await mobileBurger.click();
-  await mobilePage.waitForTimeout(900);
+  const mobileMenu = mobilePage.locator("#site-menu");
+  const menuIsOpen = () =>
+    mobileMenu.evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)");
+  let mobileMenuOpen = false;
+  for (let attempt = 0; attempt < 6 && !mobileMenuOpen; attempt += 1) {
+    await mobileBurger.click({ timeout: 5_000 }).catch(() => {});
+    for (let tick = 0; tick < 8 && !mobileMenuOpen; tick += 1) {
+      await mobilePage.waitForTimeout(250);
+      mobileMenuOpen = await menuIsOpen();
+    }
+  }
+  check(mobileMenuOpen, "mobile: burger menu did not open");
   check(
-    await mobilePage.locator("#site-menu").evaluate((el) => getComputedStyle(el).clipPath === "inset(0px)"),
-    "mobile: burger menu did not open",
-  );
-  // Account and the region picker leave the bar on small screens, so the menu
-  // is the only place they exist — if they are missing there, they are gone.
-  check(
-    (await mobilePage.locator("#site-menu a[href='/cabinet']").count()) === 1,
-    "mobile: account link missing from the menu",
+    (await mobilePage.locator("a[href='/cabinet']").count()) === 0,
+    "mobile: cabinet link leaked into public navigation",
   );
   check(
-    (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 1,
-    "mobile: region picker missing from the menu",
+    (await mobilePage.locator("#site-menu a[href='/ae/contacts']").count()) >= 1,
+    "mobile: contact link missing from the menu",
   );
+  check(
+    (await mobilePage.locator("#site-menu button[aria-label^='Region:']").count()) === 0,
+    "mobile: the old region picker is back in the menu",
+  );
+  check(
+    (await mobilePage.locator("header button[aria-label^='Country:']").count()) === 0,
+    "mobile: removed country dropdown is present",
+  );
+  check(
+    await mobileMenu.getByRole("link", { name: "Find your distributor", exact: true }).isVisible(),
+    "mobile: menu lacks the distributor finder button",
+  );
+  await checkDistributorFinder(mobilePage, "mobile", "Kyrgyzstan", "KG");
   await mobile.close();
+  console.log("Browser smoke phase passed: mobile interactions");
 
-  const viewportWidths = [1440, 1280, 1024, 768, 430, 390, 375, 360, 320];
-  const visual = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const viewports = [
+    { width: 1920, height: 1080 },
+    { width: 1536, height: 864 },
+    { width: 1440, height: 900 },
+    { width: 1366, height: 768 },
+    { width: 1280, height: 900 },
+    { width: 1024, height: 768 },
+    { width: 768, height: 1024 },
+    { width: 430, height: 932 },
+    { width: 414, height: 896 },
+    { width: 390, height: 844 },
+    { width: 375, height: 812 },
+    { width: 360, height: 800 },
+    { width: 320, height: 720 },
+  ];
+  const visual = await readOnlyContext({ viewport: { width: 1440, height: 1000 } });
   const visualPage = await visual.newPage();
-  for (const width of viewportWidths) {
-    const height = width <= 430 ? 844 : 1000;
+  for (const { width, height } of viewports) {
     await visualPage.setViewportSize({ width, height });
-    await visualPage.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
-    await visualPage.locator("#bestsellers").waitFor();
+    await visualPage.goto(`${baseUrl}/ae/`, { waitUntil: "domcontentloaded" });
+    await visualPage.locator(BESTSELLERS).waitFor();
     await visualPage.waitForTimeout(3_500);
+    check(
+      await visualPage.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      ),
+      `home: horizontal overflow at ${width}x${height}`,
+    );
     await visualPage.screenshot({
       path: path.join(artifactRoot, `home-${width}x${height}.png`),
       fullPage: false,
     });
+    const countrySelector = visualPage.locator("header button[aria-label^='Country:']");
+    check(
+      (await countrySelector.count()) === 0,
+      `header: removed country dropdown is present at ${width}x${height}`,
+    );
   }
   await visual.close();
+  console.log("Browser smoke phase passed: responsive captures");
+
+  const reduced = await readOnlyContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce",
+  });
+  const reducedPage = await reduced.newPage();
+  observe(reducedPage, "reduced-motion");
+  await reducedPage.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
+  check(
+    await reducedPage.locator("[data-home-slider] [data-active] h3").isVisible(),
+    "reduced-motion: the first slide's copy is not immediately visible",
+  );
+  await reduced.close();
+  console.log("Browser smoke phase passed: reduced motion");
+
+  const noScript = await readOnlyContext({
+    viewport: { width: 390, height: 844 },
+    javaScriptEnabled: false,
+  });
+  const noScriptPage = await noScript.newPage();
+  observe(noScriptPage, "no-script");
+  await noScriptPage.goto(`${baseUrl}/ae/`, { waitUntil: "load" });
+  check(
+    await noScriptPage.locator("[data-home-slider] [data-active] h3").isVisible(),
+    "no-script: the first slide's copy is not visible",
+  );
+  await noScript.close();
+  console.log("Browser smoke phase passed: no JavaScript");
+
 } finally {
   await browser.close();
 }
 
 for (const error of [...new Set(pageErrors)]) failures.push(`pageerror: ${error}`);
+for (const error of [...new Set(hydrationErrors)]) failures.push(`hydration: ${error}`);
 for (const error of [...new Set(localResponseErrors)]) failures.push(`response: ${error}`);
 
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-    console.log("Browser smoke passed: hero, header, region picker, menu, bestsellers, reading rail, catalog filters, cart/checkout dialog, product order popup, form error UX, and UTM attribution.");
-  console.log(`Captured nine homepage viewports in ${artifactRoot}.`);
+  console.log("Browser smoke passed: home slider, header, distributor finder, menu, bestsellers, reading rail, About, native Shop/search/pending prices, product enquiries, visible product content, clean hydration, real-signal loading, reduced-motion/no-JS fallbacks, form error UX, and UTM attribution. No real lead or order was submitted.");
+  console.log(`Captured thirteen homepage viewports in ${artifactRoot}.`);
 }

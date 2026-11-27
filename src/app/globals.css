@@ -1,4 +1,7 @@
 @import "../styles/design-tokens.css";
+@import "../styles/legacy-catalog.css";
+@import "../styles/legacy-repairs.css";
+@import "../styles/legacy-typography.css";
 
 html,
 body {
@@ -8,9 +11,47 @@ body {
 
 body.t-body {
   padding: 0;
+  font-family: var(--tbb-font-body);
+  font-weight: var(--tbb-font-weight-body);
+}
+
+button {
+  font-family: var(--tbb-font-button);
+  font-weight: var(--tbb-font-weight-button);
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+body > .t-zoomer__container,
+body > .t-zoomer__wrapper,
+.t-zoomer__container:not(.t-zoomer__active) {
+  display: none !important;
 }
 
 .legacy-head-assets,
 .legacy-document {
   display: contents;
+}
+
+a,
+a:hover,
+a:focus,
+a:focus-visible {
+  text-decoration-line: none !important;
+}
+
+.tbh-nav a:hover::after,
+.tbh-nav__btn:hover::after {
+  right: 100% !important;
+}
+
+a,
+button,
+summary,
+form label {
+  -webkit-tap-highlight-color: transparent !important;
 }

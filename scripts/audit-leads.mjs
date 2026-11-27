@@ -1,13 +1,3 @@
-/**
- * Lead pipeline audit.
- *
- * Boots the app against a local mock upstream, so nothing here ever reaches the
- * real tilda-odoo Worker or Odoo. For a genuine end-to-end check against
- * staging use `npm run test:lead-live`, which is opt-in and never runs in CI.
- *
- * Usage: node scripts/audit-leads.mjs
- */
-
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
 import { once } from "node:events";
@@ -25,10 +15,6 @@ function check(name, condition, detail = "") {
   }
 }
 
-/* ------------------------------------------------------------------ *
- * Mock upstream — stands in for tilda-odoo.thebasebev.workers.dev
- * ------------------------------------------------------------------ */
-
 /** @type {{mode: "ok" | "error" | "hang", received: any[]}} */
 const upstream = { mode: "ok", received: [] };
 
@@ -45,7 +31,6 @@ const mockServer = createServer((req, res) => {
     }
 
     if (upstream.mode === "hang") {
-      // Never respond; the route's AbortController must fire.
       return;
     }
 
@@ -63,20 +48,13 @@ const mockServer = createServer((req, res) => {
 mockServer.listen(0, "127.0.0.1");
 await once(mockServer, "listening");
 const mockPort = mockServer.address().port;
-// `localhost` (not 127.0.0.1) is the only non-https host the route accepts.
 const mockUrl = `http://localhost:${mockPort}/hook`;
-
-/* ------------------------------------------------------------------ *
- * App under test
- * ------------------------------------------------------------------ */
 
 const appPort = 3100 + (process.pid % 400);
 const baseUrl = `http://127.0.0.1:${appPort}`;
 
-// Launch Next directly rather than through `npm run dev`: no shell in between
-// means one process to wait on and one process to kill.
 const nextBin = path.resolve("node_modules", "next", "dist", "bin", "next");
-const app = spawn(process.execPath, [nextBin, "dev", "--port", String(appPort)], {
+const app = spawn(process.execPath, [nextBin, "dev", "--webpack", "--port", String(appPort)], {
   env: { ...process.env, LEAD_API_URL: mockUrl, LEAD_API_KEY: "" },
   stdio: ["ignore", "pipe", "pipe"],
   detached: process.platform !== "win32",
@@ -97,7 +75,6 @@ async function waitForApp(timeoutMs = 120_000) {
       const res = await fetch(`${baseUrl}/api/health`, { cache: "no-store" });
       if (res.ok) return true;
     } catch {
-      // still starting
     }
     await new Promise((r) => setTimeout(r, 500));
   }
@@ -109,9 +86,6 @@ function shutdown() {
   if (shutDown) return;
   shutDown = true;
 
-  // `npm run dev` spawns a shell that spawns Next. Killing only the shell
-  // leaves the server holding the port and this process's stdio open, so kill
-  // the whole tree.
   try {
     if (process.platform === "win32") {
       spawn("taskkill", ["/pid", String(app.pid), "/T", "/F"], {
@@ -121,13 +95,11 @@ function shutdown() {
       process.kill(-app.pid, "SIGKILL");
     }
   } catch {
-    /* already gone */
   }
 
   try {
     app.kill();
   } catch {
-    /* already gone */
   }
 
   mockServer.closeAllConnections?.();
@@ -146,12 +118,7 @@ if (!(await waitForApp())) {
   process.exit(1);
 }
 
-/* ------------------------------------------------------------------ *
- * Helpers
- * ------------------------------------------------------------------ */
-
 let ipCounter = 0;
-/** Each case gets its own client IP so the rate limiter stays out of the way. */
 function nextIp() {
   ipCounter += 1;
   return `203.0.113.${ipCounter % 250}`;
@@ -162,6 +129,7 @@ function validLead(overrides = {}) {
     name: "TEST NEXT MIGRATION",
     email: "audit@thebasebev.com",
     phone: "+971500000000",
+    product: "Matcha",
     message: "AUTOMATED AUDIT — DO NOT CONTACT",
     formType: "contact",
     formName: "Contact Us",
@@ -189,10 +157,6 @@ async function postLead(body, { ip = nextIp(), raw = false } = {}) {
     body: raw ? body : JSON.stringify(body),
   });
 }
-
-/* ------------------------------------------------------------------ *
- * Validation
- * ------------------------------------------------------------------ */
 
 check(
   "validation: empty body rejected",
@@ -236,10 +200,6 @@ check(
   (await postLead(validLead({ utm_source: "x".repeat(1_000) }))).status === 400,
 );
 
-/* ------------------------------------------------------------------ *
- * API contract
- * ------------------------------------------------------------------ */
-
 const getRes = await fetch(`${baseUrl}/api/leads`);
 check("api: GET rejected", getRes.status === 405, `received ${getRes.status}`);
 check(
@@ -259,10 +219,6 @@ check(
   /no-store/i.test(okRes.headers.get("cache-control") ?? ""),
 );
 
-/* ------------------------------------------------------------------ *
- * Attribution — the delivered payload must keep every UTM field
- * ------------------------------------------------------------------ */
-
 const delivered = upstream.received.at(-1) ?? {};
 
 check(
@@ -281,20 +237,38 @@ check(
   delivered.utm_campaign === "migration-test",
 );
 check("attribution: landing_page preserved", typeof delivered.landing_page === "string");
+check(
+  "attribution: legacy submission_page preserved",
+  delivered.submission_page === `${baseUrl}/contacts`,
+);
 check("attribution: current_page preserved", typeof delivered.current_page === "string");
+check(
+  "attribution: source path identifies the submitting route",
+  delivered.source_path === "/contacts",
+);
+check(
+  "attribution: request id preserved upstream",
+  delivered.request_id === okBody.requestId,
+);
+check(
+  "attribution: server timestamp preserved upstream",
+  typeof delivered.server_timestamp === "string" &&
+    !Number.isNaN(Date.parse(delivered.server_timestamp)),
+);
 check(
   "attribution: referrer preserved",
   delivered.referrer === "https://chatgpt.com/",
 );
 
-/* ------------------------------------------------------------------ *
- * Legacy field mapping — Odoo parses Tilda's vocabulary, not ours
- * ------------------------------------------------------------------ */
-
 check("mapping: name sent as legacy `name`", delivered.name === "TEST NEXT MIGRATION");
 check("mapping: email sent as legacy `email`", delivered.email === "audit@thebasebev.com");
 check("mapping: phone sent as legacy `Phone`", delivered.Phone === "+971500000000");
+check("mapping: product sent", delivered.product === "Matcha");
 check("mapping: message sent as legacy `text`", typeof delivered.text === "string");
+check(
+  "mapping: technical attribution does not pollute the customer request",
+  delivered.text === "AUTOMATED AUDIT — DO NOT CONTACT",
+);
 check(
   "mapping: tildaspec-formname sent",
   delivered["tildaspec-formname"] === "Contact Us",
@@ -308,6 +282,25 @@ check(
 
 upstream.received.length = 0;
 await postLead(
+  validLead({
+    formType: "careers",
+    formName: "Join Our Team",
+    submissionPage: `${baseUrl}/about-us`,
+  }),
+);
+const careersDelivered = upstream.received.at(-1) ?? {};
+check(
+  "attribution: careers submission retains its full source URL",
+  careersDelivered.submission_page === `${baseUrl}/about-us` &&
+    careersDelivered.current_page === `${baseUrl}/about-us`,
+);
+check(
+  "attribution: careers submission retains its short source path",
+  careersDelivered.source_path === "/about-us",
+);
+
+upstream.received.length = 0;
+await postLead(
   validLead({ formType: "order", formName: "Place order", message: "audit order" }),
 );
 const orderDelivered = upstream.received.at(-1) ?? {};
@@ -317,10 +310,6 @@ check(
     orderDelivered.Comments === "audit order",
   JSON.stringify(Object.keys(orderDelivered)),
 );
-
-/* ------------------------------------------------------------------ *
- * Upstream failure handling — never a false success
- * ------------------------------------------------------------------ */
 
 upstream.mode = "error";
 const errRes = await postLead(validLead());
@@ -347,10 +336,6 @@ check(
 );
 upstream.mode = "ok";
 
-/* ------------------------------------------------------------------ *
- * Spam protection
- * ------------------------------------------------------------------ */
-
 upstream.received.length = 0;
 const honeypotRes = await postLead(
   validLead({ company_website: "https://spam.example" }),
@@ -375,10 +360,6 @@ check(
   "spam: rate limited response carries Retry-After",
   (await postLead(validLead(), { ip: burstIp })).headers.get("retry-after") !== null,
 );
-
-/* ------------------------------------------------------------------ *
- * Security — the upstream URL must never reach the browser or Git
- * ------------------------------------------------------------------ */
 
 const pagesToScan = ["/", "/contacts", "/about-us"];
 let leakedInHtml = false;
@@ -409,7 +390,6 @@ for (const file of [".env.example", "src", "scripts", "worker.ts", "wrangler.jso
       return;
     }
     const text = fs.readFileSync(p, "utf8");
-    // The audit script itself carries the detection pattern, not a real URL.
     if (p.endsWith("audit-leads.mjs")) return;
     if (/tilda-odoo[a-z0-9.-]*\.workers\.dev/i.test(text)) {
       trackedLeak.push(path.relative(process.cwd(), p));
@@ -425,10 +405,6 @@ check(
   trackedLeak.length === 0,
   trackedLeak.join(", "),
 );
-
-/* ------------------------------------------------------------------ *
- * Report
- * ------------------------------------------------------------------ */
 
 shutdown();
 

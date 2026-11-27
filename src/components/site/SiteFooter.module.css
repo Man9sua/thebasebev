@@ -1,168 +1,248 @@
 .footer {
+  --footer-text: #c8c8c8;
+  --footer-soft: #b4b4b4;
+  --footer-dim: #8f8f8f;
+  --footer-muted: #8a8a8a;
+
   position: relative;
-  background: var(--tbb-ink);
-  color: var(--tbb-on-dark);
-  padding: var(--tbb-section) 0 0;
+  background: var(--tbb-rd-ink);
+  color: var(--footer-text);
+  padding: clamp(3rem, 7vw, 6rem) 0 0;
   overflow: clip;
 }
 
 .inner {
   width: 100%;
-  max-width: var(--tbb-max);
+  max-width: var(--tbb-measure);
   margin: 0 auto;
-  padding: 0 var(--tbb-gutter);
+  padding: 0 clamp(1.25rem, 6.6667vw, 6rem);
 }
 
 .top {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 24rem) repeat(4, minmax(0, 1fr));
   gap: clamp(2rem, 5vw, 4rem);
-  padding-bottom: clamp(3rem, 8vw, 6rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
 .brand {
-  max-width: 34ch;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
 }
 
 .statement {
-  font-family: var(--tbb-font-display);
-  font-size: var(--tbb-text-h3);
-  line-height: 1.25;
-  font-weight: 400;
-  margin-top: clamp(0.75rem, 2vw, 1.25rem);
-  color: var(--tbb-paper);
+  margin: 0 !important;
+  color: var(--footer-soft);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  line-height: 1.55 !important;
+  text-wrap: pretty;
 }
 
-.contact {
-  margin-top: clamp(1.25rem, 3vw, 2rem);
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+
+
+.contactLink {
+  width: fit-content;
+  color: var(--tbb-rd-paper);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.contactLink:hover,
+.contactLink:focus-visible {
+  color: #fff;
 }
 
 .column {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .columnTitle {
-  margin-bottom: 0.35rem;
-  color: rgba(253, 250, 245, 0.5);
+  margin-bottom: 0.5rem;
+  color: var(--footer-dim);
+  font-size: 0.875rem;
+  font-weight: 400;
 }
 
 .link {
-  color: rgba(253, 250, 245, 0.82);
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  color: var(--footer-text);
   text-decoration: none;
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
+  text-align: left;
   width: fit-content;
-  transition:
-    color var(--tbb-dur-fast) var(--tbb-ease),
-    transform var(--tbb-dur-fast) var(--tbb-ease);
+  cursor: pointer;
+  transition: color var(--tbb-dur-fast) var(--tbb-ease);
 }
 
 .link:hover,
 .link:focus-visible {
-  color: var(--tbb-paper);
-  transform: translate3d(3px, 0, 0);
-}
-
-.social {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
+  color: var(--tbb-rd-paper);
 }
 
 .legal {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem 2rem;
+  gap: 1rem clamp(1.25rem, 2.5vw, 2rem);
   padding: clamp(1rem, 2vw, 1.5rem) 0;
-  border-top: 1px solid rgba(253, 250, 245, 0.16);
-  color: rgba(253, 250, 245, 0.5);
+  border-top: 1px solid #1e1e1e;
+}
+
+.copyright {
+  color: var(--footer-muted);
   font-size: 0.8125rem;
 }
 
 .legalLinks {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  margin-left: auto;
 }
 
-/* --- the wordmark --- */
+.legalLinks .link {
+  color: var(--footer-muted);
+  font-size: 0.8125rem;
+}
+
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.socialLink {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid #2c2c2c;
+  border-radius: 50%;
+  color: var(--footer-text);
+  text-decoration: none;
+  transition:
+    color var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.socialLink svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.socialLink .whatsappIcon {
+  fill: currentColor;
+  stroke: none;
+}
+
+.socialLink:hover,
+.socialLink:focus-visible {
+  border-color: var(--tbb-rd-paper);
+  background: var(--tbb-rd-paper);
+  color: var(--tbb-rd-ink);
+}
 
 .wordmarkWrap {
-  /* Full-bleed past the page gutter so the word can actually reach the edges. */
-  margin: 0 calc(var(--tbb-gutter) * -1);
-  padding: 0 clamp(0.5rem, 1.5vw, 1.25rem);
-  /* Cropped deliberately: the descender-less caps sit tight to the baseline and
-     the bottom of the word is clipped by the footer edge. */
+  margin-bottom: clamp(0.5rem, 1.5vw, 1.25rem);
   overflow: clip;
-  line-height: 0.78;
-  /* The sizing container for the wordmark below. */
-  container-type: inline-size;
 }
 
 .wordmark {
   display: block;
-  margin: 0;
-  font-family: var(--tbb-font-display);
-  /*
-   * Sized in `cqw`, not `vw`.
-   *
-   * `vw` resolves against the viewport *including* the vertical scrollbar, so
-   * on desktop the word was ~15px wider than the space it had and the final E
-   * ran off the right edge. Mobile has no persistent scrollbar, which is why
-   * the bug only showed on desktop.
-   *
-   * `cqw` resolves against this element's container content box, which excludes
-   * the scrollbar — the word can no longer be wider than the room it has.
-   */
-  font-size: 40cqw;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  text-align: center;
-  white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.92) 0%,
-    rgba(255, 255, 255, 0.55) 62%,
-    rgba(255, 255, 255, 0.18) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
+  width: clamp(10rem, 18vw, 20rem);
+  height: auto;
+  color: #2e2e2e;
   user-select: none;
-  transform: translate3d(0, 6%, 0);
 }
 
-@media (max-width: 1023px) {
-  .top {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (min-width: 64rem) {
+  .social {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    width: min(100%, 9.25rem);
   }
 
-  .brand {
+  .socialLink {
     grid-column: span 2;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
   }
+
+  .socialLink:nth-child(4) { grid-column: 2 / span 2; }
 }
 
-@media (max-width: 559px) {
+@media (max-width: 63.9375rem) {
   .top {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    row-gap: clamp(2.5rem, 6vw, 4rem);
   }
 
   .brand {
-    grid-column: span 1;
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+}
+
+@media (max-width: 39.9375rem) {
+  .inner {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.25rem;
+    row-gap: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .top,
+  .brand {
+    display: contents;
+  }
+
+  .statement {
+    grid-column: 1 / -1;
   }
 
   .legal {
+    order: 8;
+    grid-column: 1 / -1;
+    margin-top: clamp(1rem, 4vw, 2rem);
     flex-direction: column;
     align-items: flex-start;
   }
 
+  .wordmarkWrap {
+    order: 9;
+    grid-column: 1 / -1;
+    margin: 0 0 clamp(1.5rem, 6vw, 2.5rem);
+  }
+
+  .wordmark {
+    width: clamp(8rem, 40vw, 13rem);
+  }
+
+  .column:last-child {
+    grid-column: 1 / -1;
+  }
+
   .legalLinks {
-    gap: 1.25rem;
+    margin-left: 0;
+    order: -1;
   }
 }

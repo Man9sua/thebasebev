@@ -1,0 +1,105 @@
+.list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.item {
+  overflow: clip;
+  border: 1px solid color-mix(in srgb, var(--product-panel, var(--tbb-line)) 20%, var(--tbb-line));
+  border-radius: 14px;
+  background: var(--tbb-paper);
+}
+
+.heading {
+  font: inherit;
+}
+
+.trigger {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: clamp(1.1rem, 2.2vw, 1.6rem) clamp(1rem, 2.4vw, 1.5rem);
+  border: 0;
+  background: none;
+  font-family: var(--tbb-font-button);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: var(--tbb-font-weight-button);
+  line-height: 1.25;
+  text-align: left;
+  color: var(--tbb-ink);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.trigger:active {
+  background: transparent;
+  color: var(--tbb-ink);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--tbb-line);
+  border-radius: 999px;
+  color: var(--tbb-ink);
+  transition:
+    transform var(--tbb-dur-fast) var(--tbb-ease),
+    background var(--tbb-dur-fast) var(--tbb-ease),
+    border-color var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.trigger:hover .icon {
+  border-color: var(--tbb-ink);
+}
+
+.icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.icon[data-open="true"] {
+  transform: rotate(180deg);
+  border-color: transparent;
+  background: var(--tbb-paper-warm);
+}
+
+.answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--tbb-dur-fast) var(--tbb-ease);
+}
+
+.answer[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.answerInner {
+  overflow: hidden;
+}
+
+.answerBody {
+  max-width: 68ch;
+  padding: 0 clamp(1rem, 2.4vw, 1.5rem) clamp(1.1rem, 2.2vw, 1.6rem);
+  font-size: var(--tbb-text-body);
+  line-height: 1.6;
+  color: var(--tbb-ink-soft);
+}
+
+@media (max-width: 767px) {
+  .trigger {
+    gap: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}

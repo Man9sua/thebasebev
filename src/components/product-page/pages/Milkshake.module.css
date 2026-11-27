@@ -1,0 +1,9 @@
+.facts {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: calc(16 * var(--u));
+}
+
+@media (max-width: 1023px) {
+  .facts { display: flex; flex-direction: column; gap: 16px; }
+}

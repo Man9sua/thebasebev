@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
+import { getFirstTouchAttribution } from "@/components/forms/first-touch";
+import { countryCodeFromPath, countryPath } from "@/lib/country-paths";
+import { pageMarket } from "@/lib/market-preference";
 import {
   LEGACY_FORM_NAMES,
   resolveLeadFormType,
 } from "@/lib/lead-forms";
 import {
-  createFirstTouchAttribution,
   LEAD_HONEYPOT_FIELD,
-  parseFirstTouchAttribution,
   validateLeadPayload,
   type FirstTouchAttribution,
   type LeadPayload,
 } from "@/lib/leads";
-
-const FIRST_TOUCH_STORAGE_KEY = "thebase:first-touch-attribution:v1";
 
 const OWNED_TILDA_FORM_IDS = new Set([
   "form861442702",
@@ -49,34 +48,6 @@ const COUNTRY_DIAL_CODES: Record<string, string> = {
 type DataLayerWindow = Window & {
   dataLayer?: Array<Record<string, unknown>>;
 };
-
-function getFirstTouchAttribution(): FirstTouchAttribution {
-  const current = createFirstTouchAttribution(
-    window.location.href,
-    document.referrer,
-    new URL(window.location.href).searchParams,
-  );
-
-  try {
-    const stored = window.sessionStorage.getItem(FIRST_TOUCH_STORAGE_KEY);
-    if (stored) {
-      const parsed = parseFirstTouchAttribution(JSON.parse(stored));
-      if (parsed) {
-        return parsed;
-      }
-    }
-
-    window.sessionStorage.setItem(
-      FIRST_TOUCH_STORAGE_KEY,
-      JSON.stringify(current),
-    );
-  } catch {
-    // Privacy modes can make sessionStorage unavailable. Submission still works
-    // with an in-memory first touch for the current page.
-  }
-
-  return current;
-}
 
 function getFormValue(formData: FormData, names: string[]): string | undefined {
   for (const name of names) {
@@ -142,6 +113,7 @@ function buildLeadPayload(
     phone,
     country: phoneCountry?.toUpperCase(),
     company: getFormValue(formData, ["company", "Company"]),
+    product: getFormValue(formData, ["product", "product_name"]),
     message: getFormValue(formData, [
       "text",
       "message",
@@ -151,8 +123,6 @@ function buildLeadPayload(
     ]),
     formId: form.id || undefined,
     formName,
-    // The server re-derives and re-checks this against its allowlist; sending it
-    // only saves a lookup, it is never trusted as-is.
     formType: resolveLeadFormType(form.id, formName) ?? undefined,
     consent: getConsent(form),
     [LEAD_HONEYPOT_FIELD]: getFormValue(formData, [LEAD_HONEYPOT_FIELD]) ?? "",
@@ -182,9 +152,6 @@ function isOwnedTildaLeadForm(form: HTMLFormElement): boolean {
     ?.value.trim()
     .toLowerCase();
 
-  // Tilda uses data-formactiontype=2 for both Zero Block lead forms and carts,
-  // so it is not a safe ownership signal. Audited cart form names/IDs are not
-  // in either allowlist and continue through the legacy payment pipeline.
   return formName ? OWNED_TILDA_FORM_NAMES.has(formName) : false;
 }
 
@@ -235,8 +202,6 @@ function showLegacyError(form: HTMLFormElement, message: string) {
     form.append(errorBox);
   }
 
-  // Tilda ships its own error box without a live-region role, so announce it
-  // whether we created the element or inherited it.
   errorBox.setAttribute("role", "alert");
 
   let messageNode = errorBox.querySelector<HTMLElement>(".js-rule-error-all");
@@ -273,7 +238,7 @@ function completeLegacySuccess(form: HTMLFormElement) {
   const formId = form.id || form.name || "lead-form";
   const dataLayerWindow = window as DataLayerWindow;
   dataLayerWindow.dataLayer = dataLayerWindow.dataLayer ?? [];
-  dataLayerWindow.dataLayer.push({ event: `submit_${formId}` });
+  dataLayerWindow.dataLayer.push({ event: `submit_${formId}`, ...pageMarket(window.location.pathname) });
 
   const successUrl =
     form.dataset.successUrl ||
@@ -282,7 +247,16 @@ function completeLegacySuccess(form: HTMLFormElement) {
       ?.dataset.fieldFormmsgurlValue;
 
   if (successUrl) {
-    window.setTimeout(() => window.location.assign(successUrl), 500);
+    let destination = successUrl;
+    try {
+      const url = new URL(successUrl, window.location.href);
+      if (url.origin === window.location.origin
+        || url.origin === "https://thebasebev.com" || url.origin === "https://www.thebasebev.com") {
+        destination = countryPath(`${url.pathname}${url.search}${url.hash}`, countryCodeFromPath(window.location.pathname));
+      }
+    } catch {
+    }
+    window.setTimeout(() => window.location.assign(destination), 500);
     return;
   }
 
@@ -314,10 +288,6 @@ function getApiErrorMessage(body: unknown): string {
   return "Something went wrong. Please try again.";
 }
 
-/**
- * Add the decoy field to an owned form. It is visually hidden and removed from
- * the tab order and the accessibility tree, so only automated fillers reach it.
- */
 function attachHoneypot(form: HTMLFormElement) {
   if (form.querySelector(`input[name="${LEAD_HONEYPOT_FIELD}"]`)) {
     return;
@@ -327,8 +297,11 @@ function attachHoneypot(form: HTMLFormElement) {
   input.type = "text";
   input.name = LEAD_HONEYPOT_FIELD;
   input.tabIndex = -1;
-  input.autocomplete = "off";
+  input.autocomplete = "new-password";
+  input.readOnly = true;
   input.setAttribute("aria-hidden", "true");
+  input.setAttribute("data-lpignore", "true");
+  input.setAttribute("data-1p-ignore", "true");
   input.style.cssText =
     "position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;";
   form.append(input);
@@ -351,8 +324,6 @@ export function LeadAttributionBridge() {
 
     armOwnedForms();
 
-    // Tilda injects Zero Block popup forms after hydration, so watch for them
-    // instead of assuming the first pass saw every form.
     const observer = new MutationObserver(armOwnedForms);
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -408,17 +379,11 @@ export function LeadAttributionBridge() {
         return;
       }
 
-      // Once this allowlisted form is owned, prevent the legacy Tilda handler
-      // from submitting a second copy to opaque receiver hashes.
       event.preventDefault();
       event.stopImmediatePropagation();
       submitOwnedForm(form);
     };
 
-    // Tilda's form script calls preventDefault() on the submit button's click,
-    // so on most pages no `submit` event is ever dispatched and a submit-only
-    // listener never runs. Claim the click first — window capture is the
-    // earliest phase, ahead of Tilda's element and document handlers.
     const handleClick = (event: MouseEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) {
@@ -442,8 +407,6 @@ export function LeadAttributionBridge() {
       submitOwnedForm(form);
     };
 
-    // Keyboard submits (Enter inside a field) still arrive as `submit`, and
-    // some forms are not driven by the Tilda script at all.
     window.addEventListener("click", handleClick, true);
     window.addEventListener("submit", handleSubmit, true);
     return () => {
